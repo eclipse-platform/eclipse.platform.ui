@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - 19346, 42056
+ *     Remy Chi Jian Suen - bug 204879
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -26,10 +27,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -235,9 +234,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         // creates a composite with standard margins and spacing
         Composite contents = new Composite(parentComposite, SWT.NONE);
 
-        FormLayout layout = new FormLayout();
-
-        contents.setLayout(layout);
+        contents.setLayout(new GridLayout(4, false));
         contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         if (newVariable) {
@@ -255,25 +252,18 @@ public class PathVariableDialog extends TitleAreaDialog {
      * @param contents the parent composite where to create widgets
      */
     private void createWidgets(Composite contents) {
-        FormData data;
-
         String nameLabelText = IDEWorkbenchMessages.PathVariableDialog_variableName;
         String valueLabelText = IDEWorkbenchMessages.PathVariableDialog_variableValue;
 
         // variable name label
-        variableNameLabel = new Label(contents, SWT.LEFT);
+        variableNameLabel = new Label(contents, SWT.LEAD);
         variableNameLabel.setText(nameLabelText);
-
-        data = new FormData();
-        data.top = new FormAttachment(0,
-        		convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN));
-        data.left = new FormAttachment(0,
-        		convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN));
-        variableNameLabel.setLayoutData(data);
      
         // variable name field.  Attachments done after all widgets created.
         variableNameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
         variableNameField.setText(variableName);
+        variableNameField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+        		false, 3, 1));
         variableNameField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 variableNameModified();
@@ -281,37 +271,36 @@ public class PathVariableDialog extends TitleAreaDialog {
         });
         
         // variable value label
-        variableValueLabel = new Label(contents, SWT.LEFT);
+        variableValueLabel = new Label(contents, SWT.LEAD);
         variableValueLabel.setText(valueLabelText);
-
-        data = new FormData();
-        data.left = new FormAttachment(0,
-        		convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN));
-        data.top = new FormAttachment(variableNameLabel,
-                convertVerticalDLUsToPixels(5));
-        variableValueLabel.setLayoutData(data);
 
         // variable value field.  Attachments done after all widgets created.
         variableValueField = new Text(contents, SWT.SINGLE | SWT.BORDER);
         variableValueField.setText(variableValue);
+        variableValueField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+        		false));
         variableValueField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 variableValueModified();
             }
         });
+        
+        Composite buttonsComposite = new Composite(contents, SWT.NONE);
+        buttonsComposite.setLayoutData(new GridData(SWT.END, SWT.CENTER, false,
+        		false, 2, 1));
+        GridLayout layout = new GridLayout(2, true);
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        buttonsComposite.setLayout(layout);
 
         // select file path button
-        fileButton = new Button(contents, SWT.PUSH);
+        fileButton = new Button(buttonsComposite, SWT.PUSH);
         fileButton.setText(IDEWorkbenchMessages.PathVariableDialog_file);
+        fileButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+        		false));
         if ((variableType & IResource.FILE) == 0) {
 			fileButton.setEnabled(false);
 		}
-
-        data = setButtonFormLayoutData(fileButton);
-        data.top = new FormAttachment(variableValueLabel, 0, SWT.CENTER);
-        data.right = new FormAttachment(100,
-        		-convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN));        
-        fileButton.setLayoutData(data);
 
         fileButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -320,67 +309,19 @@ public class PathVariableDialog extends TitleAreaDialog {
         });
 
         // select folder path button
-        folderButton = new Button(contents, SWT.PUSH);
+        folderButton = new Button(buttonsComposite, SWT.PUSH);
         folderButton.setText(IDEWorkbenchMessages.PathVariableDialog_folder);
+        folderButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+        		false));
         if ((variableType & IResource.FOLDER) == 0) {
 			folderButton.setEnabled(false);
 		}
-
-        data = setButtonFormLayoutData(folderButton);
-        data.top = new FormAttachment(fileButton, convertVerticalDLUsToPixels(2));
-        data.right = new FormAttachment(100,
-        		-convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN));
-        folderButton.setLayoutData(data);
 
         folderButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 selectFolder();
             }
         });
-        
-        // Attaching variable name and value fields to file and folder buttons,
-        // so do this now that those buttons have been created.
-        
-        // the larger label will be used in the left attachments for the fields  
-        Label largerLabel = nameLabelText.length() > valueLabelText.length() ? variableNameLabel
-                : variableValueLabel;
- 
-        data = new FormData();
-        data.left = new FormAttachment(largerLabel,
-                convertHorizontalDLUsToPixels(5));
-        data.right = new FormAttachment(fileButton, -convertHorizontalDLUsToPixels(5));
-        data.top = new FormAttachment(variableNameLabel,
-                convertVerticalDLUsToPixels(5), SWT.CENTER);
-        variableNameField.setLayoutData(data);
-        
-
-        data = new FormData();
-        data.left = new FormAttachment(largerLabel,
-                convertHorizontalDLUsToPixels(5));
-        data.right = new FormAttachment(fileButton, -convertHorizontalDLUsToPixels(5));
-        data.top = new FormAttachment(variableValueLabel, 0, SWT.CENTER);
-        variableValueField.setLayoutData(data);
-
-  
- 
-    }
-
-    /**
-     * Sets the <code>FormData</code> on the specified button to be one that is
-     * spaced for the current dialog page units. The method
-     * <code>initializeDialogUnits</code> must be called once before calling this
-     * method for the first time.
-     * 
-     * @param button the button to set the <code>FormData</code>
-     * @return the <code>FormData</code> set on the specified button
-     */
-    private FormData setButtonFormLayoutData(Button button) {
-        FormData data = new FormData();
-        int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-        data.width = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
-                SWT.DEFAULT, true).x);
-        button.setLayoutData(data);
-        return data;
     }
 
     /**
