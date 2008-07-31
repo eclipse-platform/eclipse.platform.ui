@@ -306,19 +306,21 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		if (editorDelegate != null) {
 			final Object activeEditor = context
 					.getVariable(ISources.ACTIVE_EDITOR_NAME);
-			if (activeEditor != null) {
+			if (activeEditor != IEvaluationContext.UNDEFINED_VARIABLE) {
 				editorDelegate.setActiveEditor(action,
 						(IEditorPart) activeEditor);
 			}
-			updateActivePart((IWorkbenchPart)activeEditor);
+			updateActivePart(activeEditor==IEvaluationContext.UNDEFINED_VARIABLE
+					?null:(IWorkbenchPart)activeEditor);
 		} else if (objectDelegate != null) {
 			final Object activePart = context
 					.getVariable(ISources.ACTIVE_PART_NAME);
-			if (activePart != null) {
+			if (activePart != IEvaluationContext.UNDEFINED_VARIABLE) {
 				objectDelegate.setActivePart(action,
 						(IWorkbenchPart) activePart);
 			}
-			updateActivePart((IWorkbenchPart) activePart);
+			updateActivePart(activePart==IEvaluationContext.UNDEFINED_VARIABLE
+					?null:(IWorkbenchPart) activePart);
 		}
 
 		final Object selectionObject = getCurrentSelection(context);
