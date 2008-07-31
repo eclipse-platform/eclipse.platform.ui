@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Liebig  - Bug 242685 StringVariableManager - Variable contributions may silently override existing variables
  *******************************************************************************/
 package org.eclipse.core.internal.variables;
 
@@ -224,7 +225,13 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			}
 			String description= element.getAttribute(ATTR_DESCRIPTION);
 			DynamicVariable variable= new DynamicVariable(name, description, element);
-			fDynamicVariables.put(variable.getName(), variable);
+			Object old = fDynamicVariables.put(variable.getName(), variable);
+			if (old != null) {
+				DynamicVariable oldVariable = (DynamicVariable)old;
+				VariablesPlugin.logMessage(NLS.bind("Dynamic variable extension from bundle ''{0}'' overrides existing extension variable ''{1}'' from bundle ''{2}''", //$NON-NLS-1$
+						new String[] {element.getDeclaringExtension().getContributor().getName(),oldVariable.getName(),
+						oldVariable.getConfigurationElement().getDeclaringExtension().getContributor().getName()}), null);
+			}
 		}
 	}
 
@@ -245,7 +252,13 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			boolean isReadOnly = TRUE_VALUE.equals(element.getAttribute(ATTR_READ_ONLY));
 			
 			IValueVariable variable = new ContributedValueVariable(name, description, isReadOnly, element);
-			fValueVariables.put(name, variable);		
+			Object old = fValueVariables.put(name, variable);
+			if (old != null) {
+				StringVariable oldVariable = (StringVariable)old;
+				VariablesPlugin.logMessage(NLS.bind("Contributed variable extension from bundle ''{0}'' overrides existing extension variable ''{1}'' from  bundle ''{2}''", //$NON-NLS-1$
+						new String[] {element.getDeclaringExtension().getContributor().getName(),oldVariable.getName(),
+						oldVariable.getConfigurationElement().getDeclaringExtension().getContributor().getName()}), null);
+			}
 		}		
 	}
 
