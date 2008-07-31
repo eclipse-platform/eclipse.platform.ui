@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -67,6 +68,8 @@ import org.eclipse.jface.text.Region;
  * @since 3.4
  */
 public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
+	
+	private static final boolean IS_WIN32= "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
 	
 	/**
 	 * An information control capable of showing a list of hyperlinks. The hyperlinks can be opened.
@@ -154,7 +157,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		 */
 		protected void createContent(Composite parent) {
 			fParent= parent;
-			if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			if (IS_WIN32) {
 				GridLayout layout= new GridLayout();
 				layout.marginWidth= 0;
 				layout.marginRight= 4;
@@ -205,7 +208,12 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			fTable.setHeaderVisible(false);
 			fTable.setForeground(fForegroundColor);
 			fTable.setBackground(fBackgroundColor);
-			
+
+			if (IS_WIN32) {
+				GridData data= new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true);
+				fTable.setLayoutData(data);
+			}
+
 			final TableViewer viewer= new TableViewer(fTable);
 			viewer.setContentProvider(new LinkContentProvider());
 			viewer.setLabelProvider(new LinkLabelProvider());
