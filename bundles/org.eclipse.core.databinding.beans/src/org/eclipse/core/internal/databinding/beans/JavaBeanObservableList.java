@@ -398,6 +398,7 @@ public class JavaBeanObservableList extends ObservableList implements
 				Object o = it.next();
 				diffEntries.add(Diffs.createListDiffEntry(0, false, o));
 			}
+			wrappedList.clear();
 			setValues();
 			fireListChange(Diffs.createListDiff((ListDiffEntry[]) diffEntries
 					.toArray(new ListDiffEntry[diffEntries.size()])));
