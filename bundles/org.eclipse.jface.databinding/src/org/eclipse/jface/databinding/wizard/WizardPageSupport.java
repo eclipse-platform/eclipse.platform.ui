@@ -10,6 +10,7 @@
  *     Boris Bokowski - bug 218269
  *     Matthew Hall - bug 218269, 240444
  *     Ashley Cambrell - bug 199179 
+ *     Ovidio Mallo - bug 235195
  *******************************************************************************/
 package org.eclipse.jface.databinding.wizard;
 
@@ -188,7 +189,7 @@ public class WizardPageSupport {
 		} else if (currentStatus != null
 				&& currentStatus.getSeverity() != IStatus.OK) {
 			int severity = currentStatus.getSeverity();
-			wizardPage.setPageComplete((severity & IStatus.CANCEL) != 0);
+			wizardPage.setPageComplete((severity & IStatus.CANCEL) == 0);
 			int type = IMessageProvider.NONE;
 			switch (severity) {
 			case IStatus.OK:

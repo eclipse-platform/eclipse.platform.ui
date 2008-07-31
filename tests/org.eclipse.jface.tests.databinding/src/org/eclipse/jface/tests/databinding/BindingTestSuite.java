@@ -14,7 +14,7 @@
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703
- *     Ovidio Mallo - bug 237163
+ *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -136,6 +136,7 @@ import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTes
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetTreeContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ViewersObservablesTest;
+import org.eclipse.jface.tests.databinding.wizard.WizardPageSupportTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ButtonObservableValueTest;
@@ -339,6 +340,9 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ObservableSetContentProviderTest.class);
 		addTestSuite(ObservableSetTreeContentProviderTest.class);
 		addTestSuite(ViewersObservablesTest.class);
+		
+		// org.eclipse.jface.tests.databinding.wizard
+		addTestSuite(WizardPageSupportTest.class);
 		
 		//org.eclipse.jface.tests.example.databinding.mask.internal
 		addTestSuite(EditMaskLexerAndTokenTest.class);
