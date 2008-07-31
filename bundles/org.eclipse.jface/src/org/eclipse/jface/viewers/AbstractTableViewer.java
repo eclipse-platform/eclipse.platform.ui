@@ -67,6 +67,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				public void handleEvent(Event event) {
 					Item item = (Item) event.item;
 					final int index = doIndexOf(item);
+					
+					if (index == -1) {
+						// Should not happen, but the spec for doIndexOf allows returning -1.
+						// See bug 241117.
+						return;
+					}
+					
 					Object element = resolveElement(index);
 					if (element == null) {
 						// Didn't find it so make a request
