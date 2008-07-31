@@ -60,7 +60,8 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 	
 	private void init() {
 		button.addListener(SWT.Selection, updateListener);
-		button.addListener(SWT.DefaultSelection, updateListener);		
+		button.addListener(SWT.DefaultSelection, updateListener);
+		this.selectionValue = button.getSelection();
 	}
 
 	public void doSetValue(final Object value) {
