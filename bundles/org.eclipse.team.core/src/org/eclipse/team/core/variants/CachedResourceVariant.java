@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,9 +181,9 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * cached contents can be retrieved from any handle to a resource variant whose
 	 * cache path (as returned by <code>getCachePath()</code>) match but other
 	 * state information may only be accessible from the cached copy.
-	 * <p>
-	 * This method is not intended to be overridden by clients.
+	 * 
 	 * @return whether the variant is cached
+	 * @nooverride This method is not intended to be overridden by clients. 
 	 */
 	protected boolean isHandleCached() {
 		return (getCache().hasEntry(getCachePath()));
@@ -241,9 +241,9 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * one. If there isn't one, then <code>null</code> is returned.
 	 * If there is no cached handle and one is desired, then <code>cacheHandle()</code>
 	 * should be called.
-	 * <p>
-	 * This method is not intended to be overridden by clients.
+	 * 
 	 * @return a cached copy of this resource variant or <code>null</code>
+	 * @nooverride This method is not intended to be overridden by clients. 
 	 */
 	protected CachedResourceVariant getCachedHandle() {
 		ResourceVariantCacheEntry entry = getCacheEntry();
@@ -260,8 +260,8 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * resource version (or revision). The ability to replace the handle itself
 	 * is provided so that additional state may be cached before or after the contents
 	 * are fetched.
-	 * <p>
-	 * This method is not intended to be overridden by clients.
+	 * 
+	 * @nooverride This method is not intended to be overridden by clients.
 	 */
 	protected void cacheHandle() {
 		getCache().add(getCachePath(), this);
