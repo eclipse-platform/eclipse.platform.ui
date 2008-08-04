@@ -141,7 +141,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	private boolean previousAuthenticationFailed = false;
 	
 	/**
-	 * Return the preferences node whose child nodes are teh know repositories
+	 * Return the preferences node whose child nodes are the know repositories
 	 * @return a preferences node
 	 */
 	public static Preferences getParentPreferences() {
@@ -149,7 +149,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	/**
-	 * Return a preferences node that contains suitabel defaults for a
+	 * Return a preferences node that contains suitable defaults for a
 	 * repository location.
 	 * @return  a preferences node
 	 */
@@ -548,11 +548,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	
 	/*
 	 * Dispose of the receiver by clearing any cached authorization information.
-	 * This method shold only be invoked when the corresponding adapter is shut
+	 * This method should only be invoked when the corresponding adapter is shut
 	 * down or a connection is being validated.
 	 */
 	public void dispose() {
-		flushCache();
+		removeNode();
 		try {
 			if (hasPreferences()) {
 				internalGetPreferences().removeNode();
@@ -564,14 +564,17 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	/*
-	 * Flush the keyring entry associated with the receiver
+	 * Clear and flush the keyring entry associated with the receiver
 	 */
-	private void flushCache() {
+	private void removeNode() {
 		ISecurePreferences node = getCVSNode();
 		if (node == null)
 			return;
 		try {
-			node.flush();
+			node.clear();
+			node.flush(); // save immediately
+		} catch (IllegalStateException e) {
+			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
 		} catch (IOException e) {
 			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
 		}
@@ -889,8 +892,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
     }
 
     /*
-     * The connection was sucessfully made. Update the cached
-     * repository location if it is a differnet instance than
+     * The connection was successfully made. Update the cached
+     * repository location if it is a different instance than
      * this location.
      */
     private void updateCachedLocation() {
@@ -963,6 +966,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// We set the password here but it will be cleared 
 		// if the user info is cached using updateCache()
 		this.password = password;
+		// The password has been changed, reset the flag, so we won't 
+		// prompt before attempting to connect
+		previousAuthenticationFailed = false;
 	}
 	
 	/*
@@ -980,10 +986,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	
 	public void setAllowCaching(boolean value) {
 		allowCaching = value;
-        if (allowCaching)
+        if (allowCaching) {
             updateCache();
-        else
-            flushCache();
+        } else {
+        	if (password == null)
+        		password = retrievePassword();
+            removeNode();
+        }
 	}
 	
 	public void updateCache() {
@@ -1082,7 +1091,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @see ICVSRepositoryLocation#flushUserInfo()
 	 */
 	public void flushUserInfo() {
-		flushCache();
+		removeNode();
 	}
 	
 	/*
