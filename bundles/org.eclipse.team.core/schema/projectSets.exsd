@@ -1,25 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.team.core">
+<schema targetNamespace="org.eclipse.team.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.team.core" id="projectSets" name="Project Sets"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to register a handler for creating and reading project sets.
 Project sets are lightweight, portable method of sharing a particular lineup of team-shared projects in a workspace.
 A project set file may be used to provide team memebers with a simple way of creating a workspace with a particular lineup of projects form one or more team providers. Providers may provide an extension for this extension point.
 &lt;p&gt;
-&lt;i&gt;deprecated: see RepositoryProvider#getProjectSetCapability.&lt;/i&gt;
+&lt;i&gt;deprecated: see org.eclipse.team.core.RepositoryProviderType#getProjectSetCapability&lt;/i&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
+         <appinfo>
+            <meta.element deprecated="true" />
+         </appinfo>
       </annotation>
       <complexType>
          <sequence>
@@ -56,18 +56,18 @@ A project set file may be used to provide team memebers with a simple way of cre
                <documentation>
                   the fully qualified name of a class implementing &lt;samp&gt;org.eclipse.team.core.IProjectSerializer&lt;/samp&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.team.core.IProjectSetSerializer"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Following is an example of a projectSets extension:
 
@@ -84,39 +84,23 @@ A project set file may be used to provide team memebers with a simple way of cre
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          2.0
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Copyright (c) 2004 IBM Corporation and others.
+         Copyright (c) 2004, 2008 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
