@@ -73,6 +73,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage";  //$NON-NLS-1$
 
 	private static final String EXPAND_PATCH_OPTIONS = "expandPatchOptions"; //$NON-NLS-1$
+	private static final String GENERATE_REJECTS = "generateRejects"; //$NON-NLS-1$
 	
 	final WorkspacePatcher fPatcher;
 	private final CompareConfiguration fConfiguration;
@@ -92,6 +93,7 @@ public class PreviewPatchPage2 extends WizardPage {
 
 	private IDialogSettings settings;
 	private ExpandableComposite patchOptions;
+	private Button generateRejects;
 		
 	public PreviewPatchPage2(WorkspacePatcher patcher, CompareConfiguration configuration) {
 		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
@@ -427,6 +429,7 @@ public class PreviewPatchPage2 extends WizardPage {
 
 		Composite c = new Composite(patchOptions, SWT.NONE);
 		patchOptions.setClient(c);
+		patchOptions.setExpanded(true);
 		GridLayout gl= new GridLayout(); gl.numColumns= 3;
 		c.setLayout(gl);
 		c.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
@@ -517,7 +520,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	}
 
 	private void createGenerateRejectsToggle(Composite pair) {
-		final Button generateRejects = new Button(pair, SWT.CHECK);
+		generateRejects = new Button(pair, SWT.CHECK);
 		generateRejects.setText(PatchMessages.HunkMergePage_GenerateRejectFile);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_CENTER
 				| GridData.HORIZONTAL_ALIGN_BEGINNING
@@ -669,21 +672,24 @@ public class PreviewPatchPage2 extends WizardPage {
 	}
 	
 	private void restoreWidgetValues() {
-		boolean expandPatchOptions = true;
-				
 		IDialogSettings dialogSettings = CompareUI.getPlugin().getDialogSettings();
 		settings = dialogSettings.getSection(PREVIEWPATCHPAGE_NAME);
 		if (settings == null) {
 			settings = dialogSettings.addNewSection(PREVIEWPATCHPAGE_NAME);
 		}
-		if (settings != null && settings.get(EXPAND_PATCH_OPTIONS) != null)
-			expandPatchOptions = settings.getBoolean(EXPAND_PATCH_OPTIONS);
-		
-		patchOptions.setExpanded(expandPatchOptions);
+		if (settings != null) {
+			if (settings.get(EXPAND_PATCH_OPTIONS) != null)
+				patchOptions.setExpanded(settings.getBoolean(EXPAND_PATCH_OPTIONS));
+			if (settings.get(GENERATE_REJECTS) != null) {
+				generateRejects.setSelection(settings.getBoolean(GENERATE_REJECTS));
+				getPatcher().setGenerateRejectFile(generateRejects.getSelection());
+			}
+		}
 	}			
 	
 	void saveWidgetValues() {
 		settings.put(EXPAND_PATCH_OPTIONS, patchOptions.isExpanded());
+		settings.put(GENERATE_REJECTS, generateRejects.getSelection());
 	}
 	
 	private String countLines() {
