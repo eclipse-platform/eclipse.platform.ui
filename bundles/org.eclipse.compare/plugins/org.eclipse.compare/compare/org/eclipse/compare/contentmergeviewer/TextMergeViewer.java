@@ -1212,7 +1212,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		else
 			fTextDirection= SWT.NONE;
 		
-		fSymbolicFontName= getClass().getName();
+		fSymbolicFontName= getSymbolicFontName();
 		
 		String platform= SWT.getPlatform();
 		fIsMotif= "motif".equals(platform); //$NON-NLS-1$
@@ -1272,6 +1272,18 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		JFaceResources.getFontRegistry().addListener(fPreferenceChangeListener);
 		JFaceResources.getColorRegistry().addListener(fPreferenceChangeListener);
 		updateFont();
+	}
+	
+	private String getSymbolicFontName() {
+		Class clazz= getClass();
+		do {
+			String fontName= clazz.getName();
+			if (JFaceResources.getFontRegistry().hasValueFor(fontName))
+				return fontName;
+			clazz= clazz.getSuperclass();
+		} while (clazz != null);
+		// use text compare font if no font has been registered for subclass
+		return getClass().getName();
 	}
 	
 	private void updateFont() {
