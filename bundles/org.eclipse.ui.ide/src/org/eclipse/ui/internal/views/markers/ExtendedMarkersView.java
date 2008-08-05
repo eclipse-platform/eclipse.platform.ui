@@ -186,8 +186,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
-			 *      java.lang.Class)
+			 * @see
+			 * org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang
+			 * .Object, java.lang.Class)
 			 */
 			public Object getAdapter(Object adaptableObject, Class adapterType) {
 				if (adapterType == IMarker.class
@@ -305,7 +306,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 * @see
+			 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange
+			 * (org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
 				String propertyName = event.getProperty();
@@ -416,8 +419,7 @@ public class ExtendedMarkersView extends ViewPart {
 			if (builder.getPrimarySortField().equals(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
 
-			// Take into account the expansion indicator
-			int columnWidth = markerField.getDefaultColumnWidth(tree);
+			int columnWidth = -1;
 
 			if (i == 0) {
 				// Compute and store a font metric
@@ -425,8 +427,8 @@ public class ExtendedMarkersView extends ViewPart {
 				gc.setFont(tree.getFont());
 				FontMetrics fontMetrics = gc.getFontMetrics();
 				gc.dispose();
-				columnWidth = Math.max(columnWidth, fontMetrics
-						.getAverageCharWidth() * 5);
+				columnWidth = Math.max(markerField.getDefaultColumnWidth(tree),
+						fontMetrics.getAverageCharWidth() * 5);
 			}
 
 			if (columnWidths != null) {
@@ -438,7 +440,13 @@ public class ExtendedMarkersView extends ViewPart {
 					columnWidth = value.intValue();
 			}
 
-			layout.addColumnData(new ColumnPixelData(columnWidth, true, true));
+			// Take trim into account if we are using the default value, but not
+			// if it is restored.
+			if (columnWidth < 0)
+				layout.addColumnData(new ColumnPixelData(markerField
+						.getDefaultColumnWidth(tree), true, true));
+			else
+				layout.addColumnData(new ColumnPixelData(columnWidth, true));
 
 		}
 
@@ -460,7 +468,9 @@ public class ExtendedMarkersView extends ViewPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 * @see
+	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
@@ -513,7 +523,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.TreeAdapter#treeCollapsed(org.eclipse.swt.events.TreeEvent)
+			 * @see
+			 * org.eclipse.swt.events.TreeAdapter#treeCollapsed(org.eclipse.
+			 * swt.events.TreeEvent)
 			 */
 			public void treeCollapsed(TreeEvent e) {
 				removeExpandedCategory((MarkerCategory) e.item.getData());
@@ -522,7 +534,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.TreeAdapter#treeExpanded(org.eclipse.swt.events.TreeEvent)
+			 * @see
+			 * org.eclipse.swt.events.TreeAdapter#treeExpanded(org.eclipse.swt
+			 * .events.TreeEvent)
 			 */
 			public void treeExpanded(TreeEvent e) {
 				addExpandedCategory((MarkerCategory) e.item.getData());
@@ -534,7 +548,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
+			 * @see
+			 * org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse
+			 * .swt.events.HelpEvent)
 			 */
 			public void helpRequested(HelpEvent e) {
 				Object provider = getAdapter(IContextProvider.class);
@@ -552,7 +568,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see
+			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
+			 * .swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				ISelection selection = viewer.getSelection();
@@ -724,8 +742,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount(java.lang.Object,
-			 *      int)
+			 * @see
+			 * org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount
+			 * (java.lang.Object, int)
 			 */
 			// public void updateChildCount(Object element, int
 			// currentChildCount) {
@@ -749,8 +768,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateElement(java.lang.Object,
-			 *      int)
+			 * @see
+			 * org.eclipse.jface.viewers.ILazyTreeContentProvider#updateElement
+			 * (java.lang.Object, int)
 			 */
 			// public void updateElement(Object parent, int index) {
 			// MarkerItem newItem;
@@ -774,7 +794,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java
+			 * .lang.Object)
 			 */
 			public Object[] getChildren(Object parentElement) {
 				MarkerSupportItem[] children = ((MarkerSupportItem) parentElement)
@@ -786,7 +808,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements
+			 * (java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
 
@@ -813,7 +837,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(
+			 * java.lang.Object)
 			 */
 			public Object getParent(Object element) {
 				Object parent = ((MarkerSupportItem) element).getParent();
@@ -825,7 +851,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java
+			 * .lang.Object)
 			 */
 			public boolean hasChildren(Object element) {
 				return ((MarkerSupportItem) element).getChildren().length > 0;
@@ -834,8 +862,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
+			 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
@@ -906,7 +935,9 @@ public class ExtendedMarkersView extends ViewPart {
 					/*
 					 * (non-Javadoc)
 					 * 
-					 * @see org.eclipse.ui.views.tasklist.ITaskListResourceAdapter#getAffectedResource(org.eclipse.core.runtime.IAdaptable)
+					 * @see
+					 * org.eclipse.ui.views.tasklist.ITaskListResourceAdapter
+					 * #getAffectedResource(org.eclipse.core.runtime.IAdaptable)
 					 */
 					public IResource getAffectedResource(IAdaptable adaptable) {
 						Object resource = adaptable.getAdapter(IResource.class);
@@ -924,8 +955,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
-			 *      org.eclipse.jface.viewers.ISelection)
+			 * @see
+			 * org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse
+			 * .ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 			 */
 			public void selectionChanged(IWorkbenchPart part,
 					ISelection selection) {
@@ -1000,7 +1032,8 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+			 * @seeorg.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.
+			 * IWorkbenchPartReference)
 			 */
 			public void partActivated(IWorkbenchPartReference partRef) {
 				// Do nothing by default
@@ -1010,7 +1043,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+			 * @see
+			 * org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui
+			 * .IWorkbenchPartReference)
 			 */
 			public void partBroughtToTop(IWorkbenchPartReference partRef) {
 				// Do nothing by default
@@ -1020,7 +1055,8 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+			 * @seeorg.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.
+			 * IWorkbenchPartReference)
 			 */
 			public void partClosed(IWorkbenchPartReference partRef) {
 				// Do nothing by default
@@ -1030,7 +1066,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+			 * @see
+			 * org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.
+			 * IWorkbenchPartReference)
 			 */
 			public void partDeactivated(IWorkbenchPartReference partRef) {
 				// Do nothing by default
@@ -1040,7 +1078,8 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+			 * @seeorg.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.
+			 * IWorkbenchPartReference)
 			 */
 			public void partHidden(IWorkbenchPartReference partRef) {
 				// Do nothing by default
@@ -1050,7 +1089,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+			 * @see
+			 * org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui
+			 * .IWorkbenchPartReference)
 			 */
 			public void partInputChanged(IWorkbenchPartReference partRef) {
 				// Do nothing by default
@@ -1060,7 +1101,8 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+			 * @seeorg.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.
+			 * IWorkbenchPartReference)
 			 */
 			public void partOpened(IWorkbenchPartReference partRef) {
 				// Do nothing by default
@@ -1070,7 +1112,8 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+			 * @seeorg.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.
+			 * IWorkbenchPartReference)
 			 */
 			public void partVisible(IWorkbenchPartReference partRef) {
 				if (partRef.getId().equals(
@@ -1184,7 +1227,8 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+			 * @see
+			 * org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 			 */
 			public boolean belongsTo(Object family) {
 				return family == MarkerContentGenerator.CACHE_UPDATE_FAMILY;
@@ -1203,7 +1247,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 * @see
+			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
+			 * runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
@@ -1302,7 +1348,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 * @see
+			 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange
+			 * (org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
 				builder.scheduleMarkerUpdate();
@@ -1317,7 +1365,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite,
-	 *      org.eclipse.ui.IMemento)
+	 * org.eclipse.ui.IMemento)
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
@@ -1728,7 +1776,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
+			 * @see
+			 * org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse
+			 * .swt.dnd.DragSourceEvent)
 			 */
 			public void dragSetData(DragSourceEvent event) {
 				performDragSetData(event);
@@ -1737,7 +1787,9 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
+			 * @see
+			 * org.eclipse.swt.dnd.DragSourceAdapter#dragFinished(org.eclipse
+			 * .swt.dnd.DragSourceEvent)
 			 */
 			public void dragFinished(DragSourceEvent event) {
 			}
@@ -1781,7 +1833,7 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.setSelection(new StructuredSelection());
 		viewer.removeAndClearAll();
 		createColumns(viewer.getTree().getColumns());
-
+		viewer.refresh();
 	}
 
 	/**

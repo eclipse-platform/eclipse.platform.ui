@@ -1,2 +1,0 @@
-This test should add a new action called "A New Action from ActionSet1"
-to the File menu item.
