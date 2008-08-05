@@ -17,7 +17,7 @@ public interface IHelpBaseConstants {
 	String P_KEY_WINDOW_INFOPOP = "window_infopop";//$NON-NLS-1$
 	String P_KEY_DIALOG_INFOPOP = "dialog_infopop";//$NON-NLS-1$
 	String P_KEY_HELP_VIEW_OPEN_MODE = "help_view_open_mode"; //$NON-NLS-1$
-	String P_IN_PLACE = "in place"; //$NON-NLS-1$
+	String P_IN_PLACE = "in_place"; //$NON-NLS-1$
 	String P_IN_EDITOR = "in editor"; //$NON-NLS-1$
 	String P_IN_BROWSER = "in browser"; //$NON-NLS-1$
 	String P_KEY_ALWAYS_EXTERNAL_BROWSER = "always_external_browser"; //$NON-NLS-1$
