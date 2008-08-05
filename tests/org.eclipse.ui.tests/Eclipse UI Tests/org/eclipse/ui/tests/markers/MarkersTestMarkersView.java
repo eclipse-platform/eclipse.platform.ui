@@ -138,7 +138,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 	 */
 	public boolean checkColumnSizes(int size) {
 		TreeColumn[] treeColumns = tree.getColumns();
-		for (int j = 0; j < treeColumns.length; j++) {
+		for (int j = 0; j < treeColumns.length - 1; j++) {
 			if(treeColumns[j].getWidth() == size)
 				continue;
 			return false;
