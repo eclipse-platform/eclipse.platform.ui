@@ -427,8 +427,8 @@ public class ExtendedMarkersView extends ViewPart {
 				gc.setFont(tree.getFont());
 				FontMetrics fontMetrics = gc.getFontMetrics();
 				gc.dispose();
-				columnWidth = Math.max(columnWidth, fontMetrics
-						.getAverageCharWidth() * 5);
+				columnWidth = Math.max(markerField.getDefaultColumnWidth(tree),
+						fontMetrics.getAverageCharWidth() * 5);
 			}
 
 			if (columnWidths != null) {
@@ -440,7 +440,8 @@ public class ExtendedMarkersView extends ViewPart {
 					columnWidth = value.intValue();
 			}
 
-			//Take trim into account if we are using the default value, but not if it is restored.
+			// Take trim into account if we are using the default value, but not
+			// if it is restored.
 			if (columnWidth < 0)
 				layout.addColumnData(new ColumnPixelData(markerField
 						.getDefaultColumnWidth(tree), true, true));
