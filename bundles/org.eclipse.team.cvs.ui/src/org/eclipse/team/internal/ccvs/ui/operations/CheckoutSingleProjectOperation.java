@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkingSet;
 
 /**
  * This operation checks out a single remote folder into the workspace as
@@ -25,17 +26,17 @@ public class CheckoutSingleProjectOperation extends CheckoutProjectOperation {
 
 	private boolean preconfigured;
 	private IProject targetProject;
-	private String workingSetName;
+	private IWorkingSet[] workingSets;
 	
 	public CheckoutSingleProjectOperation(IWorkbenchPart part, ICVSRemoteFolder remoteFolder, IProject targetProject, String targetLocation, boolean preconfigured) {
 		this(part,remoteFolder,targetProject,targetLocation,preconfigured,null);
 	}
 	
-	public CheckoutSingleProjectOperation(IWorkbenchPart part, ICVSRemoteFolder remoteFolder, IProject targetProject, String targetLocation, boolean preconfigured, String wsName) {
+	public CheckoutSingleProjectOperation(IWorkbenchPart part, ICVSRemoteFolder remoteFolder, IProject targetProject, String targetLocation, boolean preconfigured, IWorkingSet[] workingSets) {
 		super(part, new ICVSRemoteFolder[] { remoteFolder }, targetLocation);
 		this.targetProject = targetProject;
 		this.preconfigured = preconfigured;
-		this.workingSetName = wsName;
+		this.workingSets = workingSets;
 	}
 
 	private boolean isPreconfigured() {
@@ -66,8 +67,8 @@ public class CheckoutSingleProjectOperation extends CheckoutProjectOperation {
 		return checkout(folder, targetProject, monitor);
 	}
 	
-	protected String getWorkingSetName(){
-		return workingSetName;
+	protected IWorkingSet[] getWorkingSets(){
+		return workingSets;
 	}
 
 }

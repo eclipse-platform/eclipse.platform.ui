@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -253,19 +253,11 @@ public class CheckoutAsWizard extends Wizard {
 		// Run the checkout in the background
 		ICVSRemoteFolder folder = getRemoteFolder();
 		final boolean recurse = mainPage.isRecurse();
-		if (mainPage.shouldAddToWorkingSet()){
-			new CheckoutSingleProjectOperation(part, folder, newProject, targetLocation, false, mainPage.getWorkingSetName()) {
+		new CheckoutSingleProjectOperation(part, folder, newProject, targetLocation, false, mainPage.getWorkingSets()) {
 				protected boolean isRecursive() {
 					return recurse;
 				}
 			}.run();
-		} else {
-			new CheckoutSingleProjectOperation(part, folder, newProject, targetLocation, false) {
-				protected boolean isRecursive() {
-					return recurse;
-				}
-			}.run();
-		}
 		return true;
 	}
 
@@ -275,13 +267,8 @@ public class CheckoutAsWizard extends Wizard {
 	 */
 	private boolean performMultipleCheckoutAs() throws InvocationTargetException, InterruptedException {
 		String targetLocation = locationSelectionPage.getTargetLocation();
-		if (mainPage.shouldAddToWorkingSet()){
-			//Run the checkout in the background
-			new CheckoutMultipleProjectsOperation(part, getRemoteFoldersWithProjectDescriptions(), targetLocation, mainPage.getWorkingSetName()).run();
-		} else {
-			// Run the checkout in the background
-			new CheckoutMultipleProjectsOperation(part, getRemoteFoldersWithProjectDescriptions(), targetLocation).run();
-		}
+		// Run the checkout in the background
+		new CheckoutMultipleProjectsOperation(part, getRemoteFoldersWithProjectDescriptions(), targetLocation, mainPage.getWorkingSets()).run();
 		return true;
 	}
 

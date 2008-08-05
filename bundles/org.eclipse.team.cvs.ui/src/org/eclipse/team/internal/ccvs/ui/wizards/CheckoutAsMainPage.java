@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -26,8 +25,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ui.wizards.WorkingSetsDialog;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.WorkingSetGroup;
 
 /**
  * This is the main page of the Check Out As wizard. It allows the user to specify
@@ -48,10 +48,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	private Button recurseCheck;
 	private boolean recurse = true;
 	
-	private Button addToWorkingSet;
-	private Button browseButton;
-	Text workingSetField;
-	private boolean haveBrowsed;
+	private WorkingSetGroup workingSetGroup;
 	
 	public static final String NAME = "CheckoutAsMainPage"; //$NON-NLS-1$
 	
@@ -223,24 +220,6 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 				}
 			}
 		}
-		
-		workingSetField.setEnabled(addToWorkingSet.getSelection());
-		browseButton.setEnabled(addToWorkingSet.getSelection());
-		//If add to working set checkbox selected and the user has not selected
-		//a working set, mark page incomplete
-		if (addToWorkingSet.getSelection() && !haveBrowsed){
-			setPageComplete(false);
-			return;
-		}
-		
-		if (!validateWorkingSetName()){
-			setPageComplete(false);
-			return;
-		}
-			
-		
-		setErrorMessage(null);
-		setPageComplete(true);
 	}
 	
 	public String getProjectName() {
@@ -282,30 +261,16 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	}
 	
 	/**
-	 * Returns the name of the chosen working set
-	 * @return String	a string representing the working set or an empty string if no working set has been selected
+	 * Returns the chosen working sets
+	 * 
+	 * @return an array containing the selected working sets; can be empty if no
+	 *         working set has been selected
 	 */
-	public String getWorkingSetName(){
-		return workingSetField.getText();
-	}
-	
-	/**
-	 * Returns whether the checkout should add the project(s) to a working set
-	 * @return boolean	true if it should add it to a working set, false otherwise
-	 */
-	public boolean shouldAddToWorkingSet(){
-		return addToWorkingSet.getSelection();
+	public IWorkingSet[] getWorkingSets(){
+		return workingSetGroup.getSelectedWorkingSets();
 	}
 	
 	private void addWorkingSetSection(Composite composite, String label) {
-
-		addToWorkingSet = createCheckBox(composite, label);
-		addToWorkingSet.setSelection(false);
-		addToWorkingSet.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateEnablements();
-			}
-		});
 
 		Composite inner = new Composite(composite, SWT.NULL);
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -315,39 +280,13 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 		layout.marginWidth = 0;
 		inner.setLayout(layout);
 
-		workingSetField = createTextField(inner);
-		workingSetField.setEditable(false);
-		browseButton = new Button(inner, SWT.PUSH);
-		browseButton.setText(CVSUIMessages.CheckoutAsMainPage_Browse);
-		//keep track if the user has browsed for working sets; don't show any error message until then
-		haveBrowsed = false;
-		browseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				//open workspace selection dialog
-				final WorkingSetsDialog dialog = new WorkingSetsDialog(getShell());
-				haveBrowsed = true;
-				if (dialog.open() == Window.OK)
-					workingSetField.setText(dialog.getSelectedWorkingSet());
-				
-				updateEnablements();
-			}
-		});
+		setWorkingSetGroup(new WorkingSetGroup(inner, null, new String[] {
+				"org.eclipse.ui.resourcesWorkingSetPage", //$NON-NLS-1$
+				"org.eclipse.jdt.ui.JavaWorkingSetPage" })); //$NON-NLS-1$
 		updateEnablements();
-
 	}
 	
-	private boolean validateWorkingSetName() {
-		if (addToWorkingSet.getSelection()) {
-			String workingSetName = workingSetField.getText();
-			if (workingSetName.length() == 0) {
-				setMessage(CVSUIMessages.CheckoutAsMainPage_EmptyWorkingSetErrorMessage, ERROR);
-				return false;
-			}
-		}
-		setMessage(null);
-		return true;
+	public void setWorkingSetGroup(WorkingSetGroup workingSetGroup) {
+		this.workingSetGroup = workingSetGroup;
 	}
-	
-	
-	
 }

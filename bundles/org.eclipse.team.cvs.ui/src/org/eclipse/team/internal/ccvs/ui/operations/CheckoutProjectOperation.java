@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,9 +172,10 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 					}
 				}, Policy.subMonitorFor(pm, 90));
 			}
-			String wsName = getWorkingSetName();
-			if (wsName != null){
-				createWorkingSet(wsName, targetProjects);
+			IWorkingSet[] ws = getWorkingSets();
+			if (ws != null) {
+				for (int i = 0; i < ws.length; i++)
+					createWorkingSet(ws[i].getName(), targetProjects);
 			}
 			return result[0];
 		} catch (CVSException e) {
@@ -528,9 +529,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	}
 	
 	/*
-	 * Returns the name of the working set to add the checked out projects to or null for none
+	 * Returns the working sets to add the checked out projects to or null for none
 	 */
-	protected String getWorkingSetName(){
+	protected IWorkingSet[] getWorkingSets() {
 		return null;
 	}
 	
