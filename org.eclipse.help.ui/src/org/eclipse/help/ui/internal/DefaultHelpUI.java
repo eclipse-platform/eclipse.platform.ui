@@ -300,10 +300,11 @@ public class DefaultHelpUI extends AbstractHelpUI {
 					String contextText = context.getText();
 					IHelpResource[] topics = context.getRelatedTopics();
 					boolean isSingleChoiceWithoutDescription = contextText == null && topics.length == 1;
-					boolean openInEditor = pref.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
-					if (isSingleChoiceWithoutDescription && openInEditor) {
+					String openMode = pref.getString(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE);
+					if (isSingleChoiceWithoutDescription && IHelpBaseConstants.P_IN_EDITOR.equals(openMode)) {
 						showInWorkbenchBrowser(topics[0].getHref(), true);
-
+					} else if (isSingleChoiceWithoutDescription && IHelpBaseConstants.P_IN_BROWSER.equals(openMode)) {
+						BaseHelpSystem.getHelpDisplay().displayHelpResource(topics[0].getHref(), true);
 					} else {
 						IWorkbenchPart activePart = page.getActivePart();
 						Control c = window.getShell().getDisplay().getFocusControl();

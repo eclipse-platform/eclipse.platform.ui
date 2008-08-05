@@ -18,7 +18,6 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
-import org.eclipse.help.ui.internal.util.FontUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -28,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -47,17 +47,15 @@ public class HelpPreferencePage extends PreferencePage implements
 
 	private static final String WBROWSER_PAGE_ID = "org.eclipse.ui.browser.preferencePage";//$NON-NLS-1$
 
-	private Button whelpAsViewButton;
-
-	private Button whelpAsInfopopButton;
-
 	private Button dhelpAsTrayButton;
 
 	private Button dhelpAsInfopopButton;
 
-	private Button openInPlaceButton;
-
-	private Button openInEditorButton;
+	private Combo openModeCombo;
+	
+	private Combo dialogHelpCombo;
+	
+	private Combo windowHelpCombo;
 
 	/**
 	 * Creates preference page controls on demand.
@@ -115,7 +113,6 @@ public class HelpPreferencePage extends PreferencePage implements
 	private void createDynamicHelpArea(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		Composite composite;
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -124,71 +121,40 @@ public class HelpPreferencePage extends PreferencePage implements
 		Label whelpDescription = new Label(group, SWT.NONE);
 		whelpDescription.setText(Messages.HelpPreferencePage_wlabel);
 		whelpDescription.setLayoutData(createLabelData());
-		composite = createRadioComposite(group);
-		whelpAsViewButton = new Button(composite, SWT.RADIO);
-		whelpAsViewButton.setText(Messages.HelpPreferencePage_view);
-		whelpAsViewButton.setLayoutData(createIndentData());
-		whelpAsInfopopButton = new Button(composite, SWT.RADIO);
-		whelpAsInfopopButton.setText(Messages.HelpPreferencePage_winfopop);
-		whelpAsInfopopButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		
+		windowHelpCombo = new Combo(group, SWT.READ_ONLY);
+		windowHelpCombo.add(Messages.HelpPreferencePage_view);
+		windowHelpCombo.add(Messages.HelpPreferencePage_infopop);
+		windowHelpCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
-		whelpAsViewButton.setSelection(!winfopop);
-		whelpAsInfopopButton.setSelection(winfopop);
-
+		windowHelpCombo.setText(winfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_view);
+		
 		Label dhelpDescription = new Label(group, SWT.NONE);
 		dhelpDescription.setText(Messages.HelpPreferencePage_dlabel);
 		dhelpDescription.setLayoutData(createLabelData());
-		composite = createRadioComposite(group);
-		dhelpAsTrayButton = new Button(composite, SWT.RADIO);
-		dhelpAsTrayButton.setText(Messages.HelpPreferencePage_tray);
-		dhelpAsTrayButton.setLayoutData(createIndentData());
-		dhelpAsInfopopButton = new Button(composite, SWT.RADIO);
-		dhelpAsInfopopButton.setText(Messages.HelpPreferencePage_dinfopop);
-		dhelpAsInfopopButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		boolean largeFonts = FontUtils.isFontTooLargeForTray();
+		dialogHelpCombo = new Combo(group, SWT.READ_ONLY);
+		dialogHelpCombo.add(Messages.HelpPreferencePage_tray);
+		dialogHelpCombo.add(Messages.HelpPreferencePage_infopop);
+		dialogHelpCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
-		.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
-		dhelpAsTrayButton.setSelection(!dinfopop && !largeFonts);
-		dhelpAsInfopopButton.setSelection(dinfopop || largeFonts);
-		dhelpAsTrayButton.setEnabled(!largeFonts);
-		dhelpAsInfopopButton.setEnabled(!largeFonts);
+				.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
+		dialogHelpCombo.setText(dinfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_tray);
 
 		if (PlatformUI.getWorkbench().getBrowserSupport()
 				.isInternalWebBrowserAvailable()) {
 			Label ohelpDescription = new Label(group, SWT.NONE);
 			ohelpDescription.setText(Messages.HelpPreferencePage_olabel);
 			ohelpDescription.setLayoutData(createLabelData());
-			composite = createRadioComposite(group);
-			openInPlaceButton = new Button(composite, SWT.RADIO);
-			openInPlaceButton
-					.setText(Messages.HelpPreferencePage_openInPlace);
-			openInPlaceButton.setLayoutData(createIndentData());
-			openInEditorButton = new Button(composite, SWT.RADIO);
-			openInEditorButton
-					.setText(Messages.HelpPreferencePage_openInEditor);
-			openInEditorButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			boolean openInBrowser = HelpBasePlugin.getDefault()
-					.getPluginPreferences().getBoolean(
-							IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
-			openInPlaceButton.setSelection(!openInBrowser);
-			openInEditorButton.setSelection(openInBrowser);
+			openModeCombo = new Combo(group, SWT.READ_ONLY);
+			openModeCombo.add(Messages.HelpPreferencePage_openInPlace);
+			openModeCombo.add(Messages.HelpPreferencePage_openInEditor);
+			openModeCombo.add(Messages.HelpPreferencePage_openInBrowser);
+			openModeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			String openMode = HelpBasePlugin.getDefault()
+			    .getPluginPreferences().getString(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE);
+			openModeCombo.setText(openModeToString(openMode));		
 		}
-	}
-	
-	private Composite createRadioComposite (Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, true);
-		layout.marginHeight = layout.marginWidth = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		return composite;
-	}
-	
-	private GridData createIndentData () {
-		GridData data = new GridData();
-		data.horizontalIndent = 20;
-		return data;
 	}
 	
 	private GridData createLabelData () {
@@ -233,20 +199,19 @@ public class HelpPreferencePage extends PreferencePage implements
 
 		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getDefaultBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
-		whelpAsViewButton.setSelection(!winfopop);
-		whelpAsInfopopButton.setSelection(winfopop);
+		windowHelpCombo.setText(winfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_view);
 
 		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getDefaultBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
 		dhelpAsTrayButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);
+	
 		
-		if (openInPlaceButton!=null) {
-		boolean openInEditor = HelpBasePlugin.getDefault()
-				.getPluginPreferences().getDefaultBoolean(
-						IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
-		openInPlaceButton.setSelection(!openInEditor);
-		openInEditorButton.setSelection(openInEditor);
+		if (openModeCombo !=null) {
+		   String openMode = HelpBasePlugin.getDefault()
+				.getPluginPreferences().getDefaultString(
+						IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE);
+		   openModeCombo.setText(openModeToString(openMode));
 		}
 
 		super.performDefaults();
@@ -264,17 +229,36 @@ public class HelpPreferencePage extends PreferencePage implements
 					alwaysExternal.getSelection());
 		}
 		pref.setValue(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP,
-				whelpAsInfopopButton.getSelection());
-		if (dhelpAsInfopopButton.isEnabled()) {
-			pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP,
-				dhelpAsInfopopButton.getSelection());
+				windowHelpCombo.getText().equals(Messages.HelpPreferencePage_infopop));
+
+		pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP,
+				dialogHelpCombo.getText().equals(Messages.HelpPreferencePage_infopop));
+		if (openModeCombo!=null) {
+			pref.setValue(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE, openModeFromString(openModeCombo.getText()));
 		}
-		if (openInEditorButton!=null)
-			pref.setValue(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR,
-				openInEditorButton.getSelection());
 
 		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
+	}
+
+	private String openModeToString(String openMode) {
+	    if (IHelpBaseConstants.P_IN_BROWSER.equals(openMode)) {
+		    return Messages.HelpPreferencePage_openInBrowser;
+	   } else if (IHelpBaseConstants.P_IN_EDITOR.equals(openMode)) {
+		    return Messages.HelpPreferencePage_openInEditor;
+		} else {
+			return Messages.HelpPreferencePage_openInPlace;
+		}
+	}
+	
+	private String openModeFromString(String openMode) {
+	    if (Messages.HelpPreferencePage_openInBrowser.equals(openMode)) {
+		    return IHelpBaseConstants.P_IN_BROWSER;
+	   } else if (Messages.HelpPreferencePage_openInEditor.equals(openMode)) {
+		    return IHelpBaseConstants.P_IN_EDITOR;
+		} else {
+			return IHelpBaseConstants.P_IN_PLACE;
+		}
 	}
 
 	/**

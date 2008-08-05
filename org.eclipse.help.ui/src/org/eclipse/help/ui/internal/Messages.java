@@ -111,8 +111,7 @@ public final class Messages extends NLS {
 	public static String NewEngineWizard_wtitle;
 	public static String BrowserPart_showExternalTooltip;
 	public static String HelpPreferencePage_message;
-	public static String HelpPreferencePage_winfopop;
-	public static String HelpPreferencePage_dinfopop;
+	public static String HelpPreferencePage_infopop;
 	public static String BrowserPart_bookmarkTooltip;
 	public static String BrowserPart_highlightTooltip;
 	public static String BrowserPart_printTooltip;
@@ -152,6 +151,7 @@ public final class Messages extends NLS {
 	public static String HelpPreferencePage_olabel;
 	public static String HelpPreferencePage_openInPlace;
 	public static String HelpPreferencePage_openInEditor;
+	public static String HelpPreferencePage_openInBrowser;
 	
 	public static String ReusableHelpPart_internalBrowserTitle;
 	public static String ReusableHelpPart_internalWebBrowserError;

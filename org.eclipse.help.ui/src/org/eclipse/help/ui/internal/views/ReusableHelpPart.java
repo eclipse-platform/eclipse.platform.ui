@@ -1209,12 +1209,18 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 	private boolean openInternalBrowser(String url) {
 		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		boolean openInEditor = pref.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
+		String openMode = pref.getString(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE);
+		boolean openInEditor = IHelpBaseConstants.P_IN_EDITOR.equals(openMode);
+		boolean openInBrowser = IHelpBaseConstants.P_IN_BROWSER.equals(openMode);
 		Shell windowShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		Shell helpShell = mform.getForm().getShell();
 		boolean isDialog = (helpShell != windowShell);
 		if (!isDialog && openInEditor) {
 			return DefaultHelpUI.showInWorkbenchBrowser(url, true);
+		}
+		if (openInBrowser) {
+			BaseHelpSystem.getHelpDisplay().displayHelpResource(url, false);
+			return true;
 		}
 		showPage(IHelpUIConstants.HV_BROWSER_PAGE);
 		BrowserPart bpart = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
