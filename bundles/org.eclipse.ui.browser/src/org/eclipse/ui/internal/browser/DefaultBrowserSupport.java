@@ -100,8 +100,9 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 		// AS_EXTERNAL will force the external browser regardless of the user
 		// preference
-		if ((style & AS_EXTERNAL) != 0
-				|| WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL) {
+		if ((style & AS_EXTERNAL) != 0 || 
+		    ((style & (AS_EDITOR + AS_VIEW)) == 0 && WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL)
+		    || !WebBrowserUtil.canUseInternalWebBrowser()) {
 			IBrowserDescriptor ewb = BrowserManager.getInstance()
 					.getCurrentWebBrowser();
 			if (ewb == null)
