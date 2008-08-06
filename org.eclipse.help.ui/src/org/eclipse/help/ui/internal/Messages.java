@@ -24,7 +24,6 @@ public final class Messages extends NLS {
 	public static String Help_Question;
 	public static String Help_Info;
 	public static String browserTitle;
-	public static String use_only_external_browser;
 	public static String select_browser;
 	public static String SystemBrowser_noProgramForURL;
 	public static String LaunchURL_exception;
@@ -118,9 +117,13 @@ public final class Messages extends NLS {
 	public static String BrowserPart_syncTocTooltip;	
 	public static String HelpPreferencePage_wlabel;
 	public static String HelpPreferencePage_view;
+	public static String HelpPreferencePage_helpBrowser;
+	public static String HelpPreferencePage_externalBrowser;	
 	public static String HelpPreferencePage_dlabel;
 	public static String HelpPreferencePage_tray;
 	public static String HelpPreferencePage_search;
+	public static String HelpPreferencePage_searchLocation;
+	public static String HelpPreferencePage_openContents;
 	public static String InfoCenterPage_url;
 	public static String InfoCenterPage_invalidURL;
 	public static String InfoCenterPage_tocError;
@@ -148,6 +151,7 @@ public final class Messages extends NLS {
 	}
 
 	public static String HelpPreferencePage_openModeGroup;
+	public static String HelpPreferencePage_contextHelpGroup;
 	public static String HelpPreferencePage_olabel;
 	public static String HelpPreferencePage_openInPlace;
 	public static String HelpPreferencePage_openInEditor;

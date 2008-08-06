@@ -182,13 +182,24 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				try {
-					IViewPart part = page.showView(HELP_VIEW_ID);
-					if (part != null) {
-						HelpView view = (HelpView) part;
-						view.startSearch(expression);
+				boolean searchFromBrowser = HelpBasePlugin.getDefault().getPluginPreferences()
+				    .getBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER);
+				if (searchFromBrowser) {
+					String parameters = "tab=search"; //$NON-NLS-1$
+					if (expression != null) {
+						parameters += '&';
+						parameters += expression;
 					}
-				} catch (PartInitException e) {
+					BaseHelpSystem.getHelpDisplay().displayHelpResource(parameters, false);
+				} else {
+					try {
+						IViewPart part = page.showView(HELP_VIEW_ID);
+						if (part != null) {
+							HelpView view = (HelpView) part;
+							view.startSearch(expression);
+						}
+					} catch (PartInitException e) {
+					}
 				}
 			} else {
 				// check the dialog

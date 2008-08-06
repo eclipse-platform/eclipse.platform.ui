@@ -26,7 +26,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -43,14 +42,13 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class HelpPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
-	private Button alwaysExternal;
 
 	private static final String WBROWSER_PAGE_ID = "org.eclipse.ui.browser.preferencePage";//$NON-NLS-1$
 
-	private Button dhelpAsTrayButton;
-
-	private Button dhelpAsInfopopButton;
-
+	private Combo useExternalCombo;
+	
+	private Combo searchLocationCombo;
+	
 	private Combo openModeCombo;
 	
 	private Combo dialogHelpCombo;
@@ -78,23 +76,60 @@ public class HelpPreferencePage extends PreferencePage implements
 		Label description = new Label(mainComposite, SWT.NONE);
 		description.setText(Messages.select_browser);
 		
-		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
-			alwaysExternal = new Button(mainComposite, SWT.CHECK);
-			alwaysExternal
-					.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
-			alwaysExternal.setText(Messages.use_only_external_browser); 
-			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
-					.getPluginPreferences().getBoolean(
-							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
-		}
-
-		
-		createLinkArea(mainComposite);
-		createSpacer(mainComposite);
+		createOpenModesPrefs(mainComposite);	
 		createDynamicHelpArea(mainComposite);
 		createSpacer(mainComposite);
 		Dialog.applyDialogFont(mainComposite);
 		return mainComposite;
+	}
+
+	private void createOpenModesPrefs(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();		group.setLayout(layout);
+		group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		group.setText(Messages.HelpPreferencePage_openModeGroup);
+		createSearchLocation(group);
+		createHelpViewOpenPrefs(group);
+		createOpenContents(group);
+		createLinkArea(group);	
+	}
+
+	private void createDynamicHelpArea(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();		group.setLayout(layout);
+		group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		group.setText(Messages.HelpPreferencePage_contextHelpGroup);
+		
+		createWindowContextPrefs(group);
+		createDialogContextPrefs(group);
+	}
+
+	private void createSearchLocation(Composite mainComposite) {
+		Label searchLocationLabel = new Label(mainComposite, SWT.NONE);
+		searchLocationLabel.setText(Messages.HelpPreferencePage_searchLocation);
+		searchLocationLabel.setLayoutData(createLabelData());
+		searchLocationCombo = new Combo(mainComposite, SWT.READ_ONLY);
+		searchLocationCombo.add(Messages.HelpPreferencePage_view);
+		searchLocationCombo.add(Messages.HelpPreferencePage_openInBrowser);
+		searchLocationCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		boolean searchFromBrowser = HelpBasePlugin.getDefault().getPluginPreferences()
+				.getBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER);
+		searchLocationCombo.setText(searchFromBrowser ? Messages.HelpPreferencePage_openInBrowser : Messages.HelpPreferencePage_view);
+	}
+
+	private void createOpenContents(Composite mainComposite) {
+		Label isExternalLabel = new Label(mainComposite, SWT.NONE);
+		isExternalLabel.setText(Messages.HelpPreferencePage_openContents);
+		isExternalLabel.setLayoutData(createLabelData());
+		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
+			useExternalCombo = new Combo(mainComposite, SWT.READ_ONLY);
+			useExternalCombo.add(Messages.HelpPreferencePage_helpBrowser);
+			useExternalCombo.add(Messages.HelpPreferencePage_externalBrowser);
+			useExternalCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			boolean useExternal = HelpBasePlugin.getDefault().getPluginPreferences()
+					.getBoolean(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER);
+			useExternalCombo.setText(useExternal ? Messages.HelpPreferencePage_externalBrowser : Messages.HelpPreferencePage_helpBrowser);
+		}
 	}
 
 	private void createLinkArea(Composite parent) {
@@ -110,37 +145,8 @@ public class HelpPreferencePage extends PreferencePage implements
 		}
 	}
 
-	private void createDynamicHelpArea(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		group.setText(Messages.HelpPreferencePage_openModeGroup);
-		
-		Label whelpDescription = new Label(group, SWT.NONE);
-		whelpDescription.setText(Messages.HelpPreferencePage_wlabel);
-		whelpDescription.setLayoutData(createLabelData());
-		
-		windowHelpCombo = new Combo(group, SWT.READ_ONLY);
-		windowHelpCombo.add(Messages.HelpPreferencePage_view);
-		windowHelpCombo.add(Messages.HelpPreferencePage_infopop);
-		windowHelpCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
-		windowHelpCombo.setText(winfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_view);
-		
-		Label dhelpDescription = new Label(group, SWT.NONE);
-		dhelpDescription.setText(Messages.HelpPreferencePage_dlabel);
-		dhelpDescription.setLayoutData(createLabelData());
-		dialogHelpCombo = new Combo(group, SWT.READ_ONLY);
-		dialogHelpCombo.add(Messages.HelpPreferencePage_tray);
-		dialogHelpCombo.add(Messages.HelpPreferencePage_infopop);
-		dialogHelpCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
-		dialogHelpCombo.setText(dinfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_tray);
 
+	private void createHelpViewOpenPrefs(Group group) {
 		if (PlatformUI.getWorkbench().getBrowserSupport()
 				.isInternalWebBrowserAvailable()) {
 			Label ohelpDescription = new Label(group, SWT.NONE);
@@ -156,11 +162,37 @@ public class HelpPreferencePage extends PreferencePage implements
 			openModeCombo.setText(openModeToString(openMode));		
 		}
 	}
+
+	private void createDialogContextPrefs(Group group) {
+		Label dhelpDescription = new Label(group, SWT.NONE);
+		dhelpDescription.setText(Messages.HelpPreferencePage_dlabel);
+		dhelpDescription.setLayoutData(createLabelData());
+		dialogHelpCombo = new Combo(group, SWT.READ_ONLY);
+		dialogHelpCombo.add(Messages.HelpPreferencePage_tray);
+		dialogHelpCombo.add(Messages.HelpPreferencePage_infopop);
+		dialogHelpCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
+				.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
+		dialogHelpCombo.setText(dinfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_tray);
+	}
+
+	private void createWindowContextPrefs(Group group) {
+		Label whelpDescription = new Label(group, SWT.NONE);
+		whelpDescription.setText(Messages.HelpPreferencePage_wlabel);
+		whelpDescription.setLayoutData(createLabelData());
+		
+		windowHelpCombo = new Combo(group, SWT.READ_ONLY);
+		windowHelpCombo.add(Messages.HelpPreferencePage_view);
+		windowHelpCombo.add(Messages.HelpPreferencePage_infopop);
+		windowHelpCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
+				.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
+		windowHelpCombo.setText(winfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_view);
+	}
 	
 	private GridData createLabelData () {
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.verticalIndent = 5;
-		data.horizontalSpan = 2;
 		return data;
 	}
 	
@@ -191,22 +223,25 @@ public class HelpPreferencePage extends PreferencePage implements
 	 * </p>
 	 */
 	protected void performDefaults() {
-		if (alwaysExternal != null) {
-			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
+		if (useExternalCombo != null) {
+			boolean useExternal = HelpBasePlugin.getDefault()
 					.getPluginPreferences().getDefaultBoolean(
-							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
-		}
-
+							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER);
+			useExternalCombo.setText(useExternal ? Messages.HelpPreferencePage_externalBrowser : Messages.HelpPreferencePage_helpBrowser);		
+		}	
+		
+		boolean searchFromBrowser = HelpBasePlugin.getDefault()
+		    .getPluginPreferences().getDefaultBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER);
+		searchLocationCombo.setText(searchFromBrowser ? Messages.HelpPreferencePage_openInBrowser : Messages.HelpPreferencePage_view);
+		
 		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getDefaultBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
 		windowHelpCombo.setText(winfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_view);
 
 		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getDefaultBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
-		dhelpAsTrayButton.setSelection(!dinfopop);
-		dhelpAsInfopopButton.setSelection(dinfopop);
+		dialogHelpCombo.setText(dinfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_tray);
 	
-		
 		if (openModeCombo !=null) {
 		   String openMode = HelpBasePlugin.getDefault()
 				.getPluginPreferences().getDefaultString(
@@ -222,12 +257,16 @@ public class HelpPreferencePage extends PreferencePage implements
 	 */
 	public boolean performOk() {
 		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		if (alwaysExternal != null) {
+		if (useExternalCombo != null) {
+			boolean isExternalBrowser = useExternalCombo.getText().equals(Messages.HelpPreferencePage_externalBrowser);		
 			pref.setValue(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER,
-					alwaysExternal.getSelection());
+					isExternalBrowser);
 			BrowserManager.getInstance().setAlwaysUseExternal(
-					alwaysExternal.getSelection());
+					isExternalBrowser);
 		}
+		pref.setValue(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, 
+				searchLocationCombo.getText().equals(Messages.HelpPreferencePage_openInBrowser));
+		
 		pref.setValue(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP,
 				windowHelpCombo.getText().equals(Messages.HelpPreferencePage_infopop));
 

@@ -15,6 +15,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.ui.PlatformUI;
 
@@ -29,7 +31,9 @@ public class ShowIndexHandler extends AbstractHandler {
 	 * in the future
 	 */
     private boolean isOpenInHelpView() {
-	    return true;
+    	boolean searchFromBrowser = HelpBasePlugin.getDefault().getPluginPreferences()
+	       .getBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER);
+	    return !searchFromBrowser;
 	}
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
