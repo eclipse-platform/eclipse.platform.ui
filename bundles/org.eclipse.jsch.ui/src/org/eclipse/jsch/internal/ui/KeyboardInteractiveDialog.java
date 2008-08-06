@@ -233,7 +233,11 @@ public class KeyboardInteractiveDialog extends TrayDialog {
 
 	    for(int i=0; i<prompt.length; i++){
 	      new Label(parent, SWT.NONE).setText(prompt[i]);
-	      texts[i]=new Text(parent, SWT.BORDER|SWT.PASSWORD); 
+	      int flag=SWT.BORDER;
+	      if(!echo[i]){
+	        flag|=SWT.PASSWORD;
+	      }
+	      texts[i]=new Text(parent, flag); 
 	      GridData data=new GridData(GridData.FILL_HORIZONTAL);
 	      data.horizontalSpan=2;
 	      data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
