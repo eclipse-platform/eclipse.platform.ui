@@ -73,6 +73,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private ReusableHelpPart parent;
 
 	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$	
+	
+	private static final String MORE_HREF = "__more__"; //$NON-NLS-1$
 
 	private FormText text;
 
@@ -128,9 +130,18 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		text.setImage(key, HelpUIResources.getImage(key));
 		key = IHelpUIConstants.IMAGE_COMMAND_F1TOPIC;
 		text.setImage(key, HelpUIResources.getImage(key));
+
+		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;
+		text.setImage(searchKey, HelpUIResources.getImage(searchKey));
+
 		text.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
-				doOpenLink(e.getHref());
+				Object href = e.getHref();
+				if (href.equals(MORE_HREF)) {
+					doMore();
+				}  else {
+				   doOpenLink(e.getHref());
+				}
 			}
 
 			public void linkEntered(HyperlinkEvent e) {
@@ -239,16 +250,16 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		savedDescription = helpText;
 	}
 
-	private void updateDynamicHelp(boolean explicitContext) {
+	private void updateSearchExpression(boolean explicitContext) {
 		if (lastContext instanceof IContext2) {
 			String title = ((IContext2)lastContext).getTitle();
 			if (title!=null) {
-				updateDynamicHelp(stripMnemonic(title), lastControl);
+				updateSearchExpression(stripMnemonic(title), lastControl);
 				return;
 			}
 		}
 		if (lastProvider != null || lastControl != null)
-			updateDynamicHelp(lastProvider != null ? lastProvider
+			updateSearchExpression(lastProvider != null ? lastProvider
 					.getSearchExpression(lastControl) : null, lastControl);
 	}
 
@@ -270,6 +281,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (context==null && provider!=null) {
 			lastContext = provider.getContext(c);
 		}
+		updateSearchExpression(context!=null);
+
 		String helpText;
 		if (lastContext!=null)
 			helpText = formatHelpContext(lastContext);
@@ -277,10 +290,14 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			helpText = createContextHelp(c);
 		updateTitle(c);
 		updateDescription(helpText);
-		updateDynamicHelp(context!=null);
+		if (RelatedTopicsPart.useDynamicHelp) {
+		    updateDynamicHelp();
+		}
 	}
 	
 	private long lastUpdate = 0;
+
+	private String phrase;
 	
 	/*
 	 * If F1 was pressed within the last half second and this is a context change do not
@@ -331,18 +348,22 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 	}
 
-	private void updateDynamicHelp(String expression, Control c) {
+	private void updateSearchExpression(String expression, Control c) {
 		if (expression == null) {
 			expression = computeDefaultSearchExpression(c);
 		}
+		phrase = expression;
+	}
+	
+	private void updateDynamicHelp() {
 		RelatedTopicsPart part = (RelatedTopicsPart) parent
 				.findPart(IHelpUIConstants.HV_RELATED_TOPICS);
 		if (part != null) {
-			if (expression != null) {
+			if (phrase != null) {
 				if (HelpPlugin.DEBUG_CONTEXT) {
-				    System.out.println("Dynamic help - search for " + expression); //$NON-NLS-1$
+				    System.out.println("Dynamic help - search for " + phrase); //$NON-NLS-1$
 			    }
-				part.startSearch(expression, lastContext);
+				part.startSearch(phrase, lastContext);
 			}
 		}
 	}
@@ -550,6 +571,21 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				}
 			}
 		}
+		if (!RelatedTopicsPart.useDynamicHelp && phrase != null && phrase.length() > 0) {
+			sbuf.append("<p><span color=\""); //$NON-NLS-1$
+			sbuf.append(IFormColors.TITLE);
+			sbuf.append("\">"); //$NON-NLS-1$
+			sbuf.append(Messages.ContextHelpPart_more);
+			sbuf.append("</span></p>"); //$NON-NLS-1$
+			sbuf.append("<p><img href=\""); //$NON-NLS-1$
+			sbuf.append(IHelpUIConstants.IMAGE_HELP_SEARCH);
+			sbuf.append("\"/>"); //$NON-NLS-1$
+			sbuf.append(" <a href=\""); //$NON-NLS-1$
+			sbuf.append(MORE_HREF);
+			sbuf.append("\">"); //$NON-NLS-1$
+			sbuf.append(NLS.bind(Messages.ContextHelpPart_searchFor, phrase)); 
+			sbuf.append("</a></p>"); //$NON-NLS-1$
+		}
 		sbuf.append("</form>"); //$NON-NLS-1$
 		return sbuf.toString();
 	}
@@ -650,5 +686,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	public void saveState(IMemento memento) {
+	}
+	
+	private void doMore() {
+		parent.startSearch(phrase);
 	}
 }

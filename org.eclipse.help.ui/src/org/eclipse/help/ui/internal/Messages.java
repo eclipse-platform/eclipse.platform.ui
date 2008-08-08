@@ -58,6 +58,8 @@ public final class Messages extends NLS {
 	public static String ContextHelpPart_noDescription;
 	public static String ContextHelpPart_query_view;
 	public static String ContextHelpPart_seeAlso;
+	public static String ContextHelpPart_more;
+	public static String ContextHelpPart_searchFor;
 	public static String SearchResultsPart_label;
 	public static String SearchResultsPart_noHits;
 	public static String SearchResultsPart_progress;

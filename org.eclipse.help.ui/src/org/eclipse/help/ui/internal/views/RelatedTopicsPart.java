@@ -41,6 +41,8 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	private String id;
 
 	private int VSPACE = 10;
+	
+	public static final boolean useDynamicHelp = false;
 
 	class RelatedLayout extends Layout implements ILayoutExtension {
 
@@ -48,7 +50,9 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 				boolean flushCache) {
 			Point topSize = contextHelpPart.getControl().computeSize(wHint,
 					hHint, flushCache);
-			Point botSize = dynamicHelpPart.getControl().computeSize(wHint,
+		   
+			Point botSize = dynamicHelpPart == null ? new Point(0, 0) :
+			    dynamicHelpPart.getControl().computeSize(wHint,
 					hHint, flushCache);
 			Point size = new Point(0, 0);
 			size.x = Math.max(topSize.x, botSize.x);
@@ -60,17 +64,20 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 			Rectangle carea = composite.getClientArea();
 			Point topSize = contextHelpPart.getControl().computeSize(
 					carea.width, SWT.DEFAULT, flushCache);
-			Point botSize = dynamicHelpPart.getControl().computeSize(
+			Point botSize = dynamicHelpPart == null ? new Point(0, 0) :
+			    dynamicHelpPart.getControl().computeSize(
 					carea.width, SWT.DEFAULT, flushCache);
 			int y = VSPACE;
 			contextHelpPart.getControl().setBounds(0, y, carea.width, topSize.y);
 			y += topSize.y + VSPACE;
-			dynamicHelpPart.getControl().setBounds(0, y, carea.width, botSize.y);
+			if (dynamicHelpPart != null) {
+			    dynamicHelpPart.getControl().setBounds(0, y, carea.width, botSize.y);
+			}
 		}
 
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			int top = computeMinimumWidth(contextHelpPart, parent, changed);
-			int bot = computeMinimumWidth(dynamicHelpPart, parent, changed);
+			int bot = dynamicHelpPart == null ? 0 : computeMinimumWidth(dynamicHelpPart, parent, changed);
 			return Math.max(top, bot);
 		}
 		
@@ -94,16 +101,20 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		};
 		form.getBody().setLayout(new RelatedLayout());
 		contextHelpPart = new ContextHelpPart(form.getBody(), toolkit);
-		dynamicHelpPart = new DynamicHelpPart(form.getBody(), toolkit);
+		if (useDynamicHelp) {
+		     dynamicHelpPart = new DynamicHelpPart(form.getBody(), toolkit);
+	    }
 	}
 
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 		contextHelpPart.init(parent, IHelpUIConstants.HV_CONTEXT_HELP, memento);
-		dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT, memento);
 		mform.addPart(contextHelpPart);
-		mform.addPart(dynamicHelpPart);
+		if (useDynamicHelp) {
+		    dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT, memento);	
+		    mform.addPart(dynamicHelpPart);
+		}
 		mform.initialize();
 	}
 	
@@ -133,12 +144,12 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 
 	public boolean hasFocusControl(Control control) {
 		return contextHelpPart.hasFocusControl(control)
-				|| dynamicHelpPart.hasFocusControl(control);
+				|| (dynamicHelpPart != null && dynamicHelpPart.hasFocusControl(control));
 	}
 
 	public boolean fillContextMenu(IMenuManager manager) {
 		Control focusControl = mform.getForm().getDisplay().getFocusControl();
-		if (contextHelpPart.hasFocusControl(focusControl))
+		if (contextHelpPart.hasFocusControl(focusControl) || dynamicHelpPart == null)
 			return contextHelpPart.fillContextMenu(manager);
 		return dynamicHelpPart.fillContextMenu(manager);
 	}
@@ -149,23 +160,31 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 
 	public void stop() {
 		contextHelpPart.stop();
-		dynamicHelpPart.stop();
+		if (dynamicHelpPart != null) {
+		    dynamicHelpPart.stop();
+		}
 	}
 
 	public void toggleRoleFilter() {
 		contextHelpPart.toggleRoleFilter();
-		dynamicHelpPart.toggleRoleFilter();
+		if (dynamicHelpPart != null) {
+			dynamicHelpPart.toggleRoleFilter();
+		}
 	}
 
 	public void refilter() {
 		contextHelpPart.refilter();
-		dynamicHelpPart.refilter();
+		if (dynamicHelpPart != null) {
+			dynamicHelpPart.refilter();
+		}
 	}
 	public boolean setFormInput(Object input) {
 		return mform.setInput(input);
 	}
 	public void startSearch(String newPhrase, IContext excludeContext) {
-		dynamicHelpPart.startSearch(newPhrase, excludeContext);
+		if (dynamicHelpPart != null) {
+			dynamicHelpPart.startSearch(newPhrase, excludeContext);
+		}
 	}
 
 	public void saveState(IMemento memento) {
