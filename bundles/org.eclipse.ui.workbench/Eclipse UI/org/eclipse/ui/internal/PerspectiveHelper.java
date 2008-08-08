@@ -1286,6 +1286,17 @@ public class PerspectiveHelper {
     }
 
     /**
+     * Used to explicitly close and remove a DW that's being closed
+     * but that has no visible views. See bug 234484.
+     * 
+     * @param dw The DW to close
+     */
+    public void closeDetachedWindow(DetachedWindow dw) {
+    	dw.getShell().close();
+        detachedWindowList.remove(dw);
+    }
+    
+    /**
      * Add a part to the presentation.
      * 
      * Note: unlike all other LayoutParts, PartPlaceholders will still point to

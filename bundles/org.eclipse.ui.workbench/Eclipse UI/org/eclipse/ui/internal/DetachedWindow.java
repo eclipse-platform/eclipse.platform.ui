@@ -260,6 +260,12 @@ public class DetachedWindow implements IDragOverListener {
             List views = new ArrayList();
             collectViewPanes(views, getChildren());
             
+            // Surgical fix: -explicitly- close and remove
+            // this DW if it's already empty. See bug 234484.
+            if (views.size() == 0) {
+            	page.getActivePerspective().getPresentation().closeDetachedWindow(this);
+            }
+            
             // Save any drty views
             if (!handleSaves(views)) {
             	return false;  // User canceled the save
