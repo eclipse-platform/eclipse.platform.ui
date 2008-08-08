@@ -172,8 +172,10 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		if (fContentAssistant != null && fDisplay != null) {
 			fDisplay.asyncExec(new Runnable() {
 				public void run() {
-					// The asyncExec is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=235556 :
-					// fContentAssistant.hasProposalPopupFocus() is still true during the shellDeactivated(..) event.
+					/*
+					 * The asyncExec is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=235556 :
+					 * fContentAssistant.hasProposalPopupFocus() is still true during the shellDeactivated(..) event.
+					 */
 					if (fContentAssistant != null && ! fContentAssistant.hasProposalPopupFocus())
 						fContentAssistant.hide();
 				}
