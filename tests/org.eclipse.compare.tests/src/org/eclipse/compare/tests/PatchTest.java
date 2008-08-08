@@ -501,6 +501,8 @@ public class PatchTest extends TestCase {
 			Path pcPath = new Path(subfolder.getPath() + "/" + PATCH_CONFIGURATION);
 			File pcFile = pcPath.toFile();
 			
+			if (subfolder.getName().equals("CVS"))
+				continue;
 			if (pcFile.exists()) {
 				Properties properties = new Properties();
 			    try {
@@ -534,6 +536,8 @@ public class PatchTest extends TestCase {
 		File fileWithActualResult = null; // optional
 		for (int j = 0; j < files.length; j++) {
 			File file = files[j];
+			if (file.isDirectory()) // probably CVS dir
+				continue;
 			String filename = file.getName();
 			if (filename.indexOf("patch") > -1) {
 				assertTrue(ApplyPatchOperation.isPatch(new FileStorage(file)));
