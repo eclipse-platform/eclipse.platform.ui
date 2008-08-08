@@ -25,12 +25,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -54,9 +58,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.Bundle;
 
 public class PatchTest extends TestCase {
 
+	private static final String PATCHDATA = "patchdata";
+	private static final String PATCH_CONFIGURATION = "patchConfiguration.properties";
 	
 	class StringStorage implements IStorage {
 		String fileName;
@@ -123,7 +130,6 @@ public class PatchTest extends TestCase {
 			return null;
 		}
 		public IPath getFullPath() {
-			// TODO: is it enough?
 			return new Path(jarFile.getName());
 		}
 		public String getName() {
@@ -243,68 +249,55 @@ public class PatchTest extends TestCase {
 	private List failures = new ArrayList();
 	
 	public void testPatchdataSubfolders() throws IOException, CoreException {
-		URL patchdataFolderUrl = getClass().getResource("patchdata");
-		patchdataFolderUrl = FileLocator.resolve(patchdataFolderUrl);
+		URL patchdataUrl = new URL(getBundle().getEntry("/"), new Path(PATCHDATA).toString());
+		patchdataUrl = FileLocator.resolve(patchdataUrl);
 		
-		Map mapOfFilenames = null;
-		if (patchdataFolderUrl.getProtocol().equals("file")) {
-			mapOfFilenames = extractNamesForFileProtocol(patchdataFolderUrl);
-		} else if (patchdataFolderUrl.getProtocol().equals("jar")) {
-			mapOfFilenames = extractNamesForJarProtocol(patchdataFolderUrl);	
+		Map map = null;
+		if (patchdataUrl.getProtocol().equals("file")) {
+			map = extractNamesForFileProtocol(patchdataUrl);
+		} else if (patchdataUrl.getProtocol().equals("jar")) {
+			map = extractNamesForJarProtocol(patchdataUrl);	
 		} else {
-			// TODO: silently return or loudly fail?
 			fail("Unknown protocol");
 		}
+		assertNotNull(map);
 		
-		//TODO: silently return or loudly fail?
-		assertNotNull(mapOfFilenames);
-		
-		for (Iterator iterator = mapOfFilenames.keySet().iterator(); iterator
-				.hasNext();) {
+		for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
 			
-			String subfolder = (String) iterator.next();
-			String[] filenames = (String[]) mapOfFilenames.get(subfolder);
+			String sf = (String) iterator.next(); // subfolder
+			Object[] result = (Object[]) map.get(sf);
+			String[] fns =(String[]) result[0]; // filenames
+			PatchConfiguration pc = (PatchConfiguration) result[1];
+			
+			if (pc == null) {
+				pc = extractFuzzFromFilename(fns[1].substring(sf.length()));
+			}
 			
 			// create a message to distinguish tests from different subfolders
-			String msg = "Test for subfolder [patchdata/" + subfolder
-					+ "] failed.";
-
-			// get the fuzz factor for the patch if provided
-			// TODO: what if fuzz > 3
-			String patch = filenames[1].substring(subfolder.length());
-			int fuzz = -1;
-			if (patch.indexOf("fuzz3") > -1 || patch.indexOf("f3") > -1)
-				fuzz = 3;
-			if (patch.indexOf("fuzz2") > -1 || patch.indexOf("f2") > -1)
-				fuzz = 2;
-			if (patch.indexOf("fuzz1") > -1 || patch.indexOf("f1") > -1)
-				fuzz = 1;
-			if (patch.indexOf("fuzz0") > -1 || patch.indexOf("f0") > -1)
-				fuzz = 0;
+			String msg = "Test for subfolder [" + PATCHDATA + "/" + sf + "] failed.";
 			
 			try {
 				// test with expected result
-				patchWorkspace(msg, new String[] { filenames[0] },
-						filenames[1], new String[] { filenames[2] }, false,
-						fuzz);
+				patchWorkspace(msg, new String[] { fns[0] }, fns[1],
+						new String[] { fns[2] }, pc);
 			} catch (AssertionFailedError e) {
 				failures.add(e);
 			}
 
 			// test with actual result, should fail
-			if (filenames[3] != null) {
+			if (fns[3] != null) {
 				try {
-					patchWorkspace(msg, new String[] { filenames[0] },
-							filenames[1], new String[] { filenames[3] }, false,
-							fuzz);
+					patchWorkspace(msg, new String[] { fns[0] }, fns[1],
+							new String[] { fns[3] }, pc);
 				} catch (AssertionFailedError e) {
 					// a failure is expected
 					continue; // continue with a next subfolder
 				}
-				failures.add(new AssertionFailedError(
-						"\npatchWorkspace should fail for file ["
-								+ filenames[3] + "] in folder [patchdata/"
-								+ subfolder + "]."));
+				failures
+						.add(new AssertionFailedError(
+								"\npatchWorkspace should fail for file ["
+										+ fns[3] + "] in folder [" + PATCHDATA
+										+ "/" + sf + "]."));
 			}
 		}
 		
@@ -335,28 +328,54 @@ public class PatchTest extends TestCase {
 	}
 	
 	/**
-	 * @param url
-	 * @return A map with subfolder name as a key and an array of filenames as a
-	 *         value (e.g. <code>"bug12345" -> { "bug12345/file.txt", 
-	 *         "bug12345/patch.txt", "bug12345/expected.txt", 
-	 *         "bug12345/actual.txt" }</code>).
-	 *         The last value in the array can be <code>null</code> as testing
-	 *         against actual result is optional.
+	 * Return the patch configuration (with the fuzz factor) for the patcher
+	 * basing on the patch file name. Default value for the fuzz is
+	 * <code>-1</code> which means that it should be calculated automatically.
+	 * 
+	 * @param patch
+	 *            The patch file name
+	 * @return Patch configuration with the fuzz factor set.
+	 * @deprecated Use patchConfiguration.properties file for each subfolder
+	 *             instead.
+	 */
+	private PatchConfiguration extractFuzzFromFilename(String patch) {
+		int fuzz = -1;
+		if (patch.indexOf("fuzz3") > -1 || patch.indexOf("f3") > -1)
+			fuzz = 3;
+		if (patch.indexOf("fuzz2") > -1 || patch.indexOf("f2") > -1)
+			fuzz = 2;
+		if (patch.indexOf("fuzz1") > -1 || patch.indexOf("f1") > -1)
+			fuzz = 1;
+		if (patch.indexOf("fuzz0") > -1 || patch.indexOf("f0") > -1)
+			fuzz = 0;
+		
+		PatchConfiguration pc = new PatchConfiguration();
+		pc.setFuzz(fuzz);
+		return pc;
+	}
+	
+	/**
+	 * @param patchdataUrl
+	 * @return A map with subfolder name as a key and an array of objects as a
+	 *         value. The first object in the array is another array (of
+	 *         Strings) containing file names for the test. The last value in
+	 *         this array can be <code>null</code> as testing against actual
+	 *         result is optional. The second object is an instance of
+	 *         <code>PatchConfiguration</code> class.
 	 * @throws IOException
 	 * @throws CoreException
 	 */
-	private Map extractNamesForJarProtocol(URL url) throws IOException,
+	private Map extractNamesForJarProtocol(URL patchdataUrl) throws IOException,
 			CoreException {
-		JarURLConnection conn = (JarURLConnection) url.openConnection();
-		JarFile jarFile = conn.getJarFile();
+		JarFile jarFile = ((JarURLConnection) patchdataUrl.openConnection()).getJarFile();
 		
 		// look for the patchdata folder entry
 		String patchdataName = null;
-		Enumeration entries1 = jarFile.entries();
-		while (entries1.hasMoreElements()) {
-			JarEntry entry = (JarEntry) entries1.nextElement();
+		Enumeration entries = jarFile.entries();
+		while (entries.hasMoreElements()) {
+			JarEntry entry = (JarEntry) entries.nextElement();
 			String entryName = entry.getName();
-			if (entryName.endsWith("/patchdata/")) {
+			if (entryName.endsWith("/" + PATCHDATA + "/")) {
 				patchdataName = entryName;
 				break;
 			}
@@ -364,74 +383,111 @@ public class PatchTest extends TestCase {
 		// patchdata folder not found
 		if (patchdataName == null)
 			return null;
-		// System.out.println("patchdataName : " + patchdataName);
 		
 		// look for files in patchdata subfolders
-		Map mapOfSubfolders = new HashMap();
-		Enumeration entries = jarFile.entries();
+		Map result = new HashMap();
+		Set subfoldersWithConfiguration = new HashSet();
+		entries = jarFile.entries();
 		while (entries.hasMoreElements()) {
 			JarEntry entry = (JarEntry) entries.nextElement();
 			String entryName = entry.getName();
-			if (!entryName.equals(patchdataName) &&  entryName.startsWith(patchdataName)) {
-				// a subfolder found
-				if (!entryName.endsWith("/")) {
-					// file within a subfolder of 'patchdata' folder
-					String relativePath = entryName.substring(patchdataName.length());
-					
-					StringTokenizer st = new StringTokenizer(relativePath, "/");
-					if (st.countTokens() != 2) 
-						continue; // accept only files in a direct subfolder
-					
-					String subfolder = st.nextToken();
-					String filename = st.nextToken();
-					
-					if (filename.indexOf("patch") > -1) {
-						assertTrue(ApplyPatchOperation
-								.isPatch(new JarEntryStorage(entry, jarFile)));
-						String[] names = (String[]) mapOfSubfolders
-								.get(subfolder);
-						if (names == null)
-							mapOfSubfolders.put(subfolder, new String[] { null,
-									relativePath, null, null });
-						else
-							names[1] = relativePath;
-					} else if (filename.indexOf("exp") > -1) {
-						String[] names = (String[]) mapOfSubfolders
-								.get(subfolder);
-						if (names == null)
-							mapOfSubfolders.put(subfolder, new String[] { null,
-									null, relativePath, null });
-						else
-							names[2] = relativePath;
-					} else if (filename.indexOf("act") > -1) {
-						String[] names = (String[]) mapOfSubfolders
-								.get(subfolder);
-						if (names == null)
-							mapOfSubfolders.put(subfolder, new String[] { null,
-									null, null, relativePath });
-						else
-							names[3] = relativePath;
-					} else {
-						String[] names = (String[]) mapOfSubfolders
-								.get(subfolder);
-						if (names == null)
-							mapOfSubfolders.put(subfolder, new String[] {
-									relativePath, null, null, null });
-						else
-							names[0] = relativePath;
+			if (entry.isDirectory()) {
+				if (!entryName.equals(patchdataName) && entryName.startsWith(patchdataName)) {
+					// a subfolder found
+					ZipEntry patchConf = jarFile.getEntry(entryName + "/" + PATCH_CONFIGURATION);
+					if (patchConf != null) {
+						JarEntryStorage jes = new JarEntryStorage(entry,jarFile);
+						Properties properties = new Properties();
+					    try {
+					        properties.load(jes.getContents());
+					    } catch (IOException e) {
+					    	fail("IOException occured while loading the Patch Configuration file for "+entryName.toString());
+					    }
+					    
+					    processProperties(result, properties, entryName);
+						subfoldersWithConfiguration.add(entryName);
 					}
+				}
+			} else {
+				if (!entryName.equals(patchdataName) && entryName.startsWith(patchdataName)) {
+					String relativePath = entryName.substring(patchdataName.length());
+					String subfolderName = relativePath.substring(0, relativePath.indexOf("/"));
+					if (!subfoldersWithConfiguration.contains(subfolderName))
+						extractNamesForJarEntry(result,jarFile,entry,patchdataName);
 				}
 			}
 		}
-		return mapOfSubfolders;
+		return result;
 	}
 	
-	private Map extractNamesForFileProtocol(URL patchdataFolderUrl)
+	/**
+	 * @param cm configuration map
+	 * @param jf jar file with compare tests (comparetests.jar) 
+	 * @param je jar entry to process
+	 * @param patchdataName name of the jar entry for 'patchdata' folder
+	 * @throws CoreException
+	 * 
+	 * @deprecated Use patchConfiguration.properties file for each subfolder
+	 *             instead.
+	 */
+	private void extractNamesForJarEntry(Map cm, JarFile jf, JarEntry je,
+			String patchdataName) throws CoreException {
+		String entryName = je.getName();
+		//TODO: redundant check, it has been already checked in extractNamesForJarProtocol
+		if (!entryName.equals(patchdataName) && entryName.startsWith(patchdataName)) {
+			if (!entryName.endsWith("/")) {
+				
+				// file within a subfolder of 'patchdata' folder
+				String relativePath = entryName.substring(patchdataName.length());
+				
+				StringTokenizer st = new StringTokenizer(relativePath, "/");
+				if (st.countTokens() != 2) 
+					return; // accept only files in a direct subfolder
+				
+				String subfolder = st.nextToken();
+				String filename = st.nextToken();
+				
+				if (filename.indexOf("patch") > -1) {
+					assertTrue(ApplyPatchOperation.isPatch(new JarEntryStorage(
+							je, jf)));
+					String[] names = (String[]) cm.get(subfolder);
+					if (names == null)
+						cm.put(subfolder, new String[] { null, relativePath,
+								null, null });
+					else
+						names[1] = relativePath;
+				} else if (filename.indexOf("exp") > -1) {
+					String[] names = (String[]) cm.get(subfolder);
+					if (names == null)
+						cm.put(subfolder, new String[] { null, null,
+								relativePath, null });
+					else
+						names[2] = relativePath;
+				} else if (filename.indexOf("act") > -1) {
+					String[] names = (String[]) cm.get(subfolder);
+					if (names == null)
+						cm.put(subfolder, new String[] { null, null, null,
+								relativePath });
+					else
+						names[3] = relativePath;
+				} else {
+					String[] names = (String[]) cm.get(subfolder);
+					if (names == null)
+						cm.put(subfolder, new String[] { relativePath, null,
+								null, null });
+					else
+						names[0] = relativePath;
+				}
+			}
+		}
+	}
+	
+	private Map extractNamesForFileProtocol(URL patchdataUrl)
 			throws CoreException {
 
-		Map result = new HashMap();
+		Map result = new HashMap(); // configuration map
 
-		IPath patchdataFolderPath = new Path(patchdataFolderUrl.getPath());
+		IPath patchdataFolderPath = new Path(patchdataUrl.getPath());
 		File patchdataFolderFile = patchdataFolderPath.toFile();
 		assertTrue(patchdataFolderFile.isDirectory());
 		File[] listOfSubfolders = patchdataFolderFile
@@ -442,46 +498,100 @@ public class PatchTest extends TestCase {
 				});
 		for (int i = 0; i < listOfSubfolders.length; i++) {
 			File subfolder = listOfSubfolders[i];
-			File[] files = subfolder.listFiles();
-			File patchFile = null;
-			File fileToPatch = null;
-			File fileWithExpectedResult = null;
-			File fileWithActualResult = null; // optional
-			for (int j = 0; j < files.length; j++) {
-				File file = files[j];
-				String filename = file.getName();
-				if (filename.indexOf("patch") > -1) {
-					assertTrue(ApplyPatchOperation
-							.isPatch(new FileStorage(file)));
-					patchFile = file;
-				} else if (filename.indexOf("exp") > -1) {
-					fileWithExpectedResult = file;
-				} else if (filename.indexOf("act") > -1) {
-					fileWithActualResult = file;
-				} else {
-					fileToPatch = file;
-				}
-			}
+			Path pcPath = new Path(subfolder.getPath() + "/" + PATCH_CONFIGURATION);
+			File pcFile = pcPath.toFile();
 			
-			// make the paths relative
-			String fileToPatchString = fileToPatch.getPath().substring(
-					patchdataFolderFile.getPath().length() + 1);
-			String patchFileString = patchFile.getPath().substring(
-					patchdataFolderFile.getPath().length() + 1);
-			String fileWithExpectedResultString = fileWithExpectedResult
-					.getPath().substring(
-							patchdataFolderFile.getPath().length() + 1);
-			String fileWithActualResultString = null;
-			if (fileWithActualResult != null)
-				fileWithActualResultString = fileWithActualResult.getPath()
-						.substring(patchdataFolderFile.getPath().length() + 1);
-
-			result.put(subfolder.getName(), new String[] { fileToPatchString,
-					patchFileString, fileWithExpectedResultString,
-					fileWithActualResultString });
+			if (pcFile.exists()) {
+				Properties properties = new Properties();
+			    try {
+			        properties.load(new FileInputStream(pcFile));
+			    } catch (IOException e) {
+			    	fail("IOException occured while loading the Patch Configuration file for "
+							+ subfolder.toString());
+			    }
+			    processProperties(result, properties, subfolder.getName());
+			} else {
+				extractNamesForFile(result, patchdataFolderFile, subfolder);
+			}
 		}
 		return result;
 	}
+
+	/**
+	 * @param cm configuration map
+	 * @param patchdataFolderFile file object for 'patchdata' folder
+	 * @param subfolder file object for current subfolder to process
+	 * @throws CoreException
+	 * @deprecated Use patchConfiguration.properties file for each subfolder
+	 *             instead.
+	 */
+	private void extractNamesForFile(Map cm, File patchdataFolderFile,
+			File subfolder) throws CoreException {
+		File[] files = subfolder.listFiles();
+		File patchFile = null;
+		File fileToPatch = null;
+		File fileWithExpectedResult = null;
+		File fileWithActualResult = null; // optional
+		for (int j = 0; j < files.length; j++) {
+			File file = files[j];
+			String filename = file.getName();
+			if (filename.indexOf("patch") > -1) {
+				assertTrue(ApplyPatchOperation.isPatch(new FileStorage(file)));
+				patchFile = file;
+			} else if (filename.indexOf("exp") > -1) {
+				fileWithExpectedResult = file;
+			} else if (filename.indexOf("act") > -1) {
+				fileWithActualResult = file;
+			} else {
+				fileToPatch = file;
+			}
+		}
+
+		// make the paths relative
+		String fileToPatchString = fileToPatch.getPath().substring(patchdataFolderFile.getPath().length() + 1);
+		String patchFileString = patchFile.getPath().substring(patchdataFolderFile.getPath().length() + 1);
+		String fileWithExpectedResultString = fileWithExpectedResult.getPath().substring(patchdataFolderFile.getPath().length() + 1);
+		String fileWithActualResultString = null;
+		if (fileWithActualResult != null)
+			fileWithActualResultString = fileWithActualResult.getPath().substring(patchdataFolderFile.getPath().length() + 1);
+
+		cm.put(subfolder.getName(), new Object[] {
+				new String[] { fileToPatchString, patchFileString,
+						fileWithExpectedResultString,
+						fileWithActualResultString }, null });
+	}
+	
+	private void processProperties(Map cm, Properties p, String subfolderName) {
+		boolean skipTest = Boolean.parseBoolean(p.getProperty("skipTest", "false"));
+	    if (skipTest)
+	    	return;
+	    String pf = p.getProperty("patchFile", "patch.txt");
+	    String cf = p.getProperty("contextFile", "context.txt");
+	    String erf = p.getProperty("expectedResultFile", "exp_context");
+	    // optional, can't guess the file name here, it might left empty intentionally
+	    String arf = p.getProperty("actualResultFile", null);
+	    int fuzzFactor = Integer.parseInt(p.getProperty("fuzzFactor", "0")); 
+	    boolean ignoreWhitespace = Boolean.parseBoolean(p.getProperty("ignoreWhitespace", "false"));
+	    int prefixSegmentStrip = Integer.parseInt(p.getProperty("prefixSegmentStrip", "0"));
+	    boolean reversed = Boolean.parseBoolean(p.getProperty("reversed", "false"));
+	    
+	    PatchConfiguration pc = new PatchConfiguration();
+	    pc.setFuzz(fuzzFactor);
+	    pc.setIgnoreWhitespace(ignoreWhitespace);
+	    pc.setPrefixSegmentStripCount(prefixSegmentStrip);
+	    pc.setReversed(reversed);
+	    
+	    // make the paths relative
+		pf = subfolderName + "/" + pf;
+		cf = subfolderName + "/" + cf;
+		erf = subfolderName + "/" + erf;
+		if (arf != null) // optional
+			arf = subfolderName + "/" + arf;
+		
+		// add to the map
+		cm.put(subfolderName, new Object[] { new String[] { cf, pf, erf, arf },	pc });
+	}
+	
 	
 	// Test changing
 	private BufferedReader getReader(String name) {
@@ -491,8 +601,14 @@ public class PatchTest extends TestCase {
 	}
 
 	private InputStream asInputStream(String name) {
-		InputStream resourceAsStream= getClass().getResourceAsStream("patchdata/" + name); //$NON-NLS-1$
-		return resourceAsStream;
+		IPath path= new Path(PATCHDATA).append(name);
+		try {
+			URL url= new URL(getBundle().getEntry("/"), path.toString());
+			return url.openStream();
+		} catch (IOException e) {
+			fail("Failed while reading " + name);
+			return null; // never reached
+		}
 	}
 
 	private void patch(final String old, String patch, String expt) throws CoreException, IOException {
@@ -553,10 +669,12 @@ public class PatchTest extends TestCase {
 	private void patchWorkspace(String[] originalFiles, String patch,
 			String[] expectedOutcomeFiles, boolean reverse,
 			int fuzzFactor) {
-		patchWorkspace(null, originalFiles, patch, expectedOutcomeFiles,
-				reverse, fuzzFactor);
+		PatchConfiguration pc = new PatchConfiguration();
+		pc.setReversed(reverse);
+		pc.setFuzz(fuzzFactor);
+		patchWorkspace(null, originalFiles, patch, expectedOutcomeFiles, pc);
 	}
-	
+
 	/**
 	 * Parses a workspace patch and applies the diffs to the appropriate files
 	 * 
@@ -564,13 +682,12 @@ public class PatchTest extends TestCase {
 	 * @param originalFiles
 	 * @param patch
 	 * @param expectedOutcomeFiles
-	 * @param reverse
-	 * @param fuzzFactor
-	 *            The fuzz factor to use, ranging from 0 (all context must
-	 *            match) to 2 (the default maximum fuzz factor). <code>-1</code>
-	 *            means that the fuzz factor should be calculated automatically.
+	 * @param patchConfiguration
+	 *            The patch configuration to use. One of its parameters is fuzz
+	 *            factor. If it equals <code>-1</code> it means that the fuzz
+	 *            should be calculated automatically.
 	 */
-	private void patchWorkspace(String msg, String[] originalFiles, String patch, String[] expectedOutcomeFiles, boolean reverse, int fuzzFactor) {
+	private void patchWorkspace(String msg, String[] originalFiles, String patch, String[] expectedOutcomeFiles, PatchConfiguration patchConfiguration) {
 		
 		//ensure that we have the same number of input files as we have expected files
 		Assert.assertEquals(originalFiles.length, expectedOutcomeFiles.length);
@@ -578,9 +695,11 @@ public class PatchTest extends TestCase {
 		// Parse the passed in patch and extract all the Diffs
 		WorkspacePatcher patcher = new WorkspacePatcher();
 		try {
-			patcher.getConfiguration().setFuzz(fuzzFactor);
+			patcher.getConfiguration().setFuzz(patchConfiguration.getFuzz());
+			patcher.getConfiguration().setIgnoreWhitespace(patchConfiguration.isIgnoreWhitespace());
+			patcher.getConfiguration().setPrefixSegmentStripCount(patchConfiguration.getPrefixSegmentStripCount());
 			patcher.parse(getReader(patch));
-			patcher.setReversed(reverse);
+			patcher.setReversed(patchConfiguration.isReversed());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -609,4 +728,8 @@ public class PatchTest extends TestCase {
 				Assert.assertEquals(msg, expected[j], result[j]);
 		}
 	}
+	
+	private Bundle getBundle() {
+		return CompareTestPlugin.getDefault().getBundle();
+	}	
 }
