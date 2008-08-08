@@ -180,6 +180,12 @@ are appended to the initial definition.
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
                </appinfo>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="org.eclipse.ui.editorss">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="relationship" use="required">
             <annotation>
