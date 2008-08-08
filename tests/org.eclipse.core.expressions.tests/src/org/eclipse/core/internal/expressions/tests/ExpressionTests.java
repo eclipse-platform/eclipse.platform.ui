@@ -23,10 +23,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -34,7 +33,6 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.IVariableResolver;
-
 import org.eclipse.core.internal.expressions.AdaptExpression;
 import org.eclipse.core.internal.expressions.AndExpression;
 import org.eclipse.core.internal.expressions.CountExpression;
@@ -51,9 +49,10 @@ import org.eclipse.core.internal.expressions.SystemTestExpression;
 import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 
 
 public class ExpressionTests extends TestCase {
@@ -832,8 +831,7 @@ public class ExpressionTests extends TestCase {
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		IConfigurationElement enable= findExtension(ces, "test1").getChildren("enablement")[0]; //$NON-NLS-1$ //$NON-NLS-2$
-		Expression exp= ExpressionConverter.getDefault().perform(enable);
-		ref(exp);
+		ExpressionConverter.getDefault().perform(enable);
 	}
 
 	public void testReadDOMExpression() throws Exception {
@@ -888,9 +886,6 @@ public class ExpressionTests extends TestCase {
 				return ces[i];
 		}
 		return null;
-	}
-	
-	protected void ref(Expression exp) {
 	}
 	
 	
