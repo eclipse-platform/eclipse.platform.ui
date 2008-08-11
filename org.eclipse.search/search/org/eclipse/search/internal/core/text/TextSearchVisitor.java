@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,11 @@ package org.eclipse.search.internal.core.text;
 import java.io.IOException;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,6 +34,11 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ui.IEditorInput;
@@ -47,17 +48,17 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
 import org.eclipse.search.core.text.TextSearchScope;
-
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.ui.NewSearchUI;
 
 /**
  * The visitor that does the actual work.
@@ -107,8 +108,6 @@ public class TextSearchVisitor {
 	private final TextSearchRequestor fCollector;
 	private final Matcher fMatcher;
 	
-	private Map fDocumentsInEditors;
-		
 	private IProgressMonitor fProgressMonitor;
 
 	private int fNumberOfScannedFiles;
@@ -184,14 +183,18 @@ public class TextSearchVisitor {
     }
     
 	private void processFiles(IFile[] files) {
-		fDocumentsInEditors= evalNonFileBufferDocuments();
+		final Map documentsInEditors;
+		if (PlatformUI.isWorkbenchRunning())
+			documentsInEditors= evalNonFileBufferDocuments();
+		else
+			documentsInEditors= Collections.EMPTY_MAP;
+		
         for (int i= 0; i < files.length; i++) {
         	fCurrentFile= files[i];
-            boolean res= processFile(fCurrentFile);
+            boolean res= processFile(fCurrentFile, documentsInEditors);
             if (!res)
             	break;
 		}
-		fDocumentsInEditors= null;
 	}
 	
 	/**
@@ -237,13 +240,13 @@ public class TextSearchVisitor {
 		}
 	}
 
-	public boolean processFile(IFile file) {
+	public boolean processFile(IFile file, Map documentsInEditors) {
 		try {
 		    if (!fCollector.acceptFile(file) || fMatcher == null) {
 		       return true;
 		    }
 		        
-			IDocument document= getOpenDocument(file);
+			IDocument document= getOpenDocument(file, documentsInEditors);
 			
 			if (document != null) {
 				DocumentCharSequence documentCharSequence= new DocumentCharSequence(document);
@@ -271,7 +274,7 @@ public class TextSearchVisitor {
 			}
 		} catch (UnsupportedCharsetException e) {
 			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
-			String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args); 
+			String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args);
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e));
 		} catch (IllegalCharsetNameException e) {
 			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
@@ -279,11 +282,11 @@ public class TextSearchVisitor {
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e));
 		} catch (IOException e) {
 			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
-			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
+			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e));
 		} catch (CoreException e) {
 			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
-			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
+			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e));
 		} catch (StackOverflowError e) {
 			String message= SearchMessages.TextSearchVisitor_patterntoocomplex0;
@@ -356,8 +359,8 @@ public class TextSearchVisitor {
 		return message;
 	}
 
-	private IDocument getOpenDocument(IFile file) {
-		IDocument document= (IDocument) fDocumentsInEditors.get(file);
+	private IDocument getOpenDocument(IFile file, Map documentsInEditors) {
+		IDocument document= (IDocument)documentsInEditors.get(file);
 		if (document == null) {
 			ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
 			ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
