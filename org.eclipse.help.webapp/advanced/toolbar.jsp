@@ -54,7 +54,18 @@ if (data.isIE()){
 }
 %>	
     vertical-align:middle;
-	<%=prefs.getViewBackgroundStyle()%>
+<% 
+    String bg = prefs.getViewBackgroundStyle();
+    if (bg.length() == 0) {
+%>
+	background: Window;
+<%
+    } else {
+%>
+   <%=bg%>
+<%
+}
+%>
 }
 
 .button a, .buttonMenu a { 
