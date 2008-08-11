@@ -100,8 +100,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	 * @param style
 	 */
 	public ContextHelpPart(Composite parent, FormToolkit toolkit) {
-		super(parent, toolkit, Section.EXPANDED | Section.TWISTIE
-				| Section.TITLE_BAR);
+		super(parent, toolkit, getSectionStyle());
 		Section section = getSection();
 		section.marginWidth = 5;
 		section.setText(Messages.ContextHelpPart_about);
@@ -153,6 +152,14 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			}
 		});
 		text.setText(defaultText, false, false);
+	}
+
+	private static int getSectionStyle() {
+		int style = Section.EXPANDED | Section.TITLE_BAR;
+		if (RelatedTopicsPart.isUseDynamicHelp()) {
+			style = style | Section.TWISTIE;
+		}
+		return style;
 	}
 	
 	private static Font createCodeFont(Display display, Font regularFont, Font textFont) {
@@ -290,7 +297,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			helpText = createContextHelp(c);
 		updateTitle(c);
 		updateDescription(helpText);
-		if (RelatedTopicsPart.useDynamicHelp) {
+		if (RelatedTopicsPart.isUseDynamicHelp()) {
 		    updateDynamicHelp();
 		}
 	}
@@ -571,7 +578,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				}
 			}
 		}
-		if (!RelatedTopicsPart.useDynamicHelp && phrase != null && phrase.length() > 0) {
+		if (!RelatedTopicsPart.isUseDynamicHelp() && phrase != null && phrase.length() > 0) {
 			sbuf.append("<p><span color=\""); //$NON-NLS-1$
 			sbuf.append(IFormColors.TITLE);
 			sbuf.append("\">"); //$NON-NLS-1$

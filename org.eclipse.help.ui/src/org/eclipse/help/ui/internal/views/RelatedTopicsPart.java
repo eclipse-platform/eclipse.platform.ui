@@ -12,6 +12,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.IContext;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -42,7 +43,8 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 
 	private int VSPACE = 10;
 	
-	public static final boolean useDynamicHelp = false;
+	private static boolean dynamicHelpPreferenceRead = false;
+	private static boolean useDynamicHelp = false;
 
 	class RelatedLayout extends Layout implements ILayoutExtension {
 
@@ -101,7 +103,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		};
 		form.getBody().setLayout(new RelatedLayout());
 		contextHelpPart = new ContextHelpPart(form.getBody(), toolkit);
-		if (useDynamicHelp) {
+		if (isUseDynamicHelp()) {
 		     dynamicHelpPart = new DynamicHelpPart(form.getBody(), toolkit);
 	    }
 	}
@@ -111,7 +113,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		this.id = id;
 		contextHelpPart.init(parent, IHelpUIConstants.HV_CONTEXT_HELP, memento);
 		mform.addPart(contextHelpPart);
-		if (useDynamicHelp) {
+		if (isUseDynamicHelp()) {
 		    dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT, memento);	
 		    mform.addPart(dynamicHelpPart);
 		}
@@ -193,5 +195,17 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	public void setFocus() {
 		if (contextHelpPart!=null)
 			contextHelpPart.setFocus();
+	}
+
+	public static boolean isUseDynamicHelp() {
+	    if (!dynamicHelpPreferenceRead) {
+	    	dynamicHelpPreferenceRead = true;
+	    	// Preference created in case anyone complains about the removal of
+	    	// the dynamic help section. This is not API, not documented and may
+	    	// be removed in a future release.
+	    	useDynamicHelp = HelpBasePlugin.getDefault().getPluginPreferences()
+			   .getDefaultBoolean("show_dynamic_help"); //$NON-NLS-1$
+	    }
+		return useDynamicHelp;
 	}
 }
