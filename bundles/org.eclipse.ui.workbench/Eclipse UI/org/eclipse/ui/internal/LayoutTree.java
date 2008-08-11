@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISizeProvider;
 
 /**
- * Implementation of a tree where the node is allways a sash
- * and it allways has two chidren. If a children is removed
- * the sash, ie the node, is removed as well and its other children
+ * Implementation of a tree where the node is always a sash
+ * and it always has two children. If a children is removed
+ * the sash, i.e. the node, is removed as well and its other children
  * placed on its parent.
  */
 public class LayoutTree implements ISizeProvider {

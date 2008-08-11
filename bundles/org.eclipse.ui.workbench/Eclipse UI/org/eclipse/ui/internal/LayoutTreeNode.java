@@ -28,7 +28,7 @@ import org.eclipse.ui.IPageLayout;
 
 /**
  * Implementation of a tree node. The node represents a
- * sash and it allways has two children.
+ * sash and it always has two children.
  */
 public class LayoutTreeNode extends LayoutTree {
 	
