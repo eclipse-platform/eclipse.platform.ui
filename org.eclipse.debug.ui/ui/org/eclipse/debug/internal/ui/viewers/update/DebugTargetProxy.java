@@ -81,8 +81,9 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 				ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 				ILaunch launch = target.getLaunch();
 				int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
+                int targetIndex = indexOf(target.getLaunch().getChildren(), target);
 				IThread chosen = null;
-				int index = -1;
+				int threadIndex = -1;
 				// select the first thread with a breakpoint, or the first suspended thread
 				// if none have breakpoints
 				for (int i = 0; i < threads.length; i++) {
@@ -91,12 +92,12 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 						IBreakpoint[] bps = thread.getBreakpoints();
 						if (bps != null && bps.length > 0) {
 							chosen = thread;
-							index = i;
+							threadIndex = i;
 							break;
 						} else {
 							if (chosen == null) {
 								chosen = thread;
-								index = i;
+								threadIndex = i;
 							}
 						}
 					}
@@ -106,8 +107,8 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 					if (frame != null) {
 						ModelDelta delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
 						ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
-						node = node.addNode(target, 0, IModelDelta.NO_CHANGE, threads.length);
-						node = node.addNode(chosen, index, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, chosen.getStackFrames().length);
+						node = node.addNode(target, targetIndex, IModelDelta.NO_CHANGE, threads.length);
+						node = node.addNode(chosen, threadIndex, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, chosen.getStackFrames().length);
 						node = node.addNode(frame, 0, IModelDelta.NO_CHANGE | IModelDelta.SELECT, 0);
 						fireModelChanged(delta);
 						return;
@@ -116,7 +117,7 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 				// expand the target if no suspended thread
 				ModelDelta delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
 				ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
-				node = node.addNode(target, 0, IModelDelta.EXPAND | IModelDelta.SELECT, threads.length);
+				node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, threads.length);
 				fireModelChanged(delta);
 			} catch (DebugException e) {
 			}
