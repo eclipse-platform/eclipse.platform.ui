@@ -566,7 +566,7 @@ public class PatchTest extends TestCase {
 	}
 	
 	private void processProperties(Map cm, Properties p, String subfolderName) {
-		boolean skipTest = Boolean.parseBoolean(p.getProperty("skipTest", "false"));
+		boolean skipTest = Boolean.valueOf(p.getProperty("skipTest", "false")).booleanValue();
 	    if (skipTest)
 	    	return;
 	    String pf = p.getProperty("patchFile", "patch.txt");
@@ -575,9 +575,9 @@ public class PatchTest extends TestCase {
 	    // optional, can't guess the file name here, it might left empty intentionally
 	    String arf = p.getProperty("actualResultFile", null);
 	    int fuzzFactor = Integer.parseInt(p.getProperty("fuzzFactor", "0")); 
-	    boolean ignoreWhitespace = Boolean.parseBoolean(p.getProperty("ignoreWhitespace", "false"));
+	    boolean ignoreWhitespace = Boolean.valueOf(p.getProperty("ignoreWhitespace", "false")).booleanValue();
 	    int prefixSegmentStrip = Integer.parseInt(p.getProperty("prefixSegmentStrip", "0"));
-	    boolean reversed = Boolean.parseBoolean(p.getProperty("reversed", "false"));
+	    boolean reversed = Boolean.valueOf(p.getProperty("reversed", "false")).booleanValue();
 	    
 	    PatchConfiguration pc = new PatchConfiguration();
 	    pc.setFuzz(fuzzFactor);
