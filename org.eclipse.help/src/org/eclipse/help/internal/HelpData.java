@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -40,7 +41,8 @@ public class HelpData {
 	private static final String ELEMENT_TOC = "toc"; //$NON-NLS-1$
 	private static final String ELEMENT_CATEGORY = "category"; //$NON-NLS-1$
 	private static final String ELEMENT_INDEX = "index"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$	
+	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
 
 	private static HelpData productHelpData;
 	
@@ -55,16 +57,37 @@ public class HelpData {
 	 */
 	public static synchronized HelpData getProductHelpData() {
 		if (productHelpData == null) {
+			String pluginId = null;
+			IProduct product = Platform.getProduct();
+			if (product != null) {
+				pluginId = product.getDefiningBundle().getSymbolicName();
+			}
 			String helpDataFile = HelpPlugin.getDefault().getPluginPreferences().getString(HelpPlugin.HELP_DATA_KEY);
-			if (helpDataFile.length() != 0) {
-				IProduct product = Platform.getProduct();
-				if (product != null) {
-					URL url = product.getDefiningBundle().getEntry(helpDataFile);
-					productHelpData = new HelpData(url);
+			if (helpDataFile.length() > 0) {
+			    if (helpDataFile.startsWith(PLUGINS_ROOT_SLASH)) {
+				    int nextSlash = helpDataFile.indexOf('/', PLUGINS_ROOT_SLASH.length());
+				    if (nextSlash > 0) {
+					    pluginId = helpDataFile.substring(PLUGINS_ROOT_SLASH.length(), nextSlash);
+				        helpDataFile = helpDataFile.substring(nextSlash + 1);
+				    }
+				}
+			}
+			if (helpDataFile != null && pluginId != null) {
+				Bundle bundle = Platform.getBundle(pluginId);
+				if (bundle != null) {
+				    URL helpDataUrl = bundle.getEntry(helpDataFile);
+				    productHelpData = new HelpData(helpDataUrl);
 				}
 			}
 		}
 		return productHelpData;
+	}
+	
+	/*
+	 * For testing
+	 */
+	public static void clearProductHelpData() {
+		productHelpData = null;
 	}
 
 	/*

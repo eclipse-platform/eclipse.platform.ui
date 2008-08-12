@@ -130,9 +130,11 @@ public class ProductPreferences {
 				}
 			}
 			Bundle bundle = Platform.getBundle(helpDataPluginId);
-			URL helpDataUrl = bundle.getEntry(helpDataPath);
-			HelpData helpData = new HelpData(helpDataUrl);
-			return helpData.getTocOrder();
+			if (bundle != null) {
+			    URL helpDataUrl = bundle.getEntry(helpDataPath);
+			    HelpData helpData = new HelpData(helpDataUrl);
+			    return helpData.getTocOrder();
+			}
 		}
 		else {
 			if (baseTOCS != null) {
