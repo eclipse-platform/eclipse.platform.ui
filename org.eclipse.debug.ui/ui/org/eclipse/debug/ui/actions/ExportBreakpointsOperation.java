@@ -14,6 +14,8 @@ package org.eclipse.debug.ui.actions;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IMarker;
@@ -28,7 +30,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 
 /**
- * Exports breakpoints to a file. 
+ * Exports breakpoints to a file or string buffer.
  * <p>
  * This class may be instantiated.
  * <p>
@@ -38,7 +40,12 @@ import org.eclipse.ui.XMLMemento;
 public class ExportBreakpointsOperation implements IRunnableWithProgress {
 
 	private IBreakpoint[] fBreakpoints = null;
+	/**
+	 * Only one of file name or writer is used depending how the operation is
+	 * created.
+	 */
 	private String fFileName = null;
+	private StringWriter fWriter = null;
 	
 	/**
 	 * Constructs an operation to export breakpoints to a file.
@@ -52,6 +59,18 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 		fFileName = fileName;
 	}
 
+	/**
+	 * Constructs an operation to export breakpoints to a string buffer. The buffer
+	 * is available after the operation is run via {@link #getBuffer()}.
+	 * 
+	 * @param breakpoints the breakpoints to export
+	 * @since 3.5
+	 */
+	public ExportBreakpointsOperation(IBreakpoint[] breakpoints) {
+		fBreakpoints = breakpoints;
+		fWriter = new StringWriter();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -89,14 +108,34 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 					}
 				}
 			}
-			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(fFileName), "UTF-8"); //$NON-NLS-1$
-			memento.save(osw);
-			osw.close();
+			Writer writer = fWriter;
+			if (writer == null) {
+				writer =new OutputStreamWriter(new FileOutputStream(fFileName), "UTF-8"); //$NON-NLS-1$
+			} 
+			memento.save(writer);
+			writer.close();
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} catch (IOException e) {
 			throw new InvocationTargetException(e);
 		}
+	}
+	
+	/**
+	 * Returns a string buffer containing a memento of the exported breakpoints
+	 * or <code>null</code> if the operation was configured to export to a file.
+	 * The memento can be used to import breakpoints into the workspace using an
+	 * {@link ImportBreakpointsOperation}.
+	 * 
+	 * @return a string buffer containing a memento of the exported breakpoints
+	 * or <code>null</code> if the operation was configured to export to a file
+	 * @since 3.5
+	 */
+	public StringBuffer getBuffer() {
+		if (fWriter != null) {
+			return fWriter.getBuffer();
+		}
+		return null;
 	}
 	
 	

@@ -14,6 +14,8 @@ package org.eclipse.debug.ui.actions;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ import org.eclipse.ui.XMLMemento;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Imports breakpoints from a file into the workspace.
+ * Imports breakpoints from a file or string buffer into the workspace.
  * <p>
  * This class may be instantiated.
  * <p>
@@ -64,6 +66,11 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	private ArrayList fAdded = new ArrayList();
 
 	private BreakpointManager fManager = (BreakpointManager) DebugPlugin.getDefault().getBreakpointManager();
+	
+	/** 
+	 * When a buffer is specified, a file is not used.
+	 */
+	private StringBuffer fBuffer = null;
 
 	/**
 	 * Constructs an operation to import breakpoints.
@@ -81,6 +88,25 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		fOverwriteAll = overwrite;
 		fCreateWorkingSets = createWorkingSets;
 	}
+	
+	/**
+	 * Constructs an operation to import breakpoints from a string buffer. The buffer
+	 * must contain a memento created an {@link ExportBreakpointsOperation}.
+	 * 
+	 * @param buffer the string buffer to read breakpoints from - the file should have been 
+	 *            created from an export operation
+	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
+	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
+	 * 	are exported with information about the breakpoint working sets they belong to. Those
+	 * 	working sets can be optionally re-created on import if they do not already exist in the
+	 *            workspace.
+	 * @since 3.5
+	 */
+	public ImportBreakpointsOperation(StringBuffer buffer, boolean overwrite, boolean createWorkingSets) {
+		fBuffer = buffer;
+		fOverwriteAll = overwrite;
+		fCreateWorkingSets = createWorkingSets;
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -89,7 +115,13 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor wmonitor) throws CoreException {
 				try {
-					XMLMemento memento = XMLMemento.createReadRoot(new InputStreamReader(new FileInputStream(fFileName), "UTF-8")); //$NON-NLS-1$
+					Reader reader = null;
+					if (fBuffer == null) {
+						reader = new InputStreamReader(new FileInputStream(fFileName), "UTF-8"); //$NON-NLS-1$
+					} else {
+						reader = new StringReader(fBuffer.toString());
+					}
+					XMLMemento memento = XMLMemento.createReadRoot(reader);
 					IMemento[] nodes = memento.getChildren(IImportExportConstants.IE_NODE_BREAKPOINT);
 					IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
 					IMemento node = null;
