@@ -311,17 +311,22 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * 
 	 * @since 3.5
 	 */
-	private final IDocumentRewriteSessionListener fSessionListener= new IDocumentRewriteSessionListener() {
+	private final IDocumentRewriteSessionListener fSessionListener= new ProjectionDocumentRewriteSessionListener();
+	private class ProjectionDocumentRewriteSessionListener implements IDocumentRewriteSessionListener {
+
+		boolean fWasFoldingEnabled= false;
 
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
 			if (event.getSession().getSessionType() == DocumentRewriteSessionType.UNRESTRICTED_SMALL)
 				return;
-			if (DocumentRewriteSessionEvent.SESSION_START.equals(event.getChangeType()))
+			if (DocumentRewriteSessionEvent.SESSION_START.equals(event.getChangeType())) {
+				fWasProjectionEnabled= isProjectionMode();
 				disableProjection();
-			else if (DocumentRewriteSessionEvent.SESSION_STOP.equals(event.getChangeType()))
-				enableProjection();
+			} else if (DocumentRewriteSessionEvent.SESSION_STOP.equals(event.getChangeType()))
+				if (fWasProjectionEnabled)
+					enableProjection();
 		}
-	};
+	}
 
 
 	/**
