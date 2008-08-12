@@ -16,15 +16,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A representation of a file patch that can be applied to an input stream.
- * <p>
- * This interface is not intended to be implemented by clients. Clients can
- * obtain file patches by calling
- * {@link ApplyPatchOperation#parsePatch(org.eclipse.core.resources.IStorage)}.
- * </p>
  * 
  * @see ApplyPatchOperation#parsePatch(org.eclipse.core.resources.IStorage)
  * @since 3.3
- * @noimplement
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients can obtain file patches by calling
+ *              {@link ApplyPatchOperation#parsePatch(org.eclipse.core.resources.IStorage)}.
  */
 public interface IFilePatch {
 	

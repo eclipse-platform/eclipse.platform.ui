@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,13 @@ package org.eclipse.compare.patch;
 import java.util.HashMap;
 
 /**
- * A patch configuration allows clients to set parameters that control how a patch
- * is applied.
- * <p>
- * This class may be instantiated by clients but is not intended to be subclassed.
- * </p>
+ * A patch configuration allows clients to set parameters that control how a
+ * patch is applied.
+ * 
  * @see IFilePatch
  * @since 3.3
+ * @noextend This class may be instantiated by clients but is not intended to be
+ *           subclassed.
  */
 public class PatchConfiguration {
 

@@ -22,13 +22,10 @@ import org.eclipse.core.runtime.IAdaptable;
  * this interface is a means to communicate to content merge viewers that one of
  * the sides of a compare input is a patch hunk. Clients can determine which
  * side it is by adapting the side to this interface (see {@link IAdaptable}.
- * <p>
- * This interface is not intended to be implemented by clients but can be
- * obtained from an {@link IFilePatchResult}
- * </p>
  * 
  * @since 3.3
- * 
+ * @noimplement This interface is not intended to be implemented by clients but
+ *              can be obtained from an {@link IFilePatchResult}
  */
 public interface IHunk {
 
