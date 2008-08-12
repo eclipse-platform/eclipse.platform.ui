@@ -480,7 +480,11 @@ public class GenerateDiffFileWizard extends Wizard {
             		if (selectedLocation == WORKSPACE)
             			setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_4); 
             		return false;
-            	} else {
+				} else if (!container.isAccessible()) {
+					if (selectedLocation == WORKSPACE)
+						setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_ProjectClosed);
+					return false;
+				} else {
 					if (ResourcesPlugin.getWorkspace().getRoot().getFolder(
 							pathToWorkspaceFile).exists()) {
 						setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_FolderExists);

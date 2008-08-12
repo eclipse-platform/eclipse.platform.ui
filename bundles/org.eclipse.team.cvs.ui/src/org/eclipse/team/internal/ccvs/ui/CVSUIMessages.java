@@ -981,6 +981,7 @@ public class CVSUIMessages extends NLS {
 	public static String GenerateDiffFileWizard_browseFilesystem;
 	public static String GenerateDiffFileWizard_noChangesSelected;
 	public static String GenerateDiffFileWizard_FolderExists;
+	public static String GenerateDiffFileWizard_ProjectClosed;
 	public static String MergeSynchronizeParticipant_8;
 	public static String MergeSynchronizeParticipant_9;
 	public static String MergeSynchronizeParticipant_10;
