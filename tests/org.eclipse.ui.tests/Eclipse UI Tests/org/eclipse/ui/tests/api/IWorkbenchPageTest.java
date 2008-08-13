@@ -54,6 +54,7 @@ import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.PerspectiveState;
 import org.eclipse.ui.tests.harness.util.CallHistory;
@@ -1899,7 +1900,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		IWorkbenchPage page = win.getActivePage();
 		shortcuts = page.getShowViewShortcuts();
 		List shortcutList = Arrays.asList(shortcuts);
-		assertTrue(shortcutList.contains(IPageLayout.ID_RES_NAV));
+		assertTrue(shortcutList.contains(ProjectExplorer.VIEW_ID));
 		assertTrue(shortcutList.contains(IPageLayout.ID_OUTLINE));
 		assertTrue(shortcutList.contains(IPageLayout.ID_PROP_SHEET));
 		assertTrue(shortcutList.contains(IPageLayout.ID_PROBLEM_VIEW));
