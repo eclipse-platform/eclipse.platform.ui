@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,32 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.toc;
 
+import java.util.List;
+
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
+import org.eclipse.help.internal.HelpData;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.toc.TocSorter;
+import org.eclipse.help.internal.util.ProductPreferences;
 
 import junit.framework.TestCase;
 
 public class TocSortingTest extends TestCase {
+	
+	private static final String BASE_TOCS = "baseTOCS";
+	private static final String ORDERED_XML = "PLUGINS_ROOT/org.eclipse.ua.tests/data/help/toc/toc_data/helpDataOrdered.xml";
+	private static final String EMPTY_XML = "PLUGINS_ROOT/org.eclipse.ua.tests/data/help/toc/toc_data/helpDataEmpty.xml";
+	private static final String NO_SORT_XML = "PLUGINS_ROOT/org.eclipse.ua.tests/data/help/toc/toc_data/helpDataOrderedNoSort.xml";
+	private static final String BAD_PLUGIN_HELP_DATA_XML = "PLUGINS_ROOT/org.eclipse.nosuchplugin/data/help/toc/toc_data/helpData.xml";
+	private static final String NO_SUCH_FILE_XML = "PLUGINS_ROOT/org.eclipse.ua.tests/data/help/toc/toc_data/noSuchFile.xml";
+	private static final String ALPHA_SORT_XML = "PLUGINS_ROOT/org.eclipse.ua.tests/data/help/toc/toc_data/helpDataOrderedAlphaSort.xml";
+	private String helpDataPreference;
+	private String baseTocsPreference;
 	
 	private class Toc implements IToc {
 		
@@ -55,8 +71,6 @@ public class TocSortingTest extends TestCase {
 
 	}
 	
-	private int count = 0;
-	
 	private class TC implements ITocContribution {
 
 		private IToc toc;
@@ -65,8 +79,8 @@ public class TocSortingTest extends TestCase {
 		
 		public TC(String name, String category) {
 			this.categoryId = category;
-			id = "id " + count++;
-			toc = new Toc(name);
+			this.id = "/" + name + "/toc.xml";
+			this.toc = new Toc(name);
 		}
 		
 		public String getCategoryId() {
@@ -100,6 +114,33 @@ public class TocSortingTest extends TestCase {
 		public boolean isPrimary() {
 			return true;
 		}		
+	}
+	
+	protected void setUp() throws Exception {
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		helpDataPreference = prefs.getString(HelpPlugin.HELP_DATA_KEY);
+		baseTocsPreference = prefs.getString(BASE_TOCS);
+		HelpData.clearProductHelpData();
+		ProductPreferences.resetPrimaryTocOrdering();
+		setHelpData(EMPTY_XML);
+		setBaseTocs("");
+	}
+	
+	protected void tearDown() throws Exception {
+		setHelpData(helpDataPreference);
+		setBaseTocs(baseTocsPreference);
+		HelpData.clearProductHelpData();
+		ProductPreferences.resetPrimaryTocOrdering();
+	}
+
+	private void setHelpData(String value) {
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		prefs.setValue(HelpPlugin.HELP_DATA_KEY, value);
+	}
+	
+	private void setBaseTocs(String value) {
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		prefs.setValue(BASE_TOCS, value);
 	}
 	
 	private String toString(ITocContribution[] tocs) {
@@ -142,6 +183,97 @@ public class TocSortingTest extends TestCase {
 		};
 		ITocContribution[] result = sorter.orderTocContributions(tocs);
 		assertEquals("127345968", toString(result));
+	}
+
+	public void testTocOrderPreference() {
+		setHelpData(ORDERED_XML);
+		TocSorter sorter = new TocSorter();
+		ITocContribution[] tocs = new ITocContribution[] {
+				new TC("a", null), new TC("c", null), new TC("b", null), new TC("d", null)
+		};
+		ITocContribution[] result = sorter.orderTocContributions(tocs);
+		assertEquals("dbac", toString(result));
+	}
+
+	public void testTocNoSortOthers() {
+		setHelpData(NO_SORT_XML);
+		TocSorter sorter = new TocSorter();
+		ITocContribution[] tocs = new ITocContribution[] {
+				new TC("e", null), new TC("c", null), new TC("b", null), new TC("d", null) , new TC("a", null)
+		};
+		ITocContribution[] result = sorter.orderTocContributions(tocs);
+		assertEquals("dbeca", toString(result));
+	}
+
+	public void testTocAlphaSortOthers() {
+		setHelpData(ALPHA_SORT_XML);
+		TocSorter sorter = new TocSorter();
+		ITocContribution[] tocs = new ITocContribution[] {
+				new TC("e", null), new TC("c", null), new TC("b", null), new TC("d", null) , new TC("a", null)
+		};
+		ITocContribution[] result = sorter.orderTocContributions(tocs);
+		assertEquals("dbace", toString(result));
+	}
+
+	public void testTocBadHelpDataPlugin() {
+		setHelpData(BAD_PLUGIN_HELP_DATA_XML);
+		TocSorter sorter = new TocSorter();
+		ITocContribution[] tocs = new ITocContribution[] {
+				new TC("e", null), new TC("c", null), new TC("b", null), new TC("d", null) , new TC("a", null)
+		};
+		ITocContribution[] result = sorter.orderTocContributions(tocs);
+		assertEquals("abcde", toString(result));
+	}
+
+	public void testTocBadHelpDataPath() {
+		setHelpData(NO_SUCH_FILE_XML);
+		TocSorter sorter = new TocSorter();
+		ITocContribution[] tocs = new ITocContribution[] {
+				new TC("e", null), new TC("c", null), new TC("b", null), new TC("d", null) , new TC("a", null)
+		};
+		ITocContribution[] result = sorter.orderTocContributions(tocs);
+		assertEquals("abcde", toString(result));
+	}
+
+	public void testNoHelpData() {
+		setHelpData("");
+		TocSorter sorter = new TocSorter();
+		ITocContribution[] tocs = new ITocContribution[] {
+				new TC("e", null), new TC("c", null), new TC("b", null), new TC("d", null) , new TC("a", null)
+		};
+		ITocContribution[] result = sorter.orderTocContributions(tocs);
+		assertEquals("abcde", toString(result));
+	}
+	
+	public void testBaseTocs() {
+		setHelpData("");
+		setBaseTocs("/d/toc.xml,/b/toc.xml");
+		TocSorter sorter = new TocSorter();
+		ITocContribution[] tocs = new ITocContribution[] {
+				new TC("e", null), new TC("c", null), new TC("b", null), new TC("d", null) , new TC("a", null)
+		};
+		ITocContribution[] result = sorter.orderTocContributions(tocs);
+		assertEquals("dbace", toString(result));
+	}
+
+	public void testNoProductNoHelpData() {
+		List ordering = ProductPreferences.getTocOrdering(null, "", "/a/b.xml,/c/d.xml");
+		assertEquals(2, ordering.size());
+		assertEquals("/a/b.xml", ordering.get(0));
+		assertEquals("/c/d.xml", ordering.get(1));
+	}
+	
+	public void testNoProductWithHelpData() {
+		List ordering = ProductPreferences.getTocOrdering(null, "helpData.xml", "/a/b.xml,/c/d.xml");
+		assertNull(ordering);
+	}
+	
+	public void testNoProductWithPluginsRoot() {
+		List ordering = ProductPreferences.getTocOrdering(null, ORDERED_XML, "/a/b.xml,/c/d.xml");
+		assertEquals(3, ordering.size());
+		assertEquals("/x/toc.xml", ordering.get(0));
+		assertEquals("/d/toc.xml", ordering.get(1));
+		assertEquals("/b/toc.xml", ordering.get(2));
 	}
 	
 }

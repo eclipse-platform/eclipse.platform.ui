@@ -18,12 +18,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.osgi.framework.Bundle;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -42,6 +43,8 @@ public class HelpData {
 	private static final String ELEMENT_CATEGORY = "category"; //$NON-NLS-1$
 	private static final String ELEMENT_INDEX = "index"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$	
+	private static final String ELEMENT_OTHER_TOCS = "otherTocs"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_SORT = "sort"; //$NON-NLS-1$
 	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
 
 	private static HelpData productHelpData;
@@ -50,6 +53,7 @@ public class HelpData {
 	private List tocOrder;
 	private Set hiddenTocs;
 	private Set hiddenIndexes;
+	private String sortMode;
 
 	/*
 	 * Get the active product's help data, or null if the product doesn't have
@@ -78,6 +82,9 @@ public class HelpData {
 				    URL helpDataUrl = bundle.getEntry(helpDataFile);
 				    productHelpData = new HelpData(helpDataUrl);
 				}
+			}
+			if (productHelpData == null) {
+				productHelpData = new HelpData(null);
 			}
 		}
 		return productHelpData;
@@ -129,6 +136,16 @@ public class HelpData {
 		}
 		return hiddenIndexes;
 	}
+	
+	/*
+	 * Returns true if tocs not specified in the toc order are sorted
+	 */
+	public synchronized boolean isSortOthers() {
+		if (sortMode == null) {
+			loadHelpData();
+		}
+		return "true".equals(sortMode); //$NON-NLS-1$
+	}
 
 	/*
 	 * Allow unit tests to override for providing test data.
@@ -144,6 +161,7 @@ public class HelpData {
 		tocOrder = new ArrayList();
 		hiddenTocs = new HashSet();
 		hiddenIndexes = new HashSet();
+		sortMode = "true"; //$NON-NLS-1$
 		if (url != null) {
 			try {
 				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
@@ -154,6 +172,15 @@ public class HelpData {
 				String msg = "Error loading help data file \"" + url + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 				HelpPlugin.logError(msg, t);
 			}
+		} else {
+			// Derive information from preferences
+			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+			String baseTocs = prefs.getString(HelpPlugin.BASE_TOCS_KEY);
+			String ignoredTocs = prefs.getString(HelpPlugin.IGNORED_TOCS_KEY);
+			String ignoredIndexes = prefs.getString(HelpPlugin.IGNORED_INDEXES_KEY);
+			tocOrder = ProductPreferences.tokenize(baseTocs);
+			hiddenTocs.addAll(ProductPreferences.tokenize(ignoredTocs));
+			hiddenIndexes.addAll(ProductPreferences.tokenize(ignoredIndexes));
 		}
 	}
 
@@ -190,6 +217,12 @@ public class HelpData {
 				String id = attributes.getValue(ATTRIBUTE_ID);
 				if (id != null) {
 					hiddenIndexes.add(id);
+				}
+			}
+			else if (ELEMENT_OTHER_TOCS.equals(name)) {
+				String sortAttribute = attributes.getValue(ATTRIBUTE_SORT);
+				if (sortAttribute != null) {
+					sortMode = sortAttribute.toLowerCase();
 				}
 			}
 		}

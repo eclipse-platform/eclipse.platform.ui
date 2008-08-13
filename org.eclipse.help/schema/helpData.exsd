@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="Help data XML format">
+<schema targetNamespace="Help data XML format" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
-         <meta.schema plugin="Help data XML format" id="" name="Help data XML format"/>
-      </appInfo>
+      <appinfo>
+         <meta.schema plugin="Help data XML format" id="null" name="Help data XML format"/>
+      </appinfo>
       <documentation>
          The help data XML file is used by products to control the order of books in the help table of contents, as well whether or not books or keyword index sets should be displayed at all. The file must be referenced in the product&apos;s &lt;code&gt;plugin_customization.ini&lt;/code&gt; file using the &lt;code&gt;org.eclipse.help/HELP_DATA&lt;/code&gt; property.
       </documentation>
@@ -104,19 +104,31 @@
       </complexType>
    </element>
 
+   <element name="otherTocs">
+      <complexType>
+         <attribute name="sort" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Defines whether the tocs not specified in tocOrder will be sorted alphabetically by title. Not sorting gives a similar order to that in Eclipse 3.3 before sorting was introduced.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.3
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 The following example shows how to arrange the following books in the order shown:
@@ -162,28 +174,20 @@ The markup would be the following:
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This API is supported by any help implementation that is based on &lt;code&gt;org.eclipse.help&lt;/code&gt;, including the default help implementation provided by Eclipse.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.HelpData;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
 /*
@@ -42,6 +44,42 @@ public class HelpDataTest extends TestCase {
 		return new TestSuite(HelpDataTest.class);
 	}
 
+	private String baseTocsPreference;
+	private String ignoredTocsPreference;
+	private String ignoredIndexesPreference;
+	
+
+	protected void setUp() throws Exception {
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		baseTocsPreference = prefs.getString(HelpPlugin.BASE_TOCS_KEY);
+		ignoredTocsPreference = prefs.getString(HelpPlugin.IGNORED_TOCS_KEY);
+		ignoredIndexesPreference = prefs.getString(HelpPlugin.IGNORED_INDEXES_KEY);
+		setBaseTocs("");
+		setIgnoredTocs("");
+		setIgnoredIndexes("");
+	}
+	
+	protected void tearDown() throws Exception {
+		setBaseTocs(baseTocsPreference);
+		setIgnoredTocs(ignoredTocsPreference);
+		setIgnoredIndexes(ignoredIndexesPreference);
+	}
+
+	private void setBaseTocs(String value) {
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		prefs.setValue(HelpPlugin.BASE_TOCS_KEY, value);
+	}
+	
+	private void setIgnoredTocs(String value) {
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		prefs.setValue(HelpPlugin.IGNORED_TOCS_KEY, value);
+	}
+	
+	private void setIgnoredIndexes(String value) {
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		prefs.setValue(HelpPlugin.IGNORED_INDEXES_KEY, value);
+	}
+
 	public void testHelpData() {
 		for (int i=0;i<TEST_DATA.length;++i) {
 			String[][] entry = (String[][])TEST_DATA[i];
@@ -55,5 +93,49 @@ public class HelpDataTest extends TestCase {
 			Assert.assertEquals("Did not get the expected hidden tocs from help data file " + file, expectedHiddenTocs, data.getHiddenTocs());
 			Assert.assertEquals("Did not get the expected hidden indexes from help data file " + file, expectedHiddenIndexes, data.getHiddenIndexes());
 		}
+	}
+
+	public void testNullUrl() {
+		HelpData data = new HelpData(null);
+		assertEquals(0, data.getTocOrder().size());
+		assertEquals(0, data.getHiddenTocs().size());
+		assertEquals(0, data.getHiddenIndexes().size());
+		assertTrue(data.isSortOthers());
+	}
+	
+	public void testNullUrlWithBaseTocs() {
+		HelpData data = new HelpData(null);
+		setBaseTocs("/a/b.xml,/c/d.xml");
+		List tocOrder = data.getTocOrder();
+		assertEquals(2, tocOrder.size());
+		assertEquals("/a/b.xml", tocOrder.get(0));
+		assertEquals("/c/d.xml", tocOrder.get(1));
+		assertEquals(0, data.getHiddenTocs().size());
+		assertEquals(0, data.getHiddenIndexes().size());
+		assertTrue(data.isSortOthers());
+	}
+	
+	public void testNullUrlWithHiddenTocs() {
+		HelpData data = new HelpData(null);
+		setIgnoredTocs("/a/b.xml,/c/d.xml");
+		assertEquals(0, data.getTocOrder().size());
+		Set hiddenTocs = data.getHiddenTocs();
+		assertEquals(2, hiddenTocs.size());
+		assertTrue(hiddenTocs.contains("/a/b.xml"));
+		assertTrue(hiddenTocs.contains("/c/d.xml"));
+		assertEquals(0, data.getHiddenIndexes().size());
+		assertTrue(data.isSortOthers());
+	}
+	
+	public void testNullUrlWithHiddenIndexes() {
+		HelpData data = new HelpData(null);
+		setIgnoredIndexes("/a/b.xml,/c/d.xml");
+		assertEquals(0, data.getTocOrder().size());
+		assertEquals(0, data.getHiddenTocs().size());
+		Set hiddenIndexes = data.getHiddenIndexes();
+		assertEquals(2, hiddenIndexes.size());
+		assertTrue(hiddenIndexes.contains("/a/b.xml"));
+		assertTrue(hiddenIndexes.contains("/c/d.xml"));
+		assertTrue(data.isSortOthers());
 	}
 }

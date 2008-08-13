@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -76,13 +77,14 @@ public class ProductPreferences {
 	public static List getPrimaryTocOrdering() {
 		if (primaryTocOrdering == null) {
 			IProduct product = Platform.getProduct();
+			String pluginId = null;
 			if (product != null) {
-				String pluginId = product.getDefiningBundle().getSymbolicName();
-				Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-				String helpDataFile = prefs.getString(HelpPlugin.HELP_DATA_KEY);
-				String baseTOCS = prefs.getString(HelpPlugin.BASE_TOCS_KEY);
-				primaryTocOrdering = getTocOrdering(pluginId, helpDataFile, baseTOCS);
+				pluginId = product.getDefiningBundle().getSymbolicName();
 			}
+			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+			String helpDataFile = prefs.getString(HelpPlugin.HELP_DATA_KEY);
+			String baseTOCS = prefs.getString(HelpPlugin.BASE_TOCS_KEY);
+			primaryTocOrdering = getTocOrdering(pluginId, helpDataFile, baseTOCS);
 			// active product has no preference for toc order
 			if (primaryTocOrdering == null) {
 				primaryTocOrdering = new ArrayList();
@@ -129,7 +131,10 @@ public class ProductPreferences {
 				    helpDataPath = helpDataFile.substring(nextSlash + 1);
 				}
 			}
-			Bundle bundle = Platform.getBundle(helpDataPluginId);
+			Bundle bundle = null;
+			if (helpDataPluginId != null) {
+				bundle = Platform.getBundle(helpDataPluginId);
+			}
 			if (bundle != null) {
 			    URL helpDataUrl = bundle.getEntry(helpDataPath);
 			    HelpData helpData = new HelpData(helpDataUrl);
@@ -186,7 +191,7 @@ public class ProductPreferences {
 	 */
 	public static List getOrderedList(List items, List primary, List[] secondary, Map nameIdMap) {
 		List result = new ArrayList();
-		Set set = new HashSet(items);
+		Set set = new LinkedHashSet(items);
 		if (orderResolver == null) {
 			orderResolver = new SequenceResolver();
 		}
@@ -199,12 +204,14 @@ public class ProductPreferences {
 				set.remove(obj);
 			}
 		}
-		List remaining = new ArrayList();
-		remaining.addAll(set);
-		if (nameIdMap != null) {
+		if (HelpData.getProductHelpData().isSortOthers() && nameIdMap != null) {
+			List remaining = new ArrayList();
+			remaining.addAll(set);
 			sortByName(remaining, nameIdMap);
+			result.addAll(remaining);
+		} else {
+			result.addAll(set);
 		}
-		result.addAll(remaining);
 		return result;
 	}
 	
@@ -387,5 +394,9 @@ public class ProductPreferences {
 	public int compare(Object o1, Object o2) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	public static void resetPrimaryTocOrdering() {
+		primaryTocOrdering = null;
 	}
 }

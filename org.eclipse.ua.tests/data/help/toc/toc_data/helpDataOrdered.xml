@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extensions>
+	<tocOrder>
+		<toc id="/x/toc.xml"/>
+		<toc id="/d/toc.xml"/>
+		<toc id="/b/toc.xml"/>
+	</tocOrder>
+</extensions>
