@@ -262,8 +262,8 @@ public class ProxyPreferencePage extends PreferencePage implements
 	}
 
 	protected void performDefaults() {
-		directConnectionToButton.setSelection(true);
-		systemProxyConfigurationButton.setSelection(false);
+		directConnectionToButton.setSelection(false);
+		systemProxyConfigurationButton.setSelection(true);
 		manualProxyConfigurationButton.setSelection(false);
 		useSameProxyButton.setSelection(false);
 		enableProxyAuth.setSelection(false);

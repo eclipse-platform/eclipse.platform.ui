@@ -218,7 +218,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 
 	private boolean internalIsProxiesEnabled() {
 		return Activator.getInstance().getPreferences().getBoolean(
-				PREF_ENABLED, false);
+				PREF_ENABLED, true);
 	}
 
 	/* (non-Javadoc)
@@ -412,7 +412,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		}
 		
 		// migrate proxy data
-		boolean proxiesEnabled = netConfigurationPrefs.getBoolean(PREF_ENABLED, false);
+		boolean proxiesEnabled = netConfigurationPrefs.getBoolean(PREF_ENABLED, true);
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
 			IProxyData data = type.getProxyData(ProxyType.DO_NOT_VERIFY);
@@ -496,8 +496,8 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(PREF_ENABLED) || event.getKey().equals(PREF_OS)) {
 			checkMigrated();
-			internalSetEnabled(Activator.getInstance().getPreferences().getBoolean(PREF_ENABLED, false),
-					Activator.getInstance().getPreferences().getBoolean(PREF_OS, false));
+			internalSetEnabled(Activator.getInstance().getPreferences().getBoolean(PREF_ENABLED, true),
+					Activator.getInstance().getPreferences().getBoolean(PREF_OS, true));
 		}
 	}
 
@@ -508,7 +508,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	public boolean isSystemProxiesEnabled() {
 		checkMigrated();
 		return Activator.getInstance().getPreferences().getBoolean(PREF_OS,
-				false);
+				true);
 	}
 
 	public void setSystemProxiesEnabled(boolean enabled) {
