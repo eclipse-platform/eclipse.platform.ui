@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -30,7 +29,6 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry;
-import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.launchConfigurations.TaskLinkManager;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
@@ -38,6 +36,7 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
+import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -84,6 +83,8 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * General utility class dealing with Ant build files
@@ -576,8 +577,8 @@ public final class AntUtil {
 	 * @since 3.0
 	 */
 	public static void migrateToNewClasspathFormat(ILaunchConfiguration configuration) throws CoreException {
-		String oldClasspath = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-		String oldAntHome = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
+		String oldClasspath = configuration.getAttribute(org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+		String oldAntHome = configuration.getAttribute(org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
 		String provider = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
 		if (oldClasspath != null || oldAntHome != null || provider == null) {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
@@ -586,8 +587,8 @@ public final class AntUtil {
 			} else {
 				workingCopy = configuration.getWorkingCopy();
 			}
-			workingCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-			workingCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
+			workingCopy.setAttribute(org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+			workingCopy.setAttribute(org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
 			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 			if (oldAntHome != null) {

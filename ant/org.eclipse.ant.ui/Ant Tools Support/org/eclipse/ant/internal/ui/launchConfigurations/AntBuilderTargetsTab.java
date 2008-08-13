@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,16 +68,16 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 			Object source = e.getSource();
             Text text= null;
 			if (source == fAfterCleanTarget) {
-                attribute= IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS;
+                attribute= org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS;
                 text= fAfterCleanTargetText;
 			} else if (source == fManualBuildTarget) {
-                attribute= IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS;
+                attribute= org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS;
                 text= fManualBuildTargetText;
 			} else if (source == fAutoBuildTarget) {
-                attribute= IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS;
+                attribute= org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS;
                 text= fAutoBuildTargetText;
 			} else if (source == fDuringCleanTarget) {
-                attribute= IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS;
+                attribute= org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS;
                 text= fDuringCleanTargetText;
 			}
 			
@@ -147,7 +147,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
         } catch (CoreException e) {
            return;
         }
-        copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)fAttributeToTargets.get(attribute));
+        copy.setAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)fAttributeToTargets.get(attribute));
 		SetTargetsDialog dialog= new SetTargetsDialog(getShell(), copy);
 		if (dialog.open() != Window.OK) {
 		    return;
@@ -211,7 +211,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 
     public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
         configuration.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, true);
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, true);
+		configuration.setAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, true);
     }
 
     public void initializeFrom(ILaunchConfiguration configuration) {
@@ -233,19 +233,19 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
         String afterCleanTargets= null;
         String duringCleanTargets= null;
         try {
-			if (!configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, false)) {
+			if (!configuration.getAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, false)) {
 				//not yet migrated to new format
-				configTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
+				configTargets= configuration.getAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
 			}
             
-            autoTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS, (String)null);
-            manualTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, (String)null);
-            afterCleanTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, (String)null);
-            duringCleanTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, (String)null);
-			initializeAttributeToTargets(fAutoBuildTargetText, autoTargets, configTargets, IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS);
-			initializeAttributeToTargets(fManualBuildTargetText, manualTargets, configTargets, IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS);
-			initializeAttributeToTargets(fDuringCleanTargetText, duringCleanTargets, configTargets, IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS);
-			initializeAttributeToTargets(fAfterCleanTargetText, afterCleanTargets, configTargets, IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS);
+            autoTargets= configuration.getAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS, (String)null);
+            manualTargets= configuration.getAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, (String)null);
+            afterCleanTargets= configuration.getAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, (String)null);
+            duringCleanTargets= configuration.getAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, (String)null);
+			initializeAttributeToTargets(fAutoBuildTargetText, autoTargets, configTargets, org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS);
+			initializeAttributeToTargets(fManualBuildTargetText, manualTargets, configTargets, org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS);
+			initializeAttributeToTargets(fDuringCleanTargetText, duringCleanTargets, configTargets, org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS);
+			initializeAttributeToTargets(fAfterCleanTargetText, afterCleanTargets, configTargets, org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS);
         } catch (CoreException ce) {
             AntUIPlugin.log("Error reading configuration", ce); //$NON-NLS-1$
         }
@@ -308,16 +308,16 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
         }
         configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
         
-        String targets= (String) fAttributeToTargets.get(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS);
-        configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, targets);
-        targets= (String) fAttributeToTargets.get(IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS);
-        configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS, targets);
-        targets= (String) fAttributeToTargets.get(IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS);
-        configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, targets);
-        targets= (String) fAttributeToTargets.get(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS);
-        configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, targets);
+        String targets= (String) fAttributeToTargets.get(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS);
+        configuration.setAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, targets);
+        targets= (String) fAttributeToTargets.get(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS);
+        configuration.setAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS, targets);
+        targets= (String) fAttributeToTargets.get(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS);
+        configuration.setAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, targets);
+        targets= (String) fAttributeToTargets.get(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS);
+        configuration.setAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, targets);
 		
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, true);
+		configuration.setAttribute(org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, true);
     }
 
     /* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.debug.model.RemoteAntDebugBuildListener;
+import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -546,7 +547,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		StringBuffer vmArgs= generateVMArguments(copy, setInputHandler, antHome);
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());
         copy.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
-        if (copy.getAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false)) {
+        if (copy.getAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, false)) {
         	setDefaultVM(configuration, copy);
         }
         if (debug) { //do not allow launch in foreground bug 83254

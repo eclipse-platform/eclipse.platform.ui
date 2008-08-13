@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -96,14 +97,14 @@ public class AntJRETab extends JavaJRETab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
-			configuration.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, false);
 		} else {
 			super.performApply(configuration);
 			
 			if (useDefaultSeparateJRE(configuration)) {
-				configuration.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, true);
+				configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, true);
 			} else {
-				configuration.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
+				configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, false);
 			}
 			
 			applySeparateVMAttributes(configuration);
@@ -173,7 +174,7 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			 boolean isDefaultVMInstall= configuration.getAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
+			 boolean isDefaultVMInstall= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, false);
 			 if (isDefaultVMInstall) {
 			 	ILaunchConfigurationWorkingCopy copy = null;
 			 	if (configuration instanceof ILaunchConfigurationWorkingCopy) {
@@ -258,7 +259,7 @@ public class AntJRETab extends JavaJRETab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		IVMInstall defaultVMInstall= getDefaultVMInstall(config);
 		if (defaultVMInstall != null) {
-			config.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, true);
+			config.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, true);
 			setDefaultVMInstallAttributes(defaultVMInstall, config);
 			applySeparateVMAttributes(config);
 		}

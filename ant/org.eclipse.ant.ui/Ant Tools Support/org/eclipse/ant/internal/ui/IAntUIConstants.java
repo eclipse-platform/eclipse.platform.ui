@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, 49445, bug 53547
  *******************************************************************************/
 package org.eclipse.ant.internal.ui;
+
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Defines the constants available for client use.
@@ -118,13 +120,5 @@ public interface IAntUIConstants {
 	 * Boolean attribute indicating if an input handler should be supplied for the build
 	 * Default value is <code>true</code>.
 	 */
-	public static final String SET_INPUTHANDLER= PLUGIN_ID + "SET_INPUTHANDLER"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean attribute indicating if the default VM install should be used for the separate JRE build
-	 * Default value is <code>false</code> for backwards compatibility
-	 * 
-	 * @since 3.1
-	 */
-	public static final String ATTR_DEFAULT_VM_INSTALL= PLUGIN_ID + ".DEFAULT_VM_INSTALL"; //$NON-NLS-1$
+	public static final String SET_INPUTHANDLER= PLUGIN_ID + "SET_INPUTHANDLER"; //$NON-NLS-1$	
 }

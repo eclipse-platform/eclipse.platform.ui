@@ -14,7 +14,7 @@ import org.eclipse.ant.internal.ui.debug.model.AntProperty;
 import org.eclipse.ant.internal.ui.debug.model.AntStackFrame;
 import org.eclipse.ant.internal.ui.debug.model.AntThread;
 import org.eclipse.ant.internal.ui.debug.model.AntValue;
-import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
