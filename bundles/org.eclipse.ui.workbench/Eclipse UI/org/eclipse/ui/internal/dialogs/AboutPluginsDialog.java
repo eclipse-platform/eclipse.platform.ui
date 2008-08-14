@@ -99,6 +99,10 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			
 			protected IStatus run(IProgressMonitor monitor) {
 				while (true) {
+					Shell dialogShell = getShell();
+					// the shell has gone down since we were asked to render
+					if (dialogShell == null || dialogShell.isDisposed())
+						return Status.OK_STATUS;
 					AboutBundleData data = null;
 					synchronized (resolveQueue) {
 						if (resolveQueue.isEmpty())
