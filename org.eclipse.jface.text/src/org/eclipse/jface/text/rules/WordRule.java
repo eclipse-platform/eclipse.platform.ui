@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,11 @@ import org.eclipse.core.runtime.Assert;
 
 
 /**
- * An implementation of <code>IRule</code> capable of detecting words
- * Word rules also allow for the association of tokens with specific words.
- * That is, not only can the rule be used to provide tokens for exact matches,
- * but also for the generalized notion of a word in the context in which it is used.
- * A word rules uses a word detector to determine what a word is.
- *
+ * An implementation of {@link IRule} capable of detecting words. A word rule also allows to
+ * associate a token to a word. That is, not only can the rule be used to provide tokens for exact
+ * matches, but also for the generalized notion of a word in the context in which it is used. A word
+ * rule uses a word detector to determine what a word is.
+ * 
  * @see IWordDetector
  */
 public class WordRule implements IRule {
@@ -48,6 +47,7 @@ public class WordRule implements IRule {
 	 * @since 3.3
 	 */
 	private boolean fIgnoreCase= false;
+
 
 	/**
 	 * Creates a rule which, with the help of an word detector, will return the token
@@ -141,8 +141,8 @@ public class WordRule implements IRule {
 
 				String buffer= fBuffer.toString();
 				IToken token= (IToken)fWords.get(buffer);
-				
-				if(fIgnoreCase) {
+
+				if (token == null && fIgnoreCase) {
 					Iterator iter= fWords.keySet().iterator();
 					while (iter.hasNext()) {
 						String key= (String)iter.next();
@@ -151,9 +151,8 @@ public class WordRule implements IRule {
 							break;
 						}
 					}
-				} else
-					token= (IToken)fWords.get(buffer);
-				
+				}
+
 				if (token != null)
 					return token;
 
