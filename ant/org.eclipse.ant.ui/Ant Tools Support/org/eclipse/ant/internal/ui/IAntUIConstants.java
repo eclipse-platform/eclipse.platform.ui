@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui;
 
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Defines the constants available for client use.
