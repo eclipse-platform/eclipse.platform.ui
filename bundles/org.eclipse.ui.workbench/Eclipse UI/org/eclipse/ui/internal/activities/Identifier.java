@@ -146,10 +146,9 @@ final class Identifier implements IIdentifier {
 
         if (identifierListeners != null) {
 			identifierListeners.remove(identifierListener);
-		}
-
-        if (identifierListeners.isEmpty()) {
-			strongReferences.remove(this);
+			if (identifierListeners.isEmpty()) {
+				strongReferences.remove(this);
+			}
 		}
     }
 
