@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     anton.leherbauer@windriver.com - bug 220599 make CommonNavigator a ShowInSource
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
@@ -42,6 +43,7 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
@@ -56,7 +58,7 @@ import org.eclipse.ui.part.ViewPart;
  * <li>
  * <p>
  * {@link org.eclipse.ui.navigator.CommonViewer}: The viewer that renders the
- * extensible tree. Creates and manages the lifecylce of the Navigator Content
+ * extensible tree. Creates and manages the lifecycle of the Navigator Content
  * Service (described below).
  * </p>
  * </li>
@@ -112,6 +114,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
  
 	private static final Class INAVIGATOR_CONTENT_SERVICE = INavigatorContentService.class;
 	private static final Class COMMON_VIEWER_CLASS = CommonViewer.class;
+	private static final Class ISHOW_IN_SOURCE_CLASS = IShowInSource.class;
 	private static final Class ISHOW_IN_TARGET_CLASS = IShowInTarget.class;
 	
 	private static final String HELP_CONTEXT =  NavigatorPlugin.PLUGIN_ID + ".common_navigator"; //$NON-NLS-1$
@@ -376,11 +379,24 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			return getCommonViewer();
 		} else if (adapter == INAVIGATOR_CONTENT_SERVICE) {
 			return getCommonViewer().getNavigatorContentService();
-		} else if ( adapter == ISHOW_IN_TARGET_CLASS) {
+		} else if (adapter == ISHOW_IN_TARGET_CLASS) {
 			return this;
-		}
+		} else if (adapter == ISHOW_IN_SOURCE_CLASS) {
+            return getShowInSource();
+        }
 		return super.getAdapter(adapter);
 	}
+
+    /**
+     * Returns the <code>IShowInSource</code> for this view.
+     */
+    private IShowInSource getShowInSource() {
+        return new IShowInSource() {
+            public ShowInContext getShowInContext() {
+                return new ShowInContext(getCommonViewer().getInput(), getCommonViewer().getSelection());
+            }
+        };
+    }
 
 	/**
 	 * @return The Navigator Content Service which populates this instance of
