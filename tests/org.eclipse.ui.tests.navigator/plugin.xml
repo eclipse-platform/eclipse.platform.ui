@@ -287,8 +287,21 @@
    <extension
          point="org.eclipse.ui.activities">
       <activityPatternBinding
-            activityId="org.eclipse.wst.web"
-            pattern="org\.eclipse\.ui\.tests\.navigator\.*"/> 
+            activityId="org.eclipse.ui.tests.navigator.testActivity"
+            pattern="org\.eclipse\.ui\.tests\.navigator.*"/>
+      <activity
+            description="Common Navigator Test Activity"
+            id="org.eclipse.ui.tests.navigator.testActivity"
+            name="CN Test">
+      </activity>
+      <category
+            id="org.eclipse.ui.tests.navigator.category1"
+            name="CN Test Category">
+      </category>
+      <categoryActivityBinding
+            activityId="org.eclipse.ui.tests.navigator.testActivity"
+            categoryId="org.eclipse.ui.tests.navigator.category1">
+      </categoryActivityBinding> 
    </extension>
    
    <extension
@@ -296,7 +309,7 @@
       <wizard
             class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
             id="org.eclipse.ui.tests.navigator.SampleNewWizard"
-            name="Sample New Wizard (Does Nothing)"/>
+            name="CNF Test New Wizard (Does Nothing)"/>
    </extension>
    
    <extension
@@ -304,7 +317,7 @@
       <wizard
             class="org.eclipse.ui.tests.navigator.wizards.ImportWizard1"
             id="org.eclipse.ui.tests.navigator.SampleImportWizard"
-            name="Sample Import Wizard  (Does Nothing)"/>
+            name="CNF Test Import Wizard  (Does Nothing)"/>
    </extension>
   
    <extension
@@ -312,7 +325,7 @@
       <wizard
             class="org.eclipse.ui.tests.navigator.wizards.ExportWizard1"
             id="org.eclipse.ui.tests.navigator.SampleExportWizard"
-            name="Sample Export Wizard  (Does Nothing)"/>
+            name="CNF Test Export Wizard  (Does Nothing)"/>
    </extension>
 	<extension
 	      point="org.eclipse.ui.navigator.navigatorContent"> 
@@ -324,7 +337,7 @@
          <enablement>
             <or>
 				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
-				<instanceof value="org.eclipse.core.resources.IFile" />
+				<instanceof value="org.eclipse.core.resources.IResource" />
 			</or>         
          </enablement>
       </commonWizard>
@@ -336,7 +349,7 @@
          <enablement>
             <or>
 				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
-				<instanceof value="org.eclipse.core.resources.IFile" />
+				<instanceof value="org.eclipse.core.resources.IResource" />
 			</or>         
          </enablement>
       </commonWizard>
@@ -348,7 +361,19 @@
          <enablement>
             <or>
 				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
-				<instanceof value="org.eclipse.core.resources.IFile" />
+				<instanceof value="org.eclipse.core.resources.IResource" />
+			</or>         
+         </enablement>            
+      </commonWizard>
+	  <!-- make sure missing associatedExtensionId is handled correctly -->
+      <commonWizard
+            menuGroupId="org.eclipse.ui.tests.navigator"
+            type="new"
+            wizardId="org.eclipse.ui.tests.navigator.SampleNewWizard">  
+         <enablement>
+            <or>
+				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+				<instanceof value="org.eclipse.core.resources.IResource" />
 			</or>         
          </enablement>            
       </commonWizard>
