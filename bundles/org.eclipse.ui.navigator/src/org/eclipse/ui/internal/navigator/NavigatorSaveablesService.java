@@ -109,23 +109,32 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private class LifecycleListener implements ISaveablesLifecycleListener {
 		public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
 			Saveable[] saveables = event.getSaveables();
-			switch (event.getEventType()) {
-			case SaveablesLifecycleEvent.POST_OPEN:
-				recomputeSaveablesAndNotify(false, null);
-				break;
-			case SaveablesLifecycleEvent.POST_CLOSE:
-				recomputeSaveablesAndNotify(false, null);
-				break;
-			case SaveablesLifecycleEvent.DIRTY_CHANGED:
-				Saveable[] shownSaveables = getShownSaveables(saveables);
-				if (shownSaveables.length > 0) {
-					outsideListener
-							.handleLifecycleEvent(new SaveablesLifecycleEvent(
-									saveablesSource,
-									SaveablesLifecycleEvent.DIRTY_CHANGED,
-									shownSaveables, false));
+			Saveable[] shownSaveables = null;
+			// synchronize in the same order as in the init method.
+			synchronized (instances) {
+				synchronized (NavigatorSaveablesService.this) {
+					if (isDisposed())
+						return;
+					switch (event.getEventType()) {
+					case SaveablesLifecycleEvent.POST_OPEN:
+						recomputeSaveablesAndNotify(false, null);
+						break;
+					case SaveablesLifecycleEvent.POST_CLOSE:
+						recomputeSaveablesAndNotify(false, null);
+						break;
+					case SaveablesLifecycleEvent.DIRTY_CHANGED:
+						Set result = new HashSet(Arrays.asList(currentSaveables));
+						result.retainAll(Arrays.asList(saveables));
+						shownSaveables = (Saveable[]) result.toArray(new Saveable[result.size()]);
+						break;
+					}
 				}
-				break;
+			}
+
+			// Notify outside of synchronization
+			if (shownSaveables != null && shownSaveables.length > 0) {
+				outsideListener.handleLifecycleEvent(new SaveablesLifecycleEvent(saveablesSource, SaveablesLifecycleEvent.DIRTY_CHANGED,
+						shownSaveables, false));
 			}
 		}
 	}
@@ -207,6 +216,10 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		viewer.getControl().addDisposeListener(disposeListener);
 	}
 
+	private boolean isDisposed() {
+		return contentService == null;
+	}
+	
 	/** helper to compute the saveables for which elements are part of the tree.
 	 * Must be called from a synchronized method.
 	 * 
@@ -468,12 +481,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
         return (SaveablesProvider)AdaptabilityUtility.getAdapter(contentProvider, SaveablesProvider.class);
 	}
 
-	private Saveable[] getShownSaveables(Saveable[] saveables) {
-		Set result = new HashSet(Arrays.asList(currentSaveables));
-		result.retainAll(Arrays.asList(saveables));
-		return (Saveable[]) result.toArray(new Saveable[result.size()]);
-	}
-
 	private void recomputeSaveablesAndNotify(boolean recomputeProviders,
 			String startedBundleIdOrNull) {
 		if (recomputeProviders && startedBundleIdOrNull == null
@@ -500,9 +507,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		if (addedSaveables.size() > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					// We might be disposed at this point.
-					// One indication of this is that saveablesSource is null.
-					if (saveablesSource == null) {
+					if (isDisposed()) {
 						return;
 					}
 					outsideListener.handleLifecycleEvent(new SaveablesLifecycleEvent(
@@ -519,9 +524,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		if (removedSaveables.size() > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					// we might be disposed at this point
-					// One indication of this is that saveablesSource is null.
-					if (saveablesSource == null) {
+					if (isDisposed()) {
 						return;
 					}
 					outsideListener
@@ -568,9 +571,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	 * @param symbolicName
 	 */
 	private synchronized void handleBundleStarted(String symbolicName) {
-		// Guard against the case that this instance is not yet initialized,
-		// or already disposed.
-		if (saveablesSource != null) {
+		if (!isDisposed()) {
 			if (inactivePluginsWithSaveablesProviders.containsKey(symbolicName)) {
 				recomputeSaveablesAndNotify(true, symbolicName);
 			}
@@ -581,9 +582,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	 * @param symbolicName
 	 */
 	private synchronized void handleBundleStopped(String symbolicName) {
-		// Guard against the case that this instance is not yet initialized,
-		// or already disposed.
-		if (saveablesSource != null) {
+		if (!isDisposed()) {
 			recomputeSaveablesAndNotify(true, null);
 		}
 	}
@@ -592,9 +591,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	 * @see org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener#onVisibilityOrActivationChange()
 	 */
 	public synchronized void onVisibilityOrActivationChange() {
-		// Guard against the case that this instance is not yet initialized,
-		// or already disposed.
-		if (saveablesSource != null) {
+		if (!isDisposed()) {
 			recomputeSaveablesAndNotify(true, null);
 		}
 	}
