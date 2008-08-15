@@ -172,6 +172,17 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			throw new InvocationTargetException(e);
 		}
 	}
+	
+	/**
+	 * Returns the breakpoints that were imported by this operation, possibly
+	 * an empty list. 
+	 * 
+	 * @return breakpoints imported by this operation
+	 * @since 3.5
+	 */
+	public IBreakpoint[] getImportedBreakpoints() {
+		return (IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]);
+	}
 
 	/**
 	 * Restores a breakpoint on the given marker with information from the passed memento
