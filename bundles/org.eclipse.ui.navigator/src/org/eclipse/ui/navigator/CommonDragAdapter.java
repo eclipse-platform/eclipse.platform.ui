@@ -200,6 +200,8 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 				}
 			}
 
+			event.doit = false;
+
 		} else {
 			event.doit = false;
 		}
