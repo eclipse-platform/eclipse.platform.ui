@@ -829,7 +829,7 @@ public abstract class Window implements IShellProvider {
 				exceptionHandler.handleException(e);
 			}
 		}
-		display.update();
+		if (!display.isDisposed()) display.update();
 	}
 
 	/**
