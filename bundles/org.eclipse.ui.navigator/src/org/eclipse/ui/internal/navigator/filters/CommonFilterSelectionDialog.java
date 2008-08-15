@@ -35,8 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -135,7 +133,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 	}
 
 	private void createCustomizationsTabFolder(Composite superComposite) {
-		customizationsTabFolder = new CTabFolder (superComposite, SWT.RESIZE);
+		customizationsTabFolder = new CTabFolder (superComposite, SWT.RESIZE | SWT.BORDER);
  
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = convertHorizontalDLUsToPixels(TAB_WIDTH_IN_DLUS);
@@ -170,7 +168,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 		  c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
 		customizationsTabFolder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
 		customizationsTabFolder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
-		customizationsTabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		customizationsTabFolder.setSimple(true);
 	}
 
 	private CTabItem createTabItem(CTabFolder aTabFolder, String label,
