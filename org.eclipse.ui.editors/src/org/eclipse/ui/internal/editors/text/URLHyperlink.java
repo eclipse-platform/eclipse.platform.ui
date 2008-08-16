@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
  */
 final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
 	
-	private String fURLString;
 	
 	/**
 	 * Creates a new URL hyperlink.
@@ -38,7 +37,6 @@ final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
 	 */
 	public URLHyperlink(IRegion region, String urlString) {
 		super(region, urlString);
-		fURLString= urlString;
 	}
 	
 	/*
@@ -58,7 +56,7 @@ final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
 		}
 
 		try {
-			browser.openURL(new URL(fURLString));
+			browser.openURL(new URL(getURLString()));
 		} catch (PartInitException e) {
 			super.open();
 		} catch (MalformedURLException e) {

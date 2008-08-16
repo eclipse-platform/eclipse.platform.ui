@@ -56,7 +56,6 @@ public class URLHyperlink implements IHyperlink {
 	public void open() {
 		if (fURLString != null) {
 			Program.launch(fURLString);
-			fURLString= null;
 			return;
 		}
 	}
