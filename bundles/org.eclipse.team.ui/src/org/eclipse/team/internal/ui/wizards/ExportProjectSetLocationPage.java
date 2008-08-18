@@ -245,6 +245,8 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 		protected Text wsFilenameText;
 		protected IContainer wsContainer;
 		protected Image dlgTitleImage;
+		
+		private Button okButton;
 
 		public WorkspaceDialog(Shell shell) {
 			super(shell);
@@ -297,24 +299,13 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 
 			return parent;
 		}
+		
+		protected void createButtonsForButtonBar(Composite parent) {
+			super.createButtonsForButtonBar(parent);
+			okButton = getButton(IDialogConstants.OK_ID);
+		}
 
 		protected void okPressed() {
-			//make sure that a filename has been typed in 
-
-			String patchName = wsFilenameText.getText();
-
-			if (patchName.equals("")) { //$NON-NLS-1$
-				setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_WorkspaceDialogErrorNoFilename);
-				return;
-			}
-
-			//make sure that the filename does not contain more than one segment
-			if (!(ResourcesPlugin.getWorkspace().validateName(patchName, IResource.FILE)).isOK()) {
-				wsFilenameText.setText(""); //$NON-NLS-1$
-				setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_WorkspaceDialogErrorFilenameSegments);
-				return;
-			}
-
 			//Make sure that a container has been selected
 			if (wsContainer == null) {
 				getSelectedContainer();
@@ -385,7 +376,18 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 
 			wsFilenameText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					setErrorMessage(null);
+					String patchName = wsFilenameText.getText();
+					if (patchName.trim().equals("")) { //$NON-NLS-1$
+						okButton.setEnabled(false);
+						setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_WorkspaceDialogErrorNoFilename);
+					} else if (!(ResourcesPlugin.getWorkspace().validateName(patchName, IResource.FILE)).isOK()) {
+						//make sure that the filename does not contain more than one segment
+						okButton.setEnabled(false);
+						setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_WorkspaceDialogErrorFilenameSegments);
+					} else {
+						okButton.setEnabled(true);
+						setErrorMessage(null);	
+					}
 				}
 			});
 		}
