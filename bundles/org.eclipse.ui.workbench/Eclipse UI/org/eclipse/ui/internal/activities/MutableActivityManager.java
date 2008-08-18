@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.WeakHashMap;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.Assert;
@@ -58,7 +57,7 @@ import org.eclipse.ui.services.IEvaluationService;
 public final class MutableActivityManager extends AbstractActivityManager
         implements IMutableActivityManager, Cloneable {
 
-    private Map activitiesById = new WeakHashMap();
+    private Map activitiesById = new HashMap();
 
     private Map activityRequirementBindingsByActivityId = new HashMap();
 
@@ -68,7 +67,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 
     private IActivityRegistry activityRegistry;
 
-    private Map categoriesById = new WeakHashMap();
+    private Map categoriesById = new HashMap();
 
     private Map categoryActivityBindingsByCategoryId = new HashMap();
 
@@ -80,7 +79,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 
     private Set enabledActivityIds = new HashSet();
 
-    private Map identifiersById = new WeakHashMap();
+    private Map identifiersById = new HashMap();
     
     /**
      * Avoid endless circular referencing of re-adding activity to evaluation
