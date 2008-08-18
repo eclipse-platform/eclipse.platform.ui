@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.internal.texteditor.CompoundEditExitStrategy;
 import org.eclipse.ui.internal.texteditor.ICompoundEditListener;
@@ -44,8 +43,11 @@ public class MoveLinesAction extends TextEditorAction {
 	private final boolean fUpwards;
 	/** <code>true</code> if lines are to be copied instead of moved. */
 	private final boolean fCopy;
-	/** The editor we are working on. */
-	private final  AbstractTextEditor fEditor;
+	/**
+	 * The text viewer we are working on.
+	 * @since 3.5
+	 */
+	private ITextViewer fTextViewer;
 
 	/* compound members of this action */
 
@@ -66,22 +68,23 @@ public class MoveLinesAction extends TextEditorAction {
 	private boolean fEditInProgress= false;
 
 	/**
-	 * Creates and initializes the action for the given text editor.
-	 * The action configures its visual representation from the given resource
-	 * bundle.
-	 *
+	 * Creates and initializes the action for the given text editor. The action configures its
+	 * visual representation from the given resource bundle.
+	 * 
 	 * @param bundle the resource bundle
-	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
+	 * @param prefix a prefix to be prepended to the various resource keys (described in
+	 *            <code>ResourceAction</code> constructor), or <code>null</code> if none
 	 * @param editor the text editor
+	 * @param textViewer the text viewer
 	 * @param upwards <code>true</code>if the selected lines should be moved upwards,
-	 * <code>false</code> if downwards
+	 *            <code>false</code> if downwards
 	 * @param copy if <code>true</code>, the action will copy lines instead of moving them
 	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
+	 * @since 3.5
 	 */
-	public MoveLinesAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean upwards, boolean copy) {
+	public MoveLinesAction(ResourceBundle bundle, String prefix, ITextEditor editor, ITextViewer textViewer, boolean upwards, boolean copy) {
 		super(bundle, prefix, editor);
-		fEditor= editor;
+		fTextViewer= textViewer;
 		fUpwards= upwards;
 		fCopy= copy;
 		String[] commandIds= copy ? new String[] {ITextEditorActionDefinitionIds.COPY_LINES_UP, ITextEditorActionDefinitionIds.COPY_LINES_DOWN } : new String[] {ITextEditorActionDefinitionIds.MOVE_LINES_UP, ITextEditorActionDefinitionIds.MOVE_LINES_DOWN };
@@ -95,17 +98,37 @@ public class MoveLinesAction extends TextEditorAction {
 	}
 
 	/**
+	 * Creates and initializes the action for the given text editor. The action configures its
+	 * visual representation from the given resource bundle.
+	 * 
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys (described in
+	 *            <code>ResourceAction</code> constructor), or <code>null</code> if none
+	 * @param editor the text editor
+	 * @param upwards <code>true</code>if the selected lines should be moved upwards,
+	 *            <code>false</code> if downwards
+	 * @param copy if <code>true</code>, the action will copy lines instead of moving them
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
+	 * @deprecated As of 3.5, replaced by
+	 *             {@link #MoveLinesAction(ResourceBundle, String, ITextEditor, ITextViewer, boolean, boolean)}
+	 */
+	public MoveLinesAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean upwards, boolean copy) {
+		this(bundle, prefix, editor, editor != null ? editor.getSourceViewer() : null, upwards, copy);
+	}
+
+	/**
 	 * Ends the compound change.
 	 */
 	private void beginCompoundEdit() {
-		if (fEditInProgress || fEditor == null)
+		ITextEditor editor= getTextEditor();
+		if (fEditInProgress || fTextViewer == null || editor == null)
 			return;
 
 		fEditInProgress= true;
 
-		fStrategy.arm(fEditor.getSourceViewer());
+		fStrategy.arm(fTextViewer);
 
-		IRewriteTarget target= (IRewriteTarget)fEditor.getAdapter(IRewriteTarget.class);
+		IRewriteTarget target= (IRewriteTarget)editor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
 			target.beginCompoundChange();
 		}
@@ -120,7 +143,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * @param viewer the viewer displaying a visible region of <code>selection</code>'s document.
 	 * @return <code>true</code>, if <code>selection</code> is contained, <code>false</code> otherwise.
 	 */
-	private boolean containedByVisibleRegion(ITextSelection selection, ISourceViewer viewer) {
+	private boolean containedByVisibleRegion(ITextSelection selection, ITextViewer viewer) {
 		int min= selection.getOffset();
 		int max= min + selection.getLength();
 		IDocument document= viewer.getDocument();
@@ -160,10 +183,11 @@ public class MoveLinesAction extends TextEditorAction {
 	 * Ends the compound change.
 	 */
 	private void endCompoundEdit() {
-		if (!fEditInProgress || fEditor == null)
+		ITextEditor editor= getTextEditor();
+		if (!fEditInProgress || editor == null)
 			return;
 
-		IRewriteTarget target= (IRewriteTarget)fEditor.getAdapter(IRewriteTarget.class);
+		IRewriteTarget target= (IRewriteTarget)editor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
 			target.endCompoundChange();
 		}
@@ -190,7 +214,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * <code>selection</code>, without any terminating line delimiters
 	 * @throws BadLocationException if the selection is out of bounds (when the underlying document has changed during the call)
 	 */
-	private ITextSelection getMovingSelection(IDocument document, ITextSelection selection, ISourceViewer viewer) throws BadLocationException {
+	private ITextSelection getMovingSelection(IDocument document, ITextSelection selection, ITextViewer viewer) throws BadLocationException {
 		int low= document.getLineOffset(selection.getStartLine());
 		int endLine= selection.getEndLine();
 		int high= document.getLineOffset(endLine) + document.getLineLength(endLine);
@@ -250,28 +274,24 @@ public class MoveLinesAction extends TextEditorAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void runWithEvent(Event event) {
-
-		// get involved objects
-		if (fEditor == null)
+		if (fTextViewer == null)
 			return;
 
 		if (!validateEditorInputState())
 			return;
 
-		ISourceViewer viewer= fEditor.getSourceViewer();
-		if (viewer == null)
-			return;
+		// get involved objects
 
-		IDocument document= viewer.getDocument();
+		IDocument document= fTextViewer.getDocument();
 		if (document == null)
 			return;
 
-		StyledText widget= viewer.getTextWidget();
+		StyledText widget= fTextViewer.getTextWidget();
 		if (widget == null)
 			return;
 
 		// get selection
-		Point p= viewer.getSelectedRange();
+		Point p= fTextViewer.getSelectedRange();
 		if (p == null)
 			return;
 
@@ -283,11 +303,11 @@ public class MoveLinesAction extends TextEditorAction {
 
 		try {
 
-			ITextSelection movingArea= getMovingSelection(document, sel, viewer);
+			ITextSelection movingArea= getMovingSelection(document, sel, fTextViewer);
 
 			// if either the skipped line or the moving lines are outside the widget's
 			// visible area, bail out
-			if (!containedByVisibleRegion(movingArea, viewer) || !containedByVisibleRegion(skippedLine, viewer))
+			if (!containedByVisibleRegion(movingArea, fTextViewer) || !containedByVisibleRegion(skippedLine, fTextViewer))
 				return;
 
 			// get the content to be moved around: the moving (selected) area and the skipped line
@@ -344,12 +364,12 @@ public class MoveLinesAction extends TextEditorAction {
 			// move the selection along
 			int selOffset= movingArea.getOffset() + deviation;
 			int selLength= movingArea.getLength() + (fAddDelimiter ? delim.length() : 0);
-			if (! (viewer instanceof ITextViewerExtension5))
-				selLength= Math.min(selLength, viewer.getVisibleRegion().getOffset() + viewer.getVisibleRegion().getLength() - selOffset);
+			if (! (fTextViewer instanceof ITextViewerExtension5))
+				selLength= Math.min(selLength, fTextViewer.getVisibleRegion().getOffset() + fTextViewer.getVisibleRegion().getLength() - selOffset);
 			else {
 				// TODO need to check what is necessary in the projection case
 			}
-			selectAndReveal(viewer, selOffset, selLength);
+			selectAndReveal(fTextViewer, selOffset, selLength);
 		} catch (BadLocationException x) {
 			// won't happen without concurrent modification - bail out
 			return;
@@ -377,10 +397,29 @@ public class MoveLinesAction extends TextEditorAction {
 	 * Displays information in the status line why a line move is not possible
 	 */
 	private void showStatus() {
-		IEditorStatusLine status= (IEditorStatusLine) fEditor.getAdapter(IEditorStatusLine.class);
+		ITextEditor editor= getTextEditor();
+		if (editor == null)
+			return;
+
+		IEditorStatusLine status= (IEditorStatusLine)editor.getAdapter(IEditorStatusLine.class);
 		if (status == null)
 			return;
 		status.setMessage(false, EditorMessages.Editor_MoveLines_IllegalMove_status, null);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
+	 * @since 3.5
+	 */
+	public void setEditor(ITextEditor editor) {
+		ITextEditor currentEditor= getTextEditor();
+		if (currentEditor != editor && currentEditor != null && editor != null) {
+			if (editor instanceof AbstractTextEditor)
+				fTextViewer= ((AbstractTextEditor)editor).getSourceViewer();
+			else
+				fTextViewer= null;
+		}
+		super.setEditor(editor);
 	}
 
 	/*
@@ -390,7 +429,7 @@ public class MoveLinesAction extends TextEditorAction {
 		super.update();
 
 		if (isEnabled())
-			setEnabled(canModifyEditor());
+			setEnabled(canModifyEditor() && fTextViewer != null);
 
 	}
 }
