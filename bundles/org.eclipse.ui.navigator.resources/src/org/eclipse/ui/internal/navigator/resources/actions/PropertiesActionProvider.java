@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,18 +58,26 @@ public class PropertiesActionProvider extends CommonActionProvider {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		menu.appendToGroup(ICommonMenuConstants.GROUP_PROPERTIES,
-				propertiesAction);
+
+		if (propertiesAction.isApplicableForSelection()) {
+			menu.appendToGroup(ICommonMenuConstants.GROUP_PROPERTIES,
+					propertiesAction);
+		}
+
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars
+	 * )
 	 */
-	public void fillActionBars(IActionBars actionBars) { 
+	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 
-        actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(),
-        		propertiesAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(),
+				propertiesAction);
 	}
 
 	/*
@@ -99,7 +107,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 		 */
 		public Object getAdapter(Class adapter) {
-			if (adapter.isInstance(delegate)) {
+			if (adapter.isInstance(delegate) || delegate == null) {
 				return delegate;
 			}
 			return Platform.getAdapterManager().getAdapter(delegate, adapter);
