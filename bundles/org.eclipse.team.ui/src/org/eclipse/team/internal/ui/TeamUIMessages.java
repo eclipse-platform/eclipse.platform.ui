@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Trevor S. Kaufman - <endante@gmail.com> - bug 156152
  *******************************************************************************/
 package org.eclipse.team.internal.ui;
 
@@ -412,6 +413,8 @@ public class TeamUIMessages extends NLS {
 	public static String ConfigureRefreshScheduleDialog_1a;
 	public static String ConfigureRefreshScheduleDialog_2;
 	public static String ConfigureRefreshScheduleDialog_3;
+	public static String ConfigureRefreshScheduleDialog_3a;
+	public static String ConfigureRefreshScheduleDialog_3b;
 	public static String ConfigureRefreshScheduleDialog_4;
 	public static String ConfigureRefreshScheduleDialog_5;
 	public static String ConfigureRefreshScheduleDialog_6;
@@ -427,6 +430,7 @@ public class TeamUIMessages extends NLS {
 	public static String RefreshSchedule_13;
 	public static String RefreshSchedule_14;
 	public static String RefreshSchedule_15;
+	public static String RefreshSchedule_16;
 	public static String ChangesSection_8;
 	public static String ChangesSection_9;
 	public static String ChangesSection_10;
