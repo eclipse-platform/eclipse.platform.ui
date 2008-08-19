@@ -341,6 +341,7 @@ public class TeamUIMessages extends NLS {
 	public static String SynchronizeView_13;
 	public static String SynchronizeView_14;
 	public static String SynchronizeView_16;
+	public static String SynchronizeView_statusLine;
 
 	public static String StatisticsPanel_outgoing;
 	public static String StatisticsPanel_incoming;

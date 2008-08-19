@@ -10,14 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,6 +19,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
@@ -132,6 +126,10 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 				if (configuration.getParticipant().equals(getParticipant())) {
 					updateTitle();
 				}
+			} else if (event.getProperty().equals(ISynchronizePageConfiguration.P_MODE)) {
+				if (configuration.getParticipant().equals(getParticipant())) {
+					updateTitle();
+				}
 			}
 		}
 	}
@@ -176,6 +174,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			// TODO: Get the description from the configuration
 			// TODO: listen to the configuration for description changes
 			setContentDescription(Utils.shortenText(MAX_NAME_LENGTH, description)); 
+			setStatusLineMessage(description, configuration.getMode());
 		}
 	}
 	
@@ -656,5 +655,31 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 */
 	public boolean isSaveOnCloseNeeded() {
 		return true;
+	}
+	
+	private void setStatusLineMessage(String description, int mode) {
+		String syncMode = null;
+		ResourceBundle bundle = Policy.getActionBundle();
+		switch (mode) {
+		case ISynchronizePageConfiguration.INCOMING_MODE:
+			syncMode = Utils.getString("action.directionFilterIncoming.tooltip", bundle); //$NON-NLS-1$
+			break;
+		case ISynchronizePageConfiguration.OUTGOING_MODE:
+			syncMode = Utils.getString("action.directionFilterOutgoing.tooltip", bundle); //$NON-NLS-1$
+			break;
+		case ISynchronizePageConfiguration.BOTH_MODE:
+			syncMode = Utils.getString("action.directionFilterBoth.tooltip", bundle); //$NON-NLS-1$
+			break;
+		case ISynchronizePageConfiguration.CONFLICTING_MODE:
+			syncMode = Utils.getString("action.directionFilterConflicts.tooltip", bundle); //$NON-NLS-1$
+			break;			
+		}
+		
+		IViewSite viewSite = getViewSite();
+		if (viewSite != null && syncMode != null) {
+			viewSite.getActionBars().getStatusLineManager().setMessage(
+					NLS.bind(TeamUIMessages.SynchronizeView_statusLine,
+							new String[] { description, syncMode }));
+		}
 	}
 }
