@@ -164,6 +164,12 @@
             id="org.eclipse.compare.ignoreWhiteSpace"
             name="%Command.ignoreWhiteSpace.name">
       </command>
+      <command
+            categoryId="org.eclipse.compare.ui.category.compare"
+            description="%Command.compareWithOther.description"
+            id="org.eclipse.compare.compareWithOther"
+            name="%Command.compareWithOther.name">
+      </command>
    </extension>
    
    <extension
@@ -203,6 +209,7 @@
          </action>
          <action
                class="org.eclipse.compare.internal.CompareWithOtherResourceAction"
+               definitionId="org.eclipse.compare.compareWithOther"
                enablesFor="+"
                id="compareWithOtherResource"
                label="%CompareWithOtherResource.label"
