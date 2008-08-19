@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 35390 Three-way compare cannot select (mis-selects) )ancestor resource
+ *     Aleksandra Wozniak (aleksandra.k.wozniak@gmail.com) - Bug 239959
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -108,6 +109,17 @@ public final class CompareMessages extends NLS {
 	public static String SelectAncestorDialog_title;
 	public static String SelectAncestorDialog_message;
 	public static String SelectAncestorDialog_option;
+	public static String CompareWithOther_fileLabel;
+	public static String CompareWithOther_ancestor;
+	public static String CompareWithOther_rightPanel;
+	public static String CompareWithOther_leftPanel;
+	public static String CompareWithOther_dialogTitle;
+	public static String CompareWithOther_dialogMessage;
+	public static String CompareWithOther_error_not_comparable;
+	public static String CompareWithOther_error_empty;
+	public static String CompareWithOther_clear;
+	public static String CompareWithOther_warning_two_way;
+	public static String CompareWithOther_info;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CompareMessages.class);

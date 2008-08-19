@@ -201,6 +201,14 @@
                enablesFor="2+"
                id="compareWithEachOther">
          </action>
+         <action
+               class="org.eclipse.compare.internal.CompareWithOtherResourceAction"
+               enablesFor="+"
+               id="compareWithOtherResource"
+               label="%CompareWithOtherResource.label"
+               menubarPath="compareWithMenu/compareWithGroup"
+               tooltip="%CompareWithOtherResourceAction.tooltip">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 35390 Three-way compare cannot select (mis-selects) )ancestor resource
+ *     Aleksandra Wozniak (aleksandra.k.wozniak@gmail.com) - Bug 239959
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -196,12 +197,16 @@ class ResourceCompareInput extends CompareEditorInput {
 			}
 		};
 	}
-
 	// If the compare is three-way, this method asks the user which resource
-	// to use as the ancestor.  Returns false if the user cancels the prompt,
+	// to use as the ancestor. Depending on the value of
+	// showSelectAncestorDialog flag it uses different dialogs to get the
+	// feedback from the user. Returns false if the user cancels the prompt,
 	// true otherwise.
-	boolean setSelection(ISelection s, Shell shell) {
-		
+	boolean setSelection(ISelection s, Shell shell, boolean showSelectAncestorDialog) {
+
+		if (!showSelectAncestorDialog)
+			return showCompareWithOtherResourceDialog(shell, s);
+
 		IResource[] selection= Utilities.getResources(s);
 
 		fThreeWay= selection.length == 3;
@@ -223,12 +228,43 @@ class ResourceCompareInput extends CompareEditorInput {
 			fLeftResource= selection[0];
 			fRightResource= selection[1];
 		}
-
 		fLeft= getStructure(fLeftResource);
 		fRight= getStructure(fRightResource);
 		return true;
 	}
-	
+
+	private boolean showCompareWithOtherResourceDialog(Shell shell, ISelection s) {
+		CompareWithOtherResourceDialog dialog = new CompareWithOtherResourceDialog(shell, s);
+		if (dialog.open() != IDialogConstants.OK_ID)
+			return false;
+		IResource[] selection = dialog.getResult();
+		if (!checkSelection(selection))
+			return false;
+
+		fThreeWay = selection.length == 3;
+		if (fThreeWay) {
+			fAncestorResource = selection[0];
+			fAncestor = getStructure(fAncestorResource);
+			fLeftResource = selection[1];
+			fRightResource = selection[2];
+		} else {
+			fAncestorResource = null;
+			fAncestor = null;
+			fLeftResource = selection[0];
+			fRightResource = selection[1];
+		}
+		fLeft= getStructure(fLeftResource);
+		fRight= getStructure(fRightResource);
+		return true;
+	}
+
+	private boolean checkSelection(IResource[] resources) {
+		for (int i = 0; i < resources.length; i++)
+			if (resources[i] == null)
+				return false;
+		return true;
+	}
+
 	/*
 	 * Returns true if compare can be executed for the given selection.
 	 */
