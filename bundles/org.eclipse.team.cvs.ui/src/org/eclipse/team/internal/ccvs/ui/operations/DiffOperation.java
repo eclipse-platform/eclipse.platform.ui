@@ -417,11 +417,11 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				if (c != '\n') {
 					if (ignoreSingleCR) {
 						sawCRorLF = false;
-						printStream.append((char) c);
+						printStream.print((char) c);
 						continue;
 					}
 				} else { // '\n'
-					printStream.append((char) c);
+					printStream.print((char) c);
 				}
 				break;
 			}
