@@ -306,9 +306,7 @@ body, .page {
  * speak it.
  */
 #navigation-links a .link-label { 
-	position: absolute;
-	left: -999px;
-	width: 990px;
+    display : none;
 }
 
 /*
