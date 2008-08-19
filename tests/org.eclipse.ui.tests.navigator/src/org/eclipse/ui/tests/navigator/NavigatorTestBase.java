@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.navigator.filters.UpdateActiveFiltersOperation;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.NavigatorActionService;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
 public class NavigatorTestBase extends TestCase {
@@ -37,7 +38,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String COMMON_NAVIGATOR_TEST_EXT = "org.eclipse.ui.tests.navigator.testContent"; //$NON-NLS-1$
 
 	protected String _navigatorInstanceId;
-	
+
 	protected Set expectedChildren = new HashSet();
 
 	protected IProject project;
@@ -45,38 +46,58 @@ public class NavigatorTestBase extends TestCase {
 	protected CommonViewer viewer;
 
 	protected CommonNavigator _commonNavigator;
-	
+
 	protected INavigatorContentService contentService;
+	protected NavigatorActionService _actionService;
+
+	protected boolean _initTestData = true;
 
 	protected void setUp() throws Exception {
 
-		if (_navigatorInstanceId == null)
-			throw new RuntimeException("Set the _navigatorInstanceId in the constructor");
+		if (_navigatorInstanceId == null) {
+			throw new RuntimeException(
+					"Set the _navigatorInstanceId in the constructor");
+		}
 
-		TestWorkspace.init();
+		if (_initTestData) {
 
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		project = root.getProject("Test"); //$NON-NLS-1$
+			TestWorkspace.init();
 
-		expectedChildren.add(project.getFolder("src")); //$NON-NLS-1$
-		expectedChildren.add(project.getFolder("bin")); //$NON-NLS-1$
-		expectedChildren.add(project.getFile(".project")); //$NON-NLS-1$
-		expectedChildren.add(project.getFile(".classpath")); //$NON-NLS-1$ 
-		expectedChildren.add(project.getFile("model.properties")); //$NON-NLS-1$
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			project = root.getProject("Test"); //$NON-NLS-1$
+
+			expectedChildren.add(project.getFolder("src")); //$NON-NLS-1$
+			expectedChildren.add(project.getFolder("bin")); //$NON-NLS-1$
+			expectedChildren.add(project.getFile(".project")); //$NON-NLS-1$
+			expectedChildren.add(project.getFile(".classpath")); //$NON-NLS-1$ 
+			expectedChildren.add(project.getFile("model.properties")); //$NON-NLS-1$
+		}
 
 		EditorTestHelper.showView(_navigatorInstanceId, true);
 
-		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = activeWindow.getActivePage();
 
-		_commonNavigator = (CommonNavigator) activePage.findView(_navigatorInstanceId);
+		_commonNavigator = (CommonNavigator) activePage
+				.findView(_navigatorInstanceId);
 		_commonNavigator.setFocus();
 		viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
 
 		contentService = viewer.getNavigatorContentService();
+		_actionService = _commonNavigator.getNavigatorActionService();
 
-		IUndoableOperation updateFilters = new UpdateActiveFiltersOperation(viewer, new String[0], true);
+		IUndoableOperation updateFilters = new UpdateActiveFiltersOperation(
+				viewer, new String[0], true);
 		updateFilters.execute(null, null);
+	}
+
+	protected void tearDown() throws Exception {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
+				.getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			projects[i].delete(true, null);
+		}
 	}
 
 }

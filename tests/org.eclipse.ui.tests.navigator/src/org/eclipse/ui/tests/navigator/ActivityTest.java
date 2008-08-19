@@ -21,15 +21,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-import org.eclipse.ui.navigator.NavigatorActionService;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class ActivityTest extends NavigatorTestBase {
 
 	public ActivityTest() {
-		_navigatorInstanceId = "org.eclipse.ui.navigator.ProjectExplorer";
+		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
 	}
-
-	protected NavigatorActionService _actionService;
 
 	protected static final String ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
 
@@ -62,11 +60,10 @@ public class ActivityTest extends NavigatorTestBase {
 
 		IStructuredSelection sel = new StructuredSelection(project);
 		viewer.setSelection(sel);
-		_actionService = _commonNavigator.getNavigatorActionService();
 
 		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench().getActivitySupport();
 
-		assertFalse(verifyMenu(sel, "CNF Test"));
+		assertFalse(verifyMenu(sel, "Test CNF"));
 
 		Set ids = new HashSet();
 		ids = actSupport.getActivityManager().getEnabledActivityIds();
@@ -81,7 +78,7 @@ public class ActivityTest extends NavigatorTestBase {
 		ids = actSupport.getActivityManager().getEnabledActivityIds();
 		//System.out.println("enabled now: " + ids);
 
-		assertTrue(verifyMenu(sel, "CNF Test"));
+		assertTrue(verifyMenu(sel, "Test CNF"));
 
 	}
 

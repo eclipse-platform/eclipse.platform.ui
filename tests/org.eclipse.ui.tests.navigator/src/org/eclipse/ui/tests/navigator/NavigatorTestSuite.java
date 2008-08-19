@@ -26,11 +26,13 @@ public final class NavigatorTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public NavigatorTestSuite() {
+		addTest(new TestSuite(WorkingSetTest.class));
 		addTest(new TestSuite(ActivityTest.class));
 		addTest(new TestSuite(OpenTest.class));
 		addTest(new TestSuite(INavigatorContentServiceTests.class));
 		addTest(new TestSuite(ProgrammaticOpenTest.class));
 		addTest(new TestSuite(PipelineTest.class));
+		//addTest(new TestSuite(CreateProjectTest.class));
 		
 	}
 
