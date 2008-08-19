@@ -20,8 +20,10 @@ import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.CoreException;
 
 public class NetTest extends TestCase {
-	
+
 	private boolean isSetEnabled;
+	private boolean isProxiesDefault;
+	private boolean isSystemProxiesDefault;
 	private Map dataCache = new HashMap();
 
 	public NetTest() {
@@ -38,15 +40,19 @@ public class NetTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		isSystemProxiesDefault = isSystemProxiesEnabled();
+		setSystemProxiesEnabled(false);
+		isProxiesDefault = isProxiesEnabled();
 		setProxiesEnabled(true);
 		isSetEnabled = true;
 		dataCache.clear();
 		ProxyType.socksSystemPropertySetting = ProxyType.ALWAYS_SET;
 	}
-	
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		setProxiesEnabled(false);
+		setProxiesEnabled(isProxiesDefault);
+		setSystemProxiesEnabled(isSystemProxiesDefault);
 		IProxyData[] data = getProxyManager().getProxyData();
 		for (int i = 0; i < data.length; i++) {
 			IProxyData proxyData = data[i];
@@ -189,12 +195,25 @@ public class NetTest extends TestCase {
 		setPort(type, 1024);
 		setUser(type, "me", "passw0rd");
 	}
-	
+
+	private boolean isProxiesEnabled() {
+		return this.getProxyManager().isProxiesEnabled();
+	}
+
+	private boolean isSystemProxiesEnabled() {
+		return this.getProxyManager().isProxiesEnabled();
+	}
+
 	private void setProxiesEnabled(boolean enabled) {
 		this.getProxyManager().setProxiesEnabled(enabled);
 		assertEquals(enabled, this.getProxyManager().isProxiesEnabled());
 	}
-	
+
+	private void setSystemProxiesEnabled(boolean enabled) {
+		this.getProxyManager().setSystemProxiesEnabled(enabled);
+		assertEquals(enabled, this.getProxyManager().isSystemProxiesEnabled());
+	}
+
 	private void delaySettingData() {
 		isSetEnabled = false;
 	}
