@@ -206,7 +206,12 @@ public class NetTest extends TestCase {
 
 	private void setProxiesEnabled(boolean enabled) {
 		this.getProxyManager().setProxiesEnabled(enabled);
-		assertEquals(enabled, this.getProxyManager().isProxiesEnabled());
+		if (enabled && this.getProxyManager().isSystemProxiesEnabled()
+				&& !this.getProxyManager().hasSystemProxies()) {
+			assertEquals(false, this.getProxyManager().isProxiesEnabled());
+		} else {
+			assertEquals(enabled, this.getProxyManager().isProxiesEnabled());
+		}
 	}
 
 	private void setSystemProxiesEnabled(boolean enabled) {
