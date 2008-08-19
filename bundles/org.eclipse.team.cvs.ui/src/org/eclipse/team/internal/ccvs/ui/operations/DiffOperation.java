@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.*;
@@ -254,7 +255,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			
 			for (Iterator iter = newFiles.iterator(); iter.hasNext();) {
 				ICVSFile cvsFile = (ICVSFile) iter.next();
-				addFileToDiff(getNewFileRoot(cvsFile), cvsFile,stream,format);				
+				addFileToDiff(getNewFileRoot(cvsFile), cvsFile,stream,format);
 			}
 		}
 		
@@ -323,7 +324,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				//ignore
 			}
 		}
-			
+
 		// Ignore empty files
 		if (lines == 0)
 			return;
@@ -368,13 +369,16 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				printStream.println("***************");	//$NON-NLS-1$
 				printStream.println("*** 0 ****");		//$NON-NLS-1$
 			}
-			
+
 			printStream.println(positionInfo);
-			
-			for (int i = 0; i < lines; i++)  {
+
+			for (int i = 0; i < lines - 1; i++) {
 				printStream.print(linePrefix);
 				printStream.println(fileReader.readLine());
 			}
+
+			printStream.print(linePrefix);
+			readLastLine(fileReader, printStream);
 		} catch (IOException e) {
 			throw CVSException.wrapException(file.getIResource(), NLS.bind(CVSMessages.CVSTeamProvider_errorAddingFileToDiff, new String[] { pathString }), e); 
 		} finally  {
@@ -382,6 +386,49 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				fileReader.close();
 			} catch (IOException e1) {
 			}
+		}
+	}
+
+	// based on org.eclipse.compare.internal.core.patch.LineReader.readLine()
+	private void readLastLine(BufferedReader reader, PrintStream printStream)
+			throws IOException {
+		boolean sawCRorLF = false;
+		boolean sawEOF = false;
+		// TODO: hardcoded, set to the same value as initially in LineReader
+		boolean ignoreSingleCR = false;
+		while (!sawEOF) {
+			int c = reader.read();
+			if (c == -1) {
+				sawEOF = true;
+				break;
+			}
+			printStream.print((char) c);
+			if (c == '\n') {
+				sawCRorLF = true;
+				break;
+			}
+			if (c == '\r') {
+				sawCRorLF = true;
+				c = reader.read();
+				if (c == -1) {
+					sawEOF = true;
+					break; // EOF
+				}
+				if (c != '\n') {
+					if (ignoreSingleCR) {
+						sawCRorLF = false;
+						printStream.append((char) c);
+						continue;
+					}
+				} else { // '\n'
+					printStream.append((char) c);
+				}
+				break;
+			}
+		}
+		if (!sawCRorLF) {
+			printStream.println();
+			printStream.print("\\ No newline at end of file"); //$NON-NLS-1$
 		}
 	}
 
