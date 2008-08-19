@@ -261,10 +261,10 @@ public abstract class IconAndMessageDialog extends Dialog {
 	private Image getSWTImage(final int imageID) {
 		Shell shell = getShell();
 		final Display display;
-		if (shell == null) {
+		if (shell == null || shell.isDisposed()) {
 			shell = getParentShell();
 		}
-		if (shell == null) {
+		if (shell == null || shell.isDisposed()) {
 			display = Display.getCurrent();
 		} else {
 			display = shell.getDisplay();
