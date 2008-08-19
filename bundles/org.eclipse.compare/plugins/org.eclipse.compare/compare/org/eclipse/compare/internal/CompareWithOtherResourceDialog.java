@@ -71,10 +71,7 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 		}
 
 		public void dragSetData(DragSourceEvent event) {
-			if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-				event.data = section.fileText.getText();
-			} else
-				event.data = section.fileText.getText();
+			event.data = section.fileText.getText();
 		}
 
 		public void dragStart(DragSourceEvent event) {
@@ -140,8 +137,9 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 
 			if (textTransfer.isSupportedType(event.currentDataType)) {
 				String txt = (String) event.data;
-				section.setResource(ResourcesPlugin.getWorkspace().getRoot()
-						.findMember(txt));
+				IResource r = ResourcesPlugin.getWorkspace().getRoot().findMember(txt);
+				if (r != null)
+					section.setResource(r);
 			} else if (resourceTransfer.isSupportedType(event.currentDataType)) {
 				IResource[] files = (IResource[]) event.data;
 				section.setResource(files[0]);
