@@ -314,7 +314,13 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 		}
 	}
 
-	private CommonActionProvider getActionProviderInstance(
+	/**
+	 * 
+	 * @param aProviderDescriptor
+	 * @return a CommonActionProvider
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public CommonActionProvider getActionProviderInstance(
 			CommonActionProviderDescriptor aProviderDescriptor) {
 		CommonActionProvider provider = null;
 		try {

@@ -20,6 +20,12 @@
             class="org.eclipse.ui.navigator.CommonNavigator"
             id="org.eclipse.ui.tests.navigator.PipelineTestView"
             name="%test.navigator.pipelineViewName"/>            
+
+      <view
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            id="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView"
+            name="Test Hide Available Extensions View"/>            
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
@@ -73,6 +79,18 @@
 	            <instanceof value="org.eclipse.core.resources.IFile"/>
 	         </enablement>
 	      </actionProvider>
+      <commonWizard
+            associatedExtensionId="org.eclipse.NotFound"
+            menuGroupId="org.eclipse.ui.tests.navigator"
+            type="new"
+            wizardId="org.eclipse.ui.tests.navigator.SampleNewWizard2">  
+         <enablement>
+            <or>
+				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+				<instanceof value="org.eclipse.core.resources.IResource" />
+			</or>         
+         </enablement>            
+      </commonWizard>
       </navigatorContent>
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
@@ -191,27 +209,16 @@
          </possibleChildren> 
 	  </navigatorContent>      
    </extension>
+
    <extension
          point="org.eclipse.ui.navigator.viewer">
       <viewer
             popupMenuId="org.eclipse.ui.tests.navigator.TestView#PopupMenu"
             viewerId="org.eclipse.ui.tests.navigator.TestView">
          <options>
-            <!-- 
-            <property
-                  name="org.eclipse.ui.navigator.hideAvailableExtensionsTab"
-                  value="true"/>
-            
-            <property
-                  name="org.eclipse.ui.navigator.hideAvailableCustomizationsDialog"
-                  value="true"/>
-                  
-             --> 
-             <!--   -->
             <property
                   name="org.eclipse.ui.navigator.hideLinkWithEditorAction"
                   value="true"/> 
-             <!--  -->
             <property
                   name="org.eclipse.ui.navigator.hideCollapseAllAction"
                   value="true"/>  
@@ -250,8 +257,33 @@
       <dragAssistant
             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
             viewerId="org.eclipse.ui.tests.navigator.TestView"/>
+      <viewer
+            viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
+         <options>
+            <property
+                  name="org.eclipse.ui.navigator.hideAvailableExtensionsTab"
+                  value="true"/>
+         </options>
+          <popupMenu
+                allowsPlatformContributions="true"
+                id="org.eclipse.ui.navigator.ProjectExplorer#PopupMenu"/>  
+      </viewer>
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
+          <includes>
+       	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
+	          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
+           <contentExtension pattern="org.eclipse.ui.navigator.resources.linkHelper"/>
+           <contentExtension pattern="org.eclipse.ui.navigator.resources.workingSets"/>
+          </includes>
+      </viewerContentBinding>
+      <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
+         <includes>
+             <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
+         </includes>
+      </viewerActionBinding>
+      <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>      
+      <viewer viewerId="org.eclipse.ui.tests.navigator.PipelineTestView"/>      
    </extension>
- 
  
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -262,13 +294,6 @@
          <adapter type="org.eclipse.core.resources.IFile"/>
       </factory>
    </extension>
-   <extension
-         point="org.eclipse.ui.navigator.viewer">
-      <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>      
-      <viewer viewerId="org.eclipse.ui.tests.navigator.PipelineTestView"/>      
-      
-   </extension>
-   
    
    <!-- Verify decorator extension: Adds ">>" to Test Items that end in "3" --> 
    <extension
@@ -309,7 +334,15 @@
       <wizard
             class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
             id="org.eclipse.ui.tests.navigator.SampleNewWizard"
-            name="CNF Test New Wizard (Does Nothing)"/>
+            name="Test CNF New Wizard1 (Does Nothing)"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
+            id="org.eclipse.ui.tests.navigator.SampleNewWizard2"
+            name="Test CNF New Wizard2 (Does Nothing)"/>
    </extension>
    
    <extension
@@ -317,7 +350,7 @@
       <wizard
             class="org.eclipse.ui.tests.navigator.wizards.ImportWizard1"
             id="org.eclipse.ui.tests.navigator.SampleImportWizard"
-            name="CNF Test Import Wizard  (Does Nothing)"/>
+            name="Test CNF Import Wizard  (Does Nothing)"/>
    </extension>
   
    <extension
@@ -325,7 +358,7 @@
       <wizard
             class="org.eclipse.ui.tests.navigator.wizards.ExportWizard1"
             id="org.eclipse.ui.tests.navigator.SampleExportWizard"
-            name="CNF Test Export Wizard  (Does Nothing)"/>
+            name="Test CNF Export Wizard  (Does Nothing)"/>
    </extension>
 	<extension
 	      point="org.eclipse.ui.navigator.navigatorContent"> 
@@ -367,9 +400,10 @@
       </commonWizard>
 	  <!-- make sure missing associatedExtensionId is handled correctly -->
       <commonWizard
+            associatedExtensionId="org.eclipse.NotFound"
             menuGroupId="org.eclipse.ui.tests.navigator"
             type="new"
-            wizardId="org.eclipse.ui.tests.navigator.SampleNewWizard">  
+            wizardId="org.eclipse.ui.tests.navigator.SampleNewWizard2">  
          <enablement>
             <or>
 				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>

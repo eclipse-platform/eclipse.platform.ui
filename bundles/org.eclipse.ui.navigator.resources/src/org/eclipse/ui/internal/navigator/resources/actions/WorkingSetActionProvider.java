@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     anton.leherbauer@windriver.com - bug 212389 [CommonNavigator] working set issues: 
+ *         missing project, window working set inconsistency
  *******************************************************************************/
 
 package org.eclipse.ui.internal.navigator.resources.actions;
@@ -17,9 +19,11 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.CommonActionProvider;
@@ -30,13 +34,13 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private static final String TAG_CURRENT_WORKING_SET_NAME = "currentWorkingSetName"; //$NON-NLS-1$
 
-	private boolean contributedToViewMenu = false; 
+	private boolean contributedToViewMenu = false;
 
 	private StructuredViewer viewer;
 
@@ -49,9 +53,18 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private IExtensionStateModel extensionStateModel;
 
+	private final ResourceWorkingSetFilter workingSetFilter = new ResourceWorkingSetFilter();
+	private boolean filterAdded;
+
+	private boolean emptyWorkingSet;
+	private IWorkingSet workingSet;
+
+	private IPropertyChangeListener topLevelModeListener;
+
+
 	/**
 	 * Provides a smart listener to monitor changes to the Working Set Manager.
-	 * 
+	 *
 	 */
 	public class WorkingSetManagerListener implements IPropertyChangeListener {
 
@@ -59,46 +72,36 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
+			String property = event.getProperty();
+			Object newValue = event.getNewValue();
+			Object oldValue = event.getOldValue();
 
-			Object input = viewer.getInput();
-			if (input instanceof IWorkingSet) {
-				IWorkingSet workingSet = (IWorkingSet) input;
-
-				String property = event.getProperty();
-				Object newValue = event.getNewValue();
-				Object oldValue = event.getOldValue();
-
-				if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && oldValue == workingSet) {
-					// setWorkingSet(null);
-					if (viewer != null) {
-						viewer.setInput(originalViewerInput);
+			if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && oldValue == workingSet) {
+				setWorkingSet(null);
+			} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && newValue == workingSet) {
+			} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property) && newValue == workingSet) {
+				if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
+					// act as if the working set has been made null
+					if (!emptyWorkingSet) {
+						emptyWorkingSet = true;
+						workingSetFilter.setWorkingSet(null);
 					}
-				} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && newValue == workingSet) {
-				} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property) && newValue == workingSet) {
-					// if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
-					// // act as if the working set has been made null
-					// if (!emptyWorkingSet) {
-					// emptyWorkingSet = true;
-					// workingSetFilter.setWorkingSet(null);
-					// }
-					// } else {
-					// // we've gone from empty to non-empty on our set.
-					// // Restore it.
-					// if (emptyWorkingSet) {
-					// emptyWorkingSet = false;
-					// workingSetFilter.setWorkingSet(workingSet);
-					// }
-					// }
-					if (viewer != null) {
-						viewer.refresh();
+				} else {
+					// we've gone from empty to non-empty on our set.
+					// Restore it.
+					if (emptyWorkingSet) {
+						emptyWorkingSet = false;
+						workingSetFilter.setWorkingSet(workingSet);
 					}
 				}
+				if (viewer != null) {
+					viewer.refresh();
+				}
 			}
-
 		}
 
 		/**
@@ -125,27 +128,18 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	private IPropertyChangeListener filterChangeListener = new IPropertyChangeListener() {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
-			IWorkingSet oldWorkingSet = (IWorkingSet) event.getOldValue();
 			IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
-
 
 			if (newWorkingSet != null && !contentService.isActive(WorkingSetsContentProvider.EXTENSION_ID)) {
 				contentService.getActivationService().activateExtensions(new String[]{WorkingSetsContentProvider.EXTENSION_ID}, false);
 				contentService.getActivationService().persistExtensionActivations();
 			}
 
-			if (viewer != null) {
-				if (newWorkingSet == null) {
-					viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
-				} else if(oldWorkingSet != newWorkingSet) {
-					viewer.setInput(newWorkingSet);
-				}
-			}
-
+			setWorkingSet(newWorkingSet);
 		}
 	};
 
@@ -153,7 +147,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private IExtensionActivationListener activationListener = new IExtensionActivationListener() {
 
-		private IWorkingSet workingSet;
+		private IWorkingSet savedWorkingSet;
 
 		public void onExtensionActivation(String aViewerId, String[] theNavigatorExtensionIds, boolean isActive) {
 
@@ -162,28 +156,21 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 					if (isActive) {
 						extensionStateModel = contentService.findStateModel(WorkingSetsContentProvider.EXTENSION_ID);
 						workingSetRootModeActionGroup.setStateModel(extensionStateModel);
+						extensionStateModel.addPropertyChangeListener(topLevelModeListener);
 
-						if (workingSet != null) {
-							viewer.setInput(workingSet);  
-							workingSetActionGroup.setWorkingSet(workingSet); 
-							workingSetRootModeActionGroup.setShowTopLevelWorkingSets(true);
+						if (savedWorkingSet != null) {
+							setWorkingSet(savedWorkingSet);
+							workingSetActionGroup.setWorkingSet(savedWorkingSet);
 						}
-						managerChangeListener.listen();					
-
+						managerChangeListener.listen();
 
 					} else {
-						Object input = viewer.getInput();
-						if (input instanceof IWorkingSet) {
-							workingSet = (IWorkingSet) input;
-							if (viewer != null && input != originalViewerInput) {
-								viewer.setInput(originalViewerInput);
-							}
-						} else {
-							workingSet = null;
-						}
+						savedWorkingSet= workingSet;
+						setWorkingSet(null);
 						managerChangeListener.ignore();
 						workingSetActionGroup.setWorkingSet(null);
 						workingSetRootModeActionGroup.setShowTopLevelWorkingSets(false);
+						extensionStateModel.removePropertyChangeListener(topLevelModeListener);
 
 					}
 				}
@@ -192,11 +179,10 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	};
 
-	 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
 	public void init(ICommonActionExtensionSite aSite) {
@@ -206,74 +192,130 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		extensionStateModel = contentService.findStateModel(WorkingSetsContentProvider.EXTENSION_ID);
 
 		workingSetActionGroup = new WorkingSetFilterActionGroup(aSite.getViewSite().getShell(), filterChangeListener);
+		workingSetRootModeActionGroup = new WorkingSetRootModeActionGroup(viewer, extensionStateModel);
 
-		if (extensionStateModel != null) {
-			workingSetRootModeActionGroup = new WorkingSetRootModeActionGroup(viewer, extensionStateModel);
-		}
-
+		topLevelModeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				setWorkingSet(workingSet);
+			}};
 
 		if (contentService.isActive(WorkingSetsContentProvider.EXTENSION_ID)) {
 			managerChangeListener.listen();
+			extensionStateModel.addPropertyChangeListener(topLevelModeListener);
 		}
 
 		contentService.getActivationService().addExtensionActivationListener(activationListener);
+
 	}
-	
+
+    /**
+     * Restores the working set filter from the persistence store.
+     */
+    protected void initWorkingSetFilter(String workingSetName) {
+        IWorkingSet workingSet = null;
+
+        if (workingSetName != null && workingSetName.length() > 0) {
+			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+			workingSet = workingSetManager.getWorkingSet(workingSetName);
+		} else if (PlatformUI.getPreferenceStore().getBoolean(
+						IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT)) {
+			// use the window set by default if the global preference is set
+			workingSet = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getAggregateWorkingSet();
+		}
+
+		if (workingSet != null) {
+			workingSetFilter.setWorkingSet(workingSet);
+			internalSetWorkingSet(workingSet);
+			workingSetActionGroup.setWorkingSet(workingSet);
+		}
+    }
+
+	/**
+	 * Set current active working set.
+	 *
+	 * @param workingSet  working set to be activated, may be <code>null</code>
+	 */
+	protected void setWorkingSet(IWorkingSet workingSet) {
+        internalSetWorkingSet(workingSet);
+
+        workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
+
+		if (viewer != null) {
+			if (workingSet == null || emptyWorkingSet || !extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS)) {
+				if (viewer.getInput() != originalViewerInput) {
+					viewer.setInput(originalViewerInput);
+				}
+				if (!filterAdded) {
+					viewer.addFilter(workingSetFilter);
+					filterAdded = true;
+				} else {
+					viewer.refresh();
+				}
+			} else {
+				viewer.removeFilter(workingSetFilter);
+				filterAdded = false;
+				if (!workingSet.isAggregateWorkingSet()) {
+					IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+					viewer.setInput(workingSetManager.createAggregateWorkingSet("", "", new IWorkingSet[] { workingSet })); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					viewer.setInput(workingSet);
+				}
+			}
+		}
+	}
+
+	private void internalSetWorkingSet(IWorkingSet workingSet) {
+		this.workingSet = workingSet;
+		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet()
+				&& workingSet.isEmpty();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#restoreState(org.eclipse.ui.IMemento)
 	 */
 	public void restoreState(IMemento aMemento) {
 		super.restoreState(aMemento);
-		
+
 		boolean showWorkingSets = true;
 		if(aMemento != null) {
-			Integer showWorkingSetsInt = aMemento.getInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS); 
+			Integer showWorkingSetsInt = aMemento.getInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS);
 			showWorkingSets = showWorkingSetsInt == null || showWorkingSetsInt.intValue() == 1;
 			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets);
 			workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
 
-			if(viewer != null) {
-				String lastWorkingSetName = aMemento.getString(TAG_CURRENT_WORKING_SET_NAME);			
-				IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();			
-				IWorkingSet lastWorkingSet = workingSetManager.getWorkingSet(lastWorkingSetName);			 
-				viewer.setInput(lastWorkingSet);
-				workingSetActionGroup.setWorkingSet(lastWorkingSet);
-			} 
+			String lastWorkingSetName = aMemento.getString(TAG_CURRENT_WORKING_SET_NAME);
+			initWorkingSetFilter(lastWorkingSetName);
 		} else {
 			showWorkingSets = false;
-			
+
 			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets);
-			workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);			 
+			workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento aMemento) {
 		super.saveState(aMemento);
-		  	
+
 		if(aMemento != null) {
-			int showWorkingSets = extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS) ? 1 : 0;		
-			aMemento.putInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets); 
-			
-			if(viewer != null) {
-				Object input = viewer.getInput();
-				if(input instanceof IWorkingSet) {
-					IWorkingSet workingSet = (IWorkingSet) input;
-					aMemento.putString(TAG_CURRENT_WORKING_SET_NAME, workingSet.getName());
-				}
+			int showWorkingSets = extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS) ? 1 : 0;
+			aMemento.putInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets);
+
+			if (workingSet != null) {
+				aMemento.putString(TAG_CURRENT_WORKING_SET_NAME, workingSet.getName());
 			}
 		}
-		
+
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
-	public void fillActionBars(IActionBars actionBars) { 
+	public void fillActionBars(IActionBars actionBars) {
 		if (!contributedToViewMenu) {
 			try {
 				super.fillActionBars(actionBars);
@@ -284,12 +326,12 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 			} finally {
 				contributedToViewMenu = true;
 			}
-		} 
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
 	public void dispose() {
@@ -300,7 +342,19 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		}
 
 		managerChangeListener.ignore();
+		extensionStateModel.removePropertyChangeListener(topLevelModeListener);
 
 		contentService.getActivationService().removeExtensionActivationListener(activationListener);
 	}
+
+	/**
+	 * This is used only for the tests.
+	 * 
+	 * @return a PropertyChangeListener
+	 */
+	public IPropertyChangeListener getFilterChangeListener() {
+		return filterChangeListener;
+	}
+
+	
 }
