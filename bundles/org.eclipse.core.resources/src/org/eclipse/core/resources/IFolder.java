@@ -103,6 +103,12 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * with a value of <code>true</code> immediately after creating the resource.
 	 * </p>
 	 * <p>
+	 * The {@link IResource#HIDDEN} update flag indicates that this resource
+	 * should immediately be set as a hidden resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setHidden(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
 	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
@@ -184,8 +190,13 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * synchronized in the foreground before this method returns.
 	 * </p>
 	 * <p>
-	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
-	 * {@link IResource#REPLACE} or {@link IResource#BACKGROUND_REFRESH} are ignored.
+	 * The {@link IResource#HIDDEN} update flag indicates that this resource
+	 * should immediately be set as a hidden resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setHidden(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
@@ -264,8 +275,13 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * synchronized in the foreground before this method returns.
 	 * </p>
 	 * <p>
-	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
-	 * {@link IResource#REPLACE} or {@link IResource#BACKGROUND_REFRESH} are ignored.
+	 * The {@link IResource#HIDDEN} update flag indicates that this resource
+	 * should immediately be set as a hidden resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setHidden(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported

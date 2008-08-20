@@ -731,6 +731,30 @@ public class LinkedResourceTest extends ResourceTest {
 			fail("1.99", e);
 		}
 	}
+	
+	/**
+	 * Tests whether {@link IFile#createLink} and {@link IFolder#createLink} 
+	 * handle {@link IResource#HIDDEN} flag properly.
+	 */
+	public void testCreateHiddenLinkedResources() {
+		IFolder folder = existingProject.getFolder("folder");
+		IFile file = existingProject.getFile("file.txt");
+
+		try {
+			folder.createLink(localFolder, IResource.HIDDEN, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		try {
+			file.createLink(localFile, IResource.HIDDEN, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		assertTrue("3.0", folder.isHidden());
+		assertTrue("4.0", file.isHidden());
+	}
 
 	public void testDeepMoveProjectWithLinks() {
 		IPath fileLocation = getRandomLocation();

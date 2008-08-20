@@ -599,6 +599,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 						workspace.deleteResource(existing);
 				}
 				ResourceInfo info = workspace.createResource(this, false);
+				if ((updateFlags & IResource.HIDDEN) != 0)
+					info.set(M_HIDDEN);
 				info.set(M_LINK);
 				localLocation = FileUtil.canonicalURI(localLocation);
 				getLocalManager().link(this, localLocation, fileInfo);

@@ -751,6 +751,42 @@ public class HiddenResourceTest extends ResourceTest {
 		}
 	}
 
+	/**
+	 * Tests whether {@link IFile#create(java.io.InputStream, int, IProgressMonitor)},
+	 * {@link IFolder#create(int, boolean, IProgressMonitor)} 
+	 * and {@link IProject#create(IProjectDescription, int, IProgressMonitor) 
+	 * handles {@link IResource#HIDDEN} flag properly.
+	 */
+	public void testCreateHiddenResources() {
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		IFolder folder = project.getFolder("folder");
+		IFile file = project.getFile("file.txt");
+
+		ensureExistsInWorkspace(project, true);
+
+		try {
+			folder.create(IResource.HIDDEN, true, getMonitor());
+			file.create(getRandomContents(), IResource.HIDDEN, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		assertHidden("2.0", project, false, IResource.DEPTH_ZERO);
+		assertHidden("3.0", folder, true, IResource.DEPTH_ZERO);
+		assertHidden("4.0", file, true, IResource.DEPTH_ZERO);
+
+		IProject project2 = getWorkspace().getRoot().getProject(getUniqueString());
+
+		try {
+			project2.create(null, IResource.HIDDEN, getMonitor());
+			project2.open(getMonitor());
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+
+		assertHidden("6.0", project2, true, IResource.DEPTH_ZERO);
+	}
+	
 	protected void assertHidden(final String message, IResource root, final boolean value, int depth) {
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) throws CoreException {

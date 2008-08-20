@@ -285,6 +285,12 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * with a value of <code>true</code> immediately after creating the resource.
 	 * </p>
 	 * <p>
+	 * The {@link IResource#HIDDEN} update flag indicates that this resource
+	 * should immediately be set as a hidden resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setHidden(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
 	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
@@ -353,8 +359,13 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * fail if an existing resource exists of the same name.
 	 * </p>
 	 * <p>
-	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
-	 * {@link IResource#REPLACE} are ignored.
+	 * The {@link IResource#HIDDEN} update flag indicates that this resource
+	 * should immediately be set as a hidden resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setHidden(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
 	 * This method synchronizes this resource with the local file system at the given
@@ -429,8 +440,13 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * fail if an existing resource exists of the same name.
 	 * </p>
 	 * <p>
-	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
-	 * {@link IResource#REPLACE} are ignored.
+	 * The {@link IResource#HIDDEN} update flag indicates that this resource
+	 * should immediately be set as a hidden resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setHidden(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
 	 * This method synchronizes this resource with the file system at the given
