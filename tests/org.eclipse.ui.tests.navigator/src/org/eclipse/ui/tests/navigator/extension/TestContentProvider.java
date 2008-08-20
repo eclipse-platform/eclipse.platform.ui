@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.navigator.extension;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -99,7 +100,9 @@ public class TestContentProvider implements ITreeContentProvider,
 		Properties model = new Properties();
 		if (modelFile.exists()) {
 			try {
-				model.load(modelFile.getContents());
+				InputStream is = modelFile.getContents();
+				model.load(is);
+				is.close();
 				TestExtensionTreeData root = new TestExtensionTreeData(null,
 						MODEL_ROOT, model, modelFile);
 				rootElements.put(modelFile, root);
