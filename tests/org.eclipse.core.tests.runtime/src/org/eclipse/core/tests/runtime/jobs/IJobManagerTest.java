@@ -66,7 +66,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public static Test suite() {
 		return new TestSuite(IJobManagerTest.class);
 		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IJobManagerTest("testJobFamilyCancel"));
+		//		suite.addTest(new IJobManagerTest("testTransferJobToJob"));
 		//		return suite;
 	}
 
@@ -1524,6 +1524,47 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	/**
+	 * Tests transferring a scheduling rule from one job to another
+	 */
+	public void testTransferJobToJob() {
+		final PathRule ruleToTransfer = new PathRule("testTransferJobToJob");
+		final TestBarrier barrier = new TestBarrier();
+		final Thread[] sourceThread = new Thread[1];
+		final Job destination = new Job("testTransferJobToJob.destination") {
+			protected IStatus run(IProgressMonitor monitor) {
+				barrier.setStatus(TestBarrier.STATUS_RUNNING);
+				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+				return Status.OK_STATUS;
+			}
+		};
+		final Job source = new Job("testTransferJobToJob.source") {
+			protected IStatus run(IProgressMonitor monitor) {
+				sourceThread[0] = Thread.currentThread();
+				//schedule the destination job and wait until it is running
+				destination.schedule();
+				barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+				IJobManagerTest.this.sleep(100);
+
+				//transferring the rule will fail because it must have been acquired by beginRule
+				manager.transferRule(ruleToTransfer, destination.getThread());
+				return Status.OK_STATUS;
+			}
+		};
+		source.setRule(ruleToTransfer);
+		source.schedule();
+		waitForCompletion(source);
+		//source job should have failed due to illegal use of transferRule
+		assertTrue("1.0", !source.getResult().isOK());
+		assertTrue("1.1", source.getResult().getException() instanceof RuntimeException);
+
+		//let the destination finish
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+		waitForCompletion(destination);
+		if (!destination.getResult().isOK())
+			fail("1.2", destination.getResult().getException());
+	}
+
+	/**
 	 * Tests transferring a scheduling rule to the same thread
 	 */
 	public void testTransferSameThread() {
@@ -1588,7 +1629,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
-				
+
 				//sleep a little to ensure the test thread is waiting
 				IJobManagerTest.this.sleep(100);
 				//at this point we should own the rule so we can transfer it back
@@ -1611,7 +1652,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//kick the job to allow it to transfer the rule back
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
-		
+
 		//try to begin the rule again, which will block until the rule is transferred back
 		manager.beginRule(rule, null);
 		manager.endRule(rule);

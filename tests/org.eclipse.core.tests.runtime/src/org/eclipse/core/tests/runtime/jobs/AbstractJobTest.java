@@ -33,7 +33,7 @@ public class AbstractJobTest extends TestCase {
 	 * @param message
 	 * @param e
 	 */
-	public void fail(String message, Exception e) {
+	public void fail(String message, Throwable e) {
 		// If the exception is a CoreException with a multistatus
 		// then print out the multistatus so we can see all the info.
 		if (e instanceof CoreException) {
