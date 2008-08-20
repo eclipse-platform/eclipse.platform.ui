@@ -23,6 +23,7 @@ import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 
 
@@ -79,7 +80,6 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  * 
  * @since 3.4
  * @noinstantiate This class is not intended to be instantiated by clients.
- * @noextend This class is not intended to be subclassed by clients.
  */
 public final class TemplatesView extends PageBookView {
 
