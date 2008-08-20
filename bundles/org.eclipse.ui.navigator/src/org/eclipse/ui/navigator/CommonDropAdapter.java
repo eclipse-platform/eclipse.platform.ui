@@ -233,7 +233,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		}
 
 
-		setScrollExpandEnabled(result);
+		setScrollExpandEnabled(true);
 		return result;
 
 	}
