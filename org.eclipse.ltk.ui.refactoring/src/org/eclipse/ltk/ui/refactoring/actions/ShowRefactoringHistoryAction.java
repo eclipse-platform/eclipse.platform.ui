@@ -12,17 +12,10 @@ package org.eclipse.ltk.ui.refactoring.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
-
-import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-import org.eclipse.ltk.internal.ui.refactoring.scripting.ShowRefactoringHistoryWizard;
-
-import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -35,6 +28,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.scripting.ShowRefactoringHistoryWizard;
+
 /**
  * Action to show the global refactoring history.
  * 
@@ -43,8 +42,6 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  * 
  * @since 3.3
- * 
- * @noextend This class is not intended to be subclassed by clients.
  */
 public final class ShowRefactoringHistoryAction implements IWorkbenchWindowActionDelegate {
 

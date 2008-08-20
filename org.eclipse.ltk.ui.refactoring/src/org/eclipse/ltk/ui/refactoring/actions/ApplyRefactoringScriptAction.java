@@ -12,9 +12,6 @@ package org.eclipse.ltk.ui.refactoring.actions;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.scripting.ApplyRefactoringScriptWizard;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,6 +22,9 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.scripting.ApplyRefactoringScriptWizard;
+
 /**
  * Action to apply a refactoring script to the workspace.
  * 
@@ -33,8 +33,6 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  * 
  * @since 3.3
- * 
- * @noextend This class is not intended to be subclassed by clients.
  */
 public final class ApplyRefactoringScriptAction implements IWorkbenchWindowActionDelegate {
 
