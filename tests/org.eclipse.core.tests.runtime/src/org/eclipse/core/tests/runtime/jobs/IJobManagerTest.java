@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1572,6 +1572,173 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 		if (ender.error != null)
 			fail("1.0", ender.error);
+	}
+
+	/**
+	 * Tests transferring a scheduling rule to a job and back again.
+	 */
+	public void testTransferToJob() {
+		final PathRule rule = new PathRule("testTransferToJob");
+		final TestBarrier barrier = new TestBarrier();
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
+		final Exception[] failure = new Exception[1];
+		final Thread testThread = Thread.currentThread();
+		//create a job that the rule will be transferred to
+		Job job = new Job("testTransferSimple") {
+			protected IStatus run(IProgressMonitor monitor) {
+				barrier.setStatus(TestBarrier.STATUS_RUNNING);
+				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+				
+				//sleep a little to ensure the test thread is waiting
+				IJobManagerTest.this.sleep(100);
+				//at this point we should own the rule so we can transfer it back
+				try {
+					manager.transferRule(rule, testThread);
+				} catch (RuntimeException e) {
+					//should not fail
+					failure[0] = e;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+		//wait until the job starts
+		barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+
+		//now begin and transfer the rule
+		manager.beginRule(rule, null);
+		manager.transferRule(rule, job.getThread());
+
+		//kick the job to allow it to transfer the rule back
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+		
+		//try to begin the rule again, which will block until the rule is transferred back
+		manager.beginRule(rule, null);
+		manager.endRule(rule);
+
+		//ensure the job didn't fail, and finally end the rule to unwind the initial beginRule
+		if (failure[0] != null)
+			fail("1.0", failure[0]);
+		try {
+			manager.endRule(rule);
+		} catch (Exception e) {
+			//we should own the rule so this shouldn't fail
+			fail("2.00", e);
+		}
+	}
+
+	/**
+	 * Tests transferring a scheduling rule to a job that is waiting for a child of
+	 * the transferred rule.
+	 */
+	public void testTransferToJobWaitingOnChildRule() {
+		final PathRule rule = new PathRule("testTransferToJobWaitingOnChildRule");
+		final TestBarrier barrier = new TestBarrier();
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
+		final Exception[] failure = new Exception[1];
+		final Thread testThread = Thread.currentThread();
+		//create a job that the rule will be transferred to
+		Job job = new Job("testTransferToJobWaitingOnChildRule") {
+			protected IStatus run(IProgressMonitor monitor) {
+				barrier.setStatus(TestBarrier.STATUS_RUNNING);
+				//this will block until the rule is transferred
+				PathRule child = new PathRule(rule.getFullPath().append("child"));
+				try {
+					manager.beginRule(child, null);
+				} finally {
+					manager.endRule(child);
+				}
+				//at this point we should own the rule so we can transfer it back
+				try {
+					manager.transferRule(rule, testThread);
+				} catch (RuntimeException e) {
+					//should not fail
+					failure[0] = e;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		manager.beginRule(rule, null);
+
+		job.schedule();
+		//wait until the job starts
+		barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+		//wait a bit longer to ensure the job is blocked
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			//ignore
+		}
+
+		//now transfer the rule, allowing the job to complete
+		manager.transferRule(rule, job.getThread());
+		waitForCompletion(job);
+
+		//ensure the job didn't fail, and finally end the rule to assert we own it
+		if (failure[0] != null)
+			fail("1.0", failure[0]);
+		try {
+			manager.endRule(rule);
+		} catch (Exception e) {
+			//we should own the rule so this shouldn't fail
+			fail("2.00", e);
+		}
+	}
+
+	/**
+	 * Tests transferring a scheduling rule to a job that is waiting for that rule.
+	 */
+	public void testTransferToWaitingJob() {
+		final PathRule rule = new PathRule("testTransferToWaitingJob");
+		final TestBarrier barrier = new TestBarrier();
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
+		final Exception[] failure = new Exception[1];
+		final Thread testThread = Thread.currentThread();
+		//create a job that the rule will be transferred to
+		Job job = new Job("testTransferToWaitingJob") {
+			protected IStatus run(IProgressMonitor monitor) {
+				barrier.setStatus(TestBarrier.STATUS_RUNNING);
+				//this will block until the rule is transferred
+				try {
+					manager.beginRule(rule, null);
+				} finally {
+					manager.endRule(rule);
+				}
+				//at this point we should own the rule so we can transfer it back
+				try {
+					manager.transferRule(rule, testThread);
+				} catch (RuntimeException e) {
+					//should not fail
+					failure[0] = e;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		manager.beginRule(rule, null);
+
+		job.schedule();
+		//wait until the job starts
+		barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+		//wait a bit longer to ensure the job is blocked
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			//ignore
+		}
+
+		//now transfer the rule, allowing the job to complete
+		manager.transferRule(rule, job.getThread());
+		waitForCompletion(job);
+
+		//ensure the job didn't fail, and finally end the rule to assert we own it
+		if (failure[0] != null)
+			fail("1.0", failure[0]);
+		try {
+			manager.endRule(rule);
+		} catch (Exception e) {
+			//we should own the rule so this shouldn't fail
+			fail("2.00", e);
+		}
 	}
 
 	/**
