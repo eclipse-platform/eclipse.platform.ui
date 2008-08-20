@@ -245,11 +245,11 @@ class ImplicitJobs {
 			return;
 		//ensure destination thread doesn't already have a rule
 		ThreadJob job = (ThreadJob) threadJobs.get(destinationThread);
-		Assert.isLegal(job == null);
+		Assert.isLegal(job == null, "Transfer rule to job that already owns a rule"); //$NON-NLS-1$
 		//ensure calling thread owns the job being transferred
 		job = (ThreadJob) threadJobs.get(currentThread);
-		Assert.isNotNull(job);
-		Assert.isLegal(job.getRule() == rule);
+		Assert.isNotNull(job, "transferRule without beginRule"); //$NON-NLS-1$
+		Assert.isLegal(job.getRule() == rule, "transferred rule " + rule + " does not match beginRule: " + job.getRule()); //$NON-NLS-1$ //$NON-NLS-2$
 		//transfer the thread job without ending it
 		job.setThread(destinationThread);
 		threadJobs.remove(currentThread);
