@@ -444,6 +444,7 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 					&& ancestorPanel.fileText.getText() != "") { //$NON-NLS-1$
 				setMessage(CompareMessages.CompareWithOther_warning_two_way,
 						IMessageProvider.WARNING);
+				okButton.setEnabled(true);
 			} else if (!isComparePossible()) {
 				setMessage(
 						CompareMessages.CompareWithOther_error_not_comparable,
