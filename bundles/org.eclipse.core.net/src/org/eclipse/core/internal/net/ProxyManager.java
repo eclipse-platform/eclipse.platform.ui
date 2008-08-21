@@ -316,7 +316,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	}
 
 	private boolean matchesFilter(String host, String filter) {
-		StringMatcher matcher = new StringMatcher(filter, false, false);
+		StringMatcher matcher = new StringMatcher(filter, true, false);
 		return matcher.match(host);
 	}
 

@@ -322,4 +322,24 @@ public class NetTest extends TestCase {
 		this.getProxyManager().setNonProxiedHosts(oldHosts);
 	}
 
+	public void testBug238796() throws CoreException {
+		setDataTest(IProxyData.HTTP_PROXY_TYPE);
+		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
+		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
+
+		String[] oldHosts = this.getProxyManager().getNonProxiedHosts();
+
+		this.getProxyManager().setNonProxiedHosts(
+				new String[] { "nonexisting.com" });
+
+		IProxyData[] allData = this.getProxyManager().getProxyDataForHost(
+				"NONEXISTING.COM");
+		assertEquals(0, allData.length);
+		IProxyData data = this.getProxyManager().getProxyDataForHost(
+				"NONEXISTING.COM", IProxyData.HTTP_PROXY_TYPE);
+		assertNull(data);
+
+		this.getProxyManager().setNonProxiedHosts(oldHosts);
+	}
+
 }
