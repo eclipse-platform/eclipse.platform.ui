@@ -814,13 +814,16 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		HashMap linkMap = description.getLinks();
 		if (linkMap == null)
 			return null;
-		List links = new ArrayList();
+		List links = null;
 		IPath myPath = getProjectRelativePath();
 		for (Iterator it = linkMap.values().iterator(); it.hasNext();) {
 			LinkDescription link = (LinkDescription) it.next();
 			IPath linkPath = link.getProjectRelativePath();
-			if (myPath.isPrefixOf(linkPath))
+			if (myPath.isPrefixOf(linkPath)) {
+				if (links == null)
+					links = new ArrayList();
 				links.add(workspace.newResource(project.getFullPath().append(linkPath), link.getType()));
+			}
 		}
 		return links;
 	}

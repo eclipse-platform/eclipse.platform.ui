@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1708,6 +1708,28 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			verifier.addExpectedChange(linkedFolder, IResourceDelta.CHANGED, IResourceDelta.LOCAL_CHANGED);
 			path.toFile().mkdir();
 			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		} finally {
+			if (path.toFile().exists())
+				path.toFile().delete();
+		}
+	}
+	
+	public void testBug228354() {
+		IPath path = getTempDir().addTrailingSeparator().append(getUniqueString());
+		try {
+			path.toFile().mkdir();
+			IFolder linkedFolder = project1.getFolder(getUniqueString());
+			linkedFolder.createLink(path, IResource.NONE, getMonitor());
+
+			IFolder regularFolder = project1.getFolder(getUniqueString());
+			regularFolder.create(true, true, getMonitor());			
+			
+			// check the delta when underlying folder is removed
+			verifier.addExpectedChange(regularFolder, IResourceDelta.REMOVED, 0);
+			regularFolder.delete(true, getMonitor());
 			assertDelta();
 		} catch (CoreException e) {
 			handleCoreException(e);
