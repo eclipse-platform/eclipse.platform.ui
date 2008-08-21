@@ -290,7 +290,7 @@ public class TrimArea {
 			Control ctrl = cache.getControl();
 			
 			// Skip invisible trim
-			if (ctrl == null || !ctrl.isVisible())
+			if (ctrl == null || !ctrl.getVisible())
 				continue;
 			
 			// We need to keep the drag handle and the 'real' trim on the same line... 
