@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Martin Oberhuber (Wind River) - [105554] handle cyclic symbolic links
+ *     Martin Oberhuber (Wind River) - [105554] handle cyclic symbolic links
+ *     Martin Oberhuber (Wind River) - [232426] shared prefix histories for symlinks
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -15,11 +16,13 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.internal.refresh.RefreshJob;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Queue;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Represents the workspace's tree merged with the file system's tree.
@@ -349,11 +352,6 @@ public class UnifiedTree {
 			freeNodes = new ArrayList(100);
 		else
 			freeNodes.clear();
-		//clear any known path prefixes for recursive symbolic link checking
-		if (pathPrefixHistory != null) {
-			pathPrefixHistory.clear();
-			rootPathHistory.clear();
-		}
 		addRootToQueue();
 		addElementToQueue(levelMarker);
 	}
@@ -377,35 +375,45 @@ public class UnifiedTree {
 	 * This may be done when starting a visitor, or later on demand.
 	 */
 	protected void initLinkHistoriesIfNeeded() {
-		if (pathPrefixHistory==null) {
-			pathPrefixHistory = new PrefixPool(20);
-			rootPathHistory = new PrefixPool(20);
+		if (pathPrefixHistory == null) {
+			//Bug 232426: Check what life cycle we need for the histories
+			Job job = Job.getJobManager().currentJob();
+			if (job instanceof RefreshJob) {
+				//we are running from the RefreshJob: use the path history of the job
+				RefreshJob refreshJob = (RefreshJob) job;
+				pathPrefixHistory = refreshJob.getPathPrefixHistory();
+				rootPathHistory = refreshJob.getRootPathHistory();
+			} else {
+				//Local Histories
+				pathPrefixHistory = new PrefixPool(20);
+				rootPathHistory = new PrefixPool(20);
+			}
 		}
-		if (rootPathHistory.size()==0) {
+		if (rootPathHistory.size() == 0) {
 			//add current root to history
 			IFileStore rootStore = ((Resource) root).getStore();
 			try {
 				java.io.File rootFile = rootStore.toLocalFile(EFS.NONE, null);
-				if (rootFile!=null) {
+				if (rootFile != null) {
 					IPath rootProjPath = root.getProject().getLocation();
-					if (rootProjPath!=null) {
+					if (rootProjPath != null) {
 						try {
 							java.io.File rootProjFile = new java.io.File(rootProjPath.toOSString());
-							rootPathHistory.insertShorter(rootProjFile.getCanonicalPath()+'/');
-						} catch(IOException ioe) {
+							rootPathHistory.insertShorter(rootProjFile.getCanonicalPath() + '/');
+						} catch (IOException ioe) {
 							/*ignore here*/
 						}
 					}
-					rootPathHistory.insertShorter(rootFile.getCanonicalPath()+'/');
+					rootPathHistory.insertShorter(rootFile.getCanonicalPath() + '/');
 				}
-			} catch(CoreException e) {
+			} catch (CoreException e) {
 				/*ignore*/
-			} catch(IOException e) {
+			} catch (IOException e) {
 				/*ignore*/
 			}
 		}
 	}
-	
+
 	/**
 	 * Check if the given child represents a recursive symbolic link.
 	 * <p>
@@ -427,7 +435,7 @@ public class UnifiedTree {
 	private boolean isRecursiveLink(IFileStore parentStore, IFileInfo localInfo) {
 		//Try trivial pattern first - works also on remote EFS stores
 		String linkTarget = localInfo.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET);
-		if (linkTarget!=null && PatternHolder.trivialSymlinkPattern.matcher(linkTarget).matches()) {
+		if (linkTarget != null && PatternHolder.trivialSymlinkPattern.matcher(linkTarget).matches()) {
 			return true;
 		}
 		//Need canonical paths to check all other possibilities
@@ -440,8 +448,8 @@ public class UnifiedTree {
 				return false;
 			//get canonical path for both child and parent
 			java.io.File childFile = new java.io.File(parentFile, localInfo.getName());
-			String parentPath = parentFile.getCanonicalPath()+'/';
-			String childPath = childFile.getCanonicalPath()+'/';
+			String parentPath = parentFile.getCanonicalPath() + '/';
+			String childPath = childFile.getCanonicalPath() + '/';
 			//get or instantiate the prefix and root path histories.
 			//Might be done earlier - for now, do it on demand.
 			initLinkHistoriesIfNeeded();
@@ -451,7 +459,7 @@ public class UnifiedTree {
 				//found a potential loop: is it spanning up a new tree?
 				if (!rootPathHistory.insertShorter(childPath)) {
 					//not spanning up a new tree, so it is a real loop.
-				    return true;
+					return true;
 				}
 			} else if (rootPathHistory.hasPrefixOf(childPath)) {
 				//child points into a different portion of the tree that we visited already before, or will certainly visit.

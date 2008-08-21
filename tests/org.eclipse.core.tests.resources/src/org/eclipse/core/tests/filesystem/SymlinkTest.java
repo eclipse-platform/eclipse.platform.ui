@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * John Arthorne (IBM) - [172346] disable tests with problematic Platform encoding
  * Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
  * Martin Oberhuber (Wind River) - [184433] liblocalfile for Linux x86_64
+ * Martin Oberhuber (Wind River) - [232426] push up createSymLink() to CoreTest
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
@@ -58,10 +59,6 @@ public class SymlinkTest extends FileSystemTest {
 		return false;
 	}
 
-	public static boolean isWindowsVista() {
-		return Platform.getOS().equals(Platform.OS_WIN32) && "6.0".equals(System.getProperty("org.osgi.framework.os.version")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 	protected void fetchFileInfos() {
 		iDir = aDir.fetchInfo();
 		iFile = aFile.fetchInfo();
@@ -92,29 +89,9 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	protected void mkLink(IFileStore dir, String src, String tgt, boolean isDir) {
-		String[] envp = {};
 		try {
-			Process p;
-			File basedir = baseStore.toLocalFile(EFS.NONE, getMonitor());
-			if (isWindowsVista()) {
-				if (isDir) {
-					String[] cmd = {"mklink", "/d", src, tgt};
-					p = Runtime.getRuntime().exec(cmd, envp, basedir);
-				} else {
-					String[] cmd = {"mklink", src, tgt};
-					p = Runtime.getRuntime().exec(cmd, envp, basedir);
-				}
-			} else {
-				String[] cmd = {"ln", "-s", tgt, src};
-				p = Runtime.getRuntime().exec(cmd, envp, basedir);
-			}
-			int exitcode = p.waitFor();
-			assertEquals(exitcode, 0);
-		} catch (IOException e) {
-			fail("mkLink", e);
+			createSymLink(dir.toLocalFile(EFS.NONE, getMonitor()), src, tgt, isDir);
 		} catch (CoreException e) {
-			fail("mkLink", e);
-		} catch (InterruptedException e) {
 			fail("mkLink", e);
 		}
 	}
