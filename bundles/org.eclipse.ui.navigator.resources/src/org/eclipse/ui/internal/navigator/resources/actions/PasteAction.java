@@ -235,7 +235,8 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
         if (resourceData != null) {
             // linked resources can only be pasted into projects
             if (isLinked(resourceData)
-                    && targetResource.getType() != IResource.PROJECT) {
+                && targetResource.getType() != IResource.PROJECT
+                && targetResource.getType() != IResource.FOLDER) {
 				return false;
 			}
 
