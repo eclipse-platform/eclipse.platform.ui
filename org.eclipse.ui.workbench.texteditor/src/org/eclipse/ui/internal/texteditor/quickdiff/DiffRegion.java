@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,13 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		// them getting displayed.
 		switch (getChangeType()) {
 			case CHANGED:
-				return "org.eclipse.ui.workbench.texteditor.quickdiffChange"; //$NON-NLS-1$
+				int r= fDifference.rightLength();
+				int l= fDifference.leftLength();
+				int c= Math.min(r, l);
+				if (c == 0 && r - l < 0)
+					return "org.eclipse.ui.workbench.texteditor.quickdiffDeletion"; //$NON-NLS-1$
+				else
+					return "org.eclipse.ui.workbench.texteditor.quickdiffChange"; //$NON-NLS-1$
 			case ADDED:
 				return "org.eclipse.ui.workbench.texteditor.quickdiffAddition"; //$NON-NLS-1$
 			case UNCHANGED:
