@@ -1,18 +1,31 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *	IBM Corporation - initial API and implementation
+ *	Martin Oberhuber (Wind River) - [232426] createSymLink() method
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import junit.framework.TestCase;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @since 3.1
@@ -180,6 +193,41 @@ public class CoreTest extends TestCase {
 		transferData(contents, output);
 	}
 
+	/**
+	 * Create a symbolic link.
+	 * Should only be called on Platforms where symbolic links can actually
+	 * be created, i.e. an "ln" command is available.
+	 * @param basedir folder in which the symbolic link should be created. 
+	 * @param linkName name of the symbolic link
+	 * @param linkTgt target to which the symbolic link should point
+	 * @param isDir <code>true</code> if the link should point to a folder
+	 */
+	protected void createSymLink(File basedir, String linkName, String linkTgt, boolean isDir) {
+		//Deliberately use an empty environment to make the test reproducible
+		String[] envp = {};
+		try {
+			Process p;
+			if (isWindowsVista()) {
+				if (isDir) {
+					String[] cmd = {"mklink", "/d", linkName, linkTgt};
+					p = Runtime.getRuntime().exec(cmd, envp, basedir);
+				} else {
+					String[] cmd = {"mklink", linkName, linkTgt};
+					p = Runtime.getRuntime().exec(cmd, envp, basedir);
+				}
+			} else {
+				String[] cmd = {"ln", "-s", linkTgt, linkName};
+				p = Runtime.getRuntime().exec(cmd, envp, basedir);
+			}
+			int exitcode = p.waitFor();
+			assertEquals(exitcode, 0);
+		} catch (IOException e) {
+			fail("createSymLink", e);
+		} catch (InterruptedException e) {
+			fail("createSymLink", e);
+		}
+	}
+	
 	protected void ensureDoesNotExistInFileSystem(java.io.File file) {
 		FileSystemHelper.clear(file);
 	}
@@ -261,6 +309,14 @@ public class CoreTest extends TestCase {
 
 	public String getUniqueString() {
 		return System.currentTimeMillis() + "-" + Math.random();
+	}
+
+	/**
+	 * Test if running on Windows Vista.
+	 * @return <code>true</code> if running on Windows Vista.
+	 */
+	private static boolean isWindowsVista() {
+		return Platform.getOS().equals(Platform.OS_WIN32) && "6.0".equals(System.getProperty("org.osgi.framework.os.version")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
