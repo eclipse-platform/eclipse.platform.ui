@@ -622,8 +622,10 @@ public class OverviewRuler implements IOverviewRuler {
 			for (int t=0; t < style.length; t++) {
 
 				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
-				Color fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
-				Color stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+				
+				boolean areColorsComputed= false;
+				Color fill= null;
+				Color stroke= null;
 
 				for (int i= 0; e.hasNext(); i++) {
 
@@ -654,6 +656,12 @@ public class OverviewRuler implements IOverviewRuler {
 
 						int startLine= textWidget.getLineAtOffset(annotationOffset - visible.getOffset());
 						yy= Math.min((startLine * size.y) / maxLines, size.y - hh);
+
+						if (!areColorsComputed) {
+							fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+							stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+							areColorsComputed= true;
+						}
 
 						if (fill != null) {
 							gc.setBackground(fill);
@@ -725,8 +733,10 @@ public class OverviewRuler implements IOverviewRuler {
 			for (int t=0; t < style.length; t++) {
 
 				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
-				Color fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
-				Color stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+				
+				boolean areColorsComputed= false;
+				Color fill= null;
+				Color stroke= null;
 
 				for (int i= 0; e.hasNext(); i++) {
 
@@ -757,6 +767,12 @@ public class OverviewRuler implements IOverviewRuler {
 
 						int startLine= textWidget.getLineAtOffset(widgetRegion.getOffset());
 						yy= Math.min((startLine * size.y) / maxLines, size.y - hh);
+
+						if (!areColorsComputed) {
+							fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+							stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+							areColorsComputed= true;
+						}
 
 						if (fill != null) {
 							gc.setBackground(fill);
