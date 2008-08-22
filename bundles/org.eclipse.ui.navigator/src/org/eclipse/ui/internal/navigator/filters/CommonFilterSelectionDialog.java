@@ -71,7 +71,12 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	private ISelectionChangedListener updateDescriptionSelectionListener; 
 
-	protected CommonFilterSelectionDialog(CommonViewer aCommonViewer) {
+	/**
+	 * Public only for tests.
+	 * 
+	 * @param aCommonViewer
+	 */
+	public CommonFilterSelectionDialog(CommonViewer aCommonViewer) {
 		super(aCommonViewer.getControl().getShell());
 		setShellStyle(SWT.RESIZE | getShellStyle());
 
@@ -207,7 +212,6 @@ public class CommonFilterSelectionDialog extends Dialog {
 	 */
 	protected void okPressed() {
 
-		String[] contentExtensionIdsToActivate = new String[0];
 		if (contentExtensionsTab != null) {
 			List checkedExtensions = new ArrayList();
 			TableItem[] tableItems = contentExtensionsTab.getTable().getItems();
@@ -220,18 +224,17 @@ public class CommonFilterSelectionDialog extends Dialog {
 					checkedExtensions.add(descriptor.getId());
 				}
 			}
-			if (checkedExtensions.size() != 0) {
-				contentExtensionIdsToActivate = (String[]) checkedExtensions
-						.toArray(new String[checkedExtensions.size()]);
-			}
-
+			String[] contentExtensionIdsToActivate = (String[]) checkedExtensions
+					.toArray(new String[checkedExtensions.size()]);
+			UpdateActiveExtensionsOperation updateExtensions = new UpdateActiveExtensionsOperation(
+					commonViewer, contentExtensionIdsToActivate);
+			updateExtensions.execute(null, null);
 		}
 
-		String[] filterIdsToActivate = new String[0];
 		if (commonFiltersTab != null) {
 			Set checkedFilters = commonFiltersTab.getCheckedItems();
 			
-			filterIdsToActivate = new String[checkedFilters.size()];
+			String[] filterIdsToActivate = new String[checkedFilters.size()];
 			int indx = 0;
 			for (Iterator iterator = checkedFilters.iterator(); iterator
 					.hasNext();) {
@@ -241,15 +244,11 @@ public class CommonFilterSelectionDialog extends Dialog {
 				filterIdsToActivate[indx++] = descriptor.getId();
 
 			} 
+			UpdateActiveFiltersOperation updateFilters = new UpdateActiveFiltersOperation(
+					commonViewer, filterIdsToActivate, true);
+			updateFilters.execute(null, null);
 		}
 
-		UpdateActiveExtensionsOperation updateExtensions = new UpdateActiveExtensionsOperation(
-				commonViewer, contentExtensionIdsToActivate);
-		UpdateActiveFiltersOperation updateFilters = new UpdateActiveFiltersOperation(
-				commonViewer, filterIdsToActivate, true);
-
-		updateExtensions.execute(null, null);
-		updateFilters.execute(null, null);
 		super.okPressed();
 	}
 }
