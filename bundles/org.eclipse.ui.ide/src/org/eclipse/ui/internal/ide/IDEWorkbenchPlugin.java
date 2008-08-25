@@ -11,23 +11,28 @@
 
 package org.eclipse.ui.internal.ide;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -352,5 +357,61 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 				// NO-OP
 			}
 		}
+		declareWorkbenchImages();
 	}
+	
+	/**
+	 * Declares all IDE-specific workbench images. This includes the "shared"
+	 * images (named in {@link IDE.SharedImages}).
+	 * 
+	 */
+	private void declareWorkbenchImages() {
+
+		final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
+		final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; // Enabled //$NON-NLS-1$
+
+		// toolbar
+		// icons.
+		final String PATH_OBJECT = ICONS_PATH + "obj16/"; // Model object //$NON-NLS-1$
+		// //$NON-NLS-1$
+		// icons
+
+		Bundle ideBundle = Platform.getBundle(IDEWorkbenchPlugin.IDE_WORKBENCH);
+
+		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJ_PROJECT,
+				PATH_OBJECT + "prj_obj.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle,
+				IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT
+						+ "cprj_obj.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OPEN_MARKER,
+				PATH_ELOCALTOOL + "gotoobj_tsk.gif", true); //$NON-NLS-1$
+
+		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_TASK_TSK,
+				PATH_OBJECT + "taskmrk_tsk.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_BKMRK_TSK,
+				PATH_OBJECT + "bkmrk_tsk.gif", true); //$NON-NLS-1$
+
+	}
+
+	/**
+	 * Declares an IDE-specific workbench image.
+	 * 
+	 * @param symbolicName
+	 *            the symbolic name of the image
+	 * @param path
+	 *            the path of the image file; this path is relative to the base
+	 *            of the IDE plug-in
+	 * @param shared
+	 *            <code>true</code> if this is a shared image, and
+	 *            <code>false</code> if this is not a shared image
+	 */
+	private void declareWorkbenchImage(Bundle ideBundle, String symbolicName,
+			String path, boolean shared) {
+		URL url = FileLocator.find(ideBundle, new Path(path), null);
+		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+		WorkbenchImages.declareImage(symbolicName, desc, shared);
+	}
+
+	
+	
 }

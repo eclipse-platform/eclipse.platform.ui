@@ -515,8 +515,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	/**
-	 * Declares all IDE-specific workbench images. This includes both "shared"
-	 * images (named in {@link IDE.SharedImages}) and internal images (named in
+	 * Declares all IDE-specific workbench images. This includes 
+	 * the internal images (named in
 	 * {@link org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages}).
 	 * 
 	 * @see IWorkbenchConfigurer#declareImage
@@ -611,14 +611,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG, PATH_WIZBAN
 						+ "quick_fix.png", false); //$NON-NLS-1$
 
-		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJ_PROJECT,
-				PATH_OBJECT + "prj_obj.gif", true); //$NON-NLS-1$
-		declareWorkbenchImage(ideBundle,
-				IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT
-						+ "cprj_obj.gif", true); //$NON-NLS-1$
-		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OPEN_MARKER,
-				PATH_ELOCALTOOL + "gotoobj_tsk.gif", true); //$NON-NLS-1$
-
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED,
 				PATH_ELOCALTOOL + "smartmode_co.gif", true); //$NON-NLS-1$
@@ -634,11 +626,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		// PATH_OBJECT+"mprio_tsk.gif");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LPRIO_TSK,
 		// PATH_OBJECT+"lprio_tsk.gif");
-
-		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_TASK_TSK,
-				PATH_OBJECT + "taskmrk_tsk.gif", true); //$NON-NLS-1$
-		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_BKMRK_TSK,
-				PATH_OBJECT + "bkmrk_tsk.gif", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_COMPLETE_TSK, PATH_OBJECT
