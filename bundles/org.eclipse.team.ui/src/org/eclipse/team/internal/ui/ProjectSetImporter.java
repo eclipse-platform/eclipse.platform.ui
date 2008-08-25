@@ -68,6 +68,7 @@ public class ProjectSetImporter {
                     		if (allProjects != null)
                     			newProjects.addAll(Arrays.asList(allProjects));
                     	}
+                    	referenceStrings.clear();
                     } catch (TeamException e) {
                         errors.add(e);
                     }

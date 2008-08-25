@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,6 +135,54 @@ public class ProjectSetImporterTests extends EclipseTest {
 				if (!projects.contains(importProjectSet[i]))
 					fail();
 			}
+		} catch (InvocationTargetException e) {
+			fail(e.getLocalizedMessage());
+		} catch (IOException ioe) {
+			fail(ioe.getLocalizedMessage());
+		} finally {
+			if (out != null)
+				out.close();
+		}
+	}
+
+	public void testBug234149_AFewProviders() throws TeamException,
+			CoreException {
+		IProject project = createProject("ProjectSetImporterTests",
+				new String[0]);
+		IProject project2 = createProject("ProjectSetImporterTests",
+				new String[0]);
+
+		// create psf with two providers
+		PrintWriter out = null;
+		try {
+			out = new PrintWriter(new BufferedWriter(new FileWriter(PSF_FILE)),
+					true);
+
+			// add first provider to psf
+			out.println(psf_header_0);
+			out.println(psf_header_1);
+			out.println("\t" + psf_header_2);
+			out.println("\t\t" + psf_0 + project.getName() /* module */+ psf_1
+					+ project.getName() /* project */+ psf_2);
+			out.println("\t" + psf_footer_0);
+
+			// add second provider to psf
+			out.println("\t" + psf_header_2);
+			out.println("\t\t" + psf_0 + project2.getName() /* module */+ psf_1
+					+ project2.getName() /* project */+ psf_2);
+			out.println("\t" + psf_footer_0);
+
+			out.println(psf_footer_1);
+
+			project.delete(true, null);
+			project2.delete(true, null);
+
+			IProject[] importProjectSet = null;
+			importProjectSet = ProjectSetImporter.importProjectSet(
+					PSF_FILENAME, Display.getDefault().getActiveShell(), null);
+			
+			assertEquals(project, importProjectSet[0]);
+			assertEquals(project2, importProjectSet[1]);
 		} catch (InvocationTargetException e) {
 			fail(e.getLocalizedMessage());
 		} catch (IOException ioe) {
