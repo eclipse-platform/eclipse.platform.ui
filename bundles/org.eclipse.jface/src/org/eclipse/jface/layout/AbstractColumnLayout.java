@@ -177,7 +177,7 @@ public abstract class AbstractColumnLayout extends Layout {
 				ColumnWeightData cw = (ColumnWeightData) getLayoutData(
 						scrollable, colIndex);
 				final int minWidth = cw.minimumWidth;
-				final int allowedWidth = (width - fixedWidth) * cw.weight
+				final int allowedWidth = totalWeight == 0 ? 0 : (width - fixedWidth) * cw.weight
 						/ totalWeight;
 				if (allowedWidth < minWidth) {
 					/*
