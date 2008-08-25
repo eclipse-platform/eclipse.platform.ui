@@ -129,4 +129,18 @@ public class BrowserIdentificationTest extends TestCase {
 		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 	
+	public void testFirefox3() {
+		final String agent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.13) Gecko/2008031";
+		assertFalse(UrlUtil.isIE(agent));
+		assertTrue(UrlUtil.isMozilla(agent));
+		assertFalse(UrlUtil.isOpera(agent));
+		assertFalse(UrlUtil.isKonqueror(agent));
+		assertFalse(UrlUtil.isSafari(agent));
+		assertTrue(UrlUtil.isGecko(agent));
+		assertEquals("1.8.1.13", UrlUtil.getMozillaVersion(agent));
+		assertTrue(UrlUtil.isAdvanced(agent));
+	}
+	
+	
+	
 }
