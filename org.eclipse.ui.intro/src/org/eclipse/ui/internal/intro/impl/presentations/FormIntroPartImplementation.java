@@ -255,6 +255,9 @@ public class FormIntroPartImplementation extends
         toolBarManager.add(homeAction);
         toolBarManager.add(backAction);
         toolBarManager.add(forwardAction);
+        if (IntroPlugin.DEBUG_TOOLBAR) {
+            toolBarManager.add(viewIntroModelAction);
+        }
         toolBarManager.update(true);
         actionBars.updateActionBars();
         updateNavigationActionsState();

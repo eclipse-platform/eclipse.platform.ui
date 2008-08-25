@@ -23,6 +23,9 @@ org.eclipse.ui.intro/trace/printHTML = false
 # will be used if possible. If this flag is true the Browser presentation will not be used.
 org.eclipse.ui.intro/flags/noBrowser= false
 
+# Add extra toolbar buttons to help debugging
+org.eclipse.ui.intro/debug/toolbar= false
+
 # Performance flags used by the Performance framework to report failures 
 # of specific thresholds.  
 

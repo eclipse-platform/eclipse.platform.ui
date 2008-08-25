@@ -46,6 +46,7 @@ public class IntroPlugin extends AbstractUIPlugin {
     // debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_NO_BROWSER = false;
+	public static boolean DEBUG_TOOLBAR = false;
 
     /**
      * The constructor.
@@ -168,6 +169,9 @@ public class IntroPlugin extends AbstractUIPlugin {
 		DEBUG = isDebugging();
 		if (DEBUG) {
 			DEBUG_NO_BROWSER = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/flags/noBrowser")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (DEBUG) {
+			DEBUG_TOOLBAR = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/toolbar")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
     }

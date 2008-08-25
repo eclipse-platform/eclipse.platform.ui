@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
@@ -17,6 +21,7 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
@@ -31,7 +36,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -46,6 +55,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
@@ -67,6 +77,35 @@ public class BrowserIntroPartImplementation extends
 
     // the HTML generator used to generate dynamic content
     private IntroHTMLGenerator htmlGenerator = null;
+    
+    private String savedContent = null;
+     
+    private Action openBrowserAction = new Action() {
+
+        {
+            setToolTipText(Messages.IntroPart_openExternal_tooltip);
+            setImageDescriptor(ImageUtil
+                .createImageDescriptor("topic.gif")); //$NON-NLS-1$
+        }
+
+        public void run() {
+        	// Save the html to a file and open it in an external browser
+        	File tempFile;
+			try {
+				tempFile = File.createTempFile("intro",".html"); //$NON-NLS-1$//$NON-NLS-2$
+            	tempFile.deleteOnExit();
+            	BufferedWriter out = new BufferedWriter(new 
+            			FileWriter(tempFile));
+            	out.write(savedContent);	
+            	out.close();
+            	IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+    			IWebBrowser browser =  support.getExternalBrowser();
+    			browser.openURL(tempFile.toURL());
+			} catch (IOException e) {
+			} catch (PartInitException e) {
+			}  
+        }
+    };
 
     protected BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
         this);
@@ -266,6 +305,10 @@ public class BrowserIntroPartImplementation extends
             if (printHtml != null && printHtml.equalsIgnoreCase("true")) { //$NON-NLS-1$
                 System.out.println(content);
             }
+            if (IntroPlugin.DEBUG_TOOLBAR) {
+            	savedContent = content;
+            }
+            
         }
         return success;
     }
@@ -407,6 +450,10 @@ public class BrowserIntroPartImplementation extends
             forwardAction);
         actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
             backAction);
+        if (IntroPlugin.DEBUG_TOOLBAR) {
+            toolBarManager.add(viewIntroModelAction);
+        	toolBarManager.add(openBrowserAction);
+        }
         toolBarManager.add(new Separator(IntroConfigurer.TB_ADDITIONS));
         toolBarManager.add(homeAction);
         toolBarManager.add(backAction);

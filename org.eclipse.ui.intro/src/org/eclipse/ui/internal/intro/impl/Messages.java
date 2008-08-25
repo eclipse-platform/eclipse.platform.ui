@@ -51,5 +51,7 @@ public class Messages extends NLS {
 
     // Misc
     // -------
+    public static String IntroPart_openExternal_tooltip;
     public static String IntroPart_showContentButton_tooltip;
+
 }
