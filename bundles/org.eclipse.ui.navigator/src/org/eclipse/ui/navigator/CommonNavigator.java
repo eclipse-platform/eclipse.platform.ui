@@ -306,14 +306,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 */
 	public void selectReveal(ISelection selection) {
 		if (commonViewer != null) {
-			if(selection instanceof IStructuredSelection) {
-				Object[] newSelection = ((IStructuredSelection)selection).toArray();
-				Object[] expandedElements = commonViewer.getExpandedElements();
-				Object[] newExpandedElements = new Object[newSelection.length + expandedElements.length];
-				System.arraycopy(expandedElements, 0, newExpandedElements, 0, expandedElements.length);
-				System.arraycopy(newSelection, 0, newExpandedElements, expandedElements.length, newSelection.length);
- 				commonViewer.setExpandedElements(newExpandedElements);
-			}
 			commonViewer.setSelection(selection, true);
 		}
 	}
