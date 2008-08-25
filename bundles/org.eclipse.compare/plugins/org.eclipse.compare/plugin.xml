@@ -210,7 +210,7 @@
          <action
                class="org.eclipse.compare.internal.CompareWithOtherResourceAction"
                definitionId="org.eclipse.compare.compareWithOther"
-               enablesFor="+"
+               enablesFor="*"
                id="compareWithOtherResource"
                label="%CompareWithOtherResource.label"
                menubarPath="compareWithMenu/compareWithGroup"
