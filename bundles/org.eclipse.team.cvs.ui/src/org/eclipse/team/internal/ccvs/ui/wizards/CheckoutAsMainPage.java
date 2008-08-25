@@ -281,7 +281,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 		inner.setLayout(layout);
 
 		setWorkingSetGroup(new WorkingSetGroup(inner, null, new String[] {
-				"org.eclipse.ui.resourcesWorkingSetPage", //$NON-NLS-1$
+				"org.eclipse.ui.resourceWorkingSetPage", //$NON-NLS-1$
 				"org.eclipse.jdt.ui.JavaWorkingSetPage" })); //$NON-NLS-1$
 		updateEnablements();
 	}
