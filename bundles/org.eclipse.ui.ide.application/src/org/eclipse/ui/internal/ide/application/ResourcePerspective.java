@@ -9,14 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com>
  *     		- Bug 44162 [Wizards]  Define constants for wizard ids of new.file, new.folder, and new.project
- *     Remy Chi Jian Suen - Bug 208804 [CommonNavigator] change "Navigator" view perspective links
-  *******************************************************************************/
+ *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 
@@ -24,6 +22,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
  */
 public class ResourcePerspective implements IPerspectiveFactory {
 	
+	private static String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
     /**
      * Constructs a new Default layout engine.
      */
@@ -60,7 +59,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
         layout.addNewWizardShortcut(BasicNewFileResourceWizard.WIZARD_ID);
 
         // Add "show views".
-        layout.addShowViewShortcut(ProjectExplorer.VIEW_ID);
+        layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
         layout.addShowViewShortcut(IPageLayout.ID_BOOKMARKS);
         layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
         layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
@@ -82,7 +81,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
         // Top left.
         IFolderLayout topLeft = layout.createFolder(
                 "topLeft", IPageLayout.LEFT, (float) 0.26, editorArea);//$NON-NLS-1$
-        topLeft.addView(ProjectExplorer.VIEW_ID);
+        topLeft.addView(ID_PROJECT_EXPLORER);
         topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
         // Add a placeholder for the old navigator to maintain compatibility
