@@ -14,12 +14,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -50,53 +49,24 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	 */
 	public void dispose() {
 		if (viewer != null) {
-			IWorkspace workspace = null;
-			Object obj = viewer.getInput();
-			if (obj instanceof IWorkspace) {
-				workspace = (IWorkspace) obj;
-			} else if (obj instanceof IContainer) {
-				workspace = ((IContainer) obj).getWorkspace();
-			}
-			if (workspace != null) {
-				workspace.removeResourceChangeListener(this);
-			}
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		}
-
 		super.dispose();
 	}
 
 	/*
 	 * (non-Javadoc) Method declared on IContentProvider.
 	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { 
 		super.inputChanged(viewer, oldInput, newInput);
-
+		// First time through, setup the listener on the workspace
+		if (this.viewer == null) {
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this,
+					IResourceChangeEvent.POST_CHANGE);
+		}
 		this.viewer = viewer;
-		IWorkspace oldWorkspace = null;
-		IWorkspace newWorkspace = null;
-
-		if (oldInput instanceof IWorkspace) {
-			oldWorkspace = (IWorkspace) oldInput;
-		} else if (oldInput instanceof IContainer) {
-			oldWorkspace = ((IContainer) oldInput).getWorkspace();
-		}
-
-		if (newInput instanceof IWorkspace) {
-			newWorkspace = (IWorkspace) newInput;
-		} else if (newInput instanceof IContainer) {
-			newWorkspace = ((IContainer) newInput).getWorkspace();
-		}
-
-		if (oldWorkspace != newWorkspace) {
-			if (oldWorkspace != null) {
-				oldWorkspace.removeResourceChangeListener(this);
-			}
-			if (newWorkspace != null) {
-				newWorkspace.addResourceChangeListener(this,
-						IResourceChangeEvent.POST_CHANGE);
-			}
-		}
 	}
+	
 
 	/*
 	 * (non-Javadoc) Method declared on IResourceChangeListener.
