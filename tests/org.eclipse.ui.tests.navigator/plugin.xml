@@ -76,21 +76,12 @@
 	            id="org.eclipse.ui.tests.navigator.extension.TestActionProvider"
 	            overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
 	         <enablement>
-	            <instanceof value="org.eclipse.core.resources.IFile"/>
+	            <or>
+	              <instanceof value="org.eclipse.core.resources.IFolder"/>
+	              <instanceof value="org.eclipse.core.resources.IFile"/>
+	            </or>  
 	         </enablement>
 	      </actionProvider>
-      <commonWizard
-            associatedExtensionId="org.eclipse.NotFound"
-            menuGroupId="org.eclipse.ui.tests.navigator"
-            type="new"
-            wizardId="org.eclipse.ui.tests.navigator.SampleNewWizard2">  
-         <enablement>
-            <or>
-				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
-				<instanceof value="org.eclipse.core.resources.IResource" />
-			</or>         
-         </enablement>            
-      </commonWizard>
       </navigatorContent>
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
@@ -157,7 +148,7 @@
          </filterExpression>
       </commonFilter>
       <actionProvider
-            class="org.eclipse.ui.tests.navigator.TestOverrideableActionProvider"
+            class="org.eclipse.ui.tests.navigator.extension.TestOverrideableActionProvider"
             id="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
             priority="normal">
          <enablement>
@@ -167,7 +158,7 @@
          </enablement>
       </actionProvider>
       <actionProvider
-            class="org.eclipse.ui.tests.navigator.TestOverrideableActionProvider"
+            class="org.eclipse.ui.tests.navigator.extension.TestOverrideableActionProvider"
             id="org.eclipse.ui.tests.navigator.extension.TestOverridINGActionProvider1"
             overrides="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
             priority="high">
@@ -178,7 +169,7 @@
          </enablement>
       </actionProvider>
             <actionProvider
-            class="org.eclipse.ui.tests.navigator.TestOverrideableActionProvider"
+            class="org.eclipse.ui.tests.navigator.extension.TestOverrideableActionProvider"
             id="org.eclipse.ui.tests.navigator.extension.TestOverridINGActionProvider2"
             overrides="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
             priority="higher">
@@ -188,6 +179,18 @@
                  	value="org.eclipse.core.resources.IFile" />
                 <test property="org.eclipse.core.resources.extension" value="txt"/>
             </and> 
+         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
+            id="org.eclipse.ui.tests.navigator.extension.TestOverridINGAndDependentActionProvider1"
+            overrides="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
+            dependsOn="org.eclipse.ui.tests.navigator.extension.TestActionProvider"
+            priority="high">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IFolder">
+            </instanceof>
          </enablement>
       </actionProvider>
       <navigatorContent 
@@ -398,7 +401,6 @@
 			</or>         
          </enablement>            
       </commonWizard>
-	  <!-- make sure missing associatedExtensionId is handled correctly -->
       <commonWizard
             associatedExtensionId="org.eclipse.NotFound"
             menuGroupId="org.eclipse.ui.tests.navigator"
