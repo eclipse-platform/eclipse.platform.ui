@@ -2104,6 +2104,15 @@
                </test>
             </iterate>
          </enabledWhen>
+            <activeWhen>
+            <with
+                       variable="activePart">
+                    <test
+                          args="any"
+                          property="org.eclipse.ui.ide.contentGenerator">
+                    </test>
+            </with>
+         </activeWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.views.markers.DeleteCompletedHandler"

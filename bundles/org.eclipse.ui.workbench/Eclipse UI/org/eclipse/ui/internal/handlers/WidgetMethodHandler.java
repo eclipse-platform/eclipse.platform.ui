@@ -210,8 +210,8 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		return focusComponent;
 
 	}
-
-	public final boolean isEnabled() {
+	
+	public final boolean isHandled() {
 		return getMethodToExecute() != null;
 	}
 

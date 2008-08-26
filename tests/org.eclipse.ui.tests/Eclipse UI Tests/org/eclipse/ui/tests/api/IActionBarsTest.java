@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -189,6 +190,9 @@ public class IActionBarsTest extends UITestCase {
     	assertNotNull(commandId);
     	try {
 			hs.executeCommand(commandId, null);
+    	} catch (NotHandledException e) {
+    		// this is not a failure, just a condition to be checked by
+    		// the test
     	} catch (NotEnabledException e) {
     		// this is not a failure, just a condition to be checked by
     		// the test
