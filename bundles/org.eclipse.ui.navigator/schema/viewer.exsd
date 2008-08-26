@@ -15,8 +15,9 @@ and behavior of the popup context menu.
 &lt;p&gt;
 &lt;b&gt;viewerContentBinding&lt;/b&gt; binds defined content extensions (through the &lt;b&gt;navigatorContent&lt;/b&gt; 
 extension point) to viewers (defined through the 
-&lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension point). Any content 
-extension bound to a viewer is described as &lt;i&gt;visible&lt;/i&gt;. A
+&lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension point). &lt;b&gt;viewerContentBinding&lt;/b&gt; also binds a 
+&lt;b&gt;linkHelper&lt;/b&gt; extension point to a viewer.  
+Any content extension bound to a viewer is described as &lt;i&gt;visible&lt;/i&gt;. A
 content service (&lt;code&gt;org.eclipse.ui.navigator.INavigatorContentService&lt;/code&gt;)
 will not return any extensions which are not visible for
 its viewer id.
@@ -92,7 +93,7 @@ its viewer id.
    <element name="viewerContentBinding">
       <annotation>
          <documentation>
-            Clients must define one or more &lt;b&gt;viwerContentBinding&lt;/b&gt; elements to describe which content extensions and common filters are &lt;i&gt;visible&lt;/i&gt; to the viewer. A content extension or common filter is &lt;i&gt;visible&lt;/i&gt; if the id of the content extension or common filter matches an &lt;b&gt;includes&lt;/b&gt; statement under a &lt;b&gt;viewerContentBinding&lt;/b&gt; and is not excluded by an &lt;b&gt;excludes&lt;/b&gt; statement. If a content extension or common filter is not &lt;i&gt;visible&lt;/i&gt; to a viewer, then the extension will never be asked for content by a content service for that viewer or be presented to the user in the available filters dialog. 
+            Clients must define one or more &lt;b&gt;viewerContentBinding&lt;/b&gt; elements to describe which content extensions, common filters, and link helpers are &lt;i&gt;visible&lt;/i&gt; to the viewer. A content extension or common filter is &lt;i&gt;visible&lt;/i&gt; if the id of the content extension or common filter matches an &lt;b&gt;includes&lt;/b&gt; statement under a &lt;b&gt;viewerContentBinding&lt;/b&gt; and is not excluded by an &lt;b&gt;excludes&lt;/b&gt; statement. If a content extension or common filter is not &lt;i&gt;visible&lt;/i&gt; to a viewer, then the extension will never be asked for content by a content service for that viewer or be presented to the user in the available filters dialog. 
 &lt;br&gt;&lt;br&gt;
 Clients may define an &lt;b&gt;includes&lt;/b&gt; element to select which extensions are &lt;i&gt;visible&lt;/i&gt; to the viewer, and similarly an &lt;b&gt;excludes&lt;/b&gt; element for extensions that should not be made &lt;i&gt;visible&lt;/i&gt; to the viewer. Clients may further define the extensions that should be explicitly queried for root elements (through  ITreeContentProvider.getElements()) by the &quot;isRoot&quot; attribute. If one or more &lt;b&gt;contentExtension&lt;/b&gt; elements have &quot;isRoot&quot; set to true within the &lt;b&gt;includes&lt;/b&gt; statement, only those extensions will be queried for root elements. The &quot;isRoot&quot; attribute has no effect for exclusions.
 &lt;br&gt;&lt;br&gt;
@@ -601,7 +602,7 @@ The following example demonstrates the standard properties available to the view
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+
       </documentation>
    </annotation>
 
@@ -610,7 +611,7 @@ The following example demonstrates the standard properties available to the view
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2006, 2008 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
