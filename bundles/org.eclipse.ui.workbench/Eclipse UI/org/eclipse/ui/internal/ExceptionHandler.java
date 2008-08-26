@@ -52,8 +52,11 @@ public final class ExceptionHandler implements Window.IExceptionHandler {
             if (exceptionCount > 2) {
                 if (t instanceof RuntimeException) {
 					throw (RuntimeException) t;
+				} else if (t instanceof Error) {
+					throw (Error) t;
+				} else {
+					throw new RuntimeException(t);
 				}
-                throw (Error) t;
             }
 
             // Let the advisor handle this now
