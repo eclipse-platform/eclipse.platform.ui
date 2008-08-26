@@ -255,8 +255,10 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 		if (enablementExpression == null)
 			return false;
 		try {
+			EvaluationContext context = new EvaluationContext(null, object);
+			context.setAllowPluginActivation(true);
 			return enablementExpression.evaluate(
-					new EvaluationContext(null, object)).equals(
+					context).equals(
 					EvaluationResult.FALSE);
 		} catch (CoreException e) {
 			WorkbenchPlugin.log(e);
