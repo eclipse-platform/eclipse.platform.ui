@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,10 +31,6 @@ import org.eclipse.core.filebuffers.tests.ResourceHelper;
 
 import org.eclipse.text.tests.Accessor;
 
-import org.eclipse.ui.editors.text.DefaultEncodingSupport;
-import org.eclipse.ui.editors.text.IEncodingSupport;
-import org.eclipse.ui.editors.text.TextEditor;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -42,7 +38,12 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+
 import org.eclipse.ui.texteditor.StatusTextEditor;
+
+import org.eclipse.ui.editors.text.DefaultEncodingSupport;
+import org.eclipse.ui.editors.text.IEncodingSupport;
+import org.eclipse.ui.editors.text.TextEditor;
 
 
 /**
@@ -91,11 +92,7 @@ public class EncodingChangeTests extends TestCase {
 		closeEditor(fEditor);
 		fEditor= null;
 		fFile= null;
-		try {
-			ResourceHelper.deleteProject("EncodingChangeTestProject");
-		} catch (CoreException ex) {
-			// ignore
-		}
+		ResourceHelper.deleteProject("EncodingChangeTestProject");
 	}
 	
 	public void testChangeEncodingViaFile() {
