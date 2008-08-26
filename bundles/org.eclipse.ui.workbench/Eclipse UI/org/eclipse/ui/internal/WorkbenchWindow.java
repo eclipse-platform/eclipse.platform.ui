@@ -1622,8 +1622,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 		} finally {
 			result = super.close();
-			// Bring down all of the services ... after the window goes away
-			serviceLocator.dispose();
+			try {
+				// Bring down all of the services ... after the window goes away
+				serviceLocator.dispose();
+			} catch (Exception ex) {
+				WorkbenchPlugin.log(ex);
+			}
 			menuRestrictions.clear();
 		}
 		return result;
