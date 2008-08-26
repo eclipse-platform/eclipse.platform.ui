@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Gurov - bug 230853
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
+
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -22,18 +26,18 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * The
- * job of this input is to create the logical model of the contents of the
+ * The job of this input is to create the logical model of the contents of the
  * sync set for displaying to the user. The created logical model must diff
  * nodes.
- * <p>
- * 1. First, prepareInput is called to initialize the model with the given sync
- * set. Building the model occurs in the ui thread.
- * 2. The input must react to changes in the sync set and adjust its diff node
+ * <ol>
+ * <li>First, prepareInput is called to initialize the model with the given sync
+ * set. Building the model occurs in the UI thread.</li>
+ * <li>The input must react to changes in the sync set and adjust its diff node
  * model then update the viewer. In effect mediating between the sync set
  * changes and the model shown to the user. This happens in the ui thread.
- * </p>
+ * </ol>
  * NOT ON DEMAND - model is created then maintained!
+ * 
  * @since 3.0
  */
 public class HierarchicalModelProvider extends SynchronizeModelProvider {
@@ -53,10 +57,15 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	private static final HierarchicalModelProviderDescriptor hierarchicalDescriptor = new HierarchicalModelProviderDescriptor();
 	
 	/**
-	 * Create an input based on the provide sync set. The input is not initialized
-	 * until <code>prepareInput</code> is called. 
+	 * Create an input based on the provide sync set. The input is not
+	 * initialized until <code>prepareInput</code> is called.
 	 * 
-	 * @param set the sync set used as the basis for the model created by this input.
+	 * @param configuration
+	 *            the synchronize page configuration
+	 * 
+	 * @param set
+	 *            the sync set used as the basis for the model created by this
+	 *            input.
 	 */
 	public HierarchicalModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set) {
 		super(configuration, set);
@@ -176,8 +185,15 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceAdditions(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
 	 */
 	protected void handleResourceAdditions(ISyncInfoTreeChangeEvent event) {
-		IResource[] added = event.getAddedSubtreeRoots();
-		addResources(added);
+		SyncInfo[] infos = event.getAddedResources();
+		HashSet set = new HashSet();
+		for (int i = 0; i < infos.length; i++) {
+			SyncInfo info = infos[i];
+			set.add(info.getLocal().getProject());
+		}
+		for (Iterator it = set.iterator(); it.hasNext(); ) {
+			addResource((IResource)it.next());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -196,7 +212,6 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 				ISynchronizeModelElement node = getModelObject(resource);
 				if (node != null) {
 					removeFromViewer(resource);
-					addResources(new IResource[] {resource});
 				}
 			}
 		}

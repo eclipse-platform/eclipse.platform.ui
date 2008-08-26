@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Gurov - bug 230853
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
@@ -286,7 +287,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 					// but may still contain children
 				    resourcesToRemove.add(resource);
 					if (hasFileMembers((IContainer)resource)) {
-					    resourcesToAdd.addAll(Arrays.asList(getSyncInfosForFileMembers((IContainer)resource)));
+						resourcesToAdd.addAll(Arrays.asList(getSyncInfosForFileMembers((IContainer)resource)));
 					}
 				}
 			}
@@ -335,10 +336,13 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 	    List result = new ArrayList();
 		IResource[] members = getSyncInfoTree().members(parent);
 		for (int i = 0; i < members.length; i++) {
-			IResource member = members[i];
-			if (member.getType() == IResource.FILE) {
-			    result.add(getSyncInfoTree().getSyncInfo(member));
+			SyncInfo info = getSyncInfoTree().getSyncInfo(members[i]);
+			if (info != null) {
+			    result.add(info);
 			}
+		    if (members[i] instanceof IContainer) {
+		    	result.addAll(Arrays.asList(this.getSyncInfosForFileMembers((IContainer)members[i])));
+		    }
 		}
 		return (SyncInfo[]) result.toArray(new SyncInfo[result.size()]);
 	}
