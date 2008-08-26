@@ -878,6 +878,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void restoreState(final IMemento aMemento) {
 		synchronized (this) {
+			List runnables = new ArrayList();
 			for (Iterator extensionItr = getExtensions().iterator(); extensionItr
 					.hasNext();) {
 				final NavigatorContentExtension element = (NavigatorContentExtension) extensionItr
@@ -895,6 +896,10 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 					}
 				};
+				runnables.add(runnable);
+			}
+			for (Iterator iterator = runnables.iterator(); iterator.hasNext();) {
+				ISafeRunnable runnable = (ISafeRunnable) iterator.next();
 				SafeRunner.run(runnable);
 
 			}
