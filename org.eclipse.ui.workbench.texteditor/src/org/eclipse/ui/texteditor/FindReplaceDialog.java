@@ -44,11 +44,11 @@ import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.resource.JFaceColors;
 
+import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 
@@ -582,14 +582,14 @@ class FindReplaceDialog extends Dialog {
 		findLabel.setText(EditorMessages.FindReplace_Find_label);
 		setGridData(findLabel, SWT.LEFT, false, SWT.CENTER, false);
 		
-		// Create the find content assist field 
+		// Create the find content assist field
 		ComboContentAdapter contentAdapter= new ComboContentAdapter();
 		FindReplaceDocumentAdapterContentProposalProvider findProposer= new FindReplaceDocumentAdapterContentProposalProvider(true);
 		fFindField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
 		fContentAssistFindField= new ContentAssistCommandAdapter(
 				fFindField,
 				contentAdapter,
-				findProposer, 
+				findProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
 				new char[] {'\\', '[', '('},
 				true);
@@ -606,7 +606,7 @@ class FindReplaceDialog extends Dialog {
 		fReplaceField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
 		fContentAssistReplaceField= new ContentAssistCommandAdapter(
 				fReplaceField,
-				contentAdapter, replaceProposer, 
+				contentAdapter, replaceProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
 				new char[] {'$', '\\'},
 				true);
@@ -1562,10 +1562,9 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Tests whether each character in the given
-	 * string is a letter.
-	 *
-	 * @param str
+	 * Tests whether each character in the given string is a letter.
+	 * 
+	 * @param str the string to check
 	 * @return <code>true</code> if the given string is a word
 	 * @since 3.0
 	 */
@@ -1810,7 +1809,7 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Writes the given history into the given dialog store.
 	 * 
-	 * @param history the history 
+	 * @param history the history
 	 * @param settings the dialog settings
 	 * @param sectionName the section name
 	 * @since 3.2

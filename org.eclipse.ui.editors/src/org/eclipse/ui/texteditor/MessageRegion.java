@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,9 +58,8 @@ class MessageRegion {
 
 	/**
 	 * Create the contents for the receiver.
-	 *
-	 * @param parent
-	 *            the Composite that the children will be created in
+	 * 
+	 * @param parent the Composite that the children will be created in
 	 */
 	public void createContents(Composite parent) {
 		messageComposite = new Composite(parent, SWT.NONE);
@@ -96,25 +95,22 @@ class MessageRegion {
 	}
 
 	/**
-	 * Set the layoutData for the messageArea. In most cases this will be a copy
-	 * of the layoutData used in setTitleLayoutData.
-	 *
-	 * @param layoutData
-	 *            the layoutData for the message area composite.
+	 * Set the layoutData for the messageArea. In most cases this will be a copy of the layoutData
+	 * used in setTitleLayoutData.
+	 * 
+	 * @param layoutData the layoutData for the message area composite.
 	 */
 	public void setMessageLayoutData(Object layoutData) {
 		messageComposite.setLayoutData(layoutData);
 	}
 
 	/**
-	 * Show the new message in the message text and update the image. Base the
-	 * background color on whether or not there are errors.
-	 *
-	 * @param newMessage
-	 *            The new value for the message
-	 * @param newType
-	 *            One of the IMessageProvider constants. If newType is
-	 *            IMessageProvider.NONE show the title.
+	 * Show the new message in the message text and update the image. Base the background color on
+	 * whether or not there are errors.
+	 * 
+	 * @param newMessage The new value for the message
+	 * @param newType One of the IMessageProvider constants. If newType is IMessageProvider.NONE
+	 *            show the title.
 	 * @see IMessageProvider
 	 */
 	public void updateText(String newMessage, int newType) {
@@ -174,9 +170,8 @@ class MessageRegion {
 
 	/**
 	 * Set the colors of the message area.
-	 *
-	 * @param color
-	 *            The color to be use in the message area.
+	 * 
+	 * @param color the color to be use in the message area.
 	 */
 	private void setMessageColors(Color color) {
 		messageText.setBackground(color);

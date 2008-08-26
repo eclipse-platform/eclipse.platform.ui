@@ -4756,17 +4756,15 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Basically same functionality as
-	 * <code>ITextViewerExtension.setRedraw(boolean)</code>. Adds a way for
-	 * subclasses to pass in a desired top index that should be used when
-	 * <code>redraw</code> is <code>true</code>. If <code>topIndex</code>
-	 * is -1, this method is identical to
-	 * <code>ITextViewerExtension.setRedraw(boolean)</code>.
-	 *
+	 * Basically same functionality as <code>ITextViewerExtension.setRedraw(boolean)</code>. Adds a
+	 * way for subclasses to pass in a desired top index that should be used when
+	 * <code>redraw</code> is <code>true</code>. If <code>topIndex</code> is -1, this method is
+	 * identical to <code>ITextViewerExtension.setRedraw(boolean)</code>.
+	 * 
 	 * @see ITextViewerExtension#setRedraw(boolean)
-	 *
-	 * @param redraw
-	 * @param topIndex
+	 * 
+	 * @param redraw <code>true</code> if redraw is enabled
+	 * @param topIndex the top index
 	 * @since 3.0
 	 */
 	protected final void setRedraw(boolean redraw, int topIndex) {

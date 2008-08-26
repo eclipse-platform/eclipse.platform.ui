@@ -31,9 +31,9 @@ public class URLHyperlink implements IHyperlink {
 
 	/**
 	 * Creates a new URL hyperlink.
-	 *
-	 * @param region
-	 * @param urlString
+	 * 
+	 * @param region the region
+	 * @param urlString the URL string
 	 */
 	public URLHyperlink(IRegion region, String urlString) {
 		Assert.isNotNull(urlString);

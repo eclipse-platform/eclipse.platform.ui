@@ -196,12 +196,11 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			writeConfiguration();
 		}
 	}
-	
+
 	/**
-	 * Tests whether each character in the given
-	 * string is a letter.
-	 *
-	 * @param str
+	 * Tests whether each character in the given string is a letter.
+	 * 
+	 * @param str the string to check
 	 * @return <code>true</code> if the given string is a word
 	 * @since 3.2
 	 */

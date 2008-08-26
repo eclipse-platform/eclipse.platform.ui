@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 				return offset >= fOffset && offset < fOffset + fString.length() && document.get(prefixStart, offset - (prefixStart)).equals((fPrefix + fString).substring(0, offset - prefixStart));
 			} catch (BadLocationException x) {
 				return false;
-			} 
+			}
 		}
 
 		public IInformationControlCreator getInformationControlCreator() {
@@ -227,11 +227,11 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * Return the list of suggestions from the current document. First the
-	 * document is searched backwards from the caret position and then forwards.
+	 * Return the list of suggestions from the current document. First the document is searched
+	 * backwards from the caret position and then forwards.
 	 * 
-	 * @param offset 
-	 * @param viewer 
+	 * @param offset the offset
+	 * @param viewer the viewer
 	 * @param prefix the completion prefix
 	 * @return all possible completions that were found in the current document
 	 * @throws BadLocationException if accessing the document fails
@@ -246,15 +246,13 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * Create the array of suggestions. It scans all open text editors and
-	 * prefers suggestions from the currently open editor. It also adds the
-	 * empty suggestion at the end.
+	 * Create the array of suggestions. It scans all open text editors and prefers suggestions from
+	 * the currently open editor. It also adds the empty suggestion at the end.
 	 * 
-	 * @param viewer 
-	 * @param offset 
+	 * @param viewer the viewer
+	 * @param offset the offset
 	 * @param prefix the prefix to search for
-	 * @return the list of all possible suggestions in the currently open
-	 *         editors
+	 * @return the list of all possible suggestions in the currently open editors
 	 * @throws BadLocationException if accessing the current document fails
 	 */
 	private List getSuggestions(ITextViewer viewer, int offset, String prefix) throws BadLocationException {

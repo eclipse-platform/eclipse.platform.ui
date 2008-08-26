@@ -1051,7 +1051,7 @@ public class LinkedModeUI {
 	 * 
 	 * @param document the document
 	 * @return all possible content types of <code>document</code>
-	 * @throws BadPartitioningException
+	 * @throws BadPartitioningException if partitioning is invalid for this document
 	 * @since 3.1
 	 */
 	private String[] getContentTypes(IDocument document) throws BadPartitioningException {

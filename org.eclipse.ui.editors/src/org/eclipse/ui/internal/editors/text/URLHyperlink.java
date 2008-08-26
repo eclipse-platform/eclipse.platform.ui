@@ -27,13 +27,13 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
  * @since 3.1
  */
 final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
-	
-	
+
+
 	/**
 	 * Creates a new URL hyperlink.
-	 *
-	 * @param region
-	 * @param urlString
+	 * 
+	 * @param region the region
+	 * @param urlString the URL string
 	 */
 	public URLHyperlink(IRegion region, String urlString) {
 		super(region, urlString);

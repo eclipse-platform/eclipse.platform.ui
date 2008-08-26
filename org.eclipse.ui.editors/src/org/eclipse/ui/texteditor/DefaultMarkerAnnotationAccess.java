@@ -126,9 +126,10 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 
 	/**
 	 * Returns a new default marker annotation access with the given preferences.
-	 *
-	 * @param markerAnnotationPreferences
-	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess#DefaultMarkerAnnotationAccess()}
+	 * 
+	 * @param markerAnnotationPreferences the marker annotation preference
+	 * @deprecated As of 3.0, replaced by
+	 *             {@link org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess#DefaultMarkerAnnotationAccess()}
 	 */
 	public DefaultMarkerAnnotationAccess(MarkerAnnotationPreferences markerAnnotationPreferences) {
 		fMarkerAnnotationPreferences= markerAnnotationPreferences;

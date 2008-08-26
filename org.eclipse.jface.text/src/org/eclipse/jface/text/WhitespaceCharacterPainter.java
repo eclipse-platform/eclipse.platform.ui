@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Point;
 
 
 /**
- * A painter for drawing visible characters for (invisible) whitespace 
+ * A painter for drawing visible characters for (invisible) whitespace
  * characters.
  * 
  * @since 3.3
@@ -130,14 +130,8 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		}
 	}
 
-	/**
+	/*
 	 * Draw characters in view range.
-	 * 
-	 * @param gc
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
 	 */
 	private void handleDrawRequest(GC gc, int x, int y, int w, int h) {
 		int startLine= fTextWidget.getLineIndex(y);
@@ -156,11 +150,11 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Draw the given line range.
 	 * 
-	 * @param gc
-	 * @param startLine  first line number
-	 * @param endLine  last line number (inclusive)
-	 * @param x  the X-coordinate of the drawing range
-	 * @param w  the width of the drawing range
+	 * @param gc the GC
+	 * @param startLine first line number
+	 * @param endLine last line number (inclusive)
+	 * @param x the X-coordinate of the drawing range
+	 * @param w the width of the drawing range
 	 */
 	private void drawLineRange(GC gc, int startLine, int endLine, int x, int w) {
 		final int viewPortWidth= fTextWidget.getClientArea().width;
@@ -319,7 +313,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Draw string at widget offset.
 	 * 
-	 * @param gc
+	 * @param gc the GC
 	 * @param offset the widget offset
 	 * @param s the string to be drawn
 	 * @param fg the foreground color
@@ -339,7 +333,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Convert a document offset to the corresponding widget offset.
 	 * 
-	 * @param documentOffset
+	 * @param documentOffset the document offset
 	 * @return widget offset
 	 */
 	private int getWidgetOffset(int documentOffset) {
@@ -358,7 +352,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Convert a widget offset to the corresponding document offset.
 	 * 
-	 * @param widgetOffset
+	 * @param widgetOffset the widget offset
 	 * @return document offset
 	 */
 	private int getDocumentOffset(int widgetOffset) {

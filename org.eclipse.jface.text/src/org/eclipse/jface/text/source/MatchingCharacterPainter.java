@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,13 +58,12 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 
 	/**
-	 * Creates a new MatchingCharacterPainter for the given source viewer using
-	 * the given character pair matcher. The character matcher is not adopted by
-	 * this painter. Thus,  it is not disposed. However, this painter requires
-	 * exclusive access to the given pair matcher.
-	 *
-	 * @param sourceViewer
-	 * @param matcher
+	 * Creates a new MatchingCharacterPainter for the given source viewer using the given character
+	 * pair matcher. The character matcher is not adopted by this painter. Thus, it is not disposed.
+	 * However, this painter requires exclusive access to the given pair matcher.
+	 * 
+	 * @param sourceViewer the source viewer
+	 * @param matcher the character pair matcher
 	 */
 	public MatchingCharacterPainter(ISourceViewer sourceViewer, ICharacterPairMatcher matcher) {
 		fSourceViewer= sourceViewer;

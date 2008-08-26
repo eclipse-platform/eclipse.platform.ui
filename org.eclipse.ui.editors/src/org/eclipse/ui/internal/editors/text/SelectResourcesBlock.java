@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,10 +45,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-/* 
+/*
  * XXX: This is an copy of the internal ResourceTreeAndListGroup class, see:
  *      https://bugs.eclipse.org/bugs/show_bug.cgi?id=147027
- */ 
+ */
 
 /**
  * Workbench-level composite that combines a CheckboxTreeViewer and
@@ -103,17 +103,17 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	private static int PREFERRED_HEIGHT= 150;
 
 	/**
-	 * Create an instance of this class. Use this constructor if you wish to
-	 * specify the width and/or height of the combined widget (to only hard code
-	 * one of the sizing dimensions, specify the other dimension's value as -1)
-	 *
-	 * @param parent
-	 * @param rootObject
-	 * @param treeContentProvider
-	 * @param treeLabelProvider
-	 * @param listContentProvider
-	 * @param listLabelProvider
-	 * @param style
+	 * Create an instance of this class. Use this constructor if you wish to specify the width
+	 * and/or height of the combined widget (to only hard code one of the sizing dimensions, specify
+	 * the other dimension's value as -1)
+	 * 
+	 * @param parent the parent composite
+	 * @param rootObject the root object
+	 * @param treeContentProvider the tree content provider
+	 * @param treeLabelProvider the tree label provider
+	 * @param listContentProvider the list content provider
+	 * @param listLabelProvider the list label provider
+	 * @param style the style flags for the new Composite
 	 * @param useHeightHint If true then use the height hint to make this group big enough
 	 */
 	public SelectResourcesBlock(Composite parent, Object rootObject, ITreeContentProvider treeContentProvider, ILabelProvider treeLabelProvider, IStructuredContentProvider listContentProvider, ILabelProvider listLabelProvider, int style, boolean useHeightHint) {

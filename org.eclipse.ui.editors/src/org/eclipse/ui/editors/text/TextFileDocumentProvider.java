@@ -72,6 +72,7 @@ import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.FileEditorInput;
+
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension;
@@ -116,9 +117,9 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		/**
 		 * The actual functionality of this operation.
-		 *
+		 * 
 		 * @param monitor the progress monitor
-		 * @throws CoreException
+		 * @throws CoreException if the execution fails
 		 */
 		protected abstract void execute(IProgressMonitor monitor) throws CoreException;
 

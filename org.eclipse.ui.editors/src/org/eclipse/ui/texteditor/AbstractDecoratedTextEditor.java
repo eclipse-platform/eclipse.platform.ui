@@ -10,11 +10,30 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import com.ibm.icu.text.MessageFormat;
-
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledTextPrintOptions;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -30,26 +49,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.URIUtil;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledTextPrintOptions;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
@@ -63,6 +64,11 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
@@ -94,10 +100,6 @@ import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -108,11 +110,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
-import org.eclipse.ui.editors.text.DefaultEncodingSupport;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
-import org.eclipse.ui.editors.text.IEncodingSupport;
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -133,12 +130,19 @@ import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
+
 import org.eclipse.ui.texteditor.rulers.IColumnSupport;
 import org.eclipse.ui.texteditor.rulers.IContributedRulerColumn;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
-import org.eclipse.ui.views.markers.MarkerViewUtil;
+
+import org.eclipse.ui.editors.text.DefaultEncodingSupport;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
+import org.eclipse.ui.editors.text.IEncodingSupport;
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -1839,15 +1843,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			updateMarkerViews(annotation);
 		return annotation;
 	}
-	
+
 	/**
 	 * Updates visible views that show markers.
 	 * <p>
-	 * If the given annotation can be associated with a marker then
-	 * this method tries select the this marker in views that show
-	 * markers.
+	 * If the given annotation can be associated with a marker then this method tries select the
+	 * this marker in views that show markers.
 	 * </p>
-	 * @param annotation
+	 * 
+	 * @param annotation the annotation
 	 * @since 3.2
 	 */
 	protected void updateMarkerViews(Annotation annotation) {

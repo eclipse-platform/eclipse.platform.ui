@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,11 +90,11 @@ public class LinkedRangeFactory {
 
 	/**
 	 * Create a new linked range difference with the given next range and operation.
-	 *
+	 * 
 	 * @param next the next linked range difference
 	 * @param operation the operation
 	 * @return the new linked range difference
-	 * @throws LowMemoryException
+	 * @throws LowMemoryException if we hit a low memory condition
 	 */
 	public LinkedRangeDifference newRange(LinkedRangeDifference next, int operation) throws LowMemoryException {
 		check();
@@ -102,10 +102,11 @@ public class LinkedRangeFactory {
 	}
 
 	/**
-	 * After <code>CHECK_INTERVAL</code> calls check whether at least a fraction of <code>THRESHOLD</code>
-	 * of the maximal available memory is free, otherwise throw an {@link LowMemoryException}.
-	 *
-	 * @throws LowMemoryException
+	 * After <code>CHECK_INTERVAL</code> calls check whether at least a fraction of
+	 * <code>THRESHOLD</code> of the maximal available memory is free, otherwise throw an
+	 * {@link LowMemoryException}.
+	 * 
+	 * @throws LowMemoryException if we hit a low memory condition
 	 */
 	private void check() throws LowMemoryException {
 		if (fCount % CHECK_INTERVAL == 0) {

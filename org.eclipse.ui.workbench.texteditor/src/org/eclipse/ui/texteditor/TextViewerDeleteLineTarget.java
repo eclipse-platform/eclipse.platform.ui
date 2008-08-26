@@ -256,14 +256,14 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 
 	/**
 	 * Returns the document's delete region specified by position and type.
-	 *
-	 * @param document	the document
+	 * 
+	 * @param document the document
 	 * @param offset the offset
 	 * @param length the length
-	 * @param type the line deletion type, must be one of
-	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 * @param type the line deletion type, must be one of <code>WHOLE_LINE</code>,
+	 *            <code>TO_BEGINNING</code> or <code>TO_END</code>
 	 * @return the document's delete region
-	 * @throws BadLocationException
+	 * @throws BadLocationException if the document is accessed with invalid offset or line
 	 */
 	private IRegion getDeleteRegion(IDocument document, int offset, int length, int type) throws BadLocationException {
 

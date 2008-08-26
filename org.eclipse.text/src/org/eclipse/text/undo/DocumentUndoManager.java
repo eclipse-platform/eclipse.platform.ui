@@ -437,8 +437,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		/**
 		 * Creates a new compound text change.
 		 * 
-		 * @param manager
-		 *            the undo manager for this change
+		 * @param manager the undo manager for this change
 		 */
 		UndoableCompoundTextChange(DocumentUndoManager manager) {
 			super(manager);
@@ -951,11 +950,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	}
 
 	/**
-	 * Adds the given text edit to the operation history if it is not part of a
-	 * compound change.
+	 * Adds the given text edit to the operation history if it is not part of a compound change.
 	 * 
-	 * @param edit
-	 *            the edit to be added
+	 * @param edit the edit to be added
 	 */
 	private void addToOperationHistory(UndoableTextChange edit) {
 		if (!fFoldingIntoCompoundChange

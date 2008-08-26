@@ -1481,12 +1481,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected abstract class AbstractSelectionChangedListener implements ISelectionChangedListener  {
 
 		/**
-		 * Installs this selection changed listener with the given selection provider. If
-		 * the selection provider is a post selection provider, post selection changed
-		 * events are the preferred choice, otherwise normal selection changed events
-		 * are requested.
-		 *
-		 * @param selectionProvider
+		 * Installs this selection changed listener with the given selection provider. If the
+		 * selection provider is a post selection provider, post selection changed events are the
+		 * preferred choice, otherwise normal selection changed events are requested.
+		 * 
+		 * @param selectionProvider the selection provider
 		 */
 		public void install(ISelectionProvider selectionProvider) {
 			if (selectionProvider == null)
@@ -2837,7 +2836,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Sets the given selection.
-	 * @param selection
+	 * 
+	 * @param selection the selection
 	 * @since 2.1
 	 */
 	protected void doSetSelection(ISelection selection) {
@@ -6398,8 +6398,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Updates the status fields for the given category.
-	 *
-	 * @param category
+	 * 
+	 * @param category the category
 	 * @since 2.0
 	 */
 	protected void updateStatusField(String category) {

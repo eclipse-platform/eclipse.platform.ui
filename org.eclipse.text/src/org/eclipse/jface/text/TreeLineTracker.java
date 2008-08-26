@@ -165,12 +165,12 @@ abstract class TreeLineTracker implements ILineTracker {
 	 */
 	protected TreeLineTracker() {
 	}
-	
+
 	/**
 	 * Package visible constructor for creating a tree tracker from a list tracker.
 	 * 
-     * @param tracker
-     */
+	 * @param tracker the list line tracker
+	 */
     TreeLineTracker(ListLineTracker tracker) {
     	final List lines= tracker.getLines();
     	final int n= lines.size();

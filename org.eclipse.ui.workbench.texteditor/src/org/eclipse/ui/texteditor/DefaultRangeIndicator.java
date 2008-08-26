@@ -12,9 +12,6 @@
 package org.eclipse.ui.texteditor;
 
 
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationPresentation;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -29,6 +26,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationPresentation;
 
 
 /**
@@ -149,8 +149,8 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 	/**
 	 * Creates and returns a new color palette data.
-	 *
-	 * @param display
+	 * 
+	 * @param display the display
 	 * @return the new color palette data
 	 */
 	private static PaletteData createPalette(Display display) {

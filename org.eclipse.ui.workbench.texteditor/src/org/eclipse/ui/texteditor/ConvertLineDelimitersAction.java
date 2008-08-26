@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,15 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -124,10 +125,11 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		private final String fLineDelimiter;
 
 		/**
-		 * Returns a new runnable for converting all line delimiters in
-		 * the <code>rewriteTarget</code> to <code>lineDelimter</code>.
-		 * @param rewriteTarget
-		 * @param lineDelimiter
+		 * Returns a new runnable for converting all line delimiters in the
+		 * <code>rewriteTarget</code> to <code>lineDelimter</code>.
+		 * 
+		 * @param rewriteTarget the rewrite target
+		 * @param lineDelimiter the line delimiter
 		 */
 		public ConvertRunnable(IRewriteTarget rewriteTarget, String lineDelimiter) {
 			fRewriteTarget= rewriteTarget;

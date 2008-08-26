@@ -13,9 +13,6 @@
 package org.eclipse.jface.text;
 
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -26,11 +23,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.internal.text.InformationControlReplacer;
 import org.eclipse.jface.internal.text.InternalAccessor;
-import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.util.Geometry;
+
+import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 
 
 /**
@@ -524,26 +525,25 @@ abstract public class AbstractInformationControlManager {
 	}
 
 	/**
-	 * Tells this information control manager to open the information
-	 * control with the values contained in the given dialog settings
-	 * and to store the control's last valid size in the given dialog
-	 * settings.
+	 * Tells this information control manager to open the information control with the values
+	 * contained in the given dialog settings and to store the control's last valid size in the
+	 * given dialog settings.
 	 * <p>
 	 * Note: This API is only valid if the information control implements
-	 * {@link IInformationControlExtension3}. Not following this restriction
-	 * will later result in an {@link UnsupportedOperationException}.
+	 * {@link IInformationControlExtension3}. Not following this restriction will later result in an
+	 * {@link UnsupportedOperationException}.
 	 * </p>
 	 * <p>
 	 * The constants used to store the values are:
 	 * <ul>
-	 *	<li>{@link AbstractInformationControlManager#STORE_LOCATION_X}</li>
-	 *	<li>{@link AbstractInformationControlManager#STORE_LOCATION_Y}</li>
-	 *  <li>{@link AbstractInformationControlManager#STORE_SIZE_WIDTH}</li>
-	 *	<li>{@link AbstractInformationControlManager#STORE_SIZE_HEIGHT}</li>
+	 * <li>{@link AbstractInformationControlManager#STORE_LOCATION_X}</li>
+	 * <li>{@link AbstractInformationControlManager#STORE_LOCATION_Y}</li>
+	 * <li>{@link AbstractInformationControlManager#STORE_SIZE_WIDTH}</li>
+	 * <li>{@link AbstractInformationControlManager#STORE_SIZE_HEIGHT}</li>
 	 * </ul>
 	 * </p>
-	 *
-	 * @param dialogSettings
+	 * 
+	 * @param dialogSettings the dialog settings
 	 * @param restoreLocation <code>true</code> iff the location is must be (re-)stored
 	 * @param restoreSize <code>true</code>iff the size is (re-)stored
 	 * @since 3.0
@@ -1210,7 +1210,7 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * Crops the given bounds such that they lie completely on the closest monitor.
-	 *  
+	 * 
 	 * @param bounds shell bounds to crop
 	 * @since 3.4
 	 */

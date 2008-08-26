@@ -1019,8 +1019,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 
 	/**
-	 * Creates a separator between buttons
-	 * @param parent
+	 * Creates a separator between buttons.
+	 * 
+	 * @param parent the parent composite
 	 * @return a separator
 	 */
 	private Label createSeparator(Composite parent) {

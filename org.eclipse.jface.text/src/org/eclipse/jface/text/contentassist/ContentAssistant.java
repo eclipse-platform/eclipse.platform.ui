@@ -748,18 +748,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					break;
 			}
 		}
-		
+
 		/**
-		 * Copied from org.eclipse.jface.window.Window.
-		 * Returns the monitor whose client area contains the given point. If no
-		 * monitor contains the point, returns the monitor that is closest to the
-		 * point. If this is ever made public, it should be moved into a separate
+		 * Copied from org.eclipse.jface.window.Window. Returns the monitor whose client area
+		 * contains the given point. If no monitor contains the point, returns the monitor that is
+		 * closest to the point. If this is ever made public, it should be moved into a separate
 		 * utility class.
 		 * 
-		 * @param toSearch
-		 *            point to find (display coordinates)
-		 * @param rectangle
-		 *            rectangle to find (display coordinates)
+		 * @param toSearch point to find (display coordinates)
+		 * @param rectangle rectangle to find (display coordinates)
 		 * @return the monitor closest to the given point
 		 * @since 3.3
 		 */
@@ -2079,8 +2076,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * <li>{@link ContentAssistant#STORE_SIZE_Y}</li>
 	 * </ul>
 	 * </p>
-	 *
-	 * @param dialogSettings
+	 * 
+	 * @param dialogSettings the dialog settings
 	 * @since 3.0
 	 */
 	public void setRestoreCompletionProposalSize(IDialogSettings dialogSettings) {

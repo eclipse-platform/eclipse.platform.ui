@@ -223,7 +223,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 	/**
 	 * Tells whether this action accepts the given location.
 	 * 
-	 * @param location
+	 * @param location the location
 	 * @return <code>true</code> if the given location is acceptable
 	 */
 	protected boolean isAcceptableLocation(IPath location) {

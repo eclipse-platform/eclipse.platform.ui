@@ -16,22 +16,23 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Copy-on-write <code>ITextStore</code> wrapper.
  * <p>
- * This implementation uses an unmodifiable text store for the initial content.
- * Upon first modification attempt, the unmodifiable store is replaced with
- * a modifiable instance which must be supplied in the constructor.</p>
+ * This implementation uses an unmodifiable text store for the initial content. Upon first
+ * modification attempt, the unmodifiable store is replaced with a modifiable instance which must be
+ * supplied in the constructor.
+ * </p>
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- *
+ * 
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CopyOnWriteTextStore implements ITextStore {
 
 	/**
-	 * An unmodifiable String based text store. It is not possible to modify the content
-	 * other than using {@link #set}. Trying to {@link #replace} a text range will
-	 * throw an <code>UnsupportedOperationException</code>.
+	 * An unmodifiable String based text store. It is not possible to modify the content other than
+	 * using {@link #set}. Trying to {@link #replace} a text range will throw an
+	 * <code>UnsupportedOperationException</code>.
 	 */
 	private static class StringTextStore implements ITextStore {
 
@@ -47,7 +48,8 @@ public class CopyOnWriteTextStore implements ITextStore {
 
 		/**
 		 * Create a text store with initial content.
-		 * @param text  the initial content
+		 * 
+		 * @param text the initial content
 		 */
 		private StringTextStore(String text) {
 			super();
@@ -99,11 +101,10 @@ public class CopyOnWriteTextStore implements ITextStore {
 	private final ITextStore fModifiableTextStore;
 
 	/**
-	 * Creates an empty text store. The given text store will be used upon first
-	 * modification attempt.
+	 * Creates an empty text store. The given text store will be used upon first modification
+	 * attempt.
 	 * 
-	 * @param modifiableTextStore
-	 *            a modifiable <code>ITextStore</code> instance, may not be
+	 * @param modifiableTextStore a modifiable <code>ITextStore</code> instance, may not be
 	 *            <code>null</code>
 	 */
 	public CopyOnWriteTextStore(ITextStore modifiableTextStore) {

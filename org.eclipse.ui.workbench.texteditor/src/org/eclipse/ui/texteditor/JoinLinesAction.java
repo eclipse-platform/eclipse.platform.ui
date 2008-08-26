@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Benjamin Muskalla - initial API and implementation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573 
+ *     Benjamin Muskalla - initial API and implementation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -134,7 +134,7 @@ public class JoinLinesAction extends TextEditorAction {
 		ITextEditor editor= getTextEditor();
 		setEnabled(editor.isEditable());
 	}
-	
+
 	/**
 	 * Joins several text lines to one line.
 	 * 
@@ -142,7 +142,7 @@ public class JoinLinesAction extends TextEditorAction {
 	 * @param startLine the start line
 	 * @param endLine the end line
 	 * @return the new caret offset
-	 * @throws BadLocationException
+	 * @throws BadLocationException if the document is accessed with wrong line or offset
 	 */
 	private int joinLines(IDocument document, int startLine, int endLine) throws BadLocationException {
 		if (startLine == document.getNumberOfLines() - 1) {

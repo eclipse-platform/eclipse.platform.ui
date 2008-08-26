@@ -407,8 +407,8 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Sets the character pair matcher for the matching character painter.
-	 *
-	 * @param pairMatcher
+	 * 
+	 * @param pairMatcher the character pair matcher
 	 */
 	public void setCharacterPairMatcher(ICharacterPairMatcher pairMatcher) {
 		fCharacterPairMatcher= pairMatcher;
@@ -473,7 +473,8 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Sets the symbolic font name that is used for computing the margin width.
-	 * @param symbolicFontName
+	 * 
+	 * @param symbolicFontName the symbolic font name
 	 */
 	public void setSymbolicFontName(String symbolicFontName) {
 		fSymbolicFontName= symbolicFontName;

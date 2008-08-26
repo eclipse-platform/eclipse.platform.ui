@@ -14,13 +14,6 @@ package org.eclipse.jface.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyleRange;
@@ -57,6 +50,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
+
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
@@ -64,6 +64,9 @@ import org.eclipse.jface.internal.text.InformationControlReplacer;
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.viewers.StyledString;
+
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -78,8 +81,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.AbstractInformationControlManager.Anchor;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.viewers.StyledString;
 
 
 /**
@@ -1772,7 +1773,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * Enables or disables showing of the caption line. See also {@link #setMessage(String)}.
 	 * 
-	 * @param show
+	 * @param show <code>true</code> if the status line is visible
 	 * @since 3.2
 	 */
 	public void setStatusLineVisible(boolean show) {

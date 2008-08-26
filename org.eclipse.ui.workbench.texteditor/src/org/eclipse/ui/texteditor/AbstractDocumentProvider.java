@@ -58,12 +58,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		 */
 		protected static abstract class DocumentProviderOperation implements IRunnableWithProgress {
 
-			/**
-			 * The actual functionality of this operation.
-			 *
-			 * @param monitor a progress monitor to track execution
-			 * @throws CoreException
-			 */
+		/**
+		 * The actual functionality of this operation.
+		 * 
+		 * @param monitor a progress monitor to track execution
+		 * @throws CoreException if the execution fails
+		 */
 			protected abstract void execute(IProgressMonitor monitor) throws CoreException;
 
 			/*
@@ -500,10 +500,10 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 	/**
 	 * Executes the actual work of reseting the given elements document.
-	 *
+	 * 
 	 * @param element the element
 	 * @param monitor the progress monitor
-	 * @throws CoreException
+	 * @throws CoreException if resetting fails
 	 * @since 3.0
 	 */
 	protected void doResetDocument(Object element, IProgressMonitor monitor) throws CoreException {
@@ -897,11 +897,11 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 
 	/**
-	 * Informs all registered element state listeners about a change in the
-	 * state validation of the given element.
-	 *
+	 * Informs all registered element state listeners about a change in the state validation of the
+	 * given element.
+	 * 
 	 * @param element the element
-	 * @param isStateValidated
+	 * @param isStateValidated the flag indicating whether state validation is done
 	 * @see IElementStateListenerExtension#elementStateValidationChanged(Object, boolean)
 	 * @since 2.0
 	 */

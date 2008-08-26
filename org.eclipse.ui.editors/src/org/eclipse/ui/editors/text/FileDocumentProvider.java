@@ -72,6 +72,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.part.FileEditorInput;
+
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
@@ -975,8 +976,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	/**
 	 * Refreshes the given file resource.
-	 *
-	 * @param file
+	 * 
+	 * @param file the file
 	 * @throws CoreException if the refresh fails
 	 * @since 2.1
 	 */

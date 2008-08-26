@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,37 +59,21 @@ public class EditorLinkedModeUI extends LinkedModeUI {
 	}
 
 
-	/**
-	 * @param model
-	 * @param viewer
-	 */
 	public EditorLinkedModeUI(LinkedModeModel model, ITextViewer viewer) {
 		super(model, viewer);
 		setPositionListener(new EditorHistoryUpdater());
 	}
 
-	/**
-	 * @param model
-	 * @param viewers
-	 */
 	public EditorLinkedModeUI(LinkedModeModel model, ITextViewer[] viewers) {
 		super(model, viewers);
 		setPositionListener(new EditorHistoryUpdater());
 	}
 
-	/**
-	 * @param model
-	 * @param target
-	 */
 	public EditorLinkedModeUI(LinkedModeModel model, LinkedModeUITarget target) {
 		super(model, target);
 		setPositionListener(new EditorHistoryUpdater());
 	}
 
-	/**
-	 * @param model
-	 * @param targets
-	 */
 	public EditorLinkedModeUI(LinkedModeModel model, LinkedModeUITarget[] targets) {
 		super(model, targets);
 		setPositionListener(new EditorHistoryUpdater());

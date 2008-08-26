@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.link.LinkedModeModel;
-import org.eclipse.jface.text.link.LinkedPosition;
-import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 
@@ -162,12 +159,11 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 
 	/**
 	 * Switches the focus position to <code>position</code> given the
-	 * <code>LinkedModeModel env</code>. The slave positions for <code>position</code>
-	 * is extracted from the environment and set accordingly, the target positions
-	 * are updated as well.
-	 *
-	 * @param env
-	 * @param position
+	 * <code>LinkedModeModel env</code>. The slave positions for <code>position</code> is extracted
+	 * from the environment and set accordingly, the target positions are updated as well.
+	 * 
+	 * @param env the linked mode model
+	 * @param position the linked position
 	 */
 	public void switchToPosition(LinkedModeModel env, LinkedPosition position) {
 		if (fDocument == null ||
@@ -238,8 +234,9 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	}
 
 	/**
-	 * Sets the target positions
-	 * @param positions
+	 * Sets the target positions.
+	 * 
+	 * @param positions an array of positions
 	 */
 	public void setTargets(Position[] positions) {
 		fTargets= positions;

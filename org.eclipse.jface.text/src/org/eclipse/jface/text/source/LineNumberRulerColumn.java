@@ -873,14 +873,16 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	protected CompositeRuler getParentRuler() {
 		return fParentRuler;
 	}
-	
-	
+
+
 	/**
 	 * Returns the number of lines in the view port.
 	 * 
-	 * @param textWidget
-	 * @return the number of lines visible in the view port <code>-1</code> if there's no client area
-	 * @deprecated this method should not be used - it relies on the widget using a uniform line height
+	 * @param textWidget the styled text widget
+	 * @return the number of lines visible in the view port <code>-1</code> if there's no client
+	 *         area
+	 * @deprecated this method should not be used - it relies on the widget using a uniform line
+	 *             height
 	 */
 	static int getVisibleLinesInViewport(StyledText textWidget) {
 		if (textWidget != null) {

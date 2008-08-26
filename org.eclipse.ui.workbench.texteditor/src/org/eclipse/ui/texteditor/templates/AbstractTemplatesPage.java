@@ -177,7 +177,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		/**
 		 * Check whether an update of the AbstractTemplatesPage is needed
 		 * 
-		 * @param contextTypes
+		 * @param contextTypes the context types
 		 * @return true if update is needed
 		 */
 		private boolean needUpdate(String[] contextTypes) {
@@ -189,7 +189,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		/**
 		 * Check whether there is any change in the context types needed
 		 * 
-		 * @param contextTypes
+		 * @param contextTypes the context types
 		 * @return true if any of the context types changed
 		 */
 		private boolean contextTypeChanged(String[] contextTypes) {
@@ -617,9 +617,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	/**
 	 * Update the pattern viewer to show the current template.
 	 * <p>
-	 * Subclasses can extend this method to update their own pattern viewer.</p>
+	 * Subclasses can extend this method to update their own pattern viewer.
+	 * </p>
 	 * 
-	 * @param template
+	 * @param template the template
 	 */
 	protected void updatePatternViewer(Template template) {
 		String pattern= template != null ? template.getPattern() : ""; //$NON-NLS-1$
@@ -776,7 +777,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			/**
 			 * Convert the clipboard contents into a template
 			 * 
-			 * @param clipboard
+			 * @param clipboard the clipboard
 			 * @return the template or null if contents are not valid
 			 */
 			private Template getTemplateFromClipboard(Clipboard clipboard) {
@@ -969,9 +970,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Fill the toolbar
+	 * Fill the toolbar.
 	 * 
-	 * @param actionBars
+	 * @param actionBars the action bars
 	 */
 	private void fillToolbar(IActionBars actionBars) {
 		IToolBarManager toolBarManager= actionBars.getToolBarManager();
@@ -987,9 +988,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Fill the view menu
+	 * Fill the view menu.
 	 * 
-	 * @param actionBars
+	 * @param actionBars the action bars
 	 */
 	private void fillMenu(IActionBars actionBars) {
 		IMenuManager menuManager= actionBars.getMenuManager();
@@ -1003,9 +1004,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Fill the context menu items
+	 * Fill the context menu items.
 	 * 
-	 * @param manager
+	 * @param manager the menu manager
 	 */
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(fInsertAction);
@@ -1021,9 +1022,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Create the tree to display templates
+	 * Create the tree to display templates.
 	 * 
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	private void createTemplateTree(Composite parent) {
 		Composite treeComposite= new Composite(parent, SWT.NONE);
@@ -1077,9 +1078,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Create the tree viewer and setup the providers
+	 * Create the tree viewer and setup the providers.
 	 * 
-	 * @param templatesTree
+	 * @param templatesTree the tree used to show the templates
 	 */
 	private void createTreeViewer(Tree templatesTree) {
 		fTreeViewer= new TreeViewer(fTemplatesTree);
@@ -1107,9 +1108,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Setup the pattern viewer
+	 * Setup the pattern viewer.
 	 * 
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	private void createPatternForm(Composite parent) {
 		ViewForm viewForm= new ViewForm(parent, SWT.NONE);
@@ -1281,10 +1282,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Returns the context id for the given item which is either a template or a
-	 * context type.
+	 * Returns the context id for the given item which is either a template or a context type.
 	 * 
-	 * @param item
+	 * @param item the item
 	 * @return the context type id
 	 */
 	private String getContextId(Object item) {
@@ -1297,10 +1297,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Add a template. The dialog is filled with the values from the given
-	 * template.
+	 * Add a template. The dialog is filled with the values from the given template.
 	 * 
-	 * @param template
+	 * @param template the template
 	 */
 	private void addTemplate(Template template) {
 		Template newTemplate;
@@ -1351,10 +1350,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Moves the selected template from one context to another
+	 * Moves the selected template from one context to another.
 	 * 
-	 * @param templates
-	 * @param contextId
+	 * @param templates an array of template data
+	 * @param contextId the contextId
 	 * 
 	 */
 	private void moveTemplates(TemplatePersistenceData[] templates, String contextId) {
@@ -1370,8 +1369,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	/**
 	 * Copy the selected templates to another context
 	 * 
-	 * @param templates
-	 * @param contextId
+	 * @param templates an array of template data
+	 * @param contextId the context id
 	 * 
 	 */
 	private void copyTemplates(TemplatePersistenceData[] templates, String contextId) {
@@ -1581,11 +1580,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	/**
 	 * Returns the document relative offset from the text widget relative point
 	 * 
-	 * @param document
-	 * @param textWidget
-	 * @param point
+	 * @param document the document
+	 * @param textWidget the text widget
+	 * @param point the point for which to get the offset
 	 * @return the offset
-	 * @throws BadLocationException
+	 * @throws BadLocationException if the document is accessed with an invalid line
 	 */
 	private int getOffset(IDocument document, StyledText textWidget, Point point)
 			throws BadLocationException {

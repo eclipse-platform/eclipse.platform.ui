@@ -298,10 +298,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	}
 
 	/**
-	 * Computes the length of the longest detected
-	 * hyperlink.
+	 * Computes the length of the longest detected hyperlink.
 	 * 
-	 * @param hyperlinks
+	 * @param hyperlinks the list of hyperlinks
 	 * @return the length of the longest detected
 	 */
 	protected int computeLongestHyperlinkLength(List hyperlinks) {
@@ -472,11 +471,11 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		fHyperlinkPresenter.showHyperlinks(fActiveHyperlinks);
 
 	}
-	
+
 	/**
 	 * Checks whether the given state mask is registered.
 	 * 
-	 * @param stateMask
+	 * @param stateMask the state mask
 	 * @return <code>true</code> if a detector is registered for the given state mask
 	 * @since 3.3
 	 */

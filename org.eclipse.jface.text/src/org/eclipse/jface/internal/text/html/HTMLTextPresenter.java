@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.internal.text.link.contentassist.LineBreakingReader;
+
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
@@ -98,8 +99,10 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter#updatePresentation(org.eclipse.swt.widgets.Display, java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
-	 * @deprecated
+	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter#updatePresentation(org.eclipse.swt.widgets.Display,
+	 *      java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
+	 * @deprecated Use {@link #updatePresentation(Drawable, String, TextPresentation, int, int)}
+	 *             instead
 	 */
 	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 		return updatePresentation((Drawable)display, hoverInfo, presentation, maxWidth, maxHeight);

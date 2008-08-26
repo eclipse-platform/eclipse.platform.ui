@@ -40,11 +40,11 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 
 	/**
 	 * Creates a new diff region.
-	 *
-	 * @param difference
-	 * @param offset
-	 * @param differences
-	 * @param source
+	 * 
+	 * @param difference the range difference
+	 * @param offset the offset
+	 * @param differences the list of diffrences
+	 * @param source the document
 	 */
 	public DiffRegion(RangeDifference difference, int offset, List differences, IDocument source) {
 		super("org.eclipse.ui.workbench.texteditor.quickdiffChange", false, null); //$NON-NLS-1$

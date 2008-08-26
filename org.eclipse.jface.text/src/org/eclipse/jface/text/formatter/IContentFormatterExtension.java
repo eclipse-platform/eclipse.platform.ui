@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,29 +49,23 @@ public interface IContentFormatterExtension {
 	/**
 	 * Formats the given region of the specified document.
 	 * <p>
-	 * The formatter may safely assume that it is the only subject that
-	 * modifies the document at this point in time. This method is fully
-	 * reentrant, but not thread-safe.
+	 * The formatter may safely assume that it is the only subject that modifies the document at
+	 * this point in time. This method is fully reentrant, but not thread-safe.
 	 * <p>
 	 * The formatting process performed by <code>format(IDocument, IFormattingContext)</code>
 	 * happens as follows:
 	 * <ul>
-	 * <li>In a first pass the content formatter formats the range of the
-	 * document to be formatted by using the master formatting strategy. This
-	 * happens regardless of the content type of the underlying partition.
-	 * </li>
-	 * <li>In the second pass, the range is formatted again, this time using
-	 * the registered slave formatting strategies. For each partition contained
-	 * in the range to be formatted, the content formatter determines its
-	 * content type and formats the partition with the correct formatting
-	 * strategy.
-	 * </li>
-	 *
-	 * @param document
-	 *                  The document to be formatted
-	 * @param context
-	 *                   The formatting context to pass to the formatting strategies.
-	 *                   This argument must not be <code>null</code>.
+	 * <li>In a first pass the content formatter formats the range of the document to be formatted
+	 * by using the master formatting strategy. This happens regardless of the content type of the
+	 * underlying partition.</li>
+	 * <li>In the second pass, the range is formatted again, this time using the registered slave
+	 * formatting strategies. For each partition contained in the range to be formatted, the content
+	 * formatter determines its content type and formats the partition with the correct formatting
+	 * strategy.</li>
+	 * 
+	 * @param document the document to be formatted
+	 * @param context the formatting context to pass to the formatting strategies. This argument
+	 *            must not be <code>null</code>.
 	 */
 	void format(IDocument document, IFormattingContext context);
 }

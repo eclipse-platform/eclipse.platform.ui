@@ -1467,7 +1467,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 
 	/**
-	 * @param completionPosition
+	 * @param completionPosition the completion position
 	 */
 	public void setCompletionPosition(int completionPosition) {
 		fCompletionPosition= completionPosition;
@@ -1481,14 +1481,14 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 
 	/**
-	 * @param proposals
+	 * @param proposals the proposals
 	 */
 	public void setCompletions(String[] proposals) {
 		fProposalStrings= proposals;
 	}
 
 	/**
-	 * @param proposals
+	 * @param proposals the proposals
 	 */
 	public void setCompletions(ICompletionProposal[] proposals) {
 		fProposals= proposals;
@@ -1536,7 +1536,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 
 	/**
-	 * @param proposal
+	 * @param proposal the proposal
 	 */
 	public void fireProposalChosen(ICompletionProposal proposal) {
 		List list= new ArrayList(fProposalListeners);
@@ -1548,14 +1548,14 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 
 	/**
-	 * @param listener
+	 * @param listener the proposal listener
 	 */
 	public void removeProposalListener(IProposalListener listener) {
 		fProposalListeners.remove(listener);
 	}
 
 	/**
-	 * @param listener
+	 * @param listener the proposal listener
 	 */
 	public void addProposalListener(IProposalListener listener) {
 		fProposalListeners.add(listener);

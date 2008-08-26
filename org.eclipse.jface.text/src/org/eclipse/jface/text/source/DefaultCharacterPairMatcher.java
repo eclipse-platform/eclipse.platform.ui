@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	 * @param boundary a boundary at which the search should stop
 	 * @param startPos the start offset
 	 * @return the index of the end character if it was found, otherwise -1
-	 * @throws BadLocationException
+	 * @throws BadLocationException if the document is accessed with invalid offset or line
 	 */
 	private int findMatchingPeer(DocumentPartitionAccessor doc, char start, char end, boolean searchForward, int boundary, int startPos) throws BadLocationException {
 		int pos= startPos;
@@ -172,28 +172,27 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 			fPartitioning= partitioning;
 			fPartition= partition;
 		}
-	
+
 		/**
 		 * Returns the character at the specified position in this document.
 		 * 
 		 * @param pos an offset within this document
 		 * @return the character at the offset
-		 * @throws BadLocationException
+		 * @throws BadLocationException if the offset is invalid in this document
 		 */
 		public char getChar(int pos) throws BadLocationException {
 			return fDocument.getChar(pos);
 		}
-		
+
 		/**
-		 * Returns true if the character at the specified position is a
-		 * valid match for the specified end character.  To be a valid
-		 * match, it must be in the appropriate partition and equal to the
-		 * end character.
+		 * Returns true if the character at the specified position is a valid match for the
+		 * specified end character. To be a valid match, it must be in the appropriate partition and
+		 * equal to the end character.
 		 * 
 		 * @param pos an offset within this document
 		 * @param end the end character to match against
 		 * @return true exactly if the position represents a valid match
-		 * @throws BadLocationException
+		 * @throws BadLocationException if the offset is invalid in this document
 		 */
 		public boolean isMatch(int pos, char end) throws BadLocationException {
 			return getChar(pos) == end && inPartition(pos);

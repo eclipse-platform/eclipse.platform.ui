@@ -39,7 +39,7 @@ public interface IContentAssistSubjectControl {
 	 * Returns the line height.
 	 *
 	 * @return line height in pixel
-	 * @exception org.eclipse.swt.SWTException
+	 * @throws org.eclipse.swt.SWTException in these cases:
 	 *               <ul>
 	 *               	<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been
 	 *               		disposed</li>
@@ -55,7 +55,7 @@ public interface IContentAssistSubjectControl {
 	 *
 	 * @return the caret position relative to the start of the text in widget
 	 *         coordinates
-	 * @exception org.eclipse.swt.SWTException
+	 * @throws org.eclipse.swt.SWTException in these cases:
 	 *               <ul>
 	 *               	<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been
 	 *               		disposed</li>
@@ -74,7 +74,7 @@ public interface IContentAssistSubjectControl {
 	 *           <= offset <= getCharCount()
 	 * @return x, y location of the upper left corner of the character bounding
 	 *         box at the specified offset in the text
-	 * @exception org.eclipse.swt.SWTException
+	 * @throws org.eclipse.swt.SWTException in these cases:
 	 *			<ul>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
@@ -89,7 +89,7 @@ public interface IContentAssistSubjectControl {
 	 *
 	 * @return line delimiter used for entering new lines by key down or paste
 	 *         operation
-	 * @exception org.eclipse.swt.SWTException
+	 * @throws org.eclipse.swt.SWTException in these cases:
 	 *			<ul>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
@@ -101,7 +101,7 @@ public interface IContentAssistSubjectControl {
 	 * Returns the selected range in the subject's widget.
 	 *
 	 * @return start and length of the selection, x is the offset of the
-	 * @exception org.eclipse.swt.SWTException
+	 * @throws org.eclipse.swt.SWTException in these cases:
 	 *			<ul>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
@@ -199,7 +199,7 @@ public interface IContentAssistSubjectControl {
 	 *
 	 * @param keyListener the listener which should be notified
 	 * @exception IllegalArgumentException if the listener is <code>null</code>
-	 * @exception org.eclipse.swt.SWTException
+	 * @throws org.eclipse.swt.SWTException in these cases:
 	 *			<ul>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
@@ -216,7 +216,7 @@ public interface IContentAssistSubjectControl {
 	 *
 	 * @param keyListener the listener which should be notified
 	 * @exception IllegalArgumentException if the listener is null</li>
-	 * @exception org.eclipse.swt.SWTException
+	 * @throws org.eclipse.swt.SWTException in these cases:
 	 *			<ul>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
