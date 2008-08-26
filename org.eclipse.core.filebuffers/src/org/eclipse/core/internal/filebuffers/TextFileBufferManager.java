@@ -519,9 +519,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * Helper to get rid of deprecation warnings.
-	 *
-	 * @param location
-	 * @param locationKind
+	 * 
+	 * @param location the location of the file to be connected
+	 * @param locationKind the kind of the given location
 	 * @return the created empty document or <code>null</code> if none got created
 	 * @since 3.5
 	 * @deprecated As of 3.5
