@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,14 @@ package org.eclipse.core.filebuffers.tests;
 import java.io.File;
 import java.io.InputStream;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -24,14 +32,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 
 /**
  * @since 3.0
@@ -56,18 +56,18 @@ public class ResourceHelper {
 		return project;
 	}
 	
-	public static void deleteProject(String projectName) throws CoreException {
+	public static void deleteProject(String projectName) {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
 		if (project.exists())
 			delete(project);
 	}
 	
-	public static void delete(final IProject project) throws CoreException {
+	public static void delete(final IProject project) {
 		delete(project, true);
 	}
 	
-	public static void delete(final IProject project, boolean deleteContent) throws CoreException {
+	public static void delete(final IProject project, boolean deleteContent) {
 		for (int i= 0; i < MAX_RETRY; i++) {
 			try {
 				project.delete(deleteContent, true, NULL_MONITOR);
@@ -80,7 +80,7 @@ public class ResourceHelper {
 				try {
 					Thread.sleep(1000); // sleep a second
 				} catch (InterruptedException e) {
-				} 
+				}
 			}
 		}
 	}
@@ -94,14 +94,14 @@ public class ResourceHelper {
 	}
 
 	public static IFile createFile(IFolder folder, String name, String contents) throws CoreException {
-		return createFile(folder.getFile(name), name, contents);
+		return createFile(folder.getFile(name), contents);
 	}
 	
 	public static IFile createFile(IProject project, String name, String contents) throws CoreException {
-		return createFile(project.getFile(name), name, contents);
+		return createFile(project.getFile(name), contents);
 	}
 	
-	private static IFile createFile(IFile file, String name, String contents) throws CoreException {
+	private static IFile createFile(IFile file, String contents) throws CoreException {
 		if (contents == null)
 			contents= "";
 		InputStream inputStream= new java.io.StringBufferInputStream(contents);

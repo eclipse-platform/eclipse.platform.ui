@@ -26,7 +26,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
@@ -53,10 +52,6 @@ public class FileTool {
 	 * @throws IOException in case of problem
 	 */
 	public static void unzip(ZipFile zipFile, File dstDir) throws IOException {
-		unzip(zipFile, dstDir, dstDir, 0);
-	}
-	
-	private static void unzip(ZipFile zipFile, File rootDstDir, File dstDir, int depth) throws IOException {
 	
 		Enumeration entries = zipFile.entries();
 	
@@ -226,12 +221,12 @@ public class FileTool {
 		}
 	}
 	
-	public static void delete(IPath path) throws CoreException {
+	public static void delete(IPath path) {
 		File file= FileBuffers.getSystemFileAtLocation(path);
 		delete(file);
 	}
 	
-	public static void delete(File file) throws CoreException {
+	public static void delete(File file) {
 		if (file.exists()) {
 			for (int i= 0; i < MAX_RETRY; i++) {
 				if (file.delete())

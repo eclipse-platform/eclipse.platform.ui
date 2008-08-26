@@ -41,7 +41,7 @@ public class MockDocumentSetupParticipants {
 		}
 	}
 	
-	static abstract class AbstractTestDSPExtension extends AbstractTestDSP implements IDocumentSetupParticipant, IDocumentSetupParticipantExtension {
+	static abstract class AbstractTestDSPExtension extends AbstractTestDSP implements IDocumentSetupParticipantExtension {
 		/*
 		 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension#setup(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
 		 */
