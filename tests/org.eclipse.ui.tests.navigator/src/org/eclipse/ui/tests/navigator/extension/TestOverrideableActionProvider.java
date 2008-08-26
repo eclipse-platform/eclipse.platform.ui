@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.navigator.extension;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
