@@ -20,7 +20,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Widget;
@@ -31,7 +30,7 @@ import org.eclipse.ui.dialogs.TypeFilteringDialog;
 
 import org.eclipse.search.internal.ui.SearchMessages;
 
-public class FileTypeEditor extends SelectionAdapter implements DisposeListener, SelectionListener {
+public class FileTypeEditor extends SelectionAdapter implements DisposeListener {
 	
 	private Combo fTextField;
 	private Button fBrowseButton;
@@ -51,7 +50,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 			}
 			return fp1.compareTo(fp2);
 		}
-	}; 
+	};
 
 	public FileTypeEditor(Combo textField, Button browseButton) {
 		fTextField= textField;
@@ -64,7 +63,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	
 	public void widgetDisposed(DisposeEvent event) {
 		Widget widget= event.widget;
-		if (widget == fTextField) 
+		if (widget == fTextField)
 			fTextField= null;
 		else if (widget	== fBrowseButton)
 			fBrowseButton= null;

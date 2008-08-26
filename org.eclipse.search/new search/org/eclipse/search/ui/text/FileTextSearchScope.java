@@ -28,7 +28,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.core.text.TextSearchScope;
-
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -45,7 +44,6 @@ import org.eclipse.search.internal.ui.util.FileTypeEditor;
  * </p>
  * @since 3.2
  * 
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class FileTextSearchScope extends TextSearchScope {
