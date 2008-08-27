@@ -286,9 +286,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 					// A folder has been removed (i.e. is in-sync)
 					// but may still contain children
 				    resourcesToRemove.add(resource);
-					if (hasFileMembers((IContainer)resource)) {
-						resourcesToAdd.addAll(Arrays.asList(getSyncInfosForFileMembers((IContainer)resource)));
-					}
+				    resourcesToAdd.addAll(Arrays.asList(getSyncInfosForFileMembers((IContainer)resource)));
 				}
 			}
 		}
