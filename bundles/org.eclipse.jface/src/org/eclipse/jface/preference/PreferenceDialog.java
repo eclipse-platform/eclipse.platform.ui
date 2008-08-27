@@ -528,6 +528,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		//Create an outer composite for spacing
 		scrolled = new ScrolledComposite(outer, SWT.V_SCROLL | SWT.H_SCROLL);
 
+		// always show the focus control
+		scrolled.setShowFocusedControl(true);
 		scrolled.setExpandHorizontal(true);
 		scrolled.setExpandVertical(true);
 		
