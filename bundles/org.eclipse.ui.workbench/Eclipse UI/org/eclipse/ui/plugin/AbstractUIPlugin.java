@@ -375,7 +375,7 @@ public abstract class AbstractUIPlugin extends Plugin {
      * </p><p>
      * Subclasses may override this method to fill the image registry.
      * </p>
-     * @param reg the registry to initalize
+     * @param reg the registry to initialize
      *
      * @see #getImageRegistry
      */
