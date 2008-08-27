@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bug 118516
+ *     Matthew Hall - bugs 118516, 240931
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -74,28 +74,41 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
-		changeSupport.addListener(MapChangeEvent.TYPE, listener);
+		if (changeSupport != null) {
+			changeSupport.addListener(MapChangeEvent.TYPE, listener);
+		}
 	}
 
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
-		changeSupport.removeListener(MapChangeEvent.TYPE, listener);
+		if (changeSupport != null) {
+			changeSupport.removeListener(MapChangeEvent.TYPE, listener);
+		}
 	}
 
 	public synchronized void addChangeListener(IChangeListener listener) {
-		changeSupport.addChangeListener(listener);
+		if (changeSupport != null) {
+			changeSupport.addChangeListener(listener);
+		}
 	}
 
 	public synchronized void addStaleListener(IStaleListener listener) {
-		changeSupport.addStaleListener(listener);
+		if (changeSupport != null) {
+			changeSupport.addStaleListener(listener);
+		}
 	}
 
 	public synchronized void dispose() {
-		changeSupport.dispose();
-		changeSupport = null;
+		if (changeSupport != null) {
+			changeSupport.dispose();
+			changeSupport = null;
+		}
 	}
 
 	public Realm getRealm() {
-		return changeSupport.getRealm();
+		if (changeSupport != null) {
+			return changeSupport.getRealm();
+		}
+		return null;
 	}
 
 	public boolean isStale() {
@@ -104,11 +117,15 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public synchronized void removeChangeListener(IChangeListener listener) {
-		changeSupport.removeChangeListener(listener);
+		if (changeSupport != null) {
+			changeSupport.removeChangeListener(listener);
+		}
 	}
 
 	public synchronized void removeStaleListener(IStaleListener listener) {
-		changeSupport.removeStaleListener(listener);
+		if (changeSupport != null) {
+			changeSupport.removeStaleListener(listener);
+		}
 	}
 
 	/**

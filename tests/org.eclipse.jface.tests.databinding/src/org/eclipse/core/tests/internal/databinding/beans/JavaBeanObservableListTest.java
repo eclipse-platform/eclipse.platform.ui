@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098
+ *     Matthew Hall - bugs 221351, 213145, 244098, 240931
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -27,6 +27,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
@@ -474,6 +475,22 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertFalse(bean.hasListeners("list"));
 		ChangeEventTracker.observe(observable);
 		assertFalse(bean.hasListeners("list"));
+	}
+
+	public void testFirstListenerAdded_AfterLastListenerRemoved() throws Exception {
+		IListChangeListener listener = new IListChangeListener() {
+			public void handleListChange(ListChangeEvent event) {
+				// noop
+			}
+		};
+		list.addListChangeListener(listener);
+		list.removeListChangeListener(listener);
+		list.addListChangeListener(listener);
+	}
+
+	public void testDispose_DoubleInvocation() throws Exception {
+		list.dispose();
+		list.dispose();
 	}
 
 	private static void assertEntry(ListDiffEntry entry, boolean addition,

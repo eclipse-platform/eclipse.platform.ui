@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098
+ *     Matthew Hall - bugs 221351, 213145, 244098, 240931
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -106,6 +106,22 @@ public class JavaBeanObservableSetTest extends TestCase {
 		assertFalse(bean.hasListeners(propertyName));
 	}
 	
+	public void testFirstListenerAdded_AfterLastListenerRemoved() throws Exception {
+		ISetChangeListener listener = new ISetChangeListener() {
+			public void handleSetChange(SetChangeEvent event) {
+				// noop
+			}
+		};
+		observableSet.addSetChangeListener(listener);
+		observableSet.removeSetChangeListener(listener);
+		observableSet.addSetChangeListener(listener);
+	}
+
+	public void testDispose_DoubleInvocation() throws Exception {
+		observableSet.dispose();
+		observableSet.dispose();
+	}
+
 	static class SetChangeListener implements ISetChangeListener {
 		int count;
 		public void handleSetChange(SetChangeEvent event) {

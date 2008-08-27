@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bugs 213145, 240931
  *******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -158,6 +158,23 @@ public class JavaBeanObservableMapTest extends TestCase {
 		ChangeEventTracker.observe(observable);
 
 		assertTrue(bean.hasListeners("value"));
+	}
+
+	public void testFirstListenerAdded_AfterLastListenerRemoved()
+			throws Exception {
+		IMapChangeListener listener = new IMapChangeListener() {
+			public void handleMapChange(MapChangeEvent event) {
+				// noop
+			}
+		};
+		map.addMapChangeListener(listener);
+		map.removeMapChangeListener(listener);
+		map.addMapChangeListener(listener);
+	}
+
+	public void testDispose_DoubleInvocation() throws Exception {
+		map.dispose();
+		map.dispose();
 	}
 
 	private static class MapChangeListener implements IMapChangeListener {

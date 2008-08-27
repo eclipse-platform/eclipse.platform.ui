@@ -73,6 +73,7 @@ import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableListT
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableValueTest;
+import org.eclipse.core.tests.internal.databinding.beans.JavaBeanPropertyObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.beans.ListenerSupportTest;
 import org.eclipse.core.tests.internal.databinding.conversion.DateConversionSupportTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IdentityConverterTest;
@@ -283,6 +284,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(JavaBeanObservableArrayBasedSetTest.suite());
 		addTest(JavaBeanObservableListTest.suite());
 		addTest(JavaBeanObservableMapTest.suite());
+        addTest(JavaBeanPropertyObservableMapTest.suite());
 		addTest(JavaBeanObservableSetTest.suite());
 		addTest(JavaBeanObservableValueTest.suite());
 		addTestSuite(ListenerSupportTest.class);
