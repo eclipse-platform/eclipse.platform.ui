@@ -164,15 +164,28 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		});
 	}
 
-	public void testRemove() throws Exception {
+	public void testClear() throws Exception {
 		String element = "1";
 		list.add(element);
 
 		assertEquals(1, bean.getList().size());
-		list.remove(element);
+		assertPropertyChangeEvent(bean, new Runnable(){
+			public void run() {
+				list.clear();
+			}
+		});
 		assertEquals(0, bean.getList().size());
 	}
 
+	public void testRemove() throws Exception {
+		String element = "1";
+		list.add(element);
+		
+		assertEquals(1, bean.getList().size());
+		list.remove(element);
+		assertEquals(0, bean.getList().size());
+	}
+	
 	public void testRemoveListChangeEvent() throws Exception {
 		String element = "1";
 		list.add(element);
