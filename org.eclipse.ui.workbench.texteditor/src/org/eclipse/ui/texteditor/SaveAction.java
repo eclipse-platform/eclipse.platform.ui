@@ -14,6 +14,10 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.part.MultiPageEditorSite;
+
 
 /**
  * Action for saving recent changes made in the text editor. The action is
@@ -45,7 +49,13 @@ public class SaveAction extends TextEditorAction {
 	 * @see IAction#run()
 	 */
 	public void run() {
-		getTextEditor().getSite().getPage().saveEditor(getTextEditor(), false);
+		IWorkbenchPartSite site= getTextEditor().getSite();
+		IEditorPart editor;
+		if (site instanceof MultiPageEditorSite)
+			editor= ((MultiPageEditorSite)site).getMultiPageEditor();
+		else
+			editor= getTextEditor();
+		site.getPage().saveEditor(editor, false);
 	}
 
 	/*
