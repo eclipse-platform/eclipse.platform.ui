@@ -159,7 +159,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
         //add any annotations to the image descriptor
         descriptor = decorateImage(descriptor, element);
 
-        return resourceManager.createImage(descriptor);
+        return (Image)resourceManager.get(descriptor);
     }
 
     /* (non-Javadoc)
@@ -205,7 +205,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
             return null;
         }
 
-        return resourceManager.createFont(FontDescriptor.createFrom(descriptor));
+        return (Font)resourceManager.get(FontDescriptor.createFrom(descriptor));
     }
 
     private Color getColor(Object element, boolean forground) {
@@ -219,6 +219,6 @@ public class WorkbenchLabelProvider extends LabelProvider implements
             return null;
         }
 
-        return resourceManager.createColor(ColorDescriptor.createFrom(descriptor));
+        return (Color)resourceManager.get(ColorDescriptor.createFrom(descriptor));
     }
 }
