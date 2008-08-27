@@ -342,11 +342,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		super.dispose();
 		IViewSite site = getViewSite();
 		if(site != null) {
 			site.getPage().removePartListener((IPartListener2)this);
 		}
+		super.dispose();
         ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
         consoleManager.removeConsoleListener(this);        
         consoleManager.unregisterConsoleView(this);
