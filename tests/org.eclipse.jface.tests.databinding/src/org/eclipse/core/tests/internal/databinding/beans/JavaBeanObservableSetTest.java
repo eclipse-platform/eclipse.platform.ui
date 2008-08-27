@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145
+ *     Matthew Hall - bugs 221351, 213145, 244098
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -73,17 +73,12 @@ public class JavaBeanObservableSetTest extends TestCase {
 		assertEquals(Bean.class, observableSet.getElementType());
 	}
 	
-	public void testRegistersListenerAfterFirstListenerIsAdded() throws Exception {
-		assertFalse(bean.changeSupport.hasListeners(propertyName));
-		observableSet.addSetChangeListener(new SetChangeListener());
+	public void testRegistersListenerOnCreation() throws Exception {
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
-    
-    public void testRemovesListenerAfterLastListenerIsRemoved() throws Exception {
-		observableSet.addSetChangeListener(listener);
 		
-		assertTrue(bean.changeSupport.hasListeners(propertyName));
-		observableSet.removeSetChangeListener(listener);
+	public void testRemovesListenerOnDisposal() throws Exception {
+		observableSet.dispose();
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 	}
 	
@@ -96,11 +91,8 @@ public class JavaBeanObservableSetTest extends TestCase {
 
 	public void testConstructor_RegisterListeners() throws Exception {
 		bean = new Bean();
-
-		observableSet = new JavaBeanObservableSet(new CurrentRealm(true), bean,
+		new JavaBeanObservableSet(new CurrentRealm(true), bean,
 				propertyDescriptor, Bean.class);
-		assertFalse(bean.hasListeners(propertyName));
-		ChangeEventTracker.observe(observableSet);
 		assertTrue(bean.hasListeners(propertyName));
 	}
 

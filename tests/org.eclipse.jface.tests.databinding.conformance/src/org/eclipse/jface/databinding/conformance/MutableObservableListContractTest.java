@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 208858, 221351, 213145
+ *     Matthew Hall - bugs 208858, 221351, 213145, 244098
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -498,6 +499,14 @@ public class MutableObservableListContractTest extends
 				list.clear();
 			}
 		}, "List.clear()", list, element, 0);
+	}
+
+	public void testClear_ClearsList() {
+		Object element = delegate.createElement(list);
+		list.add(element);
+		Assert.assertEquals(Collections.singletonList(element), list);
+		list.clear();
+		Assert.assertEquals(Collections.EMPTY_LIST, list);
 	}
 
 	/**

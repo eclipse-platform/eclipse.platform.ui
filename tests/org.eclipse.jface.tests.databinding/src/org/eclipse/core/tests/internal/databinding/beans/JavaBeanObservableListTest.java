@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145
+ *     Matthew Hall - bugs 221351, 213145, 244098
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -75,20 +75,12 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(propertyDescriptor, list.getPropertyDescriptor());
 	}
 
-	public void testRegistersListenerAfterFirstListenerIsAdded()
-			throws Exception {
-		assertFalse(bean.changeSupport.hasListeners(propertyName));
-		list.addListChangeListener(new ListChangeEventTracker());
+	public void testRegistersListenerOnCreation() throws Exception {
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
 
-	public void testRemovesListenerAfterLastListenerIsRemoved()
-			throws Exception {
-		ListChangeEventTracker listener = new ListChangeEventTracker();
-		list.addListChangeListener(listener);
-
-		assertTrue(bean.changeSupport.hasListeners(propertyName));
-		list.removeListChangeListener(listener);
+	public void testRemovesListenerOnDisposal() throws Exception {
+		list.dispose();
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 	}
 
@@ -467,12 +459,9 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 
 	public void testConstructor_RegistersListener() throws Exception {
 		Bean bean = new Bean();
-		JavaBeanObservableList observable = new JavaBeanObservableList(Realm
-				.getDefault(), bean,
+		new JavaBeanObservableList(Realm.getDefault(), bean,
 				new PropertyDescriptor("list", Bean.class), Bean.class);
 
-		assertFalse(bean.hasListeners("list"));
-		ChangeEventTracker.observe(observable);
 		assertTrue(bean.hasListeners("list"));
 	}
 

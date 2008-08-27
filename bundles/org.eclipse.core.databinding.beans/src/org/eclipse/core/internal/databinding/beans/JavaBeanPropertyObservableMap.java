@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223164
+ *     Matthew Hall - bugs 223164, 244098
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -41,29 +41,11 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 
 	private final Object object;
 
-	private PropertyChangeListener mapListener = new PropertyChangeListener() {
-		public void propertyChange(final PropertyChangeEvent event) {
-			if (!updating) {
-				getRealm().exec(new Runnable() {
-					public void run() {
-						Map oldValue = wrappedMap;
-						Map newValue = (Map) event.getNewValue();
-						wrappedMap = new HashMap(newValue);
-						
-						fireMapChange(Diffs.computeMapDiff(oldValue, newValue));
-					}
-				});
-			}
-		}
-	};
-
 	private boolean updating = false;
 
 	private PropertyDescriptor descriptor;
 
-	private ListenerSupport collectionListenSupport;
-
-	private boolean attachListeners;
+	private ListenerSupport listenerSupport;
 
 	/**
 	 * @param realm
@@ -86,25 +68,29 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 		super(realm, new HashMap());
 		this.object = object;
 		this.descriptor = descriptor;
-		this.attachListeners = attachListeners;
 		if (attachListeners) {
-			this.collectionListenSupport = new ListenerSupport(mapListener,
+			PropertyChangeListener listener = new PropertyChangeListener() {
+				public void propertyChange(final PropertyChangeEvent event) {
+					if (!updating) {
+						getRealm().exec(new Runnable() {
+							public void run() {
+								Map oldValue = wrappedMap;
+								Map newValue = (Map) event.getNewValue();
+								wrappedMap = new HashMap(newValue);
+								
+								fireMapChange(Diffs.computeMapDiff(oldValue, newValue));
+							}
+						});
+					}
+				}
+			};
+
+			listenerSupport = new ListenerSupport(listener,
 					descriptor.getName());
+			listenerSupport.hookListener(this.object);
 		}
 
 		wrappedMap.putAll(getMap());
-	}
-
-	protected void firstListenerAdded() {
-		if (attachListeners) {
-			collectionListenSupport.hookListener(this.object);
-		}
-	}
-
-	protected void lastListenerRemoved() {
-		if (collectionListenSupport != null) {
-			collectionListenSupport.dispose();
-		}
 	}
 
 	private Object primGetMap() {
@@ -237,5 +223,13 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 
 	public PropertyDescriptor getPropertyDescriptor() {
 		return descriptor;
+	}
+
+	public synchronized void dispose() {
+		if (listenerSupport != null) {
+			listenerSupport.dispose();
+			listenerSupport = null;
+		}
+		super.dispose();
 	}
 }

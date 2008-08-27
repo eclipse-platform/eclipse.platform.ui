@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
- *     Matthew Hall - bug 221351, 223164
+ *     Matthew Hall - bugs 221351, 223164, 244098
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -40,35 +40,11 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 
 	private final Object object;
 
-	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
-		public void propertyChange(java.beans.PropertyChangeEvent event) {
-			if (!updating) {
-				getRealm().exec(new Runnable() {
-					public void run() {
-						Set newElements = new HashSet(Arrays
-								.asList(getValues()));
-						Set addedElements = new HashSet(newElements);
-						Set removedElements = new HashSet(wrappedSet);
-						// remove all new elements from old elements to compute
-						// the removed elements
-						removedElements.removeAll(newElements);
-						addedElements.removeAll(wrappedSet);
-						wrappedSet = newElements;
-						fireSetChange(Diffs.createSetDiff(addedElements,
-								removedElements));
-					}
-				});
-			}
-		}
-	};
-
 	private boolean updating = false;
 
 	private PropertyDescriptor descriptor;
 
-	private ListenerSupport collectionListenSupport;
-
-	private boolean attachListeners;
+	private ListenerSupport listenerSupport;
 
 	/**
 	 * @param realm
@@ -94,25 +70,35 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 		super(realm, new HashSet(), elementType);
 		this.object = object;
 		this.descriptor = descriptor;
-		this.attachListeners = attachListeners;
 		if (attachListeners) {
-			this.collectionListenSupport = new ListenerSupport(
-					collectionListener, descriptor.getName());
+			PropertyChangeListener listener = new PropertyChangeListener() {
+				public void propertyChange(java.beans.PropertyChangeEvent event) {
+					if (!updating) {
+						getRealm().exec(new Runnable() {
+							public void run() {
+								Set newElements = new HashSet(Arrays
+										.asList(getValues()));
+								Set addedElements = new HashSet(newElements);
+								Set removedElements = new HashSet(wrappedSet);
+								// remove all new elements from old elements to
+								// compute
+								// the removed elements
+								removedElements.removeAll(newElements);
+								addedElements.removeAll(wrappedSet);
+								wrappedSet = newElements;
+								fireSetChange(Diffs.createSetDiff(
+										addedElements, removedElements));
+							}
+						});
+					}
+				}
+			};
+			this.listenerSupport = new ListenerSupport(listener, descriptor
+					.getName());
+			listenerSupport.hookListener(this.object);
 		}
 
 		wrappedSet.addAll(Arrays.asList(getValues()));
-	}
-
-	protected void firstListenerAdded() {
-		if (attachListeners) {
-			collectionListenSupport.hookListener(this.object);
-		}
-	}
-
-	protected void lastListenerRemoved() {
-		if (collectionListenSupport != null) {
-			collectionListenSupport.dispose();
-		}
 	}
 
 	private Object primGetValues() {
@@ -302,5 +288,14 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 
 	public PropertyDescriptor getPropertyDescriptor() {
 		return descriptor;
+	}
+
+	public synchronized void dispose() {
+		if (listenerSupport != null) {
+			listenerSupport.dispose();
+			listenerSupport = null;
+		}
+
+		super.dispose();
 	}
 }
