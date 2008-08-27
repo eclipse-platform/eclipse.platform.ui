@@ -343,7 +343,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	public void dispose() {
 		super.dispose();
-		getViewSite().getPage().removePartListener((IPartListener2)this);
+		IViewSite site = getViewSite();
+		if(site != null) {
+			site.getPage().removePartListener((IPartListener2)this);
+		}
         ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
         consoleManager.removeConsoleListener(this);        
         consoleManager.unregisterConsoleView(this);
@@ -628,8 +631,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		if (isThisPart(partRef)) {
 			fActive = true;
 			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
-			fActivatedContext = contextService.activateContext(IConsoleConstants.ID_CONSOLE_VIEW);
-			activateParticipants(fActiveConsole); 
+			if(contextService != null) {
+				fActivatedContext = contextService.activateContext(IConsoleConstants.ID_CONSOLE_VIEW);
+				activateParticipants(fActiveConsole);
+			}
 		}
 	}
 
@@ -652,15 +657,23 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         if (isThisPart(partRef)) {
 			fActive = false;
 			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
-			contextService.deactivateContext(fActivatedContext);
-			deactivateParticipants(fActiveConsole);
+			if(contextService != null) {
+				contextService.deactivateContext(fActivatedContext);
+				deactivateParticipants(fActiveConsole);
+			}
         }
 	}
     
+    /**
+     * Returns if the specified part reference is to this view part (if the part 
+     * reference is the console view or not)  
+     * @param partRef
+     * @return true if the specified part reference is the console view
+     */
     protected boolean isThisPart(IWorkbenchPartReference partRef) {
         if (partRef instanceof IViewReference) {
             IViewReference viewRef = (IViewReference) partRef;
-            if (viewRef.getId().equals(getViewSite().getId())) {
+            if (getViewSite() != null && viewRef.getId().equals(getViewSite().getId())) {
                 String secId = viewRef.getSecondaryId();
                 String mySec = null;
                 if (getSite() instanceof IViewSite) {
