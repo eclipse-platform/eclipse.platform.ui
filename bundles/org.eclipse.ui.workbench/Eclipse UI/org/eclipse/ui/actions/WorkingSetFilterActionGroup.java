@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,14 +16,17 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -42,13 +45,11 @@ import org.eclipse.ui.internal.util.Util;
 /**
  * Adds working set filter actions (set / clear / edit)
  * 
- * @since 2.1 
+ * @since 2.1
  */
 public class WorkingSetFilterActionGroup extends ActionGroup {
     private static final String TAG_WORKING_SET_NAME = "workingSetName"; //$NON-NLS-1$
 
-	private static final String TAG_IS_WINDOW_WORKING_SET = "isWindowWorkingSet"; //$NON-NLS-1$
-	
     /**
      * Indicates if working set was changed
      */
@@ -160,7 +161,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
     public void fillActionBars(IActionBars actionBars) {
         menuManager = actionBars.getMenuManager();
         
-        if(menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null) 
+        if(menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null)
         	menuManager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(WORKING_SET_ACTION_GROUP));
         else
         	menuManager.add(new Separator(WORKING_SET_ACTION_GROUP));
@@ -261,18 +262,11 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * @since 3.3
 	 */
 	public void saveState(IMemento memento) {
-		String workingSetName = ""; //$NON-NLS-1$
-		boolean isWindowWorkingSet = false;
 		if (workingSet != null) {
-			if (workingSet.isAggregateWorkingSet()) {
-				isWindowWorkingSet = true;
-			} else {
-				workingSetName = workingSet.getName();
-			}
+			memento.putString(TAG_WORKING_SET_NAME, workingSet.getName());
+		} else {
+			memento.putString(TAG_WORKING_SET_NAME, ""); //$NON-NLS-1$
 		}
-		memento.putString(TAG_IS_WINDOW_WORKING_SET,
-				isWindowWorkingSet ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		memento.putString(TAG_WORKING_SET_NAME, workingSetName);
 	}
 
 	/**
@@ -285,28 +279,12 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * @since 3.3
 	 */
 	public void restoreState(IMemento memento) {
-		boolean isWindowWorkingSet;
-		if (memento.getString(TAG_IS_WINDOW_WORKING_SET) != null) {
-			isWindowWorkingSet = Boolean.valueOf(
-					memento.getString(TAG_IS_WINDOW_WORKING_SET))
-					.booleanValue();
-		} else {
-			isWindowWorkingSet = useWindowWorkingSetByDefault();
-		}
 		String workingSetName = memento.getString(TAG_WORKING_SET_NAME);
-		boolean hasWorkingSetName = workingSetName != null
-				&& workingSetName.length() > 0;
-
-		IWorkingSet ws = null;
-		// First handle name if present.
-		if (hasWorkingSetName) {
-			ws = PlatformUI.getWorkbench().getWorkingSetManager()
-					.getWorkingSet(workingSetName);
-		} else if (isWindowWorkingSet && page != null) {
-			ws = page.getAggregateWorkingSet();
+		if (workingSetName != null && workingSetName.length() > 0) {
+			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName));
+		} else if (page != null && useWindowWorkingSetByDefault()) {
+			setWorkingSet(page.getAggregateWorkingSet());
 		}
-
-		setWorkingSet(ws);
 	}
 
 	private boolean useWindowWorkingSetByDefault() {
