@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Matthew Hall - bug 245183
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -157,5 +158,25 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 
 	public synchronized void dispose() {
 		super.dispose();
+	}
+
+	public boolean equals(Object obj) {
+		getterCalled();
+
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() == obj.getClass()) {
+			return wrappedMap.equals(((ObservableMap) obj).wrappedMap);
+		}
+
+		return wrappedMap.equals(obj);
+	}
+
+	public int hashCode() {
+		getterCalled();
+
+		return wrappedMap.hashCode();
 	}
 }

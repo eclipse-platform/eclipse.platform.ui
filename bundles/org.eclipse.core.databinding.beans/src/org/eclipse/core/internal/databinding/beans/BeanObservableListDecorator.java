@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bugs 208858, 245183
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -82,11 +82,15 @@ public class BeanObservableListDecorator extends AbstractObservableList
 
 	public boolean equals(Object o) {
 		getterCalled();
-		if (o instanceof BeanObservableListDecorator) {
+		if (o == this)
+			return true;
+		if (o == null)
+			return true;
+		if (getClass() == o.getClass()) {
 			BeanObservableListDecorator other = (BeanObservableListDecorator) o;
 			return Util.equals(other.delegate, delegate);
 		}
-		return Util.equals(delegate, o);
+		return delegate.equals(o);
 	}
 
 	public Object get(int index) {

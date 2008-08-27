@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 167204
- *     Matthew Hall - bugs 208858, 213145
+ *     Matthew Hall - bugs 208858, 213145, 245183
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.list;
@@ -111,6 +111,34 @@ public class ObservableListTest extends TestCase {
 
 		assertEquals(element1, list.get(0));
 		assertEquals(element0, list.get(1));
+	}
+
+	public void testEquals_IdentityCheckShortcut() {
+		List wrappedList = new ArrayList() {
+			private static final long serialVersionUID = 1L;
+
+			public boolean equals(Object o) {
+				fail("ObservableList.equals() should return true instead of delegating to wrappedList when this == obj");
+				return false;
+			}
+		};
+		list = new ObservableListStub(wrappedList, null);
+		assertTrue(list.equals(list));
+	}
+
+	public void testEquals_SameClassDelegatesToWrappedLists() {
+		List wrappedList = new ArrayList() {
+			private static final long serialVersionUID = 1L;
+
+			public boolean equals(Object o) {
+				// The observable lists will only be equal if they delegate to
+				// wrappedList.equals(other.wrappedList)
+				return o == this;
+			}
+		};
+		list = new ObservableListStub(wrappedList, null);
+		ObservableListStub otherList = new ObservableListStub(wrappedList, null);
+		assertTrue(list.equals(otherList));
 	}
 
 	public static Test suite() {

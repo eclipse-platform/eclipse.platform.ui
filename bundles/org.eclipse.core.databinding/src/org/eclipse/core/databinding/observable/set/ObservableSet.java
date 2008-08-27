@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bugs 208332, 245183
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -79,6 +79,15 @@ public abstract class ObservableSet extends AbstractObservable implements
 
 	public boolean equals(Object o) {
 		getterCalled();
+
+		if (o == this)
+			return true;
+		if (o == null)
+			return false;
+		if (getClass() == o.getClass()) {
+			return wrappedSet.equals(((ObservableSet) o).wrappedSet);
+		}
+
 		return wrappedSet.equals(o);
 	}
 

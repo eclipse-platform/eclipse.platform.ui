@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 245183
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -84,11 +85,15 @@ public class BeanObservableSetDecorator implements IObservableSet, IBeanObservab
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof BeanObservableSetDecorator) {
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() == obj.getClass()) {
 			BeanObservableSetDecorator other = (BeanObservableSetDecorator) obj;
 			return Util.equals(other.delegate, delegate);
 		}
-		return Util.equals(delegate, obj);
+		return delegate.equals(obj);
 	}
 
 	public Object getElementType() {

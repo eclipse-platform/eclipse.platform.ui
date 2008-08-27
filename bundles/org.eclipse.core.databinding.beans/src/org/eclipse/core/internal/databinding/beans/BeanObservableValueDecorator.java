@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 245183
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -61,11 +62,15 @@ public class BeanObservableValueDecorator implements IObservableValue,
 	}
 	
 	public boolean equals(Object obj) {
-		if (obj instanceof BeanObservableValueDecorator) {
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() == obj.getClass()) {
 			BeanObservableValueDecorator other = (BeanObservableValueDecorator) obj;
 			return Util.equals(other.delegate, delegate);
 		}
-		return Util.equals(delegate, obj);
+		return delegate.equals(obj);
 	}
 
 	public Realm getRealm() {

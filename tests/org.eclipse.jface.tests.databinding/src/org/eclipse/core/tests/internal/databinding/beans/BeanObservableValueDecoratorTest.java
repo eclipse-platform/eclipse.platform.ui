@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 245183
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
 import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
@@ -58,5 +60,16 @@ public class BeanObservableValueDecoratorTest extends AbstractDefaultRealmTestCa
 
 	public void testGetPropertyDescriptor() throws Exception {
 		assertEquals(propertyDescriptor, decorator.getPropertyDescriptor());
+	}
+
+	public void testEquals_IdentityCheckShortcut() {
+		IObservableValue delegate = new WritableValue() {
+			public boolean equals(Object obj) {
+				fail("ObservableList.equals() should return true instead of delegating to wrappedList when this == obj");
+				return false;
+			}
+		};
+		decorator = new BeanObservableValueDecorator(delegate, new WritableValue(bean, Object.class), propertyDescriptor);
+		assertTrue(decorator.equals(decorator));
 	}
 }

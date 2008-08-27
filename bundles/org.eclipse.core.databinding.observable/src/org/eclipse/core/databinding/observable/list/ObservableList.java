@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164653
- *     Brad Reynolds - bug 167204
- *     Matthew Hall - bug 208858
- *     Matthew Hall - bug 208332
+ *     Brad Reynolds - bugs 164653, 167204
+ *     Matthew Hall - bugs 208858, 208332, 245183
+ *     Tom Schindl - bug 245183
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -84,6 +83,15 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	public boolean equals(Object o) {
 		getterCalled();
+
+		if (o == this)
+			return true;
+		if (o == null)
+			return false;
+		if (getClass() == o.getClass()) {
+			return wrappedList.equals(((ObservableList) o).wrappedList);
+		}
+
 		return wrappedList.equals(o);
 	}
 

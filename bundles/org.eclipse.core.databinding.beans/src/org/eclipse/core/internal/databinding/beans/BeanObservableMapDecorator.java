@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
+ *     Matthew Hall - bug 245183
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -147,11 +148,15 @@ public class BeanObservableMapDecorator implements IObservableMap, IBeanObservab
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof BeanObservableMapDecorator) {
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() == obj.getClass()) {
 			BeanObservableMapDecorator other = (BeanObservableMapDecorator) obj;
 			return Util.equals(other.delegate, delegate);
 		}
-		return Util.equals(delegate, obj);
+		return delegate.equals(obj);
 	}
 
 	public int hashCode() {

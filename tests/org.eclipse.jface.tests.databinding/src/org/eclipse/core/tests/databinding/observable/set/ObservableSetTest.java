@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bugs 213145, 245183
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.set;
@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -28,13 +27,44 @@ import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 1.1
  */
-public class ObservableSetTest extends TestCase {
+public class ObservableSetTest extends AbstractDefaultRealmTestCase {
+	public void testEquals_IdentityCheckShortcut() {
+		Set wrappedSet = new HashSet() {
+			private static final long serialVersionUID = 1L;
+
+			public boolean equals(Object o) {
+				fail("ObservableSet.equals() should return true instead of delegating to wrappedSet when this == obj");
+				return false;
+			}
+		};
+		Set set = new ObservableSetStub(Realm.getDefault(), wrappedSet, null);
+		assertTrue(set.equals(set));
+	}
+
+	public void testEquals_SameClassDelegatesToWrappedSets() {
+		Set wrappedSet = new HashSet() {
+			private static final long serialVersionUID = 1L;
+
+			public boolean equals(Object o) {
+				// The observable sets will only be equal if they delegate to
+				// wrappedSet.equals(other.wrappedSet)
+				return o == this;
+			}
+		};
+		Set set = new ObservableSetStub(Realm.getDefault(), wrappedSet, null);
+		Set otherSet = new ObservableSetStub(Realm.getDefault(), wrappedSet,
+				null);
+		assertTrue(set.equals(otherSet));
+	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ObservableSetTest.class.getName());
+		suite.addTestSuite(ObservableSetTest.class);
 		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
 		return suite;
 	}

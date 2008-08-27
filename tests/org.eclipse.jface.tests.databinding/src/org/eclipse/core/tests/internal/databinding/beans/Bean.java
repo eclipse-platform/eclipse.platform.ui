@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bugs 221351, 245183
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -15,6 +15,7 @@ package org.eclipse.core.tests.internal.databinding.beans;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,6 +30,7 @@ public class Bean {
 	private Object[] array;
 	private List list;
 	private Set set;
+	private Map map;
 
 	public Bean() {
 	}
@@ -47,6 +49,10 @@ public class Bean {
 
 	public Bean(Set set) {
 		this.set = set;
+	}
+
+	public Bean(Map map) {
+		this.map = map;
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -89,6 +95,14 @@ public class Bean {
 
 	public void setSet(Set set) {
 		changeSupport.firePropertyChange("set", this.set, this.set = set);
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+	public void setMap(Map map) {
+		changeSupport.firePropertyChange("map", this.map, this.map = map);
 	}
 
 	public boolean hasListeners(String propertyName) {

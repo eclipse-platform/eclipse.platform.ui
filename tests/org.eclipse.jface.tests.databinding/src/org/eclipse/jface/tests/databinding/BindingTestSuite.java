@@ -12,7 +12,8 @@
  *     Bob Smith - bug 198880
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
- *                    212518, 215531, 221351, 184830, 213145, 218269, 239015
+ *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
+ *                    245183
  *     Ovidio Mallo - bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -63,6 +64,7 @@ import org.eclipse.core.tests.internal.databinding.BindingStatusTest;
 import org.eclipse.core.tests.internal.databinding.QueueTest;
 import org.eclipse.core.tests.internal.databinding.RandomAccessListIteratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableListDecoratorTest;
+import org.eclipse.core.tests.internal.databinding.beans.BeanObservableMapDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableSetDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableValueDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableArrayBasedListTest;
@@ -274,9 +276,9 @@ public class BindingTestSuite extends TestSuite {
 
 		//org.eclipse.core.tests.internal.databinding.internal.beans
 		addTest(BeanObservableListDecoratorTest.suite());
+		addTestSuite(BeanObservableMapDecoratorTest.class);
 		addTestSuite(BeanObservableSetDecoratorTest.class);
 		addTestSuite(BeanObservableValueDecoratorTest.class);
-		addTestSuite(BeanObservableListDecoratorTest.class);
 		addTest(JavaBeanObservableArrayBasedListTest.suite());
 		addTest(JavaBeanObservableArrayBasedSetTest.suite());
 		addTest(JavaBeanObservableListTest.suite());
