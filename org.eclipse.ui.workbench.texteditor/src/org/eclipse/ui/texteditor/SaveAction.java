@@ -10,23 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-
-
 import java.util.ResourceBundle;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.part.MultiPageEditorSite;
 
 
 /**
- * Action for saving recent changes made in the text editor. The action is
- * initially associated with a text editor via the constructor, but that can be
- * subsequently changed using <code>setEditor</code>.
+ * Action for saving recent changes made in the text editor. The action is initially associated with
+ * a text editor via the constructor, but that can be subsequently changed using
+ * <code>setEditor</code>.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
+ * @deprecated As of 3.5, replaced by {@link org.eclipse.ui.actions.ActionFactory#SAVE}
  */
 public class SaveAction extends TextEditorAction {
 
@@ -49,13 +45,7 @@ public class SaveAction extends TextEditorAction {
 	 * @see IAction#run()
 	 */
 	public void run() {
-		IWorkbenchPartSite site= getTextEditor().getSite();
-		IEditorPart editor;
-		if (site instanceof MultiPageEditorSite)
-			editor= ((MultiPageEditorSite)site).getMultiPageEditor();
-		else
-			editor= getTextEditor();
-		site.getPage().saveEditor(editor, false);
+		getTextEditor().getSite().getPage().saveEditor(getTextEditor(), false);
 	}
 
 	/*

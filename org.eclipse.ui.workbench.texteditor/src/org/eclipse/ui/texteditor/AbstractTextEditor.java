@@ -194,6 +194,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.CommandNotMappedException;
 import org.eclipse.ui.actions.ContributedAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -5578,10 +5579,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, action);
 
-		action= new SaveAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Save.", this); //$NON-NLS-1$
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SAVE);
-		setAction(ITextEditorActionConstants.SAVE, action);
+		setAction(ITextEditorActionConstants.SAVE, ActionFactory.SAVE.create(getSite().getWorkbenchWindow()));
 
 		action= new RevertToSavedAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);

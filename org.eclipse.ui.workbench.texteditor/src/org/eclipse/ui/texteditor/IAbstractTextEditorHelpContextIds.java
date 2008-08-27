@@ -226,8 +226,8 @@ public interface IAbstractTextEditorHelpContextIds {
 	String ADD_TASK_ACTION= PREFIX + IWorkbenchActionConstants.ADD_TASK + ACTION_POSTFIX;
 
 	/**
-	 * Help context id for the action.
-	 * Value: <code>"org.eclipse.ui.save_action_context"</code>
+	 * Help context id for the action. Value: <code>"org.eclipse.ui.save_action_context"</code>
+	 * @deprecated As of 3.5, no longer used
 	 */
 	String SAVE_ACTION= PREFIX + ITextEditorActionConstants.SAVE + ACTION_POSTFIX;
 

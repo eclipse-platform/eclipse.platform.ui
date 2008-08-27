@@ -33,6 +33,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the file save action.
 	 * Value: <code>"org.eclipse.ui.file.save"</code>
+	 * @deprecated As of 3.5, no longer used
 	 */
 	public static final String SAVE= "org.eclipse.ui.file.save"; //$NON-NLS-1$
 
