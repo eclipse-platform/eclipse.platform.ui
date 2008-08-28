@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * There are currently five different types of resource change events:
  * <ul>
  *   <li>
- *    After-the-fact batch reports of arbitrary creations, 
+ *    Before-the-fact batch reports of arbitrary creations, 
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
  *    <code>PRE_BUILD</code>, and <code>getDelta</code> returns
@@ -132,7 +132,7 @@ public interface IResourceChangeEvent {
 	public static final int PRE_AUTO_BUILD = 8;
 
 	/**
-	 * Event type constant (bit mask) indicating an after-the-fact 
+	 * Event type constant (bit mask) indicating an before-the-fact 
 	 * report of creations, deletions, and modifications
 	 * to one or more resources expressed as a hierarchical
 	 * resource delta as returned by <code>getDelta</code>.
