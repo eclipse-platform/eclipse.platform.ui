@@ -72,4 +72,18 @@ public class BeanObservableValueDecoratorTest extends AbstractDefaultRealmTestCa
 		decorator = new BeanObservableValueDecorator(delegate, new WritableValue(bean, Object.class), propertyDescriptor);
 		assertTrue(decorator.equals(decorator));
 	}
+
+	public void testEquals_SameClassDelegatesToDelegateObservables() {
+		IObservableValue delegate = new WritableValue() {
+			public boolean equals(Object o) {
+				return o == this;
+			}
+		};
+		decorator = new BeanObservableValueDecorator(delegate,
+				new WritableValue(bean, Object.class), propertyDescriptor);
+		BeanObservableValueDecorator otherDecorator = new BeanObservableValueDecorator(
+				delegate, new WritableValue(bean, Object.class),
+				propertyDescriptor);
+		assertTrue(decorator.equals(otherDecorator));
+	}
 }

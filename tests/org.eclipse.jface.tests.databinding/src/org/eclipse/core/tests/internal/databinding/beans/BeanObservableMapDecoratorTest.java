@@ -70,4 +70,18 @@ public class BeanObservableMapDecoratorTest extends
 				new Bean(), Object.class), propertyDescriptor);
 		assertTrue(decorator.equals(decorator));
 	}
+
+	public void testEquals_SameClassDelegatesToDelegateObservables() {
+		IObservableMap delegate = new WritableMap() {
+			public boolean equals(Object o) {
+				return o == this;
+			}
+		};
+		Bean bean = new Bean();
+		decorator = new BeanObservableMapDecorator(delegate, bean,
+				propertyDescriptor);
+		BeanObservableMapDecorator otherDecorator = new BeanObservableMapDecorator(
+				delegate, bean, propertyDescriptor);
+		assertTrue(decorator.equals(otherDecorator));
+	}
 }
