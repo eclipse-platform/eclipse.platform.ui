@@ -68,6 +68,8 @@ import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
@@ -232,6 +234,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		try {
 			refreshFromLocal();
 			activateProxyService();
+			checkUpdates();
 			((Workbench) PlatformUI.getWorkbench()).registerService(
 					ISelectionConversionService.class,
 					new IDESelectionConversionService());
@@ -410,6 +413,29 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		if (!status.isOK()) {
 			IDEWorkbenchPlugin.log(
 					IDEWorkbenchMessages.ProblemsSavingWorkspace, status);
+		}
+	}
+
+	/**
+	 * Checks if the -newUpdates command line argument is present and if so,
+	 * opens the update manager.
+	 */
+	private void checkUpdates() {
+		boolean newUpdates = false;
+		String[] commandLineArgs = Platform.getCommandLineArgs();
+		for (int i = 0; i < commandLineArgs.length; i++) {
+			if (commandLineArgs[i].equalsIgnoreCase("-newUpdates")) { //$NON-NLS-1$
+				newUpdates = true;
+				break;
+			}
+		}
+
+		if (newUpdates) {
+			try {
+				SiteManager.handleNewChanges();
+			} catch (CoreException e) {
+				StatusManager.getManager().handle(e, IDEApplication.PLUGIN_ID);
+			}
 		}
 	}
 
