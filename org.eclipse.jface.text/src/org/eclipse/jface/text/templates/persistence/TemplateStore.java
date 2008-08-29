@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,20 +276,47 @@ public class TemplateStore {
 
 	/**
 	 * Deletes all user-added templates and reverts all contributed templates.
+	 * 
+	 * @param doSave <code>true</code> if the store should be saved after restoring
+	 * @since 3.5
 	 */
-	public void restoreDefaults() {
+	public void restoreDefaults(boolean doSave) {
+		String oldValue= null;
+		if (!doSave)
+			oldValue= fPreferenceStore.getString(fKey);
+
 		try {
 			fIgnorePreferenceStoreChanges= true;
 			fPreferenceStore.setToDefault(fKey);
 		} finally {
 			fIgnorePreferenceStoreChanges= false;
 		}
+
 		try {
 			load();
 		} catch (IOException x) {
 			// can't log from jface-text
 			x.printStackTrace();
 		}
+		
+		if (oldValue != null) {
+			try {
+				fIgnorePreferenceStoreChanges= true;
+				fPreferenceStore.putValue(fKey, oldValue);
+			} finally {
+				fIgnorePreferenceStoreChanges= false;
+			}
+		}
+	}
+
+	/**
+	 * Deletes all user-added templates and reverts all contributed templates.
+	 * <p>
+	 * <strong>Note:</strong> the store will be saved after restoring.
+	 * </p>
+	 */
+	public void restoreDefaults() {
+		restoreDefaults(true);
 	}
 
 	/**

@@ -1388,7 +1388,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fFormatButton.setSelection(prefs.getDefaultBoolean(getFormatterPreferenceKey()));
 		}
 
-		fTemplateStore.restoreDefaults();
+		fTemplateStore.restoreDefaults(false);
 
 		// refresh
 		fTableViewer.refresh();
