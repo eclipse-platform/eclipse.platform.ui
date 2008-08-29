@@ -37,6 +37,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -1064,7 +1065,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		label.setLayoutData(data);
 
 		SourceViewer viewer= createViewer(parent);
+		
 		viewer.setEditable(false);
+		Cursor arrowCursor= viewer.getTextWidget().getDisplay().getSystemCursor(SWT.CURSOR_ARROW);
+		viewer.getTextWidget().setCursor(arrowCursor);
+		viewer.getTextWidget().setCaret(null);
 
 		Control control= viewer.getControl();
 		data= new GridData(GridData.FILL_BOTH);
