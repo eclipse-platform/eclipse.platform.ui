@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Oberhuber (Wind River) - testImportWrongLineEndings() for bug [210664]
  *******************************************************************************/
 
 package org.eclipse.core.tests.resources;
 
+import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -30,6 +33,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 	private final static String VARIABLE_NAME = "ROOT";
 	private final ArrayList toDelete = new ArrayList();
+	private IFileStore toSetWritable = null;
 
 	public LinkedResourceWithPathVariableTest() {
 		super();
@@ -54,6 +58,12 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	}
 
 	protected void tearDown() throws Exception {
+		if (toSetWritable != null) {
+			IFileInfo info = toSetWritable.fetchInfo();
+			info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
+			toSetWritable.putInfo(info, EFS.SET_ATTRIBUTES, getMonitor());
+			toSetWritable = null;
+		}
 		getWorkspace().getPathVariableManager().setValue(VARIABLE_NAME, null);
 		IPath[] paths = (IPath[]) toDelete.toArray(new IPath[0]);
 		toDelete.clear();
@@ -62,6 +72,49 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		super.tearDown();
 	}
 
+	/**
+	 * Copy file "inStore" into file "outStore", converting line endings as follows:
+	 * <ul>
+	 *   <li>DOS, or MAC (CR or CRLF) into UNIX (LF)</li>
+	 *   <li>UNIX (LF) into DOS (CRLF)</li>
+	 * </ul>
+	 * @param inStore handle to an existing text file to convert
+	 * @param outStore handle to non-existing file which will be written
+	 */
+	protected void convertLineEndings(IFileStore inStore, IFileStore outStore, IProgressMonitor mon) throws CoreException, IOException {
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			is = inStore.openInputStream(EFS.NONE, mon);
+			os = outStore.openOutputStream(EFS.NONE, new NullProgressMonitor());
+			int prevb = 0;
+			int ib = is.read();
+			while (ib >= 0) {
+				switch (ib) {
+					case '\r' :
+						os.write('\n');
+						break;
+					case '\n' :
+						if (prevb != '\r') { /* not converted already */
+							os.write('\r');
+							os.write('\n');
+						}
+						break;
+					default :
+						os.write(ib);
+						break;
+				}
+				prevb = ib;
+				ib = is.read();
+			}
+		} finally {
+			if (is != null)
+				is.close();
+			if (os != null)
+				os.close();
+		}
+	}
+	
 	/**
 	 * @see org.eclipse.core.tests.harness.ResourceTest#getRandomLocation()
 	 */
@@ -299,6 +352,60 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertExistsInWorkspace("7.2", childFile);
 	}
 
+	/**
+	 * Tests importing a project with a Linked Resource and Path Variable,
+	 * where the line endings in the .project file do not match the local
+	 * Platform.
+	 * The .project file must not be modified on import, especially if it
+	 * is marked read-only.
+	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=210664">Bug 210664</a>. 
+	 */
+	public void testImportWrongLineEndings_Bug210664() throws IOException {
+		// Choose a project to work on
+		IProject proj = existingProject;
+		IFileStore projStore = null;
+		IPath randomLocationWithPathVariable = getRandomLocation();
+
+		try {
+			projStore = EFS.getStore(proj.getLocationURI());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		// Don't run this test if we cannot set a file read-only
+		if ((projStore.getFileSystem().attributes() & EFS.ATTRIBUTE_READ_ONLY) == 0)
+			return;
+
+		try {
+			// Create a linked resource with a non-existing path variable
+			IFolder folder = proj.getFolder("SOME_LINK");
+			folder.createLink(randomLocationWithPathVariable, IResource.ALLOW_MISSING_LOCAL, null);
+
+			// Close the project, and convert line endings
+			IFileStore projFile = projStore.getChild(".project");
+			proj.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
+			IFileStore projNew = projStore.getChild(".project.new");
+			convertLineEndings(projFile, projNew, getMonitor());
+
+			// Set the project read-only
+			projNew.move(projFile, EFS.OVERWRITE, getMonitor());
+			IFileInfo info = projFile.fetchInfo(EFS.NONE, getMonitor());
+			info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
+			projFile.putInfo(info, EFS.SET_ATTRIBUTES, getMonitor());
+			toSetWritable = projFile; /* for cleanup */
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		try {
+			//Bug 210664: Open project with wrong line endings and non-existing path variable
+			proj.create(null);
+			proj.open(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+	}
+	
 	/**
 	 * Tests scenario where links are relative to undefined variables
 	 */

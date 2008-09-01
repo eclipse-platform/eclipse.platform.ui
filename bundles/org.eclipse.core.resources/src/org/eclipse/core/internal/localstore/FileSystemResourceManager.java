@@ -7,10 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Oberhuber (Wind River) - [210664] descriptionChanged(): ignore LF style
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
-
-import org.eclipse.core.resources.IResource;
 
 import java.io.*;
 import java.net.URI;
@@ -237,25 +236,46 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	/**
 	 * Returns true if the description on disk is different from the given byte array,
 	 * and false otherwise.
+	 * Since org.eclipse.core.resources 3.4.100 differences in line endings (CR, LF, CRLF) 
+	 * are not considered.
 	 */
 	private boolean descriptionChanged(IFile descriptionFile, byte[] newContents) {
-		InputStream stream = null;
+		InputStream oldStream = null;
 		try {
-			stream = new BufferedInputStream(descriptionFile.getContents(true));
-			int newLength = newContents.length;
-			byte[] oldContents = new byte[newLength];
-			int read = stream.read(oldContents);
-			if (read != newLength)
+			//buffer size: twice the description length, but maximum 8KB
+			int bufsize = newContents.length > 4096 ? 8192 : newContents.length * 2;
+			oldStream = new BufferedInputStream(descriptionFile.getContents(true), bufsize);
+			InputStream newStream = new ByteArrayInputStream(newContents);
+			//Compare Streams char by char, ignoring line endings.
+			int newChar = newStream.read();
+			int oldChar = oldStream.read();
+			while (newChar >= 0 && oldChar >= 0) {
+				boolean newGotLine = (newChar == '\r' || newChar == '\n');
+				boolean oldGotLine = (oldChar == '\r' || oldChar == '\n');
+				if (newGotLine || oldGotLine) {
+					//Ignore newlines if in both streams
+					if (newGotLine != oldGotLine)
+						return true;
+					while (newChar == '\r' || newChar == '\n')
+						newChar = newStream.read();
+					while (oldChar == '\r' || oldChar == '\n')
+						oldChar = oldStream.read();
+				}
+				//Now we are pointing to a char that's not a newline.
+				if (newChar != oldChar)
+					return true;
+				newChar = newStream.read();
+				oldChar = oldStream.read();
+			}
+			//test for excess data in one stream
+			if (newChar >= 0 || oldChar >= 0)
 				return true;
-			//if the stream still has bytes available, then the description is changed
-			if (stream.read() >= 0)
-				return true;
-			return !Arrays.equals(newContents, oldContents);
+			return false;
 		} catch (Exception e) {
 			Policy.log(e);
 			//if we failed to compare, just write the new contents
 		} finally {
-			FileUtil.safeClose(stream);
+			FileUtil.safeClose(oldStream);
 		}
 		return true;
 	}
