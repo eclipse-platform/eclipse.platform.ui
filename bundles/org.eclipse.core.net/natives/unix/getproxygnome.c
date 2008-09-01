@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Oakland Software Incorporated - initial API and implementation
+ *     IBM Corporation - enabling JNI calls for gconfInit method (bug 232495)	
  */
 
 #include <jni.h>
@@ -36,7 +37,9 @@ static jmethodID passwordMethod;
 
 #define CHECK_NULL(X) { if ((X) == NULL) fprintf (stderr,"JNI error at line %d\n", __LINE__); } 
 
-static void gconfInit(JNIEnv *env) {
+JNIEXPORT void JNICALL Java_org_eclipse_core_internal_net_proxy_unix_UnixProxyProvider_gconfInit(
+		JNIEnv *env, jclass clazz) {
+
 	client = gconf_client_get_default();
 	jclass cls= NULL;
 	CHECK_NULL(cls = (*env)->FindClass(env, "org/eclipse/core/internal/net/ProxyData"));
@@ -73,7 +76,7 @@ JNIEXPORT jobject JNICALL Java_org_eclipse_core_internal_net_proxy_unix_UnixProx
 	jobject proxyInfo= NULL;
 
 	if (client == NULL) {
-		gconfInit(env);
+		Java_org_eclipse_core_internal_net_proxy_unix_UnixProxyProvider_gconfInit(env, clazz);
 	}
 
 	CHECK_NULL(proxyInfo = (*env)->NewObject(env, proxyInfoClass, proxyInfoConstructor, protocol));
@@ -183,7 +186,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_eclipse_core_internal_net_proxy_unix_Uni
 		JNIEnv *env, jclass clazz) {
 
 	if (client == NULL) {
-		gconfInit(env);
+		Java_org_eclipse_core_internal_net_proxy_unix_UnixProxyProvider_gconfInit(env, clazz);
 	}
 
 	GSList *npHosts;

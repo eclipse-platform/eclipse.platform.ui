@@ -23,11 +23,10 @@ import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.net.proxy.IProxyData;
 
 public class UnixProxyProvider extends AbstractProxyProvider {
-	
-	// Gnome support disabled - see bug 234662
-	// private static final String LIBRARY_GCONF2 = "gconf-2"; //$NON-NLS-1$
 
-	// private static final String LIBRARY_NAME = "proxygnome"; //$NON-NLS-1$
+	private static final String LIBRARY_GCONF2 = "gconf-2"; //$NON-NLS-1$
+
+	private static final String LIBRARY_NAME = "proxygnome"; //$NON-NLS-1$
 
 	private static boolean isGnomeLibLoaded = false;
 
@@ -35,8 +34,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		// We have to load this here otherwise gconf seems to have problems
 		// causing hangs and various other bad behavior,
 		// please don't move this to be initialized on another thread.
-		// Gnome support disabled - see bug 234662
-		// loadGnomeLib();
+		loadGnomeLib();
 	}
 
 	public UnixProxyProvider() {
@@ -167,8 +165,6 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		return props.getProperty(env);
 	}
 
-	// Gnome support disabled - see bug 234662
-	/* 
 	private static void loadGnomeLib() {
 		try {
 			System.loadLibrary(LIBRARY_GCONF2);
@@ -194,7 +190,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 						+ System.mapLibraryName(LIBRARY_NAME));
 		}
 	}
-	*/
+
 
 	private void debugPrint(String[] strs) {
 		for (int i = 0; i < strs.length; i++)
