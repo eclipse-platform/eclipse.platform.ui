@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,13 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 
 public class ChangeExceptionHandler {
 	
@@ -48,17 +49,20 @@ public class ChangeExceptionHandler {
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			Button ok= getButton(IDialogConstants.OK_ID);
-			ok.setText( RefactoringUIMessages.ChangeExceptionHandler_undo); 
-			Button abort= createButton(parent, IDialogConstants.CANCEL_ID, RefactoringUIMessages.ChangeExceptionHandler_abort, true); 
+			ok.setText( RefactoringUIMessages.ChangeExceptionHandler_undo);
+			Button abort= createButton(parent, IDialogConstants.CANCEL_ID, RefactoringUIMessages.ChangeExceptionHandler_abort, true);
 			abort.moveBelow(ok);
 			abort.setFocus();
 		}
 		protected Control createMessageArea (Composite parent) {
 			Control result= super.createMessageArea(parent);
-			new Label(parent, SWT.NONE); // filler
+
+			// Panic code: use 'parent' instead of 'result' in case super implementation changes in the future
+			new Label(parent, SWT.NONE); // filler as parent has 2 columns (icon and label)
 			Label label= new Label(parent, SWT.NONE);
-			label.setText(RefactoringUIMessages.ChangeExceptionHandler_button_explanation); 
+			label.setText(RefactoringUIMessages.ChangeExceptionHandler_button_explanation);
 			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 			applyDialogFont(result);
 			return result;
 		}
@@ -73,10 +77,10 @@ public class ChangeExceptionHandler {
 		RefactoringUIPlugin.log(exception);
 		IStatus status= null;
 		if (exception.getMessage() == null) {
-			status= new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), IStatus.ERROR, 
-				RefactoringUIMessages.ChangeExceptionHandler_no_details, exception); 
+			status= new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), IStatus.ERROR,
+				RefactoringUIMessages.ChangeExceptionHandler_no_details, exception);
 		} else {
-			status= new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), IStatus.ERROR, 
+			status= new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), IStatus.ERROR,
 				exception.getMessage(), exception);
 		}
 		handle(change, status);
@@ -93,20 +97,20 @@ public class ChangeExceptionHandler {
 			if (undo != null) {
 				RefactoringUIPlugin.log(status);
 				final ErrorDialog dialog= new RefactorErrorDialog(fParent,
-					RefactoringUIMessages.ChangeExceptionHandler_refactoring, 
-					Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName), 
-					status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); 
+					RefactoringUIMessages.ChangeExceptionHandler_refactoring,
+					Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName),
+					status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
 				int result= dialog.open();
 				if (result == IDialogConstants.OK_ID) {
 					performUndo(undo);
 				}
 				return;
-			}
+		}
 		}
 		ErrorDialog dialog= new ErrorDialog(fParent,
-			RefactoringUIMessages.ChangeExceptionHandler_refactoring, 
-			Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName), 
-			status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); 
+			RefactoringUIMessages.ChangeExceptionHandler_refactoring,
+			Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName),
+			status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
 		dialog.open();
 	}
 	
@@ -132,9 +136,9 @@ public class ChangeExceptionHandler {
 		try {
 			dialog.run(false, false, adapter);
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, fParent, 
-				RefactoringUIMessages.ChangeExceptionHandler_rollback_title,  
-				RefactoringUIMessages.ChangeExceptionHandler_rollback_message + fName); 
+			ExceptionHandler.handle(e, fParent,
+				RefactoringUIMessages.ChangeExceptionHandler_rollback_title,
+				RefactoringUIMessages.ChangeExceptionHandler_rollback_message + fName);
 		} catch (InterruptedException e) {
 			// can't happen
 		}
