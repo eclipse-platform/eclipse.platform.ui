@@ -31,6 +31,10 @@ import org.eclipse.swt.widgets.Shell;
  * icon and a message as the first two widgets. In this dialog the icon and
  * message are direct children of the shell in order that they can be read by
  * accessibility tools more easily.
+ * <p>
+ * <strong>Note:</strong> Clients are expected to call {@link #createMessageArea(Composite)},
+ * otherwise neither the icon nor the message will appear.
+ * </p>
  */
 public abstract class IconAndMessageDialog extends Dialog {
 	/**
@@ -65,6 +69,10 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * The parent composite is assumed to use GridLayout as its layout manager,
 	 * since the parent is typically the composite created in
 	 * {@link Dialog#createDialogArea}.
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> Clients are expected to call this method, otherwise
+	 * neither the icon nor the message will appear.
 	 * </p>
 	 * 
 	 * @param composite
