@@ -26,7 +26,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 
 	private static final String LIBRARY_GCONF2 = "gconf-2"; //$NON-NLS-1$
 
-	private static final String LIBRARY_NAME = "proxygnome"; //$NON-NLS-1$
+	private static final String LIBRARY_NAME = "gnomeproxy-1.0.0"; //$NON-NLS-1$
 
 	private static boolean isGnomeLibLoaded = false;
 
