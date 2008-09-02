@@ -77,7 +77,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			// nothing - try preferences
 			Preferences prefs = UniversalIntroPlugin.getDefault()
 					.getPluginPreferences();
-			// try to prefix with a preduct id first
+			// try to prefix with a product id first
 			String key = product.getId() + "_" + variableName; //$NON-NLS-1$
 			value = prefs.getString(key);
 			if (value.length() == 0) {

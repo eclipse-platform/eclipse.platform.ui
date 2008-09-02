@@ -33,7 +33,7 @@
          <presentation
                home-page-id="root" standby-page-id="standby">
             <implementation
-                  style="themes/shared/html/shared.css,$theme$/html/shared.css"
+                  style="themes/shared/html/shared.css,$theme$/html/shared.css,$theme$/html/font-$fontStyle$.css"
                   kind="html"
                   os="win32,linux,macosx">
             </implementation>
@@ -55,7 +55,8 @@
             id="org.eclipse.ui.intro.universal.circles"
             name="%theme.name.circles"
             path="$nl$/themes/circles"
-            previewImage="$nl$/themes/circles/preview.png">
+            previewImage="$nl$/themes/circles/preview.png"
+            scalable="true">
             <property name="workbenchAsRootLink"
             		value="true"/>
             		<!--
@@ -109,13 +110,14 @@
             <property name="highContrastNav-migrate"
             		  value="$theme$graphics/icons/ctool/mi_nav.png"/> 
             <property name="highContrastNav-workbench"
-            		  value="$theme$graphics/icons/ctool/wb_nav.png"/>            		  
+            		  value="$theme$graphics/icons/ctool/wb_nav.png"/>
       </theme>
       <theme
             id="org.eclipse.ui.intro.universal.purpleMesh"
             name="%theme.name.purpleMesh"
             path="$nl$/themes/purpleMesh"
-            previewImage="$nl$/themes/purpleMesh/preview.png">
+            previewImage="$nl$/themes/purpleMesh/preview.png"
+            scalable="true">
             <property name="launchbarBackground"
             		value="#c6c3e8"/>
             <property name="capitalizeTitles"

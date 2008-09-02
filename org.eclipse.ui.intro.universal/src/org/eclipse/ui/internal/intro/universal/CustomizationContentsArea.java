@@ -76,6 +76,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.intro.impl.FontSelection;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.universal.util.BundleUtil;
@@ -114,6 +115,7 @@ public class CustomizationContentsArea {
 	private TableContentProvider contentProvider;
 	private TableLabelProvider labelProvider;
 	private Button applyToAll;
+	private Button useRelativeFonts;
 	private Image extensionImage;
 	private Image themeImage;
 	private Image ihighImage;
@@ -372,6 +374,10 @@ public class CustomizationContentsArea {
 		public String getId() {
 			return element.getAttribute("id"); //$NON-NLS-1$
 		}
+		
+		public boolean isScalable() {
+			return "true".equals(element.getAttribute(FontSelection.ATT_SCALABLE)); //$NON-NLS-1$
+		}
 
 		public IntroTheme(IConfigurationElement element) {
 			this.element = element;
@@ -419,6 +425,8 @@ public class CustomizationContentsArea {
 				onTabChange(selection[0]);
 			}
 		});
+		useRelativeFonts = new Button(container, SWT.CHECK);
+		useRelativeFonts.setText(Messages.WelcomeCustomizationPreferencePage_useRelative);
 		applyToAll = new Button(container, SWT.CHECK);
 		applyToAll.setText(Messages.WelcomeCustomizationPreferencePage_applyToAll);
 		contentProvider = new TableContentProvider();
@@ -584,16 +592,11 @@ public class CustomizationContentsArea {
 			return;
 		String pid = product.getId();
 		introRootPages.clear();
-		Preferences prefs = UniversalIntroPlugin.getDefault().getPluginPreferences();
+		Preferences uprefs = UniversalIntroPlugin.getDefault().getPluginPreferences();
 		Preferences iprefs = IntroPlugin.getDefault().getPluginPreferences();
 		// 1. Root pages
 		// try product-qualified value first
-		String key = pid + "_" + INTRO_ROOT_PAGES; //$NON-NLS-1$
-		String rootPages = fromDefault ? prefs.getDefaultString(key) : prefs.getString(key);
-		if (rootPages.length() == 0) {
-			rootPages = fromDefault ? prefs.getDefaultString(INTRO_ROOT_PAGES) : prefs
-					.getString(INTRO_ROOT_PAGES);
-		}
+		String rootPages = getIntroPreference(INTRO_ROOT_PAGES, fromDefault, pid, uprefs);
 		if (rootPages.length() > 0) {
 			StringTokenizer stok = new StringTokenizer(rootPages, ","); //$NON-NLS-1$
 			while (stok.hasMoreTokens()) {
@@ -603,22 +606,15 @@ public class CustomizationContentsArea {
 				}
 			}
 		}
+		// 2. Font Style
+		String fontStyle = FontSelection.getFontStyle();
+		useRelativeFonts.setSelection(FontSelection.FONT_RELATIVE.equals(fontStyle));
 		// 3. Active theme
-		key = pid + "_" + INTRO_THEME; //$NON-NLS-1$
-		String value = fromDefault ? iprefs.getDefaultString(key) : iprefs.getString(key);
-		if (value.length() == 0) {
-			key = INTRO_THEME;
-			value = fromDefault ? iprefs.getDefaultString(key) : iprefs.getString(key);
-		}
+		String value = getIntroPreference(INTRO_THEME, fromDefault, pid, iprefs);
 		if (value.length() > 0)
 			introThemeId = value;
 		// 4. Intro data
-		key = pid + "_" + INTRO_DATA; //$NON-NLS-1$
-		value = fromDefault ? prefs.getDefaultString(key) : prefs.getString(key);
-		if (value.length() == 0) {
-			key = INTRO_DATA;
-			value = fromDefault ? prefs.getDefaultString(key) : prefs.getString(key);
-		}
+		value = getIntroPreference(INTRO_DATA, fromDefault, pid, uprefs);
 		if (value.length() == 0)
 			value = null;
 		if (value != null && value.startsWith("product:")) //$NON-NLS-1$
@@ -626,6 +622,17 @@ public class CustomizationContentsArea {
 		value = BundleUtil.getResolvedResourceLocation(value, product.getDefiningBundle());
 		introData = new IntroData(pid, value, true);
 		introData.addImplicitContent();
+	}
+
+	private String getIntroPreference(String key, boolean fromDefault,
+			String pid, Preferences prefs) {
+		String pidKey = pid + "_" + key; //$NON-NLS-1$
+		String rootPages = fromDefault ? prefs.getDefaultString(pidKey) : prefs.getString(pidKey);
+		if (rootPages.length() == 0) {
+			rootPages = fromDefault ? prefs.getDefaultString(key) : prefs
+					.getString(key);
+		}
+		return rootPages;
 	}
 
 	public void dispose() {
@@ -657,6 +664,7 @@ public class CustomizationContentsArea {
 	private void updateWidgetsFromData() {
 		// sync up intro background part
 		updateIntroThemeFromData();
+		enableFontsButton();
 		// sync up the root page checklist
 		rootPages.setInput(ROOT_PAGE_TABLE);
 		ArrayList selected = new ArrayList();
@@ -666,6 +674,12 @@ public class CustomizationContentsArea {
 				selected.add(ROOT_PAGE_TABLE[i]);
 		}
 		rootPages.setCheckedElements(selected.toArray());
+	}
+
+	private void enableFontsButton() {
+		if (introTheme != null) {
+			useRelativeFonts.setEnabled(introTheme.isScalable());
+		}	
 	}
 
 	private void updateThemePreview() {
@@ -730,7 +744,7 @@ public class CustomizationContentsArea {
 	}
 
 	private void saveData() {
-		Preferences prefs = UniversalIntroPlugin.getDefault().getPluginPreferences();
+		Preferences uprefs = UniversalIntroPlugin.getDefault().getPluginPreferences();
 		Preferences iprefs = IntroPlugin.getDefault().getPluginPreferences();
 		boolean toAll = applyToAll.getSelection();
 		IProduct product = Platform.getProduct();
@@ -749,10 +763,19 @@ public class CustomizationContentsArea {
 			sbuf.append((String) introRootPages.get(i));
 		}
 		String key = pid + "_" + INTRO_ROOT_PAGES; //$NON-NLS-1$
-		prefs.setValue(key, sbuf.toString());
+		uprefs.setValue(key, sbuf.toString());
 		if (toAll) {
 			key = INTRO_ROOT_PAGES;
-			prefs.setValue(key, sbuf.toString());
+			uprefs.setValue(key, sbuf.toString());
+		}
+		// Store font style
+		key = pid + "_" + FontSelection.VAR_FONT_STYLE; //$NON-NLS-1$
+		String fontStyle = useRelativeFonts.getSelection() ? FontSelection.FONT_RELATIVE :
+			FontSelection.FONT_ABSOLUTE;
+		iprefs.setValue(key, fontStyle);
+		if (toAll) {
+			key = FontSelection.VAR_FONT_STYLE;
+			iprefs.setValue(key, fontStyle);
 		}
 		// store page layouts
 		StringWriter writer = new StringWriter();
@@ -761,10 +784,10 @@ public class CustomizationContentsArea {
 		pwriter.close();
 		String value = writer.toString();
 		key = pid + "_" + INTRO_DATA; //$NON-NLS-1$
-		prefs.setValue(key, value);
+		uprefs.setValue(key, value);
 		if (toAll) {
 			key = INTRO_DATA;
-			prefs.setValue(key, value);
+			uprefs.setValue(key, value);
 		}
 		if (introTheme != null) {
 			key = pid + "_" + INTRO_THEME; //$NON-NLS-1$
@@ -810,6 +833,7 @@ public class CustomizationContentsArea {
 				Object sel = ((StructuredSelection) e.getSelection()).getFirstElement();
 				introTheme = (IntroTheme) sel;
 				themePreview.redraw();
+				enableFontsButton();
 			}
 		});
 		loadThemes();

@@ -9,14 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-/* 
- * Set up general font colours, sizes, etc.  Some of these will override
- * settings from the shared CSS 
- */
-.intro-header H1 {
-	font-size : 18pt;
-}
-
 /* Hide the extra div for links in the normal state. */
 a .link-extra-div {
 	display: none;
@@ -26,8 +18,7 @@ a .link-extra-div {
 #page-links a .link-label {
 	margin-left: 7px;
 	position: relative;
-	top: -1.2em;
-	font-size : 12.5pt;	font-weight : 600;
+	top: -1.2em;	font-weight : 600;
 	padding-left: 15px;
 	padding-right: 10px;
 	margin-bottom: -1.2pm;
@@ -50,8 +41,7 @@ a .link-extra-div {
 	padding-top: 5px;
 	padding-left: 9px;
 	padding-right: 10px;
-	margin-bottom: -1.6em;
-	font-size : 11pt;	font-weight : 500;
+	margin-bottom: -1.6em;	font-weight : 500;
 	padding-bottom: 5px;
 	background-image: url("../graphics/icons/ctool/root_midhov2.gif");
 	background-repeat: repeat-y;
@@ -321,7 +311,6 @@ html, body {
 #page-links a:hover .link-extra-div {
 	z-index: -100;
 	display: block;
-	font-size : 13pt;
 	font-weight : 600;
 	position: absolute;
 	left: 13px;

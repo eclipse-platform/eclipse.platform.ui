@@ -23,6 +23,8 @@ public class Messages extends NLS {
     public static String Browser_forwardButton_tooltip;
     public static String Browser_backwardButton_tooltip;
     public static String Browser_invalidConfig;
+    public static String Browser_magnify_tooltip;
+    public static String Browser_reduce_tooltip;
 
     // Dialogs
     // --------
@@ -47,7 +49,6 @@ public class Messages extends NLS {
     public static String IntroLaunchBar_close_label;
     public static String IntroLaunchBar_close_tooltip;
     public static String IntroLaunchBar_restore_tooltip;
-
 
     // Misc
     // -------

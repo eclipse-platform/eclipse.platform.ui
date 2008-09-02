@@ -28,6 +28,7 @@ import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.UAElementFactory;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.internal.intro.impl.FontSelection;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
@@ -939,6 +940,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
     		if (theme!=null)
     			return theme.getPath();
     	}
+     	if (variable.equals(FontSelection.VAR_FONT_STYLE)) {
+     		return FontSelection.getFontStyle();
+    	}
+		
     	if (configurer!=null)
     		return configurer.getVariable(variable);
     	return null;

@@ -9,13 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-/* 
- * Set up general font colours, sizes, etc.  Some of these will override
- * settings from the shared CSS 
- */
-.intro-header H1 {
-	font-size : 15pt;
-}
 
 /*
  * We will not use the general-purpose group1 used in
@@ -28,13 +21,11 @@
 
 
 #page-links a .link-label, #action-links a .link-label {
-	font-size : 10pt;
 	font-weight : 600;
 	color : #E5E5E5;
 }
 
 #page-links a p .text, #action-links a p .text {
-	font-size : 10pt;
 	font-weight : 500;
 	color : #E5E5E5;
 }

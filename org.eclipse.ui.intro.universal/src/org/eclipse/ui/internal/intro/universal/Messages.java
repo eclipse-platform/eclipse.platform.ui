@@ -67,6 +67,7 @@ public class Messages extends NLS {
 	public static String WelcomeCustomizationPreferencePage_webresources;
 	public static String WelcomeCustomizationPreferencePage_migrate;
 	public static String WelcomeCustomizationPreferencePage_applyToAll;
+	public static String WelcomeCustomizationPreferencePage_useRelative;
 	public static String WelcomeCustomizationPreferencePage_NoMnemonic_overview;
 	public static String WelcomeCustomizationPreferencePage_NoMnemonic_firststeps;
 	public static String WelcomeCustomizationPreferencePage_NoMnemonic_tutorials;

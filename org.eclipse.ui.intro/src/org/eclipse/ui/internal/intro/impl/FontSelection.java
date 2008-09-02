@@ -1,0 +1,98 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.ui.internal.intro.impl;
+
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+
+public class FontSelection {
+	
+	public static final String VAR_FONT_STYLE = "fontStyle";  //$NON-NLS-1$
+	public static final String FONT_ABSOLUTE = "absolute";  //$NON-NLS-1$
+	public static final String FONT_RELATIVE = "relative";  //$NON-NLS-1$	
+	private static final String SCALE_FACTOR = "scaleFactor"; //$NON-NLS-1$
+	public static final String ATT_SCALABLE = "scalable"; //$NON-NLS-1$
+	
+	private static final int MIN_HEIGHT = 10;	
+	private static final int MAX_HEIGHT = 16;
+	
+	/*
+	 * Returns the height in points of the default SWT font
+	 */
+	private static int getDefaultFontHeight() {
+       Font defaultFont = JFaceResources.getDefaultFont();
+       FontData[] fontData = defaultFont.getFontData();
+       int height = MIN_HEIGHT;	
+		for (int i=0; i< fontData.length; i++) {
+			FontData data = fontData[i];
+			height = Math.max(height, data.getHeight());
+		}
+       return Math.min(height, MAX_HEIGHT);
+	}
+
+	public static String generatePageFontStyle() {
+		int defaultFontHeight = getDefaultFontHeight();
+		int scale = getScalePercentage();
+		String result = getFontSizeDeclaration("", defaultFontHeight, 100, scale); //$NON-NLS-1$
+		result += getFontSizeDeclaration("h1", defaultFontHeight, 200, scale); //$NON-NLS-1$
+		result += getFontSizeDeclaration("h2", defaultFontHeight, 150, scale); //$NON-NLS-1$
+		result += getFontSizeDeclaration("h3", defaultFontHeight, 120, scale); //$NON-NLS-1$
+		result += getFontSizeDeclaration("h4", defaultFontHeight, 100, scale); //$NON-NLS-1$
+		result += getFontSizeDeclaration("h5", defaultFontHeight, 80, scale); //$NON-NLS-1$
+		result += getFontSizeDeclaration("h6", defaultFontHeight, 70, scale); //$NON-NLS-1$
+		return result;
+	}
+	
+	public static final int getScalePercentage() {
+		Preferences prefs = IntroPlugin.getDefault().getPluginPreferences();
+		String scale = prefs.getString(SCALE_FACTOR);
+		try {
+			return Integer.parseInt(scale);
+		} 
+		catch (NumberFormatException n) {
+			return 0;
+		}
+	}
+
+	private static String getFontSizeDeclaration(String element, int baseSize, int percentage, int scale) {
+		if (scale > 75) scale = 75;
+		int newSize = (int) ((baseSize * percentage *1.25) / (100 - scale));
+		return " body " + element  + "{  font-size : " + newSize  + "px; } ";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	public static void setScalePercentage(int i) {
+		Preferences prefs = IntroPlugin.getDefault().getPluginPreferences();	
+		prefs.setValue(SCALE_FACTOR, "" + i); //$NON-NLS-1$
+	}
+
+	public static String getFontStyle() {
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+		    String pid = product.getId();
+		    Preferences prefs = IntroPlugin.getDefault().getPluginPreferences();
+	    	String style = prefs.getString(pid + "_" +FontSelection.VAR_FONT_STYLE); //$NON-NLS-1$
+	    	if (style.length() > 0) {
+	    		return style;
+	    	}
+	    	style = prefs.getString(FontSelection.VAR_FONT_STYLE);
+	    	if (style.length() > 0) {
+	    		return style;
+	    	}
+		}
+		// Use default for font style if not specified
+	    return FontSelection.FONT_ABSOLUTE;
+	}
+}

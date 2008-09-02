@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.FontSelection;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
@@ -34,6 +35,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroLink;
 import org.eclipse.ui.internal.intro.impl.model.IntroPageTitle;
 import org.eclipse.ui.internal.intro.impl.model.IntroSeparator;
 import org.eclipse.ui.internal.intro.impl.model.IntroText;
+import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
@@ -718,6 +720,12 @@ public class IntroHTMLGenerator {
 		HTMLElement style = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_STYLE, indentLevel, false);
 		style.addAttribute(IIntroHTMLConstants.ATTRIBUTE_TYPE, IIntroHTMLConstants.LINK_STYLE);
 		style.addContent(IIntroHTMLConstants.STYLE_HTML);
+		IntroTheme theme = introPage.getModelRoot().getTheme();
+		if (theme != null && theme.isScalable() 
+				&& FontSelection.FONT_RELATIVE.equals(FontSelection.getFontStyle())) {
+		    String sizeStyle = FontSelection.generatePageFontStyle(); 
+            style.addContent(sizeStyle);
+		}
 		return style;
 	}
 

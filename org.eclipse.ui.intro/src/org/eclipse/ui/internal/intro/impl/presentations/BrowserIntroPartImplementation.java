@@ -36,11 +36,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.internal.intro.impl.FontSelection;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -52,16 +54,22 @@ import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.model.History;
 import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.intro.impl.util.Util;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
+import org.eclipse.ui.intro.config.IIntroURL;
 import org.eclipse.ui.intro.config.IIntroXHTMLContentProvider;
 import org.eclipse.ui.intro.config.IntroConfigurer;
+import org.eclipse.ui.intro.config.IntroURLFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -72,7 +80,47 @@ public class BrowserIntroPartImplementation extends
         IIntroContentProviderSite {
  
 
-    // the browser widget that will display the intro content 
+    private final class ReduceAction extends Action {
+
+		{
+            setToolTipText(Messages.Browser_reduce_tooltip); 
+            setImageDescriptor(ImageUtil
+                .createImageDescriptor("full/elcl16/reduce.gif")); //$NON-NLS-1$
+            //setDisabledImageDescriptor(ImageUtil
+                    //.createImageDescriptor("full/dlcl16/reduce.gif")); //$NON-NLS-1$
+        	int scalePercent = FontSelection.getScalePercentage();
+            setEnabled(scalePercent > -40);
+        }
+
+		public void run() {
+        	int scalePercent = FontSelection.getScalePercentage();
+        	FontSelection.setScalePercentage(scalePercent - 20);
+        	restartIntro();
+        }
+	}
+
+	private final class MagnifyAction extends Action {
+
+		{
+            setToolTipText(Messages.Browser_magnify_tooltip); 
+            setImageDescriptor(ImageUtil
+                .createImageDescriptor("full/elcl16/magnify.gif")); //$NON-NLS-1$
+            //setDisabledImageDescriptor(ImageUtil
+                    //.createImageDescriptor("full/dlcl16/magnify.gif")); //$NON-NLS-1$
+        	int scalePercent = FontSelection.getScalePercentage();
+            setEnabled(scalePercent < 100);
+        }
+
+		public void run() {
+        	int scalePercent = FontSelection.getScalePercentage();
+        	FontSelection.setScalePercentage(scalePercent + SCALE_INCREMENT);
+        	restartIntro();
+        }
+	}
+
+	private static final int SCALE_INCREMENT = 20;
+
+	// the browser widget that will display the intro content 
     protected Browser browser = null;
 
     // the HTML generator used to generate dynamic content
@@ -105,13 +153,37 @@ public class BrowserIntroPartImplementation extends
 			} catch (PartInitException e) {
 			}  
         }
-    };
+    }; 
+    
+    private void restartIntro() {
+		IIntroManager manager = PlatformUI.getWorkbench().getIntroManager();
+		IIntroPart part = manager.getIntro();
+		if (part != null && part instanceof CustomizableIntroPart) {
+			IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
+			String currentPageId = modelRoot.getCurrentPageId();
+			IWorkbenchWindow window = part.getIntroSite().getWorkbenchWindow();
+			boolean standby = manager.isIntroStandby(part);
+			PlatformUI.getWorkbench().getIntroManager().closeIntro(part);
+			IntroPlugin.getDefault().resetVolatileImageRegistry();
+			part = PlatformUI.getWorkbench().getIntroManager().showIntro(window, standby);
+			if (part != null  && !standby) {
+				StringBuffer url = new StringBuffer();
+				url.append("http://org.eclipse.ui.intro/showPage?id="); //$NON-NLS-1$
+				url.append(currentPageId);
+				IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
+				if (introURL != null)
+					introURL.execute();
+			}
+		}
+	}
 
     protected BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
         this);
 
     // internal performance test hook
     private boolean isFinishedLoading;
+
+	private boolean resizeActionsAdded = false;
 
     protected void updateNavigationActionsState() {
         if (getModel().isDynamic()) {
@@ -251,7 +323,8 @@ public class BrowserIntroPartImplementation extends
             if (html != null) {
             	IntroModelRoot root = getModel();
             	if (root!=null) {
-            		Map props = root.getTheme()!=null?root.getTheme().getProperties():null;
+            		IntroTheme theme = root.getTheme();
+					Map props = theme!=null?theme.getProperties():null;
             		if (props!=null) {
             			String value = (String)props.get("standardSupport"); //$NON-NLS-1$
             			String doctype=null;
@@ -262,12 +335,22 @@ public class BrowserIntroPartImplementation extends
             			if (doctype!=null)
             				content = doctype+html.toString();
             		}
+            		boolean createZoomButtons = theme != null && theme.isScalable() && !resizeActionsAdded 
+            				&&FontSelection.FONT_RELATIVE.equals(FontSelection.getFontStyle());
+					if (createZoomButtons) {
+            			resizeActionsAdded = true;
+        				IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();          			        
+        				IToolBarManager toolBarManager = actionBars.getToolBarManager();        		            
+        				toolBarManager.add(new ReduceAction());
+        		        toolBarManager.add(new MagnifyAction());
+        		        actionBars.updateActionBars();
+        		        //toolBarManager.update(true);
+            		}
             	}
             	if (content==null)
             		content = html.toString();
             }
         }
-
 
         if (content == null) {
             // there was an error generating the html. log an error

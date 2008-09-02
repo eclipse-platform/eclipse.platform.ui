@@ -17,20 +17,22 @@ body { font-family : Arial, sans-serif; }
 H1, H2, H3, H4, p, a { color : #4D4D4D; }
 
 .intro-header H1 {
-	font-size : 16pt;
 	font-weight : normal;
 	color : #E5E5E5;
 }
 
 h2 {
-	font-size : 13pt;
 	font-weight : normal;
 	color : #7B8694;
 }
 /* For regular div labels */
 H4 .div-label {
-	font-size : 10pt;
 	font-weight : bold;
+}
+
+/* The label part of the folding section */
+.section-title-link .section-title {
+	display : inline;
 }
 
 /* For separators */
@@ -43,7 +45,6 @@ HR {
 
 /* For the main page content's title */
 #content-header H4 .div-label {
-	font-size : 14pt;
 	font-weight : normal;
 	color : #8C96A2;
 	float : none;
@@ -51,7 +52,6 @@ HR {
 }
 
 .page-description { 
-	font-size : 10pt;
 	float : none;
 	clear : both;
 }
@@ -63,7 +63,6 @@ a {
 }
 
 a .link-label {
-	font-size : 10pt;
 	font-weight : normal;
 }
 
@@ -73,18 +72,15 @@ a .link-label {
 }
 
 #navigation-links a .link-label {
-	font-size : 9pt;
 	font-weight : normal;
 	color : #E5E5E5;
 }
 
 a .text {
-	font-size : 8pt;
 	font-weight : normal;
 }
 
 p .group-description {
-	font-size : 10pt;
 	font-weight : normal;
 }
 
@@ -398,13 +394,11 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 }
 
 .categoryContentnav {
-	font-size: 9pt; 
 	font-weight: bold; 
 	color: #4A4D4A; 
 }
 
 .topicList {
-	font-size: 8pt; 
 	line-height:1.75;
 	color: #00507C;
 }

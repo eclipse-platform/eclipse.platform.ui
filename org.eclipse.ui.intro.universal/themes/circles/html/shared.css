@@ -23,8 +23,12 @@ H1, H2, H3, H4, p, a { color : #4D4D4D; }
 	display : none;
 }
 
+/* The label part of the folding section */
+.section-title-link .section-title {
+	display : inline;
+}
+
 h2 {
-	font-size : 13pt;
 	font-weight : normal;
 	color : #7B8694;
 }
@@ -32,7 +36,6 @@ h2 {
 /* For regular div labels */
 H4 .div-label {
 	font-family: Verdana, Arial, Helvetica; 
-	font-size: 10pt; 
 	font-weight: bold; 
 	color: #4A4D4A; 
 	line-height:1.3;
@@ -42,7 +45,6 @@ H4 .div-label {
 #content-header H4 .div-label {
 	font-family: Verdana, Arial, Helvetica;
 	color:#333333; 
-	font-size: 23pt; 
 	font-weight: normal; 
 	letter-spacing:-0.03em;
 	margin-left: 68px;
@@ -62,7 +64,6 @@ HR {
 .page-description {
 	display: block;
 	font-family: Verdana, Arial, Helvetica; 
-	font-size: 10pt; 
 	line-height:1.3;
 	float : none;
 	clear : both;
@@ -77,13 +78,11 @@ a {
 
 /* General link labels */
 a .link-label {
-	font-size : 10pt;
 	font-weight : normal;
 }
 
 /* Floating link labels for navigation links */
 #navigation-links a .link-label {
-	font-size : 8pt;
 	font-weight : bold;
 }
 
@@ -93,12 +92,10 @@ a .link-label {
 
 /* Text in links. */
 a .text {
-	font-size : 8pt;
 	font-weight : normal;
 }
 
 p .group-description {
-	font-size : 10pt;
 	font-family: Verdana, Arial, Helvetica; 
 	font-weight : normal;
 }
@@ -576,7 +573,6 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 .content-link .link-label {
 	font-family: Verdana, Arial, Helvetica; 
-	font-size: 11pt; 
 	font-weight: bold; 
 	line-height:1.5;
 	color: #00507C;
@@ -589,13 +585,11 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 .content-link .text {
 	font-family: Verdana, Arial, Helvetica; 
-	font-size: 10pt;
 	line-height: 1.3;
 }
 
 .categoryContentnav {
 	font-family: Verdana, Arial, Helvetica; 
-	font-size:10pt; 
 	font-weight: bold; 
 	color: #4A4D4A; 
 	line-height:1.3;
@@ -603,14 +597,12 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 .contentpgNavhover {
 	font-family: Verdana, Arial, Helvetica; 
-	font-size: 8pt; 
 	font-weight: bold; 
 	color: #000; 
 }
 
 .topicList {
 	font-family: Verdana, Arial, Helvetica; 
-	font-size:8pt; 
 	line-height:1.75;
 	color: #00507C;
 }

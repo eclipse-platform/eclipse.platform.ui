@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.ui.internal.intro.impl.FontSelection;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
@@ -24,12 +25,14 @@ public class IntroTheme extends AbstractIntroIdElement {
 	private String name;
 	private String path;
 	private Hashtable properties; 
+	private boolean scalable;
 	
 	public IntroTheme(IConfigurationElement element) {
 		super(element);
 		name = element.getAttribute(name);
 		path = element.getAttribute(ATT_PATH);
 		path = BundleUtil.getResolvedResourceLocation(path, getBundle());
+		scalable = "true".equals(element.getAttribute(FontSelection.ATT_SCALABLE)); //$NON-NLS-1$
 		loadProperties(element);
 	}
 
@@ -55,6 +58,10 @@ public class IntroTheme extends AbstractIntroIdElement {
 	
 	public Map getProperties() {
 		return properties;
+	}
+	
+	public boolean isScalable() {
+		return scalable;
 	}
 	
 	private void loadProperties(IConfigurationElement element) {

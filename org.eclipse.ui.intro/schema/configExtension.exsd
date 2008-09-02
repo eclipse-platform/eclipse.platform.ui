@@ -190,6 +190,13 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="scalable" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Scalable themes use only relative fonts. When a scalable theme is used  toolbar items will be created to enlarge or reduce the font size by setting an absolute size for a containing element.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
