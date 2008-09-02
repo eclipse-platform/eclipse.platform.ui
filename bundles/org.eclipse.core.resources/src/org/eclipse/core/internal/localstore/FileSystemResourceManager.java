@@ -236,7 +236,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	/**
 	 * Returns true if the description on disk is different from the given byte array,
 	 * and false otherwise.
-	 * Since org.eclipse.core.resources 3.4.100 differences in line endings (CR, LF, CRLF) 
+	 * Since org.eclipse.core.resources 3.4.1 differences in line endings (CR, LF, CRLF) 
 	 * are not considered.
 	 */
 	private boolean descriptionChanged(IFile descriptionFile, byte[] newContents) {
