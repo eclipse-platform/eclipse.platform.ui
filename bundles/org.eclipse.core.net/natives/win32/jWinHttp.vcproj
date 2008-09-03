@@ -76,7 +76,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib winhttp.lib"
-				OutputFile=".\Debug/jWinHttp.dll"
+				OutputFile=".\Debug/jWinHttp-1.0.0.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
@@ -170,7 +170,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winhttp.lib"
-				OutputFile=".\Release/jWinHttp.dll"
+				OutputFile=".\Release/jWinHttp-1.0.0.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile=".\Release/jWinHttp.pdb"
@@ -237,7 +237,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\include\org_eclipse_core_internal_net_proxy_win32_winhttp_WinHttp.h"
+				RelativePath=".\include\jWinHttp.h"
 				>
 			</File>
 		</Filter>

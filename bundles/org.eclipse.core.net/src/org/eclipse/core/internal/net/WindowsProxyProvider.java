@@ -18,7 +18,7 @@ import org.eclipse.core.net.proxy.IProxyData;
 
 public class WindowsProxyProvider extends AbstractProxyProvider {
 
-	private static final String LIBRARY_NAME = "jWinHttp"; //$NON-NLS-1$
+	private static final String LIBRARY_NAME = "jWinHttp-1.0.0"; //$NON-NLS-1$
 	
 	static {
 		try {

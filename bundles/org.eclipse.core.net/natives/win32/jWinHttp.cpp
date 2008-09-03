@@ -23,7 +23,7 @@
 #include <winhttp.h>
 #include <objbase.h>
 
-#include <org_eclipse_core_internal_net_proxy_win32_winhttp_WinHttp.h>
+#include "jWinHttp.h"
 
 using namespace std;
 
