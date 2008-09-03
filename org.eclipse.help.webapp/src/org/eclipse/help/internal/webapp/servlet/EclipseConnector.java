@@ -106,9 +106,7 @@ public class EclipseConnector {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
 			    pageNotFound = true;
-				if (lowerCaseuRL.endsWith("htm") //$NON-NLS-1$
-					|| lowerCaseuRL.endsWith("pdf")  //$NON-NLS-1$
-					|| lowerCaseuRL.endsWith("html")) { //$NON-NLS-1$
+				if (requiresErrorPage(lowerCaseuRL)) { 
 					// Try to load the error page if defined
 					Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 
@@ -174,6 +172,15 @@ public class EclipseConnector {
 			String msg = "Error processing help request " + getURL(req); //$NON-NLS-1$
 			HelpWebappPlugin.logError(msg, e);
 		}
+	}
+
+
+	private boolean requiresErrorPage(String lowerCaseuRL) {
+		return lowerCaseuRL.endsWith("htm") //$NON-NLS-1$
+		|| lowerCaseuRL.endsWith("pdf")  //$NON-NLS-1$
+		|| lowerCaseuRL.endsWith("xhtml")  //$NON-NLS-1$
+		|| lowerCaseuRL.endsWith("shtml")  //$NON-NLS-1$
+			|| lowerCaseuRL.endsWith("html"); //$NON-NLS-1$
 	}
 
 	private boolean isProcessingRequired(String contentType) {
