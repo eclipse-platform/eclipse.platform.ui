@@ -335,17 +335,6 @@ public class BrowserIntroPartImplementation extends
             			if (doctype!=null)
             				content = doctype+html.toString();
             		}
-            		boolean createZoomButtons = theme != null && theme.isScalable() && !resizeActionsAdded 
-            				&&FontSelection.FONT_RELATIVE.equals(FontSelection.getFontStyle());
-					if (createZoomButtons) {
-            			resizeActionsAdded = true;
-        				IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();          			        
-        				IToolBarManager toolBarManager = actionBars.getToolBarManager();        		            
-        				toolBarManager.add(new ReduceAction());
-        		        toolBarManager.add(new MagnifyAction());
-        		        actionBars.updateActionBars();
-        		        //toolBarManager.update(true);
-            		}
             	}
             	if (content==null)
             		content = html.toString();
@@ -542,6 +531,13 @@ public class BrowserIntroPartImplementation extends
         toolBarManager.add(backAction);
         toolBarManager.add(forwardAction);
         toolBarManager.update(true);
+        IntroTheme theme = getModel().getTheme();
+        boolean createZoomButtons = theme != null && theme.isScalable() && !resizeActionsAdded 
+		    &&FontSelection.FONT_RELATIVE.equals(FontSelection.getFontStyle());
+        if (createZoomButtons) {
+            toolBarManager.add(new ReduceAction());
+            toolBarManager.add(new MagnifyAction());
+        }
         actionBars.updateActionBars();
         updateNavigationActionsState();
     }
