@@ -33,8 +33,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.util.IOpenEventListener;
-import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -471,9 +469,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		});
 		
-		OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
-		handler.addOpenListener(new IOpenEventListener() {
-			public void handleOpen(SelectionEvent e) {
+		treeViewer.addOpenListener(new IOpenListener() {
+			public void open(OpenEvent e) {
 				if (getSite() != null) {
 					StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
 					if (compareMode){
