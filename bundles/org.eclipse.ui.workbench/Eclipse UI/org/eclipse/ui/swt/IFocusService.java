@@ -52,7 +52,6 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
  * 
  * @see org.eclipse.ui.ISources
  * @since 3.3
