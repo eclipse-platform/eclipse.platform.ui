@@ -23,6 +23,8 @@
 #include <strings.h>
 #endif
 
+#include "gnomeproxy.h"
+
 static GConfClient *client= NULL;
 
 static jclass proxyInfoClass;
@@ -37,6 +39,11 @@ static jmethodID passwordMethod;
 
 #define CHECK_NULL(X) { if ((X) == NULL) fprintf (stderr,"JNI error at line %d\n", __LINE__); } 
 
+/*
+ * Class:     org_eclipse_core_internal_net_proxy_unix_UnixProxyProvider
+ * Method:    gconfInit
+ * Signature: ()V
+ */
 JNIEXPORT void JNICALL Java_org_eclipse_core_internal_net_proxy_unix_UnixProxyProvider_gconfInit(
 		JNIEnv *env, jclass clazz) {
 
