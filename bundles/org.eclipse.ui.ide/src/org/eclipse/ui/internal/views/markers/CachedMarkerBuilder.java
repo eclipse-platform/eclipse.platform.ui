@@ -1190,6 +1190,7 @@ public class CachedMarkerBuilder {
 		monitor.worked(50);
 
 		currentMap = newMarkers;
+		currentMap.clearAttributeCaches();
 	}
 
 	/**
