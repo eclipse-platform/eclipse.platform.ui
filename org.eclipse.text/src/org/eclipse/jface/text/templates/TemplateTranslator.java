@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,18 +24,16 @@ import java.util.regex.Pattern;
  * <p>
  * The EBNF grammar of a valid string is as follows:
  * </p>
- * <p>
- * template := (text | escape)*. <br />
- * text := character - dollar. <br />
- * escape := dollar ('{' variable '}' | dollar). <br />
- * dollar := '$'. <br />
- * variable := identifier | identifier ':' type. <br />
- * type := qualifiedname | qualifiedname '(' arguments ')'. <br />
- * arguments := (argument ',')* argument. <br />
- * argument := qualifiedname | argumenttext. <br />
- * qualifiedname := (identifier '.')* identifier. <br />
- * argumenttext := "'" (character - "'" | "'" "'")* "'". <br />
- * </p>
+ * <pre> template := (text | escape)*.
+ * text := character - dollar.
+ * escape := dollar ('{' variable '}' | dollar).
+ * dollar := '$'.
+ * variable := identifier | identifier ':' type.
+ * type := qualifiedname | qualifiedname '(' arguments ')'.
+ * arguments := (argument ',')* argument.
+ * argument := qualifiedname | argumenttext.
+ * qualifiedname := (identifier '.')* identifier.
+ * argumenttext := "'" (character - "'" | "'" "'")* "'".</pre>
  * <p>
  * Clients may only replace the <code>createVariable</code> method of this class.
  * </p>
@@ -47,19 +45,25 @@ public class TemplateTranslator {
 	 * Regex pattern for qualifiedname
 	 * @since 3.4
 	 */
-	private static final String QUALIFIED_NAME= "(?:\\w++\\.)*\\w++"; //$NON-NLS-1$
+	private static final String QUALIFIED_NAME= "(?:\\w++\\.)*+\\w++"; //$NON-NLS-1$
 
 	/**
 	 * Regex pattern for argumenttext
 	 * @since 3.4
 	 */
-	private static final String ARGUMENT_TEXT= "'(?:(?:'')|(?:[^']))*'"; //$NON-NLS-1$
+	private static final String ARGUMENT_TEXT= "'(?:(?:'')|(?:[^']))*+'"; //$NON-NLS-1$
 
 	/**
 	 * Regex pattern for argument
 	 * @since 3.4
 	 */
 	private static final String ARGUMENT= "(?:" + QUALIFIED_NAME + ")|(?:" + ARGUMENT_TEXT + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	/**
+	 * Regex pattern for whitespace
+	 * @since 3.5
+	 */
+	private static final String SPACES= "\\s*+"; //$NON-NLS-1$
 
 	/**
 	 * Precompiled regex pattern for qualified names.
@@ -72,13 +76,26 @@ public class TemplateTranslator {
 	 * @since 3.3
 	 */
 	private static final Pattern ESCAPE_PATTERN= Pattern.compile(
-			"\\$\\$|\\$\\{\\s*+" + // $$|${  														//$NON-NLS-1$
-			"(\\w*+)" + // variable id group (1)													//$NON-NLS-1$
-			"\\s*+(?::\\s*+" + // : 																//$NON-NLS-1$
-			"(" + QUALIFIED_NAME + ")" + // variable type group (2)									//$NON-NLS-1$ //$NON-NLS-2$
-			"\\s*+(?:\\(\\s*+" + // ( 																//$NON-NLS-1$
-			"((?:(?:" + ARGUMENT + ")\\s*+,\\s*+)*(?:" + ARGUMENT + "))" + // arguments group (3)	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			"\\s*+\\))?\\s*+)?\\}|\\$"); // )}|$ 													//$NON-NLS-1$
+			"\\$\\$|\\$\\{" + // $$|${											//$NON-NLS-1$
+			SPACES +
+			"(\\w*+)" + // variable id group (1)								//$NON-NLS-1$
+			SPACES +
+			"(?:" +																//$NON-NLS-1$
+				":" +															//$NON-NLS-1$
+				SPACES +
+				"(" + QUALIFIED_NAME + ")" + // variable type group (2)			//$NON-NLS-1$ //$NON-NLS-2$
+				SPACES +
+				"(?:" +															//$NON-NLS-1$
+					"\\(" + // (												//$NON-NLS-1$
+					SPACES +
+					"((?:(?:" + ARGUMENT + ")" + SPACES + "," + SPACES + ")*+(?:" + ARGUMENT + "))" + // arguments group (3)	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					SPACES +
+					"\\)" + // )												//$NON-NLS-1$
+				")?" +															//$NON-NLS-1$
+				SPACES +
+			")?" +																//$NON-NLS-1$
+			"\\}|\\$"); // }|$													//$NON-NLS-1$
+	
 	/**
 	 * @since 3.3
 	 */
