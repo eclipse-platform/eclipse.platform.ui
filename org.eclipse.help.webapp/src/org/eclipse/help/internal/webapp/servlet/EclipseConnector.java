@@ -79,9 +79,10 @@ public class EclipseConnector {
 				resp.sendRedirect(redirectURL.toString());
 				return;
 			}
-			if (url.toLowerCase(Locale.ENGLISH).startsWith("file:") //$NON-NLS-1$
-					|| url.toLowerCase(Locale.ENGLISH).startsWith("jar:") //$NON-NLS-1$
-					|| url.toLowerCase(Locale.ENGLISH).startsWith("platform:")) { //$NON-NLS-1$
+			String lowerCaseuRL = url.toLowerCase(Locale.ENGLISH);
+			if (lowerCaseuRL.startsWith("file:") //$NON-NLS-1$
+					|| lowerCaseuRL.startsWith("jar:") //$NON-NLS-1$
+					|| lowerCaseuRL.startsWith("platform:")) { //$NON-NLS-1$
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
@@ -105,14 +106,16 @@ public class EclipseConnector {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
 			    pageNotFound = true;
-				if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
-						|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
+				if (lowerCaseuRL.endsWith("htm") //$NON-NLS-1$
+					|| lowerCaseuRL.endsWith("pdf")  //$NON-NLS-1$
+					|| lowerCaseuRL.endsWith("html")) { //$NON-NLS-1$
 					// Try to load the error page if defined
 					Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 
 					String errorPage = prefs.getString("page_not_found"); //$NON-NLS-1$
-					if (errorPage != null && errorPage.length() > 0) {
+					if (errorPage != null && errorPage.length() > 0) {				
 						con = createConnection(req, resp, "help:" + errorPage); //$NON-NLS-1$
+						resp.setContentType("text/html"); //$NON-NLS-1$
 						try {
 						    is = con.getInputStream();
 						} catch (IOException ioe2) {
