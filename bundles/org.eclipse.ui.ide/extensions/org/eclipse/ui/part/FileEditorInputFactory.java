@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 
 /**
- * Factory for saving and restoring a <code>FileEditorInput</code>. 
+ * Factory for saving and restoring a <code>FileEditorInput</code>.
  * The stored representation of a <code>FileEditorInput</code> remembers
  * the full path of the file (that is, <code>IFile.getFullPath</code>).
  * <p>
@@ -62,9 +64,8 @@ public class FileEditorInputFactory implements IElementFactory {
                 new Path(fileName));
         if (file != null) {
 			return new FileEditorInput(file);
-		} else {
-			return null;
 		}
+		return null;
     }
 
     /**

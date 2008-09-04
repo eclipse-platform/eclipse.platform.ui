@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.ui.IInPlaceEditor;
 import org.eclipse.ui.IInPlaceEditorInput;
 
@@ -43,21 +44,12 @@ public class FileInPlaceEditorInput extends FileEditorInput implements
                 IResourceDelta affectedElement = mainDelta.findMember(getFile()
                         .getFullPath());
                 if (affectedElement != null) {
-                    try {
-                        processDelta(affectedElement);
-                    } catch (CoreException exception) {
-                        // Failed so close the receiver
-                        if (embeddedEditor != null) {
-                            embeddedEditor.getSite().getPage().closeEditor(
-                                    embeddedEditor, true);
-                        }
-                    }
+                	processDelta(affectedElement);
                 }
             }
         }
 
-        private boolean processDelta(final IResourceDelta delta)
-                throws CoreException {
+        private boolean processDelta(final IResourceDelta delta) {
             Runnable changeRunnable = null;
 
             switch (delta.getKind()) {
