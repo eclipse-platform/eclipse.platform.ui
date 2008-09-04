@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bugs 215531, 226765
+ *     Matthew Hall - bugs 215531, 226765, 222991
  *******************************************************************************/
 package org.eclipse.jface.databinding.viewers;
 
@@ -63,12 +63,16 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 				return;
 
 			Set removals = event.diff.getRemovals();
-			viewerUpdater.remove(removals.toArray());
-			knownElements.removeAll(removals);
-
 			Set additions = event.diff.getAdditions();
+
 			knownElements.addAll(additions);
+			realizedElements.removeAll(removals);
+
+			viewerUpdater.remove(removals.toArray());
 			viewerUpdater.add(additions.toArray());
+
+			realizedElements.addAll(additions);
+			knownElements.removeAll(removals);
 		}
 	}
 
@@ -102,5 +106,17 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 	 */
 	public IObservableSet getKnownElements() {
 		return impl.getKnownElements();
+	}
+
+	/**
+	 * Returns the set of known elements which have been realized in the viewer.
+	 * Clients may track this set in order to perform custom actions on elements
+	 * while they are known to be present in the viewer.
+	 * 
+	 * @return the set of known elements which have been realized in the viewer.
+	 * @since 1.3
+	 */
+	public IObservableSet getRealizedElements() {
+		return impl.getRealizedElements();
 	}
 }

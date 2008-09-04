@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix in: 214355
- *     Matthew Hall - bugs 215531, 226765
+ *     Matthew Hall - bugs 215531, 226765, 222991
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -66,24 +66,41 @@ public class ObservableListContentProvider implements
 		public void handleListChange(ListChangeEvent event) {
 			if (isViewerDisposed())
 				return;
-			final Set removals = ViewerElementSet.withComparer(comparer);
+
+			// Determine which elements were added and removed
+			final Set knownElementAdditions = ViewerElementSet
+					.withComparer(comparer);
+			final Set knownElementRemovals = ViewerElementSet
+					.withComparer(comparer);
+			event.diff.accept(new ListDiffVisitor() {
+				public void handleAdd(int index, Object element) {
+					knownElementAdditions.add(element);
+				}
+
+				public void handleRemove(int index, Object element) {
+					knownElementRemovals.add(element);
+				}
+			});
+			knownElementAdditions.removeAll(knownElements);
+			knownElementRemovals.removeAll(event.getObservableList());
+
+			knownElements.addAll(knownElementAdditions);
+			if (realizedElements != null) {
+				realizedElements.removeAll(knownElementRemovals);
+			}
 
 			event.diff.accept(new ListDiffVisitor() {
 				public void handleAdd(int index, Object element) {
-					knownElements.add(element);
 					viewerUpdater.insert(element, index);
 				}
 
 				public void handleRemove(int index, Object element) {
 					viewerUpdater.remove(element, index);
-					removals.add(element);
 				}
 
 				public void handleReplace(int index, Object oldElement,
 						Object newElement) {
-					knownElements.add(newElement);
 					viewerUpdater.replace(oldElement, newElement, index);
-					removals.add(oldElement);
 				}
 
 				public void handleMove(int oldIndex, int newIndex,
@@ -92,10 +109,10 @@ public class ObservableListContentProvider implements
 				}
 			});
 
-			// For each removed element, do not remove from known elements if
-			// the element is still present elsewhere in the list.
-			removals.removeAll(event.getObservableList());
-			knownElements.removeAll(removals);
+			if (realizedElements != null) {
+				realizedElements.addAll(knownElementAdditions);
+			}
+			knownElements.removeAll(knownElementRemovals);
 		}
 	}
 
@@ -129,5 +146,17 @@ public class ObservableListContentProvider implements
 	 */
 	public IObservableSet getKnownElements() {
 		return impl.getKnownElements();
+	}
+
+	/**
+	 * Returns the set of known elements which have been realized in the viewer.
+	 * Clients may track this set in order to perform custom actions on elements
+	 * while they are known to be present in the viewer.
+	 * 
+	 * @return the set of known elements which have been realized in the viewer.
+	 * @since 1.3
+	 */
+	public IObservableSet getRealizedElements() {
+		return impl.getRealizedElements();
 	}
 }

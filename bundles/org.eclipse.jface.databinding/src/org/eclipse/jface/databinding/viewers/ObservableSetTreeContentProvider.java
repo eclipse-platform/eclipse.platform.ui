@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bug 226765
+ *     Matthew Hall - bugs 226765, 222991
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.internal.databinding.viewers.ObservableCollectionTreeContentProvider;
+import org.eclipse.jface.internal.databinding.viewers.ViewerElementSet;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -58,27 +59,44 @@ public class ObservableSetTreeContentProvider implements ITreeContentProvider {
 				if (isViewerDisposed())
 					return;
 
-				Set removals = event.diff.getRemovals();
-				if (!removals.isEmpty()) {
-					viewerUpdater.remove(parentElement, removals.toArray());
-					for (Iterator iterator = removals.iterator(); iterator
-							.hasNext();) {
-						Object child = iterator.next();
-						TreeNode childNode = getExistingNode(child);
-						if (childNode != null)
-							childNode.removeParent(parentElement);
-					}
+				Set localAdditions = event.diff.getAdditions();
+				Set localRemovals = event.diff.getRemovals();
+
+				Set knownElementAdditions = ViewerElementSet
+						.withComparer(comparer);
+				knownElementAdditions.addAll(localAdditions);
+				knownElementAdditions.removeAll(knownElements);
+
+				Set knownElementRemovals = findPendingRemovals(parentElement,
+						localRemovals);
+				knownElementRemovals.retainAll(knownElements);
+
+				knownElements.addAll(knownElementAdditions);
+				if (realizedElements != null) {
+					realizedElements.removeAll(knownElementRemovals);
 				}
 
-				Set additions = event.diff.getAdditions();
-				if (!additions.isEmpty()) {
-					for (Iterator iterator = additions.iterator(); iterator
-							.hasNext();) {
-						Object child = iterator.next();
-						getOrCreateNode(child).addParent(parentElement);
-					}
-					viewerUpdater.add(parentElement, additions.toArray());
+				for (Iterator iterator = localAdditions.iterator(); iterator
+						.hasNext();) {
+					Object child = iterator.next();
+					getOrCreateNode(child).addParent(parentElement);
 				}
+
+				viewerUpdater.add(parentElement, localAdditions.toArray());
+				viewerUpdater.remove(parentElement, localRemovals.toArray());
+
+				for (Iterator iterator = localRemovals.iterator(); iterator
+						.hasNext();) {
+					Object child = iterator.next();
+					TreeNode childNode = getExistingNode(child);
+					if (childNode != null)
+						childNode.removeParent(parentElement);
+				}
+
+				if (realizedElements != null) {
+					realizedElements.addAll(knownElementAdditions);
+				}
+				knownElements.removeAll(knownElementRemovals);
 			}
 		}
 
@@ -158,5 +176,17 @@ public class ObservableSetTreeContentProvider implements ITreeContentProvider {
 	 */
 	public IObservableSet getKnownElements() {
 		return impl.getKnownElements();
+	}
+
+	/**
+	 * Returns the set of known elements which have been realized in the viewer.
+	 * Clients may track this set in order to perform custom actions on elements
+	 * while they are known to be present in the viewer.
+	 * 
+	 * @return the set of known elements which have been realized in the viewer.
+	 * @since 1.3
+	 */
+	public IObservableSet getRealizedElements() {
+		return impl.getRealizedElements();
 	}
 }

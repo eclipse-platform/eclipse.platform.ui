@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
- *     Matthew Hall - bug 226765
+ *     Matthew Hall - bugs 226765, 222991
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -15,7 +15,6 @@ package org.eclipse.jface.internal.databinding.viewers;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Observables;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -39,12 +38,16 @@ import org.eclipse.swt.widgets.Display;
  */
 public abstract class ObservableCollectionContentProvider implements
 		IStructuredContentProvider {
+	private Display display;
+
 	private IObservableValue viewerObservable;
 
 	/**
 	 * Element comparer used by the viewer (may be null).
 	 */
 	protected IElementComparer comparer;
+
+	private IObservableFactory elementSetFactory;
 
 	/**
 	 * Interface for sending updates to the viewer.
@@ -58,32 +61,38 @@ public abstract class ObservableCollectionContentProvider implements
 	 * them from the viewer.
 	 */
 	protected IObservableSet knownElements;
-
 	private IObservableSet unmodifiableKnownElements;
+
+	/**
+	 * Observable set of known elements which have been realized in the viewer.
+	 * Subclasses must add new elements to this set <b>after</b> adding them to
+	 * the viewer, and must remove old elements from this set <b>before</b>
+	 * removing them from the viewer.
+	 */
+	protected IObservableSet realizedElements;
+	private IObservableSet unmodifiableRealizedElements;
+
 	private IObservableCollection observableCollection;
 
 	/**
 	 * Constructs an ObservableCollectionContentProvider
 	 */
 	protected ObservableCollectionContentProvider() {
-		final Realm realm = SWTObservables.getRealm(Display.getDefault());
-		viewerObservable = new WritableValue(realm);
+		display = Display.getDefault();
+		viewerObservable = new WritableValue(SWTObservables.getRealm(display));
 		viewerUpdater = null;
 
-		// Known elements is a detail set of viewerObservable, so that when we
-		// get the viewer instance we can swap in a set that uses its
-		// IElementComparer, if any.
-		IObservableFactory knownElementsFactory = new IObservableFactory() {
+		elementSetFactory = new IObservableFactory() {
 			public IObservable createObservable(Object target) {
 				IElementComparer comparer = null;
 				if (target instanceof StructuredViewer)
 					comparer = ((StructuredViewer) target).getComparer();
-				return ObservableViewerElementSet.withComparer(realm, null,
-						comparer);
+				return ObservableViewerElementSet.withComparer(SWTObservables
+						.getRealm(display), null, comparer);
 			}
 		};
 		knownElements = MasterDetailObservables.detailSet(viewerObservable,
-				knownElementsFactory, null);
+				elementSetFactory, null);
 		unmodifiableKnownElements = Observables
 				.unmodifiableObservableSet(knownElements);
 
@@ -93,7 +102,26 @@ public abstract class ObservableCollectionContentProvider implements
 	public Object[] getElements(Object inputElement) {
 		if (observableCollection == null)
 			return new Object[0];
+
+		if (realizedElements != null) {
+			if (!realizedElements.equals(knownElements)) {
+				asyncUpdateRealizedElements();
+			}
+		}
+
 		return observableCollection.toArray();
+	}
+
+	private void asyncUpdateRealizedElements() {
+		if (realizedElements == null)
+			return;
+		display.asyncExec(new Runnable() {
+			public void run() {
+				if (realizedElements != null) {
+					realizedElements.addAll(knownElements);
+				}
+			}
+		});
 	}
 
 	public void dispose() {
@@ -108,6 +136,9 @@ public abstract class ObservableCollectionContentProvider implements
 		viewerUpdater = null;
 		knownElements = null;
 		unmodifiableKnownElements = null;
+		realizedElements = null;
+		unmodifiableRealizedElements = null;
+		display = null;
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -202,5 +233,24 @@ public abstract class ObservableCollectionContentProvider implements
 	 */
 	public IObservableSet getKnownElements() {
 		return unmodifiableKnownElements;
+	}
+
+	/**
+	 * Returns the set of known elements which have been realized in the viewer.
+	 * Clients may track this set in order to perform custom actions on elements
+	 * while they are known to be present in the viewer.
+	 * 
+	 * @return the set of known elements which have been realized in the viewer.
+	 * @since 1.3
+	 */
+	public IObservableSet getRealizedElements() {
+		if (realizedElements == null) {
+			realizedElements = MasterDetailObservables.detailSet(
+					viewerObservable, elementSetFactory, null);
+			unmodifiableRealizedElements = Observables
+					.unmodifiableObservableSet(realizedElements);
+			asyncUpdateRealizedElements();
+		}
+		return unmodifiableRealizedElements;
 	}
 }
