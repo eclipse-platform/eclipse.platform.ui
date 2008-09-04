@@ -18,14 +18,31 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -40,7 +57,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -50,19 +66,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
@@ -72,6 +77,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
@@ -84,6 +90,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -136,12 +143,12 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 	 */
     private static final String STORE_SECTION = "ResourceNavigator"; //$NON-NLS-1$
 
-    /** 
+    /**
      * Settings constant for sort order (value <code>ResourceViewer.STORE_SORT_TYPE</code>).
      */
     private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE"; //$NON-NLS-1$
 
-    /** 
+    /**
      * Settings constant for working set (value <code>ResourceWorkingSetFilter.STORE_WORKING_SET</code>).
      */
     private static final String STORE_WORKING_SET = "ResourceWorkingSetFilter.STORE_WORKING_SET"; //$NON-NLS-1$
@@ -234,6 +241,14 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     };
 
 	private CollapseAllHandler collapseAllHandler;
+	
+	/**
+	 * Helper to open and activate editors.
+	 * 
+	 * @since 3.5
+	 */
+	private OpenAndLinkWithEditorHelper openAndLinkWithEditorHelper;
+
 
     /**
      * Constructs a new resource navigator view.
@@ -320,7 +335,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 		}
         memento = null;
 
-        // Set help for the view 
+        // Set help for the view
         getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
 				viewer.getControl(), getHelpContextId());
     }
@@ -415,7 +430,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             linkingEnabled = setting.equals("true"); //$NON-NLS-1$
             return;
         }
-        // If not in the dialog settings, check the preference store for the default setting. 
+        // If not in the dialog settings, check the preference store for the default setting.
         // Use the UI plugin's preference store since this is a public preference.
         linkingEnabled = PlatformUI.getPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR);
@@ -427,7 +442,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * @param viewer the viewer
      * @since 2.0
      */
-    protected void initListeners(TreeViewer viewer) {
+    protected void initListeners(final TreeViewer viewer) {
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 handleSelectionChanged(event);
@@ -438,11 +453,55 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 handleDoubleClick(event);
             }
         });
-        viewer.addOpenListener(new IOpenListener() {
-            public void open(OpenEvent event) {
-                handleOpen(event);
-            }
-        });
+        
+		openAndLinkWithEditorHelper = new OpenAndLinkWithEditorHelper(viewer) {
+			protected void activate(ISelection selection) {
+				System.out.println("activate"); //$NON-NLS-1$
+				Object selectedElement = getSingleElement(selection);
+				if (selectedElement instanceof IFile) {
+					IEditorInput input = new FileEditorInput((IFile)selectedElement);
+					final IWorkbenchPage page = getSite().getPage();
+					IEditorPart editor = page.findEditor(input);
+					if (editor != null) {
+						page.activate(editor);
+					}
+				}
+				
+			}
+
+			protected void linkToEditor(ISelection selection) {
+		        if (!linkScheduled) {
+					// Ensure that if another selection change arrives while we're waiting for the *syncExec,
+					// we only do this work once.
+					linkScheduled = true;
+					getSite().getShell().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							// There's no telling what might have changed since the syncExec was scheduled.
+							// Check to make sure that the widgets haven't been disposed.
+							linkScheduled = false;
+
+							if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
+								return;
+							}
+
+							if (dragDetected == false) {
+								// only synchronize with editor when the selection is not the result
+								// of a drag. Fixes bug 22274.
+								ResourceNavigator.this.linkToEditor(viewer.getSelection());
+							}
+						}
+					});
+				}
+			}
+
+			protected void open(ISelection selection, boolean activate) {
+				System.out.println("open"); //$NON-NLS-1$
+				handleOpen(selection);
+			}
+
+		};
+        
+
         viewer.getControl().addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent event) {
                 handleKeyPressed(event);
@@ -452,6 +511,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 handleKeyReleased(event);
             }
         });
+        
+        openAndLinkWithEditorHelper.setLinkWithEditor(linkingEnabled);
     }
 
     /* (non-Javadoc)
@@ -476,6 +537,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 && control.isDisposed() == false) {
             control.removeListener(SWT.DragDetect, dragDetectListener);
         }
+        
+		openAndLinkWithEditorHelper.dispose();
+        
         super.dispose();
     }
 
@@ -522,7 +586,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         return frameList;
     }
 
-    /** 
+    /**
      * Returns the initial input for the viewer.
      * Tries to convert the page input to a resource, either directly or via IAdaptable.
      * If the resource is a container, it uses that.
@@ -657,7 +721,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             Object o = selection.getFirstElement();
             if (o instanceof IResource) {
                 return ((IResource) o).getFullPath().makeRelative().toString();
-            } 
+            }
             return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
         }
         if (selection.size() > 1) {
@@ -668,7 +732,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Returns the name for the given element.
-     * Used as the name for the current frame. 
+     * Used as the name for the current frame.
      */
     String getFrameName(Object element) {
         if (element instanceof IResource) {
@@ -693,7 +757,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 				return ResourceNavigatorMessages.ResourceManager_toolTip;
 			}
             return path.makeRelative().toString();
-        } 
+        }
         
         String text = ((ILabelProvider) getTreeViewer().getLabelProvider())
         	.getText(element);
@@ -703,17 +767,27 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         return text;
     }
 
-    /**
-     * Handles an open event from the viewer.
-     * Opens an editor on the selected file.
-     * 
-     * @param event the open event
-     * @since 2.0
-     */
+	/**
+	 * Handles an open event from the viewer. Opens an editor on the selected file.
+	 * 
+	 * @param event the open event
+	 * @since 2.0
+	 * @deprecated As of 3.5, replaced by {@link #handleOpen(ISelection)}
+	 */
     protected void handleOpen(OpenEvent event) {
-        IStructuredSelection selection = (IStructuredSelection) event
-                .getSelection();
-        getActionGroup().runDefaultAction(selection);
+        handleOpen(event.getSelection());
+	}
+
+	/**
+	 * Handles an open event from the viewer. Opens an editor on the selected file.
+	 * 
+	 * @param selection the selection
+	 * @since 3.5
+	 */
+	protected void handleOpen(ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			getActionGroup().runDefaultAction((IStructuredSelection)selection);
+		}
     }
 
     /**
@@ -756,33 +830,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         updateStatusLine(sel);
         updateActionBars(sel);
         dragDetected = false;
-        if (isLinkingEnabled() && !linkScheduled) {
-            // Ensure that if another selection change arrives while we're waiting for the *syncExec,
-            // we only do this work once.
-            linkScheduled = true;
-            getShell().getDisplay().asyncExec(new Runnable() {
-                public void run() {
-                    // There's no telling what might have changed since the syncExec was scheduled.
-                    // Check to make sure that the widgets haven't been disposed.
-                    linkScheduled = false;
-                    
-                    if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
-                        return;
-                    }
-                    
-                    if (dragDetected == false) {
-                        ISelection sel = viewer.getSelection();
-                        if (sel instanceof IStructuredSelection) {
-                            IStructuredSelection selection = (IStructuredSelection)sel;
-                        
-                            // only synchronize with editor when the selection is not the result 
-                            // of a drag. Fixes bug 22274.
-                            linkToEditor(selection);
-                        }
-                    }
-                }
-            });
-        }
     }
 
     /**
@@ -941,18 +988,28 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         return linkingEnabled;
     }
 
-    /**
-     * Brings the corresponding editor to top if the selected resource is open.
-     * 
-     * @since 2.0
-     */
+	/**
+	 * Brings the corresponding editor to top if the selected resource is open.
+	 * 
+	 * @since 2.0
+	 * @deprecated As of 3.5, replaced by {@link #linkToEditor(ISelection)}
+	 */
     protected void linkToEditor(IStructuredSelection selection) {
+    	linkToEditor((ISelection)selection);
+	}
+
+	/**
+	 * Brings the corresponding editor to top if the selected resource is open.
+	 * 
+	 * @since 3.5
+	 */
+	protected void linkToEditor(ISelection selection) {
 
     	if (this != this.getSite().getPage().getActivePart())
     		return;
     	
-        Object obj = selection.getFirstElement();
-        if (obj instanceof IFile && selection.size() == 1) {
+        Object obj = getSingleElement(selection);
+		if (obj instanceof IFile) {
             IFile file = (IFile) obj;
             IWorkbenchPage page = getSite().getPage();
             IEditorPart editor = ResourceUtil.findEditor(page, file);
@@ -960,7 +1017,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 page.bringToTop(editor);
                 return;
             }
-        }   
+        }
     }
 
     /**
@@ -1090,7 +1147,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         }
     }
 
-    /**	
+    /**
      * @see ViewPart#saveState
      */
     public void saveState(IMemento memento) {
@@ -1184,7 +1241,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     }
 
     /**
-     * Saves the filters defined as strings in <code>patterns</code> 
+     * Saves the filters defined as strings in <code>patterns</code>
      * in the preference store.
      */
     public void setFiltersPreference(String[] patterns) {
@@ -1201,7 +1258,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         getPlugin().getPreferenceStore().setValue(
                 ResourcePatternFilter.FILTERS_TAG, sb.toString());
 
-        // remove value in old workbench preference store location 
+        // remove value in old workbench preference store location
         IPreferenceStore preferenceStore = IDEWorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         String storedPatterns = preferenceStore
@@ -1239,7 +1296,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     public void setLinkingEnabled(boolean enabled) {
         this.linkingEnabled = enabled;
 
-        // remember the last setting in the dialog settings		
+        // remember the last setting in the dialog settings
         settings.put(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
                 enabled);
 
@@ -1250,6 +1307,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 editorActivated(editor);
             }
         }
+        openAndLinkWithEditorHelper.setLinkWithEditor(enabled);
     }
 
     /**
@@ -1296,7 +1354,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         settings.put(STORE_SORT_TYPE, comparator.getCriteria());
 
         // update the sort actions' checked state
-        updateActionBars((IStructuredSelection) viewer.getSelection());   	
+        updateActionBars((IStructuredSelection) viewer.getSelection());
     }
 
     /*
@@ -1338,7 +1396,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 	private boolean internalSetWorkingSet(IWorkingSet workingSet) {
 		boolean refreshNeeded = !Util.equals(this.workingSet, workingSet);
 		this.workingSet = workingSet;
-		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet() 
+		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet()
 				&& workingSet.isEmpty();
 		return refreshNeeded;
 	}
@@ -1500,4 +1558,23 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             }
         };
     }
+    
+	/**
+	 * Returns the selected element if the selection consists of a single element only.
+	 * 
+	 * @param s the selection
+	 * @return the selected first element or null
+	 * @since 3.5
+	 */
+	protected static final Object getSingleElement(ISelection s) {
+		if (!(s instanceof IStructuredSelection))
+			return null;
+
+		IStructuredSelection selection = (IStructuredSelection)s;
+		if (selection.size() != 1)
+			return null;
+
+		return selection.getFirstElement();
+	}
+
 }
