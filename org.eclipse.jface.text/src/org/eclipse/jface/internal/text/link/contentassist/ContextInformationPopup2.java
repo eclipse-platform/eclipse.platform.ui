@@ -556,6 +556,8 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 			switch (e.keyCode) {
 				case SWT.ARROW_LEFT:
 				case SWT.ARROW_RIGHT:
+				case SWT.ARROW_UP:
+				case SWT.ARROW_DOWN:
 					validateContextInformation();
 					break;
 				default:
