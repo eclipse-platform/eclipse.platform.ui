@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
+import java.util.Arrays;
 import java.util.regex.PatternSyntaxException;
 
 import junit.framework.Assert;
@@ -425,5 +426,24 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
+	}
+	
+	public void testRegexFindStackOverflow_fail() throws Exception {
+		// test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=102699
+		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
+		
+		int len= 100000;
+		char[] chars= new char[len];
+		Arrays.fill(chars, '\n');
+		chars[0]= '{';
+		chars[len - 1]= '}';
+		fDocument.set(new String(chars));
+		
+		try {
+			adapter.find(0, "\\{(.|[\\r\\n])*\\}", true, false, false, true);
+		} catch (PatternSyntaxException ex) {
+			return;
+		}
+		fail();
 	}
 }
