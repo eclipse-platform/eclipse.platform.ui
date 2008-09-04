@@ -425,6 +425,16 @@
        <toc file="data/help/search/toc4.xml" extradir="data/help/search/extraDir3"/>
        <toc file="data/help/index/toc.xml"/>
        <toc file="non_junit/toc.xml"/>
+       <tocIcon
+             id="org.eclipse.ua.tests.openOnly"
+             openIcon="icons/sample.gif">
+       </tocIcon>
+       <tocIcon
+             closedIcon="icons/sample2.gif"
+             id="org.eclipse.ua.tests.iconSet"
+             leafIcon="icons/sample3.gif"
+             openIcon="icons/sample.gif">
+       </tocIcon>
    </extension>
 
    <extension point= "org.eclipse.help.contentExtension"> 

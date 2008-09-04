@@ -14,7 +14,9 @@ import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.util.OverlayIcon;
@@ -108,14 +110,30 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 		}
 
 		public Image getImage(Object obj) {
+			boolean expanded = treeViewer.getExpandedState(obj);
+			boolean expandable = treeViewer.isExpandable(obj);
+			if (obj instanceof Toc){
+				Toc toc = (Toc) obj;
+				Image icon   = HelpUIResources.getImageFromId(toc.getIcon(), expanded, !expandable); 
+				if (icon != null) {
+					return icon;
+				}						
+			}
+			
+			if (obj instanceof Topic) {
+				Topic topic = (Topic) obj;			
+				Image icon   = HelpUIResources.getImageFromId(topic.getIcon(), expanded, !expandable); 
+				if (icon != null) {
+					return icon;
+				}
+			}
+
 			if (obj instanceof IToc) {
-				boolean expanded = treeViewer.getExpandedState(obj);
 				String key = expanded ? IHelpUIConstants.IMAGE_TOC_OPEN
 						: IHelpUIConstants.IMAGE_TOC_CLOSED;
 				return HelpUIResources.getImage(key);
 			}
 			if (obj instanceof ITopic) {
-				boolean expandable = treeViewer.isExpandable(obj);
 				if (expandable) {
 					ITopic topic = (ITopic) obj;
 					if (topic.getHref() != null)
@@ -176,18 +194,11 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 		treeViewer.setLabelProvider(new TopicsLabelProvider());
 		treeViewer.addTreeListener(new ITreeViewerListener() {
 			public void treeCollapsed(TreeExpansionEvent event) {
-				Object obj = event.getElement();
-				if (obj instanceof IToc) {
-					postUpdate(obj);
-				}
+				postUpdate(event.getElement());
 			}
 
 			public void treeExpanded(TreeExpansionEvent event) {
-				Object obj = event.getElement();
-
-				if (obj instanceof IToc) {
-					postUpdate(event.getElement());
-				}
+				postUpdate(event.getElement());
 			}
 		});
 	}

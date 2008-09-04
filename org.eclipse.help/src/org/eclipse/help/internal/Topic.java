@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ public class Topic extends UAElement implements ITopic {
 	public static final String NAME = "topic"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_HREF = "href"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
 	
 	public Topic() {
 		super(NAME);
@@ -28,6 +29,9 @@ public class Topic extends UAElement implements ITopic {
 		setHref(src.getHref());
 		setLabel(src.getLabel());
 		appendChildren(src.getChildren());
+	}
+	public String getIcon(){
+		return getAttribute(ATTRIBUTE_ICON);
 	}
 	
 	public Topic(Element src) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class Toc extends UAElement implements IToc {
 	public static final String ATTRIBUTE_TOPIC = "topic"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_LINK_TO = "link_to"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_ICON= "icon"; //$NON-NLS-1$
 
 	private ITocContribution contribution;
 	private ITopic topic;
@@ -85,6 +86,10 @@ public class Toc extends UAElement implements IToc {
 
 	public String getHref() {
 		return getAttribute(ATTRIBUTE_HREF);
+	}
+	
+	public String getIcon(){
+		return getAttribute(ATTRIBUTE_ICON);
 	}
 
 	/*

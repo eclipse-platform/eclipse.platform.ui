@@ -35,6 +35,7 @@ point and specify TOC file(s).&lt;/li&gt;
             <element ref="toc"/>
             <element ref="tocProvider"/>
             <element ref="index"/>
+            <element ref="tocIcon"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -224,6 +225,48 @@ or not primary and intended to be integrated into another table of contents.
                <documentation>
                   a plug-in-relative path of the prebuilt search index. The index referenced by the path must exist. Missing index will be flagged in the log file. Note that each locale must have a different index. If a plug-in contributes index directories for multiple locales, it should append the locale using standard Eclipse NLS lookup. (e.g. &lt;code&gt;index/&lt;/code&gt;, &lt;code&gt;nl/ja/JP/index/&lt;/code&gt;, &lt;code&gt;nl/en/US/index/&lt;/code&gt; etc.).
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="tocIcon">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique id of this icon. Typically this id will include the name of the plugin in which it is declared.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="openIcon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The path of an icon to be used for a toc or topic whose chidren have been expanded.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="closedIcon" type="string">
+            <annotation>
+               <documentation>
+                  The path of an icon to be used for a toc or topic whose chidren have been expanded. If no provided openIcon will be used.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="leafIcon" type="string">
+            <annotation>
+               <documentation>
+                  The path of an icon to be used for a toc or topic without children. If not provided openIcon will be used.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
