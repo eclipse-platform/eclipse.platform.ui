@@ -10,29 +10,32 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.navigator.CommonNavigator;
@@ -78,11 +81,19 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	
 	private ISelectionChangedListener statusBarListener = new ISelectionChangedListener() {
 
-		public void selectionChanged(SelectionChangedEvent anEvent) { 
+		public void selectionChanged(SelectionChangedEvent anEvent) {
 			updateStatusBar(anEvent.getSelection());
 		}
 		
 	};
+	
+	/**
+	 * Helper to open and activate editors.
+	 * 
+	 * @since 3.5
+	 */
+	private OpenAndLinkWithEditorHelper openAndLinkWithEditorHelper;
+
 	
 	private class UpdateActionBarsJob extends UIJob {
 		public UpdateActionBarsJob(String label) {
@@ -114,7 +125,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 				}
 			});
 			return Status.OK_STATUS;
-		} 
+		}
 	}
 
 	/**
@@ -169,7 +180,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		ICommonViewerSite commonViewerSite = CommonViewerSiteFactory
 				.createCommonViewerSite(commonNavigator.getViewSite());
 		actionService = new NavigatorActionService(commonViewerSite,
-				commonViewer, commonViewer.getNavigatorContentService()); 
+				commonViewer, commonViewer.getNavigatorContentService());
 
 		final RetargetAction openAction = new RetargetAction(
 				ICommonActionConstants.OPEN,
@@ -177,13 +188,35 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		commonNavigator.getViewSite().getPage().addPartListener(openAction);
 		openAction.setActionDefinitionId(ICommonActionConstants.OPEN);
 
-		commonNavigator.getCommonViewer().addOpenListener(new IOpenListener() {
-			public void open(OpenEvent event) {
-				actionService.setContext(new ActionContext(commonNavigator.getCommonViewer().getSelection()));		
-				actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());							
+		openAndLinkWithEditorHelper = new OpenAndLinkWithEditorHelper(commonNavigator.getCommonViewer()) {
+			protected void activate(ISelection selection) {
+				final int currentMode = OpenStrategy.getOpenMethod();
+				try {
+					/*
+					 * XXX:
+					 * Currently the only way to activate the editor because there is no API to
+					 * get an editor input for a given object.
+					 */
+					OpenStrategy.setOpenMethod(OpenStrategy.DOUBLE_CLICK);
+					actionService.setContext(new ActionContext(commonNavigator.getCommonViewer().getSelection()));
+					actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
+					openAction.run();
+				} finally {
+					OpenStrategy.setOpenMethod(currentMode);
+				}
+			}
+
+			protected void linkToEditor(ISelection selection) {
+				// do nothing: this is handled by org.eclipse.ui.internal.navigator.actions.LinkEditorAction
+			}
+
+			protected void open(ISelection selection, boolean activate) {
+				actionService.setContext(new ActionContext(commonNavigator.getCommonViewer().getSelection()));
+				actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
 				openAction.run();
 			}
-		});  
+			
+		};
 
 		if(memento != null)
 			restoreState(memento);
@@ -202,6 +235,10 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(this);
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(statusBarListener);
 		actionService.dispose();
+		if (openAndLinkWithEditorHelper != null) {
+			openAndLinkWithEditorHelper.dispose();
+			openAndLinkWithEditorHelper = null;
+		}
 	}
 
 	/**
@@ -288,7 +325,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 				.getMenuManager();
 		viewMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		viewMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
-				+ "-end"));//$NON-NLS-1$	
+				+ "-end"));//$NON-NLS-1$
 		
 		updateActionBars.schedule(DELAY);
 		
