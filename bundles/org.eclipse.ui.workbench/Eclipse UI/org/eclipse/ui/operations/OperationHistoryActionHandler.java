@@ -93,7 +93,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		 * @see IPartListener#partClosed(IWorkbenchPart)
 		 */
 		public void partClosed(IWorkbenchPart part) {
-			if (part.equals(site.getPart())) {
+			if (site != null && part.equals(site.getPart())) {
 				dispose();
 				// Special case for MultiPageEditorSite
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=103379
