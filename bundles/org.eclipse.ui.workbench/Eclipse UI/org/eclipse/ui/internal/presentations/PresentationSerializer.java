@@ -44,11 +44,10 @@ public class PresentationSerializer implements IPresentationSerializer {
             Integer integer = new Integer(id);
             int index = integer.intValue();
 
-            IPresentablePart result = (IPresentablePart) parts.get(index);
-            return result;
-
+            if (parts.size()>index) {
+            	return (IPresentablePart) parts.get(index);
+            }
         } catch (NumberFormatException e) {
-        } catch (IndexOutOfBoundsException e) {
         }
 
         return null;
