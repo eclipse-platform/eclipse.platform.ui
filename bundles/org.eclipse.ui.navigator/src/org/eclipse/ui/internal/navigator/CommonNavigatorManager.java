@@ -87,12 +87,6 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		
 	};
 	
-	/**
-	 * Helper to open and activate editors.
-	 * 
-	 * @since 3.5
-	 */
-	private OpenAndLinkWithEditorHelper openAndLinkWithEditorHelper;
 
 	
 	private class UpdateActionBarsJob extends UIJob {
@@ -188,7 +182,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		commonNavigator.getViewSite().getPage().addPartListener(openAction);
 		openAction.setActionDefinitionId(ICommonActionConstants.OPEN);
 
-		openAndLinkWithEditorHelper = new OpenAndLinkWithEditorHelper(commonNavigator.getCommonViewer()) {
+		new OpenAndLinkWithEditorHelper(commonNavigator.getCommonViewer()) {
 			protected void activate(ISelection selection) {
 				final int currentMode = OpenStrategy.getOpenMethod();
 				try {
@@ -235,10 +229,6 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(this);
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(statusBarListener);
 		actionService.dispose();
-		if (openAndLinkWithEditorHelper != null) {
-			openAndLinkWithEditorHelper.dispose();
-			openAndLinkWithEditorHelper = null;
-		}
 	}
 
 	/**

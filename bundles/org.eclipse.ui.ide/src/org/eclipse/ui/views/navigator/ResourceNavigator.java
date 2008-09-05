@@ -538,8 +538,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             control.removeListener(SWT.DragDetect, dragDetectListener);
         }
         
-		openAndLinkWithEditorHelper.dispose();
-        
         super.dispose();
     }
 
