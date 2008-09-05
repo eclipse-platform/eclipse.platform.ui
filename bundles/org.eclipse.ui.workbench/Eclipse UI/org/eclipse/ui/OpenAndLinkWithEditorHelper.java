@@ -95,7 +95,7 @@ public abstract class OpenAndLinkWithEditorHelper {
 	/**
 	 * Disposes this helper.
 	 * <p>
-	 * This method must not be called if the handler is installed.
+	 * Clients only need to call if their viewer has a longer life-cycle than this helper.
 	 * </p>
 	 */
 	public void dispose() {
