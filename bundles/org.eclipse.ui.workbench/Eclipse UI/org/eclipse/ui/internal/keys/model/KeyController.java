@@ -136,19 +136,21 @@ public class KeyController {
 				new ContextManager(), new CommandManager());
 		final Scheme[] definedSchemes = bindingService.getDefinedSchemes();
 		try {
+			Scheme modelActiveScheme = null;
 			for (int i = 0; i < definedSchemes.length; i++) {
 				final Scheme scheme = definedSchemes[i];
 				final Scheme copy = bindingManager.getScheme(scheme.getId());
 				copy.define(scheme.getName(), scheme.getDescription(), scheme
 						.getParentId());
 				if (definedSchemes[i] == bindingService.getActiveScheme()) {
-					bindingManager.setActiveScheme(copy);
+					modelActiveScheme = copy;
 				}
 			}
-
+			bindingManager.setActiveScheme(modelActiveScheme);
 		} catch (final NotDefinedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			StatusManager.getManager().handle(
+					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+							"Keys page found an undefined scheme", e)); //$NON-NLS-1$
 		}
 		bindingManager.setLocale(bindingService.getLocale());
 		bindingManager.setPlatform(bindingService.getPlatform());
