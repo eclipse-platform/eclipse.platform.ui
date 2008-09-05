@@ -13,7 +13,7 @@
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
- *                    237703, 237718
+ *                    237703, 237718, 222289
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -44,6 +44,7 @@ import org.eclipse.core.tests.databinding.observable.list.ComputedListTest;
 import org.eclipse.core.tests.databinding.observable.list.DecoratingObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.ListDiffTest;
 import org.eclipse.core.tests.databinding.observable.list.ListDiffVisitorTest;
+import org.eclipse.core.tests.databinding.observable.list.MultiListTest;
 import org.eclipse.core.tests.databinding.observable.list.ObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.WritableListTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
@@ -220,6 +221,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(DecoratingObservableListTest.suite());
 		addTestSuite(ListDiffTest.class);
 		addTestSuite(ListDiffVisitorTest.class);
+		addTest(MultiListTest.suite());
 		addTest(ObservableListTest.suite());
 		addTest(WritableListTest.suite());
 
