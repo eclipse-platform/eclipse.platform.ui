@@ -40,4 +40,130 @@ public interface IAntLaunchConfigurationConstants {
 	 * @see IJavaLaunchConfigurationConstants#ATTR_DEFAULT_CLASSPATH
 	 */
 	public static final String ATTR_ANT_HOME = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_HOME"; //$NON-NLS-1$
+	
+	
+	/**
+	 * String attribute indicating the Ant targets to execute. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_ANT_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS;
+	/**
+	 * String attribute indicating the Ant targets to execute after a clean (full build) for an Ant builder. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 * @since 3.1
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_ANT_AFTER_CLEAN_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS;
+	/**
+	 * String attribute indicating the Ant targets to execute during a manual build for an Ant builder. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 * @since 3.1
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_ANT_MANUAL_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS;
+	/**
+	 * String attribute indicating the Ant targets to execute during an auto build for an Ant builder. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 * @since 3.1
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_ANT_AUTO_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS;
+	/**
+	 * String attribute indicating the Ant targets to execute during a clean for an Ant builder. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 * @since 3.1
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_ANT_CLEAN_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS;
+	/**
+	 * Boolean attribute indicating whether or not target specification for an Ant builder has been updated for
+	 * 3.1 
+	 * 
+	 * @since 3.1
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_TARGETS_UPDATED = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED;
+	/**
+	 * Map attribute indicating the Ant properties to be defined during the
+	 * build. Default value is <code>null</code> which indicates no additional
+	 * properties will be defined.
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_ANT_PROPERTIES = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES;				
+	/**
+	 * String attribute indicating the Ant targets to execute. Default value is
+	 * <code>null</code> which indicates that no additional property files
+	 * will be defined. Format is a comma separated listing of property files.
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_ANT_PROPERTY_FILES = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES;
+	/**
+	 * Boolean attribute indicating whether or not internal targets (targets with no
+	 * description) should be hidden from the user in the launch configuration dialog.
+	 * Default value is <code>false</code> which indicates that all targets will be
+	 * displayed.
+	 * 
+	 * @since 3.0
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_HIDE_INTERNAL_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS;
+	/**
+	 * Integer attribute indicating which column targets should be sorted on. A
+	 * value of 0 indicates target name, 1 indicates target description, and -1
+	 * indicates no sort. Default value is -1.
+	 * 
+	 * @since 3.0
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ATTR_SORT_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS;
+	/**
+	 * Ant launch configuration type identifier.
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ID_ANT_LAUNCH_CONFIGURATION_TYPE = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE;
+	/**
+	 * Ant builder launch configuration type identifier. Ant project builders
+	 * are of this type.
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE;
+	/**
+	 * Identifier for Ant processes (value <code>org.eclipse.ant.ui.antProcess</code>). This identifier is
+	 * set as the value for the <code>IProcess.ATTR_PROCESS_TYPE</code>
+	 * attribute in processes created by the Ant launch delegate.
+	 * 
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
+	 * by the 3.5M3 release
+	 */
+	public static final String ID_ANT_PROCESS_TYPE = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE;
 }
