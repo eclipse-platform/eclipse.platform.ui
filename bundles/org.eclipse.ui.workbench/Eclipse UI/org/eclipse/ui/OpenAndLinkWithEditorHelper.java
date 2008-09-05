@@ -131,7 +131,7 @@ public abstract class OpenAndLinkWithEditorHelper {
 	 * nothing if no matching editor can be found.
 	 * <p>
 	 * The common implementation brings that editor to front but more advanced implementations may
-	 * also reveal the selection inside the editor.
+	 * also select the given selection inside the editor.
 	 * </p>
 	 * <p>
 	 * <strong>Note:</strong> The implementation must not open a new editor.
