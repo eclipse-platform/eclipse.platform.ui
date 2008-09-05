@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,13 +43,12 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	 * @see ISearchResultPage#getUIState()
 	 */
 	void setInput(ISearchResult search, Object uiState);
+
 	/**
-	 * Sets the search view this search results page is shown in. This method
-	 * will be called before the page is shown for the first time (i.e. before
-	 * the page control is created).
+	 * Sets the search view this search results page is shown in. This method will be called before
+	 * the page is shown for the first time (i.e. before the page control is created).
 	 * 
-	 * @param part
-	 *            the parent search view
+	 * @param part the parent search view
 	 */
 	void setViewPart(ISearchResultViewPart part);
 	/**
@@ -64,7 +63,7 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	void restoreState(IMemento memento);
 	/**
 	 * Saves the page state in a memento. Note that this applies to state that
-	 * should persist across sessions. 
+	 * should persist across sessions.
 	 * 
 	 * @param memento a memento to receive the object state
 	 * 
@@ -88,7 +87,7 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	/**
 	 * Returns a user readable label for this search result page. The label will be
 	 * used to describe the contents for the page to the user (for example it will be
-	 * displayed in the search view title bar). To take an example from file search, 
+	 * displayed in the search view title bar). To take an example from file search,
 	 * a label might read like this: 'test' - 896 matches in workspace.
 	 * 
 	 * @return the user readable label for this search result page

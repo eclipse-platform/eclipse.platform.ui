@@ -32,11 +32,10 @@ import org.eclipse.ui.IViewPart;
  */
 public interface ISearchResultViewPart extends IViewPart {
 	/**
-	 * Search result pages should call this method to have the search results
-	 * view contribute to their context menus.
+	 * Search result pages should call this method to have the search results view contribute to
+	 * their context menus.
 	 * 
-	 * @param menuManager
-	 *            the menu manager the search result view should contribute to
+	 * @param menuManager the menu manager the search result view should contribute to
 	 */
 	void fillContextMenu(IMenuManager menuManager);
 	/**
