@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
+ * An observable collection which decorates another observable collection
+ * 
  * @since 1.2
  */
 public class DecoratingObservableCollection extends DecoratingObservable

@@ -18,7 +18,7 @@ import java.util.ListIterator;
 import org.eclipse.core.databinding.observable.DecoratingObservableCollection;
 
 /**
- * An observable set which decorates another observable set.
+ * An observable list which decorates another observable list.
  * 
  * @since 1.2
  */

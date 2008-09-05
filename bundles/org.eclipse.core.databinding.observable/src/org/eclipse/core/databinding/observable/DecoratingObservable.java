@@ -12,6 +12,7 @@
 package org.eclipse.core.databinding.observable;
 
 /**
+ * An observable which decorates another observable
  * 
  * @since 1.2
  * 
