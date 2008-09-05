@@ -456,7 +456,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         
 		openAndLinkWithEditorHelper = new OpenAndLinkWithEditorHelper(viewer) {
 			protected void activate(ISelection selection) {
-				System.out.println("activate"); //$NON-NLS-1$
 				Object selectedElement = getSingleElement(selection);
 				if (selectedElement instanceof IFile) {
 					IEditorInput input = new FileEditorInput((IFile)selectedElement);
@@ -495,7 +494,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 			}
 
 			protected void open(ISelection selection, boolean activate) {
-				System.out.println("open"); //$NON-NLS-1$
 				handleOpen(selection);
 			}
 
