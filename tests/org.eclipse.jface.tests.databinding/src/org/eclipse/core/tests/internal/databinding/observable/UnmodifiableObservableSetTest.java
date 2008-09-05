@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *         (through UnmodifiableObservableListTest.java)
- *     Matthew Hall - bugs 208332, 213145
+ *     Matthew Hall - bugs 208332, 213145, 237718
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -123,14 +123,6 @@ public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase 
 		mutable.setStale(true);
 		assertTrue(mutable.isStale());
 		assertTrue(unmodifiable.isStale());
-	}
-
-	public void testSetStaleOnUnmodifiableList() throws Exception {
-		try {
-			unmodifiable.setStale(true);
-			fail("UnsupportedOperationException should have been thrown");
-		} catch (UnsupportedOperationException e) {
-		}
 	}
 
 	private static class StaleCounter implements IStaleListener {

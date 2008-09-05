@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 167204
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bugs 208858, 237718
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -23,7 +23,6 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 /**
  * A list whose changes can be tracked by list change listeners.
  * 
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the framework classes
  *              that implement this interface. Note that direct implementers of

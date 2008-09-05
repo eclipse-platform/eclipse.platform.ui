@@ -13,7 +13,7 @@
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
- *                    237703
+ *                    237703, 237718
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -41,6 +41,7 @@ import org.eclipse.core.tests.databinding.observable.ObservablesTest;
 import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.list.AbstractObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.ComputedListTest;
+import org.eclipse.core.tests.databinding.observable.list.DecoratingObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.ListDiffTest;
 import org.eclipse.core.tests.databinding.observable.list.ListDiffVisitorTest;
 import org.eclipse.core.tests.databinding.observable.list.ObservableListTest;
@@ -51,12 +52,14 @@ import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
 import org.eclipse.core.tests.databinding.observable.set.AbstractObservableSetTest;
 import org.eclipse.core.tests.databinding.observable.set.ComputedSetTest;
+import org.eclipse.core.tests.databinding.observable.set.DecoratingObservableSetTest;
 import org.eclipse.core.tests.databinding.observable.set.ObservableSetTest;
 import org.eclipse.core.tests.databinding.observable.set.UnionSetTest;
 import org.eclipse.core.tests.databinding.observable.set.WritableSetTest;
 import org.eclipse.core.tests.databinding.observable.value.AbstractObservableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.AbstractVetoableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.ComputedValueTest;
+import org.eclipse.core.tests.databinding.observable.value.DecoratingObservableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.core.tests.databinding.validation.MultiValidatorTest;
 import org.eclipse.core.tests.databinding.validation.ValidationStatusTest;
@@ -102,8 +105,6 @@ import org.eclipse.core.tests.internal.databinding.observable.ConstantObservable
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.MapEntryObservableValueTest;
-import org.eclipse.core.tests.internal.databinding.observable.ProxyObservableListTest;
-import org.eclipse.core.tests.internal.databinding.observable.ProxyObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.StalenessObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableSetTest;
@@ -216,6 +217,7 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.core.tests.databinding.observable.list
 		addTest(AbstractObservableListTest.suite());
 		addTest(ComputedListTest.suite());
+		addTest(DecoratingObservableListTest.suite());
 		addTestSuite(ListDiffTest.class);
 		addTestSuite(ListDiffVisitorTest.class);
 		addTest(ObservableListTest.suite());
@@ -230,6 +232,7 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.core.tests.databinding.observable.set
 		addTest(AbstractObservableSetTest.suite());
 		addTest(ComputedSetTest.suite());
+		addTest(DecoratingObservableSetTest.suite());
 		addTest(ObservableSetTest.suite());
 		addTest(UnionSetTest.suite());
 		addTest(WritableSetTest.suite());
@@ -238,6 +241,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractObservableValueTest.class);
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(ComputedValueTest.class);
+		addTest(DecoratingObservableValueTest.suite());
 		addTest(WritableValueTest.suite());
 		
 		//org.eclipse.core.tests.databinding.validation
@@ -294,8 +298,6 @@ public class BindingTestSuite extends TestSuite {
 		addTest(EmptyObservableListTest.suite());
 		addTest(EmptyObservableSetTest.suite());
 		addTest(MapEntryObservableValueTest.suite());
-		addTest(ProxyObservableListTest.suite());
-		addTest(ProxyObservableSetTest.suite());
 		addTest(StalenessObservableValueTest.suite());
 		addTest(UnmodifiableObservableValueTest.suite());
 		addTest(UnmodifiableObservableListTest.suite());

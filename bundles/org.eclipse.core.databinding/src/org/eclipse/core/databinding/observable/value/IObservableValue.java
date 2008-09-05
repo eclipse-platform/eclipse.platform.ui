@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 237718
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -17,7 +18,6 @@ import org.eclipse.core.databinding.observable.Realm;
 /**
  * A value whose changes can be tracked by value change listeners.
  * 
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
  *              implement this interface. Note that direct implementers of this

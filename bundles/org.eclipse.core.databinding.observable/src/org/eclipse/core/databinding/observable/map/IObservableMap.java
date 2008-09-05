@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Matthew Hall - bug 237718
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -21,7 +22,6 @@ import org.eclipse.core.databinding.observable.IObservable;
 /**
  * Observable Map.
  * 
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
  *              implement this interface. Note that direct implementers of this

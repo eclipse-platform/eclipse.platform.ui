@@ -7,27 +7,20 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 219909)
- *     Matthew Hall - bug 237884
+ *     Matthew Hall - bugs 237884, 237718
  *     Ovidio Mallo - bug 237163
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
 
-import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
+import org.eclipse.core.databinding.observable.value.DecoratingObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 
 /**
  * An unmodifiable wrapper class for IObservableValue instances.
  * @since 1.1
  */
-public class UnmodifiableObservableValue extends AbstractObservableValue {
-	private IObservableValue wrappedValue;
-
+public class UnmodifiableObservableValue extends DecoratingObservableValue {
 	/**
 	 * Constructs an UnmodifiableObservableValue which wraps the given
 	 * observable value
@@ -36,31 +29,10 @@ public class UnmodifiableObservableValue extends AbstractObservableValue {
 	 *            the observable value to wrap in an unmodifiable instance.
 	 */
 	public UnmodifiableObservableValue(IObservableValue wrappedValue) {
-		super(wrappedValue.getRealm());
-
-		this.wrappedValue = wrappedValue;
-		wrappedValue.addValueChangeListener(new IValueChangeListener() {
-			public void handleValueChange(ValueChangeEvent event) {
-				fireValueChange(event.diff);
-			}
-		});
-		wrappedValue.addStaleListener(new IStaleListener() {
-			public void handleStale(StaleEvent staleEvent) {
-				fireStale();
-			}
-		});
+		super(wrappedValue, false);
 	}
 
-	protected Object doGetValue() {
-		return wrappedValue.getValue();
-	}
-
-	public Object getValueType() {
-		return wrappedValue.getValueType();
-	}
-
-	public boolean isStale() {
-		ObservableTracker.getterCalled(this);
-		return wrappedValue.isStale();
+	public void setValue(Object value) {
+		throw new UnsupportedOperationException();
 	}
 }

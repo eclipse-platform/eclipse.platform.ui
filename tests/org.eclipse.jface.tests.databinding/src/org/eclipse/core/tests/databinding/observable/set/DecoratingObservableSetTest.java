@@ -8,9 +8,11 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 208332)
  *     Matthew Hall - bug 213145
+ *         (through ProxyObservableSetTest.java)
+ *     Matthew Hall - bug 237718
  ******************************************************************************/
 
-package org.eclipse.core.tests.internal.databinding.observable;
+package org.eclipse.core.tests.databinding.observable.set;
 
 import java.util.Collections;
 
@@ -20,20 +22,22 @@ import junit.framework.TestSuite;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.set.DecoratingObservableSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.core.internal.databinding.observable.ProxyObservableSet;
-import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
+import org.eclipse.jface.databinding.conformance.MutableObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 
 /**
  * @since 3.2
  * 
  */
-public class ProxyObservableSetTest {
+public class DecoratingObservableSetTest {
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ProxyObservableSetTest.class.getName());
-		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
+		TestSuite suite = new TestSuite(DecoratingObservableSetTest.class
+				.getName());
+		suite.addTest(MutableObservableCollectionContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -46,7 +50,7 @@ public class ProxyObservableSetTest {
 					Collections.EMPTY_SET, elementType);
 			for (int i = 0; i < elementCount; i++)
 				wrappedSet.add(createElement(wrappedSet));
-			return new ProxyObservableSetStub(wrappedSet);
+			return new DecoratingObservableSetStub(wrappedSet);
 		}
 
 		public Object createElement(IObservableCollection collection) {
@@ -58,16 +62,16 @@ public class ProxyObservableSetTest {
 		}
 
 		public void change(IObservable observable) {
-			ProxyObservableSetStub set = (ProxyObservableSetStub) observable;
+			DecoratingObservableSetStub set = (DecoratingObservableSetStub) observable;
 			set.wrappedSet.add(createElement(set));
 		}
 	}
 
-	static class ProxyObservableSetStub extends ProxyObservableSet {
+	static class DecoratingObservableSetStub extends DecoratingObservableSet {
 		IObservableSet wrappedSet;
 
-		ProxyObservableSetStub(IObservableSet wrappedSet) {
-			super(wrappedSet);
+		DecoratingObservableSetStub(IObservableSet wrappedSet) {
+			super(wrappedSet, true);
 			this.wrappedSet = wrappedSet;
 		}
 	}

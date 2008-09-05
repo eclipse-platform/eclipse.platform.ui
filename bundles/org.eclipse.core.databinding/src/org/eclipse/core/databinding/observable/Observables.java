@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matt Carter - bug 212518 (constantObservableValue)
- *     Matthew Hall - bugs 208332, 212518, 219909, 184830
+ *     Matthew Hall - bugs 208332, 212518, 219909, 184830, 237718
  *     Marko Topolnik - bug 184830
  ******************************************************************************/
 
@@ -17,24 +17,27 @@ package org.eclipse.core.databinding.observable;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.list.DecoratingObservableList;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ObservableList;
+import org.eclipse.core.databinding.observable.map.DecoratingObservableMap;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
+import org.eclipse.core.databinding.observable.set.DecoratingObservableSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
+import org.eclipse.core.databinding.observable.value.DecoratingObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.observable.ConstantObservableValue;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableList;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableSet;
 import org.eclipse.core.internal.databinding.observable.MapEntryObservableValue;
-import org.eclipse.core.internal.databinding.observable.ProxyObservableList;
-import org.eclipse.core.internal.databinding.observable.ProxyObservableSet;
 import org.eclipse.core.internal.databinding.observable.StalenessObservableValue;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableList;
+import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableMap;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableSet;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableValue;
 import org.eclipse.core.runtime.Assert;
@@ -154,6 +157,24 @@ public class Observables {
 		}
 
 		return new UnmodifiableObservableSet(set);
+	}
+
+	/**
+	 * Returns an unmodifiable observable map backed by the given observable
+	 * map.
+	 * 
+	 * @param map
+	 *            the map to wrap in an unmodifiable map
+	 * @return an unmodifiable observable map backed by the given observable
+	 *         map.
+	 * @since 1.2
+	 */
+	public static IObservableMap unmodifiableObservableMap(IObservableMap map) {
+		if (map == null) {
+			throw new IllegalArgumentException("Map parameter cannot be null"); //$NON-NLS-1$
+		}
+
+		return new UnmodifiableObservableMap(map);
 	}
 
 	/**
@@ -332,6 +353,20 @@ public class Observables {
 	}
 
 	/**
+	 * Returns an observable value that contains the same value as the given
+	 * observable, and fires the same events as the given observable, but can be
+	 * disposed of without disposing of the wrapped observable.
+	 * 
+	 * @param target
+	 *            the observable value to wrap
+	 * @return a disposable proxy for the given observable value.
+	 * @since 1.2
+	 */
+	public static IObservableValue proxyObservableValue(IObservableValue target) {
+		return new DecoratingObservableValue(target, false);
+	}
+
+	/**
 	 * Returns an observable set that contains the same elements as the given
 	 * set, and fires the same events as the given set, but can be disposed of
 	 * without disposing of the wrapped set.
@@ -341,7 +376,7 @@ public class Observables {
 	 * @return a disposable proxy for the given observable set
 	 */
 	public static IObservableSet proxyObservableSet(IObservableSet target) {
-		return new ProxyObservableSet(target);
+		return new DecoratingObservableSet(target, false);
 	}
 
 	/**
@@ -355,7 +390,21 @@ public class Observables {
 	 * @since 1.1
 	 */
 	public static IObservableList proxyObservableList(IObservableList target) {
-		return new ProxyObservableList(target);
+		return new DecoratingObservableList(target, false);
+	}
+
+	/**
+	 * Returns an observable map that contains the same entries as the given
+	 * map, and fires the same events as the given map, but can be disposed of
+	 * without disposing of the wrapped map.
+	 * 
+	 * @param target
+	 *            the map to wrap
+	 * @return a disposable proxy for the given observable map
+	 * @since 1.2
+	 */
+	public static IObservableMap proxyObservableMap(IObservableMap target) {
+		return new DecoratingObservableMap(target, false);
 	}
 
 	/**

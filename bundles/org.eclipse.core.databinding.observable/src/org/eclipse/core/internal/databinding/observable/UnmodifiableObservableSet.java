@@ -9,13 +9,18 @@
  *     Matthew Hall - initial API and implementation (bug 208332)
  *     Brad Reynolds - initial API and implementation
  *         (through UnmodifiableObservableList.java)
+ *     Matthew Hall - bug 237718
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
 
-import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.core.databinding.observable.set.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.eclipse.core.databinding.observable.set.DecoratingObservableSet;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 
 /**
  * ObservableList implementation that prevents modification by consumers. Events
@@ -24,53 +29,49 @@ import org.eclipse.core.databinding.observable.set.*;
  * 
  * @since 1.1
  */
-public class UnmodifiableObservableSet extends ObservableSet {
-	private ISetChangeListener setChangeListener = new ISetChangeListener() {
-		public void handleSetChange(SetChangeEvent event) {
-			fireSetChange(event.diff);
-		}
-	};
-
-	private IStaleListener staleListener = new IStaleListener() {
-		public void handleStale(StaleEvent event) {
-			fireStale();
-		}
-	};
-
-	private IObservableSet wrappedSet;
+public class UnmodifiableObservableSet extends DecoratingObservableSet {
+	private Set unmodifiableSet;
 
 	/**
-	 * @param wrappedSet
+	 * @param decorated
 	 */
-	public UnmodifiableObservableSet(IObservableSet wrappedSet) {
-		super(wrappedSet.getRealm(), wrappedSet, wrappedSet.getElementType());
+	public UnmodifiableObservableSet(IObservableSet decorated) {
+		super(decorated, false);
 
-		this.wrappedSet = wrappedSet;
-
-		wrappedSet.addSetChangeListener(setChangeListener);
-		wrappedSet.addStaleListener(staleListener);
+		this.unmodifiableSet = Collections.unmodifiableSet(decorated);
 	}
 
-	/**
-	 * Because this instance is immutable staleness cannot be changed.
-	 */
-	public void setStale(boolean stale) {
+	public boolean add(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean isStale() {
+	public boolean addAll(Collection c) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	public Iterator iterator() {
 		getterCalled();
-		return wrappedSet == null ? false : wrappedSet.isStale();
+		return unmodifiableSet.iterator();
+	}
+
+	public boolean remove(Object o) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean removeAll(Collection c) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean retainAll(Collection c) {
+		throw new UnsupportedOperationException();
 	}
 
 	public synchronized void dispose() {
-		if (wrappedSet != null) {
-			wrappedSet.removeSetChangeListener(setChangeListener);
-			wrappedSet.removeStaleListener(staleListener);
-			wrappedSet = null;
-		}
-		setChangeListener = null;
-		staleListener = null;
+		unmodifiableSet = null;
 		super.dispose();
 	}
 }

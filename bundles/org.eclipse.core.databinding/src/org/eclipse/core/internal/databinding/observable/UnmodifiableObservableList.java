@@ -7,17 +7,19 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bug 208332, 237718
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
 
-import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.eclipse.core.databinding.observable.list.DecoratingObservableList;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ObservableList;
 
 /**
  * ObservableList implementation that prevents modification by consumers. Events
@@ -26,65 +28,82 @@ import org.eclipse.core.databinding.observable.list.ObservableList;
  * 
  * @since 1.0
  */
-/*
- * Implementation makes the assumption that the superclass (ObservableList) is
- * unmodifiable and that all modify methods throw an
- * UnsupportedOperationException.
- */
-public class UnmodifiableObservableList extends ObservableList {
-	/**
-	 * List that is being made unmodifiable.
-	 */
-	private IObservableList wrappedList;
-
-	private IListChangeListener listChangeListener = new IListChangeListener() {
-		public void handleListChange(ListChangeEvent event) {
-			// Fires a Change and then ListChange event.
-			fireListChange(event.diff);
-		}
-	};
-
-	private IStaleListener staleListener = new IStaleListener() {
-		public void handleStale(StaleEvent event) {
-			fireStale();
-		}
-	};
+public class UnmodifiableObservableList extends DecoratingObservableList {
+	private List unmodifiableList;
 
 	/**
-	 * @param wrappedList
+	 * @param decorated
 	 */
-	public UnmodifiableObservableList(IObservableList wrappedList) {
-		super(wrappedList.getRealm(), wrappedList, wrappedList.getElementType());
-		this.wrappedList = wrappedList;
-
-		wrappedList.addListChangeListener(listChangeListener);
-
-		wrappedList.addStaleListener(staleListener);
+	public UnmodifiableObservableList(IObservableList decorated) {
+		super(decorated, false);
+		this.unmodifiableList = Collections.unmodifiableList(decorated);
 	}
 
-	/**
-	 * Because this instance is immutable staleness cannot be changed.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             because this instance is unmodifiable.
-	 */
-	public void setStale(boolean stale) {
+	public void add(int index, Object o) {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean isStale() {
+	public boolean add(Object o) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean addAll(Collection c) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean addAll(int index, Collection c) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	public Iterator iterator() {
 		getterCalled();
-		return wrappedList == null ? false : wrappedList.isStale();
+		return unmodifiableList.iterator();
+	}
+
+	public ListIterator listIterator() {
+		return listIterator(0);
+	}
+
+	public ListIterator listIterator(int index) {
+		getterCalled();
+		return unmodifiableList.listIterator(index);
+	}
+
+	public Object move(int oldIndex, int newIndex) {
+		throw new UnsupportedOperationException();
+	}
+
+	public Object remove(int index) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean remove(Object o) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean removeAll(Collection c) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean retainAll(Collection c) {
+		throw new UnsupportedOperationException();
+	}
+
+	public Object set(int index, Object element) {
+		throw new UnsupportedOperationException();
+	}
+
+	public List subList(int fromIndex, int toIndex) {
+		getterCalled();
+		return unmodifiableList.subList(fromIndex, toIndex);
 	}
 
 	public synchronized void dispose() {
-		if (wrappedList != null) {
-			wrappedList.removeListChangeListener(listChangeListener);
-			wrappedList.removeStaleListener(staleListener);
-			wrappedList = null;
-		}
-		listChangeListener = null;
-		staleListener = null;
+		unmodifiableList = null;
 		super.dispose();
 	}
 }
