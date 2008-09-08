@@ -304,7 +304,6 @@
           <propertyCategory category="general"/>
           <propertyCategory category="core"/>
           <propertyCategory category="appearance"/>
-          <propertyCategory category="resource"/>
           <propertyCategory category="advanced"/>
        </propertyContributor>
     </extension>
@@ -312,9 +311,9 @@
           point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
        <propertyTabs contributorId="org.eclipse.ui.navigator.ProjectExplorer">
           <propertyTab
-                label="%Resource"
-                category="resource"
-                id="CommonNavigator.tab.Resource"/>
+                label="%Advanced"
+                category="advanced"
+                id="CommonNavigator.tab.Advanced"/>
        </propertyTabs>
     </extension>
     <extension
@@ -322,8 +321,8 @@
        <propertySections contributorId="org.eclipse.ui.navigator.ProjectExplorer">
           <propertySection
                 class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
-                id="CommonNavigator.section.Resource"
-                tab="CommonNavigator.tab.Resource">
+                id="CommonNavigator.section.Advanced"
+                tab="CommonNavigator.tab.Advanced">
              <input type="java.lang.Object"/>
           </propertySection>
        </propertySections>
