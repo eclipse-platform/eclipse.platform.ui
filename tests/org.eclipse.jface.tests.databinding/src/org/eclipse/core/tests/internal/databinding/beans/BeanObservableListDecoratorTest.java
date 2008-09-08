@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 208858, 213145
+ *     Matthew Hall - bugs 208858, 213145, 246625
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.3
  */
 public class BeanObservableListDecoratorTest extends TestCase {
+	private Bean bean;
 	private PropertyDescriptor propertyDescriptor;
 	private JavaBeanObservableList observableList;
 	private BeanObservableListDecorator decorator;
@@ -46,21 +47,21 @@ public class BeanObservableListDecoratorTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		Bean bean = new Bean();
+		bean = new Bean();
 		propertyDescriptor = new PropertyDescriptor(
 				"list", Bean.class,"getList","setList");
 		observableList = new JavaBeanObservableList(
 				SWTObservables.getRealm(Display.getDefault()), bean,
 				propertyDescriptor, Bean.class);
-		decorator = new BeanObservableListDecorator(observableList, observableList, propertyDescriptor);
+		decorator = new BeanObservableListDecorator(observableList, propertyDescriptor);
 	}
 
 	public void testGetDelegate() throws Exception {
-		assertEquals(observableList, decorator.getDelegate());
+		assertEquals(observableList, decorator.getDecorated());
 	}
 
 	public void testGetObserved() throws Exception {
-		assertEquals(observableList, decorator.getObserved());
+		assertEquals(bean, decorator.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
@@ -80,7 +81,7 @@ public class BeanObservableListDecoratorTest extends TestCase {
 			final WritableList delegate = new WritableList(realm);
 			for (int i = 0; i < elementCount; i++)
 				delegate.add(createElement(delegate));
-			return new BeanObservableListDecorator(delegate, null, null);
+			return new BeanObservableListDecorator(delegate, null);
 		}
 
 		private int counter;

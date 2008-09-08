@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164268, 171616, 147515
- *     Matthew Hall - bug 221704, 234686
+ *     Matthew Hall - bug 221704, 234686, 246625
  *     Thomas Kratz - bug 213787
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
@@ -440,8 +440,7 @@ final public class BeansObservables {
 		IObservableValue value = MasterDetailObservables.detailValue(master,
 				valueFactory(realm, propertyName), propertyType);
 		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
-				value, master, getValueTypePropertyDescriptor(master,
-						propertyName));
+				value, getValueTypePropertyDescriptor(master, propertyName));
 
 		return decorator;
 	}
@@ -497,8 +496,7 @@ final public class BeansObservables {
 		IObservableValue value = MasterDetailObservables.detailValue(master,
 				valueFactory(realm, propertyName), propertyType);
 		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
-				value, master, getPropertyDescriptor(masterType,
-						propertyName));
+				value, getPropertyDescriptor(masterType, propertyName));
 
 		return decorator;
 	}
@@ -552,7 +550,7 @@ final public class BeansObservables {
 				master, listFactory(realm, propertyName, propertyType),
 				propertyType);
 		BeanObservableListDecorator decorator = new BeanObservableListDecorator(
-				observableList, master, getValueTypePropertyDescriptor(master,
+				observableList, getValueTypePropertyDescriptor(master,
 						propertyName));
 
 		return decorator;
@@ -600,7 +598,7 @@ final public class BeansObservables {
 				master, setFactory(realm, propertyName, propertyType),
 				propertyType);
 		BeanObservableSetDecorator decorator = new BeanObservableSetDecorator(
-				observableSet, master, getValueTypePropertyDescriptor(master,
+				observableSet, getValueTypePropertyDescriptor(master,
 						propertyName));
 
 		return decorator;
@@ -643,7 +641,7 @@ final public class BeansObservables {
 		IObservableMap observableMap = MasterDetailObservables.detailMap(
 				master, mapPropertyFactory(realm, propertyName));
 		BeanObservableMapDecorator decorator = new BeanObservableMapDecorator(
-				observableMap, master, getValueTypePropertyDescriptor(master,
+				observableMap, getValueTypePropertyDescriptor(master,
 						propertyName));
 		return decorator;
 	}

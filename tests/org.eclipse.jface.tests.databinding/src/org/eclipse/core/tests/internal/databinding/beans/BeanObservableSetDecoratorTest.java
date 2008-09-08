@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 246625
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -27,6 +28,7 @@ public class BeanObservableSetDecoratorTest extends TestCase {
 	private PropertyDescriptor propertyDescriptor;
 	private JavaBeanObservableSet observableSet;
 	private BeanObservableSetDecorator decorator;
+	private Bean bean;
 
 	/*
 	 * (non-Javadoc)
@@ -36,22 +38,22 @@ public class BeanObservableSetDecoratorTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		Bean bean = new Bean();
+		bean = new Bean();
 		propertyDescriptor = new PropertyDescriptor("set",
 				Bean.class);
 		observableSet = new JavaBeanObservableSet(
 				SWTObservables.getRealm(Display.getDefault()), bean,
 				propertyDescriptor, String.class);
 		decorator = new BeanObservableSetDecorator(
-				observableSet, observableSet, propertyDescriptor);
+				observableSet, propertyDescriptor);
 	}
 
 	public void testGetDelegate() throws Exception {
-		assertEquals(observableSet, decorator.getDelegate());
+		assertEquals(observableSet, decorator.getDecorated());
 	}
 
 	public void testGetObserved() throws Exception {
-		assertEquals(observableSet, decorator.getObserved());
+		assertEquals(bean, decorator.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {

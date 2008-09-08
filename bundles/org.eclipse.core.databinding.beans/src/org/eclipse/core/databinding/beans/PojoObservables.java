@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 221704, 234686
+ *     Matthew Hall - bugs 221704, 234686, 246625
  *******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -541,8 +541,8 @@ final public class PojoObservables {
 		IObservableValue value = MasterDetailObservables.detailValue(master,
 				valueFactory(realm, propertyName), propertyType);
 		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
-				value, master, BeansObservables.getValueTypePropertyDescriptor(
-						master, propertyName));
+				value, BeansObservables.getValueTypePropertyDescriptor(master,
+						propertyName));
 
 		return decorator;
 	}
@@ -588,7 +588,7 @@ final public class PojoObservables {
 				master, listFactory(realm, propertyName, propertyType),
 				propertyType);
 		BeanObservableListDecorator decorator = new BeanObservableListDecorator(
-				observableList, master, BeansObservables
+				observableList, BeansObservables
 						.getValueTypePropertyDescriptor(master, propertyName));
 
 		return decorator;
@@ -636,8 +636,8 @@ final public class PojoObservables {
 				master, setFactory(realm, propertyName, propertyType),
 				propertyType);
 		BeanObservableSetDecorator decorator = new BeanObservableSetDecorator(
-				observableSet, master, BeansObservables
-						.getValueTypePropertyDescriptor(master, propertyName));
+				observableSet, BeansObservables.getValueTypePropertyDescriptor(
+						master, propertyName));
 
 		return decorator;
 	}
@@ -677,8 +677,8 @@ final public class PojoObservables {
 		IObservableMap observableMap = MasterDetailObservables.detailMap(
 				master, mapPropertyFactory(realm, propertyName));
 		BeanObservableMapDecorator decorator = new BeanObservableMapDecorator(
-				observableMap, master, BeansObservables
-						.getValueTypePropertyDescriptor(master, propertyName));
+				observableMap, BeansObservables.getValueTypePropertyDescriptor(
+						master, propertyName));
 		return decorator;
 	}
 

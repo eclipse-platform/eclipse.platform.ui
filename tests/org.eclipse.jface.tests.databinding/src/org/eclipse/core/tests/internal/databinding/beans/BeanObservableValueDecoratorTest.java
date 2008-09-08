@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 246625
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 
-import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
 import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -44,12 +44,12 @@ public class BeanObservableValueDecoratorTest extends AbstractDefaultRealmTestCa
 				SWTObservables.getRealm(Display.getDefault()), bean,
 				propertyDescriptor);
 		decorator = new BeanObservableValueDecorator(
-				observableValue, new WritableValue(bean, Object.class), observableValue
+				observableValue, observableValue
 						.getPropertyDescriptor());
 	}
 
 	public void testGetDelegate() throws Exception {
-		assertEquals(observableValue, decorator.getDelegate());
+		assertEquals(observableValue, decorator.getDecorated());
 	}
 	
 	public void testGetObserved() throws Exception {
