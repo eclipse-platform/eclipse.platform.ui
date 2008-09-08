@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237718)
+ *     Matthew Hall - bug 246626
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -39,6 +40,11 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 		this.decorated = decorated;
 	}
 
+	public void clear() {
+		getterCalled();
+		decorated.clear();
+	}
+
 	public synchronized void addSetChangeListener(ISetChangeListener listener) {
 		addListener(SetChangeEvent.TYPE, listener);
 	}
@@ -61,12 +67,8 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 	protected void firstListenerAdded() {
 		if (setChangeListener == null) {
 			setChangeListener = new ISetChangeListener() {
-				public void handleSetChange(final SetChangeEvent event) {
-					getRealm().exec(new Runnable() {
-						public void run() {
-							fireSetChange(event.diff);
-						}
-					});
+				public void handleSetChange(SetChangeEvent event) {
+					DecoratingObservableSet.this.handleSetChange(event);
 				}
 			};
 		}
@@ -80,6 +82,19 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 			decorated.removeSetChangeListener(setChangeListener);
 			setChangeListener = null;
 		}
+	}
+
+	/**
+	 * Called whenever a SetChangeEvent is received from the decorated
+	 * observable. By default, this method fires the set change event again,
+	 * with the decorating observable as the event source. Subclasses may
+	 * override to provide different behavior.
+	 * 
+	 * @param event
+	 *            the change event received from the decorated observable
+	 */
+	protected void handleSetChange(final SetChangeEvent event) {
+		fireSetChange(event.diff);
 	}
 
 	public synchronized void dispose() {

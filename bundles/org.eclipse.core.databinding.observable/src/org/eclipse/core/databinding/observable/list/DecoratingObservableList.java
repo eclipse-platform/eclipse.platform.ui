@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237718)
+ *     Matthew Hall - but 246626
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -66,12 +67,8 @@ public class DecoratingObservableList extends DecoratingObservableCollection
 	protected void firstListenerAdded() {
 		if (listChangeListener == null) {
 			listChangeListener = new IListChangeListener() {
-				public void handleListChange(final ListChangeEvent event) {
-					getRealm().exec(new Runnable() {
-						public void run() {
-							fireListChange(event.diff);
-						}
-					});
+				public void handleListChange(ListChangeEvent event) {
+					DecoratingObservableList.this.handleListChange(event);
 				}
 			};
 		}
@@ -85,6 +82,19 @@ public class DecoratingObservableList extends DecoratingObservableCollection
 			decorated.removeListChangeListener(listChangeListener);
 			listChangeListener = null;
 		}
+	}
+
+	/**
+	 * Called whenever a ListChangeEvent is received from the decorated
+	 * observable. By default, this method fires the list change event again,
+	 * with the decorating observable as the event source. Subclasses may
+	 * override to provide different behavior.
+	 * 
+	 * @param event
+	 *            the change event received from the decorated observable
+	 */
+	protected void handleListChange(final ListChangeEvent event) {
+		fireListChange(event.diff);
 	}
 
 	public void add(int index, Object o) {

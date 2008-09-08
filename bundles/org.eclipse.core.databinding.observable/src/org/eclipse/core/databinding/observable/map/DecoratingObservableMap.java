@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237718)
+ *     Matthew Hall - but 246626
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -65,12 +66,8 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 	protected void firstListenerAdded() {
 		if (mapChangeListener == null) {
 			mapChangeListener = new IMapChangeListener() {
-				public void handleMapChange(final MapChangeEvent event) {
-					getRealm().exec(new Runnable() {
-						public void run() {
-							fireMapChange(event.diff);
-						}
-					});
+				public void handleMapChange(MapChangeEvent event) {
+					DecoratingObservableMap.this.handleMapChange(event);
 				}
 			};
 		}
@@ -84,6 +81,19 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 			decorated.removeMapChangeListener(mapChangeListener);
 			mapChangeListener = null;
 		}
+	}
+
+	/**
+	 * Called whenever a MapChangeEvent is received from the decorated
+	 * observable. By default, this method fires the map change event again,
+	 * with the decorating observable as the event source. Subclasses may
+	 * override to provide different behavior.
+	 * 
+	 * @param event
+	 *            the change event received from the decorated observable
+	 */
+	protected void handleMapChange(final MapChangeEvent event) {
+		fireMapChange(event.diff);
 	}
 
 	public void clear() {

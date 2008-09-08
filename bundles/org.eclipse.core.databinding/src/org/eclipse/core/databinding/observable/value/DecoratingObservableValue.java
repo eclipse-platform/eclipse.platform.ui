@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237718)
+ *     Matthew Hall - but 246626
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -62,12 +63,8 @@ public class DecoratingObservableValue extends DecoratingObservable implements
 	protected void firstListenerAdded() {
 		if (valueChangeListener == null) {
 			valueChangeListener = new IValueChangeListener() {
-				public void handleValueChange(final ValueChangeEvent event) {
-					getRealm().exec(new Runnable() {
-						public void run() {
-							fireValueChange(event.diff);
-						}
-					});
+				public void handleValueChange(ValueChangeEvent event) {
+					DecoratingObservableValue.this.handleValueChange(event);
 				}
 			};
 		}
@@ -81,6 +78,19 @@ public class DecoratingObservableValue extends DecoratingObservable implements
 			decorated.removeValueChangeListener(valueChangeListener);
 			valueChangeListener = null;
 		}
+	}
+
+	/**
+	 * Called whenever a ValueChangeEvent is received from the decorated
+	 * observable. By default, this method fires the value change event again,
+	 * with the decorating observable as the event source. Subclasses may
+	 * override to provide different behavior.
+	 * 
+	 * @param event
+	 *            the change event received from the decorated observable
+	 */
+	protected void handleValueChange(final ValueChangeEvent event) {
+		fireValueChange(event.diff);
 	}
 
 	public Object getValue() {
