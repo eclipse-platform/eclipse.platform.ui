@@ -14,21 +14,14 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.AbstractInformationControl;
-import org.eclipse.jface.text.IDelayedInputChangeProvider;
-import org.eclipse.jface.text.IInformationControlExtension2;
-import org.eclipse.jface.text.IInputChangedListener;
-import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.swt.browser.OpenWindowListener;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -45,6 +38,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceResources;
+
+import org.eclipse.jface.text.AbstractInformationControl;
+import org.eclipse.jface.text.IDelayedInputChangeProvider;
+import org.eclipse.jface.text.IInformationControlExtension2;
+import org.eclipse.jface.text.IInputChangedListener;
+import org.eclipse.jface.text.TextPresentation;
 
 
 /**
@@ -226,6 +231,12 @@ public class BrowserInformationControl extends AbstractInformationControl implem
             	fCompleted= true;
             }
         });
+        
+		fBrowser.addOpenWindowListener(new OpenWindowListener() {
+			public void open(WindowEvent event) {
+				event.required= true; // Cancel opening of new windows
+			}
+		});
         
 		// Replace browser's built-in context menu with none
 		fBrowser.setMenu(new Menu(getShell(), SWT.NONE));
