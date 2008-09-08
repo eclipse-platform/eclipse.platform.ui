@@ -804,6 +804,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 										provider.update((ILabelUpdate[])requests.toArray(new ILabelUpdate[requests.size()]));
 										requests.clear();
 										requests.add(labelUpdate);
+										provider = next;
 									}
 								}
 							}
