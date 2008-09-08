@@ -47,8 +47,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * <code>null</code> which indicates that the default target is to be
 	 * executed. Format is a comma separated listing of targets.
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants}
 	 */
 	public static final String ATTR_ANT_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS;
 	/**
@@ -57,8 +56,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * executed. Format is a comma separated listing of targets.
 	 * @since 3.1
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants}
 	 */
 	public static final String ATTR_ANT_AFTER_CLEAN_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS;
 	/**
@@ -67,8 +65,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * executed. Format is a comma separated listing of targets.
 	 * @since 3.1
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} 
 	 */
 	public static final String ATTR_ANT_MANUAL_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS;
 	/**
@@ -77,8 +74,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * executed. Format is a comma separated listing of targets.
 	 * @since 3.1
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} 
 	 */
 	public static final String ATTR_ANT_AUTO_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS;
 	/**
@@ -87,8 +83,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * executed. Format is a comma separated listing of targets.
 	 * @since 3.1
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} 
 	 */
 	public static final String ATTR_ANT_CLEAN_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS;
 	/**
@@ -97,8 +92,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @since 3.1
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants}
 	 */
 	public static final String ATTR_TARGETS_UPDATED = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED;
 	/**
@@ -106,8 +100,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * build. Default value is <code>null</code> which indicates no additional
 	 * properties will be defined.
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants}
 	 */
 	public static final String ATTR_ANT_PROPERTIES = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES;				
 	/**
@@ -115,8 +108,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * <code>null</code> which indicates that no additional property files
 	 * will be defined. Format is a comma separated listing of property files.
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} 
 	 */
 	public static final String ATTR_ANT_PROPERTY_FILES = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES;
 	/**
@@ -127,8 +119,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @since 3.0
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants}
 	 */
 	public static final String ATTR_HIDE_INTERNAL_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS;
 	/**
@@ -138,23 +129,20 @@ public interface IAntLaunchConfigurationConstants {
 	 * 
 	 * @since 3.0
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants}
 	 */
 	public static final String ATTR_SORT_TARGETS = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS;
 	/**
 	 * Ant launch configuration type identifier.
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} 
 	 */
 	public static final String ID_ANT_LAUNCH_CONFIGURATION_TYPE = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE;
 	/**
 	 * Ant builder launch configuration type identifier. Ant project builders
 	 * are of this type.
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} 
 	 */
 	public static final String ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE;
 	/**
@@ -162,8 +150,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * set as the value for the <code>IProcess.ATTR_PROCESS_TYPE</code>
 	 * attribute in processes created by the Ant launch delegate.
 	 * 
-	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} and will be deleted
-	 * by the 3.5M3 release
+	 * @deprecated This constant has been migrated to {@link org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants} 
 	 */
 	public static final String ID_ANT_PROCESS_TYPE = org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE;
 }
