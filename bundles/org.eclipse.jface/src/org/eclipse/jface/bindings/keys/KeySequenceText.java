@@ -367,8 +367,7 @@ public final class KeySequenceText {
 					break;
 				}
 
-				// fall through -- either no modifiers, or just shift.
-
+				//$FALL-THROUGH$ -- either no modifiers, or just shift.
 			case SWT.TRAVERSE_ARROW_NEXT:
 			case SWT.TRAVERSE_ARROW_PREVIOUS:
 			default:
