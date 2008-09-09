@@ -110,7 +110,8 @@ public class BooleanFieldEditor extends FieldEditor {
             getLabelControl(parent);
             numColumns--;
             text = null;
-        default:
+            //$FALL-THROUGH$
+		default:
             checkBox = getChangeControl(parent);
             GridData gd = new GridData();
             gd.horizontalSpan = numColumns;

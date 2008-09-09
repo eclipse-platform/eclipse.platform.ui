@@ -115,6 +115,11 @@ abstract class SWTFocusCellManager {
 		}
 	}
 
+	/**
+	 * Handles the {@link SWT#FocusIn} event.
+	 * 
+	 * @param event the event
+	 */
 	private void handleFocusIn(Event event) {
 		if (focusCell == null) {
 			setFocusCell(getInitialFocusCell());

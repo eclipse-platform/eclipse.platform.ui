@@ -34,12 +34,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * Concrete implementation of a dialog settings (<code>IDialogSettings</code>)
@@ -361,7 +362,7 @@ public class DialogSettings implements IDialogSettings {
     /* (non-Javadoc)
      * Method declared on IDialogSettings.
      */
-    public void save(Writer writer) throws IOException {
+	public void save(Writer writer) {
     	save(new XMLWriter(writer));
     }
 
@@ -388,7 +389,7 @@ public class DialogSettings implements IDialogSettings {
             String key = (String) i.next();
             attributes.put(TAG_KEY, key == null ? "" : key); //$NON-NLS-1$
             String string = (String) items.get(key);
-            attributes.put(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$        
+            attributes.put(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$
             out.printTag(TAG_ITEM, attributes, true);
         }
 
@@ -417,7 +418,7 @@ public class DialogSettings implements IDialogSettings {
     
     /**
      * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
-     * compilation against JCL Foundation (bug 80059). 
+     * compilation against JCL Foundation (bug 80059).
      */
     private static class XMLWriter extends PrintWriter {
     	/** current number of tabs to use for ident */
@@ -427,7 +428,7 @@ public class DialogSettings implements IDialogSettings {
     	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
     	/**
-    	 * Create a new XMLWriter 
+    	 * Create a new XMLWriter
     	 * @param output the stream to write the output to
     	 * @throws UnsupportedEncodingException thrown if charset is not supported
     	 */
@@ -438,7 +439,7 @@ public class DialogSettings implements IDialogSettings {
     	}
 
     	/**
-    	 * Create a new XMLWriter 
+    	 * Create a new XMLWriter
     	 * @param output the write to used when writing to
     	 */
     	public XMLWriter(Writer output) {
