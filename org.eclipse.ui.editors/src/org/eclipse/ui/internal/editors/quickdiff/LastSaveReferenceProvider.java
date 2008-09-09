@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.IJobManager;
@@ -103,12 +102,11 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		}
 
 		/**
-		 * Calls
-		 * {@link LastSaveReferenceProvider#readDocument(IProgressMonitor, boolean)}
-		 * and returns {@link Status#OK_STATUS}.
-		 *
+		 * Calls {@link LastSaveReferenceProvider#readDocument(IProgressMonitor, boolean)} and
+		 * returns {@link Status#OK_STATUS}.
+		 * 
 		 * {@inheritDoc}
-		 *
+		 * 
 		 * @param monitor {@inheritDoc}
 		 * @return {@link Status#OK_STATUS}
 		 */
@@ -222,7 +220,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				else
 					return;
 
-			IJobManager jobMgr= getJobManager();
+			IJobManager jobMgr= Job.getJobManager();
 
 			try {
 				IStorage storage= input.getStorage();
@@ -276,17 +274,6 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				}
 			}
 		}
-	}
-
-	/**
-	 * Helper to get rid of deprecation warnings.
-	 * 
-	 * @return the job manager
-	 * @since 3.5
-	 * @deprecated As of 3.5
-	 */
-	private IJobManager getJobManager() {
-		return Platform.getJobManager();
 	}
 
 	private ISchedulingRule getSchedulingRule(IStorage storage) {
