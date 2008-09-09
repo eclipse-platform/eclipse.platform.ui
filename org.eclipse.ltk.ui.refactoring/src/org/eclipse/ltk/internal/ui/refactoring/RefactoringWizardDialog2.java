@@ -212,7 +212,6 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	 * @see org.eclipse.jface.dialogs.Dialog#getButton(int)
 	 */
 	protected Button getButton(int id) {
-		// TODO Auto-generated method stub
 		return super.getButton(id);
 	}
 
