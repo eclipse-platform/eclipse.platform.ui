@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.testing;
 
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -77,16 +80,16 @@ public class WorkbenchTestable extends TestableObject {
      */
     private void waitForEarlyStartup() {
 		try {
-			Platform.getJobManager().join(Workbench.EARLY_STARTUP_FAMILY, null);
+			Job.getJobManager().join(Workbench.EARLY_STARTUP_FAMILY, null);
 		} catch (OperationCanceledException e) {
 			// ignore
 		} catch (InterruptedException e) {
 			// ignore
-		}    	
+		}
     }
     
     /**
-     * The <code>WorkbenchTestable</code> implementation of this 
+     * The <code>WorkbenchTestable</code> implementation of this
      * <code>TestableObject</code> method ensures that the workbench
      * has been set.
      */
@@ -99,7 +102,7 @@ public class WorkbenchTestable extends TestableObject {
     }
 
     /**
-     * The <code>WorkbenchTestable</code> implementation of this 
+     * The <code>WorkbenchTestable</code> implementation of this
      * <code>TestableObject</code> method flushes the event queue,
      * runs the test in a <code>syncExec</code>, then flushes the
      * event queue again.
@@ -110,8 +113,8 @@ public class WorkbenchTestable extends TestableObject {
     }
 
     /**
-     * The <code>WorkbenchTestable</code> implementation of this 
-     * <code>TestableObject</code> method flushes the event queue, 
+     * The <code>WorkbenchTestable</code> implementation of this
+     * <code>TestableObject</code> method flushes the event queue,
      * then closes the workbench.
      */
     public void testingFinished() {

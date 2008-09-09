@@ -12,23 +12,25 @@ package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.IThreadListener;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * An operation which potentially makes changes to the workspace. All resource 
- * modification should be performed using this operation. The primary 
+ * An operation which potentially makes changes to the workspace. All resource
+ * modification should be performed using this operation. The primary
  * consequence of using this operation is that events which typically occur as a
- * result of workspace changes (such as the firing of resource deltas, 
+ * result of workspace changes (such as the firing of resource deltas,
  * performance of autobuilds, etc.) are generally deferred until the outermost operation
  * has successfully completed.  The platform may still decide to broadcast
  * periodic resource change notifications during the scope of the operation
@@ -78,9 +80,9 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
      *   user requests to cancel
      * @exception CoreException if the operation fails due to a CoreException
      * @exception InvocationTargetException if the operation fails due to an exception other than CoreException
-     * @exception InterruptedException if the operation detects a request to cancel, 
-     *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
-     *  <code>InterruptedException</code>.  It is also possible to throw 
+     * @exception InterruptedException if the operation detects a request to cancel,
+     *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing
+     *  <code>InterruptedException</code>.  It is also possible to throw
      *  <code>OperationCanceledException</code>, which gets mapped to <code>InterruptedException</code>
      *  by the <code>run</code> method.
      */
@@ -89,9 +91,9 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
             InterruptedException;
 
     /**
-     * The <code>WorkspaceModifyOperation</code> implementation of this 
-     * <code>IRunnableWithProgress</code> method initiates a batch of changes by 
-     * invoking the <code>execute</code> method as a workspace runnable 
+     * The <code>WorkspaceModifyOperation</code> implementation of this
+     * <code>IRunnableWithProgress</code> method initiates a batch of changes by
+     * invoking the <code>execute</code> method as a workspace runnable
      * (<code>IWorkspaceRunnable</code>).
      */
     public synchronized final void run(IProgressMonitor monitor)
@@ -135,7 +137,7 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
 		if (rule == null) {
 			return;
 		}
-		Job currentJob = Platform.getJobManager().currentJob();
+		Job currentJob = Job.getJobManager().currentJob();
 		if (currentJob == null) {
 			return;
 		}
