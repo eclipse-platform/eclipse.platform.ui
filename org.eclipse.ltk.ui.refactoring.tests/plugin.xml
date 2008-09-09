@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-<!--
    <extension
          point="org.eclipse.ui.popupMenus">
+<!--
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
 			adaptable="true"      
@@ -17,6 +17,6 @@
                id="ExampleRefactoringAction">
          </action>
       </objectContribution>
-   </extension>
 -->
+   </extension>
 </plugin>
