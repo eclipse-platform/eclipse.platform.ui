@@ -85,7 +85,8 @@ public class OpenStrategy {
     public static final int ACTIVE_DESKTOP = SINGLE_CLICK | SELECT_ON_HOVER;
 
     // Time used in FILE_EXPLORER and ACTIVE_DESKTOP
-    private static final int TIME = 500;
+    // Not declared final, see bug 246209
+    private static int TIME = 500;
 
     /* SINGLE_CLICK or DOUBLE_CLICK;
      * In case of SINGLE_CLICK, the bits SELECT_ON_HOVER and ARROW_KEYS_OPEN
