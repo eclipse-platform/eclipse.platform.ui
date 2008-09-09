@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,6 +314,8 @@ public class Hunk {
 		List contextLines = new ArrayList();
 		boolean contextLinesMatched = true;
 		boolean precedingLinesChecked = false;
+		String lineDelimiter = getLineDelimiter(lines);
+
 		for (int i= 0; i < fLines.length; i++) {
 			String s= fLines[i];
 			Assert.isTrue(s.length() > 0);
@@ -372,6 +374,10 @@ public class Hunk {
 				contextLines.clear();
 				contextLinesMatched = true;
 				
+				// if the line contains a delimiter, use a proper one
+				if (line.length() > LineReader.length(line))
+					line = line.substring(0, LineReader.length(line)) + lineDelimiter;
+				
 				if (getLength(reverse) == 0 && pos+1 < lines.size())
 					lines.add(pos+1, line);
 				else
@@ -410,6 +416,18 @@ public class Hunk {
 	
 	private boolean isIgnoreLineDelimiter() {
 		return true;
+	}
+
+	private String getLineDelimiter(List lines) {
+		if (lines.size() > 0) {
+			// get a line separator from the file being patched
+			String line0 = (String) lines.get(0);
+			return line0.substring(LineReader.length(line0));
+		} else if (fLines.length > 0) {
+			// if the file doesn't exist use a line separator from the patch
+			return fLines[0].substring(LineReader.length(fLines[0]));
+		}
+		return System.getProperty("line.separator");
 	}
 
 	/*
