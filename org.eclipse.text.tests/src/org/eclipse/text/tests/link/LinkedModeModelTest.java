@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public class LinkedModeModelTest extends TestCase {
 		} catch (BadLocationException e) {
 			return;
 		}
-		assertFalse(true);		
+		assertFalse(true);
 	}
 	
 	public void testAddNullGroup() throws BadLocationException {
@@ -274,7 +274,7 @@ public class LinkedModeModelTest extends TestCase {
 		
 		assertEquals(group1_2, "INE");
 		assertEquals(group1, "MARGARINE");
-		assertEquals(group2, "FAUST");		
+		assertEquals(group2, "FAUST");
 		assertUnchanged(group1, group2);
 	}
 	
@@ -385,7 +385,7 @@ public class LinkedModeModelTest extends TestCase {
 		
 		assertEquals(group1, "MARGARETE");
 		assertFalse(isExit[0]);
-		assertEquals("	MARGARETE:\n" + 
+		assertEquals("	MARGARETE:\n" +
 				"	Verbrich mir, Heinrich!", doc1.get(0, 36));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
@@ -412,7 +412,7 @@ public class LinkedModeModelTest extends TestCase {
 		
 		assertEquals(group1, "MARGARINE-PLANTA");
 		assertFalse(isExit[0]);
-		assertEquals("	MARGARINE-PLANTA" + 
+		assertEquals("	MARGARINE-PLANTA" +
 				"Versprich mir, Heinrich!", doc1.get(0, 41));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
@@ -439,7 +439,7 @@ public class LinkedModeModelTest extends TestCase {
 		
 		assertEquals(group1, "MARGAR");
 		assertFalse(isExit[0]);
-		assertEquals("	MARGAR" + 
+		assertEquals("	MARGAR" +
 				"Versprich mir, Heinrich!", doc1.get(0, 31));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
@@ -572,7 +572,7 @@ public class LinkedModeModelTest extends TestCase {
 		fDocumentMap.clear();
 	}
 	
-	/**
+	/*
 	 * Returns a test group on a copy of the document
 	 */
 	private void createLinkedPositions(LinkedPositionGroup group, IDocument doc, String substring) throws BadLocationException {
@@ -605,181 +605,181 @@ public class LinkedModeModelTest extends TestCase {
 		return null;
 	}
 
-	private static final String GARTEN1= 
-		"	MARGARETE:\n" + 
-		"	Versprich mir, Heinrich!\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Was ich kann!\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Nun sag, wie hast du\'s mit der Religion?\n" + 
-		"	Du bist ein herzlich guter Mann,\n" + 
-		"	Allein ich glaub, du haltst nicht viel davon.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Las das, mein Kind! Du fuhlst, ich bin dir gut;\n" + 
-		"	Fur meine Lieben lies\' ich Leib und Blut,\n" + 
-		"	Will niemand sein Gefuhl und seine Kirche rauben.\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Das ist nicht recht, man mus dran glauben.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Mus man?\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Ach! wenn ich etwas auf dich konnte! Du ehrst auch nicht die heil\'gen Sakramente.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Ich ehre sie.\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Doch ohne Verlangen. Zur Messe, zur Beichte bist du lange nicht gegangen.\n" + 
-		"	Glaubst du an Gott?\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Mein Liebchen, wer darf sagen: Ich glaub an Gott?\n" + 
-		"	Magst Priester oder Weise fragen,\n" + 
-		"	Und ihre Antwort scheint nur Spott\n" + 
-		"	uber den Frager zu sein.\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	So glaubst du nicht?\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Mishor mich nicht, du holdes Angesicht!\n" + 
-		"	Wer darf ihn nennen?\n" + 
-		"	Und wer bekennen:\n" + 
-		"	\"Ich glaub ihn!\"?\n" + 
-		"	Wer empfinden,\n" + 
-		"	Und sich unterwinden\n" + 
-		"	Zu sagen: \"Ich glaub ihn nicht!\"?\n" + 
-		"	Der Allumfasser,\n" + 
-		"	Der Allerhalter,\n" + 
-		"	Fast und erhalt er nicht\n" + 
-		"	Dich, mich, sich selbst?\n" + 
-		"	Wolbt sich der Himmel nicht da droben?\n" + 
-		"	Liegt die Erde nicht hier unten fest?\n" + 
-		"	Und steigen freundlich blickend\n" + 
-		"	Ewige Sterne nicht herauf?\n" + 
-		"	Schau ich nicht Aug in Auge dir,\n" + 
-		"	Und drangt nicht alles\n" + 
-		"	Nach Haupt und Herzen dir,\n" + 
-		"	Und webt in ewigem Geheimnis\n" + 
-		"	Unsichtbar sichtbar neben dir?\n" + 
-		"	Erfull davon dein Herz, so gros es ist,\n" + 
-		"	Und wenn du ganz in dem Gefuhle selig bist,\n" + 
-		"	Nenn es dann, wie du willst,\n" + 
-		"	Nenn\'s Gluck! Herz! Liebe! Gott\n" + 
-		"	Ich habe keinen Namen\n" + 
-		"	Dafur! Gefuhl ist alles;\n" + 
-		"	Name ist Schall und Rauch,\n" + 
+	private static final String GARTEN1=
+		"	MARGARETE:\n" +
+		"	Versprich mir, Heinrich!\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Was ich kann!\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Nun sag, wie hast du\'s mit der Religion?\n" +
+		"	Du bist ein herzlich guter Mann,\n" +
+		"	Allein ich glaub, du haltst nicht viel davon.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Las das, mein Kind! Du fuhlst, ich bin dir gut;\n" +
+		"	Fur meine Lieben lies\' ich Leib und Blut,\n" +
+		"	Will niemand sein Gefuhl und seine Kirche rauben.\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Das ist nicht recht, man mus dran glauben.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Mus man?\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Ach! wenn ich etwas auf dich konnte! Du ehrst auch nicht die heil\'gen Sakramente.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Ich ehre sie.\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Doch ohne Verlangen. Zur Messe, zur Beichte bist du lange nicht gegangen.\n" +
+		"	Glaubst du an Gott?\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Mein Liebchen, wer darf sagen: Ich glaub an Gott?\n" +
+		"	Magst Priester oder Weise fragen,\n" +
+		"	Und ihre Antwort scheint nur Spott\n" +
+		"	uber den Frager zu sein.\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	So glaubst du nicht?\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Mishor mich nicht, du holdes Angesicht!\n" +
+		"	Wer darf ihn nennen?\n" +
+		"	Und wer bekennen:\n" +
+		"	\"Ich glaub ihn!\"?\n" +
+		"	Wer empfinden,\n" +
+		"	Und sich unterwinden\n" +
+		"	Zu sagen: \"Ich glaub ihn nicht!\"?\n" +
+		"	Der Allumfasser,\n" +
+		"	Der Allerhalter,\n" +
+		"	Fast und erhalt er nicht\n" +
+		"	Dich, mich, sich selbst?\n" +
+		"	Wolbt sich der Himmel nicht da droben?\n" +
+		"	Liegt die Erde nicht hier unten fest?\n" +
+		"	Und steigen freundlich blickend\n" +
+		"	Ewige Sterne nicht herauf?\n" +
+		"	Schau ich nicht Aug in Auge dir,\n" +
+		"	Und drangt nicht alles\n" +
+		"	Nach Haupt und Herzen dir,\n" +
+		"	Und webt in ewigem Geheimnis\n" +
+		"	Unsichtbar sichtbar neben dir?\n" +
+		"	Erfull davon dein Herz, so gros es ist,\n" +
+		"	Und wenn du ganz in dem Gefuhle selig bist,\n" +
+		"	Nenn es dann, wie du willst,\n" +
+		"	Nenn\'s Gluck! Herz! Liebe! Gott\n" +
+		"	Ich habe keinen Namen\n" +
+		"	Dafur! Gefuhl ist alles;\n" +
+		"	Name ist Schall und Rauch,\n" +
 		"	Umnebelnd Himmelsglut.\n";
 	
 	private static final String GARTEN2=
-		"	MARGARETE:\n" + 
-		"	Das ist alles recht schon und gut;\n" + 
-		"	Ungefahr sagt das der Pfarrer auch,\n" + 
-		"	Nur mit ein bischen andern Worten.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Es sagen\'s allerorten\n" + 
-		"	Alle Herzen unter dem himmlischen Tage,\n" + 
-		"	Jedes in seiner Sprache;\n" + 
-		"	Warum nicht ich in der meinen?\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Wenn man\'s so hort, mocht\'s leidlich scheinen,\n" + 
-		"	Steht aber doch immer schief darum;\n" + 
-		"	Denn du hast kein Christentum.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Liebs Kind!\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Es tut mir lange schon weh, Das ich dich in der Gesellschaft seh.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Wieso?\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Der Mensch, den du da bei dir hast, Ist mir in tiefer innrer Seele verhast;\n" + 
-		"	Es hat mir in meinem Leben\n" + 
-		"	So nichts einen Stich ins Herz gegeben\n" + 
-		"	Als des Menschen widrig Gesicht.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Liebe Puppe, furcht ihn nicht!\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Seine Gegenwart bewegt mir das Blut.\n" + 
-		"	Ich bin sonst allen Menschen gut;\n" + 
-		"	Aber wie ich mich sehne, dich zu schauen,\n" + 
-		"	Hab ich vor dem Menschen ein heimlich Grauen,\n" + 
-		"	Und halt ihn fur einen Schelm dazu!\n" + 
-		"	Gott verzeih mir\'s, wenn ich ihm unrecht tu!\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Es mus auch solche Kauze geben.\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Wollte nicht mit seinesgleichen leben!\n" + 
-		"	Kommt er einmal zur Tur herein,\n" + 
-		"	Sieht er immer so spottisch drein\n" + 
-		"	Und halb ergrimmt;\n" + 
-		"	Man sieht, das er an nichts keinen Anteil nimmt;\n" + 
-		"	Es steht ihm an der Stirn geschrieben,\n" + 
-		"	Das er nicht mag eine Seele lieben.\n" + 
-		"	Mir wird\'s so wohl in deinem Arm,\n" + 
-		"	So frei, so hingegeben warm,\n" + 
-		"	Und seine Gegenwart schnurt mir das Innre zu.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Du ahnungsvoller Engel du!\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Das ubermannt mich so sehr,\n" + 
-		"	Das, wo er nur mag zu uns treten,\n" + 
-		"	Mein ich sogar, ich liebte dich nicht mehr.\n" + 
-		"	Auch, wenn er da ist, konnt ich nimmer beten,\n" + 
-		"	Und das frist mir ins Herz hinein;\n" + 
-		"	Dir, Heinrich, mus es auch so sein.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Du hast nun die Antipathie!\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Ich mus nun fort.\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Ach kann ich nie Ein Stundchen ruhig dir am Busen hangen\n" + 
-		"	Und Brust an Brust und Seel in Seele drangen?\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Ach wenn ich nur alleine schlief!\n" + 
-		"	Ich lies dir gern heut nacht den Riegel offen;\n" + 
-		"	Doch meine Mutter schlaft nicht tief,\n" + 
-		"	Und wurden wir von ihr betroffen,\n" + 
-		"	Ich war gleich auf der Stelle tot!\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Du Engel, das hat keine Not.\n" + 
-		"	Hier ist ein Flaschchen!\n" + 
-		"	Drei Tropfen nur In ihren Trank umhullen\n" + 
-		"	Mit tiefem Schlaf gefallig die Natur.\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Was tu ich nicht um deinetwillen?\n" + 
-		"	Es wird ihr hoffentlich nicht schaden!\n" + 
-		"	 \n" + 
-		"	FAUST:\n" + 
-		"	Wurd ich sonst, Liebchen, dir es raten?\n" + 
-		"	 \n" + 
-		"	MARGARETE:\n" + 
-		"	Seh ich dich, bester Mann, nur an,\n" + 
-		"	Weis nicht, was mich nach deinem Willen treibt,\n" + 
-		"	Ich habe schon so viel fur dich getan,\n" + 
+		"	MARGARETE:\n" +
+		"	Das ist alles recht schon und gut;\n" +
+		"	Ungefahr sagt das der Pfarrer auch,\n" +
+		"	Nur mit ein bischen andern Worten.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Es sagen\'s allerorten\n" +
+		"	Alle Herzen unter dem himmlischen Tage,\n" +
+		"	Jedes in seiner Sprache;\n" +
+		"	Warum nicht ich in der meinen?\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Wenn man\'s so hort, mocht\'s leidlich scheinen,\n" +
+		"	Steht aber doch immer schief darum;\n" +
+		"	Denn du hast kein Christentum.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Liebs Kind!\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Es tut mir lange schon weh, Das ich dich in der Gesellschaft seh.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Wieso?\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Der Mensch, den du da bei dir hast, Ist mir in tiefer innrer Seele verhast;\n" +
+		"	Es hat mir in meinem Leben\n" +
+		"	So nichts einen Stich ins Herz gegeben\n" +
+		"	Als des Menschen widrig Gesicht.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Liebe Puppe, furcht ihn nicht!\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Seine Gegenwart bewegt mir das Blut.\n" +
+		"	Ich bin sonst allen Menschen gut;\n" +
+		"	Aber wie ich mich sehne, dich zu schauen,\n" +
+		"	Hab ich vor dem Menschen ein heimlich Grauen,\n" +
+		"	Und halt ihn fur einen Schelm dazu!\n" +
+		"	Gott verzeih mir\'s, wenn ich ihm unrecht tu!\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Es mus auch solche Kauze geben.\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Wollte nicht mit seinesgleichen leben!\n" +
+		"	Kommt er einmal zur Tur herein,\n" +
+		"	Sieht er immer so spottisch drein\n" +
+		"	Und halb ergrimmt;\n" +
+		"	Man sieht, das er an nichts keinen Anteil nimmt;\n" +
+		"	Es steht ihm an der Stirn geschrieben,\n" +
+		"	Das er nicht mag eine Seele lieben.\n" +
+		"	Mir wird\'s so wohl in deinem Arm,\n" +
+		"	So frei, so hingegeben warm,\n" +
+		"	Und seine Gegenwart schnurt mir das Innre zu.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Du ahnungsvoller Engel du!\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Das ubermannt mich so sehr,\n" +
+		"	Das, wo er nur mag zu uns treten,\n" +
+		"	Mein ich sogar, ich liebte dich nicht mehr.\n" +
+		"	Auch, wenn er da ist, konnt ich nimmer beten,\n" +
+		"	Und das frist mir ins Herz hinein;\n" +
+		"	Dir, Heinrich, mus es auch so sein.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Du hast nun die Antipathie!\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Ich mus nun fort.\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Ach kann ich nie Ein Stundchen ruhig dir am Busen hangen\n" +
+		"	Und Brust an Brust und Seel in Seele drangen?\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Ach wenn ich nur alleine schlief!\n" +
+		"	Ich lies dir gern heut nacht den Riegel offen;\n" +
+		"	Doch meine Mutter schlaft nicht tief,\n" +
+		"	Und wurden wir von ihr betroffen,\n" +
+		"	Ich war gleich auf der Stelle tot!\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Du Engel, das hat keine Not.\n" +
+		"	Hier ist ein Flaschchen!\n" +
+		"	Drei Tropfen nur In ihren Trank umhullen\n" +
+		"	Mit tiefem Schlaf gefallig die Natur.\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Was tu ich nicht um deinetwillen?\n" +
+		"	Es wird ihr hoffentlich nicht schaden!\n" +
+		"	 \n" +
+		"	FAUST:\n" +
+		"	Wurd ich sonst, Liebchen, dir es raten?\n" +
+		"	 \n" +
+		"	MARGARETE:\n" +
+		"	Seh ich dich, bester Mann, nur an,\n" +
+		"	Weis nicht, was mich nach deinem Willen treibt,\n" +
+		"	Ich habe schon so viel fur dich getan,\n" +
 		"	Das mir zu tun fast nichts mehr ubrigbleibt.";
 
 	private class LinkedAdapter implements ILinkedModeListener {

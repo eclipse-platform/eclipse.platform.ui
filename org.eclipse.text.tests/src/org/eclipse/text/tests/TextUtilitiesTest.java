@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import org.eclipse.jface.text.TextUtilities;
 public class TextUtilitiesTest extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(TextUtilitiesTest.class); 
+		return new TestSuite(TextUtilitiesTest.class);
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class TextUtilitiesTest extends TestCase {
 	 */
 	private static class LazilyMirroredDocument extends Document {
 		
-		private final class DocumentListener implements IDocumentListener {			
+		private final class DocumentListener implements IDocumentListener {
 			public void documentAboutToBeChanged(DocumentEvent event) {}
 			public void documentChanged(DocumentEvent event) {
 				fEvents.add(event);
@@ -53,7 +53,7 @@ public class TextUtilitiesTest extends TestCase {
 		private final DocumentListener fDocumentListener= new DocumentListener();
 		
 		/** The buffered events. */
-		private final List fEvents= new ArrayList();		
+		private final List fEvents= new ArrayList();
 		
 		public LazilyMirroredDocument(IDocument document) {
 			document.addDocumentListener(fDocumentListener);
@@ -65,7 +65,7 @@ public class TextUtilitiesTest extends TestCase {
 				return;
 			
 			replace(event.getOffset(), event.getLength(), event.getText());
-			fEvents.clear();			
+			fEvents.clear();
 		}
 
 		/*
@@ -78,7 +78,7 @@ public class TextUtilitiesTest extends TestCase {
 				flush();
 			} catch (BadLocationException e) {
 				assertFalse(true);
-			}		
+			}
 			return super.get();
 		}
 	}
@@ -89,7 +89,7 @@ public class TextUtilitiesTest extends TestCase {
 	 */
 	private static class LazilyMirroredDocument2 extends Document {
 		
-		private final class DocumentListener implements IDocumentListener {			
+		private final class DocumentListener implements IDocumentListener {
 			public void documentAboutToBeChanged(DocumentEvent event) {}
 			public void documentChanged(DocumentEvent event) {
 				event= new DocumentEvent(event.getDocument(), event.getOffset(), event.getLength(), event.getText());
@@ -101,7 +101,7 @@ public class TextUtilitiesTest extends TestCase {
 		private final DocumentListener fDocumentListener= new DocumentListener();
 		
 		/** The buffered events. */
-		private final List fEvents= new ArrayList();		
+		private final List fEvents= new ArrayList();
 		
 		public LazilyMirroredDocument2(IDocument document) {
 			document.addDocumentListener(fDocumentListener);
@@ -113,7 +113,7 @@ public class TextUtilitiesTest extends TestCase {
 				return;
 			
 			replace(event.getOffset(), event.getLength(), event.getText());
-			fEvents.clear();			
+			fEvents.clear();
 		}
 		
 		/*
@@ -126,9 +126,9 @@ public class TextUtilitiesTest extends TestCase {
 				flush();
 			} catch (BadLocationException e) {
 				Assert.fail("bad implementation");
-			}		
+			}
 			return super.get();
-		}		
+		}
 	}
 
 	
@@ -153,7 +153,7 @@ public class TextUtilitiesTest extends TestCase {
 		for (int i= 0; i < stringLength; ++i)
 			buffer.append(character);
 
-		return new DocumentEvent(document, offset, length, buffer.toString());		
+		return new DocumentEvent(document, offset, length, buffer.toString());
 	}
 	
 	public void testMergeEvents1() {
@@ -169,8 +169,8 @@ public class TextUtilitiesTest extends TestCase {
 			check(reference, testee);
 
 		} catch (BadLocationException e) {
-			Assert.fail("bad location exception");	
-		}		
+			Assert.fail("bad location exception");
+		}
 	}
 
 	public void testMergeEvents() {
@@ -193,13 +193,13 @@ public class TextUtilitiesTest extends TestCase {
 			for (Iterator iterator= events.iterator(); iterator.hasNext();) {
 				DocumentEvent event= (DocumentEvent) iterator.next();
 				currentLength += event.getText().length() - event.getLength();
-			}			
+			}
 			
 			for (int i= 0; i < 500; i++) {
 				char character= (char) (32 + i % 95);
 				DocumentEvent event= createRandomEvent(reference, currentLength, character);
 				currentLength += event.getText().length() - event.getLength();
-				events.add(event);	
+				events.add(event);
 			}
 			
 			for (Iterator iterator= events.iterator(); iterator.hasNext();) {
@@ -209,7 +209,7 @@ public class TextUtilitiesTest extends TestCase {
 				
 				reference.replace(event.getOffset(), event.getLength(), event.getText());
 				if (Math.random() < 0.3) {
-//					System.err.println("check");	
+//					System.err.println("check");
 					check(reference, testee);
 //					System.err.println("length= " + reference.getLength());
 				}
@@ -221,8 +221,8 @@ public class TextUtilitiesTest extends TestCase {
 //			System.out.println("[" + testee.get() + "]");
 
 		} catch (BadLocationException e) {
-			Assert.fail("bad location exception");	
-		}		
+			Assert.fail("bad location exception");
+		}
 	}
 
 	public void testMergeEvents2() {
@@ -245,13 +245,13 @@ public class TextUtilitiesTest extends TestCase {
 			for (Iterator iterator= events.iterator(); iterator.hasNext();) {
 				DocumentEvent event= (DocumentEvent) iterator.next();
 				currentLength += event.getText().length() - event.getLength();
-			}			
+			}
 			
 			for (int i= 0; i < 500; i++) {
 				char character= (char) (32 + i % 95);
 				DocumentEvent event= createRandomEvent(reference, currentLength, character);
 				currentLength += event.getText().length() - event.getLength();
-				events.add(event);	
+				events.add(event);
 			}
 			
 			for (Iterator iterator= events.iterator(); iterator.hasNext();) {
@@ -266,11 +266,11 @@ public class TextUtilitiesTest extends TestCase {
 			check(reference, testee);
 
 		} catch (BadLocationException e) {
-			Assert.fail("bad location exception");	
-		}		
+			Assert.fail("bad location exception");
+		}
 	}
 	
-	private static void check(IDocument reference, IDocument testee) throws BadLocationException {
+	private static void check(IDocument reference, IDocument testee) {
 		Assert.assertEquals(reference.get(), testee.get());
 	}
 	

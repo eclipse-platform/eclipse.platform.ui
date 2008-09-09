@@ -56,6 +56,12 @@ public class DocumentExtensionTest extends TestCase {
 			}
 		}
 		
+		/**
+		 * Returns the replace.
+		 * 
+		 * @param e the document event
+		 * @return the replace
+		 */
 		protected Replace getReplace(DocumentEvent e) {
 			return null;
 		}
@@ -107,7 +113,7 @@ public class DocumentExtensionTest extends TestCase {
 		
 		private boolean fPopped= false;
 		
-		public TestDocumentListener(IDocument d1, List t1, IDocument d2, List t2) {
+		public TestDocumentListener(IDocument d1, List t1, List t2) {
 			fDocument1= d1;
 			fTrace1= t1;
 			fTrace2= t2;
@@ -263,9 +269,7 @@ public class DocumentExtensionTest extends TestCase {
 			assertTrue(false);
 		}
 		
-		TestDocumentListener l= new TestDocumentListener(
-				parentDocument, createTrace(parentDocument, repetitions),
-				childDocument, createTrace(childDocument, repetitions));
+		TestDocumentListener l= new TestDocumentListener(parentDocument, createTrace(parentDocument, repetitions), createTrace(childDocument, repetitions));
 		parentDocument.addDocumentListener(l);
 		childDocument.addDocumentListener(l);
 		
