@@ -38,6 +38,21 @@ import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -50,10 +65,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStore;
-
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
@@ -61,7 +72,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
@@ -69,16 +79,6 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionReader;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionTransformer;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * Manager for persistable refactoring histories.
@@ -587,7 +587,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
-	 * compilation against JCL Foundation (bug 80053). 
+	 * compilation against JCL Foundation (bug 80053).
 	 */
 	private static final class DOMWriter extends PrintWriter {
 
@@ -841,7 +841,7 @@ public final class RefactoringHistoryManager {
 			final long stamp= descriptor.getTimeStamp();
 			if (stamp >= 0) {
 				final IPath path= stampToPath(stamp);
-				final IFileStore folder= fHistoryStore.getChild(path);
+				final IFileStore folder= fHistoryStore.getFileStore(path);
 				final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 				final IFileStore index= folder.getChild(RefactoringHistoryService.NAME_INDEX_FILE);
 				final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[] { new DefaultRefactoringDescriptorProxy(descriptor.getDescription(), descriptor.getProject(), descriptor.getTimeStamp())};
@@ -1025,7 +1025,7 @@ public final class RefactoringHistoryManager {
 	private void removeRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final IPath path, final IProgressMonitor monitor, final String task) throws CoreException {
 		try {
 			monitor.beginTask(task, 5);
-			final IFileStore folder= fHistoryStore.getChild(path);
+			final IFileStore folder= fHistoryStore.getFileStore(path);
 			final IFileStore index= folder.getChild(RefactoringHistoryService.NAME_INDEX_FILE);
 			if (index.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
 				final Set resultingProxies= new HashSet(64);
@@ -1155,7 +1155,7 @@ public final class RefactoringHistoryManager {
 			if (stamp >= 0) {
 				InputStream input= null;
 				try {
-					final IFileStore folder= fHistoryStore.getChild(stampToPath(stamp));
+					final IFileStore folder= fHistoryStore.getFileStore(stampToPath(stamp));
 					final IFileStore file= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 					if (file.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
 						input= new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
@@ -1205,7 +1205,7 @@ public final class RefactoringHistoryManager {
 			final long stamp= proxy.getTimeStamp();
 			if (stamp >= 0) {
 				final IPath path= stampToPath(stamp);
-				final IFileStore folder= fHistoryStore.getChild(path);
+				final IFileStore folder= fHistoryStore.getFileStore(path);
 				final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 				if (history.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
 					InputStream input= null;

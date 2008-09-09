@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
+
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,14 +25,12 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.wizard.IWizardContainer;
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
-
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.wizard.IWizardContainer;
 
 public class UIPerformChangeOperation extends PerformChangeOperation {
 
@@ -112,9 +113,9 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 
 	private Button getCancelButton() {
 		if (fWizardContainer instanceof RefactoringWizardDialog2) {
-			return ((RefactoringWizardDialog2)fWizardContainer).getCancelButton();
+			return ((RefactoringWizardDialog2)fWizardContainer).getButton(IDialogConstants.CANCEL_ID);
 		} else if (fWizardContainer instanceof RefactoringWizardDialog) {
-			return ((RefactoringWizardDialog)fWizardContainer).getCancelButton();
+			return ((RefactoringWizardDialog)fWizardContainer).getButton(IDialogConstants.CANCEL_ID);
 		}
 		return null;
 	}

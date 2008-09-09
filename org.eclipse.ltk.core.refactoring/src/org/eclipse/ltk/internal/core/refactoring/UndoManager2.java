@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eclipse.core.commands.operations.TriggeredOperations;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,14 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IOperationHistoryListener;
-import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.OperationHistoryEvent;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
-import org.eclipse.core.commands.operations.TriggeredOperations;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
@@ -39,13 +39,13 @@ public class UndoManager2 implements IUndoManager {
 		public void historyNotification(OperationHistoryEvent event) {
 			IUndoableOperation op= event.getOperation();
 			if (op instanceof TriggeredOperations) {
-				op= ((TriggeredOperations)op).getTriggeringOperation(); 
+				op= ((TriggeredOperations)op).getTriggeringOperation();
 			}
 			UndoableOperation2ChangeAdapter changeOperation= null;
 			if (op instanceof UndoableOperation2ChangeAdapter) {
 				changeOperation= (UndoableOperation2ChangeAdapter)op;
 			}
-			if (changeOperation == null) 
+			if (changeOperation == null)
 				return;
 			Change change= changeOperation.getChange();
 			switch(event.getEventType()) {
@@ -61,7 +61,7 @@ public class UndoManager2 implements IUndoManager {
 					fireUndoStackChanged();
 					fireRedoStackChanged();
 					break;
-				case OperationHistoryEvent.OPERATION_NOT_OK:					
+				case OperationHistoryEvent.OPERATION_NOT_OK:
 					fireChangePerformed(change);
 					break;
 				case OperationHistoryEvent.OPERATION_ADDED:
@@ -140,6 +140,9 @@ public class UndoManager2 implements IUndoManager {
     	fIsOpen= true;
 	}
 
+	/**
+	 * @deprecated use #changePerformed(Change, boolean) instead
+	 */
 	public void changePerformed(Change change) {
 		changePerformed(change, true);
 	}
@@ -175,9 +178,9 @@ public class UndoManager2 implements IUndoManager {
 	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		IUndoableOperation undo= fOperationHistroy.getUndoOperation(RefactoringCorePlugin.getUndoContext());
 		UndoableOperation2ChangeAdapter changeOperation= getUnwrappedOperation(undo);
-		if (changeOperation == null) 
+		if (changeOperation == null)
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
-				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null)); 
+				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null));
 		if (query == null)
 			query= new NullQuery();
 		try {
@@ -201,9 +204,9 @@ public class UndoManager2 implements IUndoManager {
 	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		IUndoableOperation redo= fOperationHistroy.getRedoOperation(RefactoringCorePlugin.getUndoContext());
 		UndoableOperation2ChangeAdapter changeOperation= getUnwrappedOperation(redo);
-		if (changeOperation == null) 
+		if (changeOperation == null)
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
-				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null)); 
+				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null));
 		if (query == null)
 			query= new NullQuery();
 		try {
@@ -252,8 +255,8 @@ public class UndoManager2 implements IUndoManager {
 			throw (CoreException)cause;
 		} else {
 			throw new CoreException(new Status(
-				IStatus.ERROR, RefactoringCorePlugin.getPluginId(),IStatus.ERROR, 
-				RefactoringCoreMessages.RefactoringCorePlugin_internal_error, 
+				IStatus.ERROR, RefactoringCorePlugin.getPluginId(),IStatus.ERROR,
+				RefactoringCoreMessages.RefactoringCorePlugin_internal_error,
 				e));
 		}
 	}
@@ -273,7 +276,7 @@ public class UndoManager2 implements IUndoManager {
 				public void handleException(Throwable exception) {
 					RefactoringCorePlugin.log(exception);
 				}
-			});			
+			});
 		}
 	}
 	
@@ -336,5 +339,5 @@ public class UndoManager2 implements IUndoManager {
 	
 	public boolean testHasNumberOfRedos(int number) {
 		return fOperationHistroy.getRedoHistory(RefactoringCorePlugin.getUndoContext()).length == number;
-	}	
+	}
 }

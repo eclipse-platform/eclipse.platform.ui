@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,10 +37,10 @@ public class RefactoringWizardDialog extends WizardDialog {
 	
 	/*
 	 * note: this field must not be initialized - setter is called in the call to super
-	 * and java initializes fields 'after' the call to super is made. So initializing 
+	 * and java initializes fields 'after' the call to super is made. So initializing
 	 * would override setting.
 	 */
-	private boolean fMakeNextButtonDefault; 
+	private boolean fMakeNextButtonDefault;
 
 	/**
 	 * Creates a new refactoring wizard dialog with the given wizard.
@@ -114,7 +114,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 		Point size = control.getSize();
 		fSettings.put(WIDTH, size.x);
 		fSettings.put(HEIGHT, size.y);
-	}	
+	}
 
 	/*
 	 * @see IWizardContainer#updateButtons()
@@ -136,10 +136,13 @@ public class RefactoringWizardDialog extends WizardDialog {
 		fMakeNextButtonDefault= true;
 	}
 	
-	public Button getCancelButton() {
-		return getButton(IDialogConstants.CANCEL_ID);
+	/*
+	 * @see org.eclipse.jface.wizard.WizardDialog#getButton(int)
+	 */
+	protected Button getButton(int id) {
+		return super.getButton(id);
 	}
-	
+
 	private RefactoringWizard getRefactoringWizard() {
 		return (RefactoringWizard)getWizard();
 	}

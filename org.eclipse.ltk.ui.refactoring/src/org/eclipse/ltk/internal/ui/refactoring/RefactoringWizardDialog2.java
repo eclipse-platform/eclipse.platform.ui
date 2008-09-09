@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,6 @@ package org.eclipse.ltk.internal.ui.refactoring;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -33,6 +30,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.Dialog;
@@ -88,7 +88,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			fImage.setImage(RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_INFO));
 			Point size= fImage.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			GridData gd= new GridData();
-			gd.verticalAlignment= SWT.TOP;			
+			gd.verticalAlignment= SWT.TOP;
 			gd.widthHint= size.x;
 			gd.heightHint= size.y;
 			fImage.setLayoutData(gd);
@@ -98,7 +98,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			size= fText.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			gd= new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint= size.y;
-			gd.verticalAlignment= SWT.TOP;			
+			gd.verticalAlignment= SWT.TOP;
 			fText.setLayoutData(gd);
 		}
 		public void setMessage(IWizardPage page) {
@@ -107,7 +107,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			if (msg == null || msg.length() == 0) {
 				msg= page.getMessage();
 				type= IMessageProvider.NONE;
-			if (msg != null && page instanceof IMessageProvider) 
+			if (msg != null && page instanceof IMessageProvider)
 				type = ((IMessageProvider)page).getMessageType();
 			}
 			Image image= null;
@@ -167,7 +167,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 			wizard.setDialogSettings(settings);
 		}
-		fWizard= wizard; 
+		fWizard= wizard;
 		fWizard.setContainer(this);
 		fWizard.addPages();
 		initSize(settings);
@@ -208,8 +208,12 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		}
 	}
 	
-	public Button getCancelButton() {
-		return getButton(IDialogConstants.CANCEL_ID);
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#getButton(int)
+	 */
+	protected Button getButton(int id) {
+		// TODO Auto-generated method stub
+		return super.getButton(id);
 	}
 
 	//---- IRefactoringWizardDialog ------------------------------------
@@ -333,7 +337,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			if (focusControl != null && focusControl.getShell() != getShell())
 				focusControl = null;
 				
-			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);	
+			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
 			fWaitCursor = new Cursor(d, SWT.CURSOR_WAIT);
@@ -350,7 +354,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			if (focusControl != null)
 				savedState.put("focus", focusControl); //$NON-NLS-1$
 			
-			if (hasProgressMonitor) {	
+			if (hasProgressMonitor) {
 				fProgressMonitorPart.attachToCancelComponent(cancelButton);
 				fStatusContainer.showPage(fProgressMonitorPart);
 			}
@@ -382,7 +386,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		Shell[] shells= d.getShells();
 		for (int i= 0; i < shells.length; i++)
 			shells[i].setCursor(c);
-	}	
+	}
 
 	private void stopped(Object savedState) {
 		Shell shell= getShell();
@@ -396,7 +400,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			Map state = (Map)savedState;
 			restoreUIState(state);
 	
-			setDisplayCursor(shell.getDisplay(), null);	
+			setDisplayCursor(shell.getDisplay(), null);
 			cancelButton.setCursor(null);
 			fWaitCursor.dispose();
 			fWaitCursor = null;
@@ -435,7 +439,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 
 	protected void cancelPressed() {
 		if (fActiveRunningOperations == 0)	{
-			if (fWizard.performCancel())	
+			if (fWizard.performCancel())
 				super.cancelPressed();
 		}
 	}
@@ -473,7 +477,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	
 	protected void handleShellCloseEvent() {
 		if (fActiveRunningOperations == 0)	{
-			if (fWizard.performCancel())	
+			if (fWizard.performCancel())
 				super.handleShellCloseEvent();
 		}
 	}
@@ -522,7 +526,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	}
 	
 	private boolean showErrorDialog(ErrorWizardPage page) {
-		RefactoringStatusDialog dialog= new RefactoringStatusDialog(getShell(), page, 
+		RefactoringStatusDialog dialog= new RefactoringStatusDialog(getShell(), page,
 			fWizard.internalShowBackButtonOnStatusDialog(InternalAPI.INSTANCE));
 		switch (dialog.open()) {
 			case IDialogConstants.OK_ID:
@@ -563,11 +567,11 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		// Normalize x and y relative to the client area.
 		int xe= (rect.x - clientRect.x) + rect.width;
 		if (xe > clientRect.width) {
-			rect.x-= xe - clientRect.width; 
+			rect.x-= xe - clientRect.width;
 		}
 		int ye= (rect.y - clientRect.y) + rect.height;
 		if (ye > clientRect.height) {
-			rect.y-= ye - clientRect.height; 
+			rect.y-= ye - clientRect.height;
 		}
 		
 		shell.setBounds(rect);
@@ -623,12 +627,12 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			updateButtons();
 		}
 		
-		applyDialogFont(result);		
+		applyDialogFont(result);
 		return result;
 	}
 	
 	private void createProgressMonitorPart() {
-		// Insert a progress monitor 
+		// Insert a progress monitor
 		GridLayout pmlayout= new GridLayout();
 		pmlayout.numColumns= 1;
 		pmlayout.marginHeight= 0;
@@ -727,10 +731,10 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	private void makeVisible(IWizardPage page) {
 		if (fVisiblePage == page)
 			return;
-		if (fVisiblePage != null)	
+		if (fVisiblePage != null)
 			fVisiblePage.setVisible(false);
 		fVisiblePage= page;
 		fPageContainer.showPage(page.getControl());
 		fVisiblePage.setVisible(true);
-	}	
+	}
 }

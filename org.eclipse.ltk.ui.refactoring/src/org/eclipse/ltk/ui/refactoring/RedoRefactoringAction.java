@@ -12,28 +12,25 @@ package org.eclipse.ltk.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.ltk.core.refactoring.IUndoManager;
-import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
-
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ltk.core.refactoring.IUndoManager;
+import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
 
 /**
- * The refactoring redo action. When executed the action performs 
+ * The refactoring redo action. When executed the action performs
  * the top most change from the refactoring undo manager's redo
  * stack.
  * <p>
@@ -42,18 +39,18 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * </p>
  * <p>
  * Note: this class isn't intended to be subclassed. Clients are only
- * allowed to instantiate the class or to reference it from an action 
+ * allowed to instantiate the class or to reference it from an action
  * set.
  * </p>
  * 
  * @deprecated This action is now longer needed. Undo is now performed via the
- *  global undo/redo stack provided by <code>org.eclipse.core.commands</code>. 
- *  
+ *  global undo/redo stack provided by <code>org.eclipse.core.commands</code>.
+ * 
  * @since 3.0
  * 
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class RedoRefactoringAction extends UndoManagerAction implements IWorkbenchWindowActionDelegate {
+public class RedoRefactoringAction extends UndoManagerAction {
 
 	private int fPatternLength;
 
@@ -67,17 +64,17 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 	 * Method declared in UndoManagerAction
 	 */
 	protected String getName() {
-		return RefactoringUIMessages.RedoRefactoringAction_name; 
+		return RefactoringUIMessages.RedoRefactoringAction_name;
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared in UndoManagerAction
 	 */
 	protected IRunnableWithProgress createOperation(Shell parent) {
-		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.RedoRefactoringAction_error_title) { 
+		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.RedoRefactoringAction_error_title) {
 			protected String getFullMessage(String errorMessage) {
 				return Messages.format(
-					RefactoringUIMessages.RedoRefactoringAction_error_message,  
+					RefactoringUIMessages.RedoRefactoringAction_error_message,
 					errorMessage);
 			}
 		};
@@ -86,7 +83,7 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 				try {
 					RefactoringCore.getUndoManager().performRedo(query, pm);
 				} catch (CoreException e) {
-					throw new InvocationTargetException(e);			
+					throw new InvocationTargetException(e);
 				}
 			}
 		};
@@ -107,7 +104,7 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 					enabled= true;
 					text= getActionText();
 				} else {
-					text= RefactoringUIMessages.RedoRefactoringAction_label; 
+					text= RefactoringUIMessages.RedoRefactoringAction_label;
 				}
 				action.setEnabled(enabled);
 				action.setText(text);
@@ -121,7 +118,7 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!isHooked()) {
 			hookListener(action);
-			fPatternLength= RefactoringUIMessages.RedoRefactoringAction_extendedLabel.length(); 
+			fPatternLength= RefactoringUIMessages.RedoRefactoringAction_extendedLabel.length();
 			IUndoManager undoManager = RefactoringCore.getUndoManager();
 			if (undoManager.anythingToRedo()) {
 				if (undoManager.peekRedoName() != null)
@@ -131,11 +128,11 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 				action.setEnabled(false);
 			}
 		}
-	}	
+	}
 	
 	private String getActionText() {
 		return shortenText(Messages.format(
-			RefactoringUIMessages.RedoRefactoringAction_extendedLabel, 
+			RefactoringUIMessages.RedoRefactoringAction_extendedLabel,
 			RefactoringCore.getUndoManager().peekRedoName()), fPatternLength);
 	}
 }
