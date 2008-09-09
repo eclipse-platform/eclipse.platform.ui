@@ -72,18 +72,4 @@ public class BeanObservableSetDecoratorTest extends AbstractDefaultRealmTestCase
 				new Bean(), Object.class), propertyDescriptor);
 		assertTrue(decorator.equals(decorator));
 	}
-
-	public void testEquals_SameClassDelegatesToDelegateObservables() {
-		IObservableSet delegate = new WritableSet() {
-			public boolean equals(Object o) {
-				return o == this;
-			}
-		};
-		Bean bean = new Bean();
-		decorator = new BeanObservableSetDecorator(delegate, bean,
-				propertyDescriptor);
-		BeanObservableSetDecorator otherDecorator = new BeanObservableSetDecorator(
-				delegate, bean, propertyDescriptor);
-		assertTrue(decorator.equals(otherDecorator));
-	}
 }
