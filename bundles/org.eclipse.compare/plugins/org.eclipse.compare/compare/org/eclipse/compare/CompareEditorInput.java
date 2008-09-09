@@ -55,18 +55,18 @@ import org.eclipse.ui.services.IServiceLocator;
  * <LI>tracking the dirty state of the model in case of merge,
  * <LI>saving the model.
  * </UL>
- * The Compare plug-in's <code>openCompareEditor</code> method takes an <code>ICompareEditorInput</code>
+ * The Compare plug-in's <code>openCompareEditor</code> method takes an <code>CompareEditorInput</code>
  * and starts sequencing through the above steps. If the compare result is not empty a new compare editor
  * is opened and takes over the sequence until eventually closed.
  * <p>
  * The <code>prepareInput</code> method should contain the
  * code of the compare operation. It is executed under control of a progress monitor
  * and can be canceled. If the result of the compare is not empty, that is if there are differences
- * that needs to be presented, the <code>ICompareEditorInput</code> should hold onto them and return them with
+ * that needs to be presented, the <code>ICompareInput</code> should hold onto them and return them with
  * the <code>getCompareResult</code> method.
  * If the value returned from <code>getCompareResult</code> is not <code>null</code>
- * a compare editor is opened on the <code>ICompareEditorInput</code> with title and title image initialized by the
- * corresponding methods of the <code>ICompareEditorInput</code>.
+ * a compare editor is opened on the <code>ICompareInput</code> with title and title image initialized by the
+ * corresponding methods of the <code>ICompareInput</code>.
  * <p>
  * Creation of the editor's SWT controls is delegated to the <code>createContents</code> method.
  * Here the SWT controls must be created and initialized  with the result of the compare operation.
@@ -82,7 +82,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * A selection in the top pane is fed to the bottom pane. If a content viewer is registered
  * for the type of the selected object, this viewer is installed in the pane.
  * In addition if a structure viewer is registered for the selection type the top pane
- * is split horizontally to make room for another pane and the structure viewer is installed
+ * is split vertically to make room for another pane and the structure viewer is installed
  * in it. When comparing Java files this second structure viewer would show the structural
  * differences within a Java file, e.g. added, deleted or changed methods and fields.
  * <p>

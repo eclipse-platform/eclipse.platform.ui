@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public interface IStorageMerger {
 	
 	/**
 	 * Return whether this merger can merge the two contributors
-	 * without an ancestor. Thsi is typically not possible but may be
+	 * without an ancestor. This is typically not possible but may be
 	 * for some file types (for instances, files that contain a
 	 * timestamp based list of events).
 	 * @return whether this merger can merge the two contributors
