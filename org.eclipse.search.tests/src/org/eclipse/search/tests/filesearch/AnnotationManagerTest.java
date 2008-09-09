@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,24 +26,24 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.ide.IDE;
+
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.text.FileMatch;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.FileSearchResult;
+import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.internal.ui.text.FileSearchResult;
-
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
-
-import org.eclipse.search.tests.SearchTestPlugin;
 
 public class AnnotationManagerTest extends TestCase {
 	private FileSearchQuery fQuery1;
@@ -74,7 +74,7 @@ public class AnnotationManagerTest extends TestCase {
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePattern, false);
 		fQuery1= new FileSearchQuery("Test", false, true, scope);  //$NON-NLS-1$//$NON-NLS-2$
 		fQuery2= new FileSearchQuery("Test", false, true, scope); //$NON-NLS-1$//$NON-NLS-2$
-	} 
+	}
 	
 	protected void tearDown() throws Exception {
 		InternalSearchUI.getInstance().removeAllQueries();
@@ -122,7 +122,7 @@ public class AnnotationManagerTest extends TestCase {
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		IFile file= (IFile) result.getElements()[0];
 		IDE.openEditor(SearchTestPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getPages()[0], file, true);
-		result.addMatch(new Match(file, -1, -1));
+		result.addMatch(new FileMatch(file));
 	}
 	
 	public void testRemoveQuery() throws Exception {
