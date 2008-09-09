@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
 
@@ -50,11 +50,6 @@ public class FileTool {
 	 * @throws IOException in case of problem
 	 */
 	public static void unzip(ZipFile zipFile, File dstDir) throws IOException {
-		unzip(zipFile, dstDir, dstDir, 0);
-	}
-	
-	private static void unzip(ZipFile zipFile, File rootDstDir, File dstDir, int depth) throws IOException {
-	
 		Enumeration entries = zipFile.entries();
 	
 		try {
@@ -184,7 +179,7 @@ public class FileTool {
 	public static File getFileInPlugin(Plugin plugin, IPath path) {
 		try {
 			URL installURL= plugin.getBundle().getEntry(path.toString());
-			URL localURL= Platform.asLocalURL(installURL);
+			URL localURL= FileLocator.toFileURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException e) {
 			return null;
@@ -240,7 +235,7 @@ public class FileTool {
 					try {
 						Thread.sleep(1000); // sleep a second
 					} catch (InterruptedException e) {
-					} 
+					}
 				}
 			}
 		}
