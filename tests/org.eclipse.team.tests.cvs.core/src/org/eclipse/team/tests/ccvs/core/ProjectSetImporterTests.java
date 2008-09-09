@@ -51,7 +51,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 	public ProjectSetImporterTests(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ProjectSetImporterTests.class);
 		return new CVSTestSetup(suite);
@@ -63,8 +63,8 @@ public class ProjectSetImporterTests extends EclipseTest {
 	}
 
 	public void testImportOneProject() throws TeamException, CoreException {
-		IProject project = createProject("ProjectSetImporterTests", new String[] { "file.txt", "folder1/",
-				"folder1/a.txt" });
+		IProject project = createProject("ProjectSetImporterTests",
+				new String[] { "file.txt", "folder1/", "folder1/a.txt" });
 		PrintWriter out = null;
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(PSF_FILE)),
@@ -86,9 +86,9 @@ public class ProjectSetImporterTests extends EclipseTest {
 
 			assertEquals(project, importProjectSet[0]);
 		} catch (InvocationTargetException e) {
-			fail(e.getLocalizedMessage());
-		} catch (IOException ioe) {
-			fail(ioe.getLocalizedMessage());
+			fail("1.", e.getCause());
+		} catch (IOException e) {
+			fail("2.", e);
 		} finally {
 			if (out != null)
 				out.close();
@@ -102,8 +102,8 @@ public class ProjectSetImporterTests extends EclipseTest {
 
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < PROJECTS_NO; i++) {
-			IProject project = createProject("ProjectSetImporterTests", new String[] { "file.txt", "folder1/",
-					"folder1/a.txt" });
+			IProject project = createProject("ProjectSetImporterTests",
+					new String[] { "file.txt", "folder1/", "folder1/a.txt" });
 
 			projects.add(project);
 
@@ -136,9 +136,9 @@ public class ProjectSetImporterTests extends EclipseTest {
 					fail();
 			}
 		} catch (InvocationTargetException e) {
-			fail(e.getLocalizedMessage());
-		} catch (IOException ioe) {
-			fail(ioe.getLocalizedMessage());
+			fail("1.", e.getCause());
+		} catch (IOException e) {
+			fail("2.", e);
 		} finally {
 			if (out != null)
 				out.close();
@@ -180,13 +180,13 @@ public class ProjectSetImporterTests extends EclipseTest {
 			IProject[] importProjectSet = null;
 			importProjectSet = ProjectSetImporter.importProjectSet(
 					PSF_FILENAME, Display.getDefault().getActiveShell(), null);
-			
+
 			assertEquals(project, importProjectSet[0]);
 			assertEquals(project2, importProjectSet[1]);
 		} catch (InvocationTargetException e) {
-			fail(e.getLocalizedMessage());
-		} catch (IOException ioe) {
-			fail(ioe.getLocalizedMessage());
+			fail("1.", e.getCause());
+		} catch (IOException e) {
+			fail("2.", e);
 		} finally {
 			if (out != null)
 				out.close();
