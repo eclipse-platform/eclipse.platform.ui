@@ -253,7 +253,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
 		 */
 		public void clearBlocked() {
-			if (getShell().isDisposed())
+			if (getShell() == null || getShell().isDisposed())
 				return;
 			locked = false;
 			updateForClearBlocked();
@@ -265,7 +265,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 		 */
 		public void setBlocked(IStatus reason) {
-			if (getShell().isDisposed())
+			if (getShell() == null || getShell().isDisposed())
 				return;
 			locked = true;
 			updateForSetBlocked(reason);
