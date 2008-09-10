@@ -18,19 +18,26 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
+import com.ibm.icu.text.Collator;
+
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+
+import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
@@ -43,8 +50,6 @@ import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * A menu for opening files in the workbench.
@@ -80,7 +85,7 @@ public class OpenWithMenu extends ContributionItem {
     private static final int MATCH_BOTH = IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID;
     
     /*
-     * Compares the labels from two IEditorDescriptor objects 
+     * Compares the labels from two IEditorDescriptor objects
      */
     private static final Comparator comparer = new Comparator() {
         private Collator collator = Collator.getInstance();
@@ -105,7 +110,7 @@ public class OpenWithMenu extends ContributionItem {
     }
 
     /**
-     * Constructs a new instance of <code>OpenWithMenu</code>.  
+     * Constructs a new instance of <code>OpenWithMenu</code>.
      *
      * @param page the page where the editor is opened if an item within
      *		the menu is selected
@@ -322,7 +327,7 @@ public class OpenWithMenu extends ContributionItem {
      * @param openUsingDescriptor use the descriptor's editor ID for opening if false (normal case),
      * or use the descriptor itself if true (needed to fix bug 178235).
      */
-    private void openEditor(IEditorDescriptor editor, boolean openUsingDescriptor) {
+	protected void openEditor(IEditorDescriptor editor, boolean openUsingDescriptor) {
         IFile file = getFileResource();
         if (file == null) {
             return;

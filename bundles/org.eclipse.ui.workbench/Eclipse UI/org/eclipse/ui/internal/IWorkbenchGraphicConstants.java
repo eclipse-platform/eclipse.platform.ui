@@ -53,6 +53,8 @@ public interface IWorkbenchGraphicConstants {
     
     public final static String IMG_LCL_VIEW_MENU = "IMG_LCL_VIEW_MENU"; //$NON-NLS-1$
 
+    public final static String IMG_LCL_BUTTON_MENU = "IMG_LCL_BUTTON_MENU"; //$NON-NLS-1$
+    
     public final static String IMG_LCL_SELECTED_MODE = "IMG_LCL_SELECTED_MODE"; //$NON-NLS-1$
 
     public final static String IMG_LCL_SHOWCHILD_MODE = "IMG_LCL_SHOWCHILD_MODE"; //$NON-NLS-1$
