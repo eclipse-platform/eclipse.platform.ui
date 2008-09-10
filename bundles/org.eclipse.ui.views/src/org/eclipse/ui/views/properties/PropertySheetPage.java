@@ -12,21 +12,8 @@
 
 package org.eclipse.ui.views.properties;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.IContext;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.internal.ConfigureColumnsDialog;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.window.SameShellProvider;
+
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -42,6 +29,23 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+
+import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.internal.ConfigureColumnsDialog;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.window.SameShellProvider;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISaveablePart;
@@ -60,8 +64,8 @@ import org.eclipse.ui.part.Page;
  * a table of property names and values obtained from the current selection
  * in the active workbench part.
  * <p>
- * This page obtains the information about what properties to display from 
- * the current selection (which it tracks). 
+ * This page obtains the information about what properties to display from
+ * the current selection (which it tracks).
  * </p>
  * <p>
  * The model for this page is a hierarchy of <code>IPropertySheetEntry</code>.
@@ -70,11 +74,11 @@ import org.eclipse.ui.part.Page;
  * If no root entry is set then a default model is created which uses the
  * <code>IPropertySource</code> interface to obtain the properties of
  * the current selection. This requires that the selected objects provide an
- * <code>IPropertySource</code> adapter (or implement 
+ * <code>IPropertySource</code> adapter (or implement
  * <code>IPropertySource</code> directly). This restiction can be overcome
  * by providing this page with an <code>IPropertySourceProvider</code>. If
  * supplied, this provider will be used by the default model to obtain a
- * property source for the current selection 
+ * property source for the current selection
  * </p>
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
@@ -85,7 +89,7 @@ import org.eclipse.ui.part.Page;
  */
 public class PropertySheetPage extends Page implements IPropertySheetPage, IAdaptable {
     /**
-     * Help context id 
+     * Help context id
      * (value <code>"org.eclipse.ui.property_sheet_page_help_context"</code>).
      */
     public static final String HELP_CONTEXT_PROPERTY_SHEET_PAGE = "org.eclipse.ui.property_sheet_page_help_context"; //$NON-NLS-1$
@@ -117,7 +121,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 	/**
 	 * Part listener which cleans up this page when the source part is closed.
 	 * This is hooked only when there is a source part.
-	 *  
+	 * 
 	 * @since 3.2
 	 */
 	private class PartListener implements IPartListener {
@@ -191,7 +195,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         Menu menu = menuMgr.createContextMenu(viewer.getControl());
         viewer.getControl().setMenu(menu);
 
-        // Set help on the viewer 
+        // Set help on the viewer
         viewer.getControl().addHelpListener(new HelpListener() {
             /*
              * @see HelpListener#helpRequested(HelpEvent)
@@ -205,32 +209,23 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                             .getFirstElement();
                     Object helpContextId = entry.getHelpContextIds();
                     if (helpContextId != null) {
+                    	IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
+                    	
+                        // Since 2.0 the only valid type for helpContextIds
+                        // is a String (a single id).
                         if (helpContextId instanceof String) {
-                            PlatformUI.getWorkbench()
-									.getHelpSystem().displayHelp(
-											(String) helpContextId);
+                            helpSystem.displayHelp((String) helpContextId);
                             return;
                         }
 
-                        // Since 2.0 the only valid type for helpContextIds
-                        // is a String (a single id).
-                        // However for backward compatibility we have to handle
-                        // and array of contexts (Strings and/or IContexts) 
+                        // For backward compatibility we have to handle
+                        // and array of contexts (Strings and/or IContexts)
                         // or a context computer.
-                        Object[] contexts = null;
-                        if (helpContextId instanceof IContextComputer) {
-                            // get local contexts
-                            contexts = ((IContextComputer) helpContextId)
-                                    .getLocalContexts(e);
-                        } else {
-                            contexts = (Object[]) helpContextId;
-                        }
-                        IWorkbenchHelpSystem help = PlatformUI.getWorkbench().getHelpSystem();
-                        // Ignore all but the first element in the array
-                        if (contexts[0] instanceof IContext) {
-							help.displayHelp((IContext) contexts[0]);
-						} else {
-							help.displayHelp((String) contexts[0]);
+                        Object context= getFirstContext(helpContextId, e);
+                        if (context instanceof IContext) {
+							helpSystem.displayHelp((IContext) context);
+						} else if (context instanceof String) {
+							helpSystem.displayHelp((String) context);
 						}
                         return;
                     }
@@ -239,18 +234,45 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                 // No help for the selection so show page help
                 PlatformUI.getWorkbench().getHelpSystem().displayHelp(HELP_CONTEXT_PROPERTY_SHEET_PAGE);
             }
+
+			/**
+			 * Returns the first help context.
+			 * 
+			 * @param helpContext the help context which is either an array of contexts (strings
+			 *            and/or {@linkplain IContext}s) or an {@link IContextComputer}
+			 * 
+			 * @param e the help event
+			 * @return the first context which is either a <code>String</code>, {@link IContext} or
+			 *         <code>null</code> if none
+			 * @deprecated As of 2.0, nested contexts are no longer supported by the help support
+			 *             system
+			 */
+			private Object getFirstContext(Object helpContext, HelpEvent e) {
+				Object[] contexts;
+				if (helpContext instanceof IContextComputer) {
+				    // get local contexts
+					contexts= ((IContextComputer)helpContext)
+				            .getLocalContexts(e);
+				} else {
+					contexts= (Object[])helpContext;
+				}
+
+				if (contexts.length > 0)
+					return contexts[0];
+				return null;
+			}
         });
     }
 
     /**
-     * The <code>PropertySheetPage</code> implementation of this <code>IPage</code> method 
+     * The <code>PropertySheetPage</code> implementation of this <code>IPage</code> method
      * disposes of this page's entries.
      */
     public void dispose() {
         super.dispose();
         if (sourcePart != null) {
         	sourcePart.getSite().getPage().removePartListener(partListener);
-        }        
+        }
         if (rootEntry != null) {
             rootEntry.dispose();
             rootEntry = null;
@@ -427,7 +449,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 		};
         columnsAction.setToolTipText(PropertiesMessages.Columns_toolTip);
         
-        // Copy	
+        // Copy
         Shell shell = viewer.getControl().getShell();
         clipboard = new Clipboard(shell.getDisplay());
         copyAction = new CopyPropertyAction(viewer, "copy", clipboard); //$NON-NLS-1$
@@ -460,7 +482,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
      * Updates the model for the viewer.
      * <p>
      * Note that this means ensuring that the model reflects the state
-     * of the current viewer input. 
+     * of the current viewer input.
      * </p>
      */
     public void refresh() {
@@ -498,7 +520,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
     /**
      * The <code>PropertySheetPage</code> implementation of this <code>IPage</code> method
      * calls <code>makeContributions</code> for backwards compatibility with
-     * previous versions of <code>IPage</code>. 
+     * previous versions of <code>IPage</code>.
      * <p>
      * Subclasses may reimplement.
      * </p>
@@ -552,7 +574,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 	 * Sets the sorter used for sorting categories and entries in the viewer
 	 * of this page.
 	 * <p>
-	 * The default sorter sorts categories and entries alphabetically. 
+	 * The default sorter sorts categories and entries alphabetically.
 	 * </p>
 	 * @param sorter the sorter to set (<code>null</code> will reset to the
 	 * default sorter)
