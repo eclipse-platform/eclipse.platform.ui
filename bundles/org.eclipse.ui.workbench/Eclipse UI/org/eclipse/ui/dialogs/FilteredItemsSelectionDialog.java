@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *  IBM Corporation - initial API and implementation 
- *  Willian Mitsuda <wmitsuda@gmail.com> 
+ *  IBM Corporation - initial API and implementation
+ *  Willian Mitsuda <wmitsuda@gmail.com>
  *     - Fix for bug 196553 - [Dialogs] Support IColorProvider/IFontProvider in FilteredItemsSelectionDialog
  *  Peter Friese <peter.friese@gentleware.com>
- *     - Fix for bug 208602 - [Dialogs] Open Type dialog needs accessible labels 
+ *     - Fix for bug 208602 - [Dialogs] Open Type dialog needs accessible labels
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -28,9 +28,47 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,6 +78,7 @@ import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -72,40 +111,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -575,42 +581,50 @@ public abstract class FilteredItemsSelectionDialog extends
 		menu.setVisible(true);
 	}
 
+    /** 
+     * Hook that allows to add actions to the context menu.
+	 * <p>
+	 * Subclasses may extend in order to add other actions.</p>
+     * 
+     * @param menuManager the context menu manager
+     * @since 3.5
+     */
+	protected void fillContextMenu(IMenuManager menuManager) {
+		List selectedElements= ((StructuredSelection)list.getSelection()).toList();
+
+		Object item= null;
+
+		for (Iterator it= selectedElements.iterator(); it.hasNext();) {
+			item= it.next();
+			if (item instanceof ItemsListSeparator || !isHistoryElement(item)) {
+				return;
+			}
+		}
+
+		if (selectedElements.size() > 0) {
+			removeHistoryItemAction.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
+
+			menuManager.add(removeHistoryActionContributionItem);
+
+		}
+	}
+
 	private void createPopupMenu() {
 		removeHistoryItemAction = new RemoveHistoryItemAction();
 		removeHistoryActionContributionItem = new ActionContributionItem(
 				removeHistoryItemAction);
 
 		MenuManager manager = new MenuManager();
-		manager.add(removeHistoryActionContributionItem);
+		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				List selectedElements = ((StructuredSelection) list
-						.getSelection()).toList();
-
-				Object item = null;
-
-				manager.remove(removeHistoryActionContributionItem);
-
-				for (Iterator it = selectedElements.iterator(); it.hasNext();) {
-					item = it.next();
-					if (item instanceof ItemsListSeparator
-							|| !isHistoryElement(item)) {
-						return;
-					}
-				}
-
-				if (selectedElements.size() > 0) {
-					removeHistoryItemAction
-							.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
-
-					manager.add(removeHistoryActionContributionItem);
-
-				}
+				fillContextMenu(manager);
 			}
 		});
 
-		Menu menu = manager.createContextMenu(getShell());
-		list.getTable().setMenu(menu);
+		final Table table = list.getTable();
+		Menu menu= manager.createContextMenu(table);
+		table.setMenu(menu);
 	}
 
 	/**
@@ -3333,6 +3347,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 	}
+	
 
 	/**
 	 * Get the control where the search pattern is entered. Any filtering should

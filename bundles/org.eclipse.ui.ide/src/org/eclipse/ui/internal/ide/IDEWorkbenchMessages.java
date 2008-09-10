@@ -599,6 +599,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceSelectionDialog_showDerived;
 
 	public static String OpenResourceDialog_title;
+	public static String OpenResourceDialog_openWithMenu_label;
+	public static String OpenResourceDialog_openButton_text;
+	public static String OpenResourceDialog_openWithButton_toolTip;
 
 	public static String NewFolderDialog_title;
 	public static String NewFolderDialog_nameLabel;
