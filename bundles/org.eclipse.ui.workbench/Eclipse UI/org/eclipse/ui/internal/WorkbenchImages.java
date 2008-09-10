@@ -169,49 +169,35 @@ public/*final*/class WorkbenchImages {
 
         declareImage(ISharedImages.IMG_TOOL_UNDO,
                 PATH_ETOOL + "undo_edit.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_UNDO_HOVER, PATH_ETOOL
-                + "undo_edit.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_UNDO_DISABLED, PATH_DTOOL
                 + "undo_edit.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_REDO,
                 PATH_ETOOL + "redo_edit.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_REDO_HOVER, PATH_ETOOL
-                + "redo_edit.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_REDO_DISABLED, PATH_DTOOL
                 + "redo_edit.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_CUT,
                 PATH_ETOOL + "cut_edit.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_CUT_HOVER, PATH_ETOOL
-                + "cut_edit.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_CUT_DISABLED, PATH_DTOOL
                 + "cut_edit.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_COPY,
                 PATH_ETOOL + "copy_edit.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_COPY_HOVER, PATH_ETOOL
-                + "copy_edit.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_COPY_DISABLED, PATH_DTOOL
                 + "copy_edit.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_PASTE, PATH_ETOOL
-                + "paste_edit.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_PASTE_HOVER, PATH_ETOOL
                 + "paste_edit.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_PASTE_DISABLED, PATH_DTOOL
                 + "paste_edit.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_DELETE, PATH_ETOOL
                 + "delete_edit.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_DELETE_HOVER, PATH_ETOOL
-                + "delete_edit.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_DELETE_DISABLED, PATH_DTOOL
                 + "delete_edit.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD,
                 PATH_ETOOL + "new_wiz.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_ETOOL
-                        + "new_wiz.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL
                         + "new_wiz.gif", true); //$NON-NLS-1$
 
@@ -237,22 +223,16 @@ public/*final*/class WorkbenchImages {
         
         declareImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL
                 + "forward_nav.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_FORWARD_HOVER, PATH_ELOCALTOOL
-                + "forward_nav.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_FORWARD_DISABLED, PATH_DLOCALTOOL
                 + "forward_nav.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_BACK, PATH_ELOCALTOOL
-                + "backward_nav.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_BACK_HOVER, PATH_ELOCALTOOL
                 + "backward_nav.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_BACK_DISABLED, PATH_DLOCALTOOL
                 + "backward_nav.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_UP,
                 PATH_ELOCALTOOL + "up_nav.gif", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_UP_HOVER, PATH_ELOCALTOOL
-                + "up_nav.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_UP_DISABLED, PATH_DLOCALTOOL
                 + "up_nav.gif", true); //$NON-NLS-1$
 
@@ -327,6 +307,8 @@ public/*final*/class WorkbenchImages {
                 PATH_ELOCALTOOL + "min_view.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU,
                 PATH_ELOCALTOOL + "view_menu.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU,
+        		PATH_ELOCALTOOL + "button_menu.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_LCL_LINKTO_HELP,
                 PATH_ELOCALTOOL + "linkto_help.gif", true); //$NON-NLS-1$
 
@@ -394,6 +376,8 @@ public/*final*/class WorkbenchImages {
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN,
 				PATH_OBJECT + "signed_unkn_tbl.gif", true); //$NON-NLS-1$
         
+		declareHoverImages();
+		
         // Manually create the view menu
         
         Display d = Display.getCurrent();
@@ -416,6 +400,35 @@ public/*final*/class WorkbenchImages {
                 
         getImageRegistry().put(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU, vm2);
         
+    }
+    
+    /**
+     * Declares all the workbench's deprecated hover images, including both "shared" ones and
+     * internal ones.
+     * 
+     * @deprecated As of 3.0, since the workbench itself no longer uses the hover image variants
+     */
+    private final static void declareHoverImages() {
+        declareImage(ISharedImages.IMG_TOOL_UNDO_HOVER, PATH_ETOOL
+        		+ "undo_edit.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_REDO_HOVER, PATH_ETOOL
+                + "redo_edit.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_CUT_HOVER, PATH_ETOOL
+        		+ "cut_edit.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_COPY_HOVER, PATH_ETOOL
+                + "copy_edit.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_PASTE_HOVER, PATH_ETOOL
+                + "paste_edit.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_FORWARD_HOVER, PATH_ELOCALTOOL
+                + "forward_nav.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_DELETE_HOVER, PATH_ETOOL
+        		+ "delete_edit.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_ETOOL
+                        + "new_wiz.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_BACK_HOVER, PATH_ELOCALTOOL
+        		+ "backward_nav.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_UP_HOVER, PATH_ELOCALTOOL
+                + "up_nav.gif", true); //$NON-NLS-1$
     }
 
     /**
@@ -483,6 +496,9 @@ public/*final*/class WorkbenchImages {
      *
      * This method is essentially a convenient short form of
      * WorkbenchImages.getImageRegistry.get(symbolicName).
+     * 
+     * @param symbolicName the symbolic name
+     * @return the image 
      */
     public static Image getImage(String symbolicName) {
         return getImageRegistry().get(symbolicName);
@@ -496,6 +512,9 @@ public/*final*/class WorkbenchImages {
      * The class also "caches" commonly used images in the image registry.
      * If you are looking for one of these common images it is recommended you use 
      * the getImage() method instead.
+     * 
+     * @param symbolicName the symbolic name
+     * @return the image descriptor 
      */
     public static ImageDescriptor getImageDescriptor(String symbolicName) {
         return (ImageDescriptor) getDescriptors().get(symbolicName);
@@ -515,6 +534,10 @@ public/*final*/class WorkbenchImages {
      * This consults the plugin for extension and obtains its installation location.
      * all requested images are assumed to be in a directory below and relative to that
      * plugins installation directory.
+     * 
+     * @param filename the file name
+     * @param offset the offset
+     * @return the image descriptor 
      */
 
     public static ImageDescriptor getImageDescriptorFromProgram(
@@ -531,6 +554,8 @@ public/*final*/class WorkbenchImages {
 
     /**
      * Returns the ImageRegistry.
+     * 
+     * @return the image registry
      */
     public static ImageRegistry getImageRegistry() {
         if (imageRegistry == null) {
