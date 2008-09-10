@@ -7,32 +7,15 @@
  *
  * Contributors:
  * 		IBM - Initial API and implementation
- * 		Remy Chi Jian Suen <remy.suen@gmail.com> 
+ * 		Remy Chi Jian Suen <remy.suen@gmail.com>
  * 			- Fix for Bug 155436 [IDE] Project>Clean dialog should not use a question-mark icon
- * 		Mark Melvin <mark_melvin@amis.com> 
+ * 		Mark Melvin <mark_melvin@amis.com>
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,6 +27,28 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.IShellProvider;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -63,15 +68,15 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class CleanDialog extends MessageDialog {
     private class ProjectSubsetBuildAction extends BuildAction {
         private IProject[] projectsToBuild = new IProject[0];
-        public ProjectSubsetBuildAction(Shell shell, int type, IProject[] projects) {
-            super(shell, type);
+        public ProjectSubsetBuildAction(IShellProvider shellProvider, int type, IProject[] projects) {
+            super(shellProvider, type);
             this.projectsToBuild = projects;
         }
 
         protected List getSelectedResources() {
             return Arrays.asList(this.projectsToBuild);
         }
-    };
+	}
 
     private static final String DIALOG_SETTINGS_SECTION = "CleanDialogSettings"; //$NON-NLS-1$
     private static final String DIALOG_ORIGIN_X = "DIALOG_X_ORIGIN"; //$NON-NLS-1$
@@ -160,8 +165,8 @@ public class CleanDialog extends MessageDialog {
                             projects[i] = (IProject) selection[i];
                         }
 
-                        ProjectSubsetBuildAction projectBuild = 
-                            new ProjectSubsetBuildAction(window.getShell(),
+                        ProjectSubsetBuildAction projectBuild =
+                            new ProjectSubsetBuildAction(window,
                                 IncrementalProjectBuilder.INCREMENTAL_BUILD,
                                 projects);
                         projectBuild.runInBackground(
@@ -363,7 +368,7 @@ public class CleanDialog extends MessageDialog {
     /**
      * Returns the initial location which is persisted in the IDE Plugin dialog settings
      * under the provided dialog setttings section name.
-     * If location is not persisted in the settings, the <code>null</code> is returned. 
+     * If location is not persisted in the settings, the <code>null</code> is returned.
      * 
      * @param dialogSettingsSectionName The name of the dialog settings section
      * @return The initial location or <code>null</code>
@@ -384,7 +389,7 @@ public class CleanDialog extends MessageDialog {
         IDialogSettings section = settings.getSection(dialogSettingsSectionName);
         if (section == null) {
             section = settings.addNewSection(dialogSettingsSectionName);
-        } 
+        }
         return section;
     }
 
@@ -416,7 +421,7 @@ public class CleanDialog extends MessageDialog {
     /**
      * Returns the initial size which is the larger of the <code>initialSize</code> or
      * the size persisted in the IDE UI Plugin dialog settings under the provided dialog setttings section name.
-     * If no size is persisted in the settings, the <code>initialSize</code> is returned. 
+     * If no size is persisted in the settings, the <code>initialSize</code> is returned.
      * 
      * @param initialSize The initialSize to compare against
      * @param dialogSettingsSectionName The name of the dialog settings section
