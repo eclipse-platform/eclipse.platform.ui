@@ -11,7 +11,12 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.core.patch;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +27,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 public class LineReader {
 
@@ -102,11 +108,12 @@ public class LineReader {
 	public static List readLines(BufferedReader reader) {
 		List lines;
 		LineReader lr= new LineReader(reader);
-		lr.ignoreSingleCR(); // Don't treat single CRs as line feeds to be consistent with command line patch
+		if (!Platform.WS_CARBON.equals(Platform.getWS())) //$NON-NLS-1$
+			lr.ignoreSingleCR(); // Don't treat single CRs as line feeds to be consistent with command line patch
 		lines= lr.readLines();
 		return lines;
 	}
-	
+
 	/*
 	 * Concatenates all strings found in the given List.
 	 */

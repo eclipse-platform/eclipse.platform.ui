@@ -27,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -95,7 +96,8 @@ public class PatchReader {
 		fIsWorkspacePatch= false;
 
 		LineReader lr= new LineReader(reader);
-		lr.ignoreSingleCR(); // Don't treat single CRs as line feeds to be consistent with command line patch
+		if (!Platform.WS_CARBON.equals(Platform.getWS())) //$NON-NLS-1$
+			lr.ignoreSingleCR(); // Don't treat single CRs as line feeds to be consistent with command line patch
 
 		// Test for our format
 		line= lr.readLine();
