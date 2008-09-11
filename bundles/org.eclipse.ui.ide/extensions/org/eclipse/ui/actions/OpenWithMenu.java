@@ -326,6 +326,8 @@ public class OpenWithMenu extends ContributionItem {
      * @param editor the editor descriptor, or null for the system editor
      * @param openUsingDescriptor use the descriptor's editor ID for opening if false (normal case),
      * or use the descriptor itself if true (needed to fix bug 178235).
+     * 
+     * @since 3.5
      */
 	protected void openEditor(IEditorDescriptor editor, boolean openUsingDescriptor) {
         IFile file = getFileResource();
