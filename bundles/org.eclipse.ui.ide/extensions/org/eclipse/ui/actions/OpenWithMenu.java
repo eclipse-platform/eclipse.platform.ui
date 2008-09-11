@@ -323,23 +323,23 @@ public class OpenWithMenu extends ContributionItem {
     /**
      * Opens the given editor on the selected file.
      *
-     * @param editor the editor descriptor, or null for the system editor
+     * @param editorDescriptor the editor descriptor, or null for the system editor
      * @param openUsingDescriptor use the descriptor's editor ID for opening if false (normal case),
      * or use the descriptor itself if true (needed to fix bug 178235).
-     * 
+     *
      * @since 3.5
      */
-	protected void openEditor(IEditorDescriptor editor, boolean openUsingDescriptor) {
+	protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
         IFile file = getFileResource();
         if (file == null) {
             return;
         }
         try {
         	if (openUsingDescriptor) {
-        		((WorkbenchPage) page).openEditorFromDescriptor(new FileEditorInput(file), editor, true, null);
+        		((WorkbenchPage) page).openEditorFromDescriptor(new FileEditorInput(file), editorDescriptor, true, null);
         	} else {
-	            String editorId = editor == null ? IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID
-	                    : editor.getId();
+	            String editorId = editorDescriptor == null ? IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID
+	                    : editorDescriptor.getId();
 	            
 	            ((WorkbenchPage) page).openEditor(new FileEditorInput(file), editorId, true, MATCH_BOTH);
 	            // only remember the default editor if the open succeeds
@@ -370,8 +370,7 @@ public class OpenWithMenu extends ContributionItem {
                     if (menuItem.getSelection()) {
                         IDE.setDefaultEditor(file, null);
                         try {
-                        	IEditorDescriptor desc = IDE.getEditorDescriptor(file);
-                            page.openEditor(new FileEditorInput(file), desc.getId(), true, MATCH_BOTH);
+                            openEditor(IDE.getEditorDescriptor(file), false);
                         } catch (PartInitException e) {
                             DialogUtil.openError(page.getWorkbenchWindow()
                                     .getShell(), IDEWorkbenchMessages.OpenWithMenu_dialogTitle,
