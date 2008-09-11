@@ -30,19 +30,20 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
 public class SegmentedModeTest extends TestCase {
-	
-	private static final String ORIGINAL_CONTENT= "this\nis\nthe\ncontent\nof\nthe\nfile"; 
-	
+
+	private static final String ORIGINAL_CONTENT= "this\nis\nthe\ncontent\nof\nthe\nfile";
+
 	public static Test suite() {
 		return new TestSuite(SegmentedModeTest.class);
 	}
-	
+
 	private IFile fFile;
-	
+
 	private String getOriginalContent() {
 		return ORIGINAL_CONTENT;
 	}
@@ -54,14 +55,14 @@ public class SegmentedModeTest extends TestCase {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		fFile= ResourceHelper.createFile(folder, "file.txt", getOriginalContent());
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject("project");
 	}
-	
+
 	/*
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=70934
 	 */
@@ -70,20 +71,20 @@ public class SegmentedModeTest extends TestCase {
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {
 			IEditorPart part= IDE.openEditor(page, fFile);
-			
+
 			try {
 				if (part instanceof ITextEditor) {
 					ITextEditor editor= (ITextEditor) part;
-					
+
 					editor.showHighlightRangeOnly(true);
 					editor.setHighlightRange(5, 0, true);
-					
+
 					Control control= (Control) part.getAdapter(Control.class);
 					if (control instanceof StyledText) {
 						StyledText styledText= (StyledText) control;
 						int caret= styledText.getCaretOffset();
 						styledText.replaceTextRange(caret, 0, "really ");
-						
+
 						StringBuffer buffer= new StringBuffer(getOriginalContent());
 						buffer.insert(5, "really ");
 						IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
@@ -93,7 +94,7 @@ public class SegmentedModeTest extends TestCase {
 			} finally {
 				page.saveEditor(part, false);
 			}
-			
+
 		} catch (PartInitException e) {
 			assertTrue(false);
 		}

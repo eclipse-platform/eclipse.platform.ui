@@ -15,7 +15,6 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.core.runtime.Assert;
 
-
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;

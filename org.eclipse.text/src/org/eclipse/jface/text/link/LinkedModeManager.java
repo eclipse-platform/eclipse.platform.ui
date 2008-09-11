@@ -143,7 +143,7 @@ class LinkedModeManager {
 
 	/**
 	 * Notify the manager about a leaving model.
-	 * 
+	 *
 	 * @param model the model to nest
 	 * @param flags the reason and commands for leaving linked mode
 	 */

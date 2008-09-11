@@ -19,7 +19,7 @@ import org.eclipse.core.commands.IHandler;
  * <ul>
  * <li>allows to get a handler for the given command identifier</li>
  * </ul>
- * 
+ *
  * @since 3.4
  */
 public interface IContentAssistantExtension4 {
@@ -30,7 +30,7 @@ public interface IContentAssistantExtension4 {
 	 * The same handler instance will be returned when called a more than once
 	 * with the same command identifier.
 	 * </p>
-	 * 
+	 *
 	 * @param commandId the command identifier
 	 * @return the handler for the given command identifier
 	 * @throws IllegalArgumentException if the command is not supported by this

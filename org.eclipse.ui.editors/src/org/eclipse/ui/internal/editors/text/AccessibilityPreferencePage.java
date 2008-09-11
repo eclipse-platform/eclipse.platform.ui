@@ -39,14 +39,14 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferencePage;
 
-
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage.EnumeratedDomain.EnumValue;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 /**
  * The preference page for setting the editor options.
@@ -424,7 +424,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		fOverlayStore.start();
 
 		fContents= createAppearancePage(parent);
-		
+
 		initialize();
 		Dialog.applyDialogFont(fContents);
 		return fContents;

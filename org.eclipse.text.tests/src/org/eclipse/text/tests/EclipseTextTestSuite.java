@@ -19,7 +19,7 @@ import org.eclipse.text.tests.templates.TemplatesTestSuite;
 
 /**
  * Test Suite for org.eclipse.text.
- * 
+ *
  * @since 3.0
  */
 public class EclipseTextTestSuite {
@@ -47,7 +47,7 @@ public class EclipseTextTestSuite {
 		suite.addTest(AnnotationModelExtension2Test.suite());
 		suite.addTest(TemplatesTestSuite.suite());
 		//$JUnit-END$
-		
+
 		return suite;
 	}
 }

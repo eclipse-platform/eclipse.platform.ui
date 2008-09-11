@@ -36,9 +36,9 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.StringConverter;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**
@@ -230,7 +230,7 @@ public class MarkerAnnotationPreferences {
 	 * Creates a new marker annotation preferences to access
 	 * marker annotation preferences.
 	 * @param initFromPreferences tells this instance to initialize itself from the preferences
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private MarkerAnnotationPreferences(boolean initFromPreferences) {
@@ -275,7 +275,7 @@ public class MarkerAnnotationPreferences {
 		fFragments= cloneAnnotationPreferences(sharedPrefs.fFragments);
 		fPreferences= cloneAnnotationPreferences(sharedPrefs.fPreferences);
 	}
-			
+
 	/**
 	 * Reads all extensions provided for the <code>markerAnnotationSpecification</code> extension point and
 	 * translates them into <code>AnnotationPreference</code> objects.
@@ -327,10 +327,10 @@ public class MarkerAnnotationPreferences {
 			}
 		});
 	}
-	
+
 	/**
 	 * Deeply clones the given list of <code>AnnotationPreference</code>.
-	 * 
+	 *
 	 * @param annotationPreferences a list of <code>AnnotationPreference</code>
 	 * @return the cloned list of cloned annotation preferences
 	 * @since 3.1
@@ -344,10 +344,10 @@ public class MarkerAnnotationPreferences {
 			clone.add(clone(((AnnotationPreference)iter.next())));
 		return clone;
 	}
-	
+
 	/**
 	 * Clones the given annotation preference.
-	 * 
+	 *
 	 * @param annotationPreference the annotation preference to clone
 	 * @return the cloned annotation preference
 	 * @since 3.1
@@ -355,13 +355,13 @@ public class MarkerAnnotationPreferences {
 	private AnnotationPreference clone(AnnotationPreference annotationPreference) {
 		if (annotationPreference == null)
 			return null;
-		
+
 		AnnotationPreference clone= new AnnotationPreference();
 		if (annotationPreference.getAnnotationType() != null) {
 			clone.setAnnotationType(annotationPreference.getAnnotationType());
 			clone.merge(annotationPreference);
 		}
-		
+
 		return clone;
 	}
 
@@ -512,7 +512,7 @@ public class MarkerAnnotationPreferences {
 		s= element.getAttribute("icon");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setImageDescriptor(getImageDescriptor(s, element));
-		
+
 		s= element.getAttribute("quickFixIcon");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setQuickFixImageDescriptor(getImageDescriptor(s, element));
@@ -544,7 +544,7 @@ public class MarkerAnnotationPreferences {
 		info.setIncludeOnPreferencePage(s == null || StringConverter.asBoolean(s, true));
 
 		info.markReadOnly();
-		
+
 		return info;
 	}
 
@@ -566,7 +566,7 @@ public class MarkerAnnotationPreferences {
 		URL url= FileLocator.find(bundle, new Path(iconPath), null);
 		if (url != null)
 			return ImageDescriptor.createFromURL(url);
-		
+
 		return ImageDescriptor.getMissingImageDescriptor();
 	}
 }

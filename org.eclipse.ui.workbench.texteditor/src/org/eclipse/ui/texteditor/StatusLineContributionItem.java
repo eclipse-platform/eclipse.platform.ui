@@ -137,7 +137,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		fText= text;
 		updateMessageLabel();
 	}
-	
+
 	/*
 	 * @see IStatusField#setImage(Image)
 	 */
@@ -287,7 +287,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 
 	/**
 	 * Escapes '&' with '&' in the given text.
-	 * 
+	 *
 	 * @param text the text to escape
 	 * @return the escaped string
 	 * @since 3.4

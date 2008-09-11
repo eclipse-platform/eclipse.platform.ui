@@ -26,7 +26,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * The revision information control creator that can show the tool tip affordance.
- * 
+ *
  * @since 3.3
  */
 class RevisionHoverInformationControlCreator extends AbstractReusableInformationControlCreator {
@@ -62,8 +62,8 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 	"var	         { font-style: italic }\n" + //$NON-NLS-1$
 	"th	         { font-weight: bold }\n" + //$NON-NLS-1$
 	""; //$NON-NLS-1$
-	
-	
+
+
 	private static final class RevisionInformationControl extends BrowserInformationControl {
 
 		public RevisionInformationControl(Shell parent, String statusFieldText) {
@@ -76,7 +76,7 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 
 		/**
 		 * {@inheritDoc}
-		 * 
+		 *
 		 * @deprecated use {@link #setInput(Object)}
 		 */
 		public void setInformation(String content) {
@@ -87,7 +87,7 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 		/**
 		 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment (has no
 		 * &lt;html&gt; section).
-		 * 
+		 *
 		 * @param html the html / text produced by a revision
 		 * @return modified html
 		 */
@@ -104,11 +104,11 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 			return info.toString();
 		}
 	}
-	
+
 
 	private boolean fIsFocusable;
 
-	
+
 	public RevisionHoverInformationControlCreator(boolean isFocusable) {
 		fIsFocusable= isFocusable;
 	}

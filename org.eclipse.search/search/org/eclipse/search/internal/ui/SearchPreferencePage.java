@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
-import com.ibm.icu.text.Collator;
-
 import java.util.Arrays;
 import java.util.Comparator;
+
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
@@ -41,8 +41,8 @@ import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
 public class SearchPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String PAGE_ID= "org.eclipse.search.preferences.SearchPreferencePage"; //$NON-NLS-1$
-	
-	
+
+
 	public static final String IGNORE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.ignore"; //$NON-NLS-1$
 	public static final String EMPHASIZE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.emphasize"; //$NON-NLS-1$
 	public static final String POTENTIAL_MATCH_FG_COLOR= "org.eclipse.search.potentialMatch.fgColor"; //$NON-NLS-1$
@@ -53,7 +53,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
     public static final String TEXT_SEARCH_ENGINE = "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
     public static final String TEXT_SEARCH_QUERY_PROVIDER = "org.eclipse.search.textSearchQueryProvider"; //$NON-NLS-1$
 	public static final String LIMIT_HISTORY= "org.eclipse.search.limitHistory"; //$NON-NLS-1$
-    
+
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
 	private BooleanFieldEditor fIgnorePotentialMatchesCheckbox;
@@ -98,11 +98,11 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ISearchHelpContextIds.SEARCH_PREFERENCE_PAGE);
 	}
-	
+
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(REUSE_EDITOR, SearchMessages.SearchPreferencePage_reuseEditor, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(BRING_VIEW_TO_FRONT, SearchMessages.SearchPreferencePage_bringToFront, getFieldEditorParent()));
-		
+
 		fIgnorePotentialMatchesCheckbox= new BooleanFieldEditor(
 			IGNORE_POTENTIAL_MATCHES,
 			SearchMessages.SearchPreferencePage_ignorePotentialMatches,
@@ -114,14 +114,14 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			SearchMessages.SearchPreferencePage_emphasizePotentialMatches,
 			getFieldEditorParent());
 		addField(fEmphasizedCheckbox);
-		
+
 		fColorEditor= new ColorFieldEditor(
 			POTENTIAL_MATCH_FG_COLOR,
 			SearchMessages.SearchPreferencePage_potentialMatchFgColor,
 			getFieldEditorParent()
         );
 		addField(fColorEditor);
-		
+
 		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored(), getFieldEditorParent());
 		fColorEditor.setEnabled(!arePotentialMatchesIgnored() && arePotentialMatchesEmphasized(), getFieldEditorParent());
 
@@ -133,7 +133,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			perspectiveNamesAndIds,
 			getFieldEditorParent());
 		addField(comboEditor);
-        
+
         // in case we have a contributed engine, let the user choose.
         TextSearchEngineRegistry reg= SearchPlugin.getDefault().getTextSearchEngineRegistry();
         String[][] engineNamesAndIds= reg.getAvailableEngines();
@@ -163,8 +163,8 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		super.performDefaults();
 		updateFieldEnablement();
 	}
-	
-	
+
+
 	private void updateFieldEnablement() {
 		boolean arePotentialMatchesIgnored= fIgnorePotentialMatchesCheckbox.getBooleanValue();
 		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored, getFieldEditorParent());
@@ -175,12 +175,12 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	 * Return a 2-dimensional array of perspective names and ids.
 	 */
 	private String[][] getPerspectiveNamesAndIds() {
-		
+
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] perspectiveDescriptors= registry.getPerspectives();
-		
+
 		Arrays.sort(perspectiveDescriptors, new PerspectiveDescriptorComparator());
-		
+
 		String[][] table = new String[perspectiveDescriptors.length + 1][2];
 		table[0][0] = SearchMessages.SearchPreferencePage_defaultPerspective_none;
 		table[0][1] = NO_DEFAULT_PERSPECTIVE;
@@ -198,8 +198,8 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			store.putValue(DEFAULT_PERSPECTIVE, NO_DEFAULT_PERSPECTIVE);
 		}
 	}
-	
-	
+
+
 	// Accessors to preference values
 	public static String getDefaultPerspectiveId() {
 		handleDeletedPerspectives();
@@ -218,7 +218,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(REUSE_EDITOR);
 	}
-	
+
 	public static boolean isViewBroughtToFront() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(BRING_VIEW_TO_FRONT);
@@ -238,7 +238,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_FG_COLOR);
 	}
-	
+
 	public static int getHistoryLimit() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		int limit= store.getInt(LIMIT_HISTORY);
@@ -249,5 +249,5 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		}
 		return limit;
 	}
-	
+
 }

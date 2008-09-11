@@ -62,7 +62,7 @@ public interface IContentFormatterExtension {
 	 * formatting strategies. For each partition contained in the range to be formatted, the content
 	 * formatter determines its content type and formats the partition with the correct formatting
 	 * strategy.</li>
-	 * 
+	 *
 	 * @param document the document to be formatted
 	 * @param context the formatting context to pass to the formatting strategies. This argument
 	 *            must not be <code>null</code>.

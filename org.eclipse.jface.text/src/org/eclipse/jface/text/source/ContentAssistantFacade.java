@@ -25,7 +25,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistantExtension4;
  * <p>
  * The offered API access can grow over time.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public final class ContentAssistantFacade {
@@ -34,7 +34,7 @@ public final class ContentAssistantFacade {
 
 	/**
 	 * Creates a new facade.
-	 * 
+	 *
 	 * @param contentAssistant the content assistant which implements {@link IContentAssistantExtension2} and {@link IContentAssistantExtension4}
 	 */
 	public ContentAssistantFacade(IContentAssistant contentAssistant) {
@@ -48,7 +48,7 @@ public final class ContentAssistantFacade {
 	 * The same handler instance will be returned when called a more than once
 	 * with the same command identifier.
 	 * </p>
-	 * 
+	 *
 	 * @param commandId the command identifier
 	 * @return the handler for the given command identifier
 	 * @throws IllegalArgumentException if the command is not supported by this
@@ -65,7 +65,7 @@ public final class ContentAssistantFacade {
 	/**
 	 * Adds a completion listener that will be informed before proposals are
 	 * computed.
-	 * 
+	 *
 	 * @param listener the listener
 	 * @throws IllegalStateException if called when the content assistant is
 	 *             uninstalled
@@ -78,7 +78,7 @@ public final class ContentAssistantFacade {
 
 	/**
 	 * Removes a completion listener.
-	 * 
+	 *
 	 * @param listener the listener to remove
 	 * @throws IllegalStateException if called when the content assistant is
 	 *             uninstalled

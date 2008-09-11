@@ -161,7 +161,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * Switches the focus position to <code>position</code> given the
 	 * <code>LinkedModeModel env</code>. The slave positions for <code>position</code> is extracted
 	 * from the environment and set accordingly, the target positions are updated as well.
-	 * 
+	 *
 	 * @param env the linked mode model
 	 * @param position the linked position
 	 */
@@ -235,7 +235,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 
 	/**
 	 * Sets the target positions.
-	 * 
+	 *
 	 * @param positions an array of positions
 	 */
 	public void setTargets(Position[] positions) {

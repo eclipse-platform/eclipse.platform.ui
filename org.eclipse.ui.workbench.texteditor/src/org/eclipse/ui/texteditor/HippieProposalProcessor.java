@@ -44,7 +44,7 @@ import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
  * <p>
  * Clients may instantiate.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class HippieProposalProcessor implements IContentAssistProcessor {
@@ -163,18 +163,18 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 			String prefix= getPrefix(viewer, offset);
 			if (prefix == null || prefix.length() == 0)
 				return NO_PROPOSALS;
-			
+
 			List suggestions= getSuggestions(viewer, offset, prefix);
-			
+
 			List result= new ArrayList();
 			for (Iterator it= suggestions.iterator(); it.hasNext();) {
 				String string= (String) it.next();
 				if (string.length() > 0)
 					result.add(createProposal(string, prefix, offset));
 			}
-			
+
 			return (ICompletionProposal[]) result.toArray(new ICompletionProposal[result.size()]);
-			
+
 		} catch (BadLocationException x) {
 			// ignore and return no proposals
 			return NO_PROPOSALS;
@@ -185,11 +185,11 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 		IDocument doc= viewer.getDocument();
 		if (doc == null || offset > doc.getLength())
 			return null;
-		
+
 		int length= 0;
 		while (--offset >= 0 && Character.isJavaIdentifierPart(doc.getChar(offset)))
 			length++;
-		
+
 		return doc.get(offset + 1, length);
 	}
 
@@ -204,21 +204,21 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 		// no context informations for hippie completions
 		return NO_CONTEXTS;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
 	 */
@@ -229,7 +229,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	/**
 	 * Return the list of suggestions from the current document. First the document is searched
 	 * backwards from the caret position and then forwards.
-	 * 
+	 *
 	 * @param offset the offset
 	 * @param viewer the viewer
 	 * @param prefix the completion prefix
@@ -248,7 +248,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	/**
 	 * Create the array of suggestions. It scans all open text editors and prefers suggestions from
 	 * the currently open editor. It also adds the empty suggestion at the end.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param offset the offset
 	 * @param prefix the prefix to search for

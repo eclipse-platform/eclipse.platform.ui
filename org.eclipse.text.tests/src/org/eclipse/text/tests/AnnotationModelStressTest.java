@@ -29,7 +29,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * @since 3.4
  */
 public class AnnotationModelStressTest extends TestCase {
-	
+
 	private static final String RANDOM_CONTENT= "UENTXRXNMRXSTNVZFACSMTQYVGOLEPGRXRH\n" +
 			"BCQCYH\n" +
 			"ZSJRPJZIVPLESNNZXJKZXKATUOPEB\n" +
@@ -1027,7 +1027,7 @@ public class AnnotationModelStressTest extends TestCase {
 			"VTRPDYUXBYCTZY\n" +
 			"XBW\n" +
 			"KMFEPXDJRSZRARZKCFCNZKDRNMKIMKVDQBVTSFFUBPTSAVYMKJSOGEFR";
-	
+
 	private static final AnnotationData[] RANDOM_ANNOTATIONS= new AnnotationData[] { new AnnotationData(507, 230, 1), new AnnotationData(11323, 55, 0), new AnnotationData(12543, 96, 0),
 			new AnnotationData(9964, 112, 2), new AnnotationData(579, 137, 1), new AnnotationData(15508, 198, 2), new AnnotationData(3356, 93, 1), new AnnotationData(5225, 6, 2),
 			new AnnotationData(11802, 284, 2), new AnnotationData(7848, 21, 2), new AnnotationData(10495, 145, 1), new AnnotationData(1535, 292, 0), new AnnotationData(12764, 271, 0),
@@ -1189,55 +1189,55 @@ public class AnnotationModelStressTest extends TestCase {
 			new AnnotationData(16241, 56, 1), new AnnotationData(8140, 267, 0), new AnnotationData(16417, 142, 0), new AnnotationData(16331, 194, 0), new AnnotationData(20352, 44, 2),
 			new AnnotationData(6477, 116, 1), new AnnotationData(11115, 228, 1), new AnnotationData(9387, 200, 2), new AnnotationData(18207, 141, 2), new AnnotationData(17578, 349, 0),
 			new AnnotationData(11019, 217, 1), new AnnotationData(9321, 317, 1) };
-	
+
 	private static final class AnnotationData {
 		public final int offset;
 		public final int length;
 		public int annotationNumber;
-		
+
 		public Annotation annotation;
 		public Position position;
-		
+
 		public AnnotationData(int offset, int length, int annotationNumber) {
 			this.offset= offset;
 			this.length= length;
 			this.annotationNumber= annotationNumber;
 		}
 	}
-	
+
 	private Document fDocument;
 	private AnnotationModel fAnnotationModel;
 	private AnnotationModel fInnerModel1;
 	private AnnotationModel fInnerModel2;
-	
+
 	public static Test suite() {
 		return new TestSuite(AnnotationModelStressTest.class);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void setUp() throws Exception {
 		fDocument= new Document(RANDOM_CONTENT);
-		
+
 		fAnnotationModel= new AnnotationModel();
-		
+
 		fInnerModel1= new AnnotationModel();
 		fAnnotationModel.addAnnotationModel("model1", fInnerModel1);
-		
+
 		fInnerModel2= new AnnotationModel();
 		fAnnotationModel.addAnnotationModel("model2", fInnerModel2);
-		
+
 		fAnnotationModel.connect(fDocument);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void tearDown() throws Exception {
 		fAnnotationModel.disconnect(fDocument);
 	}
-	
+
 	private IAnnotationModel getModel(int number) {
 		switch (number) {
 			case 0:
@@ -1249,66 +1249,66 @@ public class AnnotationModelStressTest extends TestCase {
 		}
 		return null;
 	}
-	
+
 	private void assertRemove(ArrayList added) {
 		AnnotationData first= (AnnotationData) added.remove(0);
 		IAnnotationModel model= getModel(first.annotationNumber);
 		assertTrue(model.getPosition(first.annotation) == first.position);
-		
+
 		model.removeAnnotation(first.annotation);
 		assertTrue(model.getPosition(first.annotation) == null);
 	}
-	
+
 	private void assertAdd(AnnotationData data, ArrayList added) {
 		Annotation annotation= new Annotation(false);
 		Position position= new Position(data.offset, data.length);
 		IAnnotationModel model= getModel(data.annotationNumber);
-		
+
 		model.addAnnotation(annotation, position);
 		assertTrue(model.getPosition(annotation) == position);
-		
+
 		data.annotation= annotation;
 		data.position= position;
-		
+
 		added.add(data);
 	}
-	
+
 	private void assertExist(ArrayList added) {
 		for (int i= 0, size= added.size(); i < size; i++) {
 			AnnotationData data= (AnnotationData) added.get(i);
 			IAnnotationModel model= getModel(data.annotationNumber);
 			assertTrue(model.getPosition(data.annotation) == data.position);
 		}
-		
+
 		ArrayList annotations= getAllAnnotations();
 		assertEquals(added.size(), annotations.size());
-		
+
 		for (int i= 0, size= annotations.size(); i < size; i++) {
 			Annotation annotation= (Annotation) annotations.get(i);
-			
+
 			AnnotationData data= getAnnotationData(added, annotation);
 			assertNotNull(data);
-			
+
 			assertTrue(fAnnotationModel.getPosition(annotation) == data.position);
 		}
 	}
-	
+
 	private void assertExistNew(ArrayList added) {
 		for (int i= 0, size= added.size(); i < size; i++) {
 			AnnotationData data= (AnnotationData) added.get(i);
 			IAnnotationModel model= getModel(data.annotationNumber);
 			assertTrue(model.getPosition(data.annotation) == data.position);
 		}
-		
+
 		ArrayList annotations= getAllAnnotationsNew();
 		assertEquals(added.size(), annotations.size());
-		
+
 		for (int i= 0, size= annotations.size(); i < size; i++) {
 			Annotation annotation= (Annotation) annotations.get(i);
-			
+
 			AnnotationData data= getAnnotationData(added, annotation);
 			assertNotNull(data);
-			
+
 			assertTrue(fAnnotationModel.getPosition(annotation) == data.position);
 		}
 	}
@@ -1324,148 +1324,148 @@ public class AnnotationModelStressTest extends TestCase {
 
 	private ArrayList getAllAnnotations() {
 		ArrayList result= new ArrayList();
-		
+
 		Iterator iterator= fAnnotationModel.getAnnotationIterator();
 		while (iterator.hasNext()) {
 			result.add(iterator.next());
 		}
-		
+
 		return result;
 	}
-	
+
 	private ArrayList getAllAnnotationsNew() {
 		ArrayList result= new ArrayList();
-		
+
 		Iterator iterator= fAnnotationModel.getAnnotationIterator(0, fDocument.getLength(), true, true);
 		while (iterator.hasNext()) {
 			result.add(iterator.next());
 		}
-		
+
 		return result;
 	}
-	
+
 	public void testStressTestPlainOld() throws Exception {
 		ArrayList added= new ArrayList();
 		int i= 0;
 		while (i < 20) {
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
 			assertAdd(data, added);
-			
+
 			assertExist(added);
-			
+
 			i++;
 		}
-		
+
 		while (i < RANDOM_ANNOTATIONS.length) {
-			
+
 			assertRemove(added);
-			
+
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
 			assertAdd(data, added);
-			
+
 			assertExist(added);
-			
+
 			i++;
 		}
-		
+
 		while (added.size() > 0) {
 			assertRemove(added);
 			assertExist(added);
 		}
 	}
-	
+
 	public void testStressTestPlainNew() throws Exception {
 		ArrayList added= new ArrayList();
 		int i= 0;
 		while (i < 20) {
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
 			assertAdd(data, added);
-			
+
 			assertExistNew(added);
-			
+
 			i++;
 		}
-		
+
 		while (i < RANDOM_ANNOTATIONS.length) {
-			
+
 			assertRemove(added);
-			
+
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
 			assertAdd(data, added);
-			
+
 			assertExistNew(added);
-			
+
 			i++;
 		}
-		
+
 		while (added.size() > 0) {
 			assertRemove(added);
 			assertExistNew(added);
 		}
 	}
-	
+
 	public void testStressTestMoveOld() throws Exception {
 		ArrayList added= new ArrayList();
 		int i= 0;
 		while (i < 20) {
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
 			assertAdd(data, added);
-			
+
 			assertExist(added);
-			
+
 			i++;
 		}
-		
+
 		Random ran= new Random(4711);
-		
+
 		while (i < RANDOM_ANNOTATIONS.length) {
-			
+
 			assertRemove(added);
-			
+
 			fDocument.replace(ran.nextInt(fDocument.getLength() - 1), 0, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
-			
+
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
 			assertAdd(data, added);
-			
+
 			assertExist(added);
-			
+
 			i++;
 		}
-		
+
 		while (added.size() > 0) {
 			assertRemove(added);
 			assertExist(added);
 		}
 	}
-	
+
 	public void testStressTestMoveNew() throws Exception {
 		ArrayList added= new ArrayList();
 		int i= 0;
 		while (i < 20) {
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
 			assertAdd(data, added);
-			
+
 			assertExistNew(added);
-			
+
 			i++;
 		}
-		
+
 		Random ran= new Random(4711);
-		
+
 		while (i < RANDOM_ANNOTATIONS.length) {
-			
+
 			assertRemove(added);
-			
+
 			fDocument.replace(ran.nextInt(fDocument.getLength() - 1), 0, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
 
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
 			assertAdd(data, added);
-			
+
 			assertExistNew(added);
-			
+
 			i++;
 		}
-		
+
 		while (added.size() > 0) {
 			assertRemove(added);
 			assertExist(added);

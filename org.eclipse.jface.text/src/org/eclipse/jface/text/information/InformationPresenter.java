@@ -13,8 +13,6 @@ package org.eclipse.jface.text.information;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -28,6 +26,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -344,7 +344,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			// backward compatibility code
 			info= provider.getInformation(fTextViewer, subject);
 		}
-		
+
 		if (provider instanceof IInformationProviderExtension2)
 			setCustomInformationControlCreator(((IInformationProviderExtension2) provider).getInformationPresenterControlCreator());
 		else
@@ -369,7 +369,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			start= widgetRegion.getOffset();
 			end= widgetRegion.getOffset() + widgetRegion.getLength();
 		}
-		
+
 		StyledText styledText= fTextViewer.getTextWidget();
 		Rectangle bounds;
 		if (end > 0 && start < end)
@@ -378,7 +378,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			Point loc= styledText.getLocationAtOffset(start);
 			bounds= new Rectangle(loc.x, loc.y, 0, styledText.getLineHeight(start));
 		}
-		
+
 		return bounds;
 	}
 

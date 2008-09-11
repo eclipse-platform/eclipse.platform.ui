@@ -17,13 +17,13 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.Separator;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -276,7 +276,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * <code>menu</code> if no item with the same id currently exists. If there already is an
 	 * contribution item with the same id, the new item gets
 	 * {@link IContributionManager#insertAfter(String, IContributionItem) inserted after} it.
-	 * 
+	 *
 	 * @param menu the contribution manager
 	 * @param item the contribution item
 	 * @since 3.2

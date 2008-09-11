@@ -31,14 +31,14 @@ final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
 
 	/**
 	 * Creates a new URL hyperlink.
-	 * 
+	 *
 	 * @param region the region
 	 * @param urlString the URL string
 	 */
 	public URLHyperlink(IRegion region, String urlString) {
 		super(region, urlString);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.URLHyperlink#open()
 	 * @since 3.1

@@ -17,11 +17,11 @@ import java.util.ResourceBundle;
 
 /**
  * RegEx messages. Helper class to get NLSed messages.
- * 
+ *
  * @since 3.4
  */
 final class RegExMessages {
-	
+
 	private static final String RESOURCE_BUNDLE= RegExMessages.class.getName();
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 

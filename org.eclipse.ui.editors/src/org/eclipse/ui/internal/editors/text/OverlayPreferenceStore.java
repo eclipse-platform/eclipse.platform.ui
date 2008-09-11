@@ -523,7 +523,7 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	 * <p>
 	 * Note: This method must be called before {@link #load()} is called.
 	 * </p>
-	 * 
+	 *
 	 * @param keys an array with overlay keys
 	 * @since 3.0
 	 */

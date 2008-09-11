@@ -23,7 +23,7 @@ import org.eclipse.text.edits.UndoEdit;
 
 /**
  * A text edit processor that brackets the application of edits into a document rewrite session.
- * 
+ *
  * @since 3.3
  */
 public final class RewriteSessionEditProcessor extends TextEditProcessor {
@@ -64,7 +64,7 @@ public final class RewriteSessionEditProcessor extends TextEditProcessor {
 
 	/**
 	 * Constructs a new edit processor for the given document.
-	 * 
+	 *
 	 * @param document the document to manipulate
 	 * @param root the root of the text edit tree describing the modifications. By passing a text
 	 *        edit a a text edit processor the ownership of the edit is transfered to the text edit
@@ -75,7 +75,7 @@ public final class RewriteSessionEditProcessor extends TextEditProcessor {
 	public RewriteSessionEditProcessor(IDocument document, TextEdit root, int style) {
 		super(document, root, style);
 	}
-	
+
 	/*
 	 * @see org.eclipse.text.edits.TextEditProcessor#performEdits()
 	 */
@@ -99,7 +99,7 @@ public final class RewriteSessionEditProcessor extends TextEditProcessor {
 	/**
 	 * Returns <code>true</code> if the passed edit is considered <em>large</em>,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param edit the edit to check
 	 * @return <code>true</code> if <code>edit</code> is considered <em>large</em>,
 	 *         <code>false</code> otherwise

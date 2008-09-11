@@ -17,7 +17,7 @@ package org.eclipse.jface.text.source;
  * computes the first line <em>after</em> the range, and a range with
  * <code>getNumberOfLines() == 0</code> is empty.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface ILineRange {

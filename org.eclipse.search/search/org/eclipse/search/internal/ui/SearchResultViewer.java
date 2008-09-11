@@ -18,13 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -36,6 +29,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -63,13 +63,12 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
 import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
-
-import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
 
 /**
@@ -81,7 +80,7 @@ import org.eclipse.search.internal.ui.util.FileLabelProvider;
  * @deprecated old search
  */
 public class SearchResultViewer extends TableViewer {
-	
+
 	private SearchResultView fOuterPart;
 	private ShowNextResultAction fShowNextResultAction;
 	private ShowPreviousResultAction fShowPreviousResultAction;
@@ -100,27 +99,27 @@ public class SearchResultViewer extends TableViewer {
 	private ActionGroup fActionGroup;
 	private IContextMenuContributor fContextMenuContributor;
 	private IAction fGotoMarkerAction;
-	
+
 	private ResourceToItemsMapper fResourceToItemsMapper;
 	private String fCurrentPageId= null;
-	
+
 	public SearchResultViewer(SearchResultView outerPart, Composite parent) {
 		super(new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION));
 
 		fResourceToItemsMapper= new ResourceToItemsMapper(this);
-		
+
 		fOuterPart= outerPart;
 		Assert.isNotNull(fOuterPart);
 
 		if (SearchPreferencePage.arePotentialMatchesEmphasized())
 			fPotentialMatchFgColor= new Color(SearchPlugin.getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchForegroundColor());
-		
+
 		setUseHashlookup(true);
 		setContentProvider(new ArrayContentProvider());
 
 		ILabelProvider labelProvider= new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL));
 		setLabelProvider(labelProvider);
-		
+
 		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
 		boolean hasSearch= currentSearch != null;
 		boolean hasSearchOperation= currentSearch != null && currentSearch.getOperation() != null;
@@ -159,7 +158,7 @@ public class SearchResultViewer extends TableViewer {
 				showResult();
 			}
 		});
-		
+
 		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(
@@ -170,11 +169,11 @@ public class SearchResultViewer extends TableViewer {
 				}
 			});
 		Menu menu= menuMgr.createContextMenu(getTable());
-		getTable().setMenu(menu);		
-		
+		getTable().setMenu(menu);
+
 		// Register menu
 		fOuterPart.getSite().registerContextMenu(menuMgr, this);
-		
+
 		IActionBars actionBars= fOuterPart.getViewSite().getActionBars();
 		if (actionBars != null) {
 			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextResultAction);
@@ -183,7 +182,7 @@ public class SearchResultViewer extends TableViewer {
 
 		fOuterPart.getSite().setSelectionProvider(this);
 	}
-	
+
 	void init() {
 		Search search= SearchManager.getDefault().getCurrentSearch();
 		if (search != null) {
@@ -192,7 +191,7 @@ public class SearchResultViewer extends TableViewer {
 			setActionGroupFactory(null);
 			setActionGroupFactory(search.getActionGroupFactory());
 			setPageId(search.getPageId());
-			setInput(search.getResults());			
+			setInput(search.getResults());
 		}
 	}
 
@@ -202,8 +201,8 @@ public class SearchResultViewer extends TableViewer {
 			TableItem ti = (TableItem) item;
 			ti.setForeground(fPotentialMatchFgColor);
 		}
-	}	
-	
+	}
+
 	private void handleSelectionChanged() {
 		int selectionCount= getSelectedEntriesCount();
 		boolean hasSingleSelection= selectionCount == 1;
@@ -298,12 +297,12 @@ public class SearchResultViewer extends TableViewer {
 		if (index > -1)
 			entry= (SearchResultViewEntry)table.getItem(index).getData();
 		return (entry != null && entry.getMatchCount() > 1);
-			
+
 	}
-	
+
 	void fillContextMenu(IMenuManager menu) {
 		ISelection selection= getSelection();
-		
+
 		if (fActionGroup != null) {
 			ActionContext context= new ActionContext(selection);
 			context.setInput(getInput());
@@ -311,10 +310,10 @@ public class SearchResultViewer extends TableViewer {
 			fActionGroup.fillContextMenu(menu);
 			fActionGroup.setContext(null);
 		}
-		
+
 		if (fContextMenuContributor != null)
 			fContextMenuContributor.fill(menu, this);
-		
+
 		if (!selection.isEmpty()) {
 			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, fCopyToClipboardAction);
 			menu.appendToGroup(IContextMenuConstants.GROUP_GOTO, fGotoMarkerActionProxy);
@@ -329,7 +328,7 @@ public class SearchResultViewer extends TableViewer {
 		// If we have elements
 		if (getItemCount() > 0)
 			menu.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, new RemoveAllResultsAction());
-	
+
 		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSearchAgainAction);
 		if (getItemCount() > 0) {
 			fSortDropDownAction= fSortDropDownAction.renew();
@@ -374,12 +373,12 @@ public class SearchResultViewer extends TableViewer {
 	}
 
 	void setActionGroupFactory(IActionGroupFactory groupFactory) {
-		IActionBars actionBars= fOuterPart.getViewSite().getActionBars();		
+		IActionBars actionBars= fOuterPart.getViewSite().getActionBars();
 		if (fActionGroup != null) {
 			fActionGroup.dispose();
 			fActionGroup= null;
 		}
-			
+
 		if (groupFactory != null) {
 			fActionGroup= groupFactory.createActionGroup(fOuterPart);
 			if (actionBars != null)
@@ -393,13 +392,13 @@ public class SearchResultViewer extends TableViewer {
 		if (fCurrentPageId != null && fCurrentPageId.equals(pageId))
 			return;
 
-		fCurrentPageId= pageId;		
+		fCurrentPageId= pageId;
 		ILabelProvider labelProvider= fOuterPart.getLabelProvider(pageId);
 		if (labelProvider != null)
 			internalSetLabelProvider(labelProvider);
 		fSortDropDownAction.setPageId(pageId);
 	}
-	
+
 	void fillToolBar(IToolBarManager tbm) {
 		tbm.add(fShowNextResultAction);
 		tbm.add(fShowPreviousResultAction);
@@ -409,7 +408,7 @@ public class SearchResultViewer extends TableViewer {
 		tbm.add(new Separator());
 		tbm.add(new OpenSearchDialogAction());
 		tbm.add(fSearchDropDownAction);
-		
+
 		// need to hook F5 to table
 		getTable().addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
@@ -423,7 +422,7 @@ public class SearchResultViewer extends TableViewer {
 				}
 			}
 		});
-	}	
+	}
 
 	int getItemCount() {
 		return SearchManager.getDefault().getCurrentItemCount();
@@ -503,16 +502,16 @@ public class SearchResultViewer extends TableViewer {
 		Table table= getTable();
 		if (!canDoShowResult(table))
 			return;
-				
+
 		int index= table.getSelectionIndex();
 		SearchResultViewEntry entry;
 
 
 		fMarkerToShow--;
 		if (fMarkerToShow >= 0)
-			entry= (SearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();			
+			entry= (SearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
 		else {
-			// move selection		
+			// move selection
 			int count= table.getItemCount();
 			if (index == -1) {
 				index= count - 1;
@@ -529,13 +528,13 @@ public class SearchResultViewer extends TableViewer {
 		openCurrentSelection();
 		updateStatusLine();
 	}
-	
+
 	private boolean canDoShowResult(Table table) {
 		if (table == null || getItemCount() == 0)
 			return false;
-		return true;			
+		return true;
 	}
-		
+
 	private void selectResult(int index) {
 		fHandleSelectionChangedEvents= false;
 		Object element= getElementAt(index);
@@ -571,9 +570,9 @@ public class SearchResultViewer extends TableViewer {
 		String title;
 		if (hasCurrentSearch) {
 			String description= SearchManager.getDefault().getCurrentSearch().getFullDescription();
-			title= Messages.format(SearchMessages.SearchResultView_titleWithDescription, description); 
+			title= Messages.format(SearchMessages.SearchResultView_titleWithDescription, description);
 		} else
-			title= SearchMessages.SearchResultView_title; 
+			title= SearchMessages.SearchResultView_title;
 		if (title == null || !title.equals(fOuterPart.getContentDescription()))
 			fOuterPart.setContentDescription(title);
 	}
@@ -582,7 +581,7 @@ public class SearchResultViewer extends TableViewer {
 	 * Clear the title
 	 */
 	protected void clearTitle() {
-		String title= SearchMessages.SearchResultView_title; 
+		String title= SearchMessages.SearchResultView_title;
 		if (!title.equals(fOuterPart.getContentDescription()))
 			fOuterPart.setContentDescription(title);
 	}
@@ -612,7 +611,7 @@ public class SearchResultViewer extends TableViewer {
 	}
 
 	//--- Change event handling -------------------------------------------------
-	
+
 	/**
 	 * Handle a single add.
 	 * @param entry the entry to add
@@ -646,7 +645,7 @@ public class SearchResultViewer extends TableViewer {
 	/**
 	 * Handle an update of an entry.
 	 * @param entry the entry
-	 * @param matchRemoved 
+	 * @param matchRemoved
 	 */
 	protected void handleUpdateMatch(ISearchResultViewEntry entry, boolean matchRemoved) {
 		Widget item= findItem(entry);
@@ -660,10 +659,10 @@ public class SearchResultViewer extends TableViewer {
 	void restoreState(IMemento memento) {
 		fSortDropDownAction.restoreState(memento);
 	}
-	
+
 	void saveState(IMemento memento) {
 		fSortDropDownAction.saveState(memento);
-	}	
+	}
 
 	/*
 	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
@@ -707,7 +706,7 @@ public class SearchResultViewer extends TableViewer {
 	protected void unmapElement(Object element, Widget item) {
 		if (item instanceof Item) {
 			fResourceToItemsMapper.removeFromMap(element, (Item)item);
-		}		
+		}
 		super.unmapElement(element, item);
 	}
 
@@ -718,7 +717,7 @@ public class SearchResultViewer extends TableViewer {
 		fResourceToItemsMapper.clearMap();
 		super.unmapAllElements();
 	}
-	
+
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		// see bug 44891
 		getTable().setRedraw(false);

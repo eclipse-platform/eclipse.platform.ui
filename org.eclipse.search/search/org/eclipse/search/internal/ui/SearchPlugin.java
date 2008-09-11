@@ -15,6 +15,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.osgi.framework.BundleContext;
+
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -26,10 +32,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -39,52 +41,49 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text2.TextSearchQueryProviderRegistry;
-
-import org.osgi.framework.BundleContext;
 
 /**
  * The plug-in runtime class for Search plug-in
  */
 public class SearchPlugin extends AbstractUIPlugin {
-	
+
 	public static final String SEARCH_PAGE_EXTENSION_POINT= "searchPages"; //$NON-NLS-1$
 	public static final String SORTER_EXTENSION_POINT= "searchResultSorters"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Filtered search marker type (value <code>"org.eclipse.search.filteredsearchmarker"</code>).
 	 *
 	 * @see org.eclipse.core.resources.IMarker
-	 */ 
+	 */
 	public static final String FILTERED_SEARCH_MARKER=  NewSearchUI.PLUGIN_ID + ".filteredsearchmarker"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Search annotation type (value <code>"org.eclipse.search.results"</code>).
 	 *
 	 * @since 3.2
-	 */ 
+	 */
 	public static final String SEARCH_ANNOTATION_TYPE= NewSearchUI.PLUGIN_ID + ".results"; //$NON-NLS-1$
-	
-	/** 
+
+	/**
 	 * Filtered search annotation type (value <code>"org.eclipse.search.filteredResults"</code>).
 	 *
 	 * @since 3.2
-	 */ 
+	 */
 	public static final String FILTERED_SEARCH_ANNOTATION_TYPE= NewSearchUI.PLUGIN_ID + ".filteredResults"; //$NON-NLS-1$
-	
+
 	/** Status code describing an internal error */
 	public static final int INTERNAL_ERROR= 1;
-	
+
 	private static SearchPlugin fgSearchPlugin;
 
-			
+
 	private List fPageDescriptors;
 	private List fSorterDescriptors;
 	private TextSearchEngineRegistry fTextSearchEngineRegistry;
@@ -104,7 +103,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	public static SearchPlugin getDefault() {
 		return fgSearchPlugin;
 	}
-	
+
 	/**
 	 * Returns the active workbench window.
 	 * @return returns <code>null</code> if the active window is not a workbench window
@@ -173,11 +172,11 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */
 	public static IWorkbenchPage getActivePage() {
 		return getActiveWorkbenchWindow().getActivePage();
-	} 
+	}
 
 	/**
 	 * @return Returns the workbench from which this plugin has been loaded.
-	 */	
+	 */
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
@@ -187,23 +186,23 @@ public class SearchPlugin extends AbstractUIPlugin {
 	static boolean setAutoBuilding(boolean state) {
 		IWorkspaceDescription workspaceDesc= getWorkspace().getDescription();
 		boolean isAutobuilding= workspaceDesc.isAutoBuilding();
-		
+
 		if (isAutobuilding != state) {
 			workspaceDesc.setAutoBuilding(state);
 			try {
 				getWorkspace().setDescription(workspaceDesc);
 			}
 			catch (CoreException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.Search_Error_setDescription_title, SearchMessages.Search_Error_setDescription_message); 
+				ExceptionHandler.handle(ex, SearchMessages.Search_Error_setDescription_title, SearchMessages.Search_Error_setDescription_message);
 			}
 		}
 		return isAutobuilding;
 	}
-	
+
 	/**
 	 * This method is called upon plug-in activation
-	 * @param context 
-	 * @throws Exception 
+	 * @param context
+	 * @throws Exception
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -211,8 +210,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * This method is called when the plug-in is stopped
-	 * @param context 
-	 * @throws Exception 
+	 * @param context
+	 * @throws Exception
 	 */
 	public void stop(BundleContext context) throws Exception {
 		InternalSearchUI.shutdown();
@@ -220,7 +219,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 		super.stop(context);
 		fgSearchPlugin= null;
 	}
-	
+
 	/**
 	 * @deprecated
 	 */
@@ -235,9 +234,9 @@ public class SearchPlugin extends AbstractUIPlugin {
 		if (fPageDescriptors == null) {
 			IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(NewSearchUI.PLUGIN_ID, SEARCH_PAGE_EXTENSION_POINT);
 			fPageDescriptors= createSearchPageDescriptors(elements);
-		}	
+		}
 		return fPageDescriptors;
-	} 
+	}
 
 	/**
 	 * @param pageId the page id
@@ -252,12 +251,12 @@ public class SearchPlugin extends AbstractUIPlugin {
 				enabledDescriptors.add(desc);
 		}
 		return enabledDescriptors;
-	} 
+	}
 
 	/**
 	 * @return Returns the help context ID for the Search view
 	 * as provided by the current search page extension.
-	 * 
+	 *
 	 * @since 3.0
 	 * @deprecated old search
 	 */
@@ -277,7 +276,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 			}
 		}
 		return ISearchHelpContextIds.SEARCH_VIEW;
-	} 
+	}
 
 	/**
 	 * Creates all necessary search page nodes.
@@ -304,18 +303,18 @@ public class SearchPlugin extends AbstractUIPlugin {
 		if (fSorterDescriptors == null) {
 			IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(NewSearchUI.PLUGIN_ID, SORTER_EXTENSION_POINT);
 			fSorterDescriptors= createSorterDescriptors(elements);
-		}	
+		}
 		return fSorterDescriptors;
 	}
-	
-	
+
+
     public TextSearchEngineRegistry getTextSearchEngineRegistry() {
         if (fTextSearchEngineRegistry == null) {
         	fTextSearchEngineRegistry= new TextSearchEngineRegistry();
         }
         return fTextSearchEngineRegistry;
     }
-    
+
     public TextSearchQueryProviderRegistry getTextSearchQueryProviderRegistry() {
         if (fTextSearchQueryProviderRegistry == null) {
         	fTextSearchQueryProviderRegistry= new TextSearchQueryProviderRegistry();
@@ -337,7 +336,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}
 		return result;
 	}
-	
+
 	public IDialogSettings getDialogSettingsSection(String name) {
 		IDialogSettings dialogSettings= getDialogSettings();
 		IDialogSettings section= dialogSettings.getSection(name);
@@ -346,20 +345,20 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}
 		return section;
 	}
-	
+
 
 	/**
 	 * Log status to platform log
 	 * @param status the status to log
-	 */	
+	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, INTERNAL_ERROR, SearchMessages.SearchPlugin_internal_error, e)); 
+		log(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, INTERNAL_ERROR, SearchMessages.SearchPlugin_internal_error, e));
 	}
-	
+
 	public static String getID() {
 		return NewSearchUI.PLUGIN_ID;
 	}

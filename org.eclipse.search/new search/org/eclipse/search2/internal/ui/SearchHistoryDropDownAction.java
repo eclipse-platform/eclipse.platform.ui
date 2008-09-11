@@ -22,11 +22,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 
+import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.NewSearchUI;
-
-import org.eclipse.search.internal.ui.SearchPluginImages;
 
 class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 
@@ -36,10 +35,10 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		public ShowSearchFromHistoryAction(ISearchResult search) {
 	        super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 			fSearch= search;
-			
+
 			String label= escapeAmp(search.getLabel());
 			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery()))
-				label= MessageFormat.format(SearchMessages.SearchDropDownAction_running_message, new String[] { label }); 
+				label= MessageFormat.format(SearchMessages.SearchDropDownAction_running_message, new String[] { label });
 			// fix for bug 38049
 			if (label.indexOf('@') >= 0)
 				label+= '@';
@@ -47,7 +46,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 			setImageDescriptor(search.getImageDescriptor());
 			setToolTipText(search.getTooltip());
 		}
-		
+
 		private String escapeAmp(String label) {
 			StringBuffer buf= new StringBuffer();
 			for (int i= 0; i < label.length(); i++) {
@@ -59,11 +58,11 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 			}
 			return buf.toString();
 		}
-		
+
 		public void runWithEvent(Event event) {
 			runIfChecked(event.stateMask == SWT.CTRL);
 		}
-		
+
 		public void run() {
 			runIfChecked(false);
 		}
@@ -78,15 +77,15 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 
 	private Menu fMenu;
 	private SearchView fSearchView;
-	
+
 	public SearchHistoryDropDownAction(SearchView searchView) {
-		setText(SearchMessages.SearchDropDownAction_label); 
-		setToolTipText(SearchMessages.SearchDropDownAction_tooltip); 
+		setText(SearchMessages.SearchDropDownAction_label);
+		setToolTipText(SearchMessages.SearchDropDownAction_tooltip);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HISTORY);
 		fSearchView= searchView;
 		setMenuCreator(this);
 	}
-	
+
 	public void updateEnablement() {
 		boolean hasQueries= InternalSearchUI.getInstance().getSearchManager().hasQueries();
 		setEnabled(hasQueries);
@@ -108,11 +107,11 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 	public Menu getMenu(Control parent) {
 		ISearchResult currentSearch= fSearchView.getCurrentSearchResult();
 		disposeMenu();
-		
+
 		fMenu= new Menu(parent);
-				
+
 		ISearchQuery[] searches= NewSearchUI.getQueries();
-		if (searches.length > 0) {			
+		if (searches.length > 0) {
 			for (int i= 0; i < searches.length; i++) {
 				ISearchResult search= searches[i].getSearchResult();
 				ShowSearchFromHistoryAction action= new ShowSearchFromHistoryAction(search);
@@ -130,7 +129,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
-	
+
 	public void run() {
 		new ShowSearchHistoryDialogAction(fSearchView).run();
 	}

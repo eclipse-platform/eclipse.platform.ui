@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.content.IContentType;
 /**
  * Describes the target of a contribution to the <code>org.eclipse.ui.texteditor.rulerColumns</code>
  * extension point.
- * 
+ *
  * @since 3.3
  */
 public abstract class RulerColumnTarget {
@@ -147,7 +147,7 @@ final class ClassTarget extends RulerColumnTarget {
 
 	public boolean matchesClass(Class clazz) {
 		Assert.isLegal(clazz != null);
-		
+
 		do {
 			if (clazz.getName().equals(fClassName))
 				return true;

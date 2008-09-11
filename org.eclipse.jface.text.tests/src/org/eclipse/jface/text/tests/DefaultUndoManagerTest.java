@@ -26,14 +26,14 @@ public class DefaultUndoManagerTest extends AbstractUndoManagerTest {
 	public static Test suite() {
 		return new TestSuite(DefaultUndoManagerTest.class);
 	}
-	
+
 	/*
 	 * @see TestCase#TestCase(String)
 	 */
 	public DefaultUndoManagerTest(final String name) {
-		super(name);	
+		super(name);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.tests.AbstractUndoManagerTest#createUndoManager(int)
 	 * @since 3.2
@@ -41,5 +41,5 @@ public class DefaultUndoManagerTest extends AbstractUndoManagerTest {
 	protected IUndoManager createUndoManager(int maxUndoLevel) {
 		return new DefaultUndoManager(maxUndoLevel);
 	}
-	
+
 }

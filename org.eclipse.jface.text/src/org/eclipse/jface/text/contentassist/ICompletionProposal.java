@@ -106,7 +106,7 @@ public interface ICompletionProposal {
 	 * If {@link ICompletionProposalExtension5} is implemented, this method should not be called any
 	 * longer. This method may be deprecated in a future release.
 	 * </p>
-	 * 
+	 *
 	 * @return the additional information or <code>null</code>
 	 */
 	String getAdditionalProposalInfo();

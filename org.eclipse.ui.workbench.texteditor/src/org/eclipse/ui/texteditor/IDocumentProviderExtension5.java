@@ -27,7 +27,7 @@ public interface IDocumentProviderExtension5 {
 	/**
 	 * Tells whether the given core exception is exactly the
 	 * exception which is thrown for a non-synchronized element.
-	 * 
+	 *
 	 * @param element the element
 	 * @param ex the core exception
 	 * @return <code>true</code> iff the given core exception is exactly the

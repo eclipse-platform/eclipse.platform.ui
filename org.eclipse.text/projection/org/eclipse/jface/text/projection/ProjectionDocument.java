@@ -183,17 +183,17 @@ public class ProjectionDocument extends AbstractDocument {
 
 	/**
 	 * Returns the projection mapping used by this document.
-	 * 
+	 *
 	 * @return the projection mapping used by this document
 	 * @deprecated As of 3.4, replaced by {@link #getDocumentInformationMapping()}
 	 */
 	public ProjectionMapping getProjectionMapping(){
 		return fMapping;
 	}
-	
+
 	/**
 	 * Returns the projection mapping used by this document.
-	 * 
+	 *
 	 * @return the projection mapping used by this document
 	 * @since 3.4
 	 */
@@ -209,7 +209,7 @@ public class ProjectionDocument extends AbstractDocument {
 	public IDocument getMasterDocument() {
 		return fMasterDocument;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension4#getDefaultLineDelimiter()
 	 * @since 3.1
@@ -217,7 +217,7 @@ public class ProjectionDocument extends AbstractDocument {
 	public String getDefaultLineDelimiter() {
 		return TextUtilities.getDefaultLineDelimiter(fMasterDocument);
 	}
-	
+
 	/**
 	 * Initializes the projection document from the master document based on
 	 * the master's fragments.

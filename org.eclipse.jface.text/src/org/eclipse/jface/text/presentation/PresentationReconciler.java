@@ -356,7 +356,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 
 		fViewer= viewer;
 		fViewer.addTextInputListener(fInternalListener);
-		
+
 		IDocument document= viewer.getDocument();
 		if (document != null)
 			fInternalListener.inputDocumentChanged(null, document);
@@ -476,7 +476,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 */
 	private IRegion getDamage(DocumentEvent e, boolean optimize) {
 		int length= e.getText() == null ? 0 : e.getText().length();
-		
+
 		if (fDamagers == null || fDamagers.isEmpty()) {
 			length= Math.max(e.getLength(), length);
 			length= Math.min(e.getDocument().getLength() - e.getOffset(), length);

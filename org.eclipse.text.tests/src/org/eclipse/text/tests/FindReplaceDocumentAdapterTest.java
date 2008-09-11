@@ -28,23 +28,23 @@ import org.eclipse.jface.text.Region;
 
 /**
  * Tests the FindReplaceDocumentAdapter.
- * 
+ *
  * @since 3.1
  */
 public class FindReplaceDocumentAdapterTest extends TestCase {
-	
+
 	private Document fDocument;
-	
-	
+
+
 	public FindReplaceDocumentAdapterTest(String name) {
 		super(name);
 	}
-	
-	
+
+
 	protected void setUp() {
-		
+
 		fDocument= new Document();
-	
+
 		String text;
 		text= "package TestPackage;\n" + //$NON-NLS-1$
 		"/*\n" + //$NON-NLS-1$
@@ -59,83 +59,83 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		"		}\n" + //$NON-NLS-1$
 		"	}\n" + //$NON-NLS-1$S
 		"// Gel\u00F6st"; //$NON-NLS-1$S
-	
+
 		fDocument.set(text);
 	}
-	
+
 	public static Test suite() {
 		return new TestSuite(FindReplaceDocumentAdapterTest.class);
 	}
-	
+
 	protected void tearDown () {
 		fDocument= null;
 	}
-	
+
 	public void testFind() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
 			IRegion result= new Region(8, 11);
-			
+
 			// Find case-sensitive
 			IRegion r= findReplaceDocumentAdapter.find(0, "TestPackage", true, true, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
 			r= findReplaceDocumentAdapter.find(0, "testpackage", true, true, false, false); //$NON-NLS-1$
 			assertNull(r);
-			
+
 			// Find non-case-sensitive
 			r= findReplaceDocumentAdapter.find(0, "TestPackage", true, false, false, false); //$NON-NLS-1$
 			assertEquals(r, result);
 			r= findReplaceDocumentAdapter.find(0, "testpackage", true, false, false, false); //$NON-NLS-1$
 			assertEquals(r, result);
-			
+
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
 	}
-	
+
 	public void testFindCaretInMiddleOfWord() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
-			
+
 			// Find forward when caret is inside word
 			IRegion r= findReplaceDocumentAdapter.find(12, "TestPackage", true, false, false, false); //$NON-NLS-1$
 			assertNull(r);
-			
+
 			// Find backward when caret is inside word
 			r= findReplaceDocumentAdapter.find(12, "TestPackage", false, false, false, false); //$NON-NLS-1$
 			assertNull(r);
-			
+
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
 	}
-	
+
 	public void testFindCaretAtWordStart() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
-			
+
 			// Find forward when caret is just before a word
 			IRegion r= findReplaceDocumentAdapter.find(8, "TestPackage", true, false, false, false); //$NON-NLS-1$
 			assertEquals(new Region(8, 11), r);
-			
+
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
 	}
-	
+
 	public void testFindCaretAtEndStart() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
-			
+
 			// Find forward when caret is just before a word
 			IRegion r= findReplaceDocumentAdapter.find(19, "TestPackage", false, false, false, false); //$NON-NLS-1$
 			assertEquals(new Region(8, 11), r);
-			
+
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
 	}
-	
+
 	/**
 	 * Test case for: https://bugs.eclipse.org/bugs/show_bug.cgi?id=74993
 	 */
@@ -144,49 +144,49 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		try {
 			IRegion r= findReplaceDocumentAdapter.find(12, "\\w+", false, false, false, true); //$NON-NLS-1$
 			assertEquals(new Region(6, 1), r);
-			
+
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
 	}
-	
+
 	public void testUTF8Pattern() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
 			IRegion result= new Region(153, 6);
-			
+
 			// Find case-sensitive
 			IRegion r= findReplaceDocumentAdapter.find(0, "Gel\u00F6st", true, true, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
 			r= findReplaceDocumentAdapter.find(0, "Gel\u00F6st", true, true, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
-			
+
 			// Find non-case-sensitive
 			r= findReplaceDocumentAdapter.find(0, "Gel\u00D6st", true, false, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
 			r= findReplaceDocumentAdapter.find(0, "Gel\u00D6st", true, false, false, false); //$NON-NLS-1$
 			assertEquals(result, r);
-			
+
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
 	}
-	
+
 	public void testReplace() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
 			findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
 			IRegion r= findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
 			assertNotNull(r);
-			
+
 			findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
 			r= findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
 			assertNotNull(r);
-			
+
 			findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
 			r= findReplaceDocumentAdapter.replace("private", false); //$NON-NLS-1$
 			assertNotNull(r);
-			
+
 			// Search again: there will be no match
 			findReplaceDocumentAdapter.find(0, "public", true, true, false, false); //$NON-NLS-1$
 			try {
@@ -194,7 +194,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			} catch (IllegalStateException e) {
 				assertTrue(true);
 			}
-			
+
 			String text=
 				"package TestPackage;\n" + //$NON-NLS-1$
 				"/*\n" + //$NON-NLS-1$
@@ -210,12 +210,12 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 				"	}\n" + //$NON-NLS-1$
 				"// Gel\u00f6st"; //$NON-NLS-1$S
 			assertEquals(text, fDocument.get());
-			
+
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
 	}
-	
+
 	public void _testRegexReplace() throws Exception {
 		fDocument.set(
 				"UnixWindowsMacInferred\n" +
@@ -227,101 +227,101 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		regexReplace("(M)ac", "\\0\\r", findReplaceDocumentAdapter);
 		regexReplace("(Inferred)", "\\1\\R", findReplaceDocumentAdapter);
 		regexReplace("Chars", "\\\\, \\xF6, \\u00F6, \\t, \\n, \\r, \\f, \\a, \\e, \\cF", findReplaceDocumentAdapter);
-			
+
 		String text= "Unix\nWindows\r\nMac\rInferred\n\n\\, \u00F6, \u00F6, \t, \n, \r, \f, \u0007, \u001B, \u0006";
 		assertEquals(text, fDocument.get());
 	}
-	
+
 	public void testRegexReplace2() throws Exception {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		
+
 		fDocument.set("foo");
 		regexReplace("foo", "\\00", findReplaceDocumentAdapter);
 		assertEquals("foo0", fDocument.get());
-		
+
 		fDocument.set("foo");
 		regexReplace("foo", "\\010", findReplaceDocumentAdapter);
 		assertEquals("foo10", fDocument.get());
-		
+
 		fDocument.set("foo");
 		regexReplace("foo", "$00", findReplaceDocumentAdapter);
 		assertEquals("foo0", fDocument.get());
-		
+
 		fDocument.set("foo");
 		regexReplace("foo", "$010", findReplaceDocumentAdapter);
 		assertEquals("foo10", fDocument.get());
 	}
-	
+
 	public void testRegexReplace3() throws Exception {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		
+
 		fDocument.set("foo");
 		regexReplace("(f)oo", "\\10", findReplaceDocumentAdapter);
 		assertEquals("f0", fDocument.get());
-		
+
 		fDocument.set("foo");
 		regexReplace("(f)oo", "$10", findReplaceDocumentAdapter);
 		assertEquals("f0", fDocument.get());
 	}
-	
+
 	/*
 	 * @since 3.4
 	 */
 	public void testRegexRetainCase() throws Exception {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		
+
 		fDocument.set("foo");
 		regexReplace("foo", "xyz\\Cbar\\Cfar", findReplaceDocumentAdapter);
 		assertEquals("xyzbarfar", fDocument.get());
-		
+
 		fDocument.set("FOO");
 		regexReplace("FOO", "xyz\\Cbar\\Cfar", findReplaceDocumentAdapter);
 		assertEquals("xyzBARFAR", fDocument.get());
-		
+
 		fDocument.set("Foo");
 		regexReplace("Foo", "xyz\\Cbar\\Cfar", findReplaceDocumentAdapter);
 		assertEquals("xyzBarFar", fDocument.get());
-		
+
 		/* Current behavior - may seem strange but it's expected
 		 * Retain case does not apply inside groups for now.
 		 */
 		fDocument.set("Foox");
 		regexReplace("F(oo)x", "\\C$1", findReplaceDocumentAdapter);
 		assertEquals("oo", fDocument.get());
-		
+
 		fDocument.set("Foo");
 		regexReplace("Foo", "xyz\\Cna\\u00EFve\\xFF\\C\\xFF", findReplaceDocumentAdapter);
 		assertEquals("xyzNa\u00EFve\u00FF\u0178", fDocument.get());
-		
+
 		fDocument.set("FOO");
 		regexReplace("FOO", "xyz\\Cna\\u00EFve\\xFF", findReplaceDocumentAdapter);
 		assertEquals("xyzNA\u00CFVE\u0178", fDocument.get());
 	}
-	
+
 	private void regexReplace(String find, String replace, FindReplaceDocumentAdapter findReplaceDocumentAdapter) throws BadLocationException {
 		findReplaceDocumentAdapter.find(0, find, true, true, false, true);
 		IRegion r= findReplaceDocumentAdapter.replace(replace, true);
 		assertNotNull(r);
 	}
-	
+
 	public void testRegexFindLinebreak() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "Unix\nWindows\r\nMac\rEnd";
 		fDocument.set(contents);
-		
+
 		int n= contents.indexOf("\n");
 		int rn= contents.indexOf("\r\n");
 		int r= contents.indexOf("\rEnd");
-		
+
 		IRegion region= adapter.find(0, "\\R", true, false, false, true);
 		assertEquals(new Region(n, 1), region);
-		
+
 		region= adapter.find(n + 1, "\\R", true, false, false, true);
 		assertEquals(new Region(rn, 2), region);
-		
+
 		region= adapter.find(rn + 2, "\\R", true, false, false, true);
 		assertEquals(new Region(r, 1), region);
-		
+
 		region= adapter.find(r + 1, "\\R", true, false, false, true);
 		assertNull(region);
 	}
@@ -346,45 +346,45 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		}
 		fail();
 	}
-	
+
 	public void _testRegexFindLinebreak2() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "+[\\R]\\R\r\n";
 		fDocument.set(contents);
-		
+
 		int n= contents.indexOf("[");
 		int rn= contents.indexOf("\r\n");
-		
+
 		IRegion region= adapter.find(0, "[a-zA-Z\\t{\\\\R}]*\\{?\\R", true, false, false, true);
 		assertEquals(new Region(0, n - 1), region);
-		
+
 		region= adapter.find(n, "\\Q[\\R]\\R\\E{0,1}(\\R)", true, false, false, true);
 		assertEquals(new Region(n, rn + 2 - n), region);
 		adapter.replace("Win\\1$1", true);
 		assertEquals("+Win\r\n\r\n", fDocument.get());
 	}
-	
+
 	public void testRegexFindLinebreak3() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "One\r\nTwo\r\n\r\nEnd";
 		fDocument.set(contents);
-		
+
 		int two= contents.indexOf("Two");
 		int end= contents.indexOf("End");
-		
+
 		IRegion region= adapter.find(0, "[a-zA-Z]+\\R", true, false, false, true);
 		assertEquals(new Region(0, two), region);
 		region= adapter.find(two, "[a-zA-Z]+\\R", true, false, false, true);
 		assertEquals(new Region(two, 3 + 2), region);
-		
+
 		region= adapter.find(0, "[a-zA-Z]+\\R{2}", true, false, false, true);
 		assertEquals(new Region(two, end - two), region);
 	}
-	
+
 	public void testRegexFindLinebreakIllegal() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		fDocument.set("\n");
-		
+
 		IRegion region= null;
 		try {
 			region= adapter.find(0, "[\\R]", true, false, false, true);
@@ -392,14 +392,14 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			//expected
 		}
 		assertNull(region);
-		
+
 		try {
 			region= adapter.find(0, "[\\s&&[^\\R]]", true, false, false, true);
 		} catch (PatternSyntaxException e) {
 			//expected
 		}
 		assertNull(region);
-		
+
 		try {
 			region= adapter.find(0, "\\p{\\R}", true, false, false, true);
 		} catch (PatternSyntaxException e) {
@@ -417,7 +417,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
-		
+
 		findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
 			findReplaceDocumentAdapter.replace("TestPackage", true); //$NON-NLS-1$
@@ -427,18 +427,18 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			Assert.assertTrue(false);
 		}
 	}
-	
+
 	public void testRegexFindStackOverflow_fail() throws Exception {
 		// test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=102699
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
-		
+
 		int len= 100000;
 		char[] chars= new char[len];
 		Arrays.fill(chars, '\n');
 		chars[0]= '{';
 		chars[len - 1]= '}';
 		fDocument.set(new String(chars));
-		
+
 		try {
 			adapter.find(0, "\\{(.|[\\r\\n])*\\}", true, false, false, true);
 		} catch (PatternSyntaxException ex) {

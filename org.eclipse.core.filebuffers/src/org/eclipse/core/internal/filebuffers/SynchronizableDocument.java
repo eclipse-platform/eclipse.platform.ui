@@ -28,7 +28,7 @@ import org.eclipse.jface.text.Position;
  * <p>
  * Initially no locking takes place.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class SynchronizableDocument extends Document implements ISynchronizable {
@@ -51,7 +51,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated since 3.1. Use
 	 *             {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)}
 	 *             instead.
@@ -69,7 +69,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.1, replaced by
 	 *             {@link IDocumentExtension4#stopRewriteSession(DocumentRewriteSession)}
 	 */
@@ -83,10 +83,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			super.stopSequentialRewrite();
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#startRewriteSession(org.eclipse.jface.text.DocumentRewriteSessionType)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public DocumentRewriteSession startRewriteSession(DocumentRewriteSessionType sessionType) {
@@ -101,7 +101,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#stopRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public void stopRewriteSession(DocumentRewriteSession session) {
@@ -281,7 +281,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#computePartitioning(java.lang.String, int, int, boolean)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public ITypedRegion[] computePartitioning(String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException, BadPartitioningException {
@@ -296,7 +296,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getLineDelimiter(int)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public String getLineDelimiter(int line) throws BadLocationException {
@@ -311,7 +311,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getDefaultLineDelimiter()
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public String getDefaultLineDelimiter() {
@@ -323,10 +323,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return super.getDefaultLineDelimiter();
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getLineInformation(int)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public IRegion getLineInformation(int line) throws BadLocationException {
@@ -341,7 +341,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getLineInformationOfOffset(int)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public IRegion getLineInformationOfOffset(int offset) throws BadLocationException {
@@ -356,7 +356,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getLineLength(int)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public int getLineLength(int line) throws BadLocationException {
@@ -371,7 +371,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getLineOffset(int)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public int getLineOffset(int line) throws BadLocationException {
@@ -386,7 +386,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getLineOfOffset(int)
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public int getLineOfOffset(int pos) throws BadLocationException {

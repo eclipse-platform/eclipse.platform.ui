@@ -264,7 +264,7 @@ public class PatternRule implements IPredicateRule {
 			}
 			readCount++;
 		}
-		
+
 		if (fBreaksOnEOF)
 			return true;
 

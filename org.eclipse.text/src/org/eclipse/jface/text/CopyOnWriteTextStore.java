@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -48,7 +48,7 @@ public class CopyOnWriteTextStore implements ITextStore {
 
 		/**
 		 * Create a text store with initial content.
-		 * 
+		 *
 		 * @param text the initial content
 		 */
 		private StringTextStore(String text) {
@@ -103,7 +103,7 @@ public class CopyOnWriteTextStore implements ITextStore {
 	/**
 	 * Creates an empty text store. The given text store will be used upon first modification
 	 * attempt.
-	 * 
+	 *
 	 * @param modifiableTextStore a modifiable <code>ITextStore</code> instance, may not be
 	 *            <code>null</code>
 	 */

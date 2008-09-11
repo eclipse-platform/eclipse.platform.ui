@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.internal.text.revisions.RevisionPainter;
+import org.eclipse.jface.internal.text.source.DiffPainter;
+import org.eclipse.jface.viewers.ISelectionProvider;
+
 import org.eclipse.jface.text.revisions.IRevisionListener;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.RevisionInformation;
-
-import org.eclipse.jface.internal.text.revisions.RevisionPainter;
-import org.eclipse.jface.internal.text.source.DiffPainter;
-import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
  * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
@@ -39,13 +39,13 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	private boolean fCharacterDisplay;
 	/**
 	 * The revision painter strategy.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private final RevisionPainter fRevisionPainter;
-	/** 
+	/**
 	 * The diff information painter strategy.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private final DiffPainter fDiffPainter;
@@ -65,7 +65,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		fRevisionPainter= new RevisionPainter(this, sharedColors);
 		fDiffPainter= new DiffPainter(this, sharedColors);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite)
 	 */
@@ -75,7 +75,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		fDiffPainter.setParentRuler(parentRuler);
 		return control;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
 	 */
@@ -102,7 +102,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		layout(true);
 		postRedraw();
 	}
-	
+
 	private void setAnnotationModel(IAnnotationModel model) {
 		if (fAnnotationModel != model)
 			fAnnotationModel= model;
@@ -177,7 +177,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#doPaint(org.eclipse.swt.graphics.GC)
 	 */
@@ -193,7 +193,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		if (fShowNumbers || fCharacterDisplay)
 			super.doPaint(gc, visibleLines);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
 	 */
@@ -243,7 +243,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	public void setDeletedColor(Color deletedColor) {
 		fDiffPainter.setDeletedColor(deletedColor);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumn#setRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation)
 	 */
@@ -273,7 +273,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 
 	/**
 	 * Sets the line number display mode.
-	 * 
+	 *
 	 * @param showNumbers <code>true</code> to show numbers, <code>false</code> to only show
 	 *        diff / revision info.
 	 * @since 3.3
@@ -299,7 +299,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
     /**
 	 * Returns <code>true</code> if the ruler is showing line numbers, <code>false</code>
 	 * otherwise
-	 * 
+	 *
 	 * @return <code>true</code> if line numbers are shown, <code>false</code> otherwise
 	 * @since 3.3
 	 */
@@ -310,7 +310,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	/**
 	 * Returns <code>true</code> if the ruler is showing revision information, <code>false</code>
 	 * otherwise
-	 * 
+	 *
 	 * @return <code>true</code> if revision information is shown, <code>false</code> otherwise
 	 * @since 3.3
 	 */
@@ -321,7 +321,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	/**
 	 * Returns <code>true</code> if the ruler is showing change information, <code>false</code>
 	 * otherwise
-	 * 
+	 *
 	 * @return <code>true</code> if change information is shown, <code>false</code> otherwise
 	 * @since 3.3
 	 */
@@ -368,7 +368,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	public void removeRevisionListener(IRevisionListener listener) {
 		fRevisionPainter.removeRevisionListener(listener);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#handleDispose()
 	 * @since 3.3

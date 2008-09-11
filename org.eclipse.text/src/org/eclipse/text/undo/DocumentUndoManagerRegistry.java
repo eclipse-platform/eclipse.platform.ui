@@ -34,7 +34,7 @@ import org.eclipse.jface.text.IDocument;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class DocumentUndoManagerRegistry {
-	
+
 	private static final class Record {
 		public Record(IDocument document) {
 			count= 0;
@@ -43,14 +43,14 @@ public final class DocumentUndoManagerRegistry {
 		private int count;
 		private IDocumentUndoManager undoManager;
 	}
-	
+
 	private static Map fgFactory= new HashMap();
-	
+
 	private DocumentUndoManagerRegistry() {
-		// 	Do not instantiate	
+		// 	Do not instantiate
 	}
 
-	
+
 	/**
 	 * Connects the file at the given location to this manager. After that call
 	 * successfully completed it is guaranteed that each call to <code>getFileBuffer</code>
@@ -81,7 +81,7 @@ public final class DocumentUndoManagerRegistry {
 		record.count--;
 		if (record.count == 0)
 			fgFactory.remove(document);
-			
+
 	}
 
 	/**

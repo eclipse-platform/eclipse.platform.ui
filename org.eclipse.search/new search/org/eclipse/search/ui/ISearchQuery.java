@@ -23,17 +23,17 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface ISearchQuery {
 	/**
 	 * This is the method that actually does the work, i.e. finds the results of
 	 * the search query.
-	 * 
+	 *
 	 * @param monitor the progress monitor to be used
-	 * 
-	 * @return the status after completion of the search job. 
+	 *
+	 * @return the status after completion of the search job.
 	 * @throws OperationCanceledException Thrown when the search query has been canceled.
 	 */
 	IStatus run(IProgressMonitor monitor) throws OperationCanceledException;
@@ -43,14 +43,14 @@ public interface ISearchQuery {
 	 * the background. Note that progress notification (for example, the number
 	 * of matches found) should be done via the progress monitor passed into the
 	 * <code>run(IProgressMonitor)</code> method
-	 * 
+	 *
 	 * @return the user readable label of this query
 	 */
 	String getLabel();
 	/**
 	 * Returns whether the query can be run more than once. Some queries may
 	 * depend on transient information and return <code>false</code>.
-	 * 
+	 *
 	 * @return whether this query can be run more than once
 	 */
 	boolean canRerun();
@@ -58,14 +58,14 @@ public interface ISearchQuery {
 	 * Returns whether this query can be run in the background. Note that
 	 * queries must do proper locking when they are run in the background (e.g.
 	 * get the appropriate workspace locks).
-	 * 
+	 *
 	 * @return whether this query can be run in the background
 	 */
 	boolean canRunInBackground();
 	/**
 	 * Returns the search result associated with this query. This method can be
 	 * called before run is called.
-	 * 
+	 *
 	 * @return this query's search result
 	 */
 	ISearchResult getSearchResult();

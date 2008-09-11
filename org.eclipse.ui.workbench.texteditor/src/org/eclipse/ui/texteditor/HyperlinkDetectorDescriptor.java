@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class HyperlinkDetectorDescriptor {
-	
+
 	public static final String STATE_MASK_POSTFIX= "_stateMask"; //$NON-NLS-1$
 
 	private static final String HYPERLINK_DETECTORS_EXTENSION_POINT= "org.eclipse.ui.workbench.texteditor.hyperlinkDetectors"; //$NON-NLS-1$
@@ -73,8 +73,8 @@ public final class HyperlinkDetectorDescriptor {
 
 	/**
 	 * Creates a new descriptor from the given configuration element.
-	 * 
-	 * @param element the configuration element 
+	 *
+	 * @param element the configuration element
 	 */
 	private HyperlinkDetectorDescriptor(IConfigurationElement element) {
 		Assert.isNotNull(element);
@@ -83,14 +83,14 @@ public final class HyperlinkDetectorDescriptor {
 
 	/**
 	 * Creates a new {@link IHyperlinkDetector}.
-	 * 
-	 * @return the hyperlink detector or <code>null</code> if the plug-in isn't loaded yet 
+	 *
+	 * @return the hyperlink detector or <code>null</code> if the plug-in isn't loaded yet
 	 * @throws CoreException if a failure occurred during creation
 	 */
 	public AbstractHyperlinkDetector createHyperlinkDetector() throws CoreException {
 		final Throwable[] exception= new Throwable[1];
 		final AbstractHyperlinkDetector[] result= new AbstractHyperlinkDetector[1];
-		String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetector_couldNotCreate_message, new String[] { getId(), fElement.getContributor().getName() }); 
+		String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetector_couldNotCreate_message, new String[] { getId(), fElement.getContributor().getName() });
 		ISafeRunnable code= new SafeRunnable(message) {
 			/*
 			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
@@ -108,17 +108,17 @@ public final class HyperlinkDetectorDescriptor {
 				super.handleException(ex);
 				exception[0]= ex;
 			}
-			
+
 		};
-		
+
 		SafeRunner.run(code);
-		
+
 		if (exception[0] == null)
 			return result[0];
 		throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, exception[0]));
-		
+
 	}
-	
+
 	private boolean isValid(HyperlinkDetectorTargetDescriptor[] targets) {
 		if (getId() == null || getName() == null || getTargetId() == null)
 			return false;
@@ -138,8 +138,8 @@ public final class HyperlinkDetectorDescriptor {
 
 	/**
 	 * Returns the hyperlink detector's id.
-	 * 
-	 * @return the hyperlink detector's id 
+	 *
+	 * @return the hyperlink detector's id
 	 */
 	public String getId() {
 		return fElement.getAttribute(ID_ATTRIBUTE);
@@ -147,26 +147,26 @@ public final class HyperlinkDetectorDescriptor {
 
 	/**
 	 * Returns the hyperlink detector's name.
-	 * 
-	 * @return the hyperlink detector's name 
+	 *
+	 * @return the hyperlink detector's name
 	 */
 	public String getName() {
 		return fElement.getAttribute(NAME_ATTRIBUTE);
 	}
-	
+
 	/**
 	 * Returns the hyperlink detector's target descriptor.
-	 * 
-	 * @return the hyperlink detector's target descriptor 
+	 *
+	 * @return the hyperlink detector's target descriptor
 	 */
 	public HyperlinkDetectorTargetDescriptor getTarget() {
 		return fTarget;
 	}
-	
+
 	/**
 	 * Returns the hyperlink detector's target id.
-	 * 
-	 * @return the hyperlink detector's target id 
+	 *
+	 * @return the hyperlink detector's target id
 	 */
 	public String getTargetId() {
 		return fElement.getAttribute(TARGET_ID_ATTRIBUTE);

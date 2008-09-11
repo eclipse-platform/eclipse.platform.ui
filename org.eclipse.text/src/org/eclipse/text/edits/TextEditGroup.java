@@ -98,7 +98,7 @@ public class TextEditGroup {
 	public void addTextEdit(TextEdit edit) {
 		fEdits.add(edit);
 	}
-	
+
 	/**
 	 * Removes the given {@link TextEdit} from this group.
 	 *
@@ -119,7 +119,7 @@ public class TextEditGroup {
 	  fEdits.clear();
 	}
 
-	
+
 
 	/**
 	 * Returns <code>true</code> if the list of managed

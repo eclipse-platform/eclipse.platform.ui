@@ -26,9 +26,9 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 	private String fPageId;
 
 	public OpenSearchDialogAction() {
-		super(SearchMessages.OpenSearchDialogAction_label); 
+		super(SearchMessages.OpenSearchDialogAction_label);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_TOOL, SearchPluginImages.IMG_TOOL_SEARCH);
-		setToolTipText(SearchMessages.OpenSearchDialogAction_tooltip); 
+		setToolTipText(SearchMessages.OpenSearchDialogAction_tooltip);
 	}
 
 	public OpenSearchDialogAction(IWorkbenchWindow window, String pageId) {

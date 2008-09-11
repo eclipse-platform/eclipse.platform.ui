@@ -17,7 +17,7 @@ package org.eclipse.jface.text;
  * Clients usually instantiate and configure this class but
  * can also extend it in their own subclass.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class TabsToSpacesConverter implements IAutoEditStrategy {

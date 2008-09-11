@@ -36,6 +36,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.keys.IBindingService;
+
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 
@@ -212,7 +213,7 @@ public class ContentAssistHandler {
 		IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		if (handlerService == null)
 			return;
-		
+
 		IHandler handler= new AbstractHandler() {
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				if (ContentAssistHandler.this.isEnabled()) // don't call AbstractHandler#isEnabled()!

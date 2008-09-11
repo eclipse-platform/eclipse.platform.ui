@@ -22,6 +22,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
 import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffExtensionsRegistry;
+
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -105,7 +106,7 @@ public class QuickDiff {
 				}
 			}
 		}
-		
+
 		for (ListIterator iter= descs.listIterator(descs.size()); iter.hasPrevious();) {
 			ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) iter.previous();
 			IQuickDiffReferenceProvider provider= desc.createProvider();
@@ -143,7 +144,7 @@ public class QuickDiff {
 	 * Returns the identifier of the quick diff provider installed with the given diff annotation
 	 * model, or the empty string if it is not a diff annotation model or has no configured diff
 	 * provider.
-	 * 
+	 *
 	 * @param differ a diff annotation model
 	 * @return the reference provider id, or the empty string for none
 	 * @since 3.2

@@ -34,7 +34,7 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  * When this view notices an editor being activated, it uses the Eclipse adapter mechanism to get
  * its {@link ITemplatesPage}. Hence, editors that want to provide a templates page need to provide
  * such an adapter:
- * 
+ *
  * <pre>
  * Object getAdapter() {
  * 	...
@@ -77,7 +77,7 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  * <p>
  * This class is not intended to be instantiated or subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.4
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -129,7 +129,7 @@ public final class TemplatesView extends PageBookView {
 			page= (ITemplatesPage)Platform.getAdapterManager().getAdapter(part, ITemplatesPage.class);
 		if (page == null)
 			return null; // There is no template page
-		
+
 		initPage(page);
 		page.createControl(getPageBook());
 		return new PageRec(part, page);

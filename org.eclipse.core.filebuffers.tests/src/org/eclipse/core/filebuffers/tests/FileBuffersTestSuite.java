@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * Test Suite for org.eclipse.core.filebuffers.
- * 
+ *
  * @since 3.0
  */
 public class FileBuffersTestSuite {
@@ -34,12 +34,12 @@ public class FileBuffersTestSuite {
 		suite.addTestSuite(FileBuffersForNonExistingExternalFiles.class);
 		suite.addTestSuite(FileBuffersForNonExistingWorkspaceFiles.class);
 		suite.addTestSuite(FileBuffersForNonAccessibleWorkspaceFiles.class);
-		
+
 		suite.addTestSuite(FileStoreFileBuffersForWorkspaceFiles.class);
 		suite.addTestSuite(FileStoreFileBuffersForExternalFiles.class);
 		suite.addTestSuite(FileStoreFileBuffersForNonExistingExternalFiles.class);
 		suite.addTestSuite(FileStoreFileBuffersForNonExistingWorkspaceFiles.class);
-		
+
 		suite.addTestSuite(TextFileManagerDocCreationTests.class);
 		suite.addTestSuite(ResourceTextFileManagerDocCreationTests.class);
 		//$JUnit-END$

@@ -45,7 +45,7 @@ public interface IFormattingStrategyExtension {
 
 	/**
 	 * Informs the strategy about the start of a formatting process in which it will participate.
-	 * 
+	 *
 	 * @param context the formatting context used in the corresponding formatting process.
 	 */
 	void formatterStarts(IFormattingContext context);

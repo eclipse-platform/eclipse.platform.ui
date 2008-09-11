@@ -17,7 +17,7 @@ package org.eclipse.jface.text.hyperlink;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public interface IHyperlinkDetectorExtension {

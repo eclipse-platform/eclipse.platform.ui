@@ -22,9 +22,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * is allowed.
  * <p>
  * In the read-only state a {@link UnsupportedOperationException}
- * is thrown by methods that modify the preference. 
+ * is thrown by methods that modify the preference.
  * </p>
- * 
+ *
  * @since 3.2
  */
 class ReadOnlyAnnotationPreference extends AnnotationPreference {
@@ -239,5 +239,5 @@ class ReadOnlyAnnotationPreference extends AnnotationPreference {
 	public void markReadOnly() {
 		fIsReadOnly= true;
 	}
-	
+
 }

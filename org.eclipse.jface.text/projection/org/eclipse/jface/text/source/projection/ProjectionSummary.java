@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source.projection;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -166,7 +166,7 @@ class ProjectionSummary {
 
 
 			removeSummaries(monitor);
-			
+
 			if (isCanceled(monitor))
 				return;
 

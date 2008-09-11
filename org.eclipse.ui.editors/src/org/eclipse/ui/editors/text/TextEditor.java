@@ -21,6 +21,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 
 import org.eclipse.ui.IEditorInput;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -186,7 +187,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		if (fEncodingSupport != null)
 			fEncodingSupport.reset();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 * @since 3.3
@@ -194,21 +195,21 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		if (event.getProperty().equals(SpellingService.PREFERENCE_SPELLING_ENABLED)) {
 			ISourceViewer viewer= getSourceViewer();
-			
+
 			if (!(viewer instanceof ISourceViewerExtension2))
 				return; // cannot unconfigure - do nothing
 
 			// XXX: this is pretty heavy-weight
 			((ISourceViewerExtension2)viewer).unconfigure();
 			viewer.configure(getSourceViewerConfiguration());
-			
+
 			if (Boolean.FALSE.equals(event.getNewValue()))
 				SpellingProblem.removeAll(getSourceViewer(), null);
-			
+
 			IAction quickAssistAction= getAction(ITextEditorActionConstants.QUICK_ASSIST);
 			if (quickAssistAction instanceof IUpdate)
 				((IUpdate)quickAssistAction).update();
-			
+
 			return;
 		}
 		super.handlePreferenceStoreChanged(event);

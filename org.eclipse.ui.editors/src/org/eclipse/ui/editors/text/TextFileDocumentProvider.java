@@ -117,7 +117,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		/**
 		 * The actual functionality of this operation.
-		 * 
+		 *
 		 * @param monitor the progress monitor
 		 * @throws CoreException if the execution fails
 		 */
@@ -186,13 +186,13 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public Object fElement;
 		public int fCount;
 		public ITextFileBuffer fTextFileBuffer;
-		
+
 		/**
 		 * The file buffer location kind.
 		 * @since 3.4
 		 */
 		public LocationKind fTextFileBufferLocationKind;
-		
+
 		public IAnnotationModel fModel;
 		public boolean fCachedReadOnlyState;
 	}
@@ -545,12 +545,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (!(element instanceof IAdaptable))
 			return null;
 		IAdaptable adaptable= (IAdaptable) element;
-		
+
 		IFile file= null;
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		ITextFileBuffer fileBuffer= null;
 		LocationKind locationKind= null;
-		
+
 		file= (IFile)adaptable.getAdapter(IFile.class);
 		if (file != null) {
 			IPath location= file.getFullPath();
@@ -602,14 +602,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	/**
 	 * Sets up the synchronization for the document
 	 * and the annotation mode.
-	 * 
+	 *
 	 * @param info the file info
 	 * @since 3.2
 	 */
 	protected void setUpSynchronization(FileInfo info) {
 		if (info == null || info.fTextFileBuffer == null)
 			return;
-		
+
 		IDocument document= info.fTextFileBuffer.getDocument();
 		IAnnotationModel model= info.fModel;
 
@@ -856,7 +856,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 */
 	protected void commitFileBuffer(IProgressMonitor monitor, FileInfo info, boolean overwrite) throws CoreException {
 		Assert.isNotNull(info);
-		
+
 		/* https://bugs.eclipse.org/bugs/show_bug.cgi?id=98327
 		 * Make sure file gets save in commit() if the underlying file has been deleted */
 		if (info.fElement instanceof IFileEditorInput) {
@@ -865,7 +865,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			if (!resource.isSynchronized(IResource.DEPTH_ZERO) && isDeleted(input))
 				info.fTextFileBuffer.setDirty(true);
 		}
-		
+
 		info.fTextFileBuffer.commit(monitor, overwrite);
 		if (info.fModel instanceof AbstractMarkerAnnotationModel) {
 			AbstractMarkerAnnotationModel model= (AbstractMarkerAnnotationModel) info.fModel;
@@ -1198,7 +1198,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			return info.fTextFileBuffer.isSynchronized();
 		return ((IDocumentProviderExtension3) getParentProvider()).isSynchronized(element);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
 	 * @since 3.2
@@ -1207,10 +1207,10 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		IStatus status= ex.getStatus();
 		if (status == null || status instanceof MultiStatus)
 			return false;
-		
+
 		if (status.getException() != null)
 			return false;
-		
+
 		return status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL;
 	}
 
@@ -1280,7 +1280,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	protected IFileStore getFileStore(FileInfo info)  {
 		return info.fTextFileBuffer.getFileStore();
 	}
-	
+
 	/**
 	 * Returns the system file denoted by the given info.
 	 *

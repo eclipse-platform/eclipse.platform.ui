@@ -24,14 +24,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * <p>
  * Implementors must have a zero-argument constructor so that they can be created
  * by {@link IConfigurationElement#createExecutableExtension(String)}.</p>
- * 
+ *
  * @since 3.3
  */
 public interface IContributedRulerColumn extends IVerticalRulerColumn {
 
 	/**
 	 * Returns the extension point descriptor of this ruler.
-	 * 
+	 *
 	 * @return descriptor the extension point descriptor of this ruler or <code>null</code> if called before {@link #columnCreated()}
 	 */
 	RulerColumnDescriptor getDescriptor();
@@ -41,7 +41,7 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 	 * <p>
 	 * <em>This method will be called by the framework and must not
 	 * be called by clients.</em></p>
-	 * 
+	 *
 	 * @param descriptor the extension point descriptor
 	 */
 	void setDescriptor(RulerColumnDescriptor descriptor);
@@ -51,14 +51,14 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 	 * <p>
 	 * <em>This method will be called by the framework and must not
 	 * be called by clients.</em></p>
-	 * 
+	 *
 	 * @param editor the editor targeted by this ruler instance
 	 */
 	void setEditor(ITextEditor editor);
 
 	/**
 	 * Returns the editor targeted by this ruler instance.
-	 * 
+	 *
 	 * @return the editor targeted by this ruler instance or <code>null</code> if called before {@link #columnCreated()}
 	 */
 	ITextEditor getEditor();
@@ -81,7 +81,7 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 	/**
 	 * Hook method called after a column has been removed from the {@link org.eclipse.jface.text.source.CompositeRuler}.
 	 * <p>
-	 * This happens when  
+	 * This happens when
 	 * <ul>
 	 * <li>the column is hidden by the user or programmatically</li>
 	 * <li>the editor is closed</li>

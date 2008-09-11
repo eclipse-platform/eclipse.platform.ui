@@ -35,7 +35,7 @@ public final class DocEquivalenceComparator implements IRangeComparator {
 	private final int fLines;
 
 	private boolean fSkip= false;
-	
+
 	public DocEquivalenceComparator(DocumentEquivalenceClass equivalenceClass, ILineRange range) {
 		fEquivalenceClass= equivalenceClass;
 		if (range == null) {
@@ -82,7 +82,7 @@ public final class DocEquivalenceComparator implements IRangeComparator {
 		}
 		return false;
 	}
-	
+
 	Hash getHash(int index) {
 		return fEquivalenceClass.getHash(fLineOffset + index);
 	}

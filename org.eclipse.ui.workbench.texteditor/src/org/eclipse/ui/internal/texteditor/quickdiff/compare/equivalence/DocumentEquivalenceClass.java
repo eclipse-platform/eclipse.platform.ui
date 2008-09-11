@@ -28,15 +28,15 @@ import org.eclipse.jface.text.IRegion;
 public final class DocumentEquivalenceClass {
 
 	private static final boolean DEBUG= false;
-	
+
 	private final ArrayList fHashes;
 	private IDocument fDocument;
 	private final IHashFunction fHashFunction;
-	
+
 	public DocumentEquivalenceClass(IDocument document) {
 		this(document, new DJBHashFunction());
 	}
-	
+
 	public DocumentEquivalenceClass(IDocument document, IHashFunction hashFunction) {
 		fDocument= document;
 		Object[] nulls= new Object[fDocument.getNumberOfLines()];
@@ -46,10 +46,10 @@ public final class DocumentEquivalenceClass {
 			throw new NullPointerException("hashFunction"); //$NON-NLS-1$
 		fHashFunction= hashFunction;
 	}
-	
+
 	/**
 	 * Returns the equivalence hash for line <code>line</code>.
-	 * 
+	 *
 	 * @param line the line for which to get the equivalent hash
 	 * @return the hash in the equivalence class defined by the hash
 	 *         function
@@ -71,13 +71,13 @@ public final class DocumentEquivalenceClass {
 		if (hash == null) {
 			if (fDocument == null)
 				throw new AssertionError("hash cannot be null after loadAndForget"); //$NON-NLS-1$
-			
+
 			IRegion lineRegion= fDocument.getLineInformation(line);
 			String lineContents= fDocument.get(lineRegion.getOffset(), lineRegion.getLength());
 			hash= fHashFunction.computeHash(lineContents);
 			fHashes.set(line, hash);
 		}
-		
+
 		return hash;
 	}
 
@@ -85,7 +85,7 @@ public final class DocumentEquivalenceClass {
 	 * Cleanses the lines affected by the document event from the
 	 * internal hash cache. Must be called before the document is
 	 * modified (in documentAboutToBeChanged).
-	 * 
+	 *
 	 * @param event the document event
 	 */
 	public void update(DocumentEvent event) {
@@ -97,16 +97,16 @@ public final class DocumentEquivalenceClass {
 			throw new ConcurrentModificationException();
 		}
 	}
-	
+
 	private void internalUpdate(DocumentEvent event) throws BadLocationException {
 		int linesBefore= fDocument.getNumberOfLines(event.getOffset(), event.getLength());
 		String text= event.getText();
 		int linesAfter= (text == null ? 0 : fDocument.computeNumberOfLines(text)) + 1;
 		int firstLine= fDocument.getLineOfOffset(event.getOffset());
-		
+
 		int delta= linesAfter - linesBefore;
 		int changed= Math.min(linesAfter, linesBefore);
-		
+
 		if (delta > 0) {
 			Object[] nulls= new Object[delta];
 			fHashes.addAll(firstLine + changed, Arrays.asList(nulls));
@@ -138,7 +138,7 @@ public final class DocumentEquivalenceClass {
 		int count= getCount();
 		for (int line= 0; line < count; line++)
 			getHash(line);
-		
+
 		fDocument= null;
 	}
 }

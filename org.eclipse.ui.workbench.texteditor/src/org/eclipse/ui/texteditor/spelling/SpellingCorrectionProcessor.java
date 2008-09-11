@@ -34,10 +34,10 @@ import org.eclipse.ui.internal.texteditor.spelling.NoCompletionsProposal;
  * @since 3.3
  */
 public final class SpellingCorrectionProcessor implements IQuickAssistProcessor {
-	
+
 
 	private static final ICompletionProposal[] fgNoSuggestionsProposal=  new ICompletionProposal[] { new NoCompletionsProposal() };
-	
+
 
 	/*
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
@@ -91,7 +91,7 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 		List proposals= new ArrayList();
 		for (int i= 0; i < spellingProblems.length; i++)
 			proposals.addAll(Arrays.asList(spellingProblems[i].getProposals(context)));
-		
+
 		return proposals;
 	}
 

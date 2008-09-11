@@ -74,7 +74,7 @@ public class ExtensionsRegistry {
 
 		/**
 		 * Return the id of the adapted content type.
-		 * 
+		 *
 		 * @return the id
 		 */
 		public String getId() {
@@ -263,7 +263,7 @@ public class ExtensionsRegistry {
 
 	/**
 	 * Returns a sharable document factory for the given file name or file extension.
-	 * 
+	 *
 	 * @param nameOrExtension the name or extension to be used for lookup
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
@@ -279,7 +279,7 @@ public class ExtensionsRegistry {
 
 	/**
 	 * Returns a sharable document factory for the given content types.
-	 * 
+	 *
 	 * @param contentTypes the content types used to find the factory
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
@@ -301,7 +301,7 @@ public class ExtensionsRegistry {
 	/**
 	 * Returns a sharable document factory for the given content types. This method considers the
 	 * base content types of the given set of content types.
-	 * 
+	 *
 	 * @param contentTypes the content types used to find the factory
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
@@ -480,7 +480,7 @@ public class ExtensionsRegistry {
 
 	/**
 	 * Returns the sharable document factory for the given location.
-	 * 
+	 *
 	 * @param location the location for which to looked up the factory
 	 * @param locationKind the kind of the given location
 	 * @return the sharable document factory
@@ -529,7 +529,7 @@ public class ExtensionsRegistry {
 		participants.toArray(result);
 		return result;
 	}
-	
+
 	/**
 	 * Returns the sharable annotation model factory for the given location.
 	 *
@@ -548,5 +548,5 @@ public class ExtensionsRegistry {
 			factory= getAnnotationModelFactory(WILDCARD);
 		return factory;
 	}
-	
+
 }

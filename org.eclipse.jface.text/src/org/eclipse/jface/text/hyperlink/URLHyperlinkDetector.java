@@ -37,7 +37,7 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 	 */
 	public URLHyperlinkDetector() {
 	}
-	
+
 	/**
 	 * Creates a new URL hyperlink detector.
 	 *
@@ -76,7 +76,7 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 		boolean startDoubleQuote= false;
 		int urlOffsetInLine= 0;
 		int urlLength= 0;
-		
+
 		int urlSeparatorOffset= line.indexOf("://"); //$NON-NLS-1$
 		while (urlSeparatorOffset >= 0) {
 
@@ -100,10 +100,10 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 			urlLength= tokenizer.nextToken().length() + 3 + urlSeparatorOffset - urlOffsetInLine;
 			if (offsetInLine >= urlOffsetInLine && offsetInLine <= urlOffsetInLine + urlLength)
 				break;
-		
+
 			urlSeparatorOffset= line.indexOf("://", urlSeparatorOffset + 1); //$NON-NLS-1$
 		}
-		
+
 		if (urlSeparatorOffset < 0)
 			return null;
 

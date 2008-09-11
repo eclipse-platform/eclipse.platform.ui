@@ -22,15 +22,15 @@ package org.eclipse.text.undo;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IDocumentUndoListener {
-	
+
 	/**
-	 * The document is involved in an undo-related change.  Notify listeners 
+	 * The document is involved in an undo-related change.  Notify listeners
 	 * with an event describing the change.
-	 * 
+	 *
 	 * @param event the document undo event that describes the particular notification
 	 */
 	void documentUndoNotification(DocumentUndoEvent event);

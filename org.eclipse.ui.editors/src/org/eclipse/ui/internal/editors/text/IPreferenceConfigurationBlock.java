@@ -81,7 +81,7 @@ interface IPreferenceConfigurationBlock {
 	 * It is up to the implementor to define whether it supports this and which
 	 * kind of data it accepts.
 	 * </p>
-	 * 
+	 *
 	 * @param data the data which is specified by each configuration block
 	 * @see PreferencePage#applyData(Object)
 	 * @since 3.4

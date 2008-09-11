@@ -36,7 +36,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 
 	private List fEvents= new ArrayList();
 	private PropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
-	
+
 	private static final String PROPERTY= "some.property";
 	private static final String VALUE= "8";
 	private static final String DEFAULT_VALUE= "4";
@@ -45,7 +45,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(ChainedPreferenceStoreTest.class);
 	}
-	
+
 	/**
 	 * [implementation] ChainedPreferenceStore
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=69419
@@ -55,11 +55,11 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		IPreferenceStore store2= new PreferenceStore();
 		IPreferenceStore chainedStore= new ChainedPreferenceStore(new IPreferenceStore[] { store1, store2 });
 		store2.setDefault(PROPERTY, DEFAULT_VALUE);
-		
+
 		chainedStore.addPropertyChangeListener(fPropertyChangeListener);
 		store1.firePropertyChangeEvent(PROPERTY, VALUE, DEFAULT_DEFAULT_VALUE); // simulated removal with newValue != null
 		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
-		
+
 		assertEquals(1, fEvents.size());
 		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
 		assertEquals(chainedStore, event.getSource());
@@ -67,7 +67,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		assertEquals(VALUE, event.getOldValue());
 		assertEquals(DEFAULT_VALUE, event.getNewValue());
 	}
-	
+
 	/**
 	 * Assertion failed in ChainedPreferenceStore.handlePropertyChangeEvent(..)
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=52827
@@ -76,11 +76,11 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		IPreferenceStore store1= new PreferenceStore();
 		IPreferenceStore store2= new PreferenceStore();
 		IPreferenceStore chainedStore= new ChainedPreferenceStore(new IPreferenceStore[] { store1, store2 });
-		
+
 		chainedStore.addPropertyChangeListener(fPropertyChangeListener);
 		store1.firePropertyChangeEvent(PROPERTY, VALUE, DEFAULT_DEFAULT_VALUE); // simulated removal with newValue != null
 		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
-		
+
 		assertEquals(1, fEvents.size());
 		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
 		assertEquals(store1, event.getSource());
@@ -97,11 +97,11 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		IPreferenceStore store2= new PreferenceStore();
 		IPreferenceStore chainedStore= new ChainedPreferenceStore(new IPreferenceStore[] { store1, store2 });
 		store1.setValue(PROPERTY, VALUE);
-		
+
 		chainedStore.addPropertyChangeListener(fPropertyChangeListener);
 		store1.firePropertyChangeEvent(PROPERTY, DEFAULT_VALUE, null); // simulated change with newValue == null
 		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
-		
+
 		assertEquals(1, fEvents.size());
 		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
 		assertEquals(store1, event.getSource());
@@ -118,11 +118,11 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		IPreferenceStore store2= new PreferenceStore();
 		IPreferenceStore chainedStore= new ChainedPreferenceStore(new IPreferenceStore[] { store1, store2 });
 		store2.setDefault(PROPERTY, DEFAULT_VALUE);
-		
+
 		chainedStore.addPropertyChangeListener(fPropertyChangeListener);
 		store1.firePropertyChangeEvent(PROPERTY, null, null); // simulated removal with oldValue == null
 		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
-		
+
 		assertEquals(1, fEvents.size());
 		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
 		assertEquals(chainedStore, event.getSource());
@@ -130,7 +130,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		assertEquals(null, event.getOldValue());
 		assertEquals(DEFAULT_VALUE, event.getNewValue());
 	}
-	
+
 //	/**
 //	 * Case where the old value cannot be determined. (Not handled by the current implementation.)
 //	 */
@@ -139,11 +139,11 @@ public class ChainedPreferenceStoreTest extends TestCase {
 //		IPreferenceStore store2= new PreferenceStore();
 //		IPreferenceStore chainedStore= new ChainedPreferenceStore(new IPreferenceStore[] { store1, store2 });
 //		store2.setDefault(PROPERTY, DEFAULT_VALUE);
-//		
+//
 //		chainedStore.addPropertyChangeListener(fPropertyChangeListener);
 //		store1.setValue(PROPERTY, VALUE);
 //		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
-//		
+//
 //		assertEquals(1, fEvents.size());
 //		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
 //		assertEquals(PROPERTY, event.getProperty());

@@ -130,10 +130,10 @@ public class AddMarkerAction extends TextEditorAction {
 			if (!askForLabel(attributes))
 				return;
 		}
-		
+
 		String name= getToolTipText();
 		name= name == null ? TextEditorMessages.AddMarkerAction_addMarker : name;
-		
+
 		final Shell shell= getTextEditor().getSite().getShell();
 		IAdaptable context= new IAdaptable() {
 			public Object getAdapter(Class adapter) {

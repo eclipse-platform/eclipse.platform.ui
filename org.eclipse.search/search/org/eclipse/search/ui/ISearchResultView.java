@@ -34,19 +34,19 @@ import org.eclipse.ui.IViewPart;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages. 
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages.
  * To access the parent view, {@link org.eclipse.search.ui.ISearchResultViewPart} is used instead.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISearchResultView extends IViewPart {
 
 	/**
 	 * Informs the view that a search has started.
-	 * Provides all necessary information to create an entry in the search result 
+	 * Provides all necessary information to create an entry in the search result
 	 * view.
 	 * If every match should show up in the search result view then the match
-	 * itself can be used as key.	 
+	 * itself can be used as key.
 	 *
  	 * @param	groupFactory			the action group factory
   	 *								  		or <code>null</code> if no factory is provided.
@@ -65,7 +65,7 @@ public interface ISearchResultView extends IViewPart {
 	 * @param	gotoAction				the action used by the view to go to a marker
 	 * @param	groupByKeyComputer		the computer used by the view to compute the key for a marker
 	 * @param	operation				the runnable used by the view to repeat the search
-	 * 
+	 *
 	 * @see IActionGroupFactory
  	 * @since 2.0
 	 */
@@ -90,10 +90,10 @@ public interface ISearchResultView extends IViewPart {
 
 	/**
 	 * Informs the view that a search has started.
-	 * Provides all necessary information to create an entry in the search result 
+	 * Provides all necessary information to create an entry in the search result
 	 * view.
 	 * If every match should show up in the search result view then the match
-	 * itself can be used as key.	 
+	 * itself can be used as key.
 	 *
 	 * @param	pageId				the id of the search page which started the search
  	 * @param	label				the label to be used for this search occurrence
@@ -121,10 +121,10 @@ public interface ISearchResultView extends IViewPart {
 
 	/**
 	 * Informs the view that a search has started.
-	 * Provides all necessary information to create an entry in the search result 
+	 * Provides all necessary information to create an entry in the search result
 	 * view.
 	 * If every match should show up in the search result view then the match
-	 * itself can be used as key.	 
+	 * itself can be used as key.
 	 *
 	 * @param	pageId					the id of the search page which started the search
  	 * @param	singularLabel			the label to be used for this search occurrence

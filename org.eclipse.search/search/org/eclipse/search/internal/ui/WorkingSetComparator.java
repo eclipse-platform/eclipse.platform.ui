@@ -10,22 +10,23 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
-import com.ibm.icu.text.Collator;
 import java.util.Comparator;
+
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.ui.IWorkingSet;
 
 public class WorkingSetComparator implements Comparator {
 
 	private Collator fCollator= Collator.getInstance();
-	
+
 	/*
 	 * @see Comparator#compare(Object, Object)
 	 */
 	public int compare(Object o1, Object o2) {
 		String name1= null;
 		String name2= null;
-		
+
 		if (o1 instanceof IWorkingSet)
 			name1= ((IWorkingSet)o1).getLabel();
 

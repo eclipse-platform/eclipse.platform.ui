@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * 
+ *
  * @see CopyOnWriteTextStore for a copy-on-write text store wrapper
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -50,7 +50,7 @@ public class GapTextStore implements ITextStore {
 	/**
 	 * The multiplier to compute the array size from the content length
 	 * (1&nbsp;&lt;=&nbsp;fSizeMultiplier&nbsp;&lt;=&nbsp;2).
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private final float fSizeMultiplier;
@@ -70,7 +70,7 @@ public class GapTextStore implements ITextStore {
 
 	/**
 	 * Creates a new empty text store using the specified low and high watermarks.
-	 * 
+	 *
 	 * @param lowWatermark unused - at the lower bound, the array is only resized when the content
 	 *        does not fit
 	 * @param highWatermark if the gap is ever larger than this, it will automatically be shrunken
@@ -93,11 +93,11 @@ public class GapTextStore implements ITextStore {
 		 */
 		this(highWatermark / 2, highWatermark / 2, 0f);
 	}
-	
+
 	/**
 	 * Equivalent to
 	 * {@linkplain GapTextStore#GapTextStore(int, int, float) new GapTextStore(256, 4096, 0.1f)}.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public GapTextStore() {
@@ -122,7 +122,7 @@ public class GapTextStore implements ITextStore {
 	 * documents. Use <code>maxSize</code> to avoid a huge gap being allocated for large
 	 * documents.
 	 * </p>
-	 * 
+	 *
 	 * @param minSize the minimum gap size to allocate (&gt;=&nbsp;0; use 0 for no minimum)
 	 * @param maxSize the maximum gap size to allocate (&gt;=&nbsp;minSize; use
 	 *        {@link Integer#MAX_VALUE} for no maximum)
@@ -204,7 +204,7 @@ public class GapTextStore implements ITextStore {
 	 * <code>offset + remove</code> behind the gap. The gap size is kept between 0 and
 	 * {@link #fThreshold}, leading to re-allocation if needed. The content between
 	 * <code>offset</code> and <code>offset + add</code> is undefined after this operation.
-	 * 
+	 *
 	 * @param offset the offset at which a change happens
 	 * @param remove the number of character which are removed or overwritten at <code>offset</code>
 	 * @param add the number of character which are inserted or overwriting at <code>offset</code>
@@ -228,7 +228,7 @@ public class GapTextStore implements ITextStore {
 
 	/**
 	 * Moves the gap to <code>newGapStart</code>.
-	 * 
+	 *
 	 * @param offset the change offset
 	 * @param remove the number of removed / overwritten characters
 	 * @param oldGapSize the old gap size
@@ -260,7 +260,7 @@ public class GapTextStore implements ITextStore {
 
 	/**
 	 * Reallocates a new array and copies the data from the previous one.
-	 * 
+	 *
 	 * @param offset the change offset
 	 * @param remove the number of removed / overwritten characters
 	 * @param oldGapSize the old gap size
@@ -330,7 +330,7 @@ public class GapTextStore implements ITextStore {
 
 	/**
 	 * Allocates a new <code>char[size]</code>.
-	 * 
+	 *
 	 * @param size the length of the new array.
 	 * @return a newly allocated char array
 	 * @since 3.3
@@ -351,7 +351,7 @@ public class GapTextStore implements ITextStore {
 
 	/**
 	 * Returns the gap size.
-	 * 
+	 *
 	 * @return the gap size
 	 * @since 3.3
 	 */

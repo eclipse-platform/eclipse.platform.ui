@@ -149,7 +149,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 	/**
 	 * Creates and returns a new color palette data.
-	 * 
+	 *
 	 * @param display the display
 	 * @return the new color palette data
 	 */

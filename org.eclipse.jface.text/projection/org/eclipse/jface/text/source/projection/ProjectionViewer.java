@@ -76,7 +76,7 @@ import org.eclipse.jface.text.source.SourceViewer;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
-	
+
 
 
 	private static final int BASE= INFORMATION; // see ISourceViewer.INFORMATION
@@ -91,7 +91,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public static final int EXPAND_ALL= BASE + 4;
 	/**
 	 * Operation constant for the collapse all operation.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final int COLLAPSE_ALL= BASE + 5;
@@ -305,10 +305,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @since 3.1
 	 */
 	private int fDeletedLines;
-	
+
 	/**
 	 * The listener for document rewrite sessions.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private final IDocumentRewriteSessionListener fSessionListener= new ProjectionDocumentRewriteSessionListener();
@@ -406,10 +406,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			IDocumentExtension4 ext= (IDocumentExtension4)document;
 			ext.addDocumentRewriteSessionListener(fSessionListener);
 		}
-		
+
 		if (wasProjectionEnabled && document != null)
 			enableProjection();
-		
+
 
 	}
 
@@ -705,11 +705,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the first line offset &lt;= <code>offset</code>. If <code>testLastLine</code>
 	 * is <code>true</code> and the offset is on last line then <code>offset</code> is returned.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the master document offset
 	 * @param testLastLine <code>true</code> if the test for the last line should be performed
@@ -720,10 +720,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private int toLineStart(IDocument document, int offset, boolean testLastLine) throws BadLocationException {
 		if (document == null)
 			return offset;
-		
+
 		if (testLastLine && offset >= document.getLineInformationOfOffset(document.getLength() - 1).getOffset())
 			return offset;
-		
+
 		return document.getLineInformationOfOffset(offset).getOffset();
 	}
 
@@ -861,7 +861,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	/**
 	 * Makes the given range visible again while not changing the folding state of any contained
 	 * ranges. If requested, a redraw request is issued.
-	 * 
+	 *
 	 * @param offset the offset of the range to be expanded
 	 * @param length the length of the range to be expanded
 	 * @param fireRedraw <code>true</code> if a redraw request should be issued,
@@ -963,11 +963,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests whether the visible document's master document
 	 * is identical to this viewer's document.
-	 * 
+	 *
 	 * @return <code>true</code> if the visible document's master is
 	 * 			identical to this viewer's document
 	 * @since 3.1
@@ -986,7 +986,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @exception BadLocationException in case the annotation model event is no longer in synchronization with the document
 	 */
 	private void catchupWithProjectionAnnotationModel(AnnotationModelEvent event) throws BadLocationException {
-		
+
 		if (event == null || !isVisibleMasterDocumentSameAsDocument()) {
 
 			fPendingAnnotationWorldChange= false;
@@ -1006,24 +1006,24 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				reinitializeProjection();
 			}
 		} else {
-			
+
 			Annotation[] addedAnnotations= event.getAddedAnnotations();
 			Annotation[] changedAnnotation= event.getChangedAnnotations();
 			Annotation[] removedAnnotations= event.getRemovedAnnotations();
-			
+
 			fCommandQueue= new ProjectionCommandQueue();
-			
+
 			boolean isRedrawing= redraws();
 			int topIndex= isRedrawing ? getTopIndex() : -1;
-			
+
 			processDeletions(event, removedAnnotations, true);
 			List coverage= new ArrayList();
 			processChanges(addedAnnotations, true, coverage);
 			processChanges(changedAnnotation, true, coverage);
-			
+
 			ProjectionCommandQueue commandQueue= fCommandQueue;
 			fCommandQueue= null;
-			
+
 			if (commandQueue.passedRedrawCostsThreshold()) {
 				setRedraw(false);
 				try {
@@ -1133,7 +1133,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			IDocument document= getDocument();
 			if (document == null)
 				return null;
-			
+
 			int line= document.getLineOfOffset(position.getOffset());
 			int offset= document.getLineOffset(line + 1);
 
@@ -1478,7 +1478,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					selection= getSelectedRange();
 					if (exposeModelRange(new Region(selection.x, selection.y)))
 						return;
-					
+
 					if (selection.y == 0)
 						copyMarkedRegion(true);
 					else
@@ -1536,7 +1536,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (redraws())
 					collapseAll();
 				break;
-				
+
 			case COLLAPSE:
 				if (redraws()) {
 					collapse();

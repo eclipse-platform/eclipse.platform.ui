@@ -69,7 +69,7 @@ import org.eclipse.jface.text.TextPresentation;
  * 	<li>focusLost event is not sent - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532</li>
  * </ul>
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class BrowserInformationControl extends AbstractInformationControl implements IInformationControlExtension2, IDelayedInputChangeProvider {
@@ -88,7 +88,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 				Browser browser= new Browser(parent, SWT.NONE);
 				browser.dispose();
 				fgIsAvailable= true;
-				
+
 				Slider sliderV= new Slider(parent, SWT.VERTICAL);
 				Slider sliderH= new Slider(parent, SWT.HORIZONTAL);
 				int width= sliderV.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
@@ -114,7 +114,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	private static final int MIN_WIDTH= 80;
 	private static final int MIN_HEIGHT= 50;
 
-	
+
 	/**
 	 * Availability checking cache.
 	 */
@@ -126,7 +126,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 * @since 3.4
 	 */
 	private static Point fgScrollBarSize;
-	
+
 	/** The control's browser widget */
 	private Browser fBrowser;
 	/** Tells whether the browser has content */
@@ -166,7 +166,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param resizable <code>true</code> if the control should be resizable
@@ -177,10 +177,10 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		fSymbolicFontName= symbolicFontName;
 		create();
 	}
-	
+
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param statusFieldText the text to be used in the optional status field
@@ -192,10 +192,10 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		fSymbolicFontName= symbolicFontName;
 		create();
 	}
-	
+
 	/**
 	 * Creates a browser information control with the given shell as parent.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
@@ -206,13 +206,13 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		fSymbolicFontName= symbolicFontName;
 		create();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createContent(Composite parent) {
 		fBrowser= new Browser(parent, SWT.NONE);
-		
+
 		Display display= getShell().getDisplay();
 		fBrowser.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fBrowser.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -231,16 +231,16 @@ public class BrowserInformationControl extends AbstractInformationControl implem
             	fCompleted= true;
             }
         });
-        
+
 		fBrowser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
 				event.required= true; // Cancel opening of new windows
 			}
 		});
-        
+
 		// Replace browser's built-in context menu with none
 		fBrowser.setMenu(new Menu(getShell(), SWT.NONE));
-		
+
 		createTextLayout();
 	}
 
@@ -263,7 +263,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			}
 		});
 	}
-	
+
 	/**
 	 * {@inheritDoc} This control can handle {@link String} and
 	 * {@link BrowserInformationControlInput}.
@@ -277,11 +277,11 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		}
 
 		fInput= (BrowserInformationControlInput)input;
-		
+
 		String content= null;
 		if (fInput != null)
 			content= fInput.getHtml();
-		
+
 		fBrowserHasContent= content != null && content.length() > 0;
 
 		if (!fBrowserHasContent)
@@ -303,20 +303,20 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			styles= new String[] { "overflow:hidden;"/*, "word-wrap: break-word;"*/ }; //$NON-NLS-1$
 		else
 			styles= new String[] { "overflow:scroll;" }; //$NON-NLS-1$
-		
+
 		StringBuffer buffer= new StringBuffer(content);
 		HTMLPrinter.insertStyles(buffer, styles);
 		content= buffer.toString();
-		
+
 		/*
 		 * XXX: Should add some JavaScript here that shows something like
 		 * "(continued...)" or "..." at the end of the visible area when the page overflowed
 		 * with "overflow:hidden;".
 		 */
-		
+
 		fCompleted= false;
 		fBrowser.setText(content);
-		
+
 		Object[] listeners= fInputChangeListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++)
 			((IInputChangedListener)listeners[i]).inputChanged(fInput);
@@ -329,45 +329,45 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		Shell shell= getShell();
 		if (shell.isVisible() == visible)
 			return;
-		
+
 		if (!visible) {
 			super.setVisible(false);
 			setInput(null);
 			return;
 		}
-		
+
 		/*
 		 * The Browser widget flickers when made visible while it is not completely loaded.
 		 * The fix is to delay the call to setVisible until either loading is completed
 		 * (see ProgressListener in constructor), or a timeout has been reached.
 		 */
 		final Display display= shell.getDisplay();
-        
+
         // Make sure the display wakes from sleep after timeout:
         display.timerExec(100, new Runnable() {
             public void run() {
                 fCompleted= true;
             }
         });
-        
+
 		while (!fCompleted) {
 			// Drive the event loop to process the events required to load the browser widget's contents:
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
-		
+
 		shell= getShell();
 		if (shell == null || shell.isDisposed())
 			return;
-		
+
 		/*
 		 * Avoids flickering when replacing hovers, especially on Vista in ON_CLICK mode.
 		 * Causes flickering on GTK. Carbon does not care.
 		 */
 		if ("win32".equals(SWT.getPlatform())) //$NON-NLS-1$
 			shell.moveAbove(null);
-		
+
         super.setVisible(true);
 	}
 
@@ -386,12 +386,12 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	/**
 	 * Creates and initializes the text layout used
 	 * to compute the size hint.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void createTextLayout() {
 		fTextLayout= new TextLayout(fBrowser.getDisplay());
-		
+
 		// Initialize fonts
 		Font font= fSymbolicFontName == null ? JFaceResources.getDialogFont() : JFaceResources.getFont(fSymbolicFontName);
 		fTextLayout.setFont(font);
@@ -401,7 +401,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			fontData[i].setStyle(SWT.BOLD);
 		font= new Font(getShell().getDisplay(), fontData);
 		fBoldStyle= new TextStyle(font, null, null);
-		
+
 		// Compute and set tab width
 		fTextLayout.setText("    "); //$NON-NLS-1$
 		int tabWidth = fTextLayout.getBounds().width;
@@ -423,7 +423,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			fBoldStyle= null;
 		}
 		fBrowser= null;
-		
+
 		super.dispose();
 	}
 
@@ -434,7 +434,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		Point sizeConstraints= getSizeConstraints();
 		Rectangle trim= computeTrim();
 		int height= trim.height;
-		
+
 		//FIXME: The HTML2TextReader does not render <p> like a browser.
 		// Instead of inserting an empty line, it just adds a single line break.
 		// Furthermore, the indentation of <dl><dd> elements is too small (e.g with a long @see line)
@@ -455,7 +455,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			if (sr.fontStyle == SWT.BOLD)
 				fTextLayout.setStyle(fBoldStyle, sr.start, sr.start + sr.length - 1);
 		}
-		
+
 		Rectangle bounds= fTextLayout.getBounds(); // does not return minimum width, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=217446
 		int lineCount= fTextLayout.getLineCount();
 		int textWidth= 0;
@@ -468,15 +468,15 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		}
 		bounds.width= textWidth;
 		fTextLayout.setText(""); //$NON-NLS-1$
-		
+
 		int minWidth= bounds.width;
 		height= height + bounds.height;
-		
+
 		// Add some air to accommodate for different browser renderings
 		minWidth+= 15;
 		height+= 15;
 
-		
+
 		// Apply max size constraints
 		if (sizeConstraints != null) {
 			if (sizeConstraints.x != SWT.DEFAULT)
@@ -488,7 +488,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		// Ensure minimal size
 		int width= Math.max(MIN_WIDTH, minWidth);
 		height= Math.max(MIN_HEIGHT, height);
-		
+
 		return new Point(width, height);
 	}
 
@@ -507,11 +507,11 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		}
 		return trim;
 	}
-	
+
 	/**
 	 * Adds the listener to the collection of listeners who will be
 	 * notified when the current location has changed or is about to change.
-	 * 
+	 *
 	 * @param listener the location listener
 	 * @since 3.4
 	 */
@@ -541,11 +541,11 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	public boolean hasContents() {
 		return fBrowserHasContent;
 	}
-	
+
 	/**
 	 * Adds a listener for input changes to this input change provider.
 	 * Has no effect if an identical listener is already registered.
-	 * 
+	 *
 	 * @param inputChangeListener the listener to add
 	 * @since 3.4
 	 */
@@ -553,18 +553,18 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		Assert.isNotNull(inputChangeListener);
 		fInputChangeListeners.add(inputChangeListener);
 	}
-	
+
 	/**
 	 * Removes the given input change listener from this input change provider.
 	 * Has no effect if an identical listener is not registered.
-	 * 
+	 *
 	 * @param inputChangeListener the listener to remove
 	 * @since 3.4
 	 */
 	public void removeInputChangeListener(IInputChangedListener inputChangeListener) {
 		fInputChangeListeners.remove(inputChangeListener);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDelayedInputChangeProvider#setDelayedInputChangeListener(org.eclipse.jface.text.IInputChangedListener)
 	 * @since 3.4
@@ -572,10 +572,10 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	public void setDelayedInputChangeListener(IInputChangedListener inputChangeListener) {
 		fDelayedInputChangeListener= inputChangeListener;
 	}
-	
+
 	/**
 	 * Tells whether a delayed input change listener is registered.
-	 * 
+	 *
 	 * @return <code>true</code> iff a delayed input change
 	 *         listener is currently registered
 	 * @since 3.4
@@ -583,10 +583,10 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	public boolean hasDelayedInputChangeListener() {
 		return fDelayedInputChangeListener != null;
 	}
-	
+
 	/**
 	 * Notifies listeners of a delayed input change.
-	 * 
+	 *
 	 * @param newInput the new input, or <code>null</code> to request cancellation
 	 * @since 3.4
 	 */
@@ -594,7 +594,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		if (fDelayedInputChangeListener != null)
 			fDelayedInputChangeListener.inputChanged(newInput);
 	}
-	
+
 	/*
 	 * @see java.lang.Object#toString()
 	 * @since 3.4
@@ -610,21 +610,21 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	public BrowserInformationControlInput getInput() {
 		return fInput;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
 	 */
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
 		if (fSymbolicFontName == null)
 			return null;
-		
+
 		GC gc= new GC(fBrowser);
 		Font font= fSymbolicFontName == null ? JFaceResources.getDialogFont() : JFaceResources.getFont(fSymbolicFontName);
 		gc.setFont(font);
 		int width= gc.getFontMetrics().getAverageCharWidth();
 		int height= gc.getFontMetrics().getHeight();
 		gc.dispose();
-		
+
 		return new Point(widthInChars * width, heightInChars * height);
 	}
 

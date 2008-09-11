@@ -45,7 +45,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	 * char[] chars = new char[] {'(', ')', '{', '}', '[', ']'};
 	 * new SimpleCharacterPairMatcher(chars, ...);
 	 * </pre>
-	 * 
+	 *
 	 * @param chars a list of characters
 	 * @param partitioning the partitioning to match within
 	 */
@@ -55,7 +55,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		fPairs= new CharPairs(chars);
 		fPartitioning= partitioning;
 	}
-	
+
 	/**
 	 * Creates a new character pair matcher that matches characters
 	 * within the default partitioning.  The specified list of
@@ -66,13 +66,13 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	 * char[] chars = new char[] {'(', ')', '{', '}', '[', ']'};
 	 * new SimpleCharacterPairMatcher(chars);
 	 * </pre>
-	 * 
+	 *
 	 * @param chars a list of characters
 	 */
 	public DefaultCharacterPairMatcher(char[] chars) {
 		this(chars, IDocumentExtension3.DEFAULT_PARTITIONING);
 	}
-	
+
 	/* @see ICharacterPairMatcher#match(IDocument, int) */
 	public IRegion match(IDocument doc, int offset) {
 		if (doc == null || offset < 0 || offset > doc.getLength()) return null;
@@ -82,7 +82,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 			return null;
 		}
 	}
-		
+
 	/*
 	 * Performs the actual work of matching for #match(IDocument, int).
 	 */
@@ -108,7 +108,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 
 	/**
 	 * Searches <code>doc</code> for the specified end character, <code>end</code>.
-	 * 
+	 *
 	 * @param doc the document to search
 	 * @param start the opening matching character
 	 * @param end the end character to search for
@@ -138,7 +138,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	public int getAnchor() {
 		return fAnchor;
 	}
-	
+
 	/* @see ICharacterPairMatcher#dispose() */
 	public void dispose() { }
 
@@ -154,14 +154,14 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	 * valid match, only considers position within its partition.
 	 */
 	private static class DocumentPartitionAccessor {
-		
+
 		private final IDocument fDocument;
 		private final String fPartitioning, fPartition;
 		private ITypedRegion fCachedPartition;
-		
+
 		/**
 		 * Creates a new partitioned document for the specified document.
-		 * 
+		 *
 		 * @param doc the document to wrap
 		 * @param partitioning the partitioning used
 		 * @param partition the partition managed by this document
@@ -175,7 +175,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 
 		/**
 		 * Returns the character at the specified position in this document.
-		 * 
+		 *
 		 * @param pos an offset within this document
 		 * @return the character at the offset
 		 * @throws BadLocationException if the offset is invalid in this document
@@ -188,7 +188,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		 * Returns true if the character at the specified position is a valid match for the
 		 * specified end character. To be a valid match, it must be in the appropriate partition and
 		 * equal to the end character.
-		 * 
+		 *
 		 * @param pos an offset within this document
 		 * @param end the end character to match against
 		 * @return true exactly if the position represents a valid match
@@ -197,11 +197,11 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		public boolean isMatch(int pos, char end) throws BadLocationException {
 			return getChar(pos) == end && inPartition(pos);
 		}
-		
+
 		/**
 		 * Returns true if the specified offset is within the partition
 		 * managed by this document.
-		 * 
+		 *
 		 * @param pos an offset within this document
 		 * @return true if the offset is within this document's partition
 		 */
@@ -209,11 +209,11 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 			final ITypedRegion partition= getPartition(pos);
 			return partition != null && partition.getType().equals(fPartition);
 		}
-		
+
 		/**
 		 * Returns the next position to query in the search.  The position
 		 * is not guaranteed to be in this document's partition.
-		 * 
+		 *
 		 * @param pos an offset within the document
 		 * @param searchForward the direction of the search
 		 * @return the next position to query
@@ -234,15 +234,15 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 			}
 			return simpleIncrement(pos, searchForward);
 		}
-	
+
 		private int simpleIncrement(int pos, boolean searchForward) {
 			return pos + (searchForward ? 1 : -1);
 		}
-		
+
 		/**
 		 * Returns partition information about the region containing the
 		 * specified position.
-		 * 
+		 *
 		 * @param pos a position within this document.
 		 * @return positioning information about the region containing the
 		 *   position
@@ -258,12 +258,12 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 			}
 			return fCachedPartition;
 		}
-		
+
 		private static boolean contains(IRegion region, int pos) {
 			int offset= region.getOffset();
 			return offset <= pos && pos < offset + region.getLength();
 		}
-		
+
 	}
 
 	/**
@@ -280,7 +280,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		/**
 		 * Returns true if the specified character pair occurs in one
 		 * of the character pairs.
-		 * 
+		 *
 		 * @param c a character
 		 * @return true exactly if the character occurs in one of the pairs
 		 */
@@ -320,17 +320,17 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 
 		/**
 		 * Returns true of the specified character is a start character.
-		 * 
+		 *
 		 * @param c a character
 		 * @return true exactly if the character is a start character
 		 */
 		public boolean isStartCharacter(char c) {
 			return this.isOpeningCharacter(c, true);
 		}
-	
+
 		/**
 		 * Returns the matching character for the specified character.
-		 * 
+		 *
 		 * @param c a character occurring in a character pair
 		 * @return the matching character
 		 */
@@ -342,15 +342,15 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 			Assert.isTrue(false);
 			return '\0';
 		}
-	
+
 		private char getStartChar(int i) {
 			return fPairs[i];
 		}
-	
+
 		private char getEndChar(int i) {
 			return fPairs[i + 1];
 		}
-	
+
 	}
 
 }

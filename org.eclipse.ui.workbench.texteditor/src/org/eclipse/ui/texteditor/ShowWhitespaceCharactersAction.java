@@ -31,7 +31,7 @@ import org.eclipse.jface.text.WhitespaceCharacterPainter;
  * <strong>Note:</strong> Currently this action only works if the given
  * editor inherits from {@link AbstractTextEditor}.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class ShowWhitespaceCharactersAction extends TextEditorAction {
@@ -40,10 +40,10 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	private IPreferenceStore fStore;
 	/** The painter. */
 	private IPainter fWhitespaceCharPainter;
-	
+
 	/**
 	 * Construct the action and initialize its state.
-	 * 
+	 *
 	 * @param resourceBundle  the resource bundle to construct label and tooltip from
 	 * @param prefix  the prefix to use for constructing resource bundle keys
 	 * @param editor  the editor this action is associated with
@@ -57,7 +57,7 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 
 	/**
 	 * Sets the preference store of this action.
-	 * 
+	 *
 	 * @param store the preference store
 	 */
 	public void setPreferenceStore(IPreferenceStore store) {
@@ -87,7 +87,7 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	 */
 	private void installPainter() {
 		Assert.isTrue(fWhitespaceCharPainter == null);
-		
+
 		ITextViewer viewer= getTextViewer();
 		if (viewer instanceof ITextViewerExtension2) {
 			fWhitespaceCharPainter= new WhitespaceCharacterPainter(viewer);
@@ -101,25 +101,25 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	private void uninstallPainter() {
 		if (fWhitespaceCharPainter == null)
 			return;
-		
+
 		ITextViewer viewer= getTextViewer();
 		if (viewer instanceof ITextViewerExtension2)
 			((ITextViewerExtension2)viewer).removePainter(fWhitespaceCharPainter);
-		
+
 		fWhitespaceCharPainter.deactivate(true);
 		fWhitespaceCharPainter= null;
 	}
 
 	/**
 	 * Get the <code>ITextViewer</code> from an <code>ITextEditor</code>.
-	 * 
+	 *
 	 * @return  the text viewer or <code>null</code>
 	 */
 	private ITextViewer getTextViewer() {
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof AbstractTextEditor)
 			return ((AbstractTextEditor)editor).getSourceViewer();
-		
+
 		return null;
 	}
 
@@ -130,7 +130,7 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 		boolean checked= false;
 		if (fStore != null)
 			checked= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS);
-		
+
 		if (checked != isChecked()) {
 			setChecked(checked);
 			togglePainterState(checked);
@@ -139,8 +139,8 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 
 	/**
 	 * Toggles the painter state.
-	 * 
-	 * @param newState <code>true</code> if the painter should be installed 
+	 *
+	 * @param newState <code>true</code> if the painter should be installed
 	 */
 	private void togglePainterState(boolean newState) {
 		if (newState)

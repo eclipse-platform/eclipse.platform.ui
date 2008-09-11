@@ -15,11 +15,12 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.ResourceAction;
 
 /**
- * 
+ *
  * @since 3.3
  */
 public class BooleanPreferenceToggleAction extends ResourceAction implements IUpdate {
@@ -33,7 +34,7 @@ public class BooleanPreferenceToggleAction extends ResourceAction implements IUp
 		Assert.isLegal(key != null);
 		fPreferences= preferences;
 		fKey= key;
-		
+
 		update();
 	}
 
@@ -43,7 +44,7 @@ public class BooleanPreferenceToggleAction extends ResourceAction implements IUp
 	public void update() {
 		setChecked(fPreferences.getBoolean(fKey));
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */

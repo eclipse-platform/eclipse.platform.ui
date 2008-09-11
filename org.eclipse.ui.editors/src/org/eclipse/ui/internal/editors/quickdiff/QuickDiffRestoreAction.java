@@ -98,7 +98,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 
 		setEnabled(computeEnablement());
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 * @since 3.3
@@ -153,7 +153,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 
 	/**
 	 * Returns the active line
-	 * 
+	 *
 	 * @param useRulerInfo <code>true</code> if the ruler info should be used
 	 * @return the line of interest.
 	 * @since 3.1

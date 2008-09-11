@@ -29,13 +29,13 @@ public class WindowAnnotationManager {
 	private Map fAnnotationManagers;
 	private IPartListener2 fPartListener;
 	private ArrayList fSearchResults;
-	
+
 	public WindowAnnotationManager(IWorkbenchWindow window) {
 		fWindow = window;
 		fAnnotationManagers = new HashMap();
-		
+
 		fSearchResults= new ArrayList();
-		
+
 		initEditors();
 		fPartListener= new IPartListener2() {
 			public void partActivated(IWorkbenchPartReference partRef) {
@@ -69,9 +69,9 @@ public class WindowAnnotationManager {
 			}
 		};
 		fWindow.getPartService().addPartListener(fPartListener);
-		
+
 	}
-	
+
 	private void startHighlighting(IEditorPart editor) {
 		if (editor == null)
 			return;
@@ -82,7 +82,7 @@ public class WindowAnnotationManager {
 			mgr.setSearchResults(fSearchResults);
 		}
 	}
-	
+
 	private void updateHighlighting(IEditorPart editor) {
 		if (editor == null)
 			return;
@@ -91,7 +91,7 @@ public class WindowAnnotationManager {
 			mgr.doEditorInputChanged();
 		}
 	}
-	
+
 
 	private void initEditors() {
 		IWorkbenchPage[] pages= fWindow.getPages();
@@ -140,7 +140,7 @@ public class WindowAnnotationManager {
 			}
 		}
 	}
-	
+
 	void removeSearchResult(AbstractTextSearchResult result) {
 		fSearchResults.remove(result);
 		boolean stillShown= fSearchResults.contains(result);
@@ -151,5 +151,5 @@ public class WindowAnnotationManager {
 			}
 		}
 	}
-	
+
 }

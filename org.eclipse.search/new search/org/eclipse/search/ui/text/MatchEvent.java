@@ -27,31 +27,31 @@ public class MatchEvent extends SearchResultEvent {
 	private Match[] fMatchContainer = new Match[1];
 	/**
 	 * Constant for a matches being added.
-	 * 
+	 *
 	 * @see MatchEvent#getKind()
 	 */
 	public static final int ADDED = 1;
 	/**
 	 * Constant for a matches being removed.
-	 * 
+	 *
 	 * @see MatchEvent#getKind()
 	 */
 	public static final int REMOVED = 2;
-	
+
 	private static final Match[] fgEmtpyMatches = new Match[0];
-	
+
 	/**
 	 * Constructs a new <code>MatchEvent</code>.
-	 * 
+	 *
 	 * @param searchResult the search result concerned
 	 */
 	public MatchEvent(ISearchResult searchResult) {
 		super(searchResult);
 	}
-	
+
 	/**
 	 * Tells whether this is a remove or an add.
-	 * 
+	 *
 	 * @return one of <code>ADDED</code> or <code>REMOVED</code>
 	 */
 	public int getKind() {
@@ -59,7 +59,7 @@ public class MatchEvent extends SearchResultEvent {
 	}
 	/**
 	 * Returns the concerned matches.
-	 * 
+	 *
 	 * @return the matches this event is about
 	 */
 	public Match[] getMatches() {
@@ -70,10 +70,10 @@ public class MatchEvent extends SearchResultEvent {
 		else
 			return fgEmtpyMatches;
 	}
-	
+
 	/**
 	 * Sets the kind of event this is.
-	 * 
+	 *
 	 * @param kind the kind to set; either <code>ADDED</code> or <code>REMOVED</code>
 	 */
 	protected void setKind(int kind) {
@@ -81,17 +81,17 @@ public class MatchEvent extends SearchResultEvent {
 	}
 	/**
 	 * Sets the match for the change this event reports.
-	 * 
+	 *
 	 * @param match the match to set
 	 */
 	protected void setMatch(Match match) {
 		fMatchContainer[0] = match;
 		fMatches = null;
 	}
-	
+
 	/**
 	 * Sets the matches for the change this event reports.
-	 * 
+	 *
 	 * @param matches the matches to set
 	 */
 	protected void setMatches(Match[] matches) {

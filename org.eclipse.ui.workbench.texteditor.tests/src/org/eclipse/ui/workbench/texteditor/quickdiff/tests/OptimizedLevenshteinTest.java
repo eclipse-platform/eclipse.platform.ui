@@ -30,15 +30,15 @@ public class OptimizedLevenshteinTest extends TestCase {
 		helper.setOptimizedCellComputer();
 		return ls;
 	}
-	
+
 	public void testInternalEditDistance() {
-		IRangeComparator c1= new SequenceComparator("abcd"); 
+		IRangeComparator c1= new SequenceComparator("abcd");
 		IRangeComparator c2= new SequenceComparator("abcd");
-		
+
 		Levenshtein levenshtein= createLevenshtein(c1, c2);
 		LevenshteinTestHelper helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
-		
+
 		// full compare
 		helper.internalEditDistance(1, 4, 1, 4);
 		assertTrue(Arrays.equals(new int[] { SKIP, SKIP, SKIP, SKIP, 0 }, helper.getPreviousRow()));
@@ -46,29 +46,29 @@ public class OptimizedLevenshteinTest extends TestCase {
 		// partial compare
 		helper.internalEditDistance(1, 2, 1, 4);
 		assertTrue(Arrays.equals(new int[] { SKIP, SKIP, 0, 1, 2 }, helper.getPreviousRow()));
-		
+
 		helper.internalEditDistance(3, 4, 1, 4);
 		assertTrue(Arrays.equals(new int[] { SKIP, SKIP, SKIP, SKIP, 2 }, helper.getPreviousRow()));
-		
+
 		helper.internalEditDistance(1, 4, 1, 2);
 		assertEquals(SKIP, helper.getPreviousRow()[0]);
 		assertEquals(SKIP, helper.getPreviousRow()[1]);
 		assertEquals(2, helper.getPreviousRow()[2]);
-		
+
 		// empty right
 		helper.internalEditDistance(1, 0, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 0, 1, 2, 3, 4 }, helper.getPreviousRow()));
-		
+
 		// empty left
 		helper.internalEditDistance(1, 4, 1, 0);
 		assertEquals(4, helper.getPreviousRow()[0]);
-		
+
 		// empty both
 		helper.internalEditDistance(1, 0, 1, 0);
 		assertEquals(0, helper.getPreviousRow()[0]);
-		
+
 		// test insertion
-		c1= new SequenceComparator("a"); 
+		c1= new SequenceComparator("a");
 		c2= new SequenceComparator("ab");
 		levenshtein= createLevenshtein(c1, c2);
 		helper= new LevenshteinTestHelper(levenshtein);
@@ -80,15 +80,15 @@ public class OptimizedLevenshteinTest extends TestCase {
 		helper.internalEditDistance(2, 2, 1, 1);
 		assertTrue(Arrays.equals(new int[] { SKIP, 1 }, helper.getPreviousRow()));
 	}
-	
+
 	public void testInternalReverseEditDistance() {
-		IRangeComparator c1= new SequenceComparator("abcd"); 
+		IRangeComparator c1= new SequenceComparator("abcd");
 		IRangeComparator c2= new SequenceComparator("abcd");
-		
+
 		Levenshtein levenshtein= createLevenshtein(c1, c2);
 		LevenshteinTestHelper helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
-		
+
 		// full compare
 		helper.internalReverseEditDistance(1, 4, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 0, SKIP, SKIP, SKIP, SKIP }, helper.getPreviousRow()));
@@ -96,31 +96,31 @@ public class OptimizedLevenshteinTest extends TestCase {
 		// partial compare
 		helper.internalReverseEditDistance(1, 2, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 2, SKIP, SKIP, SKIP, SKIP }, helper.getPreviousRow()));
-		
+
 		helper.internalReverseEditDistance(3, 4, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 2, 1, 0, SKIP, SKIP }, helper.getPreviousRow()));
-		
+
 		helper.internalReverseEditDistance(1, 4, 1, 2);
 		assertEquals(SKIP, helper.getPreviousRow()[2]);
 		assertEquals(SKIP, helper.getPreviousRow()[1]);
 		assertEquals(2, helper.getPreviousRow()[0]);
-		
+
 		// empty right
 		helper.internalReverseEditDistance(1, 0, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 4, 3, 2, 1, 0 }, helper.getPreviousRow()));
-		
+
 		// empty left
 		helper.internalReverseEditDistance(1, 4, 5, 4);
 		assertEquals(4, helper.getPreviousRow()[4]);
 		helper.internalReverseEditDistance(1, 4, 1, 0);
 		assertEquals(4, helper.getPreviousRow()[0]);
-		
+
 		// empty both
 		helper.internalReverseEditDistance(1, 0, 1, 0);
 		assertEquals(0, helper.getPreviousRow()[0]);
 
 		// test insertion
-		c1= new SequenceComparator("a"); 
+		c1= new SequenceComparator("a");
 		c2= new SequenceComparator("ab");
 		levenshtein= createLevenshtein(c1, c2);
 		helper= new LevenshteinTestHelper(levenshtein);
@@ -132,7 +132,7 @@ public class OptimizedLevenshteinTest extends TestCase {
 		helper.internalReverseEditDistance(2, 2, 1, 1);
 		assertTrue(Arrays.equals(new int[] { 1, SKIP }, helper.getPreviousRow()));
 	}
-	
+
 
 
 }

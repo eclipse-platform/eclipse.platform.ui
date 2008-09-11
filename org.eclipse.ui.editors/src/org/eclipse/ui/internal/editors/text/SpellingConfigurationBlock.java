@@ -155,7 +155,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		/**
 		 * Initializes with the given status monitor to which status changes are forwarded.
-		 * 
+		 *
 		 * @param forwardedMonitor the status monitor to which changes are forwarded
 		 */
 		public ForwardingStatusMonitor(IPreferenceStatusMonitor forwardedMonitor) {
@@ -248,11 +248,11 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		
+
 		PixelConverter pc= new PixelConverter(composite);
 		layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
-		
+
 		if (EditorsUI.getSpellingService().getSpellingEngineDescriptors().length == 0) {
 			Label label= new Label(composite, SWT.NONE);
 			label.setText(TextEditorMessages.SpellingConfigurationBlock_error_not_installed);
@@ -278,7 +278,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		Label label= new Label(composite, SWT.CENTER);
 		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
-		
+
 		if (fProviderDescriptors.size() > 1) {
 			fComboGroup= new Composite(composite, SWT.NONE);
 			gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -573,7 +573,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private void restoreFromPreferences() {
 		if (fEnablementCheckbox == null)
 			return;
-		
+
 		boolean enabled= fStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED);
 		fEnablementCheckbox.setSelection(enabled);
 

@@ -12,8 +12,8 @@
 package org.eclipse.jface.text.rules;
 
 
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 
 import org.eclipse.core.runtime.Assert;
 

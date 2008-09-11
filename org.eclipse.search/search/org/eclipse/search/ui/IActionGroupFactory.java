@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.search.ui;
 
-import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ILabelProvider;
+
+import org.eclipse.ui.actions.ActionGroup;
 
 /**
  * Allows to specify an <code>ActionGroup</code> factory
@@ -24,14 +25,14 @@ import org.eclipse.jface.action.IAction;
  * <p>
  * Note: Local tool bar contributions are not supported in 2.0.
  * </p>
- * 
+ *
  * Clients can implement this interface and pass an
  * instance to the search result view.
- * 
+ *
  * @see	org.eclipse.ui.actions.ActionGroup
  * @see	ISearchResultView#searchStarted(IActionGroupFactory, String, String, ImageDescriptor, String, ILabelProvider, IAction, IGroupByKeyComputer, IRunnableWithProgress)
  * @since 	2.0
- * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page 
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page
  * how to create actions.
  */
 public interface IActionGroupFactory {

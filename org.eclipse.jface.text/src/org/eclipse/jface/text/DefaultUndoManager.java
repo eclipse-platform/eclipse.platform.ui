@@ -158,24 +158,24 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @since 3.1
 		 */
 		public boolean canUndo() {
-			
+
 			if (isConnected() && isValid()) {
 				IDocument doc= fTextViewer.getDocument();
 				if (doc instanceof IDocumentExtension4) {
 					long docStamp= ((IDocumentExtension4)doc).getModificationStamp();
-					
+
 					// Normal case: an undo is valid if its redo will restore document
 					// to its current modification stamp
-					boolean canUndo= docStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP || 
+					boolean canUndo= docStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP ||
 						docStamp == getRedoModificationStamp();
-					
-					/* Special case to check if the answer is false.  
+
+					/* Special case to check if the answer is false.
 					 * If the last document change was empty, then the document's
-					 * modification stamp was incremented but nothing was committed.  
+					 * modification stamp was incremented but nothing was committed.
 					 * The operation being queried has an older stamp.  In this case only,
 					 * the comparison is different.  A sequence of document changes that
 					 * include an empty change is handled correctly when a valid commit
-					 * follows the empty change, but when #canUndo() is queried just after 
+					 * follows the empty change, but when #canUndo() is queried just after
 					 * an empty change, we must special case the check.  The check is very
 					 * specific to prevent false positives.
 					 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=98245
@@ -186,14 +186,14 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 							!fCurrent.isValid() &&  // the current operation is not a valid document modification
 							fCurrent.fUndoModificationStamp != // the invalid current operation has a document stamp
 								IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
-						canUndo= fCurrent.fRedoModificationStamp == docStamp;							
+						canUndo= fCurrent.fRedoModificationStamp == docStamp;
 					}
 					/*
-					 * When the composite is the current command, it may hold the timestamp 
-					 * of a no-op change.  We check this here rather than in an override of 
+					 * When the composite is the current command, it may hold the timestamp
+					 * of a no-op change.  We check this here rather than in an override of
 					 * canUndo() in CompoundTextCommand simply to keep all the special case checks
 					 * in one place.
-					 */ 
+					 */
 					if (!canUndo &&
 							this == fHistory.getUndoOperation(fUndoContext)  &&  // this is the latest operation
 							this instanceof CompoundTextCommand &&
@@ -219,7 +219,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				IDocument doc= fTextViewer.getDocument();
 				if (doc instanceof IDocumentExtension4) {
 					long docStamp= ((IDocumentExtension4)doc).getModificationStamp();
-					return docStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP || 
+					return docStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP ||
 						docStamp == getUndoModificationStamp();
 				}
 				// if there is no timestamp to check, simply return true per the 3.0.1 behavior
@@ -267,7 +267,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
-		
+
 		/**
 		 * Re-applies the change described by this command.
 		 *
@@ -354,11 +354,11 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				fPreservedText= fPreservedTextBuffer.toString();
 			}
 		}
-		
+
 		/**
 		 * Attempt a commit of this command and answer true if a new
 		 * fCurrent was created as a result of the commit.
-		 * 
+		 *
 		 * @return true if the command was committed and created a
 		 * new fCurrent, false if not.
 		 * @since 3.1
@@ -412,20 +412,20 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		    text.append('\'');
 		    return text.toString();
 		}
-		
+
 		/**
 		 * Return the undo modification stamp
-		 * 
+		 *
 		 * @return the undo modification stamp for this command
 		 * @since 3.1
 		 */
 		protected long getUndoModificationStamp() {
 			return fUndoModificationStamp;
 		}
-		
+
 		/**
 		 * Return the redo modification stamp
-		 * 
+		 *
 		 * @return the redo modification stamp for this command
 		 * @since 3.1
 		 */
@@ -467,7 +467,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 */
 		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			resetProcessChangeSate();
-			
+
 			int size= fCommands.size();
 			if (size > 0) {
 
@@ -564,10 +564,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				return (fStart > -1 || fCommands.size() > 0);
 		    return false;
 		}
-		
+
 		/**
 		 * Returns the undo modification stamp.
-		 * 
+		 *
 		 * @return the undo modification stamp
 		 * @since 3.1
 		 */
@@ -579,10 +579,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 			return fUndoModificationStamp;
 		}
-		
+
 		/**
 		 * Returns the redo modification stamp.
-		 * 
+		 *
 		 * @return the redo modification stamp
 		 * @since 3.1
 		 */
@@ -747,7 +747,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 								if (fTextViewer instanceof TextViewer)
 									((TextViewer)fTextViewer).ignoreAutoEditStrategies(true);
 								listenToTextChanges(false);
-	
+
 								// in the undo case only, make sure compounds are closed
 								if (type == OperationHistoryEvent.ABOUT_TO_UNDO) {
 									if (fFoldingIntoCompoundChange) {
@@ -755,9 +755,9 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 									}
 								}
 							} else {
-								// the undo or redo has our context, but it is not one of 
+								// the undo or redo has our context, but it is not one of
 								// our commands.  We will listen to the changes, but will
-								// reset the state that tracks the undo/redo history. 
+								// reset the state that tracks the undo/redo history.
 								commit();
 								fLastAddedCommand= null;
 							}
@@ -986,10 +986,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 		fCurrent.commit();
 	}
-	
+
 	/**
 	 * Reset processChange state.
-	 *   
+	 *
 	 * @since 3.2
 	 */
 	private void resetProcessChangeSate() {
@@ -1036,7 +1036,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 		int length= insertedText.length();
 		int diff= modelEnd - modelStart;
-		
+
 		if (fCurrent.fUndoModificationStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP)
 			fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
 
@@ -1055,7 +1055,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 					fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
 					if (fCurrent.attemptCommit())
 						fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
-						
+
 					fInserting= true;
 				}
 				if (fCurrent.fStart < 0)
@@ -1159,7 +1159,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				// because of typing or pasting whereby selection is not empty
 				fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
 				if (fCurrent.attemptCommit())
-					fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;					
+					fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
 
 				fCurrent.fStart= modelStart;
 				fCurrent.fEnd= modelEnd;

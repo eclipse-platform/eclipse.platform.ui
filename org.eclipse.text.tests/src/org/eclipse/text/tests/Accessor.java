@@ -22,11 +22,11 @@ import org.eclipse.core.runtime.Assert;
  * Helper class for accessing classes and members which cannot
  * be accessed using standard Java access control like private
  * or package visible elements.
- * 
+ *
  * @since 3.1
  */
 public class Accessor {
-	
+
 	/** The class to access. */
 	private Class fClass;
 	/** The instance to access. */
@@ -36,7 +36,7 @@ public class Accessor {
 	 * Creates an accessor for the given <code>instance</code> and
 	 * <code>class</code>. Only non-inherited members that particular
 	 * <code>class</code> can be accessed.
-	 * 
+	 *
 	 * @param instance the instance
 	 * @param clazz the class
 	 */
@@ -46,12 +46,12 @@ public class Accessor {
 		fInstance= instance;
 		fClass= clazz;
 	}
-	
+
 	/**
 	 * Creates an accessor for the given <code>instance</code> and
 	 * <code>class</code>. Only non-inherited members that particular
 	 * <code>class</code> can be accessed.
-	 * 
+	 *
 	 * @param instance the instance
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
@@ -69,7 +69,7 @@ public class Accessor {
 			fail();
 		}
 	}
-	
+
 	/**
 	 * Creates an accessor for the given class.
 	 * <p>
@@ -77,7 +77,7 @@ public class Accessor {
 	 * arguments they must all be instanceof Object. Use
 	 * {@link #Accessor(String, ClassLoader, Class[], Object[])} if this
 	 * is not the case.</p>
-	 * 
+	 *
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
 	 * @param constructorArgs the constructor arguments which must all be instance of Object
@@ -85,10 +85,10 @@ public class Accessor {
 	public Accessor(String className, ClassLoader classLoader, Object[] constructorArgs) {
 		this(className, classLoader, getTypes(constructorArgs), constructorArgs);
 	}
-	
+
 	/**
 	 * Creates an accessor for the given class.
-	 * 
+	 *
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
 	 * @param constructorTypes the types of the constructor arguments
@@ -124,13 +124,13 @@ public class Accessor {
 			fail();
 		}
 	}
-	
+
 	/**
 	 * Creates an accessor for the given class.
 	 * <p>
 	 * This constructor is used to access static stuff.
 	 * </p>
-	 * 
+	 *
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
 	 */
@@ -151,7 +151,7 @@ public class Accessor {
 	 * arguments all those arguments must be instance of Object. Use
 	 * {@link #invoke(String, Class[], Object[])} if this
 	 * is not the case.</p>
-	 * 
+	 *
 	 * @param methodName the method name
 	 * @param arguments the method arguments which must all be instance of Object
 	 * @return the method return value
@@ -159,10 +159,10 @@ public class Accessor {
 	public Object invoke(String methodName, Object[] arguments) {
 		return invoke(methodName, getTypes(arguments), arguments);
 	}
-	
+
 	/**
 	 * Invokes the method with the given method name and arguments.
-	 * 
+	 *
 	 * @param methodName the method name
 	 * @param types the argument types
 	 * @param arguments the method arguments
@@ -190,10 +190,10 @@ public class Accessor {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Assigns the given value to the field with the given name. 
-	 * 
+	 * Assigns the given value to the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @param value the value to assign to the field
 	 */
@@ -207,10 +207,10 @@ public class Accessor {
 			fail();
 		}
 	}
-	
+
 	/**
-	 * Assigns the given value to the field with the given name. 
-	 * 
+	 * Assigns the given value to the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @param value the value to assign to the field
 	 */
@@ -224,10 +224,10 @@ public class Accessor {
 			fail();
 		}
 	}
-	
+
 	/**
-	 * Assigns the given value to the field with the given name. 
-	 * 
+	 * Assigns the given value to the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @param value the value to assign to the field
 	 */
@@ -241,10 +241,10 @@ public class Accessor {
 			fail();
 		}
 	}
-	
+
 	/**
-	 * Returns the value of the field with the given name. 
-	 * 
+	 * Returns the value of the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @return the value of the field
 	 */
@@ -260,10 +260,10 @@ public class Accessor {
 		// Unreachable code
 		return null;
 	}
-	
+
 	/**
-	 * Returns the value of the field with the given name. 
-	 * 
+	 * Returns the value of the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @return the value of the field
 	 */
@@ -279,10 +279,10 @@ public class Accessor {
 		// Unreachable code
 		return false;
 	}
-	
+
 	/**
-	 * Returns the value of the field with the given name. 
-	 * 
+	 * Returns the value of the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @return the value of the field
 	 */
@@ -298,7 +298,7 @@ public class Accessor {
 		// Unreachable code
 		return 0;
 	}
-	
+
 	private Field getField(String fieldName) {
 		Field field= null;
 		try {
@@ -311,11 +311,11 @@ public class Accessor {
 		field.setAccessible(true);
 		return field;
 	}
-	
+
 	private static Class[] getTypes(Object[] objects) {
 		if (objects == null)
 			return null;
-		
+
 		int length= objects.length;
 		Class[] classes= new Class[length];
 		for (int i= 0; i < length; i++) {
@@ -324,7 +324,7 @@ public class Accessor {
 		}
 		return classes;
 	}
-	
+
 	private void fail() {
 		Assert.isTrue(false);
 	}

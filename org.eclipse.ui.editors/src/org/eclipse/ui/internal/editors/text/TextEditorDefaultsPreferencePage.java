@@ -47,15 +47,16 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 
 /**
@@ -395,7 +396,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private java.util.List fInitializers= new ArrayList();
 
 	private InitializerFactory fInitializerFactory= new InitializerFactory();
-	
+
 	private Map fDomains= new HashMap();
 
 
@@ -410,7 +411,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		ArrayList overlayKeys= new ArrayList();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE));
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 
@@ -493,67 +494,67 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private Control createAppearancePage(Composite parent) {
-	
+
 		Composite appearanceComposite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-	
+
 		appearanceComposite.setLayout(layout);
-	
+
 		String label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize;
 		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
 		IntegerDomain undoHistorySizeDomain= new IntegerDomain(0, 99999);
 		addTextField(appearanceComposite, undoHistorySize, undoHistorySizeDomain, 15, 0);
-		
+
 		label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth;
 		Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
 		IntegerDomain tabWidthDomain= new IntegerDomain(1, 16);
 		addTextField(appearanceComposite, tabWidth, tabWidthDomain, 15, 0);
-	
+
 		label= TextEditorMessages.TextEditorPreferencePage_convertTabsToSpaces;
 		Preference spacesForTabs= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, label, null);
 		addCheckBox(appearanceComposite, spacesForTabs, new BooleanDomain(), 0);
-		
-	
+
+
 		label= TextEditorMessages.TextEditorPreferencePage_highlightCurrentLine;
 		Preference highlightCurrentLine= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, label, null);
 		addCheckBox(appearanceComposite, highlightCurrentLine, new BooleanDomain(), 0);
-	
+
 		label= TextEditorMessages.TextEditorPreferencePage_showPrintMargin;
 		Preference showPrintMargin= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, label, null);
 		final Button showPrintMarginButton= addCheckBox(appearanceComposite, showPrintMargin, new BooleanDomain(), 0);
-		
-	
+
+
 		label= TextEditorMessages.TextEditorPreferencePage_printMarginColumn;
 		Preference printMarginColumn= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, label, null);
 		final IntegerDomain printMarginDomain= new IntegerDomain(20, 200);
 		final Control[] printMarginControls= addTextField(appearanceComposite, printMarginColumn, printMarginDomain, 15, 20);
 		createDependency(showPrintMarginButton, showPrintMargin, printMarginControls);
-	
+
 		showPrintMarginButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateStatus(printMarginDomain);
 			}
 		});
-		
+
 		label= TextEditorMessages.TextEditorPreferencePage_showLineNumbers;
 		Preference showLineNumbers= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, label, null);
 		addCheckBox(appearanceComposite, showLineNumbers, new BooleanDomain(), 0);
-	
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_range_indicator;
 		Preference showMagnet= new Preference(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, label, null);
 		addCheckBox(appearanceComposite, showMagnet, new BooleanDomain(), 0);
-		
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharacters;
 		Preference showWhitespaceCharacters= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_WHITESPACE_CHARACTERS, label, null);
 		addCheckBox(appearanceComposite, showWhitespaceCharacters, new BooleanDomain(), 0);
-		
+
 		label= TextEditorMessages.TextEditorPreferencePage_showAffordance;
 		Preference showAffordance= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, label, null);
 		addCheckBox(appearanceComposite, showAffordance, new BooleanDomain(), 0);
-		
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHoverMode;
 		Preference hoverReplace= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HOVER_ENRICH_MODE, label, null);
 		EnumeratedDomain hoverReplaceDomain= new EnumeratedDomain();
@@ -562,32 +563,32 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		hoverReplaceDomain.addValue(new EnumValue(0, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_afterDelay));
 		hoverReplaceDomain.addValue(new EnumValue(2, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_onClick));
 		addCombo(appearanceComposite, hoverReplace, hoverReplaceDomain, 0);
-	
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_textDragAndDrop;
 		Preference textDragAndDrop= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TEXT_DRAG_AND_DROP_ENABLED, label, null);
 		addCheckBox(appearanceComposite, textDragAndDrop, new BooleanDomain(), 0);
-	
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_warn_if_derived;
 		Preference warnIfDerived= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WARN_IF_INPUT_DERIVED, label, null);
 		addCheckBox(appearanceComposite, warnIfDerived, new BooleanDomain(), 0);
-		
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_smartHomeEnd;
 		Preference smartHomeEnd= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END, label, null);
 		addCheckBox(appearanceComposite, smartHomeEnd, new BooleanDomain(), 0);
-	
-	
+
+
 		Label l= new Label(appearanceComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
 		l.setLayoutData(gd);
-		
+
 		l= new Label(appearanceComposite, SWT.LEFT);
 		l.setText(TextEditorMessages.TextEditorPreferencePage_appearanceOptions);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		l.setLayoutData(gd);
-	
+
 		Composite editorComposite= new Composite(appearanceComposite, SWT.NONE);
 		layout= new GridLayout();
 		layout.numColumns= 2;
@@ -597,12 +598,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan= 2;
 		editorComposite.setLayoutData(gd);
-	
+
 		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
 		gd.heightHint= fAppearanceColorList.getItemHeight() * 8;
 		fAppearanceColorList.setLayoutData(gd);
-	
+
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
@@ -610,35 +611,35 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		layout.numColumns= 2;
 		stylesComposite.setLayout(layout);
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
+
 		l= new Label(stylesComposite, SWT.LEFT);
 		l.setText(TextEditorMessages.TextEditorPreferencePage_color);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		l.setLayoutData(gd);
-	
+
 		fAppearanceColorEditor= new ColorSelector(stylesComposite);
 		Button foregroundColorButton= fAppearanceColorEditor.getButton();
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
-	
+
 		SelectionListener colorDefaultSelectionListener= new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean systemDefault= fAppearanceColorDefault.getSelection();
 				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-	
+
 				int i= fAppearanceColorList.getSelectionIndex();
 				if (i == -1)
 					return;
-	
+
 				String key= fAppearanceColorListModel[i][2];
 				if (key != null)
 					fOverlayStore.setValue(key, systemDefault);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
-	
+
 		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
 		fAppearanceColorDefault.setText(TextEditorMessages.TextEditorPreferencePage_systemDefault);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
@@ -647,7 +648,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		fAppearanceColorDefault.setLayoutData(gd);
 		fAppearanceColorDefault.setVisible(false);
 		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
-	
+
 		fAppearanceColorList.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
@@ -664,12 +665,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				int i= fAppearanceColorList.getSelectionIndex();
 				if (i == -1)
 					return;
-	
+
 				String key= fAppearanceColorListModel[i][1];
 				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
 			}
 		});
-		
+
 		Link link= new Link(appearanceComposite, SWT.NONE);
 		link.setText(TextEditorMessages.TextEditorPreferencePage_colorsAndFonts_link);
 		link.addSelectionListener(new SelectionAdapter() {
@@ -680,16 +681,16 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		// TODO replace by link-specific tooltips when
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
 		link.setToolTipText(TextEditorMessages.TextEditorPreferencePage_colorsAndFonts_link_tooltip);
-		
+
 		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.widthHint= 150; // only expand further if anyone else requires it
 		gridData.horizontalSpan= 2;
 		link.setLayoutData(gridData);
-		
+
 		addFiller(appearanceComposite, 2);
-		
+
 		appearanceComposite.layout();
-		
+
 		return appearanceComposite;
 	}
 
@@ -940,7 +941,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 
 		fInitializers.add(fInitializerFactory.create(preference, textControl));
-		
+
 		fDomains.put(domain, textControl);
 
 		return new Control[] {labelControl, textControl};
@@ -980,14 +981,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
 	}
-	
+
 	void updateStatus(Domain checkedDomain) {
 		if (!fFieldsInitialized)
 			return;
-		
+
 		if (updateStatusOnError(checkedDomain))
 			return;
-		
+
 		Iterator iter= fDomains.keySet().iterator();
 		while (iter.hasNext()) {
 			Domain domain= (Domain)iter.next();
@@ -998,7 +999,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 		updateStatus(new StatusInfo());
 	}
-	
+
 	private boolean updateStatusOnError(Domain domain) {
 		Text textWidget= (Text)fDomains.get(domain);
 		if (textWidget.isEnabled()) {

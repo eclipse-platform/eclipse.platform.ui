@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IDocument;
  * <p>
  * Clients are not supposed to subclass or create instances of this class.
  * </p>
- * 
+ *
  * @see IDocumentUndoManager
  * @see IDocumentUndoListener
  * @since 3.2
@@ -77,7 +77,7 @@ public class DocumentUndoEvent {
 
 	/**
 	 * Creates a new document event.
-	 * 
+	 *
 	 * @param doc the changed document
 	 * @param offset the offset of the replaced text
 	 * @param text the substitution text
@@ -100,7 +100,7 @@ public class DocumentUndoEvent {
 
 	/**
 	 * Returns the changed document.
-	 * 
+	 *
 	 * @return the changed document
 	 */
 	public IDocument getDocument() {
@@ -109,7 +109,7 @@ public class DocumentUndoEvent {
 
 	/**
 	 * Returns the offset of the change.
-	 * 
+	 *
 	 * @return the offset of the change
 	 */
 	public int getOffset() {
@@ -118,7 +118,7 @@ public class DocumentUndoEvent {
 
 	/**
 	 * Returns the text that has been inserted.
-	 * 
+	 *
 	 * @return the text that has been inserted
 	 */
 	public String getText() {
@@ -127,7 +127,7 @@ public class DocumentUndoEvent {
 
 	/**
 	 * Returns the text that has been replaced.
-	 * 
+	 *
 	 * @return the text that has been replaced
 	 */
 	public String getPreservedText() {
@@ -136,7 +136,7 @@ public class DocumentUndoEvent {
 
 	/**
 	 * Returns the type of event that is occurring.
-	 * 
+	 *
 	 * @return the bit mask that indicates the type (or types) of the event
 	 */
 	public int getEventType() {
@@ -145,7 +145,7 @@ public class DocumentUndoEvent {
 
 	/**
 	 * Returns the source that triggered this event.
-	 * 
+	 *
 	 * @return the source that triggered this event.
 	 */
 	public Object getSource() {
@@ -154,7 +154,7 @@ public class DocumentUndoEvent {
 
 	/**
 	 * Returns whether the change was a compound change or not.
-	 * 
+	 *
 	 * @return	<code>true</code> if the undo or redo change is a
 	 * 			compound change, <code>false</code> if it is not
 	 */

@@ -22,7 +22,7 @@ import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
  * <p>
  * FIXME: only works inside the same workspace.
  * </p>
- * 
+ *
  * @see AbstractTemplatesPage
  * @since 3.4
  */
@@ -34,7 +34,7 @@ class TemplatesTransfer extends ByteArrayTransfer {
 
 	private TemplatePersistenceData[] fObject ;
 
-	
+
 	/**
 	 * Returns the singleton instance of this <code>TemplateTransfer</code> class.
 	 *

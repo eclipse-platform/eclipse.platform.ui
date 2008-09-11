@@ -20,12 +20,13 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IChangeRulerColumn;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
-import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension3;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
+import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
 
 
 /**

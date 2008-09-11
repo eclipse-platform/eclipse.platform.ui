@@ -18,7 +18,7 @@ package org.eclipse.jface.text.hyperlink;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public interface IHyperlinkPresenterExtension {
@@ -26,7 +26,7 @@ public interface IHyperlinkPresenterExtension {
 	/**
 	 * Tells whether the currently shown hyperlinks
 	 * can be hidden.
-	 * 
+	 *
 	 * @return <code>true</code> if the hyperlink manager can hide the current hyperlinks
 	 */
 	boolean canHideHyperlinks();

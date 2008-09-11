@@ -154,7 +154,7 @@ public class InfoForm {
 
     /**
 	 * Handles the property change.
-	 * 
+	 *
 	 * @param event the property change event object describing which property changed and how
 	 */
 	protected void handlePropertyChange(PropertyChangeEvent event) {

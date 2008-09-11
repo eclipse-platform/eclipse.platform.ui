@@ -26,7 +26,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
  * FileBuffersForExternalFiles
  */
 public class FileBuffersForExternalFiles extends FileBufferFunctions {
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
@@ -35,7 +35,7 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 		FileTool.delete(FileBuffers.getSystemFileAtLocation(getPath()).getParentFile());
 		super.tearDown();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
 	 */
@@ -45,7 +45,7 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 		FileTool.copy(sourceFile, externalFile);
 		return new Path(externalFile.getAbsolutePath());
 	}
-	
+
 	protected void setReadOnly(boolean state) throws Exception {
 		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
 		assertNotNull(fileStore);
@@ -79,7 +79,7 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 	protected boolean modifyUnderlyingFile() throws Exception {
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#getAnnotationModelClass()
 	 */

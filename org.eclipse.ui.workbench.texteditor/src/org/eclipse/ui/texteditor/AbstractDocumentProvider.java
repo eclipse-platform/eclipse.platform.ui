@@ -60,7 +60,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 		/**
 		 * The actual functionality of this operation.
-		 * 
+		 *
 		 * @param monitor a progress monitor to track execution
 		 * @throws CoreException if the execution fails
 		 */
@@ -500,7 +500,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 	/**
 	 * Executes the actual work of reseting the given elements document.
-	 * 
+	 *
 	 * @param element the element
 	 * @param monitor the progress monitor
 	 * @throws CoreException if resetting fails
@@ -899,7 +899,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	/**
 	 * Informs all registered element state listeners about a change in the state validation of the
 	 * given element.
-	 * 
+	 *
 	 * @param element the element
 	 * @param isStateValidated the flag indicating whether state validation is done
 	 * @see IElementStateListenerExtension#elementStateValidationChanged(Object, boolean)
@@ -1026,7 +1026,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public boolean isSynchronized(Object element) {
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
 	 * @since 3.2

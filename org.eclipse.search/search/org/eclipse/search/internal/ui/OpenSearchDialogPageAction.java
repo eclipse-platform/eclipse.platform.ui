@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 Klaus Wenger, Wind River Systems and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Klaus Wenger - initial API and implementation 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Klaus Wenger - initial API and implementation
  * Markus Schorn - cleanup and conversion to inner part of the search plugin.
  *******************************************************************************/
 
@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDelegate2 {
-	
+
 	private IWorkbenchWindow fWorkbenchWindow;
 	private Menu fMenu;
 	private OpenSearchDialogAction fOpenSearchDialogAction;
@@ -42,7 +42,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 		fillMenu(fMenu);
 		return fMenu;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
 	 */
@@ -51,7 +51,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 		fillMenu(fMenu);
 		return fMenu;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -61,14 +61,14 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 			fOpenSearchDialogAction.dispose();
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
 		fWorkbenchWindow= window;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -78,14 +78,14 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 		}
 		fOpenSearchDialogAction.run(action);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
 		// Empty
 	}
-	
+
 	protected void fillMenu(Menu localMenu) {
 		List pageDescriptors= SearchPlugin.getDefault().getSearchPageDescriptors();
 		int accelerator= 1;
@@ -97,7 +97,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 			}
 		}
 	}
-	
+
 	protected void addToMenu(Menu localMenu, IAction action, int accelerator) {
 		StringBuffer label= new StringBuffer();
 		if (accelerator >= 0 && accelerator < 10) {
@@ -114,7 +114,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 
 	private static final class SearchPageAction extends Action {
 		private final OpenSearchDialogAction fOpenSearchDialogAction;
-		
+
 		public SearchPageAction(IWorkbenchWindow workbenchWindow, SearchPageDescriptor pageDescriptor) {
 			super();
 			fOpenSearchDialogAction= new OpenSearchDialogAction(workbenchWindow, pageDescriptor.getId());
@@ -129,7 +129,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 				setImageDescriptor(imageDescriptor);
 			}
 		}
-		
+
 		public void run() {
 			fOpenSearchDialogAction.run(this);
 		}

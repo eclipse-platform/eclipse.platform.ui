@@ -28,7 +28,7 @@ import org.eclipse.jface.text.AbstractLineTracker.DelimiterInfo;
  * <li> "a\nbc\n" -> [0,2], [2,3], [5,0]
  * </ul>
  * This class must be subclassed.
- * 
+ *
  * @since 3.2
  */
 abstract class ListLineTracker implements ILineTracker {
@@ -46,7 +46,7 @@ abstract class ListLineTracker implements ILineTracker {
 
 	/**
 	 * Binary search for the line at a given offset.
-	 * 
+	 *
 	 * @param offset the offset whose line should be found
 	 * @return the line of the offset
 	 */
@@ -88,7 +88,7 @@ abstract class ListLineTracker implements ILineTracker {
 
 	/**
 	 * Returns the number of lines covered by the specified text range.
-	 * 
+	 *
 	 * @param startLine the line where the text range starts
 	 * @param offset the start offset of the text range
 	 * @param length the length of the text range
@@ -278,7 +278,7 @@ abstract class ListLineTracker implements ILineTracker {
 	/**
 	 * Returns the information about the first delimiter found in the given text starting at the
 	 * given offset.
-	 * 
+	 *
 	 * @param text the text to be searched
 	 * @param offset the offset in the given text
 	 * @return the information of the first found delimiter or <code>null</code>
@@ -288,7 +288,7 @@ abstract class ListLineTracker implements ILineTracker {
 	/**
 	 * Creates the line structure for the given text. Newly created lines are inserted into the line
 	 * structure starting at the given position. Returns the number of newly created lines.
-	 * 
+	 *
 	 * @param text the text for which to create a line structure
 	 * @param insertPosition the position at which the newly created lines are inserted into the
 	 *        tracker's line structure
@@ -352,7 +352,7 @@ abstract class ListLineTracker implements ILineTracker {
 	/**
 	 * Returns the internal data structure, a {@link List} of {@link Line}s. Used only by
 	 * {@link TreeLineTracker#TreeLineTracker(ListLineTracker)}.
-	 * 
+	 *
 	 * @return the internal list of lines.
 	 */
 	final List getLines() {

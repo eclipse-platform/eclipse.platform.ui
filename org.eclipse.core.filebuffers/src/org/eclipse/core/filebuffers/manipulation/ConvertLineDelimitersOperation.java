@@ -12,6 +12,7 @@ package org.eclipse.core.filebuffers.manipulation;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 import org.eclipse.core.internal.filebuffers.Progress;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;

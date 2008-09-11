@@ -17,11 +17,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.filebuffers.IFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -30,10 +30,9 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.text.ISearchEditorAccess;
 import org.eclipse.search.ui.text.Match;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
@@ -42,7 +41,7 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 public class EditorAccessHighlighter extends Highlighter {
 	private ISearchEditorAccess fEditorAcess;
 	private Map fMatchesToAnnotations;
-	
+
 	public EditorAccessHighlighter(ISearchEditorAccess editorAccess) {
 		fEditorAcess= editorAccess;
 		fMatchesToAnnotations= new HashMap();
@@ -59,7 +58,7 @@ public class EditorAccessHighlighter extends Highlighter {
 					if (position != null) {
 						Map map= getMap(mapsByAnnotationModel, matches[i]);
 						if (map != null) {
-							Annotation annotation= matches[i].isFiltered() 
+							Annotation annotation= matches[i].isFiltered()
 							? new Annotation(SearchPlugin.FILTERED_SEARCH_ANNOTATION_TYPE, true, null)
 							: new Annotation(SearchPlugin.SEARCH_ANNOTATION_TYPE, true, null);
 							fMatchesToAnnotations.put(matches[i], annotation);
@@ -67,7 +66,7 @@ public class EditorAccessHighlighter extends Highlighter {
 						}
 					}
 				} catch (BadLocationException e) {
-					SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.EditorAccessHighlighter_error_badLocation, e)); 
+					SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.EditorAccessHighlighter_error_badLocation, e));
 				}
 			}
 		}
@@ -76,7 +75,7 @@ public class EditorAccessHighlighter extends Highlighter {
 			Map positionMap= (Map) mapsByAnnotationModel.get(model);
 			addAnnotations(model, positionMap);
 		}
-		
+
 	}
 
 	private Position createPosition(Match match) throws BadLocationException {
@@ -91,7 +90,7 @@ public class EditorAccessHighlighter extends Highlighter {
 			if (doc != null) {
 				position= PositionTracker.convertToCharacterPosition(position, doc);
 			} else {
-				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.AnnotationHighlighter_error_noDocument, null)); 
+				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.AnnotationHighlighter_error_noDocument, null));
 				return null;
 			}
 		}
@@ -140,7 +139,7 @@ public class EditorAccessHighlighter extends Highlighter {
 		}
 
 	}
-	
+
 	private void addAnnotations(IAnnotationModel model, Map annotationToPositionMap) {
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
@@ -153,11 +152,11 @@ public class EditorAccessHighlighter extends Highlighter {
 			}
 		}
 	}
-	
+
 	/*
 	 * Removes annotations from the given annotation model. The default implementation works for editors that
 	 * implement <code>ITextEditor</code>.
-	 * Subclasses may override this method. 
+	 * Subclasses may override this method.
 	 * @param annotations A set containing the annotations to be removed.
 	 * 			 @see Annotation
 	 */
@@ -191,12 +190,12 @@ public class EditorAccessHighlighter extends Highlighter {
 			if (document != null)
 				break;
 		}
-		
+
 		if (document != null && document.equals(textBuffer.getDocument())) {
 			Match[] matches= new Match[fMatchesToAnnotations.keySet().size()];
 			fMatchesToAnnotations.keySet().toArray(matches);
 			removeAll();
-			addHighlights(matches);			
+			addHighlights(matches);
 		}
 	}
 }

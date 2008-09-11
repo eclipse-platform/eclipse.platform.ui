@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-import org.eclipse.core.resources.IResource;
-
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Item;
+
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -39,13 +39,13 @@ class ResourceToItemsMapper {
 	// map from resource to item
 	private HashMap fResourceToItem;
 	private Stack fReuseLists;
-	
+
 	private ContentViewer fContentViewer;
 
 	public ResourceToItemsMapper(ContentViewer viewer) {
 		fResourceToItem= new HashMap();
 		fReuseLists= new Stack();
-		
+
 		fContentViewer= viewer;
 	}
 
@@ -66,11 +66,11 @@ class ResourceToItemsMapper {
 			}
 		}
 	}
-		
+
 	private void updateItem(Item item) {
 		if (!item.isDisposed()) { // defensive code
 			ILabelProvider lprovider= (ILabelProvider) fContentViewer.getLabelProvider();
-			
+
 			Object data= item.getData();
 
 			String oldText= item.getText();
@@ -105,7 +105,7 @@ class ResourceToItemsMapper {
 					list.add(item);
 					fResourceToItem.put(resource, list);
 				}
-			} else { // List			
+			} else { // List
 				List list= (List) existingMapping;
 				if (!list.contains(item)) {
 					list.add(item);
@@ -118,7 +118,7 @@ class ResourceToItemsMapper {
 	 * Removes an element from the map.
 	 * @param element element to remove
 	 * @param item The item used for the element
-	 */	
+	 */
 	public void removeFromMap(Object element, Item item) {
 		IResource resource= ((ISearchResultViewEntry)element).getResource();
 		if (resource != null) {
@@ -137,32 +137,32 @@ class ResourceToItemsMapper {
 			}
 		}
 	}
-	
+
 	private List getNewList() {
 		if (!fReuseLists.isEmpty()) {
 			return (List) fReuseLists.pop();
 		}
 		return new ArrayList(2);
 	}
-	
+
 	private void releaseList(List list) {
 		if (fReuseLists.size() < NUMBER_LIST_REUSE) {
 			fReuseLists.push(list);
 		}
 	}
-	
+
 	/**
 	 * Clears the map.
 	 */
 	public void clearMap() {
 		fResourceToItem.clear();
 	}
-	
+
 	/**
 	 * Tests if the map is empty
 	 * @return returns if the map is empty
 	 */
 	public boolean isEmpty() {
 		return fResourceToItem.isEmpty();
-	}	
+	}
 }

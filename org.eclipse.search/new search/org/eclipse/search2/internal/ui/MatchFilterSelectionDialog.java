@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -28,6 +25,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -39,30 +39,29 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.MatchFilter;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 
 /**
  * A dialog that lets users configure the active {@link MatchFilter match filters} and (optionally) the
  * maximal number of top level elements.
- * 
+ *
  * @since 3.3
  */
 public class MatchFilterSelectionDialog extends StatusDialog {
 
 	private final boolean fShowLimitConfigurationControls;
 	private final MatchFilter[] fAllFilters;
-	
+
 	private MatchFilter[] fEnabledFilters;
-	
+
 	private CheckboxTableViewer fListViewer;
 	private Button fLimitElementsCheckbox;
 	private Text fLimitElementsField;
 	private Text fDescription;
-	
+
 	private int fLimitElementCount;
 	private int fLastLimit;
 	private final boolean fEnableMatchFilterConfiguration;
@@ -70,7 +69,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 
 	/**
 	 * Creates a {@link MatchFilterSelectionDialog}.
-	 * 
+	 *
 	 * @param shell the parent shell
 	 * @param enableMatchFilterConfiguration
 	 * @param allFilters all filters available for selection
@@ -84,13 +83,13 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 
 		setTitle(SearchMessages.MatchFilterSelectionDialog_label);
 		setStatusLineAboveButtons(true);
-		
+
 		fShowLimitConfigurationControls= enableLimitConfiguration;
 		fEnableMatchFilterConfiguration= enableMatchFilterConfiguration;
 
 		fAllFilters= allFilters;
 		fEnabledFilters= selectedFilters;
-		
+
 		fLimitElementCount= limit;
 		fLastLimit= limit != -1 ? limit : 1000;
 	}
@@ -110,10 +109,10 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		String name= "MatchFilterSelectionDialog_" + String.valueOf(fShowLimitConfigurationControls) + '.' + String.valueOf(fEnableMatchFilterConfiguration); //$NON-NLS-1$
 		return SearchPlugin.getDefault().getDialogSettingsSection(name);
 	}
-		
+
 	/**
 	 * Returns the currently selected match filters.
-	 * 
+	 *
 	 * @return the currently selected match filters.
 	 */
 	public MatchFilter[] getMatchFilters() {
@@ -123,13 +122,13 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 	/**
 	 * Returns the currently configured limit for top level elements. <code>-1</code> is returned if
 	 * no limit should be applied.
-	 * 
+	 *
 	 * @return the currently configured limit for top level elements or -1 if no limit should be used.
 	 */
 	public int getLimit() {
 		return fLimitElementCount;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -151,11 +150,11 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		Label l= new Label(parent, SWT.NONE);
 		l.setFont(parent.getFont());
 		l.setText(SearchMessages.MatchFilterSelectionDialog_filter_description);
-		
+
 		Table table = new Table(parent, SWT.CHECK | SWT.BORDER);
 		table.setFont(parent.getFont());
 		fListViewer = new CheckboxTableViewer(table);
-		
+
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.minimumHeight= convertHeightInCharsToPixels(8);
 		table.setLayoutData(data);
@@ -168,13 +167,13 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				performFilterListCheckStateChanged();
 			}
-			
+
 			public String getText(Object element) {
 				return ((MatchFilter) element).getName();
 			}
 		}
 		ListenerAndLabelProvider listenerAndLP= new ListenerAndLabelProvider();
-		
+
 		fListViewer.setLabelProvider(listenerAndLP);
 		fListViewer.setContentProvider(new ArrayContentProvider());
 		fListViewer.addSelectionChangedListener(listenerAndLP);
@@ -208,7 +207,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		fLimitElementsCheckbox.setText(SearchMessages.MatchFilterSelectionDialog_limit_description);
 		fLimitElementsCheckbox.setLayoutData(new GridData());
 		fLimitElementsCheckbox.setFont(parent.getFont());
-		
+
 		fLimitElementsField = new Text(parent, SWT.BORDER);
 		fLimitElementsField.setFont(parent.getFont());
 		gd = new GridData();
@@ -238,13 +237,13 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		else
 			fDescription.setText(new String());
 	}
-	
+
 	private void performFilterListCheckStateChanged() {
 		Object[] checked= fListViewer.getCheckedElements();
 		fEnabledFilters= new MatchFilter[checked.length];
 		System.arraycopy(checked, 0, fEnabledFilters, 0, checked.length);
 	}
-	
+
 	private void performLimitCheckboxChanged() {
 		boolean isEnabled= fLimitElementsCheckbox.getSelection();
 		fLimitElementsField.setEnabled(isEnabled);
@@ -269,7 +268,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		else
 			updateStatus(createStatus(IStatus.OK, "")); //$NON-NLS-1$
 	}
-	
+
 	private IStatus createStatus(int severity, String message) {
 		return new Status(severity, NewSearchUI.PLUGIN_ID, severity, message, null);
 	}

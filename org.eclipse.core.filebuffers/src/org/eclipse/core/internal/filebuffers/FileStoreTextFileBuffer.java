@@ -192,7 +192,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	private InputStream getFileContents(IFileStore fileStore) throws CoreException {
 		if (!fFileStore.fetchInfo().exists())
 			return null;
-		
+
 		return fileStore.openInputStream(EFS.NONE, null);
 	}
 
@@ -388,7 +388,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			stream= getFileContents(fFileStore);
 			if (stream == null)
 				return;
-			
+
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), options);
 			if (description != null) {
@@ -514,7 +514,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		// Make sure cache is up to date
 		if (!fIsCacheUpdated)
 			cacheEncodingState();
-		
+
 		// User-defined encoding has first priority
 		if (fExplicitEncoding != null)
 			return fExplicitEncoding;
@@ -624,7 +624,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	/**
 	 * Returns the location if it is <code>null</code> or
 	 * the name as <code>IPath</code> otherwise.
-	 * 
+	 *
 	 * @return a non-null <code>IPath</code>
 	 * @since 3.3.1
 	 */

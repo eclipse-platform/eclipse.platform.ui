@@ -14,12 +14,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.jface.internal.text.revisions.Hunk;
+import org.eclipse.jface.internal.text.revisions.HunkComputer;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
-
-import org.eclipse.jface.internal.text.revisions.Hunk;
-import org.eclipse.jface.internal.text.revisions.HunkComputer;
 
 /**
  * Tests {@link HunkComputer}.
@@ -28,13 +28,13 @@ import org.eclipse.jface.internal.text.revisions.HunkComputer;
  */
 public class HunkComputerTest extends TestCase {
 	public static Test suite() {
-		return new TestSuite(HunkComputerTest.class); 
+		return new TestSuite(HunkComputerTest.class);
 	}
 
 	private static final int A= ILineDiffInfo.ADDED;
 	private static final int C= ILineDiffInfo.CHANGED;
 	private static final int U= ILineDiffInfo.UNCHANGED;
-	
+
 	private int[] fDiffInformation;
 	private ILineDiffer fDiffer= new ILineDiffer() {
 
@@ -83,128 +83,128 @@ public class HunkComputerTest extends TestCase {
 	};
 	private int[] fRemovedBelow;
 
-	
+
 	public void testNoDiff() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testShiftOne() throws Exception {
 		int[] diffInfo= new int[] {C, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, 0, 1};
-		
+
 		assertHunks(diffInfo, expected);
 	}
 
 	public void testRemoveFirstLine() throws Exception {
 		int[] diffInfo= new int[] {U, 1, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, -1, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testRemoveSecondLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 1, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {1, -1, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testAddFirstLine() throws Exception {
 		int[] diffInfo= new int[] {A, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, 1, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testAddSecondLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, A, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {1, 1, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testAddThirdLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, A, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {2, 1, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testRemoveFirstRegion() throws Exception {
 		int[] diffInfo= new int[] {U, 2, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, -2, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testReplaceFirstRegion() throws Exception {
 		int[] diffInfo= new int[] {C, 0, C, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, 0, 2};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testRemoveOverlappingRegion() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 2, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {1, -2, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testReplaceOverlappingRegion() throws Exception {
 		int[] diffInfo= new int[] {U, 0, C, 0, C, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {1, 0, 2};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testRemoveInnerLines() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 2, };
 		int[] expected= {8, -2, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testReplaceInnerLines() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, C, 0, C, 0, U, 0, };
 		int[] expected= {8, 0, 2};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testAddInnerLines() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, A, 0, A, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {8, +2, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testRemoveLastLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0};
 		fRemovedBelow= new int[10];
 		fRemovedBelow[9]= 1;
 		int[] expected= {10, -1, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testReplaceLastLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, C, 0, };
 		int[] expected= {10, 0, 1};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	public void testAddLastLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, A, 0, };
 		int[] expected= {12, 1, 0};
-		
+
 		assertHunks(diffInfo, expected);
 	}
-	
+
 	private void assertHunks(int[] diffInfo, int[] expected) {
 		fDiffInformation= diffInfo;
 		assertEquals(0, diffInfo.length % 2);

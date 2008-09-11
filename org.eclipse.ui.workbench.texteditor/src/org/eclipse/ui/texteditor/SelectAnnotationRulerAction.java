@@ -19,10 +19,10 @@ import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
+import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.VerticalRulerEvent;
 
 /**

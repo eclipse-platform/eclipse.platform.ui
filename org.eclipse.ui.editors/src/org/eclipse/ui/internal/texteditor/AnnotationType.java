@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.texteditor;
 
 import org.eclipse.jface.text.TextUtilities;
+
 import org.eclipse.ui.texteditor.AnnotationPreference;
 
 /**

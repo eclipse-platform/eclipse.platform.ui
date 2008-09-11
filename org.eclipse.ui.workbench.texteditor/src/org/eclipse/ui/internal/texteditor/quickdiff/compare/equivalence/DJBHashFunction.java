@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence;
 
 /**
- * 
+ *
  * @since 3.2
  */
 public final class DJBHashFunction implements IHashFunction {
@@ -19,7 +19,7 @@ public final class DJBHashFunction implements IHashFunction {
 	public Hash computeHash(CharSequence string) {
 		return new IntHash(hash(string));
 	}
-	
+
 	private int hash(CharSequence seq){
         int hash = 5381;
         int len= seq.length();

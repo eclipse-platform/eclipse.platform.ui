@@ -13,10 +13,10 @@ package org.eclipse.ui.examples.javaeditor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -37,30 +37,32 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+
+import org.eclipse.ui.editors.text.TextEditor;
 
 
 /**
  * Java specific text editor.
  */
 public class JavaEditor extends TextEditor {
-	
-	
+
+
 	private class DefineFoldingRegionAction extends TextEditorAction {
 
 		public DefineFoldingRegionAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 			super(bundle, prefix, editor);
 		}
-		
+
 		private IAnnotationModel getAnnotationModel(ITextEditor editor) {
 			return (IAnnotationModel) editor.getAdapter(ProjectionAnnotationModel.class);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
@@ -72,10 +74,10 @@ public class JavaEditor extends TextEditor {
 				if (!textSelection.isEmpty()) {
 					IAnnotationModel model= getAnnotationModel(editor);
 					if (model != null) {
-						
+
 						int start= textSelection.getStartLine();
 						int end= textSelection.getEndLine();
-						
+
 						try {
 							IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 							int offset= document.getLineOffset(start);
@@ -102,28 +104,28 @@ public class JavaEditor extends TextEditor {
 	public JavaEditor() {
 		super();
 	}
-	
-	/** The <code>JavaEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method extend the 
+
+	/** The <code>JavaEditor</code> implementation of this
+	 * <code>AbstractTextEditor</code> method extend the
 	 * actions to add those specific to the receiver
 	 */
 	protected void createActions() {
 		super.createActions();
-		
+
 		IAction a= new TextOperationAction(JavaEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", a); //$NON-NLS-1$
-		
+
 		a= new TextOperationAction(JavaEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);  //$NON-NLS-1$
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		setAction("ContentAssistTip", a); //$NON-NLS-1$
-		
+
 		a= new DefineFoldingRegionAction(JavaEditorMessages.getResourceBundle(), "DefineFoldingRegion.", this); //$NON-NLS-1$
 		setAction("DefineFoldingRegion", a); //$NON-NLS-1$
 	}
-	
-	/** The <code>JavaEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method performs any extra 
+
+	/** The <code>JavaEditor</code> implementation of this
+	 * <code>AbstractTextEditor</code> method performs any extra
 	 * disposal actions required by the java editor.
 	 */
 	public void dispose() {
@@ -131,9 +133,9 @@ public class JavaEditor extends TextEditor {
 			fOutlinePage.setInput(null);
 		super.dispose();
 	}
-	
-	/** The <code>JavaEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method performs any extra 
+
+	/** The <code>JavaEditor</code> implementation of this
+	 * <code>AbstractTextEditor</code> method performs any extra
 	 * revert behavior required by the java editor.
 	 */
 	public void doRevertToSaved() {
@@ -141,11 +143,11 @@ public class JavaEditor extends TextEditor {
 		if (fOutlinePage != null)
 			fOutlinePage.update();
 	}
-	
-	/** The <code>JavaEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method performs any extra 
+
+	/** The <code>JavaEditor</code> implementation of this
+	 * <code>AbstractTextEditor</code> method performs any extra
 	 * save behavior required by the java editor.
-	 * 
+	 *
 	 * @param monitor the progress monitor
 	 */
 	public void doSave(IProgressMonitor monitor) {
@@ -153,9 +155,9 @@ public class JavaEditor extends TextEditor {
 		if (fOutlinePage != null)
 			fOutlinePage.update();
 	}
-	
-	/** The <code>JavaEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method performs any extra 
+
+	/** The <code>JavaEditor</code> implementation of this
+	 * <code>AbstractTextEditor</code> method performs any extra
 	 * save as behavior required by the java editor.
 	 */
 	public void doSaveAs() {
@@ -163,20 +165,20 @@ public class JavaEditor extends TextEditor {
 		if (fOutlinePage != null)
 			fOutlinePage.update();
 	}
-	
-	/** The <code>JavaEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method performs sets the 
+
+	/** The <code>JavaEditor</code> implementation of this
+	 * <code>AbstractTextEditor</code> method performs sets the
 	 * input of the outline page after AbstractTextEditor has set input.
-	 * 
+	 *
 	 * @param input the editor input
 	 * @throws CoreException in case the input can not be set
-	 */ 
+	 */
 	public void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(input);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
@@ -186,15 +188,15 @@ public class JavaEditor extends TextEditor {
 		addAction(menu, "ContentAssistTip"); //$NON-NLS-1$
 		addAction(menu, "DefineFoldingRegion");  //$NON-NLS-1$
 	}
-	
-	/** The <code>JavaEditor</code> implementation of this 
+
+	/** The <code>JavaEditor</code> implementation of this
 	 * <code>AbstractTextEditor</code> method performs gets
-	 * the java content outline page if request is for a an 
+	 * the java content outline page if request is for a an
 	 * outline page.
-	 * 
+	 *
 	 * @param required the required type
 	 * @return an adapter for the required type or <code>null</code>
-	 */ 
+	 */
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
@@ -204,16 +206,16 @@ public class JavaEditor extends TextEditor {
 			}
 			return fOutlinePage;
 		}
-		
+
 		if (fProjectionSupport != null) {
 			Object adapter= fProjectionSupport.getAdapter(getSourceViewer(), required);
 			if (adapter != null)
 				return adapter;
 		}
-		
+
 		return super.getAdapter(required);
 	}
-		
+
 	/* (non-Javadoc)
 	 * Method declared on AbstractTextEditor
 	 */
@@ -221,22 +223,22 @@ public class JavaEditor extends TextEditor {
 		super.initializeEditor();
 		setSourceViewerConfiguration(new JavaSourceViewerConfiguration());
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		
+
 		fAnnotationAccess= createAnnotationAccess();
 		fOverviewRuler= createOverviewRuler(getSharedColors());
-		
+
 		ISourceViewer viewer= new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
 		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
-		
+
 		return viewer;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -249,7 +251,7 @@ public class JavaEditor extends TextEditor {
 		fProjectionSupport.install();
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#adjustHighlightRange(int, int)
 	 */

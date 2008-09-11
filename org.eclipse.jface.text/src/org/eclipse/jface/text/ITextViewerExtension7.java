@@ -21,7 +21,7 @@ public interface ITextViewerExtension7 {
 
 	/**
 	 * Sets an auto edit strategy can converts tabs to spaces.
-	 * 
+	 *
 	 * @param converter the converter or <code>null</code> if none should be used
 	 */
 	void setTabsToSpacesConverter(IAutoEditStrategy converter);

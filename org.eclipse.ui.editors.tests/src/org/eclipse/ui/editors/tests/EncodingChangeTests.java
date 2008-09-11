@@ -48,29 +48,29 @@ import org.eclipse.ui.editors.text.TextEditor;
 
 /**
  * Tests changing of encoding via IFile and via encoding support.
- * 
+ *
  * @since 3.1
  */
 public class EncodingChangeTests extends TestCase {
-	
+
 	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3";
-	
+
 	public static Test suite() {
 		return new TestSuite(EncodingChangeTests.class);
 	}
-	
+
 	public static void closeEditor(IEditorPart editor) {
 		IWorkbenchPartSite site;
 		IWorkbenchPage page;
 		if (editor != null && (site= editor.getSite()) != null && (page= site.getPage()) != null)
 			page.closeEditor(editor, false);
 	}
-	
-	
+
+
 	private IFile fFile;
 	private IEditorPart fEditor;
 	private int fCount;
-	
+
 	private String getOriginalContent() {
 		return ORIGINAL_CONTENT;
 	}
@@ -84,7 +84,7 @@ public class EncodingChangeTests extends TestCase {
 		fFile.setCharset(null, null);
 		fCount++;
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -94,7 +94,7 @@ public class EncodingChangeTests extends TestCase {
 		fFile= null;
 		ResourceHelper.deleteProject("EncodingChangeTestProject");
 	}
-	
+
 	public void testChangeEncodingViaFile() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
@@ -114,14 +114,14 @@ public class EncodingChangeTests extends TestCase {
 				assertNull(composite);
 				DefaultEncodingSupport encodingSupport= (DefaultEncodingSupport)editor.getAdapter(IEncodingSupport.class);
 				assertEquals("US-ASCII", encodingSupport.getEncoding());
-				
+
 			} else
 				fail();
 		} catch (PartInitException e) {
 			fail();
 		}
 	}
-	
+
 	public void testChangeEncodingViaEncodingSupport() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
@@ -151,7 +151,7 @@ public class EncodingChangeTests extends TestCase {
 			fail();
 		}
 	}
-	
+
 	public void testAInvalidEncoding() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();

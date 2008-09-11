@@ -12,10 +12,11 @@ package org.eclipse.search.internal.ui.util;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.core.runtime.IPath;
 
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -24,25 +25,24 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.search.ui.ISearchResultViewEntry;
-
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.ui.ISearchResultViewEntry;
 
 /**
  * @deprecated Old search view
  */
 public class FileLabelProvider extends LabelProvider {
-		
+
 	public static final int SHOW_LABEL= 1;
 	public static final int SHOW_LABEL_PATH= 2;
 	public static final int SHOW_PATH_LABEL= 3;
 	public static final int SHOW_PATH= 4;
-	
-	private static final String fgSeparatorFormat= SearchMessages.FileLabelProvider_dashSeparated; 
-	
+
+	private static final String fgSeparatorFormat= SearchMessages.FileLabelProvider_dashSeparated;
+
 	private WorkbenchLabelProvider fLabelProvider;
 	private ILabelDecorator fDecorator;
-		
+
 	private int fOrder;
 	private String[] fArgs= new String[2];
 
@@ -55,7 +55,7 @@ public class FileLabelProvider extends LabelProvider {
 	public void setOrder(int orderFlag) {
 		fOrder= orderFlag;
 	}
-	
+
 	public String getText(Object element) {
 		if (!(element instanceof ISearchResultViewEntry))
 			return ""; //$NON-NLS-1$
@@ -64,8 +64,8 @@ public class FileLabelProvider extends LabelProvider {
 		String text= null;
 
 		if (resource == null || !resource.exists())
-			text= SearchMessages.SearchResultView_removed_resource; 
-		
+			text= SearchMessages.SearchResultView_removed_resource;
+
 		else {
 			IPath path= resource.getFullPath().removeLastSegments(1);
 			if (path.getDevice() == null)
@@ -89,7 +89,7 @@ public class FileLabelProvider extends LabelProvider {
 				}
 			}
 		}
-		
+
 		// Do the decoration
 		if (fDecorator != null) {
 			String decoratedText= fDecorator.decorateText(text, resource);

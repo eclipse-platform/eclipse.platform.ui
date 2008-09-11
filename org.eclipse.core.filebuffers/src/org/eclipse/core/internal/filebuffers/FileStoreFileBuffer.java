@@ -40,8 +40,8 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	protected long fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
-	
-	
+
+
 	public FileStoreFileBuffer(TextFileBufferManager manager) {
 		super(manager);
 	}
@@ -59,14 +59,14 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 		fFileStore= fileStore;
 		if (fLocation == null)
 			fLocation= URIUtil.toPath(fileStore.toURI());
-		
+
 		initializeFileBufferContent(monitor);
 		if (info.exists())
 			fSynchronizationStamp= info.getLastModified();
-		
+
 		addFileBufferContentListeners();
 	}
-	
+
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		fLocation= location;
 		create(EFS.getStore(URIUtil.toURI(getLocation())), monitor);
@@ -116,7 +116,7 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	public IPath getLocation() {
 		return fLocation;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#commit(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */

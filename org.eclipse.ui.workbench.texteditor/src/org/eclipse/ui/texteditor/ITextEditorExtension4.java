@@ -39,7 +39,7 @@ public interface ITextEditorExtension4 {
 
 	/**
 	 * Shows revision information in this editor.
-	 * 
+	 *
 	 * @param info the revision information to display
 	 * @param quickDiffProviderId the quick diff provider that matches the source of the revision
 	 *        information

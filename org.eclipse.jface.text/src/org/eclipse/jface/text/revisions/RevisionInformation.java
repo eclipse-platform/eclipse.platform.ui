@@ -29,7 +29,7 @@ import org.eclipse.jface.text.information.IInformationProviderExtension2;
  * <p>
  * Clients may instantiate.
  * </p>
- * 
+ *
  * @since 3.2
  * @see Revision
  */
@@ -41,18 +41,18 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	/**
 	 * The flattened list of {@link RevisionRange}s, unmodifiable. <code>null</code> if the list
 	 * must be re-computed.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private List fRanges= null;
-	
+
 	/**
 	 * The hover control creator. Can be <code>null</code>.
 	 *
 	 * @since 3.3
 	 */
 	private IInformationControlCreator fHoverControlCreator;
-	
+
 	/**
 	 * The information presenter control creator. Can be <code>null</code>.
 	 *
@@ -68,7 +68,7 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 
 	/**
 	 * Adds a revision.
-	 * 
+	 *
 	 * @param revision a revision
 	 */
 	public void addRevision(Revision revision) {
@@ -78,7 +78,7 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 
 	/**
 	 * Returns the contained revisions.
-	 * 
+	 *
 	 * @return an unmodifiable view of the contained revisions (element type: {@link Revision})
 	 */
 	public List getRevisions() {
@@ -90,7 +90,7 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	 * at the moment it is returned, and may change as the annotated document is modified. See
 	 * {@link IRevisionListener} for a way to be informed when the revision information changes. The
 	 * returned list is sorted by document offset.
-	 * 
+	 *
 	 * @return an unmodifiable view of the line ranges (element type: {@link RevisionRange})
 	 * @see IRevisionListener
 	 * @since 3.3
@@ -120,7 +120,7 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 
 	/**
 	 * Adjusts the revision information to the given diff information. Any previous diff information is discarded. <strong>Note</strong>: This is an internal framework method and must not be called by clients.
-	 * 
+	 *
 	 * @param hunks the diff hunks to adjust the revision information to
 	 * @since 3.3
 	 * @noreference This method is not intended to be referenced by clients.
@@ -147,14 +147,14 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return fInformationPresenterControlCreator;
 	}
-	
+
 	/**
 	 * Sets the hover control creator.
 	 * <p>
 	 * <strong>Note:</strong> The created information control must be able to display the object
 	 * returned by the concrete implementation of {@link Revision#getHoverInfo()}.
 	 * </p>
-	 * 
+	 *
 	 * @param creator the control creator
 	 * @since 3.3
 	 */
@@ -164,7 +164,7 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 
 	/**
 	 * Sets the information presenter control creator.
-	 * 
+	 *
 	 * @param creator the control creator
 	 * @since 3.3
 	 */

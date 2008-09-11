@@ -66,11 +66,11 @@ final class TextEditorMessages extends NLS {
 	public static String AbstractDecoratedTextEditor_warning_derived_title;
 	public static String AbstractDecoratedTextEditor_warning_derived_message;
 	public static String AbstractDecoratedTextEditor_warning_derived_dontShowAgain;
-	
+
 	public static String AbstractDecoratedTextEditor_showIn_menu;
 	public static String AbstractDecoratedTextEditor_printPageNumber;
-	
-	
+
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorMessages.class);
 	}

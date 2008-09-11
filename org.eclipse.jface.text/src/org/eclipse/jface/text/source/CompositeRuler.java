@@ -535,7 +535,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 
 	/**
 	 * Constructs a new composite ruler with the given gap between its columns.
-	 * 
+	 *
 	 * @param gap the gap
 	 */
 	public CompositeRuler(int gap) {
@@ -672,10 +672,10 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			}
 		}
 	}
-	
+
 	/**
 	 * Immediately redraws the entire ruler (without asynchronous posting).
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public void immediateUpdate() {
@@ -730,13 +730,13 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 
 		StyledText text= fTextViewer.getTextWidget();
 		int line= text.getLineIndex(y_coordinate);
-		
+
 		if (line == text.getLineCount() - 1) {
 			// check whether y_coordinate exceeds last line
 			if (y_coordinate > text.getLinePixel(line + 1))
 				return -1;
 		}
-		
+
 		return widgetLine2ModelLine(fTextViewer, line);
 	}
 

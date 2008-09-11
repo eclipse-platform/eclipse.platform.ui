@@ -124,27 +124,27 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
 		IWorkbenchPage page= fTextEditor.getSite().getPage();
 		MarkerViewUtil.showMarker(page, marker, false);
-		
+
 		gotoMarker(marker);
 	}
-	
+
 	private void gotoMarker(IMarker marker) {
-		
+
 		// Use the provided adapter if any
 		IGotoMarker gotoMarkerAdapter= (IGotoMarker)fTextEditor.getAdapter(IGotoMarker.class);
 		if (gotoMarkerAdapter != null) {
 			gotoMarkerAdapter.gotoMarker(marker);
 			return;
 		}
-		
+
 		int start= MarkerUtilities.getCharStart(marker);
 		int end= MarkerUtilities.getCharEnd(marker);
-		
-		boolean selectLine= start < 0 || end < 0; 
+
+		boolean selectLine= start < 0 || end < 0;
 
 		IDocumentProvider documentProvider= fTextEditor.getDocumentProvider();
 		IEditorInput editorInput= fTextEditor.getEditorInput();
-		
+
 		// look up the current range of the marker when the document has been edited
 		IAnnotationModel model= documentProvider.getAnnotationModel(editorInput);
 		if (model instanceof AbstractMarkerAnnotationModel) {
@@ -185,7 +185,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		if (end - 1 < length && start < length)
 			fTextEditor.selectAndReveal(start, end - start);
 	}
-	
+
 
 	/**
 	 * Chooses the marker with the highest layer. If there are multiple
@@ -353,7 +353,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Log status.
-	 * 
+	 *
 	 * @param status the status to log
 	 * @since 3.4
 	 */
@@ -396,7 +396,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		final int activeLine= fRuler.getLineOfLastMouseButtonActivity();
 		if (activeLine == -1)
 			return Collections.EMPTY_LIST;
-		
+
 		Iterator it;
 		try {
 			IRegion line= document.getLineInformation(activeLine);
@@ -404,10 +404,10 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		} catch (BadLocationException e) {
 			Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
 			Platform.getLog(bundle).log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, e.getLocalizedMessage(), e));
-			
+
 			it= model.getAnnotationIterator();
 		}
-		
+
 		List markers= null;
 		while (it.hasNext()) {
 			Annotation annotation= (Annotation) it.next();
@@ -462,7 +462,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		final int activeLine= fRuler.getLineOfLastMouseButtonActivity();
 		if (activeLine == -1)
 			return false;
-		
+
 		Iterator it;
 		try {
 			IRegion line= document.getLineInformation(activeLine);
@@ -471,7 +471,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			logException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, e.getLocalizedMessage(), e));
 			it= model.getAnnotationIterator();
 		}
-		
+
 		while (it.hasNext()) {
 			Annotation annotation= (Annotation) it.next();
 			if (annotation instanceof MarkerAnnotation) {

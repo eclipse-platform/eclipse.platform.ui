@@ -43,26 +43,26 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 	/**
 	 * Iterator that returns the annotations for a given region.
-	 * 
+	 *
 	 * @since 3.4
 	 * @see AnnotationModel.RegionIterator#RegionIterator(Iterator, IAnnotationModel, int, int, boolean, boolean)
 	 */
 	private static final class RegionIterator implements Iterator {
-		
+
 		private final Iterator fParentIterator;
 		private final boolean fCanEndAfter;
 		private final boolean fCanStartBefore;
 		private final IAnnotationModel fModel;
 		private Object fNext;
 		private Position fRegion;
-		
+
 		/**
 		 * Iterator that returns all annotations from the parent iterator which
 		 * have a position in the given model inside the given region.
 		 * <p>
 		 * See {@link IAnnotationModelExtension2} for a definition of inside.
 		 * </p>
-		 * 
+		 *
 		 * @param parentIterator iterator containing all annotations
 		 * @param model the model to use to retrieve positions from for each
 		 *            annotation
@@ -80,33 +80,33 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fCanStartBefore= canStartBefore;
 			fNext= findNext();
 		}
-		
+
 		/*
 		 * @see java.util.Iterator#hasNext()
 		 */
 		public boolean hasNext() {
 			return fNext != null;
 		}
-		
+
 		/*
 		 * @see java.util.Iterator#next()
 		 */
 		public Object next() {
 			if (!hasNext())
 				throw new NoSuchElementException();
-			
+
 			Object result= fNext;
 			fNext= findNext();
 			return result;
 		}
-		
+
 		/*
 		 * @see java.util.Iterator#remove()
 		 */
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
-		
+
 		private Object findNext() {
 			while (fParentIterator.hasNext()) {
 				Annotation next= (Annotation) fParentIterator.next();
@@ -131,20 +131,20 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				return fRegion.includes(start) && fRegion.includes(start + length - 1);
 		}
 	}
-	
+
 	/**
 	 * An iterator iteration over a Positions and mapping positions to
 	 * annotations using a provided map if the provided map contains the element.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static final class AnnotationsInterator implements Iterator {
-		
+
 		private Object fNext;
 		private final Position[] fPositions;
 		private int fIndex;
 		private final Map fMap;
-		
+
 		/**
 		 * @param positions positions to iterate over
 		 * @param map a map to map positions to annotations
@@ -155,14 +155,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fMap= map;
 			fNext= findNext();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#hasNext()
 		 */
 		public boolean hasNext() {
 			return fNext != null;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#next()
 		 */
@@ -171,14 +171,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fNext= findNext();
 			return result;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#remove()
 		 */
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
-		
+
 		private Object findNext() {
 			while (fIndex < fPositions.length) {
 				Position position= fPositions[fIndex];
@@ -186,7 +186,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				if (fMap.containsKey(position))
 					return fMap.get(position);
 			}
-			
+
 			return null;
 		}
 	}
@@ -694,15 +694,15 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public Iterator getAnnotationIterator(int offset, int length, boolean canStartBefore, boolean canEndAfter) {
 		Iterator regionIterator= getRegionAnnotationIterator(offset, length, canStartBefore, canEndAfter);
-		
+
 		if (fAttachments.isEmpty())
 			return regionIterator;
-		
+
 		List iterators= new ArrayList(fAttachments.size() + 1);
 		iterators.add(regionIterator);
 		Iterator it= fAttachments.keySet().iterator();
@@ -713,13 +713,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			else
 				iterators.add(new RegionIterator(attachment.getAnnotationIterator(), attachment, offset, length, canStartBefore, canEndAfter));
 		}
-		
+
 		return new MetaIterator(iterators.iterator());
 	}
-	
+
 	/**
 	 * Returns an iterator as specified in {@link IAnnotationModelExtension2#getAnnotationIterator(int, int, boolean, boolean)}
-	 * 
+	 *
 	 * @param offset region start
 	 * @param length region length
 	 * @param canStartBefore position can start before region
@@ -731,10 +731,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	private Iterator getRegionAnnotationIterator(int offset, int length, boolean canStartBefore, boolean canEndAfter) {
 		if (!(fDocument instanceof AbstractDocument))
 			return new RegionIterator(getAnnotationIterator(true), this, offset, length, canStartBefore, canEndAfter);
-		
+
 		AbstractDocument document= (AbstractDocument) fDocument;
 		cleanup(true);
-		
+
 		try {
 			Position[] positions= document.getPositions(IDocument.DEFAULT_CATEGORY, offset, length, canStartBefore, canEndAfter);
 			return new AnnotationsInterator(positions, fPositions);

@@ -30,10 +30,10 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	public static final int RESULTS_IN_DROP_DOWN= 10;
 
 	private Menu fMenu;
-	
+
 	public SearchDropDownAction() {
-		setText(SearchMessages.SearchResultView_previousSearches_text); 
-		setToolTipText(SearchMessages.SearchResultView_previousSearches_tooltip); 
+		setText(SearchMessages.SearchResultView_previousSearches_text);
+		setToolTipText(SearchMessages.SearchResultView_previousSearches_tooltip);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HISTORY);
 		setMenuCreator(this);
 	}
@@ -52,7 +52,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	public Menu getMenu(Control parent) {
 		if (fMenu != null)
 			fMenu.dispose();
-		
+
 		fMenu= new Menu(parent);
 		boolean checkedOne= false;
 		Iterator iter= SearchManager.getDefault().getPreviousSearches().iterator();
@@ -86,7 +86,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	/**
-	 * Get's rid of the menu, because the menu hangs on to 
+	 * Get's rid of the menu, because the menu hangs on to
 	 * the searches, etc.
 	 */
 	void clear() {

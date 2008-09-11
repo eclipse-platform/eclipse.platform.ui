@@ -423,7 +423,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			IDocument d= fCachedTextViewer.getDocument();
 			if (d == null)
 				return false;
-			
+
 			line= d.getLineInformation(lineNumber);
 		}  catch (BadLocationException ex) {
 			return false;
@@ -534,11 +534,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	protected int getInclusiveTopIndexStartOffset() {
 		if (fCachedTextWidget == null || fCachedTextWidget.isDisposed())
 			return -1;
-		
+
 		IDocument document= fCachedTextViewer.getDocument();
 		if (document == null)
 			return -1;
-		
+
 		int top= JFaceTextUtil.getPartialTopIndex(fCachedTextViewer);
 		try {
 			return document.getLineOffset(top);
@@ -556,11 +556,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private int getExclusiveBottomIndexEndOffset() {
 		if (fCachedTextWidget == null || fCachedTextWidget.isDisposed())
 			return -1;
-		
+
 		IDocument document= fCachedTextViewer.getDocument();
 		if (document == null)
 			return -1;
-		
+
 		int bottom= JFaceTextUtil.getPartialBottomIndex(fCachedTextViewer);
 		try {
 			if (bottom >= document.getNumberOfLines())
@@ -659,10 +659,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 					r.x= 0;
 					r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
-					
+
 					r.width= dimension.x;
 					int lines= endLine - startLine;
-					
+
 					r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
 
 					if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
@@ -758,7 +758,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 				r.x= 0;
 				r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
-				
+
 				r.width= dimension.x;
 				int lines= endLine - startLine;
 				r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
@@ -867,7 +867,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	public int toDocumentLineNumber(int y_coordinate) {
 		return fParentRuler.toDocumentLineNumber(y_coordinate);
 	}
-	
+
 	/**
 	 * Removes the given annotation type from this annotation ruler column.
 	 * Annotations of the given type are no longer shown in this annotation

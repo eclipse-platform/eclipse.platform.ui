@@ -33,36 +33,36 @@ public interface IFileBufferStatusCodes {
 	 * Creation of file buffer failed.
 	 */
 	int CREATION_FAILED= 2;
-	
+
 	/**
 	 * File buffer status code indicating that an operation failed
 	 * because a character could not be mapped using the given
 	 * charset.
 	 * <p>
 	 * Value: {@value}</p>
-	 * 
+	 *
 	 * @see UnmappableCharacterException
 	 * @since 3.2
 	 */
 	int CHARSET_MAPPING_FAILED= 3;
-	
+
 	/**
 	 * File buffer status code indicating that state
 	 * validation failed.
 	 * <p>
 	 * Value: {@value}</p>
-	 * 
+	 *
 	 * @see IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, Object)
 	 * @since 3.3
 	 */
 	int STATE_VALIDATION_FAILED= 4;
-	
+
 	/**
 	 * File buffer status code indicating that
 	 * a resource is marked derived.
 	 * <p>
 	 * Value: {@value}</p>
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IResource#isDerived()
 	 * @since 3.3
 	 */

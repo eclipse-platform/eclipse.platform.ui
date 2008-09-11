@@ -143,7 +143,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		IEditorPart editor= fWorkbenchPart.getSite().getPage().getActiveEditor();
 		if (editor == null)
 			return null;
-		
+
 		return editor.getEditorSite().getActionBars().getStatusLineManager();
 	}
 
@@ -186,7 +186,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 				statusNotFound();
 				return;
 			}
-			
+
 			boolean wholeWord= fWholeWordInit && !fRegExSearch && isWord(fFindString);
 
 			statusClear();
@@ -199,7 +199,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Tests whether each character in the given string is a letter.
-	 * 
+	 *
 	 * @param str the string to check
 	 * @return <code>true</code> if the given string is a word
 	 * @since 3.2
@@ -388,7 +388,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Returns the first line of the given selection.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return the first line of the selection
 	 */

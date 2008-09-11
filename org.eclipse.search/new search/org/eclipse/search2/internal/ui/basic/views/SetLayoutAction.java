@@ -12,6 +12,7 @@ package org.eclipse.search2.internal.ui.basic.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 public class SetLayoutAction extends Action {
@@ -25,11 +26,11 @@ public class SetLayoutAction extends Action {
 		setToolTipText(tooltip);
 		fLayout= layout;
 	}
-	
+
 	public void run() {
 		fPage.setLayout(fLayout);
 	}
-	
+
 	public int getLayout() {
 		return fLayout;
 	}

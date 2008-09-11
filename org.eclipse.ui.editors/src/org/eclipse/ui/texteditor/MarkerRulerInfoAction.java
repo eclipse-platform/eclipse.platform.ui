@@ -11,6 +11,7 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
+
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 

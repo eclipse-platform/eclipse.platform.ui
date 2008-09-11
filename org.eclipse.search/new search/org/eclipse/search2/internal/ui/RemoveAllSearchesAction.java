@@ -11,6 +11,7 @@
 package org.eclipse.search2.internal.ui;
 
 import org.eclipse.jface.action.Action;
+
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 
@@ -18,10 +19,10 @@ import org.eclipse.search.ui.NewSearchUI;
 class RemoveAllSearchesAction extends Action {
 
 	public RemoveAllSearchesAction() {
-		super(SearchMessages.RemoveAllSearchesAction_label); 
-		setToolTipText(SearchMessages.RemoveAllSearchesAction_tooltip); 
-	}	
-	
+		super(SearchMessages.RemoveAllSearchesAction_label);
+		setToolTipText(SearchMessages.RemoveAllSearchesAction_tooltip);
+	}
+
 	public void run() {
 		ISearchQuery[] queries= NewSearchUI.getQueries();
 		for (int i = 0; i < queries.length; i++) {

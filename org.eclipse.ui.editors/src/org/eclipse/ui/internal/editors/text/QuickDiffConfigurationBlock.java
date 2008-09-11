@@ -93,7 +93,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	private Button fEnablementCheckbox;
 
-	
+
 	public QuickDiffConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
 		fStore= store;
@@ -197,7 +197,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		addFiller(composite);
 
 		label= TextEditorMessages.QuickDiffConfigurationBlock_showInOverviewRuler;
@@ -308,7 +308,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		return composite;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
 	 * @since 3.4
@@ -318,14 +318,14 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private void addFiller(Composite composite) {
 		PixelConverter pixelConverter= new PixelConverter(composite);
-		
+
 		Label filler= new Label(composite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
 		filler.setLayoutData(gd);
 	}
-	
+
 	private void updateEnablement() {
 		final boolean enabled= fEnablementCheckbox.getSelection();
 		fQuickDiffOverviewRulerCheckBox.setEnabled(enabled);

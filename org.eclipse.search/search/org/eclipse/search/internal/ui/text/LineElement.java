@@ -20,7 +20,7 @@ import org.eclipse.search.ui.text.Match;
 
 /**
  * Element representing a line in a file
- * 
+ *
  */
 public class LineElement {
 
@@ -40,7 +40,7 @@ public class LineElement {
 	public IResource getParent() {
 		return fParent;
 	}
-	
+
 	public int getLine() {
 		return fLineNumber;
 	}
@@ -48,7 +48,7 @@ public class LineElement {
 	public String getContents() {
 		return fLineContents;
 	}
-	
+
 	public int getOffset() {
 		return fLineStartOffset;
 	}
@@ -56,7 +56,7 @@ public class LineElement {
 	public boolean contains(int offset) {
 		return fLineStartOffset <= offset && offset < fLineStartOffset + fLineContents.length();
 	}
-	
+
 	public int getLength() {
 		return fLineContents.length();
 	}
@@ -72,7 +72,7 @@ public class LineElement {
 		}
 		return (FileMatch[]) res.toArray(new FileMatch[res.size()]);
 	}
-	
+
 	public int getNumberOfMatches(AbstractTextSearchResult result) {
 		int count= 0;
 		Match[] matches= result.getMatches(fParent);
@@ -84,6 +84,6 @@ public class LineElement {
 		}
 		return count;
 	}
-	
-		
+
+
 }

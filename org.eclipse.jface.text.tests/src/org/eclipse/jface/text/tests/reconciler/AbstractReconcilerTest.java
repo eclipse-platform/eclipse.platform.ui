@@ -31,14 +31,14 @@ import org.eclipse.jface.text.tests.TestTextViewer;
 /**
  * Reconciler tests. Uses barrier synchronization and a call log to assert
  * correct order of reconciling events.
- * 
+ *
  * TODO test reconciler arguments (delay > 0 etc.)
  * TODO incremental reconciler tests
- * 
+ *
  * @since 3.1
  */
 public class AbstractReconcilerTest extends TestCase {
-	
+
 	/**
 	 * Modified barrier: there are two threads: the main (testing) thread
 	 * creating the barrier, and the reconciler thread. When both threads have
@@ -55,32 +55,32 @@ public class AbstractReconcilerTest extends TestCase {
 		private int fWaiting= 0;
 		private boolean fMainThreadArrived= false;
 		private boolean fIsInactive= false;
-		
+
 		Barrier() {
 			fParticipants= 2;
 			fMainThread= Thread.currentThread();
 		}
-		
+
 		public void await() {
 			synchronized (fMutex) {
 				if (fIsInactive)
 					return;
-				
+
 				fWaiting++;
-				
+
 				boolean isMainThread= Thread.currentThread() == fMainThread;
 				if (isMainThread)
 					fMainThreadArrived= true;
-				
+
 				if (allArrived()) {
 					if (!fMainThreadArrived) {
 						fWaiting--;
 						throw new RuntimeException(getClass() + " can't join barrier if only the main thread is missing!");
 					}
-					
+
 					if (!isMainThread)
 						notifyMainThread();
-				} 
+				}
 				if (!allArrived() || !isMainThread) {
 					try {
 						if (!isMainThread)
@@ -121,14 +121,14 @@ public class AbstractReconcilerTest extends TestCase {
 			}
 		}
 	}
-	
+
 	private Accessor fAccessor;
 	private Barrier fBarrier;
 	private List fCallLog;
 	private ITextViewer fViewer;
 	protected AbstractReconciler fReconciler;
 	private Document fDocument;
-	
+
 	protected void setUp() {
 		fBarrier= new Barrier();
 		fCallLog= Collections.synchronizedList(new ArrayList());
@@ -156,16 +156,16 @@ public class AbstractReconcilerTest extends TestCase {
 				};
 		fReconciler.setIsIncrementalReconciler(false);
 		fReconciler.setDelay(50); // make tests run faster
-		
+
 		fViewer= new TestTextViewer();
 		fReconciler.install(fViewer);
-		
+
 		fAccessor= new Accessor(fReconciler, AbstractReconciler.class);
 		Object object= fAccessor.get("fThread");
 		fAccessor= new Accessor(object, object.getClass());
 	}
-	
-	
+
+
 	protected void tearDown() throws Exception {
 		fBarrier.shutdown();
 		fReconciler.uninstall();
@@ -176,20 +176,20 @@ public class AbstractReconcilerTest extends TestCase {
 		// XXX shouldn't it be dirty?
 		assertFalse(isActive());
 		assertFalse(isDirty());
-		
+
 		// set up initial document
 		fDocument= new Document("foo");
 		fViewer.setDocument(fDocument);
 		assertEquals("reconcilerDocumentChanged", fCallLog.remove(0));
 		assertEquals("aboutToBeReconciled", fCallLog.remove(0));
-		
+
 		fBarrier.await();
 		assertEquals("initialProcess", fCallLog.remove(0));
 		// XXX shouldn't it be dirty and active during initialProcess?
 		assertFalse(isActive());
 		assertFalse(isDirty());
 		fBarrier.wakeAll();
-		
+
 		// wait until clean
 		pollUntilClean();
 		assertFalse(isActive());
@@ -202,13 +202,13 @@ public class AbstractReconcilerTest extends TestCase {
 		dirty();
 		assertEquals("aboutToBeReconciled", fCallLog.remove(0));
 		assertEquals("reconcilerReset", fCallLog.remove(0));
-		
+
 		fBarrier.await();
 		assertEquals("process", fCallLog.remove(0));
 		assertTrue(isActive());
 		assertTrue(isDirty());
 		fBarrier.wakeAll();
-		
+
 		// wait until clean
 		pollUntilClean();
 		assertFalse(isActive());
@@ -223,7 +223,7 @@ public class AbstractReconcilerTest extends TestCase {
 
 	public void testDirtyingWhenRunning() throws InterruptedException, BadLocationException {
 		installDocument();
-		
+
 		dirty();
 		fBarrier.await();
 		assertTrue(isActive());
@@ -234,7 +234,7 @@ public class AbstractReconcilerTest extends TestCase {
 		// when the second edition comes in
 		assertEquals("reconcilerReset", fCallLog.remove(0));
 		fBarrier.wakeAll();
-		
+
 		fBarrier.await();
 		assertEquals("process", fCallLog.remove(0));
 		fBarrier.wakeAll();
@@ -245,12 +245,12 @@ public class AbstractReconcilerTest extends TestCase {
 
 	public void testCancellingWhenClean() throws InterruptedException, BadLocationException {
 		installDocument();
-		
+
 		// dirty again
 		dirty();
 		fBarrier.await();
 		fBarrier.wakeAll();
-		
+
 		// cancel
 		fCallLog.clear();
 		fReconciler.uninstall();
@@ -263,7 +263,7 @@ public class AbstractReconcilerTest extends TestCase {
 
 	public void testCancellingWhenRunning() throws InterruptedException, BadLocationException {
 		installDocument();
-		
+
 		// dirty and cancel
 		dirty();
 		fBarrier.await();
@@ -279,7 +279,7 @@ public class AbstractReconcilerTest extends TestCase {
 
 	public void testReplacingDocumentWhenClean() throws InterruptedException, BadLocationException {
 		installDocument();
-		
+
 		// replace
 		fCallLog.clear();
 		fViewer.setDocument(new Document("bar"));
@@ -289,7 +289,7 @@ public class AbstractReconcilerTest extends TestCase {
 		fBarrier.await();
 		assertEquals("process", fCallLog.remove(0));
 		fBarrier.wakeAll();
-		
+
 		pollUntilClean();
 		assertFalse(isActive());
 		assertFalse(isDirty());
@@ -297,7 +297,7 @@ public class AbstractReconcilerTest extends TestCase {
 
 	public void testReplacingDocumentWhenRunning() throws InterruptedException, BadLocationException {
 		installDocument();
-		
+
 		// dirty and replace
 		dirty();
 		fBarrier.await();
@@ -307,8 +307,8 @@ public class AbstractReconcilerTest extends TestCase {
 		assertEquals("reconcilerReset", fCallLog.remove(0));
 		assertTrue(fCallLog.isEmpty());
 		fBarrier.wakeAll();
-		
-		// XXX this fails, which is a bug - replacing the document should 
+
+		// XXX this fails, which is a bug - replacing the document should
 		// cancel the progress monitor
 //		fBarrier.await();
 //		assertEquals("process", fCallLog.remove(0));
@@ -322,7 +322,7 @@ public class AbstractReconcilerTest extends TestCase {
 		// initial process
 		fBarrier.await();
 		fBarrier.wakeAll();
-		
+
 		pollUntilClean();
 		fCallLog.clear();
 	}
@@ -362,6 +362,6 @@ public class AbstractReconcilerTest extends TestCase {
 		Object bool= fAccessor.invoke("isDirty", null);
 		return ((Boolean) bool).booleanValue();
 	}
-	
-	
+
+
 }

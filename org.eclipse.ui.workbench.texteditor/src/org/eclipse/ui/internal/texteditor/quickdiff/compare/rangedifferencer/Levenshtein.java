@@ -32,7 +32,7 @@ public final class Levenshtein {
 	/* debug output */
 	private static final boolean DEBUG= false;
 	private static final boolean MATRIX= false;
-	
+
 	/*
 	 * asserts - enable conditional compilation by not making this a trace option.
 	 * @since 3.2
@@ -419,7 +419,7 @@ public final class Levenshtein {
 
 			if (fProgressMonitor.isCanceled())
 				return;
-			
+
 			fProgressMonitor.worked(1);
 
 			for (int col= fColStart; col <= fColEnd; col += fStep) { // for every column
@@ -455,7 +455,7 @@ public final class Levenshtein {
 
 			if (fProgressMonitor.isCanceled())
 				return;
-			
+
 			fProgressMonitor.worked(1);
 
 			for (int col= fColStart; col >= fColEnd; col += fStep) { // for every column

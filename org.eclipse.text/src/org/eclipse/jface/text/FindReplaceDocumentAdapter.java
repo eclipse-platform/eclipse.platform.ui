@@ -71,7 +71,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * The match offset from the last findReplace call.
 	 */
 	private int fFindReplaceMatchOffset;
-	
+
 	/**
 	 * Retain case mode
 	 */
@@ -220,16 +220,16 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		if (operationCode != REPLACE) {
 			try {
 				if (forwardSearch) {
-					
+
 					boolean found= false;
 					if (operationCode == FIND_FIRST)
 						found= fFindReplaceMatcher.find(startOffset);
 					else
 						found= fFindReplaceMatcher.find();
-					
+
 					if (operationCode == REPLACE_FIND_NEXT)
 						fFindReplaceState= FIND_NEXT;
-					
+
 					if (found && fFindReplaceMatcher.group().length() > 0)
 						return new Region(fFindReplaceMatcher.start(), fFindReplaceMatcher.group().length());
 					return null;
@@ -261,7 +261,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 	/**
 	 * Substitutes \R in a regex find pattern with (?>\r\n?|\n)
-	 * 
+	 *
 	 * @param findString the original find pattern
 	 * @return the transformed find pattern
 	 * @throws PatternSyntaxException if \R is added at an illegal position (e.g. in a character set)
@@ -270,7 +270,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	private String substituteLinebreak(String findString) throws PatternSyntaxException {
 		int length= findString.length();
 		StringBuffer buf= new StringBuffer(length);
-		
+
 		int inCharGroup= 0;
 		int inBraces= 0;
 		boolean inQuote= false;
@@ -282,25 +282,25 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					if (! inQuote)
 						inCharGroup++;
 					break;
-					
+
 				case ']':
 					buf.append(ch);
 					if (! inQuote)
 						inCharGroup--;
 					break;
-					
+
 				case '{':
 					buf.append(ch);
 					if (! inQuote && inCharGroup == 0)
 						inBraces++;
 					break;
-					
+
 				case '}':
 					buf.append(ch);
 					if (! inQuote && inCharGroup == 0)
 						inBraces--;
 					break;
-					
+
 				case '\\':
 					if (i + 1 < length) {
 						char ch1= findString.charAt(i + 1);
@@ -309,7 +309,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 								inQuote= false;
 							buf.append(ch).append(ch1);
 							i++;
-							
+
 						} else if (ch1 == 'R') {
 							if (inCharGroup > 0 || inBraces > 0) {
 								String msg= TextMessages.getString("FindReplaceDocumentAdapter.illegalLinebreak"); //$NON-NLS-1$
@@ -317,7 +317,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 							}
 							buf.append("(?>\\r\\n?|\\n)"); //$NON-NLS-1$
 							i++;
-						
+
 						} else {
 							if (ch1 == 'Q') {
 								inQuote= true;
@@ -329,20 +329,20 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 						buf.append(ch);
 					}
 					break;
-					
+
 				default:
 					buf.append(ch);
 					break;
 			}
-			
+
 		}
 		return buf.toString();
 	}
-	
+
 	/**
 	 * Interprets current Retain Case mode (all upper-case,all lower-case,capitalized or mixed)
 	 * and appends the character <code>ch</code> to <code>buf</code> after processing.
-	 * 
+	 *
 	 * @param buf the output buffer
 	 * @param ch the character to process
 	 * @since 3.4
@@ -361,7 +361,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 	/**
 	 * Interprets escaped characters in the given replace pattern.
-	 * 
+	 *
 	 * @param replaceText the replace pattern
 	 * @param foundText the found pattern to be replaced
 	 * @return a replace pattern with escaped characters substituted by the respective characters
@@ -371,21 +371,21 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		int length= replaceText.length();
 		boolean inEscape= false;
 		StringBuffer buf= new StringBuffer(length);
-		
+
 		/* every string we did not check looks mixed at first
 		 * so initialize retain case mode with RC_MIXED
 		 */
 		fRetainCaseMode= RC_MIXED;
-		
+
 		for (int i= 0; i < length; i++) {
 			final char ch= replaceText.charAt(i);
 			if (inEscape) {
 				i= interpretReplaceEscape(ch, i, buf, replaceText, foundText);
 				inEscape= false;
-				
+
 			} else if (ch == '\\') {
 				inEscape= true;
-				
+
 			} else if (ch == '$') {
 				buf.append(ch);
 
@@ -411,7 +411,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				interpretRetainCase(buf, ch);
 			}
 		}
-		
+
 		if (inEscape) {
 			// '\' as last character is invalid, but we still add it to get an error message
 			buf.append('\\');
@@ -422,7 +422,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	/**
 	 * Interprets the escaped character <code>ch</code> at offset <code>i</code>
 	 * of the <code>replaceText</code> and appends the interpretation to <code>buf</code>.
-	 * 
+	 *
 	 * @param ch the escaped character
 	 * @param i the offset
 	 * @param buf the output buffer
@@ -472,7 +472,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					}
 				}
 				break;
-				
+
 			case '1':
 			case '2':
 			case '3':
@@ -495,7 +495,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					throw new PatternSyntaxException(msg, replaceText, i);
 				}
 				break;
-				
+
 			case 'x':
 				if (i + 2 < length) {
 					int parsedInt;
@@ -514,7 +514,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					throw new PatternSyntaxException(msg, replaceText, i);
 				}
 				break;
-				
+
 			case 'u':
 				if (i + 4 < length) {
 					int parsedInt;
@@ -533,7 +533,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					throw new PatternSyntaxException(msg, replaceText, i);
 				}
 				break;
-				
+
 			case 'C':
 				if(foundText.toUpperCase().equals(foundText)) // is whole match upper-case?
 					fRetainCaseMode= RC_UPPER;

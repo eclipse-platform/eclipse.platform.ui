@@ -27,6 +27,7 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.IEditorInput;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -54,7 +55,7 @@ public abstract class SpellingProblem {
 	 * down to Platform Text we need to provide the proposals with
 	 * a way to access the annotation model.</em>
 	 * </p>
-	 * 
+	 *
 	 * @param editor the text editor, if <code>null</code> this method does nothing
 	 * @param word the word for which to remove the problems or <code>null</code> to remove all
 	 * @since 3.3
@@ -63,23 +64,23 @@ public abstract class SpellingProblem {
 	public static void removeAllInActiveEditor(ITextEditor editor, String word) {
 		if (editor == null)
 			return;
-		
+
 		IDocumentProvider documentProvider= editor.getDocumentProvider();
 		if (documentProvider == null)
 			return;
-	
+
 		IEditorInput editorInput= editor.getEditorInput();
 		if (editorInput == null)
 			return;
-		
+
 		IAnnotationModel model= documentProvider.getAnnotationModel(editorInput);
 		if (model == null)
 			return;
-		
+
 		IDocument document= documentProvider.getDocument(editorInput);
 		if (document == null)
 			return;
-	
+
 		boolean supportsBatchReplace= (model instanceof IAnnotationModelExtension);
 		List toBeRemovedAnnotations= new ArrayList();
 		Iterator iter= model.getAnnotationIterator();
@@ -107,32 +108,32 @@ public abstract class SpellingProblem {
 				}
 			}
 		}
-	
+
 		if (supportsBatchReplace && !toBeRemovedAnnotations.isEmpty()) {
 			Annotation[] annotationArray= (Annotation[])toBeRemovedAnnotations.toArray(new Annotation[toBeRemovedAnnotations.size()]);
 			((IAnnotationModelExtension)model).replaceAnnotations(annotationArray, null);
 		}
 	}
-	
+
 	/**
 	 * Removes all spelling problems that are reported
 	 * for the given <code>word</code> in the active editor.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer
 	 * @param word the word for which to remove the problems or <code>null</code> to remove all
 	 * @since 3.4
 	 */
 	public static void removeAll(ISourceViewer sourceViewer, String word) {
 		Assert.isNotNull(sourceViewer);
-		
+
 		IAnnotationModel model= sourceViewer.getAnnotationModel();
 		if (model == null)
 			return;
-		
+
 		IDocument document= sourceViewer.getDocument();
 		if (document == null)
 			return;
-		
+
 		boolean supportsBatchReplace= (model instanceof IAnnotationModelExtension);
 		List toBeRemovedAnnotations= new ArrayList();
 		Iterator iter= model.getAnnotationIterator();
@@ -160,7 +161,7 @@ public abstract class SpellingProblem {
 				}
 			}
 		}
-		
+
 		if (supportsBatchReplace && !toBeRemovedAnnotations.isEmpty()) {
 			Annotation[] annotationArray= (Annotation[])toBeRemovedAnnotations.toArray(new Annotation[toBeRemovedAnnotations.size()]);
 			((IAnnotationModelExtension)model).replaceAnnotations(annotationArray, null);
@@ -194,10 +195,10 @@ public abstract class SpellingProblem {
 	 * @return the proposals for the incorrectly spelled region
 	 */
 	public abstract ICompletionProposal[] getProposals();
-	
+
 	/**
 	 * Returns the proposals for the incorrectly spelled region.
-	 * 
+	 *
 	 * @param context the invocation context or <code>null</code> if none
 	 * @return the proposals for the incorrectly spelled region
 	 * @since 3.4

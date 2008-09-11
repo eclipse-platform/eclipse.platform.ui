@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 
 /**
  * Test Suite for org.eclipse.text.
- * 
+ *
  * @since 3.3
  */
 public class TemplatesTestSuite {
@@ -27,7 +27,7 @@ public class TemplatesTestSuite {
 		//$JUnit-BEGIN$
 		suite.addTest(TemplateTranslatorTest.suite());
 		//$JUnit-END$
-		
+
 		return suite;
 	}
 }

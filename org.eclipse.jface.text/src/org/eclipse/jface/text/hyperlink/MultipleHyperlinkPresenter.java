@@ -64,40 +64,40 @@ import org.eclipse.jface.text.Region;
 
 /**
  * A hyperlink presenter capable of showing multiple hyperlinks in a hover.
- * 
+ *
  * @since 3.4
  */
 public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
-	
+
 	private static final boolean IS_WIN32= "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
-	
+
 	/**
 	 * An information control capable of showing a list of hyperlinks. The hyperlinks can be opened.
 	 */
 	private static class LinkListInformationControl extends AbstractInformationControl implements IInformationControlExtension2 {
-		
+
 		private static final class LinkContentProvider implements IStructuredContentProvider {
-			
+
 			/*
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
 				return (Object[]) inputElement;
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			public void dispose() {
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		}
-		
+
 		private static final class LinkLabelProvider extends ColumnLabelProvider {
 			/*
 			 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang.Object)
@@ -110,17 +110,17 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 				return HyperlinkMessages.getString("LinkListInformationControl.unknownLink"); //$NON-NLS-1$
 			}
 		}
-		
+
 		private final MultipleHyperlinkHoverManager fManager;
-		
+
 		private IHyperlink[] fInput;
 		private Composite fParent;
 		private Table fTable;
 
 		private Color fForegroundColor;
 		private Color fBackgroundColor;
-		
-		
+
+
 		/**
 		 * Creates a link list information control with the given shell as parent.
 		 *
@@ -136,14 +136,14 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			fBackgroundColor= backgroundColor;
 			create();
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
 		 */
 		public void setInformation(String information) {
 			//replaced by IInformationControlExtension2#setInput(java.lang.Object)
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
 		 */
@@ -151,7 +151,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			fInput= (IHyperlink[]) input;
 			deferredCreateContent(fParent);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
 		 */
@@ -166,40 +166,40 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			fParent.setForeground(fForegroundColor);
 			fParent.setBackground(fBackgroundColor);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControl#computeSizeHint()
 		 */
 		public Point computeSizeHint() {
 			Point preferedSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-			
+
 			Point constraints= getSizeConstraints();
 			if (constraints == null)
 				return preferedSize;
-		
+
 			if (fTable.getVerticalBar() == null || fTable.getHorizontalBar() == null)
 				return Geometry.min(constraints, preferedSize);
-			
+
 			int scrollBarWidth= fTable.getVerticalBar().getSize().x;
 			int scrollBarHeight= fTable.getHorizontalBar().getSize().y;
-			
+
 			int width;
 			if (preferedSize.y - scrollBarHeight <= constraints.y) {
 				width= preferedSize.x - scrollBarWidth;
 			} else {
 				width= Math.min(preferedSize.x, constraints.x);
 			}
-			
+
 			int height;
 			if (preferedSize.x - scrollBarWidth <= constraints.x) {
 				height= preferedSize.y - scrollBarHeight;
 			} else {
 				height= Math.min(preferedSize.y, constraints.y);
 			}
-			
+
 			return new Point(width, height);
 		}
-		
+
 		private void deferredCreateContent(Composite parent) {
 			fTable= new Table(parent, SWT.SINGLE | SWT.FULL_SELECTION);
 			fTable.setLinesVisible(false);
@@ -217,11 +217,11 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			viewer.setLabelProvider(new LinkLabelProvider());
 			viewer.setInput(fInput);
 			fTable.setSelection(0);
-			
+
 			registerTableListeners();
-			
+
 			getShell().addShellListener(new ShellAdapter() {
-				
+
 				/*
 				 * @see org.eclipse.swt.events.ShellAdapter#shellActivated(org.eclipse.swt.events.ShellEvent)
 				 */
@@ -229,17 +229,17 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 					if (viewer.getTable().getSelectionCount() == 0) {
 						viewer.getTable().setSelection(0);
 					}
-					
+
 					viewer.getTable().setFocus();
 				}
 			});
 		}
-		
+
 		private void registerTableListeners() {
-			
+
 			fTable.addMouseMoveListener(new MouseMoveListener() {
 				TableItem fLastItem= null;
-				
+
 				public void mouseMove(MouseEvent e) {
 					if (fTable.equals(e.getSource())) {
 						Object o= fTable.getItem(new Point(e.x, e.y));
@@ -267,21 +267,21 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 					}
 				}
 			});
-			
+
 			fTable.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					openSelectedLink();
 				}
 			});
-			
+
 			fTable.addMouseListener(new MouseAdapter() {
 				public void mouseUp(MouseEvent e) {
 					if (fTable.getSelectionCount() < 1)
 						return;
-					
+
 					if (e.button != 1)
 						return;
-					
+
 					if (fTable.equals(e.getSource())) {
 						Object o= fTable.getItem(new Point(e.x, e.y));
 						TableItem selection= fTable.getSelection()[0];
@@ -290,7 +290,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 					}
 				}
 			});
-			
+
 			fTable.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
 					if (e.keyCode == 0x0D) // return
@@ -298,7 +298,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 				}
 			});
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
 		 */
@@ -316,7 +316,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			link.open();
 		}
 	}
-	
+
 	private class MultipleHyperlinkHover implements ITextHover, ITextHoverExtension, ITextHoverExtension2 {
 
 		/**
@@ -334,14 +334,14 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 			return fSubjectRegion;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 		 */
 		public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 			return fHyperlinks;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 		 */
@@ -355,36 +355,36 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			};
 		}
 	}
-	
+
 	private static class MultipleHyperlinkHoverManager extends AbstractInformationControlManager implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
-		
+
 		private class Closer implements IInformationControlCloser, Listener, KeyListener {
-			
+
 			private Control fSubjectControl;
 			private Display fDisplay;
 			private IInformationControl fControl;
 			private Rectangle fSubjectArea;
-			
+
 			/*
 			 * @see org.eclipse.jface.text.AbstractInformationControlManager.IInformationControlCloser#setInformationControl(org.eclipse.jface.text.IInformationControl)
 			 */
 			public void setInformationControl(IInformationControl control) {
 				fControl= control;
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.text.AbstractInformationControlManager.IInformationControlCloser#setSubjectControl(org.eclipse.swt.widgets.Control)
 			 */
 			public void setSubjectControl(Control subject) {
 				fSubjectControl= subject;
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.text.AbstractInformationControlManager.IInformationControlCloser#start(org.eclipse.swt.graphics.Rectangle)
 			 */
 			public void start(Rectangle subjectArea) {
 				fSubjectArea= subjectArea;
-				
+
 				fDisplay= fSubjectControl.getDisplay();
 				if (!fDisplay.isDisposed()) {
 					fDisplay.addFilter(SWT.FocusOut, this);
@@ -392,7 +392,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 					fTextViewer.getTextWidget().addKeyListener(this);
 				}
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.text.AbstractInformationControlManager.IInformationControlCloser#stop()
 			 */
@@ -402,10 +402,10 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 					fDisplay.removeFilter(SWT.MouseMove, this);
 					fTextViewer.getTextWidget().removeKeyListener(this);
 				}
-				
+
 				fSubjectArea= null;
 			}
-			
+
 			/*
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 			 */
@@ -420,41 +420,41 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 						break;
 				}
 			}
-			
+
 			/**
 			 * Handle mouse movement events.
-			 * 
+			 *
 			 * @param event the event
 			 */
 			private void handleMouseMove(Event event) {
 				if (!(event.widget instanceof Control))
 					return;
-				
+
 				if (fControl.isFocusControl())
 					return;
-				
+
 				Control eventControl= (Control) event.widget;
-				
+
 				//transform coordinates to subject control:
 				Point mouseLoc= event.display.map(eventControl, fSubjectControl, event.x, event.y);
-				
+
 				if (fSubjectArea.contains(mouseLoc))
 					return;
-				
+
 				if (inKeepUpZone(mouseLoc.x, mouseLoc.y, ((IInformationControlExtension3) fControl).getBounds()))
 					return;
-				
+
 				hideInformationControl();
 			}
-			
+
 			/**
 			 * Tests whether a given mouse location is within the keep-up zone.
 			 * The hover should not be hidden as long as the mouse stays inside this zone.
-			 * 
+			 *
 			 * @param x the x coordinate, relative to the <em>subject control</em>
 			 * @param y the y coordinate, relative to the <em>subject control</em>
 			 * @param controlBounds the bounds of the current control
-			 * 
+			 *
 			 * @return <code>true</code> iff the mouse event occurred in the keep-up zone
 			 */
 			private boolean inKeepUpZone(int x, int y, Rectangle controlBounds) {
@@ -467,23 +467,23 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 				// +--------------------+
 				if (fSubjectArea.contains(x, y))
 					return true;
-				
+
 				Rectangle iControlBounds= fSubjectControl.getDisplay().map(null, fSubjectControl, controlBounds);
 				Rectangle totalBounds= Geometry.copy(iControlBounds);
 				if (totalBounds.contains(x, y))
 					return true;
-				
+
 				int keepUpY= fSubjectArea.y + fSubjectArea.height;
 				Rectangle alsoKeepUp= new Rectangle(fSubjectArea.x, keepUpY, fSubjectArea.width, totalBounds.y - keepUpY);
 				return alsoKeepUp.contains(x, y);
 			}
-			
+
 			/*
 			 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 			 */
 			public void keyPressed(KeyEvent e) {
 			}
-			
+
 			/*
 			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 			 */
@@ -492,41 +492,41 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			}
 
 		}
-		
+
 		/**
 		 * Priority of the hover managed by this manager.
 		 * Default value: One higher then for the hovers
 		 * managed by TextViewerHoverManager.
 		 */
 		private static final int WIDGET_TOKEN_PRIORITY= 1;
-		
+
 		private final MultipleHyperlinkHover fHover;
 		private final ITextViewer fTextViewer;
 		private final MultipleHyperlinkPresenter fHyperlinkPresenter;
 		private Closer fCloser;
 		private boolean fIsControlVisible;
 
-		
+
 		/**
 		 * Create a new MultipleHyperlinkHoverManager. The MHHM can show and hide
 		 * the given MultipleHyperlinkHover inside the given ITextViewer.
-		 * 
+		 *
 		 * @param hover the hover to manage
 		 * @param viewer the viewer to show the hover in
 		 * @param hyperlinkPresenter the hyperlink presenter using this manager to present hyperlinks
 		 */
 		public MultipleHyperlinkHoverManager(MultipleHyperlinkHover hover, ITextViewer viewer, MultipleHyperlinkPresenter hyperlinkPresenter) {
 			super(hover.getHoverControlCreator());
-			
+
 			fHover= hover;
 			fTextViewer= viewer;
 			fHyperlinkPresenter= hyperlinkPresenter;
-			
+
 			fCloser= new Closer();
 			setCloser(fCloser);
 			fIsControlVisible= false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeInformation()
 		 */
@@ -536,32 +536,32 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 				setInformation(null, null);
 				return;
 			}
-			
+
 			Rectangle area= JFaceTextUtil.computeArea(region, fTextViewer);
 			if (area == null || area.isEmpty()) {
 				setInformation(null, null);
 				return;
 			}
-			
+
 			Object information= fHover.getHoverInfo2(fTextViewer, region);
 			setCustomInformationControlCreator(fHover.getHoverControlCreator());
 			setInformation(information, area);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeInformationControlLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point)
 		 */
 		protected Point computeInformationControlLocation(Rectangle subjectArea, Point controlSize) {
 			Point result= super.computeInformationControlLocation(subjectArea, controlSize);
-			
+
 			Point cursorLocation= fTextViewer.getTextWidget().getDisplay().getCursorLocation();
 			if (cursorLocation.x <= result.x + controlSize.x)
 				return result;
-			
+
 			result.x= cursorLocation.x + 20 - controlSize.x;
 			return result;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControlManager#showInformationControl(org.eclipse.swt.graphics.Rectangle)
 		 */
@@ -575,38 +575,38 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			} else {
 				super.showInformationControl(subjectArea);
 			}
-			
+
 			fIsControlVisible= true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
 		 */
 		protected void hideInformationControl() {
 			super.hideInformationControl();
-			
+
 			if (fTextViewer instanceof IWidgetTokenOwner) {
 				((IWidgetTokenOwner) fTextViewer).releaseWidgetToken(this);
 			}
-			
+
 			fIsControlVisible= false;
 			fHyperlinkPresenter.hideHyperlinks();
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControlManager#disposeInformationControl()
 		 */
 		public void disposeInformationControl() {
 			super.disposeInformationControl();
-			
+
 			if (fTextViewer instanceof IWidgetTokenOwner) {
 				((IWidgetTokenOwner) fTextViewer).releaseWidgetToken(this);
 			}
-			
+
 			fIsControlVisible= false;
 			fHyperlinkPresenter.hideHyperlinks();
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner)
 		 */
@@ -614,42 +614,42 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			hideInformationControl();
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
 		 */
 		public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
 			if (priority < WIDGET_TOKEN_PRIORITY)
 				return false;
-			
+
 			hideInformationControl();
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
 		 */
 		public boolean setFocus(IWidgetTokenOwner owner) {
 			return false;
 		}
-		
+
 		/**
 		 * Returns <code>true</code> if the information control managed by
 		 * this manager is visible, <code>false</code> otherwise.
-		 * 
+		 *
 		 * @return <code>true</code> if information control is visible
 		 */
 		public boolean isInformationControlVisible() {
 			return fIsControlVisible;
 		}
 	}
-	
+
 	private ITextViewer fTextViewer;
-	
+
 	private IHyperlink[] fHyperlinks;
 	private Region fSubjectRegion;
 	private MultipleHyperlinkHoverManager fManager;
-	
+
 	/**
 	 * Creates a new multiple hyperlink presenter which uses
 	 * {@link #HYPERLINK_COLOR} to read the color from the given preference store.
@@ -659,7 +659,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	public MultipleHyperlinkPresenter(IPreferenceStore store) {
 		super(store);
 	}
-	
+
 	/**
 	 * Creates a new multiple hyperlink presenter.
 	 *
@@ -668,55 +668,55 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	public MultipleHyperlinkPresenter(RGB color) {
 		super(color);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#install(org.eclipse.jface.text.ITextViewer)
 	 */
 	public void install(ITextViewer viewer) {
 		super.install(viewer);
 		fTextViewer= viewer;
-		
+
 		fManager= new MultipleHyperlinkHoverManager(new MultipleHyperlinkHover(), fTextViewer, this);
 		fManager.install(viewer.getTextWidget());
 		fManager.setSizeConstraints(100, 12, false, true);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#uninstall()
 	 */
 	public void uninstall() {
 		super.uninstall();
-		
+
 		if (fTextViewer != null) {
 			fManager.dispose();
-			
+
 			fTextViewer= null;
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#canShowMultipleHyperlinks()
 	 */
 	public boolean canShowMultipleHyperlinks() {
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#canHideHyperlinks()
 	 */
 	public boolean canHideHyperlinks() {
 		return !fManager.isInformationControlVisible();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#hideHyperlinks()
 	 */
 	public void hideHyperlinks() {
 		super.hideHyperlinks();
-		
+
 		fHyperlinks= null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#showHyperlinks(org.eclipse.jface.text.hyperlink.IHyperlink[])
 	 */
@@ -725,23 +725,23 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 
 		fSubjectRegion= null;
 		fHyperlinks= hyperlinks;
-		
+
 		if (hyperlinks.length == 1)
 			return;
-		
+
 		int start= hyperlinks[0].getHyperlinkRegion().getOffset();
 		int end= start + hyperlinks[0].getHyperlinkRegion().getLength();
-		
+
 		for (int i= 1; i < hyperlinks.length; i++) {
 			int hstart= hyperlinks[i].getHyperlinkRegion().getOffset();
 			int hend= hstart + hyperlinks[i].getHyperlinkRegion().getLength();
-			
+
 			start= Math.min(start, hstart);
 			end= Math.max(end, hend);
 		}
-		
+
 		fSubjectRegion= new Region(start, end - start);
-		
+
 		fManager.showInformation();
 	}
 }

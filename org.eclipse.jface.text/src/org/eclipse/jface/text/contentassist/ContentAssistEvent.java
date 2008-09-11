@@ -17,7 +17,7 @@ package org.eclipse.jface.text.contentassist;
  * <p>
  * Clients may use this class.
  * </p>
- * 
+ *
  * @since 3.2
  * @see ICompletionListener
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -25,7 +25,7 @@ package org.eclipse.jface.text.contentassist;
 public final class ContentAssistEvent {
 	/**
 	 * Creates a new event.
-	 * 
+	 *
 	 * @param ca the assistant
 	 * @param proc the processor
 	 * @param isAutoActivated whether content assist was triggered by auto activation
@@ -39,7 +39,7 @@ public final class ContentAssistEvent {
 
 	/**
 	 * Creates a new event.
-	 * 
+	 *
 	 * @param ca the assistant
 	 * @param proc the processor
 	 */
@@ -60,7 +60,7 @@ public final class ContentAssistEvent {
 	 * <p>
 	 * <strong>Note:</strong> This flag is only valid in {@link ICompletionListener#assistSessionStarted(ContentAssistEvent)}.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public final boolean isAutoActivated;

@@ -104,9 +104,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		/**
 		 * Calls {@link LastSaveReferenceProvider#readDocument(IProgressMonitor, boolean)} and
 		 * returns {@link Status#OK_STATUS}.
-		 * 
+		 *
 		 * {@inheritDoc}
-		 * 
+		 *
 		 * @param monitor {@inheritDoc}
 		 * @return {@link Status#OK_STATUS}
 		 */

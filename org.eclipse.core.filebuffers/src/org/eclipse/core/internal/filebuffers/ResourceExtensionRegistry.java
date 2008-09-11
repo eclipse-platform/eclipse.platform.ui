@@ -53,7 +53,7 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 
 	/**
 	 * Returns the sharable document factory for the given file.
-	 * 
+	 *
 	 * @param file the file for which to looked up the factory
 	 * @return the sharable document factory
 	 * @deprecated As of 3.5
@@ -69,7 +69,7 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 			factory= getDocumentFactory(WILDCARD);
 		return factory;
 	}
-	
+
 	/**
 	 * Returns the sharable annotation model factory for the given file.
 	 *
@@ -115,23 +115,23 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 	 */
 	IDocumentSetupParticipant[] getDocumentSetupParticipants(IFile file) {
 		Set participants= new HashSet();
-		
+
 		List p= getDocumentSetupParticipants(findContentTypes(file));
 		if (p != null)
 			participants.addAll(p);
-		
+
 		p= getDocumentSetupParticipants(file.getFullPath().lastSegment());
 		if (p != null)
 			participants.addAll(p);
-		
+
 		p= getDocumentSetupParticipants(file.getFileExtension());
 		if (p != null)
 			participants.addAll(p);
-		
+
 		p= getDocumentSetupParticipants(WILDCARD);
 		if (p != null)
 			participants.addAll(p);
-		
+
 		IDocumentSetupParticipant[] result= new IDocumentSetupParticipant[participants.size()];
 		participants.toArray(result);
 		return result;

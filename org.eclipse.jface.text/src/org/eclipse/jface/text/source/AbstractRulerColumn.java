@@ -228,7 +228,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * <p>
 	 * Clients may reimplement this method to create a canvas with their
 	 * desired style bits.</p>
-	 * 
+	 *
 	 * @return the SWT style bits, or <code>SWT.NONE</code> if none
 	 */
 	protected int getCanvasStyle() {
@@ -268,7 +268,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	/**
 	 * Returns the parent ruler, <code>null</code> before
 	 * {@link #createControl(CompositeRuler, Composite)} has been called.
-	 * 
+	 *
 	 * @return the parent ruler or <code>null</code>
 	 */
 	protected final CompositeRuler getParentRuler() {
@@ -277,7 +277,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @param font the font or <code>null</code> to use the default font
 	 */
 	public final void setFont(Font font) {
@@ -290,7 +290,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	/**
 	 * Returns the current font. If a font has not been explicitly set, the widget's font is
 	 * returned.
-	 * 
+	 *
 	 * @return the font used to render text on the ruler.
 	 */
 	protected final Font getFont() {
@@ -303,7 +303,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 	/**
 	 * Sets the text inset (padding) used to draw text in {@link #paintLine(GC, int, int, int, int)}.
-	 * 
+	 *
 	 * @param textInset the new text inset
 	 */
 	protected final void setTextInset(int textInset) {
@@ -316,7 +316,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	/**
 	 * Returns the text inset for text drawn by {@link #paintLine(GC, int, int, int, int)}. The
 	 * <code>DEFAULT_TEXT_INSET</code> constant specifies the default inset in pixels.
-	 * 
+	 *
 	 * @return the text inset for text
 	 */
 	protected final int getTextInset() {
@@ -344,7 +344,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * Sets the default background color for this column. The default background is used as default
 	 * implementation of {@link #computeBackground(int)} and also to paint the area of the ruler
 	 * that does not correspond to any lines (when the viewport is not entirely filled with lines).
-	 * 
+	 *
 	 * @param background the default background color, <code>null</code> to use the text widget's
 	 *        background
 	 */
@@ -359,7 +359,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 	/**
 	 * Returns the background color. May return <code>null</code> if the system is shutting down.
-	 * 
+	 *
 	 * @return the background color
 	 */
 	protected final Color getDefaultBackground() {
@@ -379,7 +379,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 	/**
 	 * Sets the annotation hover.
-	 * 
+	 *
 	 * @param hover the annotation hover, <code>null</code> for no hover
 	 */
 	protected final void setHover(IAnnotationHover hover) {
@@ -428,7 +428,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 	/**
 	 * Marks the region covered by <code>lines</code> as needing to be redrawn.
-	 * 
+	 *
 	 * @param lines the lines to be redrawn in document coordinates
 	 */
 	protected final void redraw(ILineRange lines) {
@@ -447,7 +447,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 	/**
 	 * Paints the ruler column.
-	 * 
+	 *
 	 * @param event the paint event
 	 */
 	private void paintControl(PaintEvent event) {
@@ -473,7 +473,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 	/**
 	 * Computes the widget lines that need repainting given the clipping region of a paint event.
-	 * 
+	 *
 	 * @param event the paint event
 	 * @return the lines in widget coordinates that need repainting
 	 */
@@ -491,7 +491,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * Subclasses may replace or extend. The default implementation calls
 	 * {@link #paintLine(GC, int, int, int, int)} for every visible line.
 	 * </p>
-	 * 
+	 *
 	 * @param gc the graphics context to paint on
 	 * @param lines the lines to paint in widget coordinates
 	 */
@@ -516,7 +516,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * the entire width using the {@link #computeBackground(int) background color}. The text is
 	 * drawn {@link #getTextInset()} pixels to the right of the left border.
 	 * </p>
-	 * 
+	 *
 	 * @param gc the graphics context to paint on
 	 * @param modelLine the model line (based on document coordinates)
 	 * @param widgetLine the line in the text widget corresponding to <code>modelLine</code>
@@ -539,7 +539,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * <p>
 	 * Subclasses may replace or extend.
 	 * </p>
-	 * 
+	 *
 	 * @param line the document line number
 	 * @return the text to be drawn for the given line, <code>null</code> for no text
 	 */
@@ -554,7 +554,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * <p>
 	 * Subclasses may replace or extend.
 	 * </p>
-	 * 
+	 *
 	 * @param line the document line number
 	 * @return the background color for drawn for the given line
 	 */
@@ -569,7 +569,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * <p>
 	 * Subclasses may replace or extend.
 	 * </p>
-	 * 
+	 *
 	 * @param line the document line number
 	 * @return the foreground color for drawn for the given line
 	 */
@@ -608,7 +608,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	/**
 	 * Scrolls the canvas vertically (adapted from
 	 * {@linkplain StyledText StyledText.scrollVertical()}).
-	 * 
+	 *
 	 * @param pixels the number of pixels to scroll (negative to scroll upwards)
 	 * @return <code>true</code> if the widget was scrolled, <code>false</code> if the widget
 	 *         was not scrolled

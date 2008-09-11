@@ -16,16 +16,16 @@ import org.eclipse.jface.action.Action;
  * @deprecated old search
  */
 class GotoMarkerAction extends Action {
-	
+
 	private SearchResultViewer fViewer;
 
 	public GotoMarkerAction(SearchResultViewer viewer) {
-		super(SearchMessages.SearchResultView_gotoMarker_text); 
+		super(SearchMessages.SearchResultView_gotoMarker_text);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_GOTO);
-		setToolTipText(SearchMessages.SearchResultView_gotoMarker_tooltip); 
+		setToolTipText(SearchMessages.SearchResultView_gotoMarker_tooltip);
 		fViewer= viewer;
 	}
-	
+
 	public void run() {
 		fViewer.showResult();
 	}

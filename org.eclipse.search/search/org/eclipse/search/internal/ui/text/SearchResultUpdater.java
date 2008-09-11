@@ -20,13 +20,12 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 public class SearchResultUpdater implements IResourceChangeListener, IQueryListener {
 	private AbstractTextSearchResult fResult;
@@ -79,7 +78,7 @@ public class SearchResultUpdater implements IResourceChangeListener, IQueryListe
 			NewSearchUI.removeQueryListener(this);
 		}
 	}
-	
+
 	public void queryStarting(ISearchQuery query) {
 		// don't care
 	}

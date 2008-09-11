@@ -12,13 +12,14 @@ package org.eclipse.ui.examples.templateeditor.preferences;
 
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.examples.templateeditor.editors.TemplateEditorUI;
+
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
 /**
  * @see org.eclipse.jface.preference.PreferencePage
  */
 public class TemplatesPreferencePage extends TemplatePreferencePage implements IWorkbenchPreferencePage {
-	
+
 	public TemplatesPreferencePage() {
 		setPreferenceStore(TemplateEditorUI.getDefault().getPreferenceStore());
 		setTemplateStore(TemplateEditorUI.getDefault().getTemplateStore());
@@ -28,13 +29,13 @@ public class TemplatesPreferencePage extends TemplatePreferencePage implements I
 	protected boolean isShowFormatterSetting() {
 		return false;
 	}
-	
-	
+
+
 	public boolean performOk() {
 		boolean ok= super.performOk();
-		
+
 		TemplateEditorUI.getDefault().savePluginPreferences();
-		
+
 		return ok;
 	}
 }

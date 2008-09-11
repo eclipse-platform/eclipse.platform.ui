@@ -87,11 +87,11 @@ public interface IFileBuffer {
 	 * Returns the modification stamp of the file underlying this file buffer.
 	 * <p>
 	 * {@link IDocumentExtension4#UNKNOWN_MODIFICATION_STAMP} is returned if the
-	 * buffer cannot get the modification stamp from the underlying file. 
+	 * buffer cannot get the modification stamp from the underlying file.
 	 * </p>
 	 * <p>
 	 * <strong>Note:</strong> The value of the modification stamp returned for
-	 * non-existing files can differ depending on the underlying file system. 
+	 * non-existing files can differ depending on the underlying file system.
 	 * </p>
 	 *
 	 * @return the modification stamp of the file underlying this file buffer

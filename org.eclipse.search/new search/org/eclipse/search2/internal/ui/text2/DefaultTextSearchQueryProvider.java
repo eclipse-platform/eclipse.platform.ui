@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 Wind River Systems and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Markus Schorn - initial API and implementation 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Markus Schorn - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.search2.internal.ui.text2;
@@ -15,11 +15,10 @@ import org.eclipse.core.resources.IResource;
 
 import org.eclipse.ui.IWorkingSet;
 
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
-
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
 public class DefaultTextSearchQueryProvider extends TextSearchQueryProvider {
 
@@ -41,7 +40,7 @@ public class DefaultTextSearchQueryProvider extends TextSearchQueryProvider {
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(getPreviousFileNamePatterns(), false);
 		return new FileSearchQuery(searchForString, false, true, scope);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.TextSearchQueryProvider#createQuery(java.lang.String, org.eclipse.core.resources.IResource[])
 	 */
@@ -57,9 +56,9 @@ public class DefaultTextSearchQueryProvider extends TextSearchQueryProvider {
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(ws, getPreviousFileNamePatterns(), false);
 		return new FileSearchQuery(selectedText, false, true, scope);
 	}
-	
+
 	private String[] getPreviousFileNamePatterns() {
 		return new String[] { "*" }; //$NON-NLS-1$
 	}
-	
+
 }

@@ -47,21 +47,21 @@ public final class HippieCompletionEngine {
 	private static final String COMPLETION_WORD_REGEX= "[\\p{L}[\\p{Mn}[\\p{Pc}[\\p{Nd}[\\p{Nl}[\\p{Sc}]]]]]]+"; //$NON-NLS-1$
 	/**
 	 * The pre-compiled word pattern.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final Pattern COMPLETION_WORD_PATTERN= Pattern.compile(COMPLETION_WORD_REGEX);
-	
+
 	/**
 	 * Word boundary pattern that does not allow searching at the beginning of the document.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String NON_EMPTY_COMPLETION_BOUNDARY= "[\\s\\p{Z}[\\p{P}&&[\\P{Pc}]][\\p{S}&&[\\P{Sc}]]]+"; //$NON-NLS-1$
-	
+
 	/**
 	 * The word boundary pattern string.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final String COMPLETION_BOUNDARY= "(^|" + NON_EMPTY_COMPLETION_BOUNDARY + ")";  //$NON-NLS-1$ //$NON-NLS-2$
@@ -120,7 +120,7 @@ public final class HippieCompletionEngine {
 	/**
 	 * Return the list of completion suggestions that correspond to the
 	 * provided prefix.
-	 * 
+	 *
 	 * @param document the document to be scanned
 	 * @param prefix the prefix to search for
 	 * @param firstPosition the initial position in the document that
@@ -129,17 +129,17 @@ public final class HippieCompletionEngine {
 	 * @param currentWordLast if <code>true</code> the word at caret position
 	 * 		  should be that last completion. <code>true</code> is good
 	 * 		  for searching in the currently open document and <code>false</code>
-	 * 		  is good for searching in other documents. 
+	 * 		  is good for searching in other documents.
 	 * @return a {@link List} of possible completions (as {@link String}s),
 	 *         excluding the common prefix
 	 * @throws BadLocationException if there is some error scanning the
 	 *         document.
 	 */
-	public List getCompletionsForward(IDocument document, CharSequence prefix, 
+	public List getCompletionsForward(IDocument document, CharSequence prefix,
 			int firstPosition, boolean currentWordLast) throws BadLocationException {
 		ArrayList res= new ArrayList();
 		String currentWordCompletion= null; // fix bug 132533
-		
+
         if (firstPosition == document.getLength()) {
             return res;
         }
@@ -154,13 +154,13 @@ public final class HippieCompletionEngine {
 		// because the boundary pattern has the (....)+ form.
 		// see HippieCompletionTest#testForwardSearch().
 		if (firstPosition > 0) {
-			firstPosition--; 
+			firstPosition--;
 			// empty spacing is not permitted now.
 			searchPattern= NON_EMPTY_COMPLETION_BOUNDARY + asRegPattern(prefix);
 		} else {
 			searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix);
 		}
-		
+
 		IRegion reg= searcher.find(firstPosition, searchPattern, true, CASE_SENSITIVE, false, true);
 		while (reg != null) {
 			// since the boundary may be of nonzero length
@@ -182,7 +182,7 @@ public final class HippieCompletionEngine {
 			}
 			reg= searcher.find(nextPos, searchPattern, true, CASE_SENSITIVE, false, true);
 		}
-		
+
 		// the word at caret position goes last (bug 132533).
 		if (currentWordCompletion != null) {
 			res.add(currentWordCompletion);
@@ -216,7 +216,7 @@ public final class HippieCompletionEngine {
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
 
 		// search only at word boundaries
-		String searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix); 
+		String searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix);
 
 		IRegion reg= searcher.find(0, searchPattern, true, CASE_SENSITIVE, false, true);
 		while (reg != null) {
@@ -244,7 +244,7 @@ public final class HippieCompletionEngine {
 
 	/**
 	 * Returns the text between the provided position and the preceding word boundary.
-	 * 
+	 *
 	 * @param doc the document that will be scanned.
 	 * @param pos the caret position.
 	 * @return the text if found, or null.

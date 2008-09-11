@@ -38,8 +38,8 @@ import org.eclipse.jface.text.source.LineRange;
  * @since 3.0
  */
 class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExtension, IInformationProviderExtension2 {
-	
-	
+
+
 	private IInformationControlCreator fInformationControlCreator;
 	private IInformationControlCreator fInformationPresenterControlCreator;
 
@@ -51,7 +51,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	public void setHoverControlCreator(IInformationControlCreator creator) {
 		fInformationControlCreator= creator;
 	}
-	
+
 	/**
 	 * Sets the information presenter control creator for this projection annotation hover.
 	 *

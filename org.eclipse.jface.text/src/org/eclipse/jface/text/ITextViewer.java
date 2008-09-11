@@ -464,7 +464,7 @@ public interface ITextViewer {
 
 	/**
 	 * Sets the selection to the specified range.
-	 * 
+	 *
 	 * @param offset the offset of the selection range
 	 * @param length the length of the selection range. A negative length places
 	 *            the caret at the visual start of the selection.

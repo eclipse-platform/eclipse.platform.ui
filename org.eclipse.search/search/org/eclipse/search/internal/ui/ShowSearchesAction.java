@@ -33,9 +33,9 @@ import org.eclipse.search.internal.ui.util.ListDialog;
 class ShowSearchesAction extends Action {
 
 	private static final class SearchesLabelProvider extends LabelProvider {
-		
+
 		private ArrayList fImages= new ArrayList();
-		
+
 		public String getText(Object element) {
 			if (!(element instanceof ShowSearchAction))
 				return ""; //$NON-NLS-1$
@@ -45,21 +45,21 @@ class ShowSearchesAction extends Action {
 			if (!(element instanceof ShowSearchAction))
 				return null;
 
-			ImageDescriptor imageDescriptor= ((ShowSearchAction)element).getImageDescriptor(); 
+			ImageDescriptor imageDescriptor= ((ShowSearchAction)element).getImageDescriptor();
 			if (imageDescriptor == null)
 				return null;
-			
+
 			Image image= imageDescriptor.createImage();
 			fImages.add(image);
 
 			return image;
 		}
-		
+
 		public void dispose() {
 			Iterator iter= fImages.iterator();
 			while (iter.hasNext())
 				((Image)iter.next()).dispose();
-			
+
 			fImages= null;
 		}
 	}
@@ -68,8 +68,8 @@ class ShowSearchesAction extends Action {
 	 *	Create a new instance of this class
 	 */
 	public ShowSearchesAction() {
-		super(SearchMessages.ShowOtherSearchesAction_label); 
-		setToolTipText(SearchMessages.ShowOtherSearchesAction_tooltip); 
+		super(SearchMessages.ShowOtherSearchesAction_label);
+		setToolTipText(SearchMessages.ShowOtherSearchesAction_tooltip);
 	}
 	/*
 	 * Overrides method from Action
@@ -77,7 +77,7 @@ class ShowSearchesAction extends Action {
 	public void run() {
 		run(false);
 	}
-	 
+
 	public void run(boolean showAll) {
 		Iterator iter= SearchManager.getDefault().getPreviousSearches().iterator();
 		int cutOffSize;
@@ -104,14 +104,14 @@ class ShowSearchesAction extends Action {
 		String title;
 		String message;
 		if (showAll) {
-			title= SearchMessages.PreviousSearchesDialog_title; 
-			message= SearchMessages.PreviousSearchesDialog_message; 
+			title= SearchMessages.PreviousSearchesDialog_title;
+			message= SearchMessages.PreviousSearchesDialog_message;
 		}
 		else {
-			title= SearchMessages.OtherSearchesDialog_title; 
-			message= SearchMessages.OtherSearchesDialog_message; 
+			title= SearchMessages.OtherSearchesDialog_title;
+			message= SearchMessages.OtherSearchesDialog_message;
 		}
-		
+
 		LabelProvider labelProvider=new SearchesLabelProvider();
 
 		ListDialog dlg= new ListDialog(SearchPlugin.getActiveWorkbenchShell(),input, title, message, new ArrayContentProvider(), labelProvider);

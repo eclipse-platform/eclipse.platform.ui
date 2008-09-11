@@ -16,9 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -31,12 +28,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.IEventConsumer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+
+import org.eclipse.jface.text.IEventConsumer;
 
 
 /**
@@ -81,7 +82,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 * @since 3.3
 	 */
 	private Image fCachedDefaultCueImage;
-	
+
 	/**
 	 * Creates a new {@link AbstractControlContentAssistSubjectAdapter}.
 	 */
@@ -331,15 +332,15 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		if (fCueLabelProvider != null) {
 			fCueLabelProvider.dispose();
 		}
-		
+
 		fCueLabelProvider= labelProvider;
-		
+
 		if (labelProvider == null) {
 			if (fControlDecoration != null) {
 				fControlDecoration.dispose();
 				fControlDecoration= null;
 			}
-			
+
 		} else {
 			if (fControlDecoration == null) {
 				fControlDecoration= new ControlDecoration(getControl(), (SWT.TOP | SWT.LEFT));
@@ -362,7 +363,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				fControlDecoration.setShowHover(true);
 				fControlDecoration.setShowOnlyOnFocus(true);
 			}
-			
+
 			ILabelProviderListener listener= new ILabelProviderListener() {
 				public void labelProviderChanged(LabelProviderChangedEvent event) {
 					fControlDecoration.setDescriptionText(labelProvider.getText(getControl()));
@@ -377,10 +378,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			listener.labelProviderChanged(new LabelProviderChangedEvent(labelProvider));
 		}
 	}
-	
+
 	/**
 	 * Returns the default cue image.
-	 * 
+	 *
 	 * @return the default cue image
 	 * @since 3.3
 	 */

@@ -129,7 +129,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 */
 	private boolean fIsQuickFixableStateSet;
 
-	
+
 	/**
 	 * Creates a new annotation for the given marker.
 	 *
@@ -325,7 +325,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void setQuickFixable(boolean state) {
@@ -335,7 +335,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public boolean isQuickFixableStateSet() {
@@ -344,7 +344,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public boolean isQuickFixable() {

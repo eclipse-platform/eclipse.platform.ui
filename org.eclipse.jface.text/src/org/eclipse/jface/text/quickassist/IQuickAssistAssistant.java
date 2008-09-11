@@ -86,7 +86,7 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 	 * @return an optional error message if no proposals can be computed
 	 */
 	String showPossibleQuickAssists();
-	
+
 	/**
 	 * Registers a given quick assist processor for a particular content type. If there is already
 	 * a processor registered, the new processor is registered instead of the old one.
@@ -95,34 +95,34 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 	 *        an existing one
 	 */
 	void setQuickAssistProcessor(IQuickAssistProcessor processor);
-	
+
 	/**
 	 * Returns the quick assist processor to be used for the given content type.
 	 *
 	 * @return the quick assist processor or <code>null</code> if none exists
 	 */
 	IQuickAssistProcessor getQuickAssistProcessor();
-	
+
 	/**
 	 * Tells whether this assistant has a fix for the given annotation.
 	 * <p>
 	 * <strong>Note:</strong> This test must be fast and optimistic i.e. it is OK to return
 	 * <code>true</code> even though there might be no quick fix.
 	 * </p>
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return <code>true</code> if the assistant has a fix for the given annotation
 	 */
 	boolean canFix(Annotation annotation);
-	
+
 	/**
 	 * Tells whether this assistant has assists for the given invocation context.
-	 * 
+	 *
 	 * @param invocationContext the invocation context
 	 * @return <code>true</code> if the assistant has a fix for the given annotation
 	 */
 	boolean canAssist(IQuickAssistInvocationContext invocationContext);
-	
+
 	/**
 	 * Sets the proposal selector's background color.
 	 * <p>
@@ -144,34 +144,34 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 	 * @param foreground the foreground color
 	 */
 	void setProposalSelectorForeground(Color foreground);
-	
+
 	/**
 	 * Adds a completion listener that will be informed before proposals are computed.
-	 * 
+	 *
 	 * @param listener the listener
 	 */
 	void addCompletionListener(ICompletionListener listener);
 
 	/**
 	 * Removes a completion listener.
-	 * 
+	 *
 	 * @param listener the listener to remove
 	 */
 	void removeCompletionListener(ICompletionListener listener);
-	
+
 	/**
 	 * Enables displaying a status line below the proposal popup. The default is not to show the
 	 * status line. The contents of the status line may be set via {@link #setStatusMessage(String)}.
-	 * 
+	 *
 	 * @param show <code>true</code> to show a message line, <code>false</code> to not show one.
 	 */
 	public void setStatusLineVisible(boolean show);
 
 	/**
 	 * Sets the caption message displayed at the bottom of the completion proposal popup.
-	 * 
+	 *
 	 * @param message the message
 	 */
 	public void setStatusMessage(String message);
-	
+
 }

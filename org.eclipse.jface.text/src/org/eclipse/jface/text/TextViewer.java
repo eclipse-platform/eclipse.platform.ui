@@ -120,7 +120,7 @@ public class TextViewer extends Viewer implements
 	 * @since 3.4
 	 */
 	private static final int TEXT_HOVER_HEIGHT_CHARS= 12; //used to be 10 (text font)
-	
+
 	/**
 	 * Represents a replace command that brings the text viewer's text widget
 	 * back in synchronization with text viewer's document after the document
@@ -200,12 +200,12 @@ public class TextViewer extends Viewer implements
 		public void getNextOffset(MovementEvent event) {
 			if (event.movement != SWT.MOVEMENT_WORD_END)
 				return;
-			
+
 			if (TRACE_DOUBLE_CLICK) {
 				System.out.println("\n+++"); //$NON-NLS-1$
 				print(event);
 			}
-			
+
 			if (fDoubleClickSelection != null) {
 				if (fDoubleClickSelection.x <= event.offset && event.offset <= fDoubleClickSelection.y)
 					event.newOffset= fDoubleClickSelection.y;
@@ -219,7 +219,7 @@ public class TextViewer extends Viewer implements
 		public void getPreviousOffset(MovementEvent event) {
 			if (event.movement != SWT.MOVEMENT_WORD_START)
 				return;
-			
+
 			if (TRACE_DOUBLE_CLICK) {
 				System.out.println("\n---"); //$NON-NLS-1$
 				print(event);
@@ -243,7 +243,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * Print trace info about <code>MovementEvent</code>.
-	 * 
+	 *
 	 * @param e the event to print
 	 * @since 3.3
 	 */
@@ -1104,7 +1104,7 @@ public class TextViewer extends Viewer implements
 			fStateMask= stateMask;
 		}
 	}
-	
+
 	/**
 	 * Captures and remembers the viewer state (selection and visual position). {@link TextViewer.ViewerState}
 	 * instances are normally used once and then discarded, similar to the following snippet:
@@ -1113,7 +1113,7 @@ public class TextViewer extends Viewer implements
 	 * doStuff(); // operation that may call setRedraw() and perform complex document modifications
 	 * state.restore(true); // restore the remembered state
 	 * </pre>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private final class ViewerState {
@@ -1146,7 +1146,7 @@ public class TextViewer extends Viewer implements
 
 		/**
 		 * Returns the normalized selection, i.e. the the selection length is always non-negative.
-		 * 
+		 *
 		 * @return the normalized selection
 		 */
 		public Point getSelection() {
@@ -1157,7 +1157,7 @@ public class TextViewer extends Viewer implements
 
 		/**
 		 * Updates the selection.
-		 * 
+		 *
 		 * @param offset the new selection offset
 		 * @param length the new selection length
 		 */
@@ -1172,7 +1172,7 @@ public class TextViewer extends Viewer implements
 		/**
 		 * Restores the state and disconnects it from the document. The selection is no longer
 		 * tracked after this call.
-		 * 
+		 *
 		 * @param restoreViewport <code>true</code> to restore both selection and viewport,
 		 *        <code>false</code> to only restore the selection
 		 */
@@ -1220,7 +1220,7 @@ public class TextViewer extends Viewer implements
 
 		/**
 		 * Remembers the viewer state.
-		 * 
+		 *
 		 * @param document the document to remember the state of
 		 */
 		private void connect(IDocument document) {
@@ -1266,7 +1266,7 @@ public class TextViewer extends Viewer implements
 
 		/**
 		 * Updates a position with the given information and clears its deletion state.
-		 * 
+		 *
 		 * @param position the position to update
 		 * @param offset the new selection offset
 		 * @param length the new selection length
@@ -1281,7 +1281,7 @@ public class TextViewer extends Viewer implements
 		/**
 		 * Returns the document line to keep visually stable. If the caret line is (partially)
 		 * visible, it is returned, otherwise the topmost (partially) visible line is returned.
-		 * 
+		 *
 		 * @return the visually stable line of this viewer state
 		 */
 		private int getStableLine() {
@@ -1298,7 +1298,7 @@ public class TextViewer extends Viewer implements
 		/**
 		 * Returns <code>true</code> if the viewer state is being tracked, <code>false</code>
 		 * otherwise.
-		 * 
+		 *
 		 * @return the tracking state
 		 */
 		private boolean isConnected() {
@@ -1326,7 +1326,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * Internal cursor listener i.e. aggregation of mouse and key listener.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class CursorListener implements KeyListener, MouseListener {
@@ -1420,8 +1420,8 @@ public class TextViewer extends Viewer implements
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Identifies the scrollbars as originators of a view port change.
 	 */
@@ -1700,7 +1700,7 @@ public class TextViewer extends Viewer implements
 	protected void createControl(Composite parent, int styles) {
 
 		fTextWidget= createTextWidget(parent, styles);
-		
+
 		// Support scroll page upon MOD1+MouseWheel
 		fTextWidget.addListener(SWT.MouseWheel, new Listener() {
 
@@ -1719,7 +1719,7 @@ public class TextViewer extends Viewer implements
 				updateViewportListeners(INTERNAL);
 			}
 		});
-		
+
 		fTextWidget.addDisposeListener(
 			new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
@@ -1815,7 +1815,7 @@ public class TextViewer extends Viewer implements
 	 * control has been disposed.
 	 */
 	protected void handleDispose() {
-		
+
 		setDocument(null);
 
 		if (fPaintManager != null) {
@@ -1904,7 +1904,7 @@ public class TextViewer extends Viewer implements
 		fVisibleDocument= null;
 		fDocument= null;
 		fScroller= null;
-		
+
 		fTextWidget= null;
 	}
 
@@ -2204,7 +2204,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void setHoverEnrichMode(ITextViewerExtension8.EnrichMode mode) {
@@ -2985,7 +2985,7 @@ public class TextViewer extends Viewer implements
 	 * accurate if the widget does not use variable line heights - for that reason, clients should
 	 * not use this method any longer and use the client area height of the text widget to find out
 	 * how much content fits into it.
-	 * 
+	 *
 	 * @return the view port height in lines
 	 * @deprecated as of 3.2
 	 */
@@ -3005,7 +3005,7 @@ public class TextViewer extends Viewer implements
 
 		if (fTextWidget == null)
 			return -1;
-		
+
 		int widgetBottom= JFaceTextUtil.getBottomIndex(fTextWidget);
 		return widgetLine2ModelLine(widgetBottom);
 	}
@@ -3098,7 +3098,7 @@ public class TextViewer extends Viewer implements
 				// scroll vertically
 				int bottom= JFaceTextUtil.getBottomIndex(fTextWidget);
 				int lines= bottom - top;
-				
+
 				// if the widget is not scrollable as it is displaying the entire content
 				// setTopIndex won't have any effect.
 
@@ -3199,7 +3199,7 @@ public class TextViewer extends Viewer implements
 			Rectangle bounds= fTextWidget.getTextBounds(start, end - 1);
 			return new Region(bounds.x, bounds.width);
 		}
-		
+
 		return new Region(fTextWidget.getLocationAtOffset(start).x, 0);
 	}
 
@@ -3549,9 +3549,9 @@ public class TextViewer extends Viewer implements
 	protected void customizeDocumentCommand(DocumentCommand command) {
 		if (isIgnoringAutoEditStrategies())
 			return;
-		
+
 		IDocument document= getDocument();
-		
+
 		if (fTabsToSpacesConverter != null)
 			fTabsToSpacesConverter.customizeDocumentCommand(document, command);
 
@@ -3990,7 +3990,7 @@ public class TextViewer extends Viewer implements
 	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {
 		if (fUndoManager != null)
 			fUndoManager.beginCompoundChange();
-		
+
 		IDocument d= getDocument();
 		Map partitioners= null;
 		DocumentRewriteSession rewriteSession= null;
@@ -4043,7 +4043,7 @@ public class TextViewer extends Viewer implements
 
 			if (partitioners != null)
 				TextUtilities.addDocumentPartitioners(d, partitioners);
-			
+
 			if (d instanceof IDocumentExtension4) {
 				IDocumentExtension4 extension= (IDocumentExtension4) d;
 				extension.stopRewriteSession(rewriteSession);
@@ -4163,7 +4163,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void print(StyledTextPrintOptions options) {
@@ -4409,7 +4409,7 @@ public class TextViewer extends Viewer implements
 			range= modelStyleRange2WidgetStyleRange(range);
 			if (range != null)
 				fTextWidget.setStyleRange(range);
-			
+
 			ArrayList ranges= new ArrayList(presentation.getDenumerableRanges());
 			Iterator e= presentation.getNonDefaultStyleRangeIterator();
 			while (e.hasNext()) {
@@ -4418,10 +4418,10 @@ public class TextViewer extends Viewer implements
 				if (range != null)
 					ranges.add(range);
 			}
-			
+
 			if (!ranges.isEmpty())
 				fTextWidget.replaceStyleRanges(0, 0, (StyleRange[])ranges.toArray(new StyleRange[ranges.size()]));
-			
+
 		} else {
 			IRegion region= modelRange2WidgetRange(presentation.getCoverage());
 			if (region == null)
@@ -4760,9 +4760,9 @@ public class TextViewer extends Viewer implements
 	 * way for subclasses to pass in a desired top index that should be used when
 	 * <code>redraw</code> is <code>true</code>. If <code>topIndex</code> is -1, this method is
 	 * identical to <code>ITextViewerExtension.setRedraw(boolean)</code>.
-	 * 
+	 *
 	 * @see ITextViewerExtension#setRedraw(boolean)
-	 * 
+	 *
 	 * @param redraw <code>true</code> if redraw is enabled
 	 * @param topIndex the top index
 	 * @since 3.0
@@ -5310,7 +5310,7 @@ public class TextViewer extends Viewer implements
 					((IHyperlinkDetectorExtension)fHyperlinkDetectors[i]).dispose();
 			}
 		}
-		
+
 		boolean enable= hyperlinkDetectors != null && hyperlinkDetectors.length > 0;
 		fHyperlinkStateMask= eventStateMask;
 		fHyperlinkDetectors= hyperlinkDetectors;

@@ -18,16 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.SafeRunner;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
@@ -49,6 +39,16 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -77,13 +77,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
-
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 
 public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer, IPageChangeProvider {
 
@@ -92,40 +91,40 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
 				return new Point(wHint, hHint);
 
-			int x= 0; 
-			int y= 0;				
+			int x= 0;
+			int y= 0;
 			Control[] children= composite.getChildren();
 			for (int i= 0; i < children.length; i++) {
 				Point size= children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 				x= Math.max(x, size.x);
 				y= Math.max(y, size.y);
 			}
-			
+
 			Point minSize= getMinSize();
 			x= Math.max(x, minSize.x);
 			y= Math.max(y, minSize.y);
-			
+
 			if (wHint != SWT.DEFAULT)
 				x= wHint;
 			if (hHint != SWT.DEFAULT)
 				y= hHint;
-			return new Point(x, y);		
+			return new Point(x, y);
 		}
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle rect= composite.getClientArea();
-			
+
 			Control[] children= composite.getChildren();
 			for (int i= 0; i < children.length; i++) {
 				children[i].setBounds(rect);
 			}
 		}
 	}
-	
-	
+
+
 	private static final int SEARCH_ID= IDialogConstants.CLIENT_ID + 1;
 	private static final int REPLACE_ID= SEARCH_ID + 1;
 	private static final int CUSTOMIZE_ID= REPLACE_ID + 1;
-	
+
 	private ISearchPage fCurrentPage;
 	private String fInitialPageId;
 	private int fCurrentIndex;
@@ -137,7 +136,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private Button fCustomizeButton;
 	private Button fReplaceButton;
 	private ListenerList fPageChangeListeners;
-	
+
 	private final IWorkbenchWindow fWorkbenchWindow;
 	private final ISelection fCurrentSelection;
 	private final String[] fCurrentEnclosingProject;
@@ -155,7 +154,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		setUseEmbeddedProgressMonitorPart(false);
 	}
 
-	public static String evaluateEnclosingProject(IAdaptable adaptable) {		
+	public static String evaluateEnclosingProject(IAdaptable adaptable) {
 		IProject project= (IProject) adaptable.getAdapter(IProject.class);
 		if (project == null) {
 			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
@@ -168,9 +167,9 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		}
 		return null;
 	}
-	
+
 	public static String[] evaluateEnclosingProject(ISelection selection, IEditorPart activeEditor) {
-		// always use the editor if active 
+		// always use the editor if active
 		if (activeEditor != null) {
 			String name= evaluateEnclosingProject(activeEditor.getEditorInput());
 			if (name != null) {
@@ -219,7 +218,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	protected IDialogSettings getDialogBoundsSettings() {
 		return SearchPlugin.getDefault().getDialogSettingsSection("DialogBounds_SearchDialog"); //$NON-NLS-1$
 	}
-	
+
 	protected Point getInitialSize() {
 		Point requiredSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		Point lastSize= super.getInitialSize();
@@ -228,24 +227,24 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		}
 		return lastSize;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in Window.
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(SearchMessages.SearchDialog_title); 
+		shell.setText(SearchMessages.SearchDialog_title);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, ISearchHelpContextIds.SEARCH_DIALOG);
 	}
 
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return fWorkbenchWindow;
 	}
-	
+
 	public ISelection getSelection() {
 		return fCurrentSelection;
 	}
-	
+
 	private IEditorPart getActiveEditor() {
 		IWorkbenchPage activePage= fWorkbenchWindow.getActivePage();
 		if (activePage != null) {
@@ -255,7 +254,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		}
 		return null;
 	}
-	
+
 	//---- Page Handling -------------------------------------------------------
 
 	/*
@@ -293,8 +292,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			}
 		};
 
-		String message= SearchMessages.SearchPageSelectionDialog_message; 
-		
+		String message= SearchMessages.SearchPageSelectionDialog_message;
+
 		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ArrayContentProvider(), labelProvider, message) {
 			public void create() {
 				super.create();
@@ -314,12 +313,12 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				this.getButton(IDialogConstants.DESELECT_ALL_ID).addSelectionListener(listener);
 			}
 		};
-		dialog.setTitle(SearchMessages.SearchPageSelectionDialog_title); 
+		dialog.setTitle(SearchMessages.SearchPageSelectionDialog_title);
 		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(fInitialPageId).toArray());
 		if (dialog.open() == Window.OK) {
 			SearchPageDescriptor.setEnabled(dialog.getResult());
 			Display display= getShell().getDisplay();
-			close();			
+			close();
 			if (display != null && !display.isDisposed()) {
 				display.asyncExec(
 						new Runnable() {
@@ -329,7 +328,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 						});
 			}
 		}
-		destroyImages(createdImages);		
+		destroyImages(createdImages);
 	}
 
 	private List filterByActivities(List input) {
@@ -338,7 +337,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			SearchPageDescriptor descriptor= (SearchPageDescriptor) descriptors.next();
 			if (!WorkbenchActivityHelper.filterItem(descriptor))
 			    filteredList.add(descriptor);
-			
+
 		}
 		return filteredList;
 	}
@@ -351,39 +350,39 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				image.dispose();
 		}
 	}
-	
+
 	protected Control createPageArea(Composite parent) {
 		int numPages= fDescriptors.size();
 		fScopeParts= new ScopePart[numPages];
-		
+
 		if (numPages == 0) {
 			Label label= new Label(parent, SWT.CENTER | SWT.WRAP);
-			label.setText(SearchMessages.SearchDialog_noSearchExtension); 
+			label.setText(SearchMessages.SearchDialog_noSearchExtension);
 			return label;
 		}
-		
+
 		fCurrentIndex= getPreferredPageIndex();
 		final SearchPageDescriptor currentDesc= getDescriptorAt(fCurrentIndex);
-				
+
 		Composite composite= new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
-		
+
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		TabFolder folder= new TabFolder(composite, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		folder.setFont(composite.getFont());
-		
-		for (int i= 0; i < numPages; i++) {			
+
+		for (int i= 0; i < numPages; i++) {
 			SearchPageDescriptor descriptor= getDescriptorAt(i);
 			if (WorkbenchActivityHelper.filterItem(descriptor))
 			    continue;
-			
+
 			final TabItem item= new TabItem(folder, SWT.NONE);
 			item.setData("descriptor", descriptor); //$NON-NLS-1$
 			item.setText(descriptor.getLabel());
@@ -397,7 +396,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			ImageDescriptor imageDesc= descriptor.getImage();
 			if (imageDesc != null)
 				item.setImage(imageDesc.createImage());
-			
+
 			if (i == fCurrentIndex) {
 				Control pageControl= createPageControl(folder, descriptor);
 				pageControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -405,7 +404,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				fCurrentPage= currentDesc.getPage();
 			}
 		}
-		
+
 		folder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				turnToPage(event);
@@ -413,38 +412,38 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		});
 
 		folder.setSelection(fCurrentIndex);
-		
+
 		return composite;
 	}
-	
+
 	protected Control createButtonBar(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
-		layout.numColumns= 0;   // create 
+		layout.numColumns= 0;   // create
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		
+
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	
+
 		// create help control if needed
         if (isHelpAvailable()) {
         	createHelpControl(composite);
         }
-		fCustomizeButton= createButton(composite, CUSTOMIZE_ID, SearchMessages.SearchDialog_customize, true); 
-		
+		fCustomizeButton= createButton(composite, CUSTOMIZE_ID, SearchMessages.SearchDialog_customize, true);
+
 		Label filler= new Label(composite, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		layout.numColumns++;
-		
-		fReplaceButton= createActionButton(composite, REPLACE_ID, SearchMessages.SearchDialog_replaceAction, true); 
+
+		fReplaceButton= createActionButton(composite, REPLACE_ID, SearchMessages.SearchDialog_replaceAction, true);
 		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
-		Button searchButton= createActionButton(composite, SEARCH_ID, SearchMessages.SearchDialog_searchAction, true); 
+		Button searchButton= createActionButton(composite, SEARCH_ID, SearchMessages.SearchDialog_searchAction, true);
 		searchButton.setEnabled(fDescriptors.size() > 0);
 		super.createButtonsForButtonBar(composite);  // cancel button
-		
+
 		return composite;
 	}
 
@@ -465,26 +464,26 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				try {
 					fCustomizeButton.setEnabled(false);
 
-					// safe cast, replace button is only visible when the current page is 
+					// safe cast, replace button is only visible when the current page is
 					// a replace page.
 					return ((IReplacePage)fCurrentPage).performReplace();
 				} finally {
 					fCustomizeButton.setEnabled(true);
-					SearchPlugin.setAutoBuilding(isAutoBuilding);				
+					SearchPlugin.setAutoBuilding(isAutoBuilding);
 				}
 			default:
 				return false;
-		}	
+		}
 	}
 
 	private SearchPageDescriptor getDescriptorAt(int index) {
 		return (SearchPageDescriptor) fDescriptors.get(index);
 	}
-	
+
 	private Point getMinSize() {
 		if (fMinSize != null)
 			return fMinSize;
-			
+
 		int x= 0;
 		int y= 0;
 		int length= fDescriptors.size();
@@ -495,35 +494,35 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			if (size.y != SWT.DEFAULT)
 				y= Math.max(y, size.y);
 		}
-		
+
 		fMinSize= new Point(x, y);
-		return fMinSize;	
+		return fMinSize;
 	}
-	
+
 	private void turnToPage(SelectionEvent event) {
 		final TabItem item= (TabItem) event.item;
 		TabFolder folder= item.getParent();
-		
+
 		SearchPageDescriptor descriptor= (SearchPageDescriptor) item.getData("descriptor"); //$NON-NLS-1$
-		
+
 		if (item.getControl() == null) {
 			item.setControl(createPageControl(folder, descriptor));
 		}
-		
+
 		Control oldControl= folder.getItem(fCurrentIndex).getControl();
 		Point oldSize= oldControl.getSize();
 		Control newControl= item.getControl();
 		Point newSize= newControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		resizeDialogIfNeeded(oldSize, newSize);
-		
+
 		ISearchPage oldPage= fCurrentPage;
 		if (oldPage != null) {
 			oldPage.setVisible(false);
 		}
-		
+
 		fCurrentPage= descriptor.getPage();
 		fCurrentIndex= folder.getSelectionIndex();
-		
+
 		setPerformActionEnabled(fCurrentPage != null);
 		if (fCurrentPage != null) {
 			fCurrentPage.setVisible(true);
@@ -531,13 +530,13 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
 		notifyPageChanged();
 	}
-	
+
 	private int getPreferredPageIndex() {
 		Object element= null;
 		ISelection selection= getSelection();
 		if (selection instanceof IStructuredSelection)
 			element= ((IStructuredSelection) selection).getFirstElement();
-		
+
 		if (element == null) {
 			IEditorPart editorPart= getActiveEditor();
 			if (editorPart != null) {
@@ -551,7 +550,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			SearchPageDescriptor descriptor= (SearchPageDescriptor) fDescriptors.get(i);
 			if (fInitialPageId != null && fInitialPageId.equals(descriptor.getId()))
 				return i;
-			
+
 			int newLevel= descriptor.computeScore(element);
 			if (newLevel > level) {
 				level= newLevel;
@@ -570,12 +569,12 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 	/*
 	 * Implements method from ISearchPageContainer
-	 */	
+	 */
 	public int getSelectedScope() {
 		if (fScopeParts[fCurrentIndex] == null)
 			// safe code - should not happen
 			return ISearchPageContainer.WORKSPACE_SCOPE;
-		
+
 		return fScopeParts[fCurrentIndex].getSelectedScope();
 	}
 
@@ -586,15 +585,15 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		if (fScopeParts[fCurrentIndex] == null)
 			// safe code - should not happen
 			return null;
-		
+
 		return fScopeParts[fCurrentIndex].getSelectedWorkingSets();
 	}
-	
+
 	public String[] getEnclosingProjectNames() {
 		return fCurrentEnclosingProject;
 	}
-	
-	
+
+
 	public String[] getSelectedProjectNames() {
 		if (getSelectedScope() == SELECTED_PROJECTS_SCOPE) {
 			return getEnclosingProjectNames();
@@ -616,7 +615,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	public boolean hasValidScope() {
 		return getSelectedScope() != WORKING_SET_SCOPE || getSelectedWorkingSets() != null;
 	}
-	
+
 	/*
 	 * Implements method from ISearchPageContainer
 	 */
@@ -631,7 +630,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	public void setPerformActionEnabled(boolean state) {
 		fLastEnableState= state;
 		super.setPerformActionEnabled(state && hasValidScope());
-	} 
+	}
 
 	/**
 	 * Notify that the scope selection has changed
@@ -644,16 +643,16 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	}
 
 	private Control createPageControl(Composite parent, final SearchPageDescriptor descriptor) {
-		
+
 		// Page wrapper
 		final Composite pageWrapper= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
 		layout.marginHeight= 0;
 		pageWrapper.setLayout(layout);
-		
+
 		applyDialogFont(pageWrapper);
-		
+
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
 				SafeRunner.run(new ISafeRunnable() {
@@ -666,34 +665,34 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 					}
 					public void handleException(Throwable ex) {
 						if (ex instanceof CoreException) {
-							ExceptionHandler.handle((CoreException) ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel())); 
+							ExceptionHandler.handle((CoreException) ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel()));
 						} else {
-							ExceptionHandler.displayMessageDialog(ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel())); 
+							ExceptionHandler.displayMessageDialog(ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel()));
 						}
 					}
 				});
 			}
 		});
-		
+
 		ISearchPage page= descriptor.getPage();
 		if (page == null || page.getControl() == null) {
 			Composite container= new Composite(parent, SWT.NONE);
 			Label label= new Label(container, SWT.WRAP);
-			label.setText(Messages.format(SearchMessages.SearchDialog_error_pageCreationFailed, descriptor.getLabel())); 
+			label.setText(Messages.format(SearchMessages.SearchDialog_error_pageCreationFailed, descriptor.getLabel()));
 			container.setLayout(new GridLayout());
 			label.setLayoutData(new GridData());
 			return container;
 		}
-		
+
 		page.getControl().setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		
+
 		// Search scope
 		boolean showScope= descriptor.showScopeSection();
 		if (showScope) {
 			Composite c= new Composite(pageWrapper, SWT.NONE);
 			c.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 			c.setLayout(new GridLayout());
-			
+
 			int index= fDescriptors.indexOf(descriptor);
 			fScopeParts[index]= new ScopePart(this, descriptor.canSearchInProjects());
 			Control part= fScopeParts[index].createPart(c);
@@ -701,10 +700,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			part.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 			fScopeParts[index].setVisible(true);
 		}
-		
+
 		return pageWrapper;
 	}
-	
+
 	private void resizeDialogIfNeeded(Point oldSize, Point newSize) {
 		if (oldSize == null || newSize == null)
 			return;
@@ -719,11 +718,11 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 					shell.layout(true);
 		}
 	}
-	
+
 	private boolean mustResize(Point currentSize, Point newSize) {
 		return currentSize.x < newSize.x || currentSize.y < newSize.y;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
@@ -758,7 +757,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	public void removePageChangedListener(IPageChangedListener listener) {
 		fPageChangeListeners.remove(listener);
 	}
-	
+
 	private void notifyPageChanged() {
 		if (fPageChangeListeners != null && !fPageChangeListeners.isEmpty()) {
 			// Fires the page change event

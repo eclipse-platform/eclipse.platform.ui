@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
@@ -19,8 +21,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
-
-import org.osgi.framework.Bundle;
 
 /**
  * Proxy that represents a sorter.
@@ -34,13 +34,13 @@ class SorterDescriptor {
 	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
 	private final static String LABEL_ATTRIBUTE= "label"; //$NON-NLS-1$
 	private final static String TOOLTIP_ATTRIBUTE= "tooltip"; //$NON-NLS-1$
-	
+
 	private IConfigurationElement fElement;
-	
+
 	/**
 	 * Creates a new sorter node with the given configuration element.
-	 * 
-	 * @param element the configuration element 
+	 *
+	 * @param element the configuration element
 	 */
 	public SorterDescriptor(IConfigurationElement element) {
 		fElement= element;
@@ -54,16 +54,16 @@ class SorterDescriptor {
 		try {
 			return (ViewerSorter)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.Search_Error_createSorter_title, SearchMessages.Search_Error_createSorter_message); 
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_createSorter_title, SearchMessages.Search_Error_createSorter_message);
 			return null;
 		} catch (ClassCastException ex) {
-			ExceptionHandler.displayMessageDialog(ex, SearchMessages.Search_Error_createSorter_title, SearchMessages.Search_Error_createSorter_message); 
+			ExceptionHandler.displayMessageDialog(ex, SearchMessages.Search_Error_createSorter_title, SearchMessages.Search_Error_createSorter_message);
 			return null;
 		}
 	}
-	
+
 	//---- XML Attribute accessors ---------------------------------------------
-	
+
 	/**
 	 * Returns the sorter's id.
 	 * @return the sorter's id.
@@ -71,7 +71,7 @@ class SorterDescriptor {
 	public String getId() {
 		return fElement.getAttribute(ID_ATTRIBUTE);
 	}
-	 
+
 	/**
 	 * Returns the sorter's image
 	 * @return the sorter's image
@@ -91,7 +91,7 @@ class SorterDescriptor {
 	public String getLabel() {
 		return fElement.getAttribute(LABEL_ATTRIBUTE);
 	}
-	
+
 	/**
 	 * Returns the sorter's tooltip.
 	 * @return the sorter's tooltip.

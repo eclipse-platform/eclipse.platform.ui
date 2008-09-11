@@ -34,15 +34,15 @@ public class DAGTest extends TestCase {
 	private static final Set CD= new LinkedHashSet(Arrays.asList(new Object[] { C, D }));
 	private static final Set ACD= new LinkedHashSet(Arrays.asList(new Object[] { A, C, D }));
 	private static final Set BD= new LinkedHashSet(Arrays.asList(new Object[] { B, D }));
-	
+
 	private DAG fDag= new DAG();
-	
+
 	public void testEmpty() throws Exception {
 		assertTrue(fDag.getChildren(new Object()).isEmpty());
 		assertTrue(fDag.getSources().isEmpty());
 		assertTrue(fDag.getSinks().isEmpty());
 	}
-	
+
 	public void testIllegal() throws Exception {
 		assertFalse(fDag.addEdge(A, A));
 		try {
@@ -66,7 +66,7 @@ public class DAGTest extends TestCase {
 		} catch (RuntimeException x) {
 		}
 	}
-	
+
 	public void testDag() throws Exception {
 		assertTrue(fDag.addEdge(A, B));
 		assertEquals(AS, fDag.getSources());
@@ -78,7 +78,7 @@ public class DAGTest extends TestCase {
 		assertTrue(fDag.getChildren(B).isEmpty());
 		assertTrue(fDag.getChildren(C).isEmpty());
 		assertTrue(fDag.getChildren(D).isEmpty());
-		
+
 		assertTrue(fDag.addEdge(B, C));
 		assertEquals(AS, fDag.getSources());
 		assertEquals(CS, fDag.getSinks());
@@ -86,7 +86,7 @@ public class DAGTest extends TestCase {
 		assertEquals(CS, fDag.getChildren(B));
 		assertTrue(fDag.getChildren(C).isEmpty());
 		assertTrue(fDag.getChildren(D).isEmpty());
-		
+
 		fDag.addVertex(C);
 		assertEquals(AS, fDag.getSources());
 		assertEquals(CS, fDag.getSinks());
@@ -94,7 +94,7 @@ public class DAGTest extends TestCase {
 		assertEquals(CS, fDag.getChildren(B));
 		assertTrue(fDag.getChildren(C).isEmpty());
 		assertTrue(fDag.getChildren(D).isEmpty());
-		
+
 		fDag.addVertex(D);
 		assertEquals(AD, fDag.getSources());
 		assertEquals(CD, fDag.getSinks());
@@ -102,7 +102,7 @@ public class DAGTest extends TestCase {
 		assertEquals(CS, fDag.getChildren(B));
 		assertTrue(fDag.getChildren(C).isEmpty());
 		assertTrue(fDag.getChildren(D).isEmpty());
-		
+
 		fDag.removeVertex(A);
 		assertEquals(BD, fDag.getSources());
 		assertEquals(CD, fDag.getSinks());
@@ -110,7 +110,7 @@ public class DAGTest extends TestCase {
 		assertEquals(CS, fDag.getChildren(B));
 		assertTrue(fDag.getChildren(C).isEmpty());
 		assertTrue(fDag.getChildren(D).isEmpty());
-		
+
 		assertTrue(fDag.addEdge(A, B));
 		assertTrue(fDag.addEdge(D, B));
 		assertEquals(AD, fDag.getSources());
@@ -119,7 +119,7 @@ public class DAGTest extends TestCase {
 		assertEquals(CS, fDag.getChildren(B));
 		assertTrue(fDag.getChildren(C).isEmpty());
 		assertEquals(BS, fDag.getChildren(D));
-		
+
 		fDag.removeVertex(B);
 		assertEquals(ACD, fDag.getSources());
 		assertEquals(ACD, fDag.getSinks());

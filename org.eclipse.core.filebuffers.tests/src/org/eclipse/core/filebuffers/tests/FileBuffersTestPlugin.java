@@ -14,12 +14,12 @@ import org.eclipse.core.runtime.Plugin;
 
 /**
  * The main plug-in class to be used in the desktop.
- * 
+ *
  * @since 3.0
  */
 public class FileBuffersTestPlugin extends Plugin {
 	private static FileBuffersTestPlugin fgPlugin;
-	
+
 	public FileBuffersTestPlugin() {
 		fgPlugin= this;
 	}

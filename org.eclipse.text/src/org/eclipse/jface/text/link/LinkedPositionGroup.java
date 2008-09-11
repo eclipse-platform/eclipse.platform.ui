@@ -263,7 +263,7 @@ public class LinkedPositionGroup {
 
 				return map;
 			} catch (MalformedTreeException x) {
-				// may happen during undo, as LinkedModeModel does not know 
+				// may happen during undo, as LinkedModeModel does not know
 				// that the changes technically originate from a parent environment
 				// if this happens, post notification changes are not accepted anyway and
 				// we can simply return null - any changes will be undone by the undo
@@ -380,7 +380,7 @@ public class LinkedPositionGroup {
 	public boolean isEmpty() {
 		return fPositions.size() == 0;
 	}
-	
+
 	/**
 	 * Returns whether this group contains any positions.
 	 *

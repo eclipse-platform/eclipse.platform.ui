@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
+
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.IAnnotationImageProvider;
@@ -139,7 +140,7 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 	public ImageDescriptor getImageDescriptor() {
 		return (ImageDescriptor) getAttributeValue(IMAGE_DESCRIPTOR);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getQuickFixImageDescriptor()
 	 */

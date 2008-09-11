@@ -61,7 +61,7 @@ public class TextChangeHover extends LineChangeHover {
 			}
 		};
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 * @since 3.3

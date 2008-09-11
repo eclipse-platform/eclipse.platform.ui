@@ -22,15 +22,15 @@ public class ExpandAllAction extends Action {
 	private TreeViewer fViewer;
 
 	public ExpandAllAction() {
-		super(SearchMessages.ExpandAllAction_label); 
-		setToolTipText(SearchMessages.ExpandAllAction_tooltip); 
+		super(SearchMessages.ExpandAllAction_label);
+		setToolTipText(SearchMessages.ExpandAllAction_tooltip);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_EXPAND_ALL);
 	}
-	
+
 	public void setViewer(TreeViewer viewer) {
 		fViewer= viewer;
 	}
-	
+
 	public void run() {
 		if (fViewer != null) {
 			fViewer.expandAll();

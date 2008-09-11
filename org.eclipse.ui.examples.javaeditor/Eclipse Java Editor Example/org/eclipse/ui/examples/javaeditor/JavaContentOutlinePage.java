@@ -15,13 +15,28 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IPositionUpdater;
+import org.eclipse.jface.text.Position;
+
+import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
  * A content outline page which always represents the content of the
@@ -165,7 +180,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 
 	/**
 	 * Creates a content outline page using the given provider and the given editor.
-	 * 
+	 *
 	 * @param provider the document provider
 	 * @param editor the editor
 	 */
@@ -174,7 +189,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 		fDocumentProvider= provider;
 		fTextEditor= editor;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on ContentOutlinePage
 	 */
@@ -190,7 +205,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 		if (fInput != null)
 			viewer.setInput(fInput);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on ContentOutlinePage
 	 */
@@ -212,17 +227,17 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the input of the outline page
-	 * 
+	 *
 	 * @param input the input of this outline page
 	 */
 	public void setInput(Object input) {
 		fInput= input;
 		update();
 	}
-	
+
 	/**
 	 * Updates the outline page.
 	 */

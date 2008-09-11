@@ -28,7 +28,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see org.eclipse.search.ui.ISearchResultPage
  * @since 3.0
  */
@@ -36,39 +36,39 @@ public interface ISearchResult {
 	/**
 	 * Adds a <code>ISearchResultListener</code>. Has no effect when the
 	 * listener has already been added.
-	 * 
+	 *
 	 * @param l the listener to be added
 	 */
 	void addListener(ISearchResultListener l);
 	/**
 	 * Removes a <code>ISearchResultChangedListener</code>. Has no effect
 	 * when the listener hasn't previously been added.
-	 * 
+	 *
 	 * @param l the listener to be removed
 	 */
 	void removeListener(ISearchResultListener l);
 	/**
 	 * Returns a user readable label for this search result. The label is typically used in the result
 	 * view and should contain the search query string and number of matches.
-	 * 
+	 *
 	 * @return the label for this search result
 	 */
 	String getLabel();
 	/**
 	 * Returns a tooltip to be used when this search result is shown in the UI.
-	 * 
+	 *
 	 * @return a user readable String
 	 */
 	String getTooltip();
 	/**
 	 * Returns an image descriptor for the given ISearchResult.
-	 * 
+	 *
 	 * @return an image representing this search result or <code>null</code>
 	 */
 	ImageDescriptor getImageDescriptor();
 	/**
 	 * Returns the query that produced this search result.
-	 * 
+	 *
 	 * @return the query producing this result
 	 */
 	ISearchQuery getQuery();

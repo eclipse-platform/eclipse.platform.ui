@@ -44,9 +44,9 @@ import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 /**
  * Source viewer based implementation of <code>IInformationControl</code>.
@@ -97,7 +97,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	public SourceViewerInformationControl(Shell parent,boolean isResizable, String symbolicFontName, String statusFieldText) {
 		GridLayout layout;
 		GridData gd;
-		
+
 		int shellStyle= SWT.TOOL | SWT.ON_TOP | (isResizable ? SWT.RESIZE : 0);
 		int textStyle= isResizable ? SWT.V_SCROLL | SWT.H_SCROLL : SWT.NONE;
 
@@ -197,7 +197,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 		IDocument doc= new Document(content);
 		fViewer.setInput(doc);
-		
+
 		// ensure that we can scroll enough
 		ensureScrollable();
 
@@ -357,7 +357,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		scrollIndex= Math.max(0, scrollIndex);
 		fHorizontalScrollPixel= scrollIndex;
 	}
-	
+
 	/**
 	 * Ensures that the control can be scrolled at least to
 	 * <code>fHorizontalScrollPixel</code> and adjusts <code>fMaxWidth</code>
@@ -400,8 +400,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		// but never more than the configured max size (viewport size).
 		fMaxWidth= Math.max(0, Math.min(fMaxWidth, maxWidth - fHorizontalScrollPixel + 8));
 	}
-	
-	
+
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 * @since 3.4
@@ -414,7 +414,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 	/**
 	 * Adds the internal trimmings to the given trim of the shell.
-	 * 
+	 *
 	 * @param trim the shell's trim, will be updated
 	 * @since 3.4
 	 */
@@ -483,7 +483,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	public boolean isVisible() {
 		return fShell != null && !fShell.isDisposed() && fShell.isVisible();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
 	 * @since 3.4

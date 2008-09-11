@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * <p>
  * Clients may subclass.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractHyperlinkDetector implements IHyperlinkDetector, IHyperlinkDetectorExtension {
@@ -34,7 +34,7 @@ public abstract class AbstractHyperlinkDetector implements IHyperlinkDetector, I
 	/**
 	 * Sets this hyperlink detector's context which
 	 * is responsible to provide the adapters.
-	 * 
+	 *
 	 * @param context the context for this hyperlink detector
 	 * @throws IllegalArgumentException if the context is <code>null</code>
 	 * @throws IllegalStateException if this method is called more than once
@@ -58,7 +58,7 @@ public abstract class AbstractHyperlinkDetector implements IHyperlinkDetector, I
 	 * and provides additional context for this hyperlink detector.
 	 *
 	 * @param adapterClass the adapter class to look up
-	 * @return an instance that can be cast to the given class, 
+	 * @return an instance that can be cast to the given class,
 	 *			or <code>null</code> if this object does not
 	 *			have an adapter for the given class
 	 */

@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IFile;
  * Clients may implement this interface.
  * </p>
  * @see org.eclipse.search.ui.text.AbstractTextSearchResult
- * 
+ *
  * @since 3.0
  */
 public interface IFileMatchAdapter {
@@ -30,10 +30,10 @@ public interface IFileMatchAdapter {
 	 * Returns an array with all matches contained in the given file in the
 	 * given search result. If the matches are not contained within an
 	 * <code>IFile</code>, this method must return an empty array.
-	 * 
+	 *
 	 * @param result the search result to find matches in
 	 * @param file the file to find matches in
-	 * 
+	 *
 	 * @return an array of matches (possibly empty)
 	 */
 	public abstract Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file);
@@ -41,9 +41,9 @@ public interface IFileMatchAdapter {
 	 * Returns the file associated with the given element (usually the file the
 	 * element is contained in). If the element is not associated with a file,
 	 * this method should return <code>null</code>.
-	 * 
+	 *
 	 * @param element an element associated with a match
-	 * 
+	 *
 	 * @return the file associated with the element or <code>null</code>
 	 */
 	public abstract IFile getFile(Object element);

@@ -99,7 +99,7 @@ class SelectResourcesDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		
+
 		if (fTitle != null)
 			newShell.setText(fTitle);
 	}

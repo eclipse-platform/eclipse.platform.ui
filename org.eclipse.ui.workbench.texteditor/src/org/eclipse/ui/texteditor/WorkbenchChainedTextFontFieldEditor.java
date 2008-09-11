@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Plugin;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.jface.text.PropagatingFontFieldEditor;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;

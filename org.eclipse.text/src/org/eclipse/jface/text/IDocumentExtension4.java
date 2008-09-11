@@ -15,12 +15,12 @@ package org.eclipse.jface.text;
  * following concepts:
  * <ul>
  *   <li>Rewrite sessions. A rewrite session is a sequence of replace operations
- *       that form a semantic unit.</li> 
+ *       that form a semantic unit.</li>
  *   <li>A modification stamp on the document</li>
  *   <li>The ability to set the initial line delimiter and to query the default
  *       line delimiter</li>
  * </ul>
- * 
+ *
  * @since 3.1
  */
 public interface IDocumentExtension4 {
@@ -131,17 +131,17 @@ public interface IDocumentExtension4 {
 	 * @return the modification stamp of this document or <code>UNKNOWN_MODIFICATION_STAMP</code>
 	 */
 	long getModificationStamp();
-	
+
 	/**
 	 * Returns this document's default line delimiter.
 	 * <p>
 	 * This default line delimiter should be used by clients who
-	 * want unique delimiters (e.g. 'CR's) in the document.</p> 
+	 * want unique delimiters (e.g. 'CR's) in the document.</p>
 	 *
 	 * @return the default line delimiter or <code>null</code> if none
 	 */
 	String getDefaultLineDelimiter();
-	
+
 	/**
 	 * Sets this document's initial line delimiter i.e. the one
 	 * which is returned by <code>getDefaultLineDelimiter</code>

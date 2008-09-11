@@ -446,7 +446,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @see org.eclipse.ui.actions.ActionFactory#REVERT
 	 */
 	String REVERT= ActionFactory.REVERT.getId();
-	
+
 	/**
 	 * Name of standard Next global action in the Navigate menu.
 	 * Value <code>"next"</code>
@@ -454,7 +454,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @see org.eclipse.ui.actions.ActionFactory#NEXT
 	 */
 	String NEXT= ActionFactory.NEXT.getId();
-	
+
 	/**
 	 * Name of standard Previous global action in the Navigate menu.
 	 * Value <code>"previous"</code>
@@ -462,7 +462,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @see org.eclipse.ui.actions.ActionFactory#PREVIOUS
 	 */
 	String PREVIOUS= ActionFactory.PREVIOUS.getId();
-	
+
 	/**
 	 * Name of standard Refresh global action in the File menu.
 	 * Value <code>"refresh"</code>
@@ -470,7 +470,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @see org.eclipse.ui.actions.ActionFactory#REFRESH
 	 */
 	String REFRESH= ActionFactory.REFRESH.getId();
-	
+
 	/**
 	 * Name of the action for re-establishing the state after the
 	 * most recent save operation.
@@ -617,7 +617,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.3
 	 */
 	String REVISION_SHOW_AUTHOR_TOGGLE= "Revision.ShowAuthor.Toggle"; //$NON-NLS-1$
-	
+
 	/**
 	 * Name of the action for toggling the display of the revision id.
 	 * Value: <code>"Revision.ShowId.Toggle"</code>
@@ -637,11 +637,11 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.3
 	 */
 	String SHOW_WHITESPACE_CHARACTERS= "ShowWhitespaceCharacters"; //$NON-NLS-1$
-	
+
 	/**
 	 * Name of the action displaying information for the
 	 * current caret location in a sticky hover.
-	 * 
+	 *
 	 * Value: <code>"ShowInformation"</code>
 	 * @see IInformationProvider
 	 * @since 3.3

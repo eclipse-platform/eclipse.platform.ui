@@ -54,13 +54,13 @@ public class TemplateStore {
 	/**
 	 * Set to <code>true</code> if property change events should be ignored (e.g. during writing
 	 * to the preference store).
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private boolean fIgnorePreferenceStoreChanges= false;
 	/**
 	 * The property listener, if any is registered, <code>null</code> otherwise.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private IPropertyChangeListener fPropertyListener;
@@ -108,13 +108,13 @@ public class TemplateStore {
 		loadContributedTemplates();
 		loadCustomTemplates();
 	}
-	
+
 	/**
 	 * Starts listening for property changes on the preference store. If the configured preference
 	 * key changes, the template store is {@link #load() reloaded}. Call
 	 * {@link #stopListeningForPreferenceChanges()} to remove any listener and stop the
 	 * auto-updating behavior.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public final void startListeningForPreferenceChanges() {
@@ -136,13 +136,13 @@ public class TemplateStore {
 			};
 			fPreferenceStore.addPropertyChangeListener(fPropertyListener);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Stops the auto-updating behavior started by calling
 	 * {@link #startListeningForPreferenceChanges()}.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public final void stopListeningForPreferenceChanges() {
@@ -151,11 +151,11 @@ public class TemplateStore {
 			fPropertyListener= null;
 		}
 	}
-	
+
 	/**
 	 * Handles an {@link IOException} thrown during reloading the preferences due to a preference
 	 * store update. The default is to write to stderr.
-	 * 
+	 *
 	 * @param x the exception
 	 * @since 3.2
 	 */
@@ -276,7 +276,7 @@ public class TemplateStore {
 
 	/**
 	 * Deletes all user-added templates and reverts all contributed templates.
-	 * 
+	 *
 	 * @param doSave <code>true</code> if the store should be saved after restoring
 	 * @since 3.5
 	 */
@@ -298,7 +298,7 @@ public class TemplateStore {
 			// can't log from jface-text
 			x.printStackTrace();
 		}
-		
+
 		if (oldValue != null) {
 			try {
 				fIgnorePreferenceStoreChanges= true;

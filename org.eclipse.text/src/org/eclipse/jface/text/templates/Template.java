@@ -32,7 +32,7 @@ public class Template {
 	/** The template pattern. */
 	private /*final*/ String fPattern;
 	/**
-	 * The auto insertable property. 
+	 * The auto insertable property.
 	 * @since 3.1
 	 */
 	private final boolean fIsAutoInsertable;
@@ -204,7 +204,7 @@ public class Template {
 
 	/**
 	 * Returns the auto insertable property of the template.
-	 * 
+	 *
 	 * @return the auto insertable property of the template
 	 * @since 3.1
 	 */

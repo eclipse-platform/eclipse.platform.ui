@@ -21,7 +21,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.link.InclusivePositionUpdater;
 
 public class InclusivePositionUpdaterTest extends TestCase {
-	
+
 	private IPositionUpdater fUpdater;
 	private static final String CATEGORY= "testcategory";
 	private Position fPos;
@@ -37,7 +37,7 @@ public class InclusivePositionUpdaterTest extends TestCase {
 		fDoc.addPositionCategory(CATEGORY);
 		fDoc.addPosition(CATEGORY, fPos);
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -51,13 +51,13 @@ public class InclusivePositionUpdaterTest extends TestCase {
 		Assert.assertEquals(5, fPos.offset);
 		Assert.assertEquals(5, fPos.length);
 	}
-	
+
 	public void testAddAfter() throws BadLocationException {
 		fDoc.replace(20, 0, "yy");
 		Assert.assertEquals(5, fPos.offset);
 		Assert.assertEquals(5, fPos.length);
 	}
-	
+
 	public void testDeleteBefore() throws BadLocationException {
 		fDoc.replace(2, 2, "");
 		Assert.assertEquals(3, fPos.offset);
@@ -129,7 +129,7 @@ public class InclusivePositionUpdaterTest extends TestCase {
 		Assert.assertEquals(5, fPos.offset);
 		Assert.assertEquals(4, fPos.length);
 	}
-	
+
 	public void testDeleted() throws BadLocationException {
 		fDoc.replace(4, 7, "");
 		Assert.assertTrue(fPos.isDeleted);

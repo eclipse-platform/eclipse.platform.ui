@@ -15,6 +15,7 @@ package org.eclipse.ui.texteditor;
 import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.jface.action.IStatusLineManager;
+
 import org.eclipse.jface.text.IMarkRegionTarget;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;

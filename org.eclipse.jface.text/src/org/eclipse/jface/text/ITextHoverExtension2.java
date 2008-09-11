@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ package org.eclipse.jface.text;
  * <p>
  * Provides a way for hovers to return hover-specific information objects.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.ITextHover
  * @since 3.4
  */
@@ -42,5 +42,5 @@ public interface ITextHoverExtension2 {
 	 * @return the hover popup display information, or <code>null</code> if none available
 	 */
 	Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion);
-	
+
 }

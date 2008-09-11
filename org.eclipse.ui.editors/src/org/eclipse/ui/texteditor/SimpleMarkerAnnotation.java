@@ -13,7 +13,9 @@ package org.eclipse.ui.texteditor;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.text.source.Annotation;
+
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 

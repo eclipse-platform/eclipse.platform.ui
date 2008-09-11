@@ -65,7 +65,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			FileBuffersPlugin.getDefault().getLog().log(status);
 		}
 	}
-	
+
 	protected static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
 	private Map fFilesBuffers= new HashMap();
@@ -81,7 +81,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.3, replaced by {@link #connect(IPath, LocationKind, IProgressMonitor)}
 	 */
 	public void connect(IPath location, IProgressMonitor monitor) throws CoreException {
@@ -96,7 +96,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Assert.isNotNull(location);
 		if (locationKind == LocationKind.NORMALIZE)
 			location= normalizeLocation(location);
-		
+
 		AbstractFileBuffer fileBuffer= null;
 		synchronized (fFilesBuffers) {
 			fileBuffer= internalGetFileBuffer(location);
@@ -105,13 +105,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				return;
 			}
 		}
-			
+
 		fileBuffer= createFileBuffer(location, locationKind);
 		if (fileBuffer == null)
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
-		
+
 		fileBuffer.create(location, monitor);
-			
+
 		synchronized (fFilesBuffers) {
 			AbstractFileBuffer oldFileBuffer= internalGetFileBuffer(location);
 			if (oldFileBuffer != null) {
@@ -123,18 +123,18 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			fileBuffer.connect();
 			fFilesBuffers.put(location, fileBuffer);
 		}
-		
+
 		// Do notification outside synchronized block
 		fireBufferCreated(fileBuffer);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
 	 * @since 3.3
 	 */
 	public void connectFileStore(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
 		Assert.isLegal(fileStore != null);
-		
+
 		FileStoreFileBuffer fileBuffer= null;
 		synchronized (fFileStoreFileBuffers) {
 			fileBuffer= internalGetFileBuffer(fileStore);
@@ -143,13 +143,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				return;
 			}
 		}
-		
+
 		fileBuffer= createFileBuffer(fileStore);
 		if (fileBuffer == null)
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
-		
+
 		fileBuffer.create(fileStore, monitor);
-		
+
 		synchronized (fFileStoreFileBuffers) {
 			AbstractFileBuffer oldFileBuffer= internalGetFileBuffer(fileStore);
 			if (oldFileBuffer != null) {
@@ -161,20 +161,20 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			fileBuffer.connect();
 			fFileStoreFileBuffers.put(fileStore, fileBuffer);
 		}
-		
+
 		// Do notification outside synchronized block
 		fireBufferCreated(fileBuffer);
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.3, replaced by {@link #disconnect(IPath, LocationKind, IProgressMonitor)}
 	 */
 	public void disconnect(IPath location, IProgressMonitor monitor) throws CoreException {
 		disconnect(location, LocationKind.NORMALIZE, monitor);
 	}
-	
+
 	/*
 	 * @since 3.3
 	 */
@@ -196,39 +196,39 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			fileBuffer= internalGetFileBuffer(location);
 			if (fileBuffer == null)
 				return;
-			
+
 			fileBuffer.disconnect();
 			if (!fileBuffer.isDisconnected())
 				return;
-			
+
 			fFilesBuffers.remove(location);
 		}
-		
+
 		// Do notification outside synchronized block
 		fireBufferDisposed(fileBuffer);
 		fileBuffer.dispose();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
 	 * @since 3.3
 	 */
 	public void disconnectFileStore(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
 		Assert.isLegal(fileStore != null);
-		
+
 		AbstractFileBuffer fileBuffer;
 		synchronized (fFileStoreFileBuffers) {
 			fileBuffer= internalGetFileBuffer(fileStore);
 			if (fileBuffer == null)
 				return;
-				
+
 			fileBuffer.disconnect();
 			if (!fileBuffer.isDisconnected())
 				return;
 
 			fFileStoreFileBuffers.remove(fileStore);
 		}
-		
+
 		// Do notification outside synchronized block
 		fireBufferDisposed(fileBuffer);
 		fileBuffer.dispose();
@@ -236,7 +236,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.2, replaced by {@link #isTextFileLocation(IPath, boolean)}
 	 */
 	public boolean isTextFileLocation(IPath location) {
@@ -267,7 +267,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	protected boolean isTextFileLocation(IFileStore fileStore, boolean strict) {
 		if (fileStore == null)
 			return false;
-		
+
 		IContentTypeManager manager= Platform.getContentTypeManager();
 		IFileInfo fileInfo= fileStore.fetchInfo();
 		if (fileInfo.exists()) {
@@ -324,7 +324,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.3, replaced by {@link #getFileBuffer(IPath, LocationKind)}
 	 */
 	public IFileBuffer getFileBuffer(IPath location) {
@@ -349,13 +349,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Assert.isLegal(fileStore != null);
 		return internalGetFileBuffer(fileStore);
 	}
-	
+
 	private AbstractFileBuffer internalGetFileBuffer(IPath location) {
 		synchronized (fFilesBuffers) {
 			return (AbstractFileBuffer)fFilesBuffers.get(location);
 		}
 	}
-	
+
 	private FileStoreFileBuffer internalGetFileBuffer(IFileStore fileStore) {
 		synchronized (fFileStoreFileBuffers) {
 			return (FileStoreFileBuffer)fFileStoreFileBuffers.get(fileStore);
@@ -364,13 +364,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.3, replaced by {@link #getTextFileBuffer(IPath, LocationKind)}
 	 */
 	public ITextFileBuffer getTextFileBuffer(IPath location) {
 		return getTextFileBuffer(location, LocationKind.NORMALIZE);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind)
 	 * @since 3.3
@@ -378,7 +378,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public ITextFileBuffer getTextFileBuffer(IPath location, LocationKind locationKind) {
 		return (ITextFileBuffer)getFileBuffer(location, locationKind);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getFileStoreTextFileBuffer(org.eclipse.core.filesystem.IFileStore)
 	 * @since 3.3
@@ -398,7 +398,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		synchronized (fFilesBuffers) {
 			iter= new ArrayList(fFilesBuffers.values()).iterator();
 		}
-		
+
 		while (iter.hasNext()) {
 			Object buffer= iter.next();
 			if (buffer instanceof ITextFileBuffer) {
@@ -457,7 +457,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.3, replaced by {@link #createEmptyDocument(IPath, LocationKind)}
 	 */
 	public IDocument createEmptyDocument(IPath location) {
@@ -475,10 +475,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			document= documentFromFactory;
 		else
 			document= new SynchronizableDocument();
-		
+
 		if (location == null)
 			return document;
-		
+
 		// Set the initial line delimiter
 		if (document instanceof IDocumentExtension4) {
 			String initalLineDelimiter= getLineDelimiterPreference(location, locationKind);
@@ -496,7 +496,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 							((IDocumentSetupParticipantExtension)participant).setup(document, location, locationKind);
 						else
 							participant.setup(document);
-						
+
 						if (document.getDocumentPartitioner() != null) {
 							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
 							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
@@ -519,7 +519,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * Helper to get rid of deprecation warnings.
-	 * 
+	 *
 	 * @param location the location of the file to be connected
 	 * @param locationKind the kind of the given location
 	 * @return the created empty document or <code>null</code> if none got created
@@ -550,13 +550,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.3, replaced by {@link #createAnnotationModel(IPath, LocationKind)}
 	 */
 	public IAnnotationModel createAnnotationModel(IPath location) {
 		return createAnnotationModel(location, LocationKind.NORMALIZE);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createAnnotationModel(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
 	 * @since 3.3
@@ -599,7 +599,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.1, replaced by
 	 *             {@link org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()}
 	 */
@@ -614,7 +614,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.1, replaced by {@link IFileBuffer#releaseSynchronizationContext()}
 	 */
 	public void releaseSynchronizationContext(IPath location) {
@@ -653,10 +653,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 //		return createBinaryFileBuffer(location, locationKind);
 		return createTextFileBuffer(location, locationKind);
 	}
-	
+
 	/**
 	 * Creates a text file buffer for the given path.
-	 * 
+	 *
 	 * @param location the location of the file to be connected
 	 * @param locationKind the kind of the given location
 	 * @return the text file buffer
@@ -671,7 +671,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 //		// XXX: should return a binary file buffer - using text file buffer for now
 //		return createTextFileBuffer(location, locationKind);
 //	}
-	
+
 	private FileStoreFileBuffer createFileBuffer(IFileStore location) {
 		/*
 		 * XXX: the following code is commented out for performance
@@ -682,12 +682,12 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 //			return createTextFileBuffer(location);
 //		return createBinaryFileBuffer(location);
 		return createTextFileBuffer(location);
-		
+
 	}
 
 	/**
 	 * Creates a text file buffer for the given file store.
-	 * 
+	 *
 	 * @param location the file store
 	 * @return the text file buffer
 	 * @since 3.3
@@ -833,10 +833,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void validateState(final IFileBuffer[] fileBuffers, IProgressMonitor monitor, final Object computationContext) throws CoreException {
 	}
-	
+
 	/**
 	 * Returns the line delimiter to be used by the given location.
-	 * 
+	 *
 	 * @param location the location of the file to be connected
 	 * @param locationKind the kind of the given location
 	 * @return the line delimiter
@@ -845,5 +845,5 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	protected String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
-	
+
 }

@@ -22,11 +22,12 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.editors.text.EditorsPluginPreferenceInitializer;
+
 import org.eclipse.ui.texteditor.spelling.SpellingService;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**
@@ -356,7 +357,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String EDITOR_DISABLE_OVERWRITE_MODE= "disable_overwrite_mode"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether a confirmation
 	 * dialog is shown before editing derived input.
@@ -367,7 +368,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	public static final String EDITOR_WARN_IF_INPUT_DERIVED= "warn_if_input_derived"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls if smart home/end navigation is on or off
 	 * <p>
@@ -404,7 +405,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>String</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String REVISION_ASK_BEFORE_QUICKDIFF_SWITCH= "quickdiff.nowarn.before.switch"; //$NON-NLS-1$
@@ -415,7 +416,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Value is of type <code>String</code> and should contain the name of a
 	 * {@link org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode}.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String REVISION_RULER_RENDERING_MODE= "revisionRulerRenderingMode"; //$NON-NLS-1$
@@ -425,7 +426,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String REVISION_RULER_SHOW_AUTHOR= "revisionRulerShowAuthor"; //$NON-NLS-1$
@@ -435,11 +436,11 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String REVISION_RULER_SHOW_REVISION= "revisionRulerShowRevision"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether text drag and drop is enabled.
 	 * <p>
@@ -449,13 +450,13 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	public static final String EDITOR_TEXT_DRAG_AND_DROP_ENABLED= AbstractTextEditor.PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED;
-	
+
 	/**
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "showTextHoverAffordance"; //$NON-NLS-1$
@@ -473,11 +474,11 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <li>1: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#IMMEDIATELY},</li>
 	 * <li>2: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#ON_CLICK}.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final String EDITOR_HOVER_ENRICH_MODE= AbstractTextEditor.PREFERENCE_HOVER_ENRICH_MODE;
-	
+
 	/**
   	* Initializes the given preference store with the default values.
 	 *
@@ -496,7 +497,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
-		
+
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
 
 		if (!store.getBoolean(USE_QUICK_DIFF_PREFERENCE_PAGE)) {
@@ -518,14 +519,14 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, true);
 
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
-		
+
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, true);
-		
+
 		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on MAC; SWT.CONTROL elsewhere
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, mod1Name);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
-		
+
 		HyperlinkDetectorDescriptor[] descriptors= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
 		for (int i= 0; i < descriptors.length; i++) {
 			int stateMask= computeStateMask(descriptors[i].getModifierKeys());
@@ -545,10 +546,10 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		boolean isInstalled= EditorsUI.getSpellingService().getSpellingEngineDescriptors().length > 0;
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, !isInTestMode && isInstalled);
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENGINE, ""); //$NON-NLS-1$
-		
+
 		store.setDefault(SHOW_RANGE_INDICATOR, true);
 		store.setDefault(REVISION_ASK_BEFORE_QUICKDIFF_SWITCH, ""); //$NON-NLS-1$
-		
+
 		store.setDefault(AbstractTextEditor.PREFERENCE_RULER_CONTRIBUTIONS, ""); //$NON-NLS-1$
 		store.setDefault(REVISION_RULER_RENDERING_MODE, IRevisionRulerColumnExtension.AGE.name());
 		store.setDefault(REVISION_RULER_SHOW_AUTHOR, false);
@@ -560,12 +561,12 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 		store.setDefault(EDITOR_HOVER_ENRICH_MODE, 0);
-		
+
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
-		
+
 		EditorsPluginPreferenceInitializer.setThemeBasedPreferences(store, false);
 	}
-	
+
 	/**
 	 * Computes the state mask out of the given modifiers string.
 	 *
@@ -622,5 +623,5 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		return SWT.NONE;
 	}
-	
+
 }

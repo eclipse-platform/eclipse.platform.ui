@@ -20,26 +20,25 @@ import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.jface.util.SafeRunnable;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultPage;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-
 public class SearchPageRegistry {
-	
+
 	public static final String ID_EXTENSION_POINT= "org.eclipse.search.searchResultViewPages"; //$NON-NLS-1$
 	public static final String ATTRIB_SEARCH_RESULT_CLASS= "searchResultClass"; //$NON-NLS-1$
 	public static final String ATTRIB_ID= "id"; //$NON-NLS-1$
 
 	public static final String ATTRIB_LABEL= "label"; //$NON-NLS-1$
 	public static final String ATTRIB_ICON= "icon"; //$NON-NLS-1$
-	
+
 	public static final String ATTRIB_HELP_CONTEXT= "helpContextId"; //$NON-NLS-1$
-	
+
 	private final Map fResultClassNameToExtension;
 	private final Map fExtensionToInstance;
 	private final IConfigurationElement[] fExtensions;
-	
+
 	public SearchPageRegistry() {
 		fExtensionToInstance= new HashMap();
 		fResultClassNameToExtension= new HashMap();
@@ -57,7 +56,7 @@ public class SearchPageRegistry {
 		}
 		return null;
 	}
-	
+
 	public ISearchResultPage findPageForPageId(String pageId, boolean create) {
 		IConfigurationElement configElement= findConfigurationElement(pageId);
 		if (configElement != null) {
@@ -105,7 +104,7 @@ public class SearchPageRegistry {
 		}
 		return instance;
 	}
-	
+
 	private IConfigurationElement findConfigurationElement(String pageId) {
 		for (int i= 0; i < fExtensions.length; i++) {
 			IConfigurationElement curr= fExtensions[i];
@@ -115,7 +114,7 @@ public class SearchPageRegistry {
 		}
 		return null;
 	}
-	
+
 	private IConfigurationElement findConfigurationElement(Class resultClass) {
 		String className= resultClass.getName();
 		IConfigurationElement configElement= (IConfigurationElement) fResultClassNameToExtension.get(className);
@@ -130,7 +129,7 @@ public class SearchPageRegistry {
 				return foundExtension;
 			}
 		}
-			
+
 		Class[] interfaces= resultClass.getInterfaces();
 		for (int i= 0; i < interfaces.length; i++) {
 			IConfigurationElement foundExtension= findConfigurationElement(interfaces[i]);

@@ -11,6 +11,7 @@
 package org.eclipse.ui.editors.text;
 
 import org.eclipse.ui.ide.IDEActionFactory;
+
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
@@ -28,7 +29,7 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	 * Value: <code>"org.eclipse.ui.text_editor_preference_page_context"</code>.
 	 */
 	public static final String TEXT_EDITOR_PREFERENCE_PAGE= PREFIX + "text_editor_preference_page_context"; //$NON-NLS-1$
-	
+
 	/**
 	 * Help context id for the Spelling preference page.
 	 * Value: <code>"org.eclipse.ui.spelling_preference_page_context"</code>.

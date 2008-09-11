@@ -36,6 +36,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.StatusTextEditor;
@@ -305,7 +306,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 
 	/**
 	 * Returns the shell of the active workbench window.
-	 * 
+	 *
 	 * @return the shell of the active workbench window or <code>null</code> if none
 	 * @since 3.2
 	 */
@@ -313,7 +314,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		 IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		 if (window != null)
 		 	return window.getShell();
-		 
+
 		 return null;
 	}
 

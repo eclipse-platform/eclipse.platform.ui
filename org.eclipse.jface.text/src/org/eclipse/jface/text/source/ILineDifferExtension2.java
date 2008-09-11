@@ -21,7 +21,7 @@ package org.eclipse.jface.text.source;
 public interface ILineDifferExtension2 {
 	/**
 	 * Returns <code>true</code> if the receiver is suspended, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the receiver is suspended, <code>false</code> otherwise
 	 */
 	boolean isSuspended();

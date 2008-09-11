@@ -20,11 +20,11 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 /**
  * The page for setting the editor options.
- * 
+ *
  * @since 3.2
  */
 public final class LinkedModePreferencePage extends AbstractConfigurationBlockPreferencePage {
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
@@ -36,18 +36,18 @@ public final class LinkedModePreferencePage extends AbstractConfigurationBlockPr
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
 	protected void setDescription() {
-		String description= TextEditorMessages.LinkedModeConfigurationBlock_linking_title; 
+		String description= TextEditorMessages.LinkedModeConfigurationBlock_linking_title;
 		setDescription(description);
 	}
-	
+
 	/*
 	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */
 	protected void setPreferenceStore() {
 		setPreferenceStore(EditorsUI.getPreferenceStore());
 	}
-	
-	
+
+
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look.
 	}

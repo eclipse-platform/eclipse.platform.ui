@@ -21,12 +21,12 @@ import org.eclipse.search.internal.ui.SearchMessages;
  *
  */
 public class PatternConstructor {
-	
+
 
 	private PatternConstructor() {
 		// don't instantiate
 	}
-	
+
 	public static Pattern createPattern(String pattern, boolean isCaseSensitive, boolean isRegex) throws PatternSyntaxException {
 		return createPattern(pattern, isRegex, true, isCaseSensitive, false);
 	}
@@ -71,9 +71,9 @@ public class PatternConstructor {
 		}
 		return Pattern.compile(pattern, regexOptions);
 	}
-	
+
 	/**
-	 * Copied from {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}' to support '\R' 
+	 * Copied from {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}' to support '\R'
 	 * @param findString the string to substitute
 	 * @return the new string
 	 * @throws PatternSyntaxException
@@ -81,7 +81,7 @@ public class PatternConstructor {
 	private static String substituteLinebreak(String findString) throws PatternSyntaxException {
 		int length= findString.length();
 		StringBuffer buf= new StringBuffer(length);
-		
+
 		int inCharGroup= 0;
 		int inBraces= 0;
 		boolean inQuote= false;
@@ -93,25 +93,25 @@ public class PatternConstructor {
 					if (! inQuote)
 						inCharGroup++;
 					break;
-					
+
 				case ']':
 					buf.append(ch);
 					if (! inQuote)
 						inCharGroup--;
 					break;
-					
+
 				case '{':
 					buf.append(ch);
 					if (! inQuote && inCharGroup == 0)
 						inBraces++;
 					break;
-					
+
 				case '}':
 					buf.append(ch);
 					if (! inQuote && inCharGroup == 0)
 						inBraces--;
 					break;
-					
+
 				case '\\':
 					if (i + 1 < length) {
 						char ch1= findString.charAt(i + 1);
@@ -120,7 +120,7 @@ public class PatternConstructor {
 								inQuote= false;
 							buf.append(ch).append(ch1);
 							i++;
-							
+
 						} else if (ch1 == 'R') {
 							if (inCharGroup > 0 || inBraces > 0) {
 								String msg= SearchMessages.PatternConstructor_error_line_delim_position;
@@ -128,7 +128,7 @@ public class PatternConstructor {
 							}
 							buf.append("(?>\\r\\n?|\\n)"); //$NON-NLS-1$
 							i++;
-						
+
 						} else {
 							if (ch1 == 'Q') {
 								inQuote= true;
@@ -140,17 +140,17 @@ public class PatternConstructor {
 						buf.append(ch);
 					}
 					break;
-					
+
 				default:
 					buf.append(ch);
 					break;
 			}
-			
+
 		}
 		return buf.toString();
 	}
 
-	
+
     private static boolean isWordChar(char c) {
         return Character.isLetterOrDigit(c);
     }
@@ -175,8 +175,8 @@ public class PatternConstructor {
 		}
 		return createPattern(pattern.toString(), true, true, isCaseSensitive, false);
 	}
-	
-	
+
+
 	public static StringBuffer appendAsRegEx(boolean isStringMatcher, String pattern, StringBuffer buffer) {
         boolean isEscaped= false;
         for (int i = 0; i < pattern.length(); i++) {
@@ -247,10 +247,10 @@ public class PatternConstructor {
         }
         return buffer;
     }
-	
+
 	/**
 	 * Interprets escaped characters in the given replace pattern.
-	 * 
+	 *
 	 * @param replaceText the replace pattern
 	 * @param foundText the found pattern to be replaced
 	 * @param lineDelim the line delimiter to use for \R
@@ -260,33 +260,33 @@ public class PatternConstructor {
 	public static String interpretReplaceEscapes(String replaceText, String foundText, String lineDelim) {
 		return new ReplaceStringConstructor(lineDelim).interpretReplaceEscapes(replaceText, foundText);
 	}
-	
+
 	/**
 	 * Copied from {@link FindReplaceDocumentAdapter}}
-	 * 
+	 *
 	 * FindReplaceDocumentAdapter with contributions from:
 	 * Cagatay Calli <ccalli@gmail.com> - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
 	 * Cagatay Calli <ccalli@gmail.com> - [find/replace] define & fix behavior of retain caps with other escapes and text before \C - https://bugs.eclipse.org/bugs/show_bug.cgi?id=217061
 	 */
 	private static class ReplaceStringConstructor {
-		
+
 		private static final int RC_MIXED= 0;
 		private static final int RC_UPPER= 1;
 		private static final int RC_LOWER= 2;
 		private static final int RC_FIRSTUPPER= 3;
-		
-		
+
+
 		private int fRetainCaseMode;
 		private final String fLineDelim;
-		
+
 		public ReplaceStringConstructor(String lineDelim) {
 			fLineDelim= lineDelim;
-			
+
 		}
-		
+
 		/**
 		 * Interprets escaped characters in the given replace pattern.
-		 * 
+		 *
 		 * @param replaceText the replace pattern
 		 * @param foundText the found pattern to be replaced
 		 * @return a replace pattern with escaped characters substituted by the respective characters
@@ -296,21 +296,21 @@ public class PatternConstructor {
 			int length= replaceText.length();
 			boolean inEscape= false;
 			StringBuffer buf= new StringBuffer(length);
-			
+
 			/* every string we did not check looks mixed at first
 			 * so initialize retain case mode with RC_MIXED
 			 */
 			fRetainCaseMode= RC_MIXED;
-			
+
 			for (int i= 0; i < length; i++) {
 				final char ch= replaceText.charAt(i);
 				if (inEscape) {
 					i= interpretReplaceEscape(ch, i, buf, replaceText, foundText);
 					inEscape= false;
-					
+
 				} else if (ch == '\\') {
 					inEscape= true;
-					
+
 				} else if (ch == '$') {
 					buf.append(ch);
 
@@ -336,7 +336,7 @@ public class PatternConstructor {
 					interpretRetainCase(buf, ch);
 				}
 			}
-			
+
 			if (inEscape) {
 				// '\' as last character is invalid, but we still add it to get an error message
 				buf.append('\\');
@@ -347,7 +347,7 @@ public class PatternConstructor {
 		/**
 		 * Interprets the escaped character <code>ch</code> at offset <code>i</code>
 		 * of the <code>replaceText</code> and appends the interpretation to <code>buf</code>.
-		 * 
+		 *
 		 * @param ch the escaped character
 		 * @param i the offset
 		 * @param buf the output buffer
@@ -397,7 +397,7 @@ public class PatternConstructor {
 						}
 					}
 					break;
-					
+
 				case '1':
 				case '2':
 				case '3':
@@ -416,11 +416,11 @@ public class PatternConstructor {
 						interpretRetainCase(buf, (char)(ch1 ^ 64));
 						i++;
 					} else {
-						String msg= SearchMessages.PatternConstructor_error_escape_sequence;  
+						String msg= SearchMessages.PatternConstructor_error_escape_sequence;
 						throw new PatternSyntaxException(msg, replaceText, i);
 					}
 					break;
-					
+
 				case 'x':
 					if (i + 2 < length) {
 						int parsedInt;
@@ -429,17 +429,17 @@ public class PatternConstructor {
 							if (parsedInt < 0)
 								throw new NumberFormatException();
 						} catch (NumberFormatException e) {
-							String msg= SearchMessages.PatternConstructor_error_hex_escape_sequence; 
+							String msg= SearchMessages.PatternConstructor_error_hex_escape_sequence;
 							throw new PatternSyntaxException(msg, replaceText, i);
 						}
 						interpretRetainCase(buf, (char) parsedInt);
 						i+= 2;
 					} else {
-						String msg= SearchMessages.PatternConstructor_error_hex_escape_sequence; 
+						String msg= SearchMessages.PatternConstructor_error_hex_escape_sequence;
 						throw new PatternSyntaxException(msg, replaceText, i);
 					}
 					break;
-					
+
 				case 'u':
 					if (i + 4 < length) {
 						int parsedInt;
@@ -448,17 +448,17 @@ public class PatternConstructor {
 							if (parsedInt < 0)
 								throw new NumberFormatException();
 						} catch (NumberFormatException e) {
-							String msg= SearchMessages.PatternConstructor_error_unicode_escape_sequence; 
+							String msg= SearchMessages.PatternConstructor_error_unicode_escape_sequence;
 							throw new PatternSyntaxException(msg, replaceText, i);
 						}
 						interpretRetainCase(buf, (char) parsedInt);
 						i+= 4;
 					} else {
-						String msg= SearchMessages.PatternConstructor_error_unicode_escape_sequence; 
+						String msg= SearchMessages.PatternConstructor_error_unicode_escape_sequence;
 						throw new PatternSyntaxException(msg, replaceText, i);
 					}
 					break;
-					
+
 				case 'C':
 					if(foundText.toUpperCase().equals(foundText)) // is whole match upper-case?
 						fRetainCaseMode= RC_UPPER;
@@ -481,7 +481,7 @@ public class PatternConstructor {
 		/**
 		 * Interprets current Retain Case mode (all upper-case,all lower-case,capitalized or mixed)
 		 * and appends the character <code>ch</code> to <code>buf</code> after processing.
-		 * 
+		 *
 		 * @param buf the output buffer
 		 * @param ch the character to process
 		 * @since 3.4
@@ -497,6 +497,6 @@ public class PatternConstructor {
 			} else
 				buf.append(ch);
 		}
-		
+
 	}
 }

@@ -479,11 +479,11 @@ public class TextUtilities {
 	 */
 	public static String getDefaultLineDelimiter(IDocument document) {
 
-		if (document instanceof IDocumentExtension4) 
+		if (document instanceof IDocumentExtension4)
 			return ((IDocumentExtension4)document).getDefaultLineDelimiter();
-		
+
 		String lineDelimiter= null;
-			
+
 		try {
 			lineDelimiter= document.getLineDelimiter(0);
 		} catch (BadLocationException x) {
@@ -491,7 +491,7 @@ public class TextUtilities {
 
 		if (lineDelimiter != null)
 			return lineDelimiter;
-		
+
 		String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
 		String[] delimiters= document.getLegalLineDelimiters();
 		Assert.isTrue(delimiters.length > 0);
@@ -501,7 +501,7 @@ public class TextUtilities {
 				break;
 			}
 		}
-		
+
 		if (lineDelimiter == null)
 			lineDelimiter= delimiters[0];
 

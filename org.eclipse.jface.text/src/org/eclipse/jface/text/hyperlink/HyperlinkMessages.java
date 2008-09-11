@@ -16,20 +16,20 @@ import java.util.ResourceBundle;
 
 /**
  * Helper class to get NLSed messages.
- * 
+ *
  * @since 3.4
  */
 class HyperlinkMessages {
 	private static final String BUNDLE_NAME= HyperlinkMessages.class.getName();
-	
+
 	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
-	
+
 	private HyperlinkMessages() {
 	}
 
 	/**
 	 * Gets a string from the resource bundle.
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be
 	 *            <code>null</code>
 	 * @return the string from the resource bundle

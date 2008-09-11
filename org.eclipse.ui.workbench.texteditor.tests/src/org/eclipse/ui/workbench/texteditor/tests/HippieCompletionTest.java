@@ -27,82 +27,82 @@ import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
 
 /**
  * Tests for the Hippie completion action of the text editor.
- * 
+ *
  * @author Genady Beryozkin, me@genady.org
  */
 public class HippieCompletionTest extends TestCase {
-	
+
 	IDocument[] documents;
 	private HippieCompletionEngine fEngine;
-	
+
 	public HippieCompletionTest(String name) {
 		super(name);
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		documents= new IDocument[5];
-		documents[0]= new Document("package ui.TestPackage;\n" + 
-				"\n" + 
-				"/**\n" + 
+		documents[0]= new Document("package ui.TestPackage;\n" +
+				"\n" +
+				"/**\n" +
 				" * This is a testing class that tests the hippie completion engine.\n" +
-				" * it has a simple main with a print method\n" + 
-				" */\n" + 
-				"public class TestClass1 {\n" + 
-				"\n" + 
-				"    public static void main(String[] args) {\n" + 
-				"        System.out.println(\"I will be printing Hello world!\");\n" + 
-				"    }\n" + 
+				" * it has a simple main with a print method\n" +
+				" */\n" +
+				"public class TestClass1 {\n" +
+				"\n" +
+				"    public static void main(String[] args) {\n" +
+				"        System.out.println(\"I will be printing Hello world!\");\n" +
+				"    }\n" +
 				"}");
-		documents[1]= new Document("This is a simple text file\n" + 
+		documents[1]= new Document("This is a simple text file\n" +
 				"with some testssome test that is also used in the completion engine tests");
-		
-		documents[2]= new Document("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
-				"<plugin\n" + 
-				"   id=\"org.eclipse.ui.workbench.texteditor.tests\"\n" + 
-				"   name=\"%Plugin.name\"\n" + 
-				"   version=\"3.1.0\"\n" + 
-				"   provider-name=\"%Plugin.providerName\">\n" + 
-				"\n" + 
-				"   <runtime>\n" + 
-				"      <library name=\"workbenchtexteditortests.jar\">\n" + 
-				"         <export name=\"*\"/>\n" + 
-				"      </library>\n" + 
-				"   </runtime>\n" + 
-				"   \n" + 
-				"   <requires>\n" + 
-				"      <import plugin=\"org.eclipse.core.runtime.compatibility\"/>\n" + 
-				"      <import plugin=\"org.junit\"/>\n" + 
-				"      <import plugin=\"org.eclipse.text.tests\"/>\n" + 
-				"      <import plugin=\"org.eclipse.jface.text\"/>\n" + 
-				"      <import plugin=\"org.eclipse.ui.workbench.texteditor\"/>\n" + 
-				"      <import plugin=\"org.eclipse.ui\"/>\n" + 
-				"   </requires>\n" + 
-				"   \n" + 
-				"</plugin>\n" + 
+
+		documents[2]= new Document("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+				"<plugin\n" +
+				"   id=\"org.eclipse.ui.workbench.texteditor.tests\"\n" +
+				"   name=\"%Plugin.name\"\n" +
+				"   version=\"3.1.0\"\n" +
+				"   provider-name=\"%Plugin.providerName\">\n" +
+				"\n" +
+				"   <runtime>\n" +
+				"      <library name=\"workbenchtexteditortests.jar\">\n" +
+				"         <export name=\"*\"/>\n" +
+				"      </library>\n" +
+				"   </runtime>\n" +
+				"   \n" +
+				"   <requires>\n" +
+				"      <import plugin=\"org.eclipse.core.runtime.compatibility\"/>\n" +
+				"      <import plugin=\"org.junit\"/>\n" +
+				"      <import plugin=\"org.eclipse.text.tests\"/>\n" +
+				"      <import plugin=\"org.eclipse.jface.text\"/>\n" +
+				"      <import plugin=\"org.eclipse.ui.workbench.texteditor\"/>\n" +
+				"      <import plugin=\"org.eclipse.ui\"/>\n" +
+				"   </requires>\n" +
+				"   \n" +
+				"</plugin>\n" +
 				"");
-		
-		documents[3]= new Document("###############################################################################\n" + 
-				"# Copyright (c) 2000, 2004 IBM Corporation and others.\n" + 
-				"# All rights reserved. This program and the accompanying materials \n" + 
-				"# are made available under the terms of the Eclipse Public License v1.0\n" + 
-				"# which accompanies this distribution, and is available at\n" + 
-				"# http://www.eclipse.org/legal/epl-v10.html\n" + 
-				"# \n" + 
-				"# Contributors:\n" + 
-				"#     IBM Corporation - initial API and implementation\n" + 
-				"###############################################################################\n" + 
-				"bin.includes= plugin.xml,\\\n" + 
-				"               plugin.properties,\\\n" + 
-				"               test.xml,\\\n" + 
-				"               about.html,\\\n" + 
-				"               *.jar\n" + 
-				"\n" + 
-				"src.includes= about.html\n" + 
-				"               \n" + 
-				"source.workbenchtexteditortests.jar= src/\n" + 
+
+		documents[3]= new Document("###############################################################################\n" +
+				"# Copyright (c) 2000, 2004 IBM Corporation and others.\n" +
+				"# All rights reserved. This program and the accompanying materials \n" +
+				"# are made available under the terms of the Eclipse Public License v1.0\n" +
+				"# which accompanies this distribution, and is available at\n" +
+				"# http://www.eclipse.org/legal/epl-v10.html\n" +
+				"# \n" +
+				"# Contributors:\n" +
+				"#     IBM Corporation - initial API and implementation\n" +
+				"###############################################################################\n" +
+				"bin.includes= plugin.xml,\\\n" +
+				"               plugin.properties,\\\n" +
+				"               test.xml,\\\n" +
+				"               about.html,\\\n" +
+				"               *.jar\n" +
+				"\n" +
+				"src.includes= about.html\n" +
+				"               \n" +
+				"source.workbenchtexteditortests.jar= src/\n" +
 				"");
 		documents[4]= new Document("/**\n" +
 				" * This class tests the hippie completion functionality.\n" +
@@ -120,40 +120,40 @@ public class HippieCompletionTest extends TestCase {
 				"\t\tString $arabic\u20AAWord= \"\u0628\u064E\u0627\u0628\u0650\";\n" + // shekel (israeli) currency symbol + arabic word
 				"\t\tString \u0628\u0627\u0628= \"\u044D\u0442\";\n" + // arabic var, russian string
 				"\t\tint \u20A31= 3;\n" + // frank currency symbol
-				"\t\tint \u00A3\u0661\u0662\u0663= \u20A31 + \u05DE\u05D7;\n" + // pound, arabic digits 1-3, partial hebrew word  
+				"\t\tint \u00A3\u0661\u0662\u0663= \u20A31 + \u05DE\u05D7;\n" + // pound, arabic digits 1-3, partial hebrew word
 				"\t\tint a\u0300\u0301b= 18;\n" + // combining diactritical marks
 				"\t\t}\n" +
 				"\t\t\n" +
 				"\tpublic void \u05D4\u05D4\u05E9(int \u0441\u0430\u043C) {\n" + // hebrew word prexif, russian word prefix
 				"\t\tString \u043B\u0443\u0447\u0448= \"\u05D1\u05D5\u05D3\u05E7\";\n" +
-				"\t\tchar \u20AA129;\n" + // shekel (israeli) currency 
+				"\t\tchar \u20AA129;\n" + // shekel (israeli) currency
 				"\t}\n" +
 				"}");
-		
+
 		fEngine= new HippieCompletionEngine();
 	}
-	
+
 	public void testSearchBackwards1() {
 		try {
-			List list= fEngine.getCompletionsBackwards(documents[0], 
+			List list= fEngine.getCompletionsBackwards(documents[0],
 					"pri", documents[0].get().indexOf("println") + 10);
 			assertEquals(list.size(), 2);
 			assertEquals(list.get(0), "ntln");
 			assertEquals(list.get(1), "nt");
-			
-			list= fEngine.getCompletionsBackwards(documents[0], 
+
+			list= fEngine.getCompletionsBackwards(documents[0],
 					"pri", documents[0].getLength());
 			assertEquals(list.size(), 3);
 			assertEquals(list.get(0), "nting");
 			assertEquals(list.get(1), "ntln");
 			assertEquals(list.get(2), "nt");
-			
-			list= fEngine.getCompletionsBackwards(documents[0], 
+
+			list= fEngine.getCompletionsBackwards(documents[0],
 					"pri", documents[0].get().indexOf("println") + 1);
 			assertEquals(list.size(), 1);
             assertEquals(list.get(0), "nt");
 
-			list= fEngine.getCompletionsBackwards(documents[0], 
+			list= fEngine.getCompletionsBackwards(documents[0],
 					"pa", 2);
 			assertEquals(list.size(), 0);
 
@@ -161,52 +161,52 @@ public class HippieCompletionTest extends TestCase {
 			assertTrue("Got out of document bounds", false);
 		}
 	}
-	
+
 	public void testSearchBackwards2() {
 		try {
-			List list= fEngine.getCompletionsBackwards(documents[2], 
+			List list= fEngine.getCompletionsBackwards(documents[2],
 					"plugi", documents[2].getLength());
 			assertEquals(8, list.size());
 			list= fEngine.makeUnique(list);
 			assertEquals(1, list.size());
 			assertEquals("n", list.get(0));
-			
-			list= fEngine.getCompletionsBackwards(documents[2], 
+
+			list= fEngine.getCompletionsBackwards(documents[2],
 					"plugin", documents[2].getLength());
 			assertEquals(0, list.size()); // empty completions discarded
-			
+
 		} catch (BadLocationException e) {
 			assertTrue("Got out of document bounds", false);
 		}
 	}
-	
+
     public void testSearchBackwards3() {
         try {
-            List list= fEngine.getCompletionsBackwards(documents[1], 
+            List list= fEngine.getCompletionsBackwards(documents[1],
                     "test", documents[1].getLength());
             assertEquals("Number of backwards suggestions does not match", 2, list.size());
-            list= fEngine.getCompletionsBackwards(documents[1], 
+            list= fEngine.getCompletionsBackwards(documents[1],
                     "tests", documents[1].getLength());
             assertEquals("Number of backwards suggestions does not match", 1, list.size());
 
-            list= fEngine.getCompletionsBackwards(documents[1], 
+            list= fEngine.getCompletionsBackwards(documents[1],
                     "test", documents[1].getLength() - 1);
             assertEquals("Number of backwards suggestions does not match", 1, list.size());
         } catch (BadLocationException e) {
             assertTrue("Got out of document bounds", false);
         }
     }
-	
+
 	public void testSearch() {
 		ArrayList docsList= new ArrayList(Arrays.asList(this.documents));
 		List result= createSuggestions("te", docsList);
 		assertEquals("Number of completions does not match", 15, result.size());
 		result= fEngine.makeUnique(result);
 		assertEquals("Number of completions does not match", 7, result.size());
-		
+
 		result= createSuggestions("Plug", docsList);
 		assertEquals("Number of completions does not match", 2, result.size());
-		
+
 		result= createSuggestions("p", docsList);
 		assertEquals("Number of completions does not match", 23, result.size());
 		result= fEngine.makeUnique(result);
@@ -222,58 +222,58 @@ public class HippieCompletionTest extends TestCase {
 		assertEquals("Incorrect completion", "rogram", result.get(8));
 		assertEquals("Incorrect completion", "roperties", result.get(9));
 	}
-	
+
 	public void testSearch2() {
 		ArrayList docsList= new ArrayList(Arrays.asList(this.documents));
 		List result= createSuggestions("printe", docsList);
 		assertEquals("Number of completions does not match", 0, result.size());
-		
+
 		result= createSuggestions("s", docsList);
 		assertEquals("Number of completions does not match", 8, result.size());
-		
+
 		result= createSuggestions("pack", documents[0]);
 		assertEquals("Number of completions does not match", 1, result.size());
 	}
-	
-	
+
+
 	public void testForwardSearch() {
 		try {
-			List result= fEngine.getCompletionsForward(documents[0], 
+			List result= fEngine.getCompletionsForward(documents[0],
 					"cl", documents[0].get().indexOf("cl"), true);
 			assertEquals(2, result.size());
-			
-			result= fEngine.getCompletionsForward(documents[0], 
+
+			result= fEngine.getCompletionsForward(documents[0],
 					"cl", documents[0].get().indexOf("cl") + 1, true);
 			assertEquals(1, result.size());
 
-			result= fEngine.getCompletionsForward(documents[1], 
+			result= fEngine.getCompletionsForward(documents[1],
 					"Thi", 0, true);
 			assertEquals(1, result.size());
 
-			result= fEngine.getCompletionsForward(documents[1], 
+			result= fEngine.getCompletionsForward(documents[1],
 					"Thi", 1, true);
 			assertEquals(0, result.size());
 		} catch (BadLocationException e) {
 			assertTrue("Got out of document bounds", false);
 		}
 	}
-	
+
 	public void testForwardSearchInternational() {
 		List result;
 		try {
-			result= fEngine.getCompletionsForward(documents[4], 
+			result= fEngine.getCompletionsForward(documents[4],
 					"$", documents[4].get().indexOf('$'), true);
-			assertEquals(2, result.size());		
+			assertEquals(2, result.size());
 			assertEquals("arabic\u20AAWord", result.get(0));
 			assertEquals("arabic\u20ACDigits", result.get(1));
 
-			result= fEngine.getCompletionsForward(documents[4], 
+			result= fEngine.getCompletionsForward(documents[4],
 					"$", documents[4].get().indexOf('$'), false);
-			assertEquals(2, result.size());		
+			assertEquals(2, result.size());
 			assertEquals("arabic\u20ACDigits", result.get(0));
 			assertEquals("arabic\u20AAWord", result.get(1));
 
-			result= fEngine.getCompletionsForward(documents[4], 
+			result= fEngine.getCompletionsForward(documents[4],
 					"$", documents[4].get().indexOf('$') + 1, true);
 			assertEquals(1, result.size());
 			assertEquals("arabic\u20AAWord", result.get(0));
@@ -281,23 +281,23 @@ public class HippieCompletionTest extends TestCase {
 			assertTrue("Got out of document bounds", false);
 		}
 	}
-	
-	
+
+
 	public void testPrefix() {
 		try {
-			String prefix= fEngine.getPrefixString(documents[0], 
+			String prefix= fEngine.getPrefixString(documents[0],
 					documents[0].get().indexOf("testing") + 3);
 			assertEquals(prefix, "tes");
-			
-			prefix= fEngine.getPrefixString(documents[0], 
+
+			prefix= fEngine.getPrefixString(documents[0],
 					documents[0].get().indexOf("public") + 4);
 			assertEquals(prefix, "publ");
 
-			prefix= fEngine.getPrefixString(documents[0], 
+			prefix= fEngine.getPrefixString(documents[0],
 					documents[0].get().indexOf("println") + 7);
 			assertEquals(prefix, "println");
 
-			prefix= fEngine.getPrefixString(documents[0], 
+			prefix= fEngine.getPrefixString(documents[0],
 					documents[0].get().indexOf("println") + 8);
 			assertEquals(prefix, null);
 
@@ -309,50 +309,50 @@ public class HippieCompletionTest extends TestCase {
 
 			prefix= fEngine.getPrefixString(documents[1], documents[1].getLength());
 			assertEquals(prefix, "tests");
-			
-			prefix= fEngine.getPrefixString(documents[3], 
+
+			prefix= fEngine.getPrefixString(documents[3],
 					documents[3].get().indexOf("Copyright") - 2);
 			assertEquals(prefix, null);
-			
-			prefix= fEngine.getPrefixString(documents[4], 
+
+			prefix= fEngine.getPrefixString(documents[4],
 					documents[4].get().indexOf("IDE") + 2);
 			assertEquals(prefix, "ID");
 
-			prefix= fEngine.getPrefixString(documents[4], 
+			prefix= fEngine.getPrefixString(documents[4],
 					documents[4].get().indexOf("$arabic\u20ACDigits") + 8);
 			assertEquals(prefix, "$arabic\u20AC");
-			
-			prefix= fEngine.getPrefixString(documents[4], 
+
+			prefix= fEngine.getPrefixString(documents[4],
 					documents[4].get().indexOf("$arabic\u20AAWord") + 8);
 			assertEquals(prefix, "$arabic\u20AA");
-			
-			prefix= fEngine.getPrefixString(documents[4], 
+
+			prefix= fEngine.getPrefixString(documents[4],
 					documents[4].get().indexOf("\u00A3\u0661\u0662\u0663") + 3);
 			assertEquals(prefix, "\u00A3\u0661\u0662");
-			
-			prefix= fEngine.getPrefixString(documents[4], 
+
+			prefix= fEngine.getPrefixString(documents[4],
 					documents[4].get().indexOf("a\u0300\u0301b") + 3);
 			assertEquals(prefix, "a\u0300\u0301");
 
-			prefix= fEngine.getPrefixString(documents[4], 
+			prefix= fEngine.getPrefixString(documents[4],
 					documents[4].get().indexOf("\u0667\u0668\u0669\u0660") + 2);
 			assertEquals(prefix, "\u0667\u0668");
-		
+
 		} catch (BadLocationException e) {
 			assertTrue("Got out of document bounds", false);
 		}
 	}
-	
+
 	public void testInternational() {
 		IDocument intlDoc= documents[4];
-		
+
 		List result= createSuggestions("\u05D4", intlDoc); // hebrew letter heh
 		assertEquals("Number of completions does not match", 4, result.size());
 		assertEquals(result.get(0), "\u05DE\u05D7\u05DC\u05E7\u05D4");
 		assertEquals(result.get(1), "\u05D6\u05D5");
 		assertEquals(result.get(2), "\u05D4\u05E9\u05DC\u05DE\u05D5\u05EA");
 		assertEquals(result.get(3), "\u05D4\u05E9");
-		
+
 		result= createSuggestions("\u0661", intlDoc); // arabic digit "1"
 		assertEquals("Number of completions does not match", 1, result.size());
 		assertEquals(result.get(0), "\u0662\u0663\u0664\u0665\u0666");
@@ -380,7 +380,7 @@ public class HippieCompletionTest extends TestCase {
 		assertEquals(result.get(0), "\u05D3\u05E7\u05EA");
 		assertEquals(result.get(1), "\u05D3\u05E7");
 
-		result= createSuggestions("a", intlDoc); 
+		result= createSuggestions("a", intlDoc);
 		assertEquals("Number of completions does not match", 4, result.size());
 		assertEquals(result.get(0), "n");
 		assertEquals(result.get(1), "rabic");
@@ -404,45 +404,45 @@ public class HippieCompletionTest extends TestCase {
 		result= createSuggestions("\u00A3", intlDoc);  // pound currency sign
 		assertEquals("Number of completions does not match", 1, result.size());
 		assertEquals(result.get(0), "\u0661\u0662\u0663");
-		
+
 		result= createSuggestions("\u00A5", intlDoc);  // yen currency sign
-		assertEquals("Number of completions does not match", 0, result.size());		
+		assertEquals("Number of completions does not match", 0, result.size());
 	}
-	
-	
+
+
 	public void testInternationalBackwards() {
 		IDocument intlDoc= documents[4];
 		try {
-			List list= fEngine.getCompletionsBackwards(intlDoc, 
+			List list= fEngine.getCompletionsBackwards(intlDoc,
 					"\u043B\u0443", intlDoc.get().indexOf("129"));
 			assertEquals(2, list.size());
 			assertEquals(list.get(0), "\u0447\u0448");
 			assertEquals(list.get(1), "\u0447\u0448\u0438\u0439");
 
-			list= fEngine.getCompletionsBackwards(intlDoc, 
+			list= fEngine.getCompletionsBackwards(intlDoc,
 					"\u05DE", intlDoc.get().lastIndexOf('+'));
 			assertEquals(2, list.size());
 			assertEquals(list.get(0), "\u05D7");
 			assertEquals(list.get(1), "\u05E0\u05D2\u05E0\u05D5\u05DF");
 
-			list= fEngine.getCompletionsBackwards(intlDoc, 
+			list= fEngine.getCompletionsBackwards(intlDoc,
 					"\u0667", intlDoc.get().indexOf("\u2021\u0667") + 1);
 			assertEquals(0, list.size());
-			
-			list= fEngine.getCompletionsBackwards(intlDoc, 
+
+			list= fEngine.getCompletionsBackwards(intlDoc,
 					"\u0628", intlDoc.get().lastIndexOf("\u0628"));
 			assertEquals(1, list.size());
 			assertEquals(list.get(0), "\u064E\u0627\u0628\u0650");
-			
+
 		} catch (BadLocationException e) {
 			assertTrue("Got out of document bounds", false);
 		}
 	}
-	
+
 	public static Test suite() {
-		return new TestSuite(HippieCompletionTest.class); 
+		return new TestSuite(HippieCompletionTest.class);
 	}
-	
+
 	private List createSuggestions(String prefix, IDocument doc) {
 		return createSuggestions(prefix, Arrays.asList(new IDocument[]{doc}));
 	}
@@ -459,5 +459,5 @@ public class HippieCompletionTest extends TestCase {
 		}
 		return results;
 	}
-	
+
 }

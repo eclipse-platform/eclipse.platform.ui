@@ -33,17 +33,17 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension2;
  * Hyperlink detector registry that manages the detectors
  * contributed by the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectors</code> extension point for
  * targets contributed by the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets</code> extension point.
- * 
+ *
  * @since 3.3
  */
 public final class HyperlinkDetectorRegistry {
-	
-	
+
+
 	/**
 	 * Delegate for contributed hyperlink detectors.
 	 */
 	private class HyperlinkDetectorDelegate implements IHyperlinkDetector, IHyperlinkDetectorExtension, IHyperlinkDetectorExtension2 {
-		
+
 		private HyperlinkDetectorDescriptor fHyperlinkDescriptor;
 		private AbstractHyperlinkDetector fHyperlinkDetector;
 		private boolean fFailedDuringCreation= false;
@@ -51,7 +51,7 @@ public final class HyperlinkDetectorRegistry {
 		private int fStateMask;
 		private boolean fIsEnabled;
 
-		
+
 		private HyperlinkDetectorDelegate(HyperlinkDetectorDescriptor descriptor) {
 			fHyperlinkDescriptor= descriptor;
 			if (fPreferenceStore != null) {
@@ -66,7 +66,7 @@ public final class HyperlinkDetectorRegistry {
 		public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 			if (!isEnabled())
 				return null;
-			
+
 			if (!fFailedDuringCreation && fHyperlinkDetector == null) {
 				try {
 					fHyperlinkDetector= fHyperlinkDescriptor.createHyperlinkDetector();
@@ -78,10 +78,10 @@ public final class HyperlinkDetectorRegistry {
 			}
 			if (fHyperlinkDetector != null)
 				return fHyperlinkDetector.detectHyperlinks(textViewer, region, canShowMultipleHyperlinks);
-			
+
 			return null;
 		}
-		
+
 		private boolean isEnabled() {
 			return fIsEnabled;
 		}
@@ -89,7 +89,7 @@ public final class HyperlinkDetectorRegistry {
 		private void setContext(IAdaptable context) {
 			fContext= context;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension#dispose()
 		 */
@@ -101,7 +101,7 @@ public final class HyperlinkDetectorRegistry {
 			fHyperlinkDescriptor= null;
 			fContext= null;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension#getStateMask()
 		 * @since 3.3
@@ -109,38 +109,38 @@ public final class HyperlinkDetectorRegistry {
 		public int getStateMask() {
 			return fStateMask;
 		}
-		
+
 	}
 
-	
+
 	private HyperlinkDetectorDescriptor[] fHyperlinkDetectorDescriptors;
 	private IPreferenceStore fPreferenceStore;
-	
+
 
 	/**
 	 * Creates a new hyperlink detector registry.
 	 */
 	public HyperlinkDetectorRegistry() {
 	}
-	
+
 	/**
 	 * Creates a new hyperlink detector registry that controls
 	 * hyperlink enablement via the given preference store.
 	 * <p>
 	 * The hyperlink detector id is used as preference key.
 	 * The value is of type <code>Boolean</code> where
-	 * <code>false</code> means that the hyperlink detector is active. 
+	 * <code>false</code> means that the hyperlink detector is active.
 	 * </p>
-	 * 
+	 *
 	 * @param preferenceStore the preference store to be used
 	 */
 	public HyperlinkDetectorRegistry(IPreferenceStore preferenceStore) {
 		fPreferenceStore= preferenceStore;
 	}
-	
+
 	/**
 	 * Returns all hyperlink detectors contributed to the workbench.
-	 * 
+	 *
 	 * @return an array of hyperlink detector descriptors
 	 */
 	public synchronized HyperlinkDetectorDescriptor[] getHyperlinkDetectorDescriptors() {
@@ -156,7 +156,7 @@ public final class HyperlinkDetectorRegistry {
 	private synchronized void initHyperlinkDetectorDescriptors() {
 		if (fHyperlinkDetectorDescriptors == null)
 			fHyperlinkDetectorDescriptors= HyperlinkDetectorDescriptor.getContributedHyperlinkDetectors();
-	} 
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetectorRegistry#createHyperlinkDetectors(java.lang.String[], org.eclipse.core.runtime.IAdaptable)
@@ -164,7 +164,7 @@ public final class HyperlinkDetectorRegistry {
 	public IHyperlinkDetector[] createHyperlinkDetectors(String targetId, IAdaptable context) {
 		Assert.isLegal(targetId != null);
 		initHyperlinkDetectorDescriptors();
-		
+
 		List result= new ArrayList();
 		for (int i= 0; i < fHyperlinkDetectorDescriptors.length; i++) {
 			if (targetId.equals(fHyperlinkDetectorDescriptors[i].getTargetId())) {

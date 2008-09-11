@@ -359,7 +359,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		if (list == null)
 			throw new BadPositionCategoryException();
 		list.add(computeIndexInPositionList(list, position.offset), position);
-		
+
 		List endPositions= (List) fEndPositions.get(category);
 		if (endPositions == null)
 			throw new BadPositionCategoryException();
@@ -452,7 +452,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected int computeIndexInPositionList(List positions, int offset) {
 		return computeIndexInPositionList(positions, offset, true);
 	}
-	
+
 	/**
 	 * Computes the index in the list of positions at which a position with the given
 	 * position would be inserted. The position to insert is supposed to become the first
@@ -551,7 +551,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected void fireDocumentPartitioningChanged() {
 		if (fDocumentPartitioningListeners == null)
 			return;
-		
+
 		Object[] listeners= fDocumentPartitioningListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++)
 			((IDocumentPartitioningListener)listeners[i]).documentPartitioningChanged(this);
@@ -572,7 +572,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected void fireDocumentPartitioningChanged(IRegion region) {
 		if (fDocumentPartitioningListeners == null)
 			return;
-		
+
 		Object[] listeners= fDocumentPartitioningListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			IDocumentPartitioningListener l= (IDocumentPartitioningListener)listeners[i];
@@ -639,7 +639,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		Object[] listeners= fPrenotifiedDocumentListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++)
 			((IDocumentListener)listeners[i]).documentAboutToBeChanged(event);
-		
+
 		listeners= fDocumentListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++)
 			((IDocumentListener)listeners[i]).documentAboutToBeChanged(event);
@@ -821,20 +821,20 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public String[] getLegalLineDelimiters() {
 		return getTracker().getLegalLineDelimiters();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension4#getDefaultLineDelimiter()
 	 * @since 3.1
 	 */
 	public String getDefaultLineDelimiter() {
-		
+
 		String lineDelimiter= null;
-		
+
 		try {
 			lineDelimiter= getLineDelimiter(0);
 		} catch (BadLocationException x) {
 		}
-	
+
 		if (lineDelimiter != null)
 			return lineDelimiter;
 
@@ -850,14 +850,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 				break;
 			}
 		}
-		
+
 		if (lineDelimiter == null)
 			lineDelimiter= delimiters[0];
-	
+
 		return lineDelimiter;
-		
+
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension4#setInitialLineDelimiter(java.lang.String)
 	 * @since 3.1
@@ -1036,7 +1036,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		if (c == null)
 			throw new BadPositionCategoryException();
 		removeFromPositionsList(c, position, true);
-		
+
 		List endPositions= (List) fEndPositions.get(category);
 		if (endPositions == null)
 			throw new BadPositionCategoryException();
@@ -1053,14 +1053,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	private void removeFromPositionsList(List positions, Position position, boolean orderedByOffset) {
 		int size= positions.size();
-		
+
 		//Assume position is somewhere near it was before
 		int index= computeIndexInPositionList(positions, orderedByOffset ? position.offset : position.offset + position.length - 1, orderedByOffset);
 		if (index < size && positions.get(index) == position) {
 			positions.remove(index);
 			return;
 		}
-		
+
 		int back= index - 1;
 		int forth= index + 1;
 		while (back >= 0 || forth < size) {
@@ -1071,7 +1071,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 				}
 				back--;
 			}
-			
+
 			if (forth < size) {
 				if (position == positions.get(forth)) {
 					positions.remove(forth);
@@ -1159,7 +1159,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public boolean isLineInformationRepairNeeded(int offset, int length, String text) throws BadLocationException {
@@ -1182,7 +1182,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public void set(String text) {
 		set(text, getNextModificationStamp());
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension4#set(java.lang.String, long)
 	 * @since 3.1
@@ -1222,7 +1222,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated as of 3.0 search is provided by {@link FindReplaceDocumentAdapter}
 	 */
 	public int search(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException {
@@ -1330,7 +1330,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated since 3.1. Use
 	 *             {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)}
@@ -1341,7 +1341,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated As of 3.1, replaced by {@link IDocumentExtension4#stopRewriteSession(DocumentRewriteSession)}
 	 */
@@ -1679,10 +1679,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			fireDocumentPartitioningChanged(event);
 		}
 	}
-	
+
 	/**
 	 * Returns all positions of the given category that are inside the given region.
-	 * 
+	 *
 	 * @param category the position category
 	 * @param offset the start position of the region, must be >= 0
 	 * @param length the length of the region, must be >= 0
@@ -1706,18 +1706,18 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			} else {
 				documentPositions= getStartingPositions(category, offset, length);
 			}
-			
+
 			ArrayList list= new ArrayList(documentPositions.size());
-			
+
 			Position region= new Position(offset, length);
-			
+
 			for (Iterator iterator= documentPositions.iterator(); iterator.hasNext();) {
 				Position position= (Position) iterator.next();
 				if (isWithinRegion(region, position, canStartBefore, canEndAfter)) {
 					list.add(position);
 				}
 			}
-			
+
 			Position[] positions= new Position[list.size()];
 			list.toArray(positions);
 			return positions;
@@ -1728,14 +1728,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			return positions;
 		} else {
 			Assert.isLegal(canEndAfter && !canStartBefore);
-			
+
 			List list= getStartingPositions(category, offset, length);
 			Position[] positions= new Position[list.size()];
 			list.toArray(positions);
 			return positions;
 		}
 	}
-	
+
 	/*
 	 * @since 3.4
 	 */
@@ -1751,11 +1751,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			return region.includes(start) && region.includes(start + position.getLength() - 1);
 		}
 	}
-	
+
 	/**
 	 * A list of positions in the given category with an offset inside the given
 	 * region. The order of the positions is arbitrary.
-	 * 
+	 *
 	 * @param category the position category
 	 * @param offset the offset of the region
 	 * @param length the length of the region
@@ -1767,17 +1767,17 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		List positions= (List) fPositions.get(category);
 		if (positions == null)
 			throw new BadPositionCategoryException();
-		
+
 		int indexStart= computeIndexInPositionList(positions, offset, true);
 		int indexEnd= computeIndexInPositionList(positions, offset + length, true);
-		
+
 		return positions.subList(indexStart, indexEnd);
 	}
 
 	/**
 	 * A list of positions in the given category with an end position inside
 	 * the given region. The order of the positions is arbitrary.
-	 * 
+	 *
 	 * @param category the position category
 	 * @param offset the offset of the region
 	 * @param length the length of the region
@@ -1789,10 +1789,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		List positions= (List) fEndPositions.get(category);
 		if (positions == null)
 			throw new BadPositionCategoryException();
-		
+
 		int indexStart= computeIndexInPositionList(positions, offset, false);
 		int indexEnd= computeIndexInPositionList(positions, offset + length, false);
-		
+
 		return positions.subList(indexStart, indexEnd);
 	}
 

@@ -17,7 +17,7 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
 /**
- * Looks up existing ant variables and proposes them. The proposals are sorted by 
+ * Looks up existing ant variables and proposes them. The proposals are sorted by
  * their prefix-likeness with the variable type.
  */
 public class AntVariableResolver extends TemplateVariableResolver {
@@ -26,7 +26,7 @@ public class AntVariableResolver extends TemplateVariableResolver {
 	 */
 	protected String[] resolveAll(TemplateContext context) {
 		String[] proposals= new String[] { "${srcDir}", "${dstDir}" }; //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		Arrays.sort(proposals, new Comparator() {
 
 			public int compare(Object o1, Object o2) {
@@ -44,7 +44,7 @@ public class AntVariableResolver extends TemplateVariableResolver {
 				return i;
 			}
 		});
-		
+
 		return proposals;
 	}
 }

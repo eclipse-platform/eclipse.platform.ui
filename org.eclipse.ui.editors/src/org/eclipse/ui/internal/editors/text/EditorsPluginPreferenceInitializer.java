@@ -18,12 +18,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.texteditor.ITextEditorThemeConstants;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 
 
 /**
@@ -63,11 +64,11 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 		setDefault(store,
 				AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
 				findRGB(registry, ITextEditorThemeConstants.PREFERENCE_COLOR_BACKGROUND, new RGB(255, 255, 255)), fireEvent);
-		
+
 		setDefault(store,
 				AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND,
 				findRGB(registry, ITextEditorThemeConstants.PREFERENCE_COLOR_FOREGROUND, new RGB(0,0,0)), fireEvent);
-		
+
 		setDefault(store,
 				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR,
 				findRGB(registry,ITextEditorThemeConstants.HYPERLINK_COLOR, new RGB(0, 0, 255)), fireEvent);
@@ -75,13 +76,13 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 		setDefault(store,
 				AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE,
 				findRGB(registry, ITextEditorThemeConstants.FIND_SCOPE_COLOR, new RGB(185, 176 , 180)), fireEvent);
-		
+
 	}
 
 	/**
 	 * Sets the default value and fires a property
 	 * change event if necessary.
-	 * 
+	 *
 	 * @param store	the preference store
 	 * @param key the preference key
 	 * @param newValue the new value
@@ -106,7 +107,7 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 
 	/**
 	 * Returns the RGB for the given key in the given color registry.
-	 * 
+	 *
 	 * @param registry the color registry
 	 * @param key the key for the constant in the registry
 	 * @param defaultRGB the default RGB if no entry is found
@@ -116,14 +117,14 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
 		if (registry == null)
 			return defaultRGB;
-			
+
 		RGB rgb= registry.getRGB(key);
 		if (rgb != null)
 			return rgb;
-		
+
 		return defaultRGB;
 	}
-	
+
 
 	/**
 	 * Migrates the overview ruler preference by re-enabling it.

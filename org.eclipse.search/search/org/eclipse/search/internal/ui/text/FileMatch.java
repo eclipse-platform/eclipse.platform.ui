@@ -24,19 +24,19 @@ import org.eclipse.search.ui.text.Match;
 public class FileMatch extends Match {
 	private LineElement fLineElement;
 	private Region fOriginalLocation;
-	
+
 	public FileMatch(IFile element) {
 		super(element, -1, -1);
 		fLineElement= null;
 		fOriginalLocation= null;
 	}
-	
+
 	public FileMatch(IFile element, int offset, int length, LineElement lineEntry) {
 		super(element, offset, length);
 		Assert.isLegal(lineEntry != null);
 		fLineElement= lineEntry;
 	}
-	
+
 	public void setOffset(int offset) {
 		if (fOriginalLocation == null) {
 			// remember the original location before changing it
@@ -44,7 +44,7 @@ public class FileMatch extends Match {
 		}
 		super.setOffset(offset);
 	}
-	
+
 	public void setLength(int length) {
 		if (fOriginalLocation == null) {
 			// remember the original location before changing it
@@ -52,30 +52,30 @@ public class FileMatch extends Match {
 		}
 		super.setLength(length);
 	}
-	
+
 	public int getOriginalOffset() {
 		if (fOriginalLocation != null) {
 			return fOriginalLocation.getOffset();
 		}
 		return getOffset();
 	}
-	
+
 	public int getOriginalLength() {
 		if (fOriginalLocation != null) {
 			return fOriginalLocation.getLength();
 		}
 		return getLength();
 	}
-	
-	
+
+
 	public LineElement getLineElement() {
 		return fLineElement;
 	}
-	
+
 	public IFile getFile() {
 		return (IFile) getElement();
 	}
-	
+
 	public boolean isFileSearch() {
 		return fLineElement == null;
 	}

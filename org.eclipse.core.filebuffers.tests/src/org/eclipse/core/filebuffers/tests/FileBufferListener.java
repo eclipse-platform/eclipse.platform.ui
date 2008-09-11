@@ -19,7 +19,7 @@ import org.eclipse.core.filebuffers.IFileBufferListener;
  * FileBufferListener
  */
 public class FileBufferListener implements IFileBufferListener {
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferCreated(org.eclipse.core.filebuffers.IFileBuffer)
 	 */

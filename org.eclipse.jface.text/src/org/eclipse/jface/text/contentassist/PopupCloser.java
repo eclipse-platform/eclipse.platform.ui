@@ -75,7 +75,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	public void install(ContentAssistant contentAssistant, Table table) {
 		install(contentAssistant, table, null);
 	}
-	
+
 	/**
 	 * Installs this closer on the given table opened by the given content assistant.
 	 *
@@ -88,22 +88,22 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		fContentAssistant= contentAssistant;
 		fTable= table;
 		fAdditionalInfoController= additionalInfoController;
-		
+
 		if (Helper.okToUse(fTable)) {
 			fShell= fTable.getShell();
 			fDisplay= fShell.getDisplay();
-			
+
 			fShell.addShellListener(this);
 			fTable.addFocusListener(this);
 			fScrollbar= fTable.getVerticalBar();
 			if (fScrollbar != null)
 				fScrollbar.addSelectionListener(this);
-			
+
 			fDisplay.addFilter(SWT.Activate, this);
 			fDisplay.addFilter(SWT.MouseWheel, this);
-			
+
 			fDisplay.addFilter(SWT.Deactivate, this);
-			
+
 			fDisplay.addFilter(SWT.MouseUp, this);
 		}
 	}
@@ -123,9 +123,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		if (fDisplay != null && ! fDisplay.isDisposed()) {
 			fDisplay.removeFilter(SWT.Activate, this);
 			fDisplay.removeFilter(SWT.MouseWheel, this);
-			
+
 			fDisplay.removeFilter(SWT.Deactivate, this);
-			
+
 			fDisplay.removeFilter(SWT.MouseUp, this);
 		}
 	}
@@ -205,7 +205,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 					return;
 				if (event.widget == fShell || event.widget == fTable || event.widget == fScrollbar)
 					return;
-				
+
 				if (fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer() == null)
 					fAdditionalInfoController.hideInformationControl();
 				else if (!fAdditionalInfoController.getInternalAccessor().isReplaceInProgress()) {
@@ -223,7 +223,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 					}
 				}
 				break;
-				
+
 			case SWT.MouseUp:
 				if (fAdditionalInfoController == null || fAdditionalInfoController.getInternalAccessor().isReplaceInProgress())
 					break;
@@ -244,7 +244,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 									}
 								});
 							}
-							
+
 							// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212392 :
 							control.getShell().getDisplay().asyncExec(new Runnable() {
 								public void run() {
@@ -255,7 +255,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 					}
 				}
 				break;
-	
+
 			case SWT.Deactivate:
 				if (fAdditionalInfoController == null)
 					break;

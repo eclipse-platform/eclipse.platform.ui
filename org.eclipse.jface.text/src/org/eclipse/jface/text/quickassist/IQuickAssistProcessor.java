@@ -22,7 +22,7 @@ import org.eclipse.jface.text.source.Annotation;
  * </p>
  * <p>
  * This interface can be implemented by clients.</p>
- * 
+ *
  * @since 3.2
  */
 public interface IQuickAssistProcessor {
@@ -41,20 +41,20 @@ public interface IQuickAssistProcessor {
 	 * <strong>Note:</strong> This test must be fast and optimistic i.e. it is OK to return
 	 * <code>true</code> even though there might be no quick fix.
 	 * </p>
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return <code>true</code> if the assistant has a fix for the given annotation
 	 */
 	boolean canFix(Annotation annotation);
-	
+
 	/**
 	 * Tells whether this assistant has assists for the given invocation context.
-	 * 
+	 *
 	 * @param invocationContext the invocation context
 	 * @return <code>true</code> if the assistant has a fix for the given annotation
 	 */
 	boolean canAssist(IQuickAssistInvocationContext invocationContext);
-	
+
 	/**
 	 * Returns a list of quick assist and quick fix proposals for the
 	 * given invocation context.
@@ -63,5 +63,5 @@ public interface IQuickAssistProcessor {
 	 * @return an array of completion proposals or <code>null</code> if no proposals are available
 	 */
 	ICompletionProposal[] computeQuickAssistProposals(IQuickAssistInvocationContext invocationContext);
-	
+
 }

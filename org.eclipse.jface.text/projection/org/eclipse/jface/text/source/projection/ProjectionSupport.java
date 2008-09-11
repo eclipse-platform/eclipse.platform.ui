@@ -228,7 +228,7 @@ public class ProjectionSupport {
 	public void setHoverControlCreator(IInformationControlCreator creator) {
 		fInformationControlCreator= creator;
 	}
-	
+
 	/**
 	 * Sets the information presenter control creator that is used for the annotation
 	 * hovers that are shown in the projection viewer's projection ruler column.

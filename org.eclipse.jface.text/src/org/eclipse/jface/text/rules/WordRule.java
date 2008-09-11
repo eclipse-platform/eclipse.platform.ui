@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Assert;
  * associate a token to a word. That is, not only can the rule be used to provide tokens for exact
  * matches, but also for the generalized notion of a word in the context in which it is used. A word
  * rule uses a word detector to determine what a word is.
- * 
+ *
  * @see IWordDetector
  */
 public class WordRule implements IRule {

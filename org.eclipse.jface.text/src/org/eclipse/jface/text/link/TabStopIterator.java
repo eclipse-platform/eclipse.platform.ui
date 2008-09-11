@@ -20,7 +20,6 @@ import java.util.NoSuchElementException;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.link.LinkedPosition;
 
 
 

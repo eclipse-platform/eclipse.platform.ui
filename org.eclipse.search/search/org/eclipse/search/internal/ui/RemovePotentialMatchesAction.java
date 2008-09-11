@@ -13,8 +13,9 @@ package org.eclipse.search.internal.ui;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.core.resources.IMarker;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -23,9 +24,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IWorkbenchSite;
 
-import org.eclipse.search.ui.SearchUI;
-
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.SearchUI;
 
 /**
  * @deprecated old search
@@ -38,33 +38,33 @@ class RemovePotentialMatchesAction extends Action {
 		fSite= site;
 
 		if (usePluralLabel()) {
-			setText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatches_text); 
-			setToolTipText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatches_tooltip); 
+			setText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatches_text);
+			setToolTipText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatches_tooltip);
 		}
 		else {
-			setText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatch_text); 
-			setToolTipText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatch_tooltip); 
+			setText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatch_text);
+			setToolTipText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatch_tooltip);
 		}
 	}
-	
+
 	public void run() {
 		IMarker[] markers= getMarkers();
 		if (markers != null)
 			try {
 				SearchPlugin.getWorkspace().deleteMarkers(markers);
 			} catch (CoreException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
+				ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message);
 			}
 		else {
-			String title= SearchMessages.RemovePotentialMatchesAction_dialog_title; 
-			String message= SearchMessages.RemovePotentialMatchesAction_dialog_message; 
+			String title= SearchMessages.RemovePotentialMatchesAction_dialog_title;
+			String message= SearchMessages.RemovePotentialMatchesAction_dialog_message;
 			MessageDialog.openInformation(fSite.getShell(), title, message);
 		}
 
 		// action only makes sense once
 		setEnabled(false);
 	}
-	
+
 	private IMarker[] getMarkers() {
 
 		ISelection s= fSite.getSelectionProvider().getSelection();
@@ -95,7 +95,7 @@ class RemovePotentialMatchesAction extends Action {
 
 		if (! (s instanceof IStructuredSelection) || s.isEmpty())
 			return false;
-	
+
 		IStructuredSelection selection= (IStructuredSelection)s;
 		int size= selection.size();
 		if (size <= 0)

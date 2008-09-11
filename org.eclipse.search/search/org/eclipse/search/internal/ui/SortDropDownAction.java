@@ -34,8 +34,8 @@ class SortDropDownAction extends Action implements IMenuCreator {
 
 	// Persistance tags.
 	private static final String TAG_SORTERS= "sorters"; //$NON-NLS-1$
-	private static final String TAG_DEFAULT_SORTERS= "defaultSorters"; //$NON-NLS-1$	
-	private static final String TAG_ELEMENT= "element"; //$NON-NLS-1$	
+	private static final String TAG_DEFAULT_SORTERS= "defaultSorters"; //$NON-NLS-1$
+	private static final String TAG_ELEMENT= "element"; //$NON-NLS-1$
 	private static final String TAG_PAGE_ID= "pageId"; //$NON-NLS-1$
 	private static final String TAG_SORTER_ID= "sorterId"; //$NON-NLS-1$
 
@@ -47,10 +47,10 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	private Map fLastCheckedForType;
 
 	public SortDropDownAction(SearchResultViewer viewer) {
-		super(SearchMessages.SortDropDownAction_label); 
+		super(SearchMessages.SortDropDownAction_label);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_SORT);
 		fViewer= viewer;
-		setToolTipText(SearchMessages.SortDropDownAction_tooltip); 
+		setToolTipText(SearchMessages.SortDropDownAction_tooltip);
 		setMenuCreator(this);
 		fLastCheckedForType= new HashMap(5);
 	}
@@ -83,9 +83,9 @@ class SortDropDownAction extends Action implements IMenuCreator {
 
 	public Menu getMenu(final Menu parent) {
 		dispose(); // ensure old menu gets disposed
-	
+
 		fMenu= new Menu(parent);
-		
+
 		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
 			Object value= fLastCheckedForType.get(fPageId);
@@ -94,7 +94,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				checkedId= ((SorterDescriptor)value).getId();
 			else
 				checkedId= ""; //$NON-NLS-1$
-			
+
 			final SorterDescriptor sorterDesc= (SorterDescriptor) iter.next();
 			if (!sorterDesc.getPageId().equals(fPageId) && !sorterDesc.getPageId().equals("*")) //$NON-NLS-1$
 				continue;
@@ -169,7 +169,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	}
 
 	//--- Persistency -------------------------------------------------
-	
+
 	void restoreState(IMemento memento) {
 		if (fLastCheckedForType.isEmpty())
 			restoreState(memento, fLastCheckedForType, TAG_SORTERS);
@@ -190,12 +190,12 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				map.put(pageId, sorterDesc);
 		}
 	}
-	
+
 	void saveState(IMemento memento) {
 		saveState(memento, fgLastCheckedForType, TAG_DEFAULT_SORTERS);
 		saveState(memento, fLastCheckedForType, TAG_SORTERS);
 	}
-	
+
 	private void saveState(IMemento memento, Map map, String mapName) {
 		Iterator iter= map.entrySet().iterator();
 		memento= memento.createChild(mapName);

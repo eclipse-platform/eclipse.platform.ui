@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * A hunk describes a contiguous range of changed, added or deleted lines. <code>Hunk</code>s are separated by
  * one or more unchanged lines.
- * 
+ *
  * @since 3.3
  */
 public final class Hunk {
@@ -35,7 +35,7 @@ public final class Hunk {
 
 	/**
 	 * Creates a new hunk.
-	 * 
+	 *
 	 * @param line the line at which the hunk starts, must be &gt;= 0
 	 * @param delta the difference in lines compared to the original
 	 * @param changed the number of changed lines in this hunk, must be &gt;= 0
@@ -54,7 +54,7 @@ public final class Hunk {
 	public String toString() {
 		return "Hunk [" + line + ">" + changed + (delta < 0 ? "-" : "+") + Math.abs(delta) + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
-	
+
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */

@@ -47,7 +47,7 @@ public interface IVerticalRulerInfo {
 	 * Returns the line number of the last mouse button activity.
 	 * Based on the input document of the connected text viewer.
 	 *
-	 * @return the line number of the last mouse button activity or <code>-1</code> if 
+	 * @return the line number of the last mouse button activity or <code>-1</code> if
 	 * 			the last mouse activity does not correspond to a valid document line
 	 */
 	int getLineOfLastMouseButtonActivity();

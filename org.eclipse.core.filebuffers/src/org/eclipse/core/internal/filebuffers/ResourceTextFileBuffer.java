@@ -167,7 +167,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 	/**
 	 * Returns the file buffer manager.
-	 * 
+	 *
 	 * @return the file buffer manager
 	 * @since 3.4
 	 */
@@ -302,7 +302,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	protected void cacheBOM() throws CoreException {
 		fBOM= null;
-		
+
 		IContentDescription description= fFile.getContentDescription();
 		if (description != null)
 			fBOM= (byte[])description.getProperty(IContentDescription.BYTE_ORDER_MARK);
@@ -337,7 +337,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
 		String encoding= computeEncoding();
-		
+
 		if (fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16.equals(encoding))
 			encoding= CHARSET_UTF_16LE;
 
@@ -357,9 +357,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		CharsetEncoder encoder= charset.newEncoder();
 		encoder.onMalformedInput(CodingErrorAction.REPLACE);
 		encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
-		
+
 		InputStream stream;
-		
+
 		try {
 			byte[] bytes;
 			ByteBuffer byteBuffer= encoder.encode(CharBuffer.wrap(fDocument.get()));

@@ -21,7 +21,7 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 
 /**
  * Test Suite for org.eclipse.ui.workbench.texteditor.
- * 
+ *
  * @since 3.0
  */
 public class WorkbenchTextEditorTestSuite extends TestSuite {
@@ -36,7 +36,7 @@ public class WorkbenchTextEditorTestSuite extends TestSuite {
         suite.addTest(ChangeRegionTest.suite());
         suite.addTest(RulerTestSuite.suite());
         suite.addTest(HunkComputerTest.suite());
-        
+
 		//$JUnit-END$
 		return suite;
 	}

@@ -13,18 +13,11 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
-import com.ibm.icu.text.MessageFormat;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.commands.operations.IUndoContext;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.resources.ResourcesPlugin;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -39,6 +32,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+
+import org.eclipse.core.commands.operations.IUndoContext;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
@@ -72,6 +72,9 @@ import org.eclipse.ui.part.PageSwitcher;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
+import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.OpenSearchDialogAction;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -80,12 +83,8 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.search.internal.ui.ISearchHelpContextIds;
-import org.eclipse.search.internal.ui.OpenSearchDialogAction;
-import org.eclipse.search.internal.ui.SearchPlugin;
-
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener {
-	
+
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
 	private static final String MEMENTO_KEY_IS_PINNED= "isPinned"; //$NON-NLS-1$
 	private static final String MEMENTO_KEY_LAST_ACTIVATION= "org.eclipse.search.lastActivation"; //$NON-NLS-1$
@@ -101,19 +100,19 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private CancelSearchAction fCancelAction;
 	private PinSearchViewAction fPinSearchViewAction;
 	private UndoRedoActionGroup fUndoRedoActionGroup;
-	
+
 	private IMemento fPageState;
 	private boolean fIsPinned;
 	private int fActivationCount= 0;
 	private String fDefaultPartName;
-	
+
 	private Composite fPageContent;
 	private Link fDescription;
 	private Composite fDescriptionComposite;
-	
+
 	/**
 	 * Creates the groups and separators for the search view's context menu
-	 * 
+	 *
 	 * @param menu the context menu
 	 */
 	public static void createContextMenuGroups(IMenuManager menu) {
@@ -131,10 +130,10 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 	}
-	
+
 	/**
 	 * Creates the groups and separators for the search view's context menu
-	 * 
+	 *
 	 * @param menu the context menu
 	 */
 	private static void createViewMenuGroups(IMenuManager menu) {
@@ -155,9 +154,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	/**
-	 * Creates the groups and separators for the search view's 
+	 * Creates the groups and separators for the search view's
 	 * tool bar
-	 * 
+	 *
 	 * @param toolbar the toolbar
 	 */
 	public static void createToolBarGroups(IToolBarManager toolbar) {
@@ -176,7 +175,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		toolbar.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
 	}
 
-	static class DummyPart implements IWorkbenchPart { 
+	static class DummyPart implements IWorkbenchPart {
 		private int fLastActivation= 0;
 		public void setLastActivation(int lastActivation) {
 			fLastActivation= lastActivation;
@@ -202,12 +201,12 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 		public void createControl(Composite parent) {
 			Color background= parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-			
+
 			Composite composite= new Composite(parent, SWT.NONE);
 			composite.setLayout(new GridLayout(1, false));
-			
+
 			composite.setBackground(background);
-			
+
 			Link link= new Link(composite, SWT.NONE);
 			link.setText(SearchMessages.SearchView_empty_search_label);
 			link.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
@@ -217,9 +216,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 					new OpenSearchDialogAction().run();
 				}
 			});
-			
+
 			fControl= composite;
-		}		
+		}
 
 		public Control getControl() {
 			return fControl;
@@ -249,7 +248,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			return null;
 		}
 
-	
+
 		public void init(IPageSite pageSite) {
 			super.init(pageSite);
 			getSite().setSelectionProvider(null);
@@ -263,7 +262,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		 */
 		public void saveState(IMemento memento) {
 			// do nothing
-			
+
 		}
 
 		/* (non-Javadoc)
@@ -303,14 +302,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fSearchViewStates= new HashMap();
 		fIsPinned= false;
 	}
-	
+
 	/**
 	 * @return the search result page registry
 	 */
 	public SearchPageRegistry getSearchPageRegistry() {
 		return fSearchViewPageService;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -320,8 +319,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			InternalSearchUI.getInstance().getSearchViewManager().searchViewActivated(this);
 		}
 	}
-	
-	
+
+
 	protected IPage createDefaultPage(PageBook book) {
 		IPageBookViewPage page= new EmptySearchView();
 		page.createControl(book);
@@ -345,7 +344,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		IPage page = pageRecord.page;
 		page.dispose();
 		pageRecord.dispose();
-						
+
 		// empty cross-reference cache
 		fPartsToPages.remove(part);
 	}
@@ -357,14 +356,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	protected boolean isImportant(IWorkbenchPart part) {
 		return part instanceof DummyPart;
 	}
-	
-	
+
+
 	public void showSearchResult(ISearchResult search) {
 		ISearchResultPage newPage= null;
 		if (search != null) {
 			newPage= fSearchViewPageService.findPageForSearchResult(search, true);
 			if (newPage == null) {
-				String format= SearchMessages.SearchView_error_noResultPage; 
+				String format= SearchMessages.SearchView_error_noResultPage;
 				String message= MessageFormat.format(format, new Object[] { search.getClass().getName() });
 				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, message, null));
 				return;
@@ -372,13 +371,13 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		}
 		internalShowSearchPage(newPage, search);
 	}
-	
+
 	public void showEmptySearchPage(String pageId) {
 		ISearchResultPage newPage= fSearchViewPageService.findPageForPageId(pageId, true);
 		internalShowSearchPage(newPage, null);
 	}
-	
-	
+
+
 	private void internalShowSearchPage(ISearchResultPage page, ISearchResult search) {
 		// detach the previous page.
 		ISearchResultPage currentPage= (ISearchResultPage) getCurrentPage();
@@ -386,7 +385,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			fSearchViewStates.put(fCurrentSearch, currentPage.getUIState());
 			currentPage.setInput(null, null);
 		}
-		
+
 		fCurrentSearch= search;
 
 		if (page != null) {
@@ -401,7 +400,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 				part.setLastActivation(++fActivationCount);
 				partActivated(part);
 			}
-			
+
 			// connect to the new pages
 			Object uiState= search != null ? fSearchViewStates.get(search) : null;
 			page.setInput(search, uiState);
@@ -409,21 +408,21 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		updatePartName();
 		updateLabel();
 		updateCancelAction();
-		
+
 		updateHelpContextID(page);
 
 	}
-	
+
 	private void updateHelpContextID(ISearchResultPage page) {
 		String helpContextId= null;
 		String pageId= null;
-		
+
 		if (page != null)
 			pageId= page.getID();
-		
+
 		if (pageId != null)
 			helpContextId= fSearchViewPageService.getHelpContextId(pageId);
-		
+
 		if (helpContextId == null)
 			helpContextId= ISearchHelpContextIds.New_SEARCH_VIEW;
 
@@ -447,20 +446,20 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 				if (fDescriptionComposite == null) {
 					fDescriptionComposite= new Composite(fPageContent, SWT.NONE);
 					fDescriptionComposite.moveAbove(null);
-					
+
 					GridLayout layout= new GridLayout();
 					layout.marginHeight= 0;
 					layout.marginWidth= 0;
 					layout.verticalSpacing= 0;
 					fDescriptionComposite.setLayout(layout);
 					fDescriptionComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-					
+
 					fDescription= new Link(fDescriptionComposite, SWT.NONE);
 					GridData gridData= new GridData(SWT.FILL, SWT.CENTER, true, false);
 					gridData.horizontalIndent= 5;
 					fDescription.setLayoutData(gridData);
 					fDescription.setText(label);
-					
+
 					Label separator= new Label(fDescriptionComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 					separator.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 					fPageContent.layout();
@@ -470,14 +469,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			}
 		}
 	}
-	
+
 	public ISearchResult getCurrentSearchResult() {
 		return fCurrentSearch;
 	}
 
 	public void createPartControl(Composite parent) {
 		createActions();
-		
+
 		fPageContent= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.marginHeight= 0;
@@ -485,17 +484,17 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		layout.horizontalSpacing= 0;
 		layout.verticalSpacing= 0;
 		fPageContent.setLayout(layout);
-		
+
 		fDescriptionComposite= null;
-		
+
 		super.createPartControl(fPageContent);
 		getPageBook().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
+
 		fDefaultPartName= getPartName();
 		initializeToolBar();
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
 		initializePageSwitcher();
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ISearchHelpContextIds.New_SEARCH_VIEW);
 		restorePageFromMemento();
 	}
@@ -558,7 +557,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fPinSearchViewAction);
 		getViewSite().getActionBars().updateActionBars();
 	}
-		
+
 	private void createActions() {
 		fSearchesDropDownAction= new SearchHistoryDropDownAction(this);
 		fSearchesDropDownAction.updateEnablement();
@@ -569,7 +568,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fCancelAction= new CancelSearchAction(this);
 		fCancelAction.setEnabled(false);
 		fPinSearchViewAction= new PinSearchViewAction(this);
-		
+
 		IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 		fUndoRedoActionGroup= new UndoRedoActionGroup(getViewSite(), workspaceContext, true);
 	}
@@ -642,21 +641,21 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			}
 		}
 	}
-	
+
 	private String getShowInMenuLabel() {
 		String keyBinding= null;
-		
+
 		IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null)
 			keyBinding= bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
-		
+
 		if (keyBinding == null)
 			keyBinding= ""; //$NON-NLS-1$
-		
+
 		return NLS.bind(SearchMessages.SearchView_showIn_menu, keyBinding);
 	}
 
-	
+
 	// Methods related to saving page state. -------------------------------------------
 
 	public void saveState(IMemento memento) {
@@ -671,7 +670,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		}
 		memento.putString(MEMENTO_KEY_IS_PINNED, String.valueOf(isPinned()));
 	}
-	
+
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
@@ -682,16 +681,16 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (progressService != null)
 			progressService.showBusyForFamily(InternalSearchUI.FAMILY_SEARCH);
 	}
-	
+
 
 	protected void initPage(IPageBookViewPage page) {
 		super.initPage(page);
 		IActionBars actionBars= page.getSite().getActionBars();
 		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fSearchAgainAction);
 		actionBars.updateActionBars();
-		
+
 		fUndoRedoActionGroup.fillActionBars(actionBars);
-		
+
 		ISearchResultPage srPage= (ISearchResultPage) page;
 		IMemento memento= null;
 		if (fPageState != null) {
@@ -705,7 +704,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		}
 		srPage.restoreState(memento);
 	}
-	
+
 	/*
 	 *  TODO workaround for focus problem. Clarify focus behavior.
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
@@ -714,17 +713,17 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		IPage currentPage= getCurrentPage();
 		if (currentPage != null)
 			currentPage.setFocus();
-		else 
+		else
 			super.setFocus();
 	}
-	
+
 	public ISearchResultPage getActivePage() {
 		IPage page= getCurrentPage();
 		if (page instanceof ISearchResultPage)
 			return (ISearchResultPage) page;
 		return null;
 	}
-	
+
 	public IWorkbenchSiteProgressService getProgressService() {
 		IWorkbenchSiteProgressService service = null;
 		Object siteService =
@@ -738,7 +737,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
         super.showBusy(busy);
         getProgressService().warnOfContentChange();
     }
-    
+
 	public Object getAdapter(Class adapter) {
 		Object superAdapter= super.getAdapter(adapter);
 		if (superAdapter != null)
@@ -754,21 +753,21 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	/**
-	 * Marks the view as pinned. 
-	 * 
-	 * @param pinned if <code>true</code> the view is marked as pinned 
+	 * Marks the view as pinned.
+	 *
+	 * @param pinned if <code>true</code> the view is marked as pinned
 	 */
 	public void setPinned(boolean pinned) {
 		fIsPinned= pinned;
 	}
 
 	/**
-	 * @return returns <code>true</code> the view is marked as pinned 
+	 * @return returns <code>true</code> the view is marked as pinned
 	 */
 	public boolean isPinned() {
 		return fIsPinned;
 	}
-	
+
 	public void updatePartName() {
 		if (fDefaultPartName != null) {
 			// mstodo not yet enabled.

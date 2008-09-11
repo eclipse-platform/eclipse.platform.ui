@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Point;
 /**
  * A painter for drawing visible characters for (invisible) whitespace
  * characters.
- * 
+ *
  * @since 3.3
  */
 public class WhitespaceCharacterPainter implements IPainter, PaintListener {
@@ -36,7 +36,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	private static final char TAB_SIGN= '\u00bb';
 	private static final char CARRIAGE_RETURN_SIGN= '\u00a4';
 	private static final char LINE_FEED_SIGN= '\u00b6';
-	
+
 	/** Indicates whether this painter is active. */
 	private boolean fIsActive= false;
 	/** The source viewer this painter is attached to. */
@@ -48,7 +48,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Creates a new painter for the given text viewer.
-	 * 
+	 *
 	 * @param textViewer  the text viewer the painter should be attached to
 	 */
 	public WhitespaceCharacterPainter(ITextViewer textViewer) {
@@ -149,7 +149,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Draw the given line range.
-	 * 
+	 *
 	 * @param gc the GC
 	 * @param startLine first line number
 	 * @param endLine last line number (inclusive)
@@ -218,7 +218,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Draw characters of content range.
-	 * 
+	 *
 	 * @param gc the GC
 	 * @param startOffset inclusive start index
 	 * @param endOffset exclusive end index
@@ -289,7 +289,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Check if the given widget line is a folded line.
-	 * 
+	 *
 	 * @param widgetLine  the widget line number
 	 * @return <code>true</code> if the line is folded
 	 */
@@ -312,7 +312,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Draw string at widget offset.
-	 * 
+	 *
 	 * @param gc the GC
 	 * @param offset the widget offset
 	 * @param s the string to be drawn
@@ -324,7 +324,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		FontMetrics fontMetrics= gc.getFontMetrics();
 		int fontBaseline= fontMetrics.getAscent() + fontMetrics.getLeading();
 		int baslineDelta= baseline - fontBaseline;
-		
+
 		Point pos= fTextWidget.getLocationAtOffset(offset);
 		gc.setForeground(fg);
 		gc.drawString(s, pos.x, pos.y + baslineDelta, true);
@@ -332,7 +332,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Convert a document offset to the corresponding widget offset.
-	 * 
+	 *
 	 * @param documentOffset the document offset
 	 * @return widget offset
 	 */
@@ -351,7 +351,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Convert a widget offset to the corresponding document offset.
-	 * 
+	 *
 	 * @param widgetOffset the widget offset
 	 * @return document offset
 	 */

@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.text;
 
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
-import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.search.ui.text.Match;
 
 public class Highlighter {
@@ -54,39 +56,39 @@ public class Highlighter {
 		};
 		FileBuffers.getTextFileBufferManager().addFileBufferListener(fBufferListener);
 	}
-	
+
 	/**
 	 * Adds highlighting for the given matches
-	 * 
+	 *
 	 * @param matches the matches to add highlighting
 	 */
 	public void addHighlights(Match[] matches) {
 	}
-	
+
 	/**
 	 * Removes highlighting for the given matches
-	 * 
+	 *
 	 * @param matches the matches to remove the highlighting
 	 */
 	public void removeHighlights(Match[] matches) {
 	}
-	
+
 	/**
 	 * Removes all highlighting
 	 */
 	public void removeAll() {
 	}
-	
+
 	/**
 	 * Called when the highlighter is disposed.
 	 */
 	public void dispose() {
 		FileBuffers.getTextFileBufferManager().removeFileBufferListener(fBufferListener);
 	}
-	
+
 	/**
 	 * Notifies that a buffer has its content changed
-	 * 
+	 *
 	 * @param buffer the buffer
 	 */
 	protected void handleContentReplaced(IFileBuffer buffer) {

@@ -93,12 +93,12 @@ public class OverviewRuler implements IOverviewRuler {
 		public void modelChanged(AnnotationModelEvent event) {
 			if (!event.isValid())
 				return;
-			
+
 			if (event.isWorldChange()) {
 				update();
 				return;
 			}
-			
+
 			Annotation[] annotations= event.getAddedAnnotations();
 			int length= annotations.length;
 			for (int i= 0; i < length; i++) {
@@ -107,7 +107,7 @@ public class OverviewRuler implements IOverviewRuler {
 					return;
 				}
 			}
-			
+
 			annotations= event.getRemovedAnnotations();
 			length= annotations.length;
 			for (int i= 0; i < length; i++) {
@@ -116,7 +116,7 @@ public class OverviewRuler implements IOverviewRuler {
 					return;
 				}
 			}
-			
+
 			annotations= event.getChangedAnnotations();
 			length= annotations.length;
 			for (int i= 0; i < length; i++) {
@@ -125,7 +125,7 @@ public class OverviewRuler implements IOverviewRuler {
 					return;
 				}
 			}
-			
+
 		}
 	}
 
@@ -362,7 +362,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @since 3.0
 	 */
 	private List fCachedAnnotations= new ArrayList();
-	
+
 	/**
 	 * Redraw runnable lock
 	 * @since 3.3
@@ -390,7 +390,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * Tells whether temporary annotations are drawn with
 	 * a separate color. This color will be computed by
 	 * discoloring the original annotation color.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private boolean fIsTemporaryAnnotationDiscolored;
@@ -414,7 +414,7 @@ public class OverviewRuler implements IOverviewRuler {
 	/**
 	 * Constructs a overview ruler of the given width using the given annotation
 	 * access and the given color manager.
-	 * 
+	 *
 	 * @param annotationAccess the annotation access
 	 * @param width the width of the vertical ruler
 	 * @param sharedColors the color manager
@@ -577,7 +577,7 @@ public class OverviewRuler implements IOverviewRuler {
 			gc.fillRectangle(0, 0, size.x, size.y);
 
 			cacheAnnotations();
-			
+
 			if (fTextViewer instanceof ITextViewerExtension5)
 				doPaint1(gc);
 			else
@@ -608,7 +608,7 @@ public class OverviewRuler implements IOverviewRuler {
 
 		Point size= fCanvas.getSize();
 		int writable= JFaceTextUtil.computeLineHeight(textWidget, 0, maxLines, maxLines);
-		
+
 		if (size.y > writable)
 			size.y= Math.max(writable - fHeader.getSize().y, 0);
 
@@ -622,7 +622,7 @@ public class OverviewRuler implements IOverviewRuler {
 			for (int t=0; t < style.length; t++) {
 
 				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
-				
+
 				boolean areColorsComputed= false;
 				Color fill= null;
 				Color stroke= null;
@@ -733,7 +733,7 @@ public class OverviewRuler implements IOverviewRuler {
 			for (int t=0; t < style.length; t++) {
 
 				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
-				
+
 				boolean areColorsComputed= false;
 				Color fill= null;
 				Color stroke= null;
@@ -1296,7 +1296,7 @@ public class OverviewRuler implements IOverviewRuler {
 	private void updateHeader() {
 		if (fHeader == null || fHeader.isDisposed())
 			return;
-		
+
 		fHeader.setToolTipText(null);
 
 		Object colorType= null;
@@ -1304,7 +1304,7 @@ public class OverviewRuler implements IOverviewRuler {
 			Object annotationType= fAnnotationsSortedByLayer.get(i);
 			if (skipInHeader(annotationType) || skip(annotationType))
 				continue;
-			
+
 			Iterator e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY | FilterIterator.IGNORE_BAGS, fCachedAnnotations.iterator());
 			while (e.hasNext()) {
 				if (e.next() != null) {
@@ -1328,18 +1328,18 @@ public class OverviewRuler implements IOverviewRuler {
 			}
 			fHeaderPainter.setColor(color);
 		}
-		
+
 		fHeader.redraw();
 
 	}
-	
+
 	/**
 	 * Updates the header tool tip text of this ruler.
 	 */
 	private void updateHeaderToolTipText() {
 		if (fHeader == null || fHeader.isDisposed())
 			return;
-		
+
 		if (fHeader.getToolTipText() != null)
 			return;
 
@@ -1371,7 +1371,7 @@ public class OverviewRuler implements IOverviewRuler {
 				overview += JFaceTextMessages.getFormattedString("OverviewRulerHeader.toolTipTextEntry", new Object[] {annotationTypeLabel, new Integer(count)}); //$NON-NLS-1$
 			}
 		}
-		
+
 		if (overview.length() > 0)
 			fHeader.setToolTipText(overview);
 	}

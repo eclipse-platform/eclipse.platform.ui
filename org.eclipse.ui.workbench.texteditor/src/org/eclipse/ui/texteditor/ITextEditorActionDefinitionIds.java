@@ -22,7 +22,7 @@ import org.eclipse.jface.text.information.IInformationProvider;
  * <p>
  * This interface must not be implemented by clients.
  * </p>
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -457,14 +457,14 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 2.1
 	 */
 	String CONTENT_ASSIST_PROPOSALS= "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the edit -> content assist context information action
 	 * Value: <code>"org.eclipse.ui.edit.text.contentAssist.contextInformation"</code>).
 	 * @since 2.1
 	 */
 	String CONTENT_ASSIST_CONTEXT_INFORMATION= "org.eclipse.ui.edit.text.contentAssist.contextInformation"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the edit -> quick assist proposal action
 	 * <p>
@@ -530,21 +530,21 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.3
 	 */
 	String REVISION_RENDERING_CYCLE= "org.eclipse.ui.editors.revisions.rendering.cycle"; //$NON-NLS-1$
-	
+
 	/**
 	 * Command ID of the command to toggle the revision author display.
 	 * Value: <code>"org.eclipse.ui.editors.revisions.author.toggle"</code>).
 	 * @since 3.3
 	 */
 	String REVISION_AUTHOR_TOGGLE= "org.eclipse.ui.editors.revisions.author.toggle"; //$NON-NLS-1$
-	
+
 	/**
 	 * Command ID of the command to toggle the revision ID display.
 	 * Value: <code>"org.eclipse.ui.editors.revisions.id.toggle"</code>).
 	 * @since 3.3
 	 */
 	String REVISION_ID_TOGGLE= "org.eclipse.ui.editors.revisions.id.toggle"; //$NON-NLS-1$
-	
+
 	 /**
 	 * Command ID of the recenter command.
 	 * Value: <code>"org.eclipse.ui.edit.text.recenter"</code>).
@@ -558,7 +558,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.3
 	 */
 	String SHOW_WHITESPACE_CHARACTERS = "org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"; //$NON-NLS-1$
-	
+
 	/**
 	 * Command ID of the command to display information for the
 	 * current caret location in a sticky hover.
@@ -567,5 +567,5 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.3
 	 */
 	String SHOW_INFORMATION= "org.eclipse.ui.edit.text.showInformation"; //$NON-NLS-1$
-	
+
 }

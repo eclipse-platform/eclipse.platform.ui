@@ -37,13 +37,14 @@ import org.eclipse.ui.internal.texteditor.rulers.DAG;
 import org.eclipse.ui.internal.texteditor.rulers.ExtensionPointHelper;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnMessages;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnPlacementConstraint;
+
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 
 
 /**
  * A registry for all extensions to the
  * <code>rulerColumns</code> extension point.
- * 
+ *
  * @since 3.3
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -51,26 +52,26 @@ public final class RulerColumnRegistry {
 
 	private static final String EXTENSION_POINT= "rulerColumns"; //$NON-NLS-1$
 	private static final String QUALIFIED_EXTENSION_POINT= TextEditorPlugin.PLUGIN_ID + '.' + EXTENSION_POINT;
-	
+
 	/** The singleton instance. */
 	private static RulerColumnRegistry fgSingleton= null;
-	
+
 	/**
 	 * Returns the default computer registry.
 	 * <p>
 	 * TODO keep this or add some other singleton, e.g. TextEditorPlugin?
 	 * </p>
-	 * 
+	 *
 	 * @return the singleton instance
 	 */
 	public static synchronized RulerColumnRegistry getDefault() {
 		if (fgSingleton == null) {
 			fgSingleton= new RulerColumnRegistry();
 		}
-		
+
 		return fgSingleton;
 	}
-	
+
 	/**
 	 * All descriptors (element type:
 	 * {@link RulerColumnDescriptor}).
@@ -80,7 +81,7 @@ public final class RulerColumnRegistry {
 	 * All descriptors by id (element type: {@link RulerColumnDescriptor}).
 	 */
 	private Map fDescriptorMap= null;
-	
+
 	/**
 	 * <code>true</code> if this registry has been loaded.
 	 */
@@ -100,7 +101,7 @@ public final class RulerColumnRegistry {
 	 * The returned list is unmodifiable and guaranteed to never change. Note that the set of
 	 * descriptors may change over time due to dynamic plug-in removal or addition.
 	 * </p>
-	 * 
+	 *
 	 * @return the sorted list of extensions to the <code>rulerColumns</code> extension point
 	 *         (element type: {@link RulerColumnDescriptor})
 	 */
@@ -108,11 +109,11 @@ public final class RulerColumnRegistry {
 		ensureExtensionPointRead();
 		return fDescriptors;
 	}
-	
+
 	/**
 	 * Returns the {@link RulerColumnDescriptor} with the given identity, <code>null</code> if no
 	 * such descriptor exists.
-	 * 
+	 *
 	 * @param id the identity of the ruler contribution as given in the extension point xml.
 	 * @return the {@link RulerColumnDescriptor} with the given identity, <code>null</code> if no
 	 *         such descriptor exists
@@ -147,10 +148,10 @@ public final class RulerColumnRegistry {
 	public void reload() {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		List elements= new ArrayList(Arrays.asList(registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, EXTENSION_POINT)));
-		
+
 		List descriptors= new ArrayList();
 		Map descriptorMap= new HashMap();
-		
+
 		for (Iterator iter= elements.iterator(); iter.hasNext();) {
 			IConfigurationElement element= (IConfigurationElement) iter.next();
 			try {
@@ -160,7 +161,7 @@ public final class RulerColumnRegistry {
 					noteDuplicateId(desc);
 					continue;
 				}
-					
+
 				descriptors.add(desc);
 				descriptorMap.put(id, desc);
 			} catch (InvalidRegistryObjectException x) {
@@ -174,9 +175,9 @@ public final class RulerColumnRegistry {
 				warnUser(x.getStatus());
 			}
 		}
-		
+
 		sort(descriptors);
-		
+
 		synchronized (this) {
 			fDescriptors= Collections.unmodifiableList(descriptors);
 			fDescriptorMap= Collections.unmodifiableMap(descriptorMap);
@@ -185,7 +186,7 @@ public final class RulerColumnRegistry {
 
 	/**
 	 * Sorts the column contributions.
-	 * 
+	 *
 	 * @param descriptors the descriptors to sort
 	 */
 	private void sort(List descriptors) {
@@ -202,18 +203,18 @@ public final class RulerColumnRegistry {
 		};
 		Object[] array= descriptors.toArray();
 		sorter.sort(array);
-		
+
 		Map descriptorsById= new HashMap();
 		for (int i= 0; i < array.length; i++) {
 			RulerColumnDescriptor desc= (RulerColumnDescriptor) array[i];
 			descriptorsById.put(desc.getId(), desc);
 		}
-		
+
 		DAG dag= new DAG();
 		for (int i= 0; i < array.length; i++) {
 			RulerColumnDescriptor desc= (RulerColumnDescriptor) array[i];
 			dag.addVertex(desc);
-			
+
 			Set before= desc.getPlacement().getConstraints();
 			for (Iterator it= before.iterator(); it.hasNext();) {
 				RulerColumnPlacementConstraint constraint= (RulerColumnPlacementConstraint) it.next();
@@ -232,7 +233,7 @@ public final class RulerColumnRegistry {
 				}
 			}
 		}
-		
+
 		Comparator gravityComp= new Comparator() {
 			public int compare(Object o1, Object o2) {
 				float diff= ((RulerColumnDescriptor) o1).getPlacement().getGravity() - ((RulerColumnDescriptor) o2).getPlacement().getGravity();
@@ -243,7 +244,7 @@ public final class RulerColumnRegistry {
 				return 1;
 			}
 		};
-		
+
 		/* Topological sort - always select the source with the least gravity */
 		Set toProcess= dag.getSources();
 		int index= 0;
@@ -255,7 +256,7 @@ public final class RulerColumnRegistry {
 			toProcess= dag.getSources();
 		}
 		Assert.isTrue(index == array.length);
-		
+
 		ListIterator it= descriptors.listIterator();
 		for (int i= 0; i < index; i++) {
 			it.next();

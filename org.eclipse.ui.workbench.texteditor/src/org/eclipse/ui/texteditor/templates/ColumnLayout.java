@@ -33,11 +33,11 @@ import org.eclipse.jface.viewers.ColumnWeightData;
  * <p>
  * XXX: Should switch to use {@link org.eclipse.jface.layout.TableColumnLayout}.
  * </p>
- * 
+ *
  * @since 3.2
  */
 final class ColumnLayout extends Layout {
-	
+
 	private static final String RECALCULATE_LAYOUT= "recalculateKey"; //$NON-NLS-1$
 
 	/**
@@ -49,7 +49,7 @@ final class ColumnLayout extends Layout {
 	 * {@link org.eclipse.jface.layout.TableColumnLayout} or get API from JFace
 	 * or SWT, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=218483
 	 * </p>
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static int COLUMN_TRIM;
@@ -62,7 +62,7 @@ final class ColumnLayout extends Layout {
 		else
 			COLUMN_TRIM= 3;
 	}
-	
+
 	private List columns= new ArrayList();
 
 	/**
@@ -73,10 +73,10 @@ final class ColumnLayout extends Layout {
 	public void addColumnData(ColumnLayoutData data) {
 		columns.add(data);
 	}
-	
+
 	private Point computeTableSize(Table table, int wHint, int hHint) {
 		Point result= table.computeSize(wHint, hHint);
-		
+
 		int width= 0;
 		int size= columns.size();
 		for (int i= 0; i < size; ++i) {
@@ -98,7 +98,7 @@ final class ColumnLayout extends Layout {
 			result.x= width;
 		return result;
 	}
-	
+
 	private void layoutTable(final Table table, final int width, final Rectangle area, final boolean increase) {
 		final TableColumn[] tableColumns= table.getColumns();
 		final int size= Math.min(columns.size(), tableColumns.length);
@@ -106,7 +106,7 @@ final class ColumnLayout extends Layout {
 
 		final int[] weightIteration= new int[size];
 		int numberOfWeightColumns= 0;
-		
+
 		int fixedWidth= 0;
 		int minWeightWidth= 0;
 		int totalWeight= 0;
@@ -133,13 +133,13 @@ final class ColumnLayout extends Layout {
 				Assert.isTrue(false, "Unknown column layout data"); //$NON-NLS-1$
 			}
 		}
-		
+
 
 		// Do we have columns that have a weight?
 		final int restIncludingMinWidths= width - fixedWidth;
 		final int rest= restIncludingMinWidths - minWeightWidth;
 		if (numberOfWeightColumns > 0 && rest > 0) {
-			
+
 			// Modify the weights to reflect what each column already
 			// has due to its minimum. Otherwise, columns with low
 			// minimums get discriminated.
@@ -150,7 +150,7 @@ final class ColumnLayout extends Layout {
 				wantedPixels[i]= totalWeight == 0 ? 0 : cw.weight * restIncludingMinWidths / totalWeight;
 				totalWantedPixels+= wantedPixels[i];
 			}
-			
+
 			// Now distribute the rest to the columns with weight.
 			int totalDistributed= 0;
 			for (int i= 0; i < numberOfWeightColumns; ++i) {
@@ -166,7 +166,7 @@ final class ColumnLayout extends Layout {
 				--diff;
 			}
 		}
-		
+
 		if (increase) {
 			table.setSize(area.width, area.height);
 		}
@@ -194,10 +194,10 @@ final class ColumnLayout extends Layout {
         int tableWidth= table.getSize().x;
         int trim= computeTrim(area, table, tableWidth);
         int width= Math.max(0, area.width - trim);
-        
+
         if (width > 1)
         	layoutTable(table, width, area, tableWidth < area.width);
-        
+
         if( composite.getData(RECALCULATE_LAYOUT) == null ) {
         	composite.setData(RECALCULATE_LAYOUT, Boolean.FALSE);
         	composite.layout();

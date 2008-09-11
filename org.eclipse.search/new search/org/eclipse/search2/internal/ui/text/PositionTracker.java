@@ -16,6 +16,22 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IFile;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.IFileBufferListener;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -29,44 +45,29 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.IFileBuffer;
-import org.eclipse.core.filebuffers.IFileBufferListener;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.LocationKind;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-
 
 public class PositionTracker implements IQueryListener, ISearchResultListener, IFileBufferListener {
 
 	private Map fMatchesToPositions= new HashMap();
 	private Map fMatchesToSearchResults= new HashMap();
 	private Map fFileBuffersToMatches= new HashMap();
-	
+
 	private interface IFileBufferMatchOperation {
 		void run(ITextFileBuffer buffer, Match match);
 	}
-	
+
 	public PositionTracker() {
 		NewSearchUI.addQueryListener(this);
 		FileBuffers.getTextFileBufferManager().addFileBufferListener(this);
 	}
-	
+
 	// tracking search results --------------------------------------------------------------
 	public void queryAdded(ISearchQuery query) {
 		if (query.getSearchResult() instanceof AbstractTextSearchResult) {
 			query.getSearchResult().addListener(this);
 		}
 	}
-	
+
 	public void queryRemoved(ISearchQuery query) {
 		ISearchResult result= query.getSearchResult();
 		if (result instanceof AbstractTextSearchResult) {
@@ -132,7 +133,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		int length = match.getLength();
 		if (offset < 0 || length < 0)
 			return;
-		
+
 		try {
 			IDocument doc= fb.getDocument();
 			Position position= new Position(offset, length);
@@ -152,7 +153,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	public static Position convertToCharacterPosition(Position linePosition, IDocument doc) throws BadLocationException {
 		int lineOffset= linePosition.getOffset();
 		int lineLength= linePosition.getLength();
-		
+
 		int charOffset= doc.getLineOffset(lineOffset);
 		int charLength= 0;
 		if (lineLength > 0) {
@@ -180,7 +181,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 				fFileBuffersToMatches.remove(fb);
 		}
 	}
-	
+
 	private ITextFileBuffer getTrackedFileBuffer(AbstractTextSearchResult result, Object element) {
 		IFileMatchAdapter adapter= result.getFileMatchAdapter();
 		if (adapter == null)
@@ -192,7 +193,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			return null;
 		return FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 	}
-	
+
 	public Position getCurrentPosition(Match match) {
 		Position pos= (Position)fMatchesToPositions.get(match);
 		if (pos == null)
@@ -205,14 +206,14 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 				try {
 					pos= convertToLinePosition(pos, doc);
 				} catch (BadLocationException e) {
-					
+
 				}
 			}
 		}
-		
+
 		return pos;
 	}
-	
+
 	public static Position convertToLinePosition(Position pos, IDocument doc) throws BadLocationException {
 		int offset= doc.getLineOfOffset(pos.getOffset());
 		int end= doc.getLineOfOffset(pos.getOffset()+pos.getLength());
@@ -237,7 +238,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		final int[] trackCount= new int[1];
 		if (!(buffer instanceof ITextFileBuffer))
 			return;
-		
+
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(buffer.getLocation());
 		if (file == null)
 			return;
@@ -258,7 +259,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			}
 		}
 	}
-		
+
 	private void doForExistingMatchesIn(IFileBuffer buffer, IFileBufferMatchOperation operation) {
 		if (!(buffer instanceof ITextFileBuffer))
 			return;
@@ -271,7 +272,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			}
 		}
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferDisposed(org.eclipse.core.filebuffers.IFileBuffer)

@@ -16,7 +16,7 @@ import org.eclipse.jface.text.GapTextStore;
 
 /**
  * A test specifically testing the gap property of a gap text store.
- * 
+ *
  * @since 3.3
  */
 public class AbstractGapTextTest extends TestCase {
@@ -24,7 +24,7 @@ public class AbstractGapTextTest extends TestCase {
 
 		/**
 		 * Creates a new empty text store using the specified low and high watermarks.
-		 * 
+		 *
 		 * @param lowWatermark unused - at the lower bound, the array is only resized when the
 		 *            content does not fit
 		 * @param highWatermark if the gap is ever larger than this, it will automatically be
@@ -34,7 +34,7 @@ public class AbstractGapTextTest extends TestCase {
 		public GapText(int lowWatermark, int highWatermark) {
 			super(lowWatermark, highWatermark);
 		}
-		
+
 		public GapText(int min, int max, float maxGapFactor) {
 			super(min, max, maxGapFactor);
 		}
@@ -55,21 +55,21 @@ public class AbstractGapTextTest extends TestCase {
 			return super.getContentAsString().length();
 		}
 	}
-		
+
 	protected GapText fText;
-	
+
 	private String printGap() {
 		return printGap(fText.getGapStart(), fText.getGapEnd());
 	}
-	
+
 	private String printGap(int start, int end) {
 		return "[" + start + "," + end + "]";
 	}
-	
+
 	protected void assertGap(int start, int end) {
 		assertTrue("Invalid gap. Expected: " + printGap(start, end) + " actual:" + printGap() , fText.getGapStart() == start && fText.getGapEnd() == end);
 	}
-	
+
 	protected void assertContents(String expected) {
 		assertEquals(expected, fText.get(0, fText.getLength()));
 	}

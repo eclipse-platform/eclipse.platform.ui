@@ -24,12 +24,12 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
  * @deprecated old search
  */
 class SearchResultLabelProvider extends LabelProvider {
-	
+
 	private static final String MATCHES_POSTFIX= " " + SearchMessages.SearchResultView_matches + ")";  //$NON-NLS-1$ //$NON-NLS-2$
 
 	private ILabelProvider fLabelProvider;
 
-	
+
 	SearchResultLabelProvider(ILabelProvider provider) {
 		fLabelProvider= provider;
 	}
@@ -42,13 +42,13 @@ class SearchResultLabelProvider extends LabelProvider {
 			buf.append(count);
 			buf.append(MATCHES_POSTFIX);
 		}
-		return buf.toString();			
+		return buf.toString();
 	}
-	
+
 	public Image getImage(Object element) {
 		return fLabelProvider.getImage(element);
 	}
-	
+
 	// Don't dispose since label providers are reused.
 	public void dispose() {
 	}

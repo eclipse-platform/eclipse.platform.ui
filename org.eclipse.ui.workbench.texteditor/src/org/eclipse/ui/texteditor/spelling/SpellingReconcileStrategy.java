@@ -39,12 +39,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Reconcile strategy used for spell checking.
- * 
+ *
  * @since 3.3
  */
 public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
-	
+
 	/**
 	 * Spelling problem collector.
 	 */
@@ -55,7 +55,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 
 		/** Annotations to add. */
 		private Map fAddAnnotations;
-		
+
 		/** Lock object for modifying the annotations. */
 		private Object fLockObject;
 
@@ -91,9 +91,9 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#endCollecting()
 		 */
 		public void endCollecting() {
-			
+
 			List toRemove= new ArrayList();
-			
+
 			synchronized (fLockObject) {
 				Iterator iter= fAnnotationModel.getAnnotationIterator();
 				while (iter.hasNext()) {
@@ -119,7 +119,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		}
 	}
 
-	
+
 	/** Text content type */
 	private static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
@@ -133,22 +133,22 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	private IProgressMonitor fProgressMonitor;
 
 	private SpellingService fSpellingService;
-	
+
 	private ISpellingProblemCollector fSpellingProblemCollector;
-	
+
 	/** The spelling context containing the Java source content type. */
 	private SpellingContext fSpellingContext;
-	
+
 	/**
 	 * Region array, used to prevent us from creating a new array on each reconcile pass.
 	 * @since 3.4
 	 */
 	private IRegion[] fRegions= new IRegion[1];
-	
-	
+
+
 	/**
 	 * Creates a new comment reconcile strategy.
-	 * 
+	 *
 	 * @param viewer the source viewer
 	 * @param spellingService the spelling service to use
 	 */
@@ -180,7 +180,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 				subRegion= startLineInfo;
 			else
 				subRegion= new Region(startLineInfo.getOffset(), endLineInfo.getOffset() + Math.max(0, endLineInfo.getLength() - 1) - startLineInfo.getOffset());
-			
+
 		} catch (BadLocationException e) {
 			subRegion= new Region(0, fDocument.getLength());
 		}
@@ -207,10 +207,10 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	protected IContentType getContentType() {
 		return TEXT_CONTENT_TYPE;
 	}
-	
+
 	/**
 	 * Returns the document which is spell checked.
-	 * 
+	 *
 	 * @return the document
 	 */
 	protected final IDocument getDocument() {
@@ -227,7 +227,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 
 	/**
 	 * Creates a new spelling problem collector.
-	 * 
+	 *
 	 * @return the collector or <code>null</code> if none is available
 	 */
 	protected ISpellingProblemCollector createSpellingProblemCollector() {
@@ -243,7 +243,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	public final void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
 	}
-	
+
 	/**
 	 * Returns the annotation model to be used by this reconcile strategy.
 	 *

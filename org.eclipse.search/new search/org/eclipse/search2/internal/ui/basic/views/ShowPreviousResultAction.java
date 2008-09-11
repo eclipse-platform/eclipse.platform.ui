@@ -12,23 +12,22 @@ package org.eclipse.search2.internal.ui.basic.views;
 
 import org.eclipse.jface.action.Action;
 
-import org.eclipse.search.ui.text.*;
-
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
 public class ShowPreviousResultAction extends Action {
-	
+
 	private AbstractTextSearchViewPage fPage;
 
 	public ShowPreviousResultAction(AbstractTextSearchViewPage page) {
-		super(SearchMessages.ShowPreviousResultAction_label); 
+		super(SearchMessages.ShowPreviousResultAction_label);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_PREV);
-		setToolTipText(SearchMessages.ShowPreviousResultAction_tooltip); 
+		setToolTipText(SearchMessages.ShowPreviousResultAction_tooltip);
 		fPage= page;
 	}
-	
+
 	public void run() {
 		fPage.gotoPreviousMatch();
 	}

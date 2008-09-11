@@ -30,7 +30,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 
 	/** The maximum undo level. */
 	private static final int MAX_UNDO_LEVEL= 256;
-	
+
 	/** The shell. */
 	private Shell fShell;
 	/** The text viewer. */
@@ -39,7 +39,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 	private IUndoManager fUndoManager;
 
 	private static final int LOOP_COUNT= 20;
-	
+
 	//--- Static data sets for comparing scenarios - obtained from capturing random data ---
 	/** Original document */
 	private static final String INITIAL_DOCUMENT_CONTENT= "+7cyg:/F!T4KnW;0+au$t1G%(`Z|u'7'_!-k?<c\"2Y.]CwsO.r";
@@ -50,14 +50,14 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 
 	private static final boolean DEBUG= false;
 
-	
+
 	/*
 	 * @see TestCase#TestCase(String)
 	 */
 	public AbstractUndoManagerTest(final String name) {
 		super(name);
 	}
-	
+
 	/*
 	 *  @see TestCase#setUp()
 	 */
@@ -68,7 +68,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		fTextViewer.setUndoManager(fUndoManager);
 		fUndoManager.connect(fTextViewer);
 	}
-	
+
 	abstract protected IUndoManager createUndoManager(int maxUndoLevel);
 
 	/*
@@ -89,21 +89,21 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		final String original= "a\r\nb\r\n";
 		final IDocument document= new Document(original);
 		fTextViewer.setDocument(document);
-		
+
 		try {
 			document.replace(1, 2, "\n");
 			document.replace(3, 2, "\n");
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
-		
+
 		assertTrue(fUndoManager.undoable());
 		fUndoManager.undo();
 		assertTrue(fUndoManager.undoable());
 		fUndoManager.undo();
 
 		final String reverted= document.get();
-		
+
 		assertEquals(original, reverted);
 	}
 
@@ -113,31 +113,31 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 	public void testRandomAccess() {
 		final int RANDOM_STRING_LENGTH= 50;
 		final int RANDOM_REPLACE_COUNT= 100;
-		
+
 		assertTrue(RANDOM_REPLACE_COUNT >= 1);
 		assertTrue(RANDOM_REPLACE_COUNT <= MAX_UNDO_LEVEL);
-		
+
 		String original= createRandomString(RANDOM_STRING_LENGTH);
 		final IDocument document= new Document(original);
 		fTextViewer.setDocument(document);
-	
+
 		doChange(document, RANDOM_REPLACE_COUNT);
-		
+
 		assertTrue(fUndoManager.undoable());
 		while (fUndoManager.undoable())
 			fUndoManager.undo();
-			
+
 		final String reverted= document.get();
 		assertEquals(original, reverted);
 	}
-	
+
 	private void doChange(IDocument document, int count) {
 		try {
 			String before= document.get();
-			
+
 			if (DEBUG)
 				System.out.println(before);
-			
+
 			Position [] positions= new Position[count];
 			String [] strings= new String[count];
 			for (int i= 0; i < count; i++) {
@@ -147,7 +147,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 				positions[i]= position;
 				strings[i]= string;
 			}
-			
+
 			if (DEBUG) {
 				System.out.print("{ ");
 				for (int i=0; i<count; i++) {
@@ -169,7 +169,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	// repeatable test case for comparing success/failure among different tests
 	private void doRepeatableChange(IDocument document) {
 		assertTrue(POSITIONS.length >= (2 * REPLACEMENTS.length));
@@ -186,7 +186,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void testLoopRandomAccessAsCompound() {
 		int i= 0;
 		while (i < LOOP_COUNT) {
@@ -195,7 +195,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			i++;
 		}
 	}
-	
+
 	public void testLoopRandomAccess() {
 		int i= 0;
 		while (i < LOOP_COUNT) {
@@ -204,7 +204,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			i++;
 		}
 	}
-	
+
 	public void testLoopRandomAccessAsUnclosedCompound() {
 		int i= 0;
 		while (i < LOOP_COUNT) {
@@ -213,7 +213,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			i++;
 		}
 	}
-	
+
 	public void testLoopConvertLineDelimiters() {
 		int i= 0;
 		while (i < LOOP_COUNT) {
@@ -222,7 +222,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			i++;
 		}
 	}
-	
+
 	public void testLoopRandomAccessWithMixedCompound() {
 		int i= 0;
 		while (i < LOOP_COUNT) {
@@ -231,14 +231,14 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			i++;
 		}
 	}
-	
+
 	public void testRandomAccessAsCompound() {
 		final int RANDOM_STRING_LENGTH= 50;
 		final int RANDOM_REPLACE_COUNT= 100;
-		
+
 		assertTrue(RANDOM_REPLACE_COUNT >= 1);
 		assertTrue(RANDOM_REPLACE_COUNT <= MAX_UNDO_LEVEL);
-		
+
 		String original= createRandomString(RANDOM_STRING_LENGTH);
 		final IDocument document= new Document(original);
 		fTextViewer.setDocument(document);
@@ -251,23 +251,23 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		while (fUndoManager.undoable())
 			fUndoManager.undo();
 		assertTrue(!fUndoManager.undoable());
-			
+
 		final String reverted= document.get();
 
 		assertEquals(original, reverted);
 	}
-	
+
 	/**
 	 * Test case for https://bugs.eclipse.org/bugs/show_bug.cgi?id=88172
 	 */
 	public void testRandomAccessAsUnclosedCompound() {
-		
+
 		final int RANDOM_STRING_LENGTH= 50;
 		final int RANDOM_REPLACE_COUNT= 100;
-		
+
 		assertTrue(RANDOM_REPLACE_COUNT >= 1);
 		assertTrue(RANDOM_REPLACE_COUNT <= MAX_UNDO_LEVEL);
-		
+
 		String original= createRandomString(RANDOM_STRING_LENGTH);
 		final IDocument document= new Document(original);
 		fTextViewer.setDocument(document);
@@ -281,22 +281,22 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		while (fUndoManager.undoable())
 			fUndoManager.undo();
 		assertTrue(!fUndoManager.undoable());
-			
+
 		final String reverted= document.get();
 
 		assertEquals(original, reverted);
 	}
-	
+
 	public void testRandomAccessWithMixedCompound() {
 
 		final int RANDOM_STRING_LENGTH= 50;
 		final int RANDOM_REPLACE_COUNT= 10;
 		final int NUMBER_COMPOUNDS= 5;
 		final int NUMBER_ATOMIC_PER_COMPOUND= 3;
-		
+
 		assertTrue(RANDOM_REPLACE_COUNT >= 1);
 		assertTrue(NUMBER_COMPOUNDS * (1 + NUMBER_ATOMIC_PER_COMPOUND) * RANDOM_REPLACE_COUNT <= MAX_UNDO_LEVEL);
-		
+
 		String original= createRandomString(RANDOM_STRING_LENGTH);
 		final IDocument document= new Document(original);
 		fTextViewer.setDocument(document);
@@ -316,7 +316,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		while (fUndoManager.undoable())
 			fUndoManager.undo();
 		assertTrue(!fUndoManager.undoable());
-			
+
 		final String reverted= document.get();
 
 		assertEquals(original, reverted);
@@ -324,59 +324,59 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 
 	public void testRepeatableAccess() {
 		assertTrue(REPLACEMENTS.length <= MAX_UNDO_LEVEL);
-		
+
 		final IDocument document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
-	
+
 		doRepeatableChange(document);
-		
+
 		assertTrue(fUndoManager.undoable());
 		while (fUndoManager.undoable())
 			fUndoManager.undo();
-			
+
 		final String reverted= document.get();
 
 		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);
 	}
-	
+
 	public void testRepeatableAccessAsCompound() {
 		assertTrue(REPLACEMENTS.length <= MAX_UNDO_LEVEL);
 
 		final IDocument document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
-	
+
 		fUndoManager.beginCompoundChange();
 		doRepeatableChange(document);
 		fUndoManager.endCompoundChange();
-		
+
 		assertTrue(fUndoManager.undoable());
 		fUndoManager.undo();
 		// with a single compound, there should be only one undo
 		assertFalse(fUndoManager.undoable());
-			
+
 		final String reverted= document.get();
 
 		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);
 	}
-	
+
 	public void testRepeatableAccessAsUnclosedCompound() {
 		assertTrue(REPLACEMENTS.length <= MAX_UNDO_LEVEL);
-		
+
 		final IDocument document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
-	
+
 		fUndoManager.beginCompoundChange();
 		doRepeatableChange(document);
-		
+
 		assertTrue(fUndoManager.undoable());
 		while (fUndoManager.undoable())
 			fUndoManager.undo();
-			
+
 		final String reverted= document.get();
 
 		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);
 	}
-	
+
 	public void testRepeatableAccessWithMixedAndEmptyCompound() {
 		assertTrue(REPLACEMENTS.length + 2 <= MAX_UNDO_LEVEL);
 
@@ -387,11 +387,11 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		doRepeatableChange(document);
 		fUndoManager.endCompoundChange();
 		assertTrue(fUndoManager.undoable());
-		
+
 		// insert an empty compound
 		fUndoManager.beginCompoundChange();
 		fUndoManager.endCompoundChange();
-			
+
 	    // insert the atomic changes
 		doRepeatableChange(document);
 
@@ -399,12 +399,12 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		while (fUndoManager.undoable())
 			fUndoManager.undo();
 		assertTrue(!fUndoManager.undoable());
-			
+
 		final String reverted= document.get();
 
 		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);
 	}
-	
+
 	public void testDocumentStamp() {
 		final Document document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
@@ -414,7 +414,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		assertEquals(stamp, document.getModificationStamp());
 
 	}
-	
+
 	// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=109104
 	public void testDocumentStamp2() throws BadLocationException {
 		final Document document= new Document("");
@@ -425,33 +425,33 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		fUndoManager.undo();
 		document.replace(0, 0, createRandomString(stringLength));
 		assertFalse(stamp == document.getModificationStamp());
-		
+
 	}
-	
+
 	private static String createRandomString(int length) {
 		final StringBuffer buffer= new StringBuffer();
-		
+
 		for (int i= 0; i < length; i++)
 			buffer.append(getRandomCharacter());
 
 		return buffer.toString();
 	}
-	
+
 	private static final char getRandomCharacter() {
 		// XXX should include \t
 		return (char) (32 + 95 * Math.random());
 	}
-	
+
 	private static String createRandomStringPoisson(int mean) {
 		final int length= getRandomPoissonValue(2);
 		return createRandomString(length);
 	}
-	
+
 	private static Position createRandomPositionPoisson(int documentLength) {
 
 		float random= (float) Math.random();
 		int offset= (int) (random * (documentLength + 1));
-		
+
 		// Catch potential rounding issue
 		if (offset == documentLength + 1)
 			offset= documentLength;
@@ -459,10 +459,10 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		int length= getRandomPoissonValue(2);
 		if (offset + length > documentLength)
 			length= documentLength - offset;
-			
+
 		return new Position(offset, length);
 	}
-	
+
 	private static int getRandomPoissonValue(int mean) {
 		final int MAX_VALUE= 10;
 
@@ -481,10 +481,10 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 	private static float getPoissonDistribution(float lambda, int k) {
 		return (float) (Math.exp(-lambda) * Math.pow(lambda, k) / faculty(k));
 	}
-	
+
 	/**
 	 * Returns the faculty of k.
-	 * 
+	 *
 	 * @param k the <code>int</code> for which to get the faculty
 	 * @return the faculty
 	 */
@@ -493,5 +493,5 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			? 1
 			: k * faculty(k - 1);
 	}
-	
+
 }

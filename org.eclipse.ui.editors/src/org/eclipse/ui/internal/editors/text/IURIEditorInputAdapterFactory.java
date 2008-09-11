@@ -17,15 +17,15 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.ui.IURIEditorInput;
+
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.ILocationProviderExtension;
-
-import org.eclipse.ui.IURIEditorInput;
 
 
 /**
  * Adapter factory for <code>IURIEditorInput</code>.
- * 
+ *
  * @since 3.3
  */
 public class IURIEditorInputAdapterFactory implements IAdapterFactory {
@@ -40,7 +40,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 				return URIUtil.toPath(uri);
 			return null;
 		}
-		
+
 		/*
 		 * @see org.eclipse.ui.editors.text.ILocationProviderExtension#getURI(java.lang.Object)
 		 */
@@ -53,7 +53,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 		}
 	}
 
-	
+
 	/** The list of provided adapters. */
 	private static final Class[] ADAPTER_LIST= new Class[] { ILocationProvider.class };
 

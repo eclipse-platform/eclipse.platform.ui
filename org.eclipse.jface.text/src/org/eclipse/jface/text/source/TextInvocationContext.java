@@ -18,7 +18,7 @@ import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
  * <p>
  * Clients may extend this class to add additional context information.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public class TextInvocationContext implements IQuickAssistInvocationContext {
@@ -26,7 +26,7 @@ public class TextInvocationContext implements IQuickAssistInvocationContext {
 	private ISourceViewer fSourceViewer;
 	private int fOffset;
 	private int fLength;
-	
+
 	public TextInvocationContext(ISourceViewer sourceViewer, int offset, int length) {
 		fSourceViewer= sourceViewer;
 		fOffset= offset;
@@ -53,5 +53,5 @@ public class TextInvocationContext implements IQuickAssistInvocationContext {
 	public ISourceViewer getSourceViewer() {
 		return fSourceViewer;
 	}
-	
+
 }

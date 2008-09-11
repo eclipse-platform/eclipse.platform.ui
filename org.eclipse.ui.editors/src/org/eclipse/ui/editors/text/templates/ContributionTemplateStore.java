@@ -240,7 +240,7 @@ public class ContributionTemplateStore extends TemplateStore {
 							bAutoInsert= true;
 						else
 							bAutoInsert= Boolean.valueOf(autoInsert).booleanValue();
-						
+
 						Template template= new Template(name, desc, contextTypeId, pattern, bAutoInsert);
 						TemplatePersistenceData data= new TemplatePersistenceData(template, true, id);
 						if (validateTemplate(template))
@@ -254,7 +254,7 @@ public class ContributionTemplateStore extends TemplateStore {
 	private static boolean isValidTemplateId(String id) {
 		return id != null && id.trim().length() != 0; // TODO test validity?
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.templates.persistence.TemplateStore#handleException(java.io.IOException)
 	 * @since 3.2

@@ -38,9 +38,9 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * FileBuffersForLinkedFiles
  */
 public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
-	
+
 	private File fExternalFile;
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
@@ -54,7 +54,7 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		FileTool.delete(file); // externalResources/
 		super.tearDown();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
 	 */
@@ -62,12 +62,12 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/linkedFolderTarget/FileInLinkedFolder"));
 		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/linkedFolderTarget/FileInLinkedFolder"));
 		FileTool.copy(sourceFile, fExternalFile);
-		
+
 		IFolder folder= ResourceHelper.createLinkedFolder(project, new Path("LinkedFolder"), fExternalFile.getParentFile());
 		IFile file= folder.getFile(new Path("FileInLinkedFolder"));
 		return file.getFullPath();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
@@ -84,7 +84,7 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	protected boolean isStateValidationSupported() {
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#deleteUnderlyingFile()
 	 */
@@ -93,7 +93,7 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		file.delete(true, false, null);
 		return file.exists();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#moveUnderlyingFile()
 	 */
@@ -102,11 +102,11 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		ResourceHelper.createFolder("project/folderA");
 		IPath path= new Path("/project/folderA/MovedLinkedFile");
 		file.move(path, true, false, null);
-		
+
 		file= FileBuffers.getWorkspaceFileAtLocation(path);
 		if (file != null && file.exists())
 			return path;
-		
+
 		return null;
 	}
 
@@ -129,7 +129,7 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		fileInfo.setLastModified(1000);
 		fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 
-		
+
 		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 		return true;

@@ -453,7 +453,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			fOverviewRulerHoveringController.getInternalAccessor().setInformationControlReplacer(new StickyHoverManager(this));
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode)
 	 * @since 3.4
@@ -511,17 +511,17 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 	/**
 	 * Disposes the visual annotation model.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected void disposeVisualAnnotationModel() {
 		if (fVisualAnnotationModel != null) {
 			if (getDocument() != null)
 				fVisualAnnotationModel.disconnect(getDocument());
-		
+
 			if ( fVisualAnnotationModel instanceof IAnnotationModelExtension)
 				((IAnnotationModelExtension)fVisualAnnotationModel).removeAnnotationModel(MODEL_ANNOTATION_MODEL);
-			
+
 			fVisualAnnotationModel= null;
 		}
 	}
@@ -570,7 +570,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public final ContentAssistantFacade getContentAssistantFacade() {
@@ -687,7 +687,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		if (operation == CONTENTASSIST_CONTEXT_INFORMATION)
 			return fContentAssistant != null && fContentAssistantInstalled && isEditable();
-		
+
 		if (operation == QUICK_ASSIST)
 			return fQuickAssistAssistant != null && fQuickAssistAssistantInstalled && isEditable();
 
@@ -950,10 +950,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				break;
 			}
 			case QUICK_ASSIST: {
-				
+
 				if (fQuickAssistAssistant == null)
 					return;
-				
+
 				if (enable) {
 					if (!fQuickAssistAssistantInstalled) {
 						fQuickAssistAssistant.install(this);
@@ -1031,14 +1031,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 	/**
 	 * Tells whether the vertical ruler only acts as annotation ruler.
-	 * 
+	 *
 	 * @return <code>true</code> if the vertical ruler only show annotations
 	 * @since 3.3
 	 */
 	private boolean isVerticalRulerOnlyShowingAnnotations() {
 		if (fVerticalRuler instanceof VerticalRuler)
 			return true;
-		
+
 		if (fVerticalRuler instanceof CompositeRuler) {
 			Iterator iter= ((CompositeRuler)fVerticalRuler).getDecoratorIterator();
 			return iter.hasNext() && iter.next() instanceof AnnotationRulerColumn && !iter.hasNext();
@@ -1074,7 +1074,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			}
 		}
 	}
-	
+
     /*
      * @see org.eclipse.jface.text.source.ISourceViewer#getCurrentAnnotationHover()
      * @since 3.2

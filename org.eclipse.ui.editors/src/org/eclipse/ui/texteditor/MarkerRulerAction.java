@@ -107,7 +107,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	public MarkerRulerAction(ResourceBundle bundle, String prefix,  ITextEditor editor, IVerticalRulerInfo ruler, String markerType, boolean askForLabel) {
 		super(bundle, prefix);
 		Assert.isLegal(editor != null);
-		
+
 		fRuler= ruler;
 		fTextEditor= editor;
 		fMarkerType= markerType;
@@ -207,7 +207,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Returns whether the given markers are all editable by the user.
-	 * 
+	 *
 	 * @param markers the list of markers to test
 	 * @return boolean <code>true</code> if they are all editable
 	 * @since 3.2
@@ -223,7 +223,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Returns whether the given marker is editable by the user.
-	 * 
+	 *
 	 * @param marker the marker to test
 	 * @return boolean <code>true</code> if it is editable
 	 * @since 3.2
@@ -488,7 +488,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Returns the name to be used for the operation.
-	 * 
+	 *
 	 * @return the operation name
 	 * @since 3.3
 	 */
@@ -499,7 +499,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Execute the specified undoable operation.
-	 * 
+	 *
 	 * @param operation the operation to execute
 	 * @since 3.3
 	 */

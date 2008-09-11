@@ -46,6 +46,7 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
+
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 
@@ -348,13 +349,13 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @since 3.2
 	 */
 	public boolean isNotSynchronizedException(Object element, CoreException ex) {
-		IStatus status= ex.getStatus(); 
+		IStatus status= ex.getStatus();
 		if (status == null || status instanceof MultiStatus)
 			return false;
-		
+
 		if (status.getException() != null)
 			return false;
-		
+
 		return status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL;
 	}
 

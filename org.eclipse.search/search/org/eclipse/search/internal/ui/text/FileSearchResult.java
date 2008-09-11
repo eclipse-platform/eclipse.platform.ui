@@ -18,17 +18,16 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
+import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.ui.SearchPluginImages;
-
 public class FileSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	private final Match[] EMPTY_ARR= new Match[0];
-	
+
 	private FileSearchQuery fQuery;
 
 	public FileSearchResult(FileSearchQuery job) {
@@ -62,7 +61,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 		}
 		return false;
 	}
-	
+
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
 		if (ei instanceof IFileEditorInput) {
@@ -75,11 +74,11 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
-	
+
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return this;
 	}
-	
+
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return this;
 	}

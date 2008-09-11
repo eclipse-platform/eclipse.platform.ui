@@ -22,7 +22,7 @@ public interface IContextInformationExtension {
 	/**
 	 * Returns the start offset of the range for which this context
 	 * information is valid or <code>-1</code> if unknown.
-	 * 
+	 *
 	 * @return the start offset of the range for which this context
 	 *         information is valid
 	 */

@@ -25,7 +25,7 @@ package org.eclipse.jface.text.source;
  *     This allows for sophisticated hovers in a way that information computed by
  *     the hover can be displayed in the best possible form.</li>
  * <li>{@link org.eclipse.jface.text.source.IAnnotationHoverExtension2} since
- *     version 3.2 allowing a text hover to specify whether it handles mouse-wheel 
+ *     version 3.2 allowing a text hover to specify whether it handles mouse-wheel
  *     events itself.</li>
  * </ul></p>
  * <p>

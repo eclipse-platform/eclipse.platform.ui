@@ -15,11 +15,11 @@ import org.eclipse.jface.text.TextEvent;
 
 
 public class TestTextEvent extends TextEvent {
-	
+
 	TestTextEvent(DocumentEvent event, String replacedText) {
 		super(event.getOffset(), event.getLength(), event.getText(), replacedText, event, true);
 	}
-	
+
 	TestTextEvent(String text) {
 		super(0, 0, text, (String) null, (DocumentEvent) null, true);
 	}

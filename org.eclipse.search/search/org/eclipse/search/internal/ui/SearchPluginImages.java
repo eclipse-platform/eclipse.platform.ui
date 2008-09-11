@@ -12,17 +12,17 @@ package org.eclipse.search.internal.ui;
 
 import java.net.URL;
 
+import org.osgi.framework.Bundle;
+
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-
-import org.osgi.framework.Bundle;
 
 /**
  * Bundle of all images used by the Search UI plugin.
@@ -33,7 +33,7 @@ public class SearchPluginImages {
 	private final static ImageRegistry PLUGIN_REGISTRY= SearchPlugin.getDefault().getImageRegistry();
 
 	private static final IPath ICONS_PATH= new Path("$nl$/icons/full"); //$NON-NLS-1$
-	
+
 	public static final String T_OBJ= "obj16/"; //$NON-NLS-1$
 	public static final String T_WIZBAN= "wizban/"; //$NON-NLS-1$
 	public static final String T_LCL= "lcl16/"; //$NON-NLS-1$
@@ -45,7 +45,7 @@ public class SearchPluginImages {
 
 	// Define image names
 	public static final String IMG_TOOL_SEARCH= NAME_PREFIX + "search.gif"; //$NON-NLS-1$
-	
+
 	public static final String IMG_LCL_SEARCH_AGAIN= NAME_PREFIX + "search_again.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_PIN_VIEW= NAME_PREFIX + "pin_view.gif"; //$NON-NLS-1$
 
@@ -77,11 +77,11 @@ public class SearchPluginImages {
 	public static final ImageDescriptor DESC_OBJ_SEARCHMARKER= createManaged(T_OBJ, IMG_OBJ_SEARCHMARKER);
 	public static final ImageDescriptor DESC_OBJ_TEXT_SEARCH_LINE= createManaged(T_OBJ, IMG_OBJ_TEXT_SEARCH_LINE);
 	public static final ImageDescriptor DESC_VIEW_SEARCHRES= createManaged(T_EVIEW, IMG_VIEW_SEARCHRES);
-	
+
 	public static Image get(String key) {
 		return PLUGIN_REGISTRY.get(key);
 	}
-	
+
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		ImageDescriptor result= create(prefix, name.substring(NAME_PREFIX_LENGTH), true);
 		PLUGIN_REGISTRY.put(name, result);
@@ -99,20 +99,20 @@ public class SearchPluginImages {
 		IPath path= ICONS_PATH.append(prefix).append(name);
 		return createImageDescriptor(SearchPlugin.getDefault().getBundle(), path, useMissingImageDescriptor);
 	}
-	
+
 	/*
 	 * Sets all available image descriptors for the given action.
-	 */	
+	 */
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath= relPath.substring(NAME_PREFIX_LENGTH);
-		
+
 		action.setDisabledImageDescriptor(create("d" + type, relPath, false)); //$NON-NLS-1$
-		
+
 		ImageDescriptor desc= create("e" + type, relPath, true); //$NON-NLS-1$
-		action.setHoverImageDescriptor(desc); 
+		action.setHoverImageDescriptor(desc);
 		action.setImageDescriptor(desc);
 	}
-	
+
 	/*
 	 * Creates an image descriptor for the given path in a bundle. The path can contain variables
 	 * like $NL$.
@@ -130,5 +130,5 @@ public class SearchPluginImages {
 		}
 		return null;
 	}
-	
+
 }

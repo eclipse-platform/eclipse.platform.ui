@@ -142,7 +142,7 @@ public final class TextOperationAction extends TextEditorAction {
 	public void update() {
 		if (!fAllowUpdate)
 			return;
-		
+
 		super.update();
 
 		if (!fRunsOnReadOnly && !canModifyEditor()) {

@@ -19,18 +19,18 @@ import org.eclipse.core.filebuffers.LocationKind;
  * @since 3.4
  */
 public class TextFileManagerDocCreationTests extends AbstractFileBufferDocCreationTests {
-	
+
 	protected void setUp() throws Exception {
 		fManager= new TextFileBufferManager();
 	}
-	
+
 	protected void assertDocumentContent(String expectedContent, String path, LocationKind locKind) {
 		if (locKind != LocationKind.IFILE) {
 			/**  {@link TextFileBufferManager} does not deal with {@link LocationKind#IFILE} */
 			super.assertDocumentContent(expectedContent, path, locKind);
 		}
 	}
-	
+
 	protected LocationKind[] getSupportLocationKinds() {
 		return new LocationKind[] {LocationKind.LOCATION, LocationKind.NORMALIZE};
 	}

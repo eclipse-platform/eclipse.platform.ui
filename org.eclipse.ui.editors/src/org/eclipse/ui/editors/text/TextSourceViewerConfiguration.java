@@ -16,15 +16,16 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IInformationControl;
@@ -49,6 +50,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
@@ -111,7 +113,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		// backward compatibility
 		if (key != null && !fPreferenceStore.getBoolean(key))
 			return false;
-		
+
 		return true;
 	}
 
@@ -138,7 +140,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		String key= preference.getOverviewRulerPreferenceKey();
 		if (key == null || !fPreferenceStore.getBoolean(key))
 			return false;
-		
+
 		return true;
 	}
 
@@ -177,7 +179,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns the annotation preference for the given annotation.
 	 *
@@ -230,7 +232,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED))
 			return null;
-		
+
 		return getRegisteredHyperlinkDetectors(sourceViewer);
 	}
 
@@ -247,7 +249,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 		Map targets= getHyperlinkDetectorTargets(sourceViewer);
 		Assert.isNotNull(targets);
-		
+
 		IHyperlinkDetector[] result= null;
 		Iterator iter= targets.entrySet().iterator();
 		while (iter.hasNext()) {
@@ -265,7 +267,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * <p>
 	 * Subclasses are allowed to modify the returned map.
 	 * </p>
-	 * 
+	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return the hyperlink detector targets with target id (<code>String</code>) as key
 	 * 			and the target context (<code>IAdaptable</code>) as value
@@ -372,7 +374,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * This implementation currently returns a {@link MonoReconciler} which
 	 * is responsible for spell checking. In the future a different reconciler
 	 * taking over more responsibilities might be returned.</p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.3
 	 */
@@ -383,7 +385,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		SpellingService spellingService= EditorsUI.getSpellingService();
 		if (spellingService.getActiveSpellingEngineDescriptor(fPreferenceStore) == null)
 			return null;
-		
+
 		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, spellingService);
 		MonoReconciler reconciler= new MonoReconciler(strategy, false);
 		reconciler.setDelay(500);
@@ -401,7 +403,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		IQuickAssistAssistant assistant= new QuickAssistAssistant();
 		assistant.setQuickAssistProcessor(new SpellingCorrectionProcessor());
 		assistant.setInformationControlCreator(getQuickAssistAssistantInformationControlCreator());
-		
+
 		return assistant;
 	}
 
@@ -421,7 +423,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	/**
 	 * Helper method to merge two {@link IHyperlinkDetector} arrays.
-	 * 
+	 *
 	 * @param array1 an array of hyperlink detectors or <code>null</code>
 	 * @param array2 an array of hyperlink detectors or <code>null</code>
 	 * @return an array with the merged hyperlink detectors or <code>null</code> if both given arrays are <code>null</code>
@@ -447,7 +449,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	/**
 	 * Text hover with custom control creator that
 	 * can show the tool tip affordance.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private final class TextHover extends DefaultTextHover implements ITextHoverExtension {

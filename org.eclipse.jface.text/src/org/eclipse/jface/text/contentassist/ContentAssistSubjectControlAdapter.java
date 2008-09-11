@@ -19,7 +19,9 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.jface.contentassist.*;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.contentassist.ISubjectControlContextInformationPresenter;
+import org.eclipse.jface.contentassist.ISubjectControlContextInformationValidator;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IEventConsumer;
@@ -73,7 +75,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	public int getLineHeight() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getLineHeight();
-		
+
 		return fViewer.getTextWidget().getLineHeight(getCaretOffset());
 	}
 

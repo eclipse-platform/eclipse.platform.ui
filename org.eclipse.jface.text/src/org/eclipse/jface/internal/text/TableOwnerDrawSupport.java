@@ -25,13 +25,13 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * Adds owner draw support for tables.
- * 
+ *
  * @since 3.4
  */
 public class TableOwnerDrawSupport implements Listener {
-	
+
 	private static final String STYLED_RANGES_KEY= "styled_ranges"; //$NON-NLS-1$
-	
+
 	private TextLayout fLayout;
 
 	public static void install(Table table) {
@@ -41,10 +41,10 @@ public class TableOwnerDrawSupport implements Listener {
 		table.addListener(SWT.EraseItem, listener);
 		table.addListener(SWT.PaintItem, listener);
 	}
-	
+
 	/**
 	 * Stores the styled ranges in the given table item.
-	 * 
+	 *
 	 * @param item table item
 	 * @param column the column index
 	 * @param ranges the styled ranges or <code>null</code> to remove them
@@ -52,10 +52,10 @@ public class TableOwnerDrawSupport implements Listener {
 	public static void storeStyleRanges(TableItem item, int column, StyleRange[] ranges) {
 		item.setData(STYLED_RANGES_KEY + column, ranges);
 	}
-	
+
 	/**
 	 * Returns the styled ranges which are stored in the given table item.
-	 * 
+	 *
 	 * @param item table item
 	 * @param column the column index
 	 * @return the styled ranges
@@ -91,28 +91,28 @@ public class TableOwnerDrawSupport implements Listener {
 
 	/**
 	 * Performs the paint operation.
-	 * 
+	 *
 	 * @param event the event
 	 */
 	private void performPaint(Event event) {
 		TableItem item= (TableItem) event.item;
 		GC gc= event.gc;
 		int index= event.index;
-		
+
 		boolean isSelected= (event.detail & SWT.SELECTED) != 0;
-		
+
 		// Remember colors to restore the GC later
 		Color oldForeground= gc.getForeground();
 		Color oldBackground= gc.getBackground();
-		
+
 		if (!isSelected) {
 			Color foreground= item.getForeground(index);
 			gc.setForeground(foreground);
-			
+
 			Color background= item.getBackground(index);
 			gc.setBackground(background);
 		}
-		
+
 		Image image=item.getImage(index);
 		if (image != null) {
 			Rectangle imageBounds=item.getImageBounds(index);
@@ -121,14 +121,14 @@ public class TableOwnerDrawSupport implements Listener {
 			int y=imageBounds.y + Math.max(0, (imageBounds.height - bounds.height) / 2);
 			gc.drawImage(image, x, y);
 		}
-		
+
 		fLayout.setFont(item.getFont(index));
-		
+
 		// XXX: needed to clear the style info, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=226090
 		fLayout.setText(""); //$NON-NLS-1$
-		
+
 		fLayout.setText(item.getText(index));
-		
+
 		StyleRange[] ranges= getStyledRanges(item, index);
 		if (ranges != null) {
 			for (int i= 0; i < ranges.length; i++) {
@@ -141,7 +141,7 @@ public class TableOwnerDrawSupport implements Listener {
 				fLayout.setStyle(curr, curr.start, curr.start + curr.length - 1);
 			}
 		}
-		
+
 		Rectangle textBounds=item.getTextBounds(index);
 		if (textBounds != null) {
 			Rectangle layoutBounds=fLayout.getBounds();
@@ -149,20 +149,20 @@ public class TableOwnerDrawSupport implements Listener {
 			int y=textBounds.y + Math.max(0, (textBounds.height - layoutBounds.height) / 2);
 			fLayout.draw(gc, x, y);
 		}
-		
+
 		if ((event.detail & SWT.FOCUSED) != 0) {
 			Rectangle focusBounds=item.getBounds();
 			gc.drawFocus(focusBounds.x, focusBounds.y, focusBounds.width, focusBounds.height);
 		}
-		
+
 		if (!isSelected) {
 			gc.setForeground(oldForeground);
 			gc.setBackground(oldBackground);
 		}
 	}
-	
+
 	private void widgetDisposed() {
 		fLayout.dispose();
 	}
 }
-	
+

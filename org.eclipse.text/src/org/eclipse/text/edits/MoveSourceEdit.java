@@ -375,7 +375,7 @@ public final class MoveSourceEdit extends TextEdit {
 		int end2= offset2 + length2 - 1;
 		if (end2 < offset1)
 			return null;
-		
+
 		int end= Math.min(end1, end2);
 		if (offset1 < offset2) {
 			return new Region(offset2, end - offset2 + 1);

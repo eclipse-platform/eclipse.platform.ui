@@ -12,11 +12,14 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.search.ui.NewSearchUI;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+
+import org.eclipse.search.ui.NewSearchUI;
 
 /**
  * Opens the Search Dialog.

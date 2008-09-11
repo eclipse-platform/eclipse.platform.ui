@@ -23,37 +23,35 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.search.core.text.TextSearchEngine;
+import org.eclipse.search.core.text.TextSearchMatchAccess;
+import org.eclipse.search.core.text.TextSearchRequestor;
+import org.eclipse.search.internal.core.text.PatternConstructor;
+import org.eclipse.search.internal.ui.Messages;
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.core.text.TextSearchEngine;
-import org.eclipse.search.core.text.TextSearchMatchAccess;
-import org.eclipse.search.core.text.TextSearchRequestor;
-
-import org.eclipse.search.internal.core.text.PatternConstructor;
-import org.eclipse.search.internal.ui.Messages;
-import org.eclipse.search.internal.ui.SearchMessages;
-
 
 public class FileSearchQuery implements ISearchQuery {
-	
+
 	private final static class TextSearchResultCollector extends TextSearchRequestor {
-		
+
 		private final AbstractTextSearchResult fResult;
 		private final boolean fIsFileSearchOnly;
 		private final boolean fSearchInBinaries;
 		private ArrayList fCachedMatches;
-		
+
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
 			fIsFileSearchOnly= isFileSearchOnly;
 			fSearchInBinaries= searchInBinaries;
-			
+
 		}
-		
+
 		public boolean acceptFile(IFile file) throws CoreException {
 			if (fIsFileSearchOnly) {
 				fResult.addMatch(new FileMatch(file));
@@ -61,7 +59,7 @@ public class FileSearchQuery implements ISearchQuery {
 			flushMatches();
 			return true;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.search.core.text.TextSearchRequestor#reportBinaryFile(org.eclipse.core.resources.IFile)
 		 */
@@ -71,7 +69,7 @@ public class FileSearchQuery implements ISearchQuery {
 
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
 			int matchOffset= matchRequestor.getMatchOffset();
-			
+
 			LineElement lineElement= getLineElement(matchOffset, matchRequestor);
 			if (lineElement != null) {
 				FileMatch fileMatch= new FileMatch(matchRequestor.getFile(), matchOffset, matchRequestor.getMatchLength(), lineElement);
@@ -97,7 +95,7 @@ public class FileSearchQuery implements ISearchQuery {
 			if (offset < lineStart) {
 				return null; // offset before the last line
 			}
-			
+
 			int i= lineStart;
 			int contentLength= matchRequestor.getFileContentLength();
 			while (i < contentLength) {
@@ -120,7 +118,7 @@ public class FileSearchQuery implements ISearchQuery {
 			}
 			return null; // offset outside of range
 		}
-		
+
 		private static String getContents(TextSearchMatchAccess matchRequestor, int start, int end) {
 			StringBuffer buf= new StringBuffer();
 			for (int i= start; i < end; i++) {
@@ -133,11 +131,11 @@ public class FileSearchQuery implements ISearchQuery {
 			}
 			return buf.toString();
 		}
-		
+
 		public void beginReporting() {
 			fCachedMatches= new ArrayList();
 		}
-		
+
 		public void endReporting() {
 			flushMatches();
 			fCachedMatches= null;
@@ -150,25 +148,25 @@ public class FileSearchQuery implements ISearchQuery {
 			}
 		}
 	}
-	
+
 	private final FileTextSearchScope fScope;
 	private final String fSearchText;
 	private final boolean fIsRegEx;
 	private final boolean fIsCaseSensitive;
-	
+
 	private FileSearchResult fResult;
-	
+
 	public FileSearchQuery(String searchText, boolean isRegEx, boolean isCaseSensitive, FileTextSearchScope scope) {
 		fSearchText= searchText;
 		fIsRegEx= isRegEx;
 		fIsCaseSensitive= isCaseSensitive;
 		fScope= scope;
 	}
-	
+
 	public FileTextSearchScope getSearchScope() {
 		return fScope;
 	}
-	
+
 	public boolean canRunInBackground() {
 		return true;
 	}
@@ -176,14 +174,14 @@ public class FileSearchQuery implements ISearchQuery {
 	public IStatus run(final IProgressMonitor monitor) {
 		AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
-		
+
 		Pattern searchPattern= getSearchPattern();
 		boolean searchInBinaries= !isScopeAllFileTypes();
-		
+
 		TextSearchResultCollector collector= new TextSearchResultCollector(textResult, isFileNameSearch(), searchInBinaries);
 		return TextSearchEngine.create().search(fScope, collector, searchPattern, monitor);
 	}
-	
+
 	private boolean isScopeAllFileTypes() {
 		String[] fileNamePatterns= fScope.getFileNamePatterns();
 		if (fileNamePatterns == null)
@@ -195,16 +193,16 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 		return false;
 	}
-	
+
 
 	public String getLabel() {
-		return SearchMessages.FileSearchQuery_label; 
+		return SearchMessages.FileSearchQuery_label;
 	}
-	
+
 	public String getSearchString() {
 		return fSearchText;
 	}
-	
+
 	public String getResultLabel(int nMatches) {
 		String searchString= getSearchString();
 		if (searchString.length() > 0) {
@@ -216,7 +214,7 @@ public class FileSearchQuery implements ISearchQuery {
 					return Messages.format(SearchMessages.FileSearchQuery_singularLabel, args);
 				}
 				Object[] args= { searchString, new Integer(nMatches), fScope.getDescription() };
-				return Messages.format(SearchMessages.FileSearchQuery_pluralPattern, args); 
+				return Messages.format(SearchMessages.FileSearchQuery_pluralPattern, args);
 			}
 			// search selected file extensions
 			if (nMatches == 1) {
@@ -229,10 +227,10 @@ public class FileSearchQuery implements ISearchQuery {
 		// file search
 		if (nMatches == 1) {
 			Object[] args= { fScope.getFilterDescription(), fScope.getDescription() };
-			return Messages.format(SearchMessages.FileSearchQuery_singularLabel_fileNameSearch, args); 
+			return Messages.format(SearchMessages.FileSearchQuery_singularLabel_fileNameSearch, args);
 		}
 		Object[] args= { fScope.getFilterDescription(), new Integer(nMatches), fScope.getDescription() };
-		return Messages.format(SearchMessages.FileSearchQuery_pluralPattern_fileNameSearch, args); 
+		return Messages.format(SearchMessages.FileSearchQuery_pluralPattern_fileNameSearch, args);
 	}
 
 	/**
@@ -243,25 +241,25 @@ public class FileSearchQuery implements ISearchQuery {
 	 */
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { file }, new String[] { "*" }, true); //$NON-NLS-1$
-		
+
 		Pattern searchPattern= getSearchPattern();
 		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileNameSearch(), true);
-		
+
 		return TextSearchEngine.create().search(scope, collector, searchPattern, monitor);
 	}
-	
+
 	protected Pattern getSearchPattern() {
 		return PatternConstructor.createPattern(fSearchText, fIsCaseSensitive, fIsRegEx);
 	}
-	
+
 	public boolean isFileNameSearch() {
 		return fSearchText.length() == 0;
 	}
-	
+
 	public boolean isRegexSearch() {
 		return fIsRegEx;
 	}
-	
+
 	public boolean isCaseSensitive() {
 		return fIsCaseSensitive;
 	}

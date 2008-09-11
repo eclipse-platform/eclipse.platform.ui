@@ -88,7 +88,7 @@ import org.eclipse.jface.text.source.LineRange;
 /**
  * A strategy for painting the live annotate colors onto the vertical ruler column. It also manages
  * the revision hover.
- * 
+ *
  * @since 3.2
  */
 public final class RevisionPainter {
@@ -99,7 +99,7 @@ public final class RevisionPainter {
 	private static final RGB BY_DATE_START_COLOR= new RGB(199, 134, 57);
 	private static final RGB BY_DATE_END_COLOR= new RGB(241, 225, 206);
 
-	
+
 	/**
 	 * The annotations created to show a revision in the overview ruler.
 	 */
@@ -150,14 +150,14 @@ public final class RevisionPainter {
 
 		/**
 		 * Sets the revision information, which is needed to compute the relative age of a revision.
-		 * 
+		 *
 		 * @param info the new revision info, <code>null</code> for none.
 		 */
 		public void setInfo(RevisionInformation info) {
 			fRevisions= null;
 			fColors.clear();
 			fFocusColors.clear();
-			
+
 			if (info == null)
 				return;
 			List revisions= new ArrayList();
@@ -210,7 +210,7 @@ public final class RevisionPainter {
 			int index= fRevisions.indexOf(new Long(age));
 			return index;
 		}
-		
+
 		private RGB getShadedColor(RGB color, float scale, boolean focus) {
 			Assert.isLegal(scale >= 0.0);
 			Assert.isLegal(scale <= 1.0);
@@ -242,7 +242,7 @@ public final class RevisionPainter {
 
 		/**
 		 * Returns the color for a revision based on relative age and author.
-		 * 
+		 *
 		 * @param revision the revision
 		 * @param focus <code>true</code> to return the focus color
 		 * @return the color for a revision
@@ -252,7 +252,7 @@ public final class RevisionPainter {
 			RGB color= (RGB) map.get(revision);
 			if (color != null)
 				return color;
-			
+
 			color= adaptColor(revision, focus);
 			map.put(revision, color);
 			return color;
@@ -265,7 +265,7 @@ public final class RevisionPainter {
 	private class MouseHandler implements MouseMoveListener, MouseTrackListener, Listener {
 
 		private RevisionRange fMouseDownRegion;
-		
+
 		private void handleMouseUp(Event e) {
 			if (e.button == 1) {
 				RevisionRange upRegion= fFocusRange;
@@ -356,7 +356,7 @@ public final class RevisionPainter {
 	 */
 	private static final class HoverInformationControlCreator extends AbstractReusableInformationControlCreator {
 		private boolean fIsFocusable;
-		
+
 		public HoverInformationControlCreator(boolean isFocusable) {
 			fIsFocusable= isFocusable;
 		}
@@ -369,18 +369,18 @@ public final class RevisionPainter {
 	            return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, fIsFocusable) {
 	            	/**
 					 * {@inheritDoc}
-					 * 
+					 *
 					 * @deprecated use {@link #setInput(Object)}
 					 */
 	            	public void setInformation(String content) {
         				content= addCSSToHTMLFragment(content);
 	            		super.setInformation(content);
 	            	}
-	            	
+
 	        		/**
 	        		 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment (has no
 	        		 * &lt;html&gt; section).
-	        		 * 
+	        		 *
 	        		 * @param html the html / text produced by a revision
 	        		 * @return modified html
 	        		 */
@@ -389,14 +389,14 @@ public final class RevisionPainter {
 	        			if (html.substring(0, max).indexOf("<html>") != -1) //$NON-NLS-1$
 	        				// there is already a header
 	        				return html;
-	        			
+
 	        			StringBuffer info= new StringBuffer(512 + html.length());
 	        			HTMLPrinter.insertPageProlog(info, 0, fgStyleSheet);
 	        			info.append(html);
 	        			HTMLPrinter.addPageEpilog(info);
 	        			return info.toString();
 	        		}
-	            	
+
 	            };
             }
 			return new DefaultInformationControl(parent, fIsFocusable);
@@ -442,12 +442,12 @@ public final class RevisionPainter {
 		"var	         { font-style: italic }\n" + //$NON-NLS-1$
 		"th	         { font-weight: bold }\n" + //$NON-NLS-1$
 		""; //$NON-NLS-1$
-	
+
 	/**
 	 * The revision hover displays information about the currently selected revision.
 	 */
 	private final class RevisionHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2, IInformationProviderExtension2 {
-		
+
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer,
 		 *      int)
@@ -624,7 +624,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Creates a new revision painter for a vertical ruler column.
-	 * 
+	 *
 	 * @param column the column that will delegate{@link #paint(GC, ILineRange) painting} to the
 	 *        newly created painter.
 	 * @param sharedColors a shared colors object to store shaded colors in
@@ -638,7 +638,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Sets the revision information to be drawn and triggers a redraw.
-	 * 
+	 *
 	 * @param info the revision information to show, <code>null</code> to draw none
 	 */
 	public void setRevisionInformation(RevisionInformation info) {
@@ -657,7 +657,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Changes the rendering mode and triggers redrawing if needed.
-	 * 
+	 *
 	 * @param renderingMode the rendering mode
 	 * @since 3.3
 	 */
@@ -672,7 +672,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Sets the background color.
-	 * 
+	 *
 	 * @param background the background color, <code>null</code> for the platform's list
 	 *        background
 	 */
@@ -683,7 +683,7 @@ public final class RevisionPainter {
 	/**
 	 * Sets the parent ruler - the delegating column must call this method as soon as it creates its
 	 * control.
-	 * 
+	 *
 	 * @param parentRuler the parent ruler
 	 */
 	public void setParentRuler(CompositeRuler parentRuler) {
@@ -694,7 +694,7 @@ public final class RevisionPainter {
 	 * Delegates the painting of the quick diff colors to this painter. The painter will draw the
 	 * color boxes onto the passed {@link GC} for all model (document) lines in
 	 * <code>visibleModelLines</code>.
-	 * 
+	 *
 	 * @param gc the {@link GC} to draw onto
 	 * @param visibleLines the lines (in document offsets) that are currently (perhaps only
 	 *        partially) visible
@@ -715,14 +715,14 @@ public final class RevisionPainter {
 			}
 			fAuthorInset= gc.stringExtent(new String(string)).x;
 		}
-		
+
 		// recompute colors (show intense colors if ruler is narrow)
 		int width= getWidth();
 		if (width != fLastWidth) {
 			fColorTool.setInfo(fRevisionInfo);
 			fLastWidth= width;
 		}
-		
+
 		// draw change regions
 		List/* <RevisionRange> */ranges= getRanges(visibleLines);
 		for (Iterator it= ranges.iterator(); it.hasNext();) {
@@ -763,13 +763,13 @@ public final class RevisionPainter {
 				handleDispose();
 			}
 		});
-		
+
 		fRevisionSelectionProvider.install(fViewer);
 	}
 
 	/**
 	 * Returns <code>true</code> if the column is fully connected.
-	 * 
+	 *
 	 * @return <code>true</code> if the column is fully connected, false otherwise
 	 */
 	private boolean isConnected() {
@@ -778,7 +778,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Sets the annotation model.
-	 * 
+	 *
 	 * @param model the annotation model, possibly <code>null</code>
 	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
 	 */
@@ -795,7 +795,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Sets the annotation model.
-	 * 
+	 *
 	 * @param model the annotation model.
 	 */
 	private void setAnnotationModel(IAnnotationModel model) {
@@ -805,7 +805,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Sets the line differ.
-	 * 
+	 *
 	 * @param differ the line differ or <code>null</code> if none
 	 */
 	private void setDiffer(IAnnotationModel differ) {
@@ -830,13 +830,13 @@ public final class RevisionPainter {
 			((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
 			fLineDiffer= null;
 		}
-		
+
 		fRevisionSelectionProvider.uninstall();
 	}
 
 	/**
 	 * Paints a single change region onto <code>gc</code>.
-	 * 
+	 *
 	 * @param range the range to paint
 	 * @param gc the {@link GC} to paint on
 	 */
@@ -906,16 +906,16 @@ public final class RevisionPainter {
 		 */
 		int offset= fWidget.getOffsetAtLine(widgetLine);
 		int widgetBaseline= fWidget.getBaseline(offset);
-		
+
 		FontMetrics fm = gc.getFontMetrics();
 		int fontBaseline = fm.getAscent() + fm.getLeading();
 		int baselineBias= widgetBaseline - fontBaseline;
 		return Math.max(0, baselineBias);
 	}
-	
+
 	/**
 	 * Looks up the color for a certain revision.
-	 * 
+	 *
 	 * @param revision the revision to get the color for
 	 * @param focus <code>true</code> if it is the focus revision
 	 * @return the color for the revision
@@ -927,7 +927,7 @@ public final class RevisionPainter {
 	/**
 	 * Returns the revision range that contains the given line, or
 	 * <code>null</code> if there is none.
-	 * 
+	 *
 	 * @param line the line of interest
 	 * @return the corresponding <code>RevisionRange</code> or <code>null</code>
 	 */
@@ -952,7 +952,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns the sublist of all <code>RevisionRange</code>s that intersect with the given lines.
-	 * 
+	 *
 	 * @param lines the model based lines of interest
 	 * @return elementType: RevisionRange
 	 */
@@ -983,7 +983,7 @@ public final class RevisionPainter {
 	/**
 	 * Gets all change ranges of the revisions in the revision model and adapts them to the current
 	 * quick diff information. The list is cached.
-	 * 
+	 *
 	 * @return the list of all change regions, with diff information applied
 	 */
 	private List getRangeCache() {
@@ -1010,11 +1010,11 @@ public final class RevisionPainter {
 	private void clearRangeCache() {
 		fRevisionRanges= null;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if <code>range</code> contains <code>line</code>. A line is
 	 * not contained in a range if it is the range's exclusive end line.
-	 * 
+	 *
 	 * @param range the range to check whether it contains <code>line</code>
 	 * @param line the line the line
 	 * @return <code>true</code> if <code>range</code> contains <code>line</code>,
@@ -1026,7 +1026,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Computes the end index of a line range.
-	 * 
+	 *
 	 * @param range a line range
 	 * @return the last line (exclusive) of <code>range</code>
 	 */
@@ -1036,7 +1036,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns the visible extent of a document line range in widget lines.
-	 * 
+	 *
 	 * @param range the document line range
 	 * @return the visible extent of <code>range</code> in widget lines
 	 */
@@ -1074,7 +1074,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns the revision hover.
-	 * 
+	 *
 	 * @return the revision hover
 	 */
 	public IAnnotationHover getHover() {
@@ -1085,7 +1085,7 @@ public final class RevisionPainter {
 	 * Computes and returns the bounds of the rectangle corresponding to a widget line range. The
 	 * rectangle is in pixel coordinates relative to the text widget's
 	 * {@link StyledText#getClientArea() client area} and has the width of the ruler.
-	 * 
+	 *
 	 * @param range the widget line range
 	 * @return the box bounds corresponding to <code>range</code>
 	 */
@@ -1102,7 +1102,7 @@ public final class RevisionPainter {
 	private void updateOverviewAnnotations() {
 		if (fAnnotationModel == null)
 			return;
-		
+
 		Revision revision= fFocusRevision != null ? fFocusRevision : fSelectedRevision;
 
 		Map added= null;
@@ -1144,7 +1144,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns the character offset based region of a line range.
-	 * 
+	 *
 	 * @param lines the line range to convert
 	 * @return the character offset range corresponding to <code>range</code>
 	 * @throws BadLocationException if the line range is not within the document bounds
@@ -1163,7 +1163,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Handles the selection of a revision and informs listeners.
-	 * 
+	 *
      * @param revision the selected revision, <code>null</code> for none
      */
     void handleRevisionSelected(Revision revision) {
@@ -1175,7 +1175,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Handles the selection of a revision id and informs listeners
-	 * 
+	 *
      * @param id the selected revision id
      */
 	void handleRevisionSelected(String id) {
@@ -1197,7 +1197,7 @@ public final class RevisionPainter {
 
     /**
      * Returns the selection provider.
-     * 
+     *
      * @return the selection provider
      */
     public RevisionSelectionProvider getRevisionSelectionProvider() {
@@ -1206,7 +1206,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Updates the focus line with a new line.
-	 * 
+	 *
 	 * @param line the new focus line, -1 for no focus
 	 */
 	private void updateFocusLine(int line) {
@@ -1216,7 +1216,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Handles a changing focus line.
-	 * 
+	 *
 	 * @param previousLine the old focus line (-1 for no focus)
 	 * @param nextLine the new focus line (-1 for no focus)
 	 */
@@ -1230,7 +1230,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Updates the focus range.
-	 * 
+	 *
 	 * @param range the new focus range, <code>null</code> for no focus
 	 */
 	private void updateFocusRange(RevisionRange range) {
@@ -1240,7 +1240,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Handles a changing focus range.
-	 * 
+	 *
 	 * @param previousRange the old focus range (<code>null</code> for no focus)
 	 * @param nextRange the new focus range (<code>null</code> for no focus)
 	 */
@@ -1259,7 +1259,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Handles a changing focus revision.
-	 * 
+	 *
 	 * @param previousRevision the old focus revision (<code>null</code> for no focus)
 	 * @param nextRevision the new focus revision (<code>null</code> for no focus)
 	 */
@@ -1296,7 +1296,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Handles a mouse wheel event.
-	 * 
+	 *
 	 * @param event the mouse wheel event
 	 */
 	private void handleMouseWheel(Event event) {
@@ -1372,7 +1372,7 @@ public final class RevisionPainter {
 	/**
 	 * Translates a y coordinate in the pixel coordinates of the column's control to a document line
 	 * number.
-	 * 
+	 *
 	 * @param y the y coordinate
 	 * @return the corresponding document line, -1 for no line
 	 * @see CompositeRuler#toDocumentLineNumber(int)
@@ -1397,7 +1397,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns the width of the column.
-	 * 
+	 *
 	 * @return the width of the column
 	 */
 	private int getWidth() {
@@ -1406,7 +1406,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns the System background color for list widgets.
-	 * 
+	 *
 	 * @return the System background color for list widgets
 	 */
 	private Color getBackground() {
@@ -1417,7 +1417,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Sets the hover later returned by {@link #getHover()}.
-	 * 
+	 *
 	 * @param hover the hover
 	 */
 	public void setHover(IAnnotationHover hover) {
@@ -1426,7 +1426,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns <code>true</code> if the receiver can provide a hover for a certain document line.
-	 * 
+	 *
 	 * @param activeLine the document line of interest
 	 * @return <code>true</code> if the receiver can provide a hover
 	 */
@@ -1436,7 +1436,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns the revision at a certain document offset, or <code>null</code> for none.
-	 * 
+	 *
 	 * @param offset the document offset
 	 * @return the revision at offset, or <code>null</code> for none
 	 */
@@ -1458,7 +1458,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns <code>true</code> if a revision model has been set, <code>false</code> otherwise.
-	 * 
+	 *
      * @return <code>true</code> if a revision model has been set, <code>false</code> otherwise
      */
     public boolean hasInformation() {
@@ -1467,7 +1467,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Returns the width in chars required to display information.
-	 * 
+	 *
 	 * @return the width in chars required to display information
 	 * @since 3.3
 	 */
@@ -1497,7 +1497,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Enables showing the revision id.
-	 * 
+	 *
 	 * @param show <code>true</code> to show the revision, <code>false</code> to hide it
 	 */
 	public void showRevisionId(boolean show) {
@@ -1508,10 +1508,10 @@ public final class RevisionPainter {
 			postRedraw();
 		}
 	}
-	
+
 	/**
 	 * Enables showing the revision author.
-	 * 
+	 *
 	 * @param show <code>true</code> to show the author, <code>false</code> to hide it
 	 */
 	public void showRevisionAuthor(boolean show) {
@@ -1525,7 +1525,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Adds a revision listener.
-	 * 
+	 *
 	 * @param listener the listener
 	 * @since 3.3
 	 */
@@ -1535,7 +1535,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Removes a revision listener.
-	 * 
+	 *
 	 * @param listener the listener
 	 * @since 3.3
 	 */
@@ -1545,7 +1545,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Informs the revision listeners about a change.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private void informListeners() {

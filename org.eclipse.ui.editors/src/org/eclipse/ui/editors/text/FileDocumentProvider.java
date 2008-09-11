@@ -738,7 +738,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				s= x.getStatus();
 				d= createEmptyDocument();
 			}
-			
+
 			// Set the initial line delimiter
 			if (d instanceof IDocumentExtension4) {
 				String initalLineDelimiter= getLineDelimiterPreference(input.getFile());
@@ -769,10 +769,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 		return super.createElementInfo(element);
 	}
-	
+
 	/**
 	 * Returns the default line delimiter preference for the given file.
-	 * 
+	 *
 	 * @param file the file
 	 * @return the default line delimiter
 	 * @since 3.1
@@ -923,7 +923,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 		super.doValidateState(element, computationContext);
 	}
-	
+
 	/*
 	 *
 	 * @see IResource#isDerived()
@@ -976,7 +976,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	/**
 	 * Refreshes the given file resource.
-	 * 
+	 *
 	 * @param file the file
 	 * @throws CoreException if the refresh fails
 	 * @since 2.1
@@ -1237,7 +1237,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			}
 		}
 	}
-	
+
 	/**
 	 * Computes the scheduling rule needed to create or modify a resource. If
 	 * the resource exists, its modify rule is returned. If it does not, the

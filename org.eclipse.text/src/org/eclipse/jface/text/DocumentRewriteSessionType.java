@@ -39,7 +39,7 @@ public class DocumentRewriteSessionType {
 	/**
 	 * An small unrestricted rewrite session is a short sequence of unrestricted replace operations.
 	 * This should be used for changes that touch less than about fifty lines.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public final static DocumentRewriteSessionType UNRESTRICTED_SMALL= new DocumentRewriteSessionType();

@@ -144,7 +144,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			return EMPTY_STRING;
 
 		html= html.toLowerCase();
-		
+
 		String tag= html;
 		if ('/' == tag.charAt(0))
 			tag= tag.substring(1);
@@ -212,13 +212,13 @@ public class HTML2TextReader extends SubstitutionTextReader {
 
 		if ("/dd".equals(html)) //$NON-NLS-1$
 			return LINE_DELIM;
-		
+
 		if ("head".equals(html) && !fHeaderDetected) { //$NON-NLS-1$
 			fHeaderDetected= true;
 			fIgnore= true;
 			return EMPTY_STRING;
 		}
-		
+
 		if ("/head".equals(html) && fHeaderDetected && fIgnore) { //$NON-NLS-1$
 			fIgnore= false;
 			return EMPTY_STRING;
@@ -267,11 +267,11 @@ public class HTML2TextReader extends SubstitutionTextReader {
 
 		return html2Text(buf.toString());
 	}
-	
+
 	private static boolean isInComment(StringBuffer buf) {
 		return buf.length() >= 3 && "!--".equals(buf.substring(0, 3)); //$NON-NLS-1$
 	}
-	
+
 	private static boolean isCommentEnd(StringBuffer buf) {
 		int tagLen= buf.length();
 		return tagLen >= 5 && "--".equals(buf.substring(tagLen - 2)); //$NON-NLS-1$

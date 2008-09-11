@@ -63,7 +63,7 @@ public class Region implements IRegion {
 	public int hashCode() {
 	 	return (fOffset << 24) | (fLength << 16);
 	}
-	
+
 	/*
 	 * @see java.lang.Object#toString()
 	 */

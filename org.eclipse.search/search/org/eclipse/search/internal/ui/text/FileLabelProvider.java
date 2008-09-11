@@ -16,10 +16,10 @@ package org.eclipse.search.internal.ui.text;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.core.resources.IResource;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -29,30 +29,29 @@ import org.eclipse.jface.viewers.StyledString.Styler;
 
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import org.eclipse.search.internal.ui.Messages;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.ui.Messages;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPluginImages;
-
 public class FileLabelProvider extends LabelProvider implements IStyledLabelProvider {
-	
+
 	public static final int SHOW_LABEL= 1;
 	public static final int SHOW_LABEL_PATH= 2;
 	public static final int SHOW_PATH_LABEL= 3;
-	
+
 	private static final String fgSeparatorFormat= "{0} - {1}"; //$NON-NLS-1$
-	
+
 	private static final String fgEllipses= " ... "; //$NON-NLS-1$
-	
+
 	private final WorkbenchLabelProvider fLabelProvider;
 	private final AbstractTextSearchViewPage fPage;
 	private final Comparator fMatchComparator;
-	
+
 	private final Image fLineMatchImage;
-		
+
 	private int fOrder;
 
 	public FileLabelProvider(AbstractTextSearchViewPage page, int orderFlag) {
@@ -70,34 +69,34 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 	public void setOrder(int orderFlag) {
 		fOrder= orderFlag;
 	}
-	
+
 	public int getOrder() {
 		return fOrder;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object object) {
 		return getStyledText(object).getString();
 	}
-	
+
 	public StyledString getStyledText(Object element) {
 		if (element instanceof LineElement)
 			return getLineElementLabel((LineElement) element);
-		
+
 		if (!(element instanceof IResource))
 			return new StyledString();
 
 		IResource resource= (IResource) element;
 		if (!resource.exists())
 			new StyledString(SearchMessages.FileLabelProvider_removed_resource_label);
-		
+
 		String name= BasicElementLabels.getResourceName(resource);
 		if (fOrder == SHOW_LABEL) {
 			return getColoredLabelWithCounts(resource, new StyledString(name));
 		}
-		
+
 		String pathString= BasicElementLabels.getPathLabel(resource.getParent().getFullPath(), false);
 		if (fOrder == SHOW_LABEL_PATH) {
 			StyledString str= new StyledString(name);
@@ -116,12 +115,12 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		String lineNumberString= Messages.format(SearchMessages.FileLabelProvider_line_number, new Integer(lineNumber));
 
 		StyledString str= new StyledString(lineNumberString, StyledString.QUALIFIER_STYLER);
-		
+
 		Match[] matches= lineElement.getMatches(fPage.getInput());
 		Arrays.sort(matches, fMatchComparator);
-		
+
 		String content= lineElement.getContents();
-		
+
 		int pos= evaluateLineStart(matches, content, lineElement.getOffset());
 
 		int length= content.length();
@@ -166,7 +165,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 			str.append(content.substring(start, end));
 			return charsToCut;
 		}
-		
+
 		int context= MIN_MATCH_CONTEXT;
 		if (gapLength > charsToCut) {
 			context+= gapLength - charsToCut;
@@ -184,7 +183,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		}
 		return charsToCut - gapLength + fgEllipses.length();
 	}
-	
+
 
 	private int getCharsToCut(int contentLength, Match[] matches) {
 		if (contentLength <= 256 || !"win32".equals(SWT.getPlatform()) || matches.length == 0) { //$NON-NLS-1$
@@ -211,21 +210,21 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		}
 		return max;
 	}
-	
+
 	private StyledString getColoredLabelWithCounts(Object element, StyledString coloredName) {
 		AbstractTextSearchResult result= fPage.getInput();
 		if (result == null)
 			return coloredName;
-			
+
 		int matchCount= result.getMatchCount(element);
 		if (matchCount <= 1)
 			return coloredName;
-		
+
 		String countInfo= Messages.format(SearchMessages.FileLabelProvider_count_format, new Integer(matchCount));
 		coloredName.append(' ').append(countInfo, StyledString.COUNTER_STYLER);
 		return coloredName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 	 */
@@ -288,5 +287,5 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		}
 		return string; // no change
 	}
-	
+
 }

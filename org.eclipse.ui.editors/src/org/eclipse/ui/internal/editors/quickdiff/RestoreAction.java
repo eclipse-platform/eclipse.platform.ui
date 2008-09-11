@@ -16,6 +16,7 @@ import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
 
 import org.eclipse.ui.internal.editors.text.NLSUtility;
+
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**

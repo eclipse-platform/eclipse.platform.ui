@@ -22,15 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ModifyEvent;
@@ -44,6 +35,15 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
@@ -63,8 +63,15 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
+import org.eclipse.search.internal.core.text.PatternConstructor;
+import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.FileTypeEditor;
+import org.eclipse.search.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
@@ -75,13 +82,6 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
 import org.eclipse.search.ui.text.TextSearchQueryProvider.TextSearchInput;
-
-import org.eclipse.search.internal.core.text.PatternConstructor;
-import org.eclipse.search.internal.ui.ISearchHelpContextIds;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.FileTypeEditor;
-import org.eclipse.search.internal.ui.util.SWTUtil;
 
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
@@ -103,7 +103,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private boolean fIsCaseSensitive;
 	private boolean fIsRegExSearch;
 	private boolean fSearchDerived;
-	
+
 	private Combo fPattern;
 	private Button fIsCaseSensitiveCheckbox;
 	private Combo fExtensions;
@@ -115,7 +115,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private FileTypeEditor fFileTypeEditor;
 
 	private ContentAssistCommandAdapter fPatterFieldContentAssist;
-    
+
 	private static class SearchPatternData {
 		public final boolean isCaseSensitive;
 		public final boolean isRegExSearch;
@@ -123,7 +123,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		public final String[] fileNamePatterns;
 		public final int scope;
 		public final IWorkingSet[] workingSets;
-		
+
 		public SearchPatternData(String textPattern, boolean isCaseSensitive, boolean isRegExSearch, String[] fileNamePatterns, int scope, IWorkingSet[] workingSets) {
 			Assert.isNotNull(fileNamePatterns);
 			this.isCaseSensitive= isCaseSensitive;
@@ -133,7 +133,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			this.scope= scope;
 			this.workingSets= workingSets; // can be null
 		}
-		
+
 		public void store(IDialogSettings settings) {
 			settings.put("ignoreCase", !isCaseSensitive); //$NON-NLS-1$
 			settings.put("isRegExSearch", isRegExSearch); //$NON-NLS-1$
@@ -151,7 +151,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 
 		}
-		
+
 		public static SearchPatternData create(IDialogSettings settings) {
 			String textPattern= settings.get("textPattern"); //$NON-NLS-1$
 			String[] wsIds= settings.getArray("workingSets"); //$NON-NLS-1$
@@ -197,9 +197,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			return !isRegExSearch;
 		}
 	}
-	
+
 	private static class TextSearchPageInput extends TextSearchInput {
-		
+
 		private final String fSearchText;
 		private final boolean fIsCaseSensitive;
 		private final boolean fIsRegEx;
@@ -228,15 +228,15 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			return fScope;
 		}
 	}
-	
+
 	//---- Action Handling ------------------------------------------------
-	
+
 	private ISearchQuery newQuery() throws CoreException {
 		SearchPatternData data= getPatternData();
 		TextSearchPageInput input= new TextSearchPageInput(data.textPattern, data.isCaseSensitive, data.isRegExSearch, createTextSearchScope());
 		return TextSearchQueryProvider.getPreferred().createQuery(input);
 	}
-	
+
 	public boolean performAction() {
 		try {
 			NewSearchUI.runQueryInBackground(newQuery());
@@ -246,7 +246,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
  		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.IReplacePage#performReplace()
 	 */
@@ -259,7 +259,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			if (!status.isOK()) {
 				ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_runproblem_message, status);
 			}
-						
+
 			Display.getCurrent().asyncExec(new Runnable() {
 				public void run() {
 					ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
@@ -282,7 +282,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private String getPattern() {
 		return fPattern.getText();
 	}
-	
+
 	public FileTextSearchScope createTextSearchScope() {
 		// Setup search scope
 		switch (getContainer().getSelectedScope()) {
@@ -300,7 +300,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				return FileTextSearchScope.newWorkspaceScope(getExtensions(), fSearchDerived);
 		}
 	}
-	
+
 	private FileTextSearchScope getSelectedResourcesScope() {
 		HashSet resources= new HashSet();
 		ISelection sel= getContainer().getSelection();
@@ -337,17 +337,17 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		if (enclosingProjectName == null) {
 			return FileTextSearchScope.newWorkspaceScope(getExtensions(), fSearchDerived);
 		}
-		
+
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IResource[] res= new IResource[enclosingProjectName.length];
 		for (int i= 0; i < res.length; i++) {
 			res[i]= root.getProject(enclosingProjectName[i]);
 		}
-		
+
 		return FileTextSearchScope.newSearchScope(res, getExtensions(), fSearchDerived);
 	}
 
-	
+
 	private SearchPatternData findInPrevious(String pattern) {
 		for (Iterator iter= fPreviousSearchPatterns.iterator(); iter.hasNext();) {
 			SearchPatternData element= (SearchPatternData) iter.next();
@@ -398,7 +398,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			patterns[i]= ((SearchPatternData) fPreviousSearchPatterns.get(i)).textPattern;
 		return patterns;
 	}
-		
+
 	private String[] getExtensions() {
 		return fFileTypeEditor.getFileTypes();
 	}
@@ -431,7 +431,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		updateOKStatus();
 		super.setVisible(visible);
 	}
-	
+
 	final void updateOKStatus() {
 		boolean regexStatus= validateRegex();
 		boolean hasFilePattern= fExtensions.getText().length() > 0;
@@ -443,27 +443,27 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		readConfiguration();
-		
+
 		Composite result= new Composite(parent, SWT.NONE);
 		result.setFont(parent.getFont());
 		GridLayout layout= new GridLayout(2, false);
 		result.setLayout(layout);
-		
+
 		addTextPatternControls(result);
-		
+
 		Label separator= new Label(result, SWT.NONE);
 		separator.setVisible(false);
 		GridData data= new GridData(GridData.FILL, GridData.FILL, false, false, 2, 1);
 		data.heightHint= convertHeightInCharsToPixels(1) / 3;
 		separator.setLayoutData(data);
-		
+
 		addFileNameControls(result);
 
 		setControl(result);
 		Dialog.applyDialogFont(result);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
 }
-	
+
 	private boolean validateRegex() {
 		if (fIsRegExCheckbox.getSelection()) {
 			try {
@@ -479,7 +479,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 			statusMessage(false, ""); //$NON-NLS-1$
 		} else {
-			statusMessage(false, SearchMessages.SearchPage_containingText_hint); 
+			statusMessage(false, SearchMessages.SearchPage_containingText_hint);
 		}
 		return true;
 	}
@@ -487,9 +487,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private void addTextPatternControls(Composite group) {
 		// grid layout with 2 columns
 
-		// Info text		
+		// Info text
 		Label label= new Label(group, SWT.LEAD);
-		label.setText(SearchMessages.SearchPage_containingText_text); 
+		label.setText(SearchMessages.SearchPage_containingText_text);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		label.setFont(group.getFont());
 
@@ -513,20 +513,20 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
 		data.widthHint= convertWidthInCharsToPixels(50);
 		fPattern.setLayoutData(data);
-		
+
 		ComboContentAdapter contentAdapter= new ComboContentAdapter();
 		FindReplaceDocumentAdapterContentProposalProvider findProposer= new FindReplaceDocumentAdapterContentProposalProvider(true);
 		fPatterFieldContentAssist= new ContentAssistCommandAdapter(
 				fPattern,
 				contentAdapter,
-				findProposer, 
+				findProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
 				new char[] {'\\', '[', '('},
 				true);
 		fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
-		
+
 		fIsCaseSensitiveCheckbox= new Button(group, SWT.CHECK);
-		fIsCaseSensitiveCheckbox.setText(SearchMessages.SearchPage_caseSensitive); 
+		fIsCaseSensitiveCheckbox.setText(SearchMessages.SearchPage_caseSensitive);
 		fIsCaseSensitiveCheckbox.setSelection(fIsCaseSensitive);
 		fIsCaseSensitiveCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -541,11 +541,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		fStatusLabel.setFont(group.getFont());
 		fStatusLabel.setAlignment(SWT.LEFT);
-		fStatusLabel.setText(SearchMessages.SearchPage_containingText_hint); 
+		fStatusLabel.setText(SearchMessages.SearchPage_containingText_hint);
 
 		// RegEx checkbox
 		fIsRegExCheckbox= new Button(group, SWT.CHECK);
-		fIsRegExCheckbox.setText(SearchMessages.SearchPage_regularExpression); 
+		fIsRegExCheckbox.setText(SearchMessages.SearchPage_regularExpression);
 		fIsRegExCheckbox.setSelection(fIsRegExSearch);
 
 		fIsRegExCheckbox.addSelectionListener(new SelectionAdapter() {
@@ -565,7 +565,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		int selectionIndex= fPattern.getSelectionIndex();
 		if (selectionIndex < 0 || selectionIndex >= fPreviousSearchPatterns.size())
 			return;
-		
+
 		SearchPatternData patternData= (SearchPatternData) fPreviousSearchPatterns.get(selectionIndex);
 		if (!fPattern.getText().equals(patternData.textPattern))
 			return;
@@ -588,14 +588,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 					fPattern.setText(escapeForRegExPattern(text));
 				else
 					fPattern.setText(insertEscapeChars(text));
-				
+
 				if (getPreviousExtensions().length > 0) {
 					fExtensions.setText(getPreviousExtensions()[0]);
 				} else {
 					String extension= getExtensionFromEditor();
 					if (extension != null)
 						fExtensions.setText(extension);
-					else 
+					else
 						fExtensions.setText("*"); //$NON-NLS-1$
 				}
 				return true;
@@ -603,7 +603,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
 		return false;
 	}
-	
+
 //	private void loadFilePatternDefaults() {
 //		SearchMatchInformationProviderRegistry registry= SearchPlugin.getDefault().getSearchMatchInformationProviderRegistry();
 //		String[] defaults= registry.getDefaultFilePatterns();
@@ -633,11 +633,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
 		return sbOut.toString();
 	}
-	
+
 	/**
 	 * Escapes special characters in the string, such that the resulting pattern
 	 * matches the given string.
-	 * 
+	 *
 	 * @param string the string to escape
 	 * @return a regex pattern that matches the given string
 	 * @since 3.5
@@ -666,7 +666,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				case '|':
 					pattern.append('\\').append(ch);
 					break;
-					
+
 				case '\n':
 					pattern.append("\\n"); //$NON-NLS-1$
 					break;
@@ -699,7 +699,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			pattern.insert(pattern.length() - 1, '\\');
 		return pattern.toString();
 	}
-	
+
 
 	private String getExtensionFromEditor() {
 		IEditorPart ep= SearchPlugin.getActivePage().getActiveEditor();
@@ -717,13 +717,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private void addFileNameControls(Composite group) {
 		// grid layout with 2 columns
-		
+
 		// Line with label, combo and button
 		Label label= new Label(group, SWT.LEAD);
-		label.setText(SearchMessages.SearchPage_fileNamePatterns_text); 
+		label.setText(SearchMessages.SearchPage_fileNamePatterns_text);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		label.setFont(group.getFont());
-		
+
 		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fExtensions.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -734,25 +734,25 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		data.widthHint= convertWidthInCharsToPixels(50);
 		fExtensions.setLayoutData(data);
 		fExtensions.setFont(group.getFont());
-		
+
 		Button button= new Button(group, SWT.PUSH);
-		button.setText(SearchMessages.SearchPage_browse); 
+		button.setText(SearchMessages.SearchPage_browse);
 		GridData gridData= new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1);
-		gridData.widthHint= SWTUtil.getButtonWidthHint(button);	
+		gridData.widthHint= SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gridData);
 		button.setFont(group.getFont());
-		
+
 		fFileTypeEditor= new FileTypeEditor(fExtensions, button);
-		
+
 		// Text line which explains the special characters
 		Label description= new Label(group, SWT.LEAD);
-		description.setText(SearchMessages.SearchPage_fileNamePatterns_hint); 
+		description.setText(SearchMessages.SearchPage_fileNamePatterns_hint);
 		description.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		description.setFont(group.getFont());
-		
+
 		fSearchDerivedCheckbox= new Button(group, SWT.CHECK);
-		fSearchDerivedCheckbox.setText(SearchMessages.TextSearchPage_searchDerived_label); 
-		
+		fSearchDerivedCheckbox.setText(SearchMessages.TextSearchPage_searchDerived_label);
+
 		fSearchDerivedCheckbox.setSelection(fSearchDerived);
 		fSearchDerivedCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -771,18 +771,18 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	public void setContainer(ISearchPageContainer container) {
 		fContainer= container;
 	}
-	
+
 	private ISearchPageContainer getContainer() {
 		return fContainer;
 	}
-	
+
 	private ISelection getSelection() {
 		return fContainer.getSelection();
 	}
-		
+
 
 	//--------------- Configuration handling --------------
-	
+
     /* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
@@ -790,17 +790,17 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		writeConfiguration();
 		super.dispose();
 	}
-	
+
 	/**
 	 * Returns the page settings for this Text search page.
-	 * 
+	 *
 	 * @return the page settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
 		return SearchPlugin.getDefault().getDialogSettingsSection(PAGE_NAME);
 	}
-		
-	
+
+
 	/**
 	 * Initializes itself from the stored page settings.
 	 */
@@ -809,7 +809,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsCaseSensitive= s.getBoolean(STORE_CASE_SENSITIVE);
 		fIsRegExSearch= s.getBoolean(STORE_IS_REG_EX_SEARCH);
 		fSearchDerived= s.getBoolean(STORE_SEARCH_DERIVED);
-		
+
 		try {
 			int historySize= s.getInt(STORE_HISTORY_SIZE);
 			for (int i= 0; i < historySize; i++) {
@@ -825,7 +825,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			// ignore
 		}
 	}
-	
+
 	/**
 	 * Stores it current configuration in the dialog store.
 	 */
@@ -834,7 +834,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		s.put(STORE_CASE_SENSITIVE, fIsCaseSensitive);
 		s.put(STORE_IS_REG_EX_SEARCH, fIsRegExSearch);
 		s.put(STORE_SEARCH_DERIVED, fSearchDerived);
-		
+
 		int historySize= Math.min(fPreviousSearchPatterns.size(), HISTORY_SIZE);
 		s.put(STORE_HISTORY_SIZE, historySize);
 		for (int i= 0; i < historySize; i++) {
@@ -852,4 +852,4 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			fStatusLabel.setForeground(null);
 	}
 
-}	
+}

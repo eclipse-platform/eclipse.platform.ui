@@ -85,7 +85,7 @@ public interface ISourceViewer extends ITextViewer {
 
 	/*
 	 * XXX: Cannot continue numbering due to operation codes used in ProjectionViewer
-	 */ 
+	 */
 
 	/**
 	 * Text operation code for requesting quick assist. This will normally

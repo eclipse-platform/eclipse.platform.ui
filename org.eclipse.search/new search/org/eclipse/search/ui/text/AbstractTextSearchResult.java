@@ -24,15 +24,15 @@ import org.eclipse.search.ui.SearchResultEvent;
 
 /**
  * An abstract base implementation for text-match based search results. This search
- * result implementation consists of a list of {@link org.eclipse.search.ui.text.Match matches}. 
+ * result implementation consists of a list of {@link org.eclipse.search.ui.text.Match matches}.
  * No assumptions are made about the kind of elements these matches are reported against.
- * 
- * @since 3.0 
+ *
+ * @since 3.0
  */
 public abstract class AbstractTextSearchResult implements ISearchResult {
-	
+
 	private static final Match[] EMPTY_ARRAY= new Match[0];
-	
+
 	private final Map fElementsToMatches;
 	private final List fListeners;
 	private final MatchEvent fMatchEvent;
@@ -46,14 +46,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		fElementsToMatches= new HashMap();
 		fListeners= new ArrayList();
 		fMatchEvent= new MatchEvent(this);
-		
+
 		fMatchFilters= null; // filtering disabled by default
 	}
-	
+
 	/**
 	 * Returns an array with all matches reported against the given element.
 	 * Note that all matches of the given element are returned. The filter state of the matches is not relevant.
-	 * 
+	 *
 	 * @param element the element to report matches for
 	 * @return all matches reported for this element
 	 * @see Match#getElement()
@@ -66,14 +66,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			return EMPTY_ARRAY;
 		}
 	}
-	
+
 	/**
 	 * Adds a <code>Match</code> to this search result. This method does nothing if the
 	 * match is already present.
 	 * <p>
 	 * Subclasses may extend this method.
 	 * </p>
-	 * 
+	 *
 	 * @param match the match to add
 	 */
 	public void addMatch(Match match) {
@@ -84,9 +84,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		if (hasAdded)
 			fireChange(getSearchResultEvent(match, MatchEvent.ADDED));
 	}
-	
+
 	/**
-	 * Adds a number of Matches to this search result. This method does nothing for 
+	 * Adds a number of Matches to this search result. This method does nothing for
 	 * matches that are already present.
 	 * <p>
 	 * Subclasses may extend this method.
@@ -104,7 +104,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		if (!reallyAdded.isEmpty())
 			fireChange(getSearchResultEvent(reallyAdded, MatchEvent.ADDED));
 	}
-	
+
 	private MatchEvent getSearchResultEvent(Match match, int eventKind) {
 		fMatchEvent.setKind(eventKind);
 		fMatchEvent.setMatch(match);
@@ -120,7 +120,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	private boolean doAddMatch(Match match) {
 		updateFilterState(match);
-		
+
 		List matches= (List) fElementsToMatches.get(match.getElement());
 		if (matches == null) {
 			matches= new ArrayList();
@@ -134,12 +134,12 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		}
 		return false;
 	}
-	
+
 	private static void insertSorted(List matches, Match match) {
 		int insertIndex= getInsertIndex(matches, match);
 		matches.add(insertIndex, match);
 	}
-		
+
 	private static int getInsertIndex(List matches, Match match) {
 		int count= matches.size();
 		int min = 0, max = count - 1;
@@ -178,7 +178,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private void doRemoveAll() {
 		fElementsToMatches.clear();
 	}
-	
+
 	/**
 	 * Removes the given match from this search result. This method has no
 	 * effect if the match is not found.
@@ -195,14 +195,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		if (existed)
 			fireChange(getSearchResultEvent(match, MatchEvent.REMOVED));
 	}
-	
+
 	/**
 	 * Removes the given matches from this search result. This method has no
 	 * effect for matches that are not found
 	 * <p>
 	 * Subclasses may extend this method.
 	 * </p>
-	 * 
+	 *
 	 * @param matches the matches to remove
 	 */
 	public void removeMatches(Match[] matches) {
@@ -217,7 +217,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fireChange(getSearchResultEvent(existing, MatchEvent.REMOVED));
 	}
 
-	
+
 	private boolean doRemoveMatch(Match match) {
 		boolean existed= false;
 		List matches= (List) fElementsToMatches.get(match.getElement());
@@ -228,7 +228,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		}
 		return existed;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -237,7 +237,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fListeners.add(l);
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -246,13 +246,13 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fListeners.remove(l);
 		}
 	}
-	
+
 	/**
 	 * Send the given <code>SearchResultEvent</code> to all registered search
 	 * result listeners.
-	 * 
+	 *
 	 * @param e the event to be sent
-	 * 
+	 *
 	 * @see ISearchResultListener
 	 */
 	protected void fireChange(SearchResultEvent e) {
@@ -265,7 +265,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			((ISearchResultListener) listeners.next()).searchResultChanged(e);
 		}
 	}
-		
+
 	private void updateFilterStateForAllMatches() {
 		boolean disableFiltering= getActiveMatchFilters() == null;
 		ArrayList changed= new ArrayList();
@@ -281,7 +281,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		Match[] allChanges= (Match[]) changed.toArray(new Match[changed.size()]);
 		fireChange(new FilterUpdateEvent(this, allChanges, getActiveMatchFilters()));
 	}
-	
+
 	/*
 	 * Evaluates the filter for the match and updates it. Return true if the filter changed.
 	 */
@@ -290,7 +290,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		if (matchFilters == null) {
 			return false; // do nothing, no change
 		}
-		
+
 		boolean oldState= match.isFiltered();
 		for (int i= 0; i < matchFilters.length; i++) {
 			if (matchFilters[i].filters(match)) {
@@ -301,11 +301,11 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		match.setFiltered(false);
 		return oldState;
 	}
-	
+
 	/**
 	 * Returns the total number of matches contained in this search result.
 	 * The filter state of the matches is not relevant when counting matches. All matches are counted.
-	 * 
+	 *
 	 * @return total number of matches
 	 */
 	public int getMatchCount() {
@@ -319,12 +319,12 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		}
 		return count;
 	}
-	
+
 	/**
 	 * Returns the number of matches reported against a given element. This is
 	 * equivalent to calling <code>getMatches(element).length</code>
 	 * The filter state of the matches is not relevant when counting matches. All matches are counted.
-	 * 
+	 *
 	 * @param element the element to get the match count for
 	 * @return the number of matches reported against the element
 	 */
@@ -334,12 +334,12 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			return matches.size();
 		return 0;
 	}
-		
+
 	/**
 	 * Returns an array containing the set of all elements that matches are
 	 * reported against in this search result.
 	 * Note that all elements that contain matches are returned. The filter state of the matches is not relevant.
-	 * 
+	 *
 	 * @return the set of elements in this search result
 	 */
 	public Object[] getElements() {
@@ -347,7 +347,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			return fElementsToMatches.keySet().toArray();
 		}
 	}
-	
+
 	/**
 	 * Sets the active match filters for this result. If set to non-null, the match filters will be used to update the filter
 	 * state ({@link Match#isFiltered()} of matches and the {@link AbstractTextSearchViewPage} will only
@@ -355,63 +355,63 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * the filter state of the match is ignored by the {@link AbstractTextSearchViewPage} and all matches
 	 * are shown.
 	 * Note the model contains all matches, regardless if the filter state of a match.
-	 * 
+	 *
 	 * @param filters the match filters to set or <code>null</code> if the filter state of the match
 	 * should be ignored.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void setActiveMatchFilters(MatchFilter[] filters) {
 		fMatchFilters= filters;
 		updateFilterStateForAllMatches();
 	}
-	
+
 	/**
 	 * Returns the active match filters for this result. If not null is returned, the match filters will be used to update the filter
 	 * state ({@link Match#isFiltered()} of matches and the {@link AbstractTextSearchViewPage} will only
 	 * show non-filtered matches. If <code>null</code> is set
 	 * the filter state of the match is ignored by the {@link AbstractTextSearchViewPage} and all matches
 	 * are shown.
-	 * 
+	 *
 	 * @return the match filters to be used or <code>null</code> if the filter state of the match
 	 * should be ignored.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public MatchFilter[] getActiveMatchFilters() {
 		return fMatchFilters;
 	}
-	
+
 	/**
 	 * Returns all applicable filters for this result or null if match filters are not supported. If match filters are returned,
 	 * the {@link AbstractTextSearchViewPage} will contain menu entries in the view menu.
-	 * 
-	 * @return all applicable filters for this result. 
-	 * 
+	 *
+	 * @return all applicable filters for this result.
+	 *
 	 * @since 3.3
 	 */
 	public MatchFilter[] getAllMatchFilters() {
 		return null;
 	}
-	
+
 
 	/**
 	 * Returns an implementation of <code>IEditorMatchAdapter</code> appropriate
 	 * for this search result.
-	 *  
+	 *
 	 * @return an appropriate adapter or <code>null</code> if none has been implemented
-	 * 
+	 *
 	 * @see IEditorMatchAdapter
 	 */
 	public abstract IEditorMatchAdapter getEditorMatchAdapter();
-	
+
 
 	/**
 	 * Returns an implementation of <code>IFileMatchAdapter</code> appropriate
-	 * for this search result. 
-	 * 
+	 * for this search result.
+	 *
 	 * @return an appropriate adapter or <code>null</code> if none has been implemented
-	 * 
+	 *
 	 * @see IFileMatchAdapter
 	 */
 	public abstract IFileMatchAdapter getFileMatchAdapter();

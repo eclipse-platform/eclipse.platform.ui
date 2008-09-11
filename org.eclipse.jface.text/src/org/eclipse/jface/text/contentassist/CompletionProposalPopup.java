@@ -104,23 +104,23 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Completion proposal selection handler.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	final class ProposalSelectionHandler extends AbstractHandler {
-		
+
 		/**
 		 * Selection operation codes.
 		 */
 		static final int SELECT_NEXT= 1;
 		static final int SELECT_PREVIOUS= 2;
 
-		
+
 		private int fOperationCode;
 
 		/**
 		 * Creates a new selection handler.
-		 * 
+		 *
 		 * @param operationCode the operation code
 		 * @since 3.4
 		 */
@@ -153,11 +153,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 
 	}
-	
+
 
 	/**
 	 * The empty proposal displayed if there is nothing else to show.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static final class EmptyProposal implements ICompletionProposal, ICompletionProposalExtension {
@@ -261,15 +261,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	private final class CommandKeyListener extends KeyAdapter {
 		private KeySequence fCommandSequence;
-		
+
 		private CommandKeyListener(KeySequence keySequence) {
 			fCommandSequence= keySequence;
 		}
-		
+
 		public void keyPressed(KeyEvent e) {
 			if (!Helper.okToUse(fProposalShell))
 				return;
-			
+
 			int accelerator= SWTKeySupport.convertEventToUnmodifiedAccelerator(e);
 			KeySequence sequence= KeySequence.getInstance(SWTKeySupport.convertAcceleratorToKeyStroke(accelerator));
 			if (sequence.equals(fCommandSequence))
@@ -277,11 +277,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 					incrementalComplete();
 				else
 					showProposals(false);
-			
+
 		}
 	}
-	
-	
+
+
 	/** The associated text viewer. */
 	private ITextViewer fViewer;
 	/** The associated content assistant. */
@@ -349,14 +349,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private boolean fIsFilteredSubset;
 	/**
 	 * The filter runnable.
-	 * 
+	 *
 	 * @since 3.1.1
 	 */
 	private final Runnable fFilterRunnable= new Runnable() {
 		public void run() {
 			if (!fIsFilterPending)
 				return;
-			
+
 			fIsFilterPending= false;
 
 			if (!Helper.okToUse(fContentAssistSubjectControlAdapter.getControl()))
@@ -384,50 +384,50 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * <code>true</code> if <code>fFilterRunnable</code> has been
 	 * posted, <code>false</code> if not.
-	 * 
+	 *
 	 * @since 3.1.1
 	 */
 	private boolean fIsFilterPending= false;
 	/**
 	 * The info message at the bottom of the popup, or <code>null</code> for no popup (if
 	 * ContentAssistant does not provide one).
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private Label fMessageText;
 	/**
 	 * The font used for <code>fMessageText</code> or null; dispose when done.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private Font fMessageTextFont;
 	/**
 	 * The most recent completion offset (used to determine repeated invocation)
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private int fLastCompletionOffset;
 	/**
 	 * The (reusable) empty proposal.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private final EmptyProposal fEmptyProposal= new EmptyProposal();
 	/**
 	 * The text for the empty proposal, or <code>null</code> to use the default text.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private String fEmptyMessage= null;
 	/**
 	 * Tells whether colored labels support is enabled.
 	 * Only valid while the popup is active.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private boolean fIsColoredLabelsSupportEnabled= false;
 
-	
+
 	/**
 	 * Creates a new completion proposal popup for the given elements.
 	 *
@@ -488,7 +488,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					int count= (fComputedProposals == null ? 0 : fComputedProposals.length);
 					if (count == 0 && hideWhenNoProposals(autoActivated))
 						return;
-					
+
 					if (count == 1 && !autoActivated && canAutoInsert(fComputedProposals[0])) {
 						insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
@@ -506,11 +506,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		return getErrorMessage();
 	}
-	
+
 	/**
 	 * Hides the popup and returns <code>true</code> if the popup is configured
 	 * to never display an empty list. Returns <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param autoActivated whether the invocation was auto-activated
 	 * @return <code>false</code> if an empty list should be displayed, <code>true</code> otherwise
 	 * @since 3.2
@@ -531,7 +531,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * If content assist is set up to handle cycling, then the proposals are recomputed. Otherwise,
 	 * nothing happens.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void handleRepeatedInvocation() {
@@ -585,7 +585,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		} else {
 			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 		}
-		
+
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
 		if (fIsColoredLabelsSupportEnabled)
 			TableOwnerDrawSupport.install(fProposalTable);
@@ -599,7 +599,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		layout.marginHeight= 0;
 		layout.verticalSpacing= 1;
 		fProposalShell.setLayout(layout);
-		
+
 		if (fContentAssistant.isStatusLineVisible()) {
 			createMessageText();
 		}
@@ -636,7 +636,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				fSize= fProposalShell.getSize();
 			}
 		});
-		
+
 		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 
 		Color c= getBackgroundColor(control);
@@ -663,14 +663,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 		});
 
 		fProposalTable.setHeaderVisible(false);
-		
+
 		addCommandSupport(fProposalTable);
 	}
 
 	/**
 	 * Returns the minimal required height for the proposal, may return 0 if the popup has not been
 	 * created yet.
-	 * 
+	 *
 	 * @return the minimal height
 	 * @since 3.3
 	 */
@@ -688,7 +688,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Adds command support to the given control.
-	 * 
+	 *
 	 * @param control the control to watch for focus
 	 * @since 3.2
 	 */
@@ -744,7 +744,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Returns the background color to use.
-	 * 
+	 *
 	 * @param control the control to get the display from
 	 * @return the background color
 	 * @since 3.2
@@ -758,7 +758,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Returns the foreground color to use.
-	 * 
+	 *
 	 * @param control the control to get the display from
 	 * @return the foreground color
 	 * @since 3.2
@@ -769,10 +769,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 			c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
 		return c;
 	}
-	
+
 	/**
 	 * Creates the caption line under the proposal table.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void createMessageText() {
@@ -831,7 +831,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			item.setText(displayString);
 			if (fIsColoredLabelsSupportEnabled)
 				TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
-			
+
 			item.setImage(current.getImage());
 			item.setData(current);
 		} else {
@@ -851,11 +851,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 		 */
 		if (fIsFilterPending)
 			fFilterRunnable.run();
-		
+
 		// filter runnable may have hidden the proposals
 		if (!Helper.okToUse(fProposalTable))
 			return null;
-		
+
 		int i= fProposalTable.getSelectionIndex();
 		if (fFilteredProposals == null || i < 0 || i >= fFilteredProposals.length)
 			return null;
@@ -1017,20 +1017,20 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell.dispose();
 			fProposalShell= null;
 		}
-		
+
 		if (fMessageTextFont != null) {
 			fMessageTextFont.dispose();
 			fMessageTextFont= null;
 		}
-		
+
 		if (fMessageText != null) {
 			fMessageText= null;
 		}
-		
+
 		fEmptyMessage= null;
-		
+
 		fLastCompletionOffset= -1;
-		
+
 		fContentAssistant.fireSessionEndEvent();
 	}
 
@@ -1092,7 +1092,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (Helper.okToUse(fProposalTable)) {
 			if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
-			
+
 			if (proposals == null || proposals.length == 0) {
 				fEmptyProposal.fOffset= fFilterOffset;
 				fEmptyProposal.fDisplayString= fEmptyMessage != null ? fEmptyMessage : JFaceTextMessages.getString("CompletionProposalPopup.no_proposals"); //$NON-NLS-1$
@@ -1160,7 +1160,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR)) {
 
 			ensureDocumentListenerInstalled();
-			
+
 			if (fFocusHelper == null) {
 				fFocusHelper= new IEditingSupport() {
 
@@ -1341,11 +1341,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fireSelectionEvent(null, smartToggle);
 			return;
 		}
-		
+
 		ICompletionProposal proposal= fFilteredProposals[index];
 		if (proposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
-		
+
 		fireSelectionEvent(proposal, smartToggle);
 
 		fLastProposal= proposal;
@@ -1358,7 +1358,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Fires a selection event, see {@link ICompletionListener}.
-	 * 
+	 *
 	 * @param proposal the selected proposal, possibly <code>null</code>
 	 * @param smartToggle true if the smart toggle is on
 	 * @since 3.2
@@ -1485,11 +1485,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell.setFocus();
 		}
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if <code>proposal</code> should be auto-inserted,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param proposal the single proposal that might be automatically inserted
 	 * @return <code>true</code> if <code>proposal</code> can be inserted automatically,
 	 *         <code>false</code> otherwise
@@ -1541,7 +1541,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					int count= (fFilteredProposals == null ? 0 : fFilteredProposals.length);
 					if (count == 0 && hideWhenNoProposals(false))
 						return;
-					
+
 					if (count == 1 && canAutoInsert(fFilteredProposals[0])) {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
@@ -1567,7 +1567,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * proposal, it is inserted, otherwise, the common prefix of all proposals
 	 * is inserted into the document. If there is no common prefix, nothing
 	 * happens and <code>false</code> is returned.
-	 * 
+	 *
 	 * @return <code>true</code> if a single proposal was inserted and the
 	 *         selector can be closed, <code>false</code> otherwise
 	 * @since 3.0
@@ -1592,7 +1592,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		List rightCase= new ArrayList();
 
 		boolean isWrongCaseMatch= false;
-		
+
 		// the prefix of all case insensitive matches. This differs from the document
 		// contents and will be replaced.
 		CharSequence wrongCasePrefix= null;
@@ -1603,10 +1603,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		for (int i= 0; i < fFilteredProposals.length; i++) {
 			ICompletionProposal proposal= fFilteredProposals[i];
-			
+
 			if (!(proposal instanceof ICompletionProposalExtension3))
 				return false;
-			
+
 			int start= ((ICompletionProposalExtension3)proposal).getPrefixCompletionStart(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
 			CharSequence insertion= ((ICompletionProposalExtension3)proposal).getPrefixCompletionText(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
 			if (insertion == null)
@@ -1744,11 +1744,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 		// all equal up to minimum
 		buffer.delete(min, buffer.length());
 	}
-	
+
 	/**
 	 * Sets the message for the repetition affordance text at the bottom of the proposal. Only has
 	 * an effect if {@link ContentAssistant#isRepeatedInvocationMode()} returns <code>true</code>.
-	 * 
+	 *
 	 * @param message the new caption
 	 * @since 3.2
 	 */
@@ -1761,7 +1761,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * Sets the text to be displayed if no proposals are available. Only has an effect if
 	 * {@link ContentAssistant#isShowEmptyList()} returns <code>true</code>.
-	 * 
+	 *
 	 * @param message the empty message
 	 * @since 3.2
 	 */
@@ -1772,14 +1772,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Enables or disables showing of the caption line. See also {@link #setMessage(String)}.
-	 * 
+	 *
 	 * @param show <code>true</code> if the status line is visible
 	 * @since 3.2
 	 */
 	public void setStatusLineVisible(boolean show) {
 		if (!isActive() || show == (fMessageText != null))
 			return; // nothing to do
-		
+
 		if (show) {
 			createMessageText();
 		} else {
@@ -1791,7 +1791,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Informs the popup that it is being placed above the caret line instead of below.
-	 * 
+	 *
 	 * @param above <code>true</code> if the location of the popup is above the caret line, <code>false</code> if it is below
 	 * @since 3.3
 	 */
@@ -1807,7 +1807,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Returns a new proposal selection handler.
-	 * 
+	 *
 	 * @param operationCode the operation code
 	 * @return the handler
 	 * @since 3.4

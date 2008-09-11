@@ -102,7 +102,7 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 		if (fAction != null)
 			fAction.run();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 * @since 3.2

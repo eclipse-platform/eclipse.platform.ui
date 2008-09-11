@@ -24,7 +24,7 @@ public interface IAnnotationModelExtension2 {
 	/**
 	 * Returns an iterator over all annotations managed by this model that are
 	 * inside the given region.
-	 * 
+	 *
 	 * @param offset the start position of the region, must be >= 0
 	 * @param length the length of the region, must be >= 0
 	 * @param canStartBefore if <code>true</code> then annotations are included

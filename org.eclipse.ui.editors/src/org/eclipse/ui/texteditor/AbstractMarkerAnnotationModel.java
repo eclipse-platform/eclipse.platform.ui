@@ -16,9 +16,6 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResourceStatus;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -27,6 +24,9 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 
@@ -37,9 +37,9 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationMap;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**
@@ -477,7 +477,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * <p>
 	 * <strong>Note:</strong> This implementation queries the registered
 	 * {@linkplain IMarkerUpdater}s. If any of these updaters returns
-	 * <code>false</code> this method also returns <code>false</code>. 
+	 * <code>false</code> this method also returns <code>false</code>.
 	 * </p>
 	 *
 	 * @param marker the marker to be updated

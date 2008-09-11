@@ -12,7 +12,11 @@ package org.eclipse.ui.examples.javaeditor.javadoc;
 
 
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.*;
+import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
  * Example Java doc completion processor.
@@ -30,35 +34,35 @@ public class JavaDocCompletionProcessor implements IContentAssistProcessor {
 			result[i]= new CompletionProposal(fgProposals[i], documentOffset, 0, fgProposals[i].length());
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */

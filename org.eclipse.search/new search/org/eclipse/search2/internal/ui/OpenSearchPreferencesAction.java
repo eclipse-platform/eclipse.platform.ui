@@ -25,8 +25,8 @@ import org.eclipse.search.internal.ui.SearchPreferencePage;
  */
 public class OpenSearchPreferencesAction extends Action {
 	public OpenSearchPreferencesAction() {
-		super(SearchMessages.OpenSearchPreferencesAction_label); 
-		setToolTipText(SearchMessages.OpenSearchPreferencesAction_tooltip); 
+		super(SearchMessages.OpenSearchPreferencesAction_label);
+		setToolTipText(SearchMessages.OpenSearchPreferencesAction_tooltip);
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
 	}
 

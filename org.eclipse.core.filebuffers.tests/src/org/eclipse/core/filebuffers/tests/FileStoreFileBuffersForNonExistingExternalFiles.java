@@ -24,7 +24,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
  * FileBuffersForNonExistingExternalFiles
  */
 public class FileStoreFileBuffersForNonExistingExternalFiles extends FileStoreFileBufferFunctions {
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
@@ -32,13 +32,13 @@ public class FileStoreFileBuffersForNonExistingExternalFiles extends FileStoreFi
 		FileTool.delete(getPath());
 		super.tearDown();
 	}
-	
+
 	protected IPath createPath(IProject project) throws Exception {
 		IPath path= FileBuffersTestPlugin.getDefault().getStateLocation();
 		path= path.append("NonExistingExternalFile");
 		return new Path(path.toFile().getAbsolutePath());
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */

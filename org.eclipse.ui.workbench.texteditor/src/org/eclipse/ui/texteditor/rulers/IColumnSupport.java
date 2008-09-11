@@ -17,7 +17,7 @@ package org.eclipse.ui.texteditor.rulers;
  * <p>
  * This interface must not be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.3
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -26,7 +26,7 @@ public interface IColumnSupport {
 	/**
 	 * Returns <code>true</code> if the column described by <code>descriptor</code> is
 	 * currently showing, <code>false</code> if not.
-	 * 
+	 *
 	 * @param descriptor the column descriptor
 	 * @return <code>true</code> if the specified column is currently visible
 	 */
@@ -36,7 +36,7 @@ public interface IColumnSupport {
 	 * Attempts to set the visibility of the column described by <code>descriptor</code>. Nothing
 	 * happens if the visibility is already as requested, or if the column is not supported by the
 	 * editor.
-	 * 
+	 *
 	 * @param descriptor the column descriptor
 	 * @param visible <code>true</code> to show the column, <code>false</code> to hide it
 	 */
@@ -47,7 +47,7 @@ public interface IColumnSupport {
 	 * supported by the receiver's editor, <code>false</code> if <code>id</code> is not the
 	 * identifier of a known column contribution, if the column does not target the editor, or if
 	 * the editor does not support contributed columns.
-	 * 
+	 *
 	 * @param descriptor the column descriptor
 	 * @return <code>true</code> if the specified column is supported
 	 */

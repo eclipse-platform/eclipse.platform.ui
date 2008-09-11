@@ -12,10 +12,6 @@ package org.eclipse.jface.internal.text.revisions;
 
 import org.eclipse.core.runtime.ListenerList;
 
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.revisions.Revision;
-
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -23,6 +19,10 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.revisions.Revision;
 
 /**
  * A selection provider for annotate revisions. Selections of a revision can currently happen in
@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * <p>
  * Calling {@link #setSelection(ISelection)} will set the current sticky revision on the ruler.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class RevisionSelectionProvider implements ISelectionProvider {
@@ -58,9 +58,9 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 	            int offset= ts.getOffset();
 	            setSelectedRevision(fPainter.getRevision(offset));
 	        }
-	    	
+
 	    }
-		
+
 		public void dispose() {
 			fPostProvider.removePostSelectionChangedListener(this);
 		}
@@ -68,7 +68,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 
 	private final RevisionPainter fPainter;
 	private final ListenerList fListeners= new ListenerList();
-	
+
 	/**
 	 * The text viewer once we are installed, <code>null</code> if not installed.
 	 */
@@ -90,7 +90,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 
 	/**
 	 * Creates a new selection provider.
-	 * 
+	 *
 	 * @param painter the painter that the created provider interacts with
 	 */
     RevisionSelectionProvider(RevisionPainter painter) {
@@ -110,7 +110,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
     	fListeners.remove(listener);
     }
-    
+
 	/*
      * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
      */
@@ -139,7 +139,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 
     /**
 	 * Installs the selection provider on the viewer.
-	 * 
+	 *
 	 * @param viewer the viewer on which we listen to for post selection events
 	 */
     void install(ITextViewer viewer) {
@@ -153,7 +153,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
             }
 		}
     }
-    
+
     /**
      * Uninstalls the selection provider.
      */
@@ -167,7 +167,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 
     /**
 	 * Private protocol used by {@link RevisionPainter} to signal selection of a revision.
-	 * 
+	 *
 	 * @param revision the selected revision, or <code>null</code> for none
 	 */
     void revisionSelected(Revision revision) {
@@ -176,7 +176,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 
 	/**
 	 * Updates the currently selected revision and sends out an event if it changed.
-	 * 
+	 *
 	 * @param revision the newly selected revision or <code>null</code> for none
 	 */
 	private void setSelectedRevision(Revision revision) {

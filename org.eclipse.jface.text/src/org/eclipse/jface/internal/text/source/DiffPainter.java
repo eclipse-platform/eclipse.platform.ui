@@ -42,7 +42,7 @@ import org.eclipse.jface.text.source.IVerticalRulerColumn;
 /**
  * A strategy for painting the quick diff colors onto the vertical ruler column. It also manages the
  * quick diff hover.
- * 
+ *
  * @since 3.2
  */
 public final class DiffPainter {
@@ -87,7 +87,7 @@ public final class DiffPainter {
 
 	/**
 	 * Creates a new diff painter for a vertical ruler column.
-	 * 
+	 *
 	 * @param column the column that will delegate{@link #paint(GC, ILineRange) painting} to the
 	 *        newly created painter.
 	 * @param sharedColors a shared colors object to store shaded colors in, may be
@@ -102,7 +102,7 @@ public final class DiffPainter {
 	/**
 	 * Sets the parent ruler - the delegating column must call this method as soon as it creates its
 	 * control.
-	 * 
+	 *
 	 * @param parentRuler the parent ruler
 	 */
 	public void setParentRuler(CompositeRuler parentRuler) {
@@ -111,7 +111,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the quick diff hover later returned by {@link #getHover()}.
-	 * 
+	 *
 	 * @param hover the hover
 	 */
 	public void setHover(IAnnotationHover hover) {
@@ -120,7 +120,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns the quick diff hover set by {@link #setHover(IAnnotationHover)}.
-	 * 
+	 *
 	 * @return the quick diff hover set by {@link #setHover(IAnnotationHover)}
 	 */
 	public IAnnotationHover getHover() {
@@ -129,7 +129,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the background color.
-	 * 
+	 *
 	 * @param background the background color, <code>null</code> to use the platform's list background
 	 */
 	public void setBackground(Color background) {
@@ -140,7 +140,7 @@ public final class DiffPainter {
 	 * Delegates the painting of the quick diff colors to this painter. The painter will draw the
 	 * color boxes onto the passed {@link GC} for all model (document) lines in
 	 * <code>visibleModelLines</code>.
-	 * 
+	 *
 	 * @param gc the {@link GC} to draw onto
 	 * @param visibleModelLines the lines (in document offsets) that are currently (perhaps only
 	 *        partially) visible
@@ -191,7 +191,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns <code>true</code> if the column is fully connected.
-	 * 
+	 *
 	 * @return <code>true</code> if the column is fully connected, false otherwise
 	 */
 	private boolean isConnected() {
@@ -210,7 +210,7 @@ public final class DiffPainter {
 
 	/**
 	 * Paints a single model line onto <code>gc</code>.
-	 * 
+	 *
 	 * @param line the model line to paint
 	 * @param gc the {@link GC} to paint onto
 	 * @param width the width of the column
@@ -248,7 +248,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns whether the line background differs from the default.
-	 * 
+	 *
 	 * @param info the info being queried
 	 * @return <code>true</code> if <code>info</code> describes either a changed or an added
 	 *         line.
@@ -260,7 +260,7 @@ public final class DiffPainter {
 	/**
 	 * Retrieves the <code>ILineDiffInfo</code> for <code>line</code> from the model. There are
 	 * optimizations for direct access and sequential access patterns.
-	 * 
+	 *
 	 * @param line the line we want the info for.
 	 * @return the <code>ILineDiffInfo</code> for <code>line</code>, or <code>null</code>.
 	 */
@@ -273,7 +273,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns the color for deleted lines.
-	 * 
+	 *
 	 * @return the color to be used for the deletion indicator
 	 */
 	private Color getDeletionColor() {
@@ -282,7 +282,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns the color for the given line diff info.
-	 * 
+	 *
 	 * @param info the <code>ILineDiffInfo</code> being queried
 	 * @return the correct background color for the line type being described by <code>info</code>
 	 */
@@ -302,7 +302,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the background color for changed lines.
-	 * 
+	 *
 	 * @param color the new color to be used for the changed lines background
 	 * @return the shaded color
 	 */
@@ -328,7 +328,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the annotation model.
-	 * 
+	 *
 	 * @param model the annotation model, possibly <code>null</code>
 	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
 	 */
@@ -344,7 +344,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the line differ.
-	 * 
+	 *
 	 * @param differ the line differ
 	 */
 	private void setDiffer(IAnnotationModel differ) {
@@ -384,7 +384,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns the width of the column.
-	 * 
+	 *
 	 * @return the width of the column
 	 */
 	private int getWidth() {
@@ -393,7 +393,7 @@ public final class DiffPainter {
 
 	/**
 	 * Computes the end index of a line range.
-	 * 
+	 *
 	 * @param range a line range
 	 * @return the last line (exclusive) of <code>range</code>
 	 */
@@ -403,7 +403,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns the System background color for list widgets or the set background.
-	 * 
+	 *
 	 * @return the System background color for list widgets
 	 */
 	private Color getBackground() {
@@ -414,7 +414,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the color for added lines.
-	 * 
+	 *
 	 * @param addedColor the color for added lines
 	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setAddedColor(org.eclipse.swt.graphics.Color)
 	 */
@@ -424,7 +424,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the color for changed lines.
-	 * 
+	 *
 	 * @param changedColor the color for changed lines
 	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setChangedColor(org.eclipse.swt.graphics.Color)
 	 */
@@ -434,7 +434,7 @@ public final class DiffPainter {
 
 	/**
 	 * Sets the color for deleted lines.
-	 * 
+	 *
 	 * @param deletedColor the color for deleted lines
 	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setDeletedColor(org.eclipse.swt.graphics.Color)
 	 */
@@ -444,7 +444,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns <code>true</code> if the receiver can provide a hover for a certain document line.
-	 * 
+	 *
 	 * @param activeLine the document line of interest
 	 * @return <code>true</code> if the receiver can provide a hover
 	 */
@@ -454,7 +454,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns the display character for the accessibility mode for a certain model line.
-	 * 
+	 *
 	 * @param line the document line of interest
 	 * @return the display character for <code>line</code>
 	 */
@@ -465,7 +465,7 @@ public final class DiffPainter {
 	/**
 	 * Returns the character to display in character display mode for the given
 	 * <code>ILineDiffInfo</code>
-	 * 
+	 *
 	 * @param info the <code>ILineDiffInfo</code> being queried
 	 * @return the character indication for <code>info</code>
 	 */
@@ -484,7 +484,7 @@ public final class DiffPainter {
 	/**
 	 * Returns a specification of a color that lies between the given foreground and background
 	 * color using the given scale factor.
-	 * 
+	 *
 	 * @param fg the foreground color
 	 * @param bg the background color
 	 * @param scale the scale factor
@@ -496,7 +496,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns the grey value in which the given color would be drawn in grey-scale.
-	 * 
+	 *
 	 * @param rgb the color
 	 * @return the grey-scale value
 	 */
@@ -508,7 +508,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns whether the given color is dark or light depending on the colors grey-scale level.
-	 * 
+	 *
 	 * @param rgb the color
 	 * @return <code>true</code> if the color is dark, <code>false</code> if it is light
 	 */
@@ -518,7 +518,7 @@ public final class DiffPainter {
 
 	/**
 	 * Returns <code>true</code> if diff information is being displayed, <code>false</code> otherwise.
-	 * 
+	 *
      * @return <code>true</code> if diff information is being displayed, <code>false</code> otherwise
      * @since 3.3
      */

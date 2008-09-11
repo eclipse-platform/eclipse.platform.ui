@@ -22,7 +22,6 @@ import java.util.StringTokenizer;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -31,11 +30,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.core.resources.IFile;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**

@@ -37,26 +37,26 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * FileBufferFunctions
  */
 public abstract class FileStoreFileBufferFunctions extends TestCase {
-	
+
 	private IProject fProject;
 	protected ITextFileBufferManager fManager;
 	private IFileStore fFileStore;
-	
-	
+
+
 	protected abstract IPath createPath(IProject project) throws Exception;
-	
+
 	protected abstract void setReadOnly(boolean state) throws Exception;
-	
+
 	protected abstract boolean modifyUnderlyingFile() throws Exception;
-	
+
 	protected abstract boolean deleteUnderlyingFile() throws Exception;
-	
+
 	protected abstract IPath moveUnderlyingFile() throws Exception;
-	
+
 	protected abstract boolean isStateValidationSupported();
-	
+
 	protected abstract Class getAnnotationModelClass() throws Exception;
-	
+
 
 	protected void setUp() throws Exception {
 		fManager= FileBuffers.getTextFileBufferManager();
@@ -65,21 +65,21 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 		assertTrue(buffer == null);
 	}
-	
+
 	protected IProject getProject() {
 		return fProject;
 	}
-	
+
 	protected void tearDown() throws Exception {
 		ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 		assertTrue(buffer == null);
 		ResourceHelper.deleteProject("project");
 	}
-	
+
 	protected IPath getPath() {
 		return URIUtil.toPath(fFileStore.toURI());
 	}
-		
+
 	/*
 	 * Tests getLocation.
 	 */
@@ -88,12 +88,12 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		try {
 			ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertEquals(fFileStore, buffer.getFileStore());
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-		
+
 	/*
 	 * Tests isSynchronized.
 	 */
@@ -109,12 +109,12 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			long lastModified= fileStore.fetchInfo().getLastModified();
 			assertTrue(lastModified == EFS.NONE || !fileBuffer.isSynchronized());
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Tests isDirty.
 	 */
@@ -126,12 +126,12 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			IDocument document= fileBuffer.getDocument();
 			document.replace(document.getLength(), 0, "appendix");
 			assertTrue(fileBuffer.isDirty());
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Tests isShared.
 	 */
@@ -140,7 +140,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		try {
 			ITextFileBuffer fileBuffer1= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertFalse(fileBuffer1.isShared());
-			
+
 			fManager.connectFileStore(fFileStore, null);
 			try {
 				ITextFileBuffer fileBuffer2= fManager.getFileStoreTextFileBuffer(fFileStore);
@@ -149,14 +149,14 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 			assertFalse(fileBuffer1.isShared());
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Tests getModificationStamp.
 	 */
@@ -183,7 +183,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	public void test6() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
-			
+
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			// set dirty bit
 			IDocument document= fileBuffer.getDocument();
@@ -205,14 +205,14 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Test commit.
 	 */
 	public void test7() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
-			
+
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			// set dirty bit
 			IDocument document= fileBuffer.getDocument();
@@ -244,119 +244,119 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Test validateState.
 	 */
 	public void test8_1() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
-			
+
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			fileBuffer.validateState(null, null);
 			assertTrue(fileBuffer.isStateValidated());
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Test validateState.
 	 */
 	public void test8_2() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
-			
+
 			setReadOnly(true);
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			fileBuffer.validateState(null, null);
 			assertTrue(fileBuffer.isStateValidated());
-			
+
 		} finally {
 			setReadOnly(false);
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Test resetStateValidation.
 	 */
 	public void test9_1() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
-			
+
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			fileBuffer.validateState(null, null);
 			fileBuffer.resetStateValidation();
 			if (isStateValidationSupported())
 				assertFalse(fileBuffer.isStateValidated());
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Test resetStateValidation.
 	 */
 	public void test9_2() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
-			
+
 			setReadOnly(true);
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			fileBuffer.validateState(null, null);
 			fileBuffer.resetStateValidation();
 			if (isStateValidationSupported())
 				assertFalse(fileBuffer.isStateValidated());
-			
+
 		} finally {
 			setReadOnly(false);
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#bufferCreated and IFileBufferListener#bufferDisposed
 	 */
 	public void test10() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
-			
+
 			public void bufferCreated(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
-			
+
 			public void bufferDisposed(IFileBuffer buf) {
 				--count;
 				this.buffer= buf;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			
+
 			fManager.connectFileStore(fFileStore, null);
-			
+
 			assertTrue(listener.count == 1);
 			assertNotNull(listener.buffer);
 			IFileBuffer fileBuffer= fManager.getFileStoreFileBuffer(fFileStore);
 			assertTrue(listener.buffer == fileBuffer);
-			
+
 			fManager.disconnectFileStore(fFileStore, null);
 			assertTrue(listener.count == 0);
 			assertTrue(listener.buffer == fileBuffer);
-			
+
 		} finally {
 			try {
 				fManager.disconnectFileStore(fFileStore, null);
@@ -365,263 +365,263 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			}
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#dirtyStateChanged
 	 */
 	public void test11_1() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
 			public boolean isDirty;
-			
+
 			public void dirtyStateChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
 				this.isDirty= state;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			
+
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertTrue(listener.count == 0 && listener.buffer == null);
-			
+
 			fManager.connectFileStore(fFileStore, null);
 			try {
-				
+
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
-				
+
 				assertTrue(listener.count == 1);
 				assertTrue(listener.buffer == fileBuffer);
 				assertTrue(listener.isDirty);
-				
+
 				fileBuffer.commit(null, true);
-				
+
 				assertTrue(listener.count == 2);
 				assertTrue(listener.buffer == fileBuffer);
 				assertFalse(listener.isDirty);
-				
+
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#dirtyStateChanged
 	 */
 	public void test11_2() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
 			public boolean isDirty;
-			
+
 			public void dirtyStateChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
 				this.isDirty= state;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertTrue(listener.count == 0 && listener.buffer == null);
-			
+
 			fManager.connectFileStore(fFileStore, null);
 			try {
-				
+
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
-				
+
 				assertTrue(listener.count == 1);
 				assertTrue(listener.buffer == fileBuffer);
 				assertTrue(listener.isDirty);
-				
+
 				fileBuffer.revert(null);
-				
+
 				assertTrue(listener.count == 2);
 				assertTrue(listener.buffer == fileBuffer);
 				assertFalse(listener.isDirty);
-				
+
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#bufferContentAboutToBeReplaced/replaced
 	 */
 	public void test12_1() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer preBuffer, postBuffer;
 			public int preCount, postCount;
-			
+
 			public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
 				++preCount;
 				preBuffer= buffer;
 			}
-			
+
 			public void bufferContentReplaced(IFileBuffer buffer) {
 				++postCount;
 				postBuffer= buffer;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertTrue(listener.preCount == 0 && listener.postCount == 0 && listener.preBuffer == null && listener.postBuffer == null);
-			
+
 			fManager.connectFileStore(fFileStore, null);
 			try {
-				
+
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
-							
+
 				fileBuffer.revert(null);
-				
+
 				assertTrue(listener.preCount == 1);
 				assertTrue(listener.preBuffer == fileBuffer);
 				assertTrue(listener.postCount == 1);
 				assertTrue(listener.postBuffer == fileBuffer);
-				
+
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#bufferContentAboutToBeReplaced/replaced
 	 */
 	public void test12_2() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer preBuffer, postBuffer;
 			public int preCount, postCount;
-			
+
 			public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
 				++preCount;
 				preBuffer= buffer;
 			}
-			
+
 			public void bufferContentReplaced(IFileBuffer buffer) {
 				++postCount;
 				postBuffer= buffer;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertTrue(listener.preCount == 0 && listener.postCount == 0 && listener.preBuffer == null && listener.postBuffer == null);
-			
+
 			fManager.connectFileStore(fFileStore, null);
 			try {
-				
+
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
-							
+
 				if (modifyUnderlyingFile()) {
 					assertTrue(listener.preCount == 1);
 					assertTrue(listener.preBuffer == fileBuffer);
 					assertTrue(listener.postCount == 1);
 					assertTrue(listener.postBuffer == fileBuffer);
 				}
-				
+
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#stateValidationChanged
 	 */
 	public void test13_1() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
 			public boolean isStateValidated;
-			
+
 			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
 				this.isStateValidated= state;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertTrue(listener.count == 0 && listener.buffer == null);
-			
+
 			fManager.connectFileStore(fFileStore, null);
 			try {
-				
+
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				fileBuffer.validateState(null, null);
-				
+
 				if (isStateValidationSupported()) {
 					assertTrue(listener.count == 1);
 					assertTrue(listener.buffer == fileBuffer);
 					assertTrue(listener.isStateValidated);
 				}
-				
+
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#stateValidationChanged
 	 */
 	public void test13_2() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
 			public boolean isStateValidated;
-			
+
 			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
 				this.isStateValidated= state;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -645,7 +645,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				setReadOnly(false);
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
@@ -655,18 +655,18 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	 */
 	public void test13_3() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
 			public boolean isStateValidated;
-			
+
 			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
 				this.isStateValidated= state;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -679,7 +679,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				fileBuffer.validateState(null, null);
 				fileBuffer.resetStateValidation();
-				
+
 				if (isStateValidationSupported()) {
 					assertTrue(listener.count == 2);
 					assertTrue(listener.buffer == fileBuffer);
@@ -689,29 +689,29 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#stateValidationChanged
 	 */
 	public void test13_4() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
 			public boolean isStateValidated;
-			
+
 			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
 				this.isStateValidated= state;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -736,27 +736,27 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				setReadOnly(false);
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#underlyingFileDeleted
 	 */
 	public void test14() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
-			
+
 			public void underlyingFileDeleted(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -775,29 +775,29 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#underlyingFileMoved
 	 */
 	public void test15() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
 			public IPath newLocation;
-			
+
 			public void underlyingFileMoved(IFileBuffer buf, IPath location) {
 				++count;
 				this.buffer= buf;
 				this.newLocation= location;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -818,7 +818,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
@@ -829,16 +829,16 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	 */
 	public void test16_1() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
-			
+
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -857,27 +857,27 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#stateChanging for external changes
 	 */
 	public void test16_2() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
-			
+
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -896,7 +896,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
@@ -907,16 +907,16 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	 */
 	public void test16_3() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
-			
+
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -935,27 +935,27 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#stateChanging for internal changes
 	 */
 	public void test17_1() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
-			
+
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -967,7 +967,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				fileBuffer.validateState(null, null);
-				
+
 				if (isStateValidationSupported()) {
 					assertTrue(listener.count == 1);
 					assertTrue(listener.buffer == fileBuffer);
@@ -976,7 +976,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
@@ -986,16 +986,16 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	 */
 	public void test17_2() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
-			
+
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -1009,34 +1009,34 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 				fileBuffer.revert(null);
-				
+
 				assertTrue(listener.count == 1);
 				assertTrue(listener.buffer == fileBuffer);
 
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test IFileBufferListener#stateChanging for internal changes
 	 */
 	public void test17_3() throws Exception {
 		class Listener extends FileBufferListener {
-			
+
 			public IFileBuffer buffer;
 			public int count;
-			
+
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
 		}
-		
+
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
@@ -1050,19 +1050,19 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 				fileBuffer.commit(null, true);
-				
+
 				assertTrue(listener.count == 1);
 				assertTrue(listener.buffer == fileBuffer);
 
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
-			
+
 		} finally {
 			fManager.removeFileBufferListener(listener);
 		}
 	}
-	
+
 	/*
 	 * Test annotation model existence.
 	 * ATTENTION: This test is only effective in a workspace that contains the "org.eclipse.ui.editors" bundle.
@@ -1072,27 +1072,27 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		try {
 			ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertNotNull(buffer);
-			
+
 			Class clazz= getAnnotationModelClass();
 			if (clazz != null) {
 				IAnnotationModel model= buffer.getAnnotationModel();
 				assertTrue(clazz.isInstance(model));
 			}
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 	/*
 	 * Test notification in case of failing listener.
 	 */
 	public void test19() throws Exception {
-		
+
 		class NotifiedListener extends FileBufferListener {
-			
+
 			int notifyCount= 0;
-			
+
 			public void bufferCreated(IFileBuffer buffer) {
 				notifyCount++;
 			}
@@ -1100,22 +1100,22 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				notifyCount++;
 			}
 		}
-		
+
 		class ForcedException extends RuntimeException {
 			private static final long serialVersionUID= 1L;
 
 			public void printStackTrace(PrintStream s) {
 				s.println("!FORCED BY TEST: this entry is intentional");
 			}
-			
+
 			public void printStackTrace(PrintWriter s) {
 				s.println("!FORCED BY TEST: this entry is intentional");
 			}
 		}
-		
+
 		NotifiedListener notifyCounter1= new NotifiedListener();
 		NotifiedListener notifyCounter2= new NotifiedListener();
-		
+
 		FileBufferListener failingListener= new FileBufferListener() {
 			public void bufferCreated(IFileBuffer buffer) {
 				throw new ForcedException();
@@ -1124,33 +1124,33 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				throw new ForcedException();
 			}
 		};
-		
+
 		fManager.addFileBufferListener(notifyCounter1);
 		fManager.addFileBufferListener(failingListener);
 		fManager.addFileBufferListener(notifyCounter2);
-		
+
 		fManager.connectFileStore(fFileStore, null);
 		try {
 			ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertNotNull(buffer);
-			
+
 			Class clazz= getAnnotationModelClass();
 			if (clazz != null) {
 				IAnnotationModel model= buffer.getAnnotationModel();
 				assertTrue(clazz.isInstance(model));
 			}
-			
+
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
 			fManager.removeFileBufferListener(notifyCounter1);
 			fManager.removeFileBufferListener(failingListener);
 			fManager.removeFileBufferListener(notifyCounter2);
 		}
-		
+
 		assertEquals(2, notifyCounter1.notifyCount);
 		assertEquals(2, notifyCounter2.notifyCount);
 	}
-	
+
 	public void testGetBufferForDocument() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -1180,5 +1180,5 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
-	
+
 }

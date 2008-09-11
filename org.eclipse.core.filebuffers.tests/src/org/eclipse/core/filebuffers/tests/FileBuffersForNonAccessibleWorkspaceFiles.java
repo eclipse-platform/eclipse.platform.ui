@@ -25,19 +25,19 @@ import org.eclipse.core.filebuffers.FileBuffers;
  * FileBuffersForWorkspaceFiles
  */
 public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctions {
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		getProject().close(null);
 	}
-	
+
 	protected IPath createPath(IProject project) throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		IFile file= ResourceHelper.createFile(folder, "WorkspaceFile", "content");
 		return file.getFullPath();
 	}
 
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
@@ -45,7 +45,7 @@ public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctio
 		FileTool.delete(getPath());
 		super.tearDown();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
@@ -89,11 +89,11 @@ public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctio
 	protected Class getAnnotationModelClass() throws Exception {
 		return null;
 	}
-	
+
 	public void test7() throws Exception {
 		// disable because it might create a file outside the closed project
 	}
-	
+
 	public void test11_1() throws Exception {
 		// disable because it might create a file outside the closed project
 	}

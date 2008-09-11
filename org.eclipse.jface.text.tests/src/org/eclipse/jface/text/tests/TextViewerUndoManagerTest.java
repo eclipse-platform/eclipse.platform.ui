@@ -42,7 +42,7 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 	public static Test suite() {
 		return new TestSuite(TextViewerUndoManagerTest.class);
 	}
-	
+
 	/*
 	 * @see TestCase#TestCase(String)
 	 */
@@ -59,12 +59,12 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 	}
 
 	//--- DocumentUndoManager only ---
-	
+
 	public void internalTestTransferNonTextOp(final boolean isUndoable) throws Exception {
 		Object context= new Object();
 		DocumentUndoManager tempUndoManager= new DocumentUndoManager(new Document());
 		tempUndoManager.connect(context);
-		
+
 		IUndoableOperation operation= new AbstractOperation("") {
 			public boolean canUndo() {
 				return isUndoable;

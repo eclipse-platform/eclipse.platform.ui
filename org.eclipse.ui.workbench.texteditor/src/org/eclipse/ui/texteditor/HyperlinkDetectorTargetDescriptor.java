@@ -58,8 +58,8 @@ public final class HyperlinkDetectorTargetDescriptor {
 
 	/**
 	 * Creates a new descriptor from the given configuration element.
-	 * 
-	 * @param element the configuration element 
+	 *
+	 * @param element the configuration element
 	 */
 	private HyperlinkDetectorTargetDescriptor(IConfigurationElement element) {
 		Assert.isNotNull(element);
@@ -70,8 +70,8 @@ public final class HyperlinkDetectorTargetDescriptor {
 
 	/**
 	 * Returns the hyperlink detector target's id.
-	 * 
-	 * @return the hyperlink detector target's id 
+	 *
+	 * @return the hyperlink detector target's id
 	 */
 	public String getId() {
 		return fElement.getAttribute(ID_ATTRIBUTE);
@@ -79,18 +79,18 @@ public final class HyperlinkDetectorTargetDescriptor {
 
 	/**
 	 * Returns the hyperlink detector target's name.
-	 * 
-	 * @return the hyperlink detector target's name 
+	 *
+	 * @return the hyperlink detector target's name
 	 */
 	public String getName() {
 		return fElement.getAttribute(NAME_ATTRIBUTE);
 	}
-	
+
 	/**
 	 * Returns the types that the context of this
 	 * hyperlink detector target supports.
-	 * 
-	 * @return an array with type names that this target's context supports 
+	 *
+	 * @return an array with type names that this target's context supports
 	 */
 	public String[] getTypes() {
 		IConfigurationElement[] contexts= fElement.getChildren(CONTEXT_ELEMENT);
@@ -136,11 +136,11 @@ public final class HyperlinkDetectorTargetDescriptor {
 				String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetectorTarget_invalidElementName_message, new String[] { element.getContributor().getName(), element.getName() });
 				TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, null));
 			}
-			
+
 		}
 		return (HyperlinkDetectorTargetDescriptor[])result.toArray(new HyperlinkDetectorTargetDescriptor[result.size()]);
 	}
-	
+
 	private boolean isValid() {
 		return getId() != null && getName() != null;
 	}

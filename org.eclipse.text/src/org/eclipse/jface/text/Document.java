@@ -32,7 +32,7 @@ package org.eclipse.jface.text;
  * See {@link GapTextStore} and <code>TreeLineTracker</code> for algorithmic behavior of the used
  * document structures.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.GapTextStore
  * @see org.eclipse.jface.text.CopyOnWriteTextStore
  */
@@ -74,7 +74,7 @@ public class Document extends AbstractDocument {
 
 	/**
 	 * Checks whether the line information needs to be repaired.
-	 * 
+	 *
 	 * @param text the text to check
 	 * @return <code>true</code> if the line information must be repaired
 	 * @since 3.4
@@ -104,7 +104,7 @@ public class Document extends AbstractDocument {
 
 		if (defaultLD == null)
 			return false;
-		
+
 		defaultLD= getDefaultLineDelimiter();
 
 		if (defaultLD.length() == 1) {
@@ -114,8 +114,8 @@ public class Document extends AbstractDocument {
 				return true;
 		} else if (defaultLD.length() == 2)
 			return rIndex == -1 || nIndex - rIndex != 1;
-		
+
 		return false;
 	}
-	
+
 }

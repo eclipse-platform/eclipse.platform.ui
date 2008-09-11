@@ -196,7 +196,7 @@ class EditDocument implements IDocument {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.0 search is provided by {@link FindReplaceDocumentAdapter}
 	 */
 	public int search(int startOffset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException {

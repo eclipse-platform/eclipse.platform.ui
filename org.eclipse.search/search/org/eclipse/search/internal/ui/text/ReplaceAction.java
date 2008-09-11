@@ -21,7 +21,7 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 
 public class ReplaceAction extends Action {
 
-	public static class ReplaceWizard extends RefactoringWizard {	
+	public static class ReplaceWizard extends RefactoringWizard {
 		public ReplaceWizard(ReplaceRefactoring refactoring) {
 			super(refactoring, RefactoringWizard.DIALOG_BASED_USER_INTERFACE);
 		}
@@ -33,14 +33,14 @@ public class ReplaceAction extends Action {
 			addPage(new ReplaceConfigurationPage((ReplaceRefactoring) getRefactoring()));
 		}
 	}
-	
+
 	private final FileSearchResult fResult;
 	private final Object[] fSelection;
 	private final boolean fSkipFiltered;
 	private final Shell fShell;
 
 	/**
-	 * Creates the replace action to be 
+	 * Creates the replace action to be
 	 * @param shell the parent shell
 	 * @param result the file search page to
 	 * @param selection the selected entries or <code>null</code> to replace all
@@ -52,7 +52,7 @@ public class ReplaceAction extends Action {
 		fSelection= selection;
 		fSkipFiltered= skipFiltered;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */

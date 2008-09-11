@@ -17,14 +17,14 @@ package org.eclipse.jface.text;
  * operation of the provider.
  * <p>
  * Clients can implement that interface and its extension interfaces.</p>
- * 
+ *
  * @since 3.4
  */
 public interface IDelayedInputChangeProvider {
 
 	/**
 	 * Sets or clears the delayed input change listener.
-	 * 
+	 *
 	 * @param inputChangeListener the new delayed input change listener, or
 	 *        <code>null</code> if none
 	 * @since 3.4

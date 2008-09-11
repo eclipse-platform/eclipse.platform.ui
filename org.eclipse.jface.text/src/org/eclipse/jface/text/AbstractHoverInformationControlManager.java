@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -38,12 +32,19 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.internal.text.DelayedInputChangeListener;
 import org.eclipse.jface.internal.text.InformationControlReplacer;
 import org.eclipse.jface.internal.text.InternalAccessor;
+import org.eclipse.jface.util.Geometry;
+
 import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.text.source.AnnotationBarHoverManager;
-import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -63,14 +64,14 @@ import org.eclipse.jface.util.Geometry;
  * @since 2.0
  */
 abstract public class AbstractHoverInformationControlManager extends AbstractInformationControlManager {
-	
+
 	/**
 	 * The  information control closer for the hover information. Closes the information control as
 	 * soon as the mouse pointer leaves the subject area (unless "move into hover" is enabled),
 	 * a mouse button is pressed, the user presses a key, or the subject control is resized, moved, or loses focus.
 	 */
 	class Closer implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, SelectionListener, Listener {
-		
+
 		/** The closer's subject control */
 		private Control fSubjectControl;
 		/** The subject area */
@@ -130,17 +131,17 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					if (hBar != null)
 						hBar.addSelectionListener(this);
 				}
-				
+
 				fDisplay= fSubjectControl.getDisplay();
 				if (!fDisplay.isDisposed()) {
 					fDisplay.addFilter(SWT.Activate, this);
 					fDisplay.addFilter(SWT.MouseWheel, this);
-					
+
 					fDisplay.addFilter(SWT.FocusOut, this);
-					
+
 					fDisplay.addFilter(SWT.MouseDown, this);
 					fDisplay.addFilter(SWT.MouseUp, this);
-					
+
 					fDisplay.addFilter(SWT.MouseMove, this);
 					fDisplay.addFilter(SWT.MouseEnter, this);
 					fDisplay.addFilter(SWT.MouseExit, this);
@@ -179,12 +180,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.Activate, this);
 				fDisplay.removeFilter(SWT.MouseWheel, this);
-				
+
 				fDisplay.removeFilter(SWT.FocusOut, this);
-				
+
 				fDisplay.removeFilter(SWT.MouseDown, this);
 				fDisplay.removeFilter(SWT.MouseUp, this);
-				
+
 				fDisplay.removeFilter(SWT.MouseMove, this);
 				fDisplay.removeFilter(SWT.MouseEnter, this);
 				fDisplay.removeFilter(SWT.MouseExit, this);
@@ -261,13 +262,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		public void widgetSelected(SelectionEvent e) {
 			hideInformationControl();
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 * @since 3.1
@@ -293,7 +294,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 						}
 					}
 					break;
-					
+
 				case SWT.MouseUp:
 				case SWT.MouseDown:
 					if (!hasInformationControlReplacer())
@@ -319,7 +320,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 											}
 										});
 									}
-									
+
 									// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212392 :
 									control.getShell().getDisplay().asyncExec(new Runnable() {
 										public void run() {
@@ -341,7 +342,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					if (iControl != null && ! iControl.isFocusControl())
 						hideInformationControl();
 					break;
-					
+
 				case SWT.MouseMove:
 				case SWT.MouseEnter:
 				case SWT.MouseExit:
@@ -352,24 +353,24 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 		/**
 		 * Handle mouse movement events.
-		 * 
+		 *
 		 * @param event the event
 		 * @since 3.4
 		 */
 		private void handleMouseMove(Event event) {
 //			if (DEBUG)
 //				System.out.println("AbstractHoverInformationControl.Closer.handleMouseMove():" + event); //$NON-NLS-1$
-			
+
 			if (!(event.widget instanceof Control))
 				return;
 			Control eventControl= (Control) event.widget;
-			
+
 			//transform coordinates to subject control:
 			Point mouseLoc= event.display.map(eventControl, fSubjectControl, event.x, event.y);
-			
+
 			if (fSubjectArea.contains(mouseLoc))
 				return;
-			
+
 			IInformationControl iControl= getCurrentInformationControl();
 			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(iControl)) {
 				if (AbstractHoverInformationControlManager.this instanceof AnnotationBarHoverManager) {
@@ -379,7 +380,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				hideInformationControl();
 				return;
 			}
-			
+
 			IInformationControlExtension3 iControl3= (IInformationControlExtension3) iControl;
 			Rectangle controlBounds= iControl3.getBounds();
 			if (controlBounds != null) {
@@ -496,7 +497,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					System.out.println("AbstractHoverInformationControlManager...mouseHover: @ " + event.x + "/" + event.y + " : hover cancelled: fIsComputing= " + fIsComputing + ", fIsInRestartMode= " + fIsInRestartMode); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				return;
 			}
-			
+
 			fIsInRestartMode= true;
 			fIsComputing= true;
 			fMouseLostWhileComputing= false;
@@ -526,7 +527,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		protected void deactivate() {
 			if (fIsComputing)
 				return;
-			
+
 			fIsInRestartMode= false;
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseMoveListener(this);
@@ -632,24 +633,24 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	/**
 	 * The thread that delays replacing of the hover information control.
 	 * To be accessed in the UI thread only!
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private Job fReplacingDelayJob;
-	
+
 	/**
 	 * The {@link ITextViewerExtension8.EnrichMode}, may be <code>null</code>.
 	 * @since 3.4
 	 */
 	private EnrichMode fEnrichMode;
-	
+
 	/**
 	 * Indicates whether we have received a MouseDown event and are waiting for a MouseUp
 	 * (and don't replace the information control until that happened).
 	 * @since 3.4
 	 */
 	private boolean fWaitForMouseUp= false;
-	
+
 	/**
 	 * Creates a new hover information control manager using the given information control creator.
 	 * By default a <code>Closer</code> instance is set as this manager's closer.
@@ -665,21 +666,21 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	/**
 	 * Tests whether a given mouse location is within the keep-up zone.
 	 * The hover should not be hidden as long as the mouse stays inside this zone.
-	 * 
+	 *
 	 * @param x the x coordinate, relative to the <em>subject control</em>
 	 * @param y the y coordinate, relative to the <em>subject control</em>
 	 * @param subjectControl the subject control
 	 * @param subjectArea the area for which the presented information is valid
 	 * @param blowUp If <code>true</code>, then calculate for the closer, i.e. blow up the keepUp area.
 	 *        If <code>false</code>, then use tight bounds for hover detection.
-	 * 
+	 *
 	 * @return <code>true</code> iff the mouse event occurred in the keep-up zone
 	 * @since 3.4
 	 */
 	private boolean inKeepUpZone(int x, int y, Control subjectControl, Rectangle subjectArea, boolean blowUp) {
 		if (subjectArea.contains(x, y))
 			return true;
-		
+
 		IInformationControl iControl= getCurrentInformationControl();
 		if ((iControl instanceof IInformationControlExtension5 && !((IInformationControlExtension5) iControl).isVisible())) {
 			iControl= null;
@@ -692,7 +693,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 		if (iControl instanceof IInformationControlExtension3) {
 			IInformationControlExtension3 iControl3= (IInformationControlExtension3) iControl;
-			
+
 			Rectangle iControlBounds= subjectControl.getDisplay().map(null, subjectControl, iControl3.getBounds());
 			Rectangle totalBounds= Geometry.copy(iControlBounds);
 			if (blowUp && isReplaceInProgress()) {
@@ -701,11 +702,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				int margin= getInformationControlReplacer().getKeepUpMargin();
 				Geometry.expand(totalBounds, margin, margin, margin, margin);
 			}
-			
+
 			if (!blowUp) {
 				if (iControlBounds.contains(x, y))
 					return true;
-				
+
 				if (subjectArea.y + subjectArea.height < iControlBounds.y) {
 					// special case for hover events: subjectArea totally above iControl:
 					//  +-----------+
@@ -724,7 +725,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 						// FIXME: cases when subjectArea extends to left or right of iControl?
 					}
 					return false;
-					
+
 				} else if (iControlBounds.x + iControlBounds.width < subjectArea.x) {
 					// special case for hover events (e.g. in overview ruler): iControl totally left of subjectArea
 					// +--------------------+-----------+
@@ -740,7 +741,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 						}
 					}
 					return false;
-					
+
 				} else if (subjectArea.x + subjectArea.width < iControlBounds.x) {
 					// special case for hover events (e.g. in annotation ruler): subjectArea totally left of iControl
 					//             +-----------+--------------------+
@@ -758,7 +759,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					return false;
 				}
 			}
-			
+
 			// FIXME: should maybe use convex hull, not bounding box
 			totalBounds.add(subjectArea);
 			if (totalBounds.contains(x, y))
@@ -766,11 +767,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Tests whether the given information control allows the mouse to be moved
 	 * into it.
-	 * 
+	 *
 	 * @param iControl information control or <code>null</code> if none
 	 * @return <code>true</code> if information control allows mouse move into
 	 *         control, <code>false</code> otherwise
@@ -778,7 +779,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	boolean canMoveIntoInformationControl(IInformationControl iControl) {
 		return fEnrichMode != null && canReplace(iControl);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
 	 */
@@ -791,7 +792,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * Sets the hover enrich mode. Only applicable when an information
 	 * control replacer has been set with
 	 * {@link #setInformationControlReplacer(InformationControlReplacer)} .
-	 * 
+	 *
 	 * @param mode the enrich mode
 	 * @since 3.4
 	 * @see ITextViewerExtension8#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode)
@@ -799,7 +800,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	void setHoverEnrichMode(EnrichMode mode) {
 		fEnrichMode= mode;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#replaceInformationControl(boolean)
 	 */
@@ -807,7 +808,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		fWaitForMouseUp= false;
 		super.replaceInformationControl(takeFocus);
 	}
-	
+
 	/**
 	 * Cancels the replacing delay job.
 	 * @return <code>true</code> iff canceling was successful, <code>false</code> if replacing has already started
@@ -825,20 +826,20 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 //			System.out.println("AbstractHoverInformationControlManager.cancelReplacingDelay(): not delayed"); //$NON-NLS-1$
 		return true;
 	}
-	
+
 	/**
 	 * Starts replacing the information control, considering the current
 	 * {@link ITextViewerExtension8.EnrichMode}.
 	 * If set to {@link ITextViewerExtension8.EnrichMode#AFTER_DELAY}, this
 	 * method cancels previous requests and restarts the delay timer.
-	 * 
+	 *
 	 * @param display the display to be used for the call to
 	 *        {@link #replaceInformationControl(boolean)} in the UI thread
 	 */
 	private void startReplaceInformationControl(final Display display) {
 		if (fEnrichMode == EnrichMode.ON_CLICK)
 			return;
-		
+
 		if (fReplacingDelayJob != null) {
 			if (fReplacingDelayJob.getState() != Job.RUNNING) {
 				if (fReplacingDelayJob.cancel()) {
@@ -855,7 +856,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 			return;
 		}
-		
+
 		fReplacingDelayJob= new Job("AbstractHoverInformationControlManager Replace Delayer") { //$NON-NLS-1$
 			public IStatus run(final IProgressMonitor monitor) {
 		        if (monitor.isCanceled() || display.isDisposed()) {
@@ -960,12 +961,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	protected int getHoverEventStateMask() {
 		return fHoverEventStateMask;
  	}
-	
+
 	/**
 	 * Returns an adapter that gives access to internal methods.
 	 * <p>
 	 * <strong>Note:</strong> This method is not intended to be referenced or overridden by clients.</p>
-	 * 
+	 *
 	 * @return the replaceable information control accessor
 	 * @since 3.4
 	 * @noreference This method is not intended to be referenced by clients.

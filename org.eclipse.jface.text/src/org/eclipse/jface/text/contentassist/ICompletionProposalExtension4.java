@@ -17,7 +17,7 @@ package org.eclipse.jface.text.contentassist;
  * <ul>
  *   <li>specify whether a proposal is automatically insertable</li>
  * </ul>
- * 
+ *
  * @since 3.1
  */
 public interface ICompletionProposalExtension4 {
@@ -30,7 +30,7 @@ public interface ICompletionProposalExtension4 {
 	 * a list of proposals, but simply insert the single proposal. A
 	 * proposal may veto this behavior by returning <code>false</code>
 	 * to a call to this method.
-	 * 
+	 *
 	 * @return <code>true</code> if the proposal may be inserted
 	 *         automatically, <code>false</code> if not
 	 */

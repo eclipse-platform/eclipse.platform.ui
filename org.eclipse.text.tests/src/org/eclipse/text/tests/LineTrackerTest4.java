@@ -37,7 +37,7 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		fTracker= null;
 		fText= null;
 	}
-	
+
 	protected int getLineOffset(int line, int[] lines) {
 		int offset= 0;
 		for (int i= 0; i < line; i++)

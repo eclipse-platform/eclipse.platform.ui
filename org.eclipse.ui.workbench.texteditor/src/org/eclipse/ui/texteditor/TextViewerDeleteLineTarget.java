@@ -44,7 +44,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * A delete line target.
- * 
+ *
  * @since 3.4
  */
 public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
@@ -256,7 +256,7 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 
 	/**
 	 * Returns the document's delete region specified by position and type.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset
 	 * @param length the length
@@ -305,13 +305,13 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 		default:
 			throw new IllegalArgumentException();
 		}
-	
+
 		return clipToVisibleRegion(resultOffset, resultOffset + resultLength);
 	}
 
 	/**
 	 * Clips the given start and end offset to the visible viewer region.
-	 * 
+	 *
 	 * @param startOffset the start offset
 	 * @param endOffset the end offset
 	 * @return the clipped region
@@ -327,7 +327,7 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 
 		int visibleStart= visibleRegion.getOffset();
 		int visibleLength= visibleRegion.getLength();
-		
+
 		startOffset= Math.max(startOffset, visibleStart);
 		endOffset= Math.min(endOffset, visibleStart + visibleLength);
 		return new Region(startOffset, endOffset - startOffset);

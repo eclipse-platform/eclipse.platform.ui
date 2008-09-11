@@ -18,7 +18,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * for a page within the {@link TemplatesView}.
  * <p>
  * Clients can either implement this interface directly or subclass the {@link AbstractTemplatesPage}.
- * 
+ *
  * @see TemplatesView
  * @since 3.4
  */

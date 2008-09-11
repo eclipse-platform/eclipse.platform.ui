@@ -22,15 +22,15 @@ public class CollapseAllAction extends Action {
 	private TreeViewer fViewer;
 
 	public CollapseAllAction() {
-		super(SearchMessages.CollapseAllAction_0); 
-		setToolTipText(SearchMessages.CollapseAllAction_1); 
+		super(SearchMessages.CollapseAllAction_0);
+		setToolTipText(SearchMessages.CollapseAllAction_1);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_COLLAPSE_ALL);
 	}
-	
+
 	public void setViewer(TreeViewer viewer) {
 		fViewer= viewer;
 	}
-	
+
 	public void run() {
 		if (fViewer != null) {
 			fViewer.collapseAll();

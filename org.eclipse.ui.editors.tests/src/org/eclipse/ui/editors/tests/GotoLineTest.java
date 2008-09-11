@@ -35,25 +35,26 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+
 import org.eclipse.ui.texteditor.GotoLineAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
  * Tests the GotoLineAction.
- * 
+ *
  * @since 3.1
  */
 public class GotoLineTest extends TestCase {
-	
-	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3"; 
-	
+
+	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3";
+
 	public static Test suite() {
 		return new TestSuite(GotoLineTest.class);
 	}
-	
+
 	private IFile fFile;
-	
+
 	private String getOriginalContent() {
 		return ORIGINAL_CONTENT;
 	}
@@ -65,7 +66,7 @@ public class GotoLineTest extends TestCase {
 		IFolder folder= ResourceHelper.createFolder("GoToLineTestProject/goToLineTests/");
 		fFile= ResourceHelper.createFile(folder, "file.txt", getOriginalContent());
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -73,27 +74,27 @@ public class GotoLineTest extends TestCase {
 		ResourceHelper.deleteProject("GoToLineTestProject");
 		fFile= null;
 	}
-	
+
 	public void testGoToFirstLine() {
 		goToLine(0, 0);
 	}
-	
+
 	public void testGoToLastLine() {
 		goToLine(2, 2);
 	}
-	
+
 	public void testGoToInvalidLine() {
 		goToLine(1, 1);
 		goToLine(-1, 1);
 		goToLine(3, 1);
 	}
-	
+
 	private void goToLine(int line, int expectedResult) {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {
 			IEditorPart part= IDE.openEditor(page, fFile);
-			
+
 			if (part instanceof ITextEditor) {
 				ITextEditor editor= (ITextEditor) part;
 				IAction action= editor.getAction(ITextEditorActionConstants.GOTO_LINE);

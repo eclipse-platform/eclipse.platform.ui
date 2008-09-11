@@ -98,11 +98,11 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 
 	private void drawRangeIndication(GC gc, Canvas canvas, Rectangle r) {
 		final int MARGIN= 3;
-		
+
 		/* cap the height - at least on GTK, large numbers are converted to
 		 * negatives at some point */
 		int height= Math.min(r.y + r.height - MARGIN, canvas.getSize().y);
-		
+
 		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
 		gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 		gc.drawLine(r.x + 4, r.y + 12, r.x + 4, height);
@@ -120,7 +120,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 				FontMetrics fontMetrics= gc.getFontMetrics();
 				int delta= (fontMetrics.getHeight() - image.getBounds().height)/2;
 				rectangle.y += delta;
-				rectangle.height -= delta; 
+				rectangle.height -= delta;
 				drawRangeIndication(gc, canvas, rectangle);
 			}
 		}

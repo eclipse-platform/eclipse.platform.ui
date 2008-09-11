@@ -12,28 +12,28 @@ package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourceAttributes;
+import org.osgi.framework.Bundle;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 
 import org.eclipse.jface.text.source.IAnnotationModel;
-
-import org.osgi.framework.Bundle;
 
 /**
  * FileBuffersForLinkedFiles
  */
 public class FileBuffersForLinkedFiles extends FileBufferFunctions {
-	
+
 	private File fExternalFile;
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
@@ -42,7 +42,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 		FileTool.delete(fExternalFile.getParentFile());
 		super.tearDown();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
 	 */
@@ -53,7 +53,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 		IFile file= ResourceHelper.createLinkedFile(project, new Path("LinkedFile"), fExternalFile);
 		return file.getFullPath();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
@@ -70,7 +70,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 	protected boolean isStateValidationSupported() {
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#deleteUnderlyingFile()
 	 */
@@ -79,7 +79,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 		file.delete(true, false, null);
 		return file.exists();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#moveUnderlyingFile()
 	 */
@@ -88,11 +88,11 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 		ResourceHelper.createFolder("project/folderA");
 		IPath path= new Path("/project/folderA/MovedLinkedFile");
 		file.move(path, true, false, null);
-		
+
 		file= FileBuffers.getWorkspaceFileAtLocation(path);
 		if (file != null && file.exists())
 			return path;
-		
+
 		return null;
 	}
 

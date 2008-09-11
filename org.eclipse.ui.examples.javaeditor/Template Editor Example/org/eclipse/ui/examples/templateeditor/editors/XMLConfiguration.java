@@ -22,8 +22,9 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.examples.templateeditor.template.XMLCompletionProcessor;
+
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 public class XMLConfiguration extends TextSourceViewerConfiguration {
 

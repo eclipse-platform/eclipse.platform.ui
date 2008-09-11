@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+
 import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
 
 /**
@@ -87,7 +88,7 @@ public class QuickDiffExtensionsRegistry {
 				fDefaultDescriptor= desc;
 			list.add(desc);
 		}
-		
+
 		// make sure the default is the first one in the list
 		if (fDefaultDescriptor != null) {
 			list.remove(fDefaultDescriptor);

@@ -18,20 +18,20 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextStore;
 
 /**
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractLineTrackerTest extends TestCase {
 	protected ITextStore fText;
 	protected ILineTracker  fTracker;
-	
+
 	protected AbstractLineTrackerTest(String name) {
 		super(name);
 	}
-	
+
 	protected final void checkLines(int[] lines) throws BadLocationException {
 		assertEquals("number of lines", lines.length, fTracker.getNumberOfLines());
-	
+
 		for (int i= 0; i < lines.length; i++) {
 			IRegion line= fTracker.getLineInformation(i);
 
@@ -47,10 +47,10 @@ public abstract class AbstractLineTrackerTest extends TestCase {
 		fTracker.replace(offset, length, text);
 		fText.replace(offset, length, text);
 	}
-	
+
 	protected final void set(String string) {
 		fText.set(string);
 		fTracker.set(string);
     }
-	
+
 }

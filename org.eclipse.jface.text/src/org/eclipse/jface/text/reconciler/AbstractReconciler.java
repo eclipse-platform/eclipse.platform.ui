@@ -380,7 +380,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	public void setIsIncrementalReconciler(boolean isIncremental) {
 		fIsIncrementalReconciler= isIncremental;
 	}
-	
+
 	/**
 	 * Tells the reconciler whether it is allowed to change the document
 	 * inside its reconciler thread.
@@ -509,11 +509,11 @@ abstract public class AbstractReconciler implements IReconciler {
 			if (e.getLength() == 0 && e.getText() != null) {
 				// Insert
 				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
-	
+
 			} else if (e.getText() == null || e.getText().length() == 0) {
 				// Remove
 				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
-	
+
 			} else {
 				// Replace (Remove + Insert)
 				fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
@@ -554,7 +554,7 @@ abstract public class AbstractReconciler implements IReconciler {
 
 			if (fThread.isActive())
 				fProgressMonitor.setCanceled(true);
-			
+
 			if (fIsIncrementalReconciler) {
 				DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), fDocument.get());
 				createDirtyRegion(e);
@@ -591,11 +591,11 @@ abstract public class AbstractReconciler implements IReconciler {
      */
     protected void reconcilerReset() {
     }
-    
+
     /**
 	 * Tells whether the code is running in this reconciler's
 	 * background thread.
-	 * 
+	 *
 	 * @return <code>true</code> if running in this reconciler's background thread
 	 * @since 3.4
 	 */

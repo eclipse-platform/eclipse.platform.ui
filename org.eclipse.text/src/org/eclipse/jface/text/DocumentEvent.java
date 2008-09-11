@@ -23,12 +23,12 @@ import org.eclipse.core.runtime.Assert;
  * @see org.eclipse.jface.text.IDocument
  */
 public class DocumentEvent {
-	
+
 	/**
 	 * Debug option for asserting that text is not null.
 	 * If the <code>org.eclipse.text/debug/DocumentEvent/assertTextNotNull</code>
 	 * system property is <code>true</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private static final boolean ASSERT_TEXT_NOT_NULL= Boolean.getBoolean("org.eclipse.text/debug/DocumentEvent/assertTextNotNull"); //$NON-NLS-1$
@@ -128,7 +128,7 @@ public class DocumentEvent {
 	public long getModificationStamp() {
 		return fModificationStamp;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#toString()
 	 * @since 3.4

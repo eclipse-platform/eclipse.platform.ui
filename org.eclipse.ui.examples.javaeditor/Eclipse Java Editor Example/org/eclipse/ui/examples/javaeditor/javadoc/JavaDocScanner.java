@@ -15,7 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.text.rules.WordRule;
+
 import org.eclipse.ui.examples.javaeditor.util.JavaColorProvider;
 import org.eclipse.ui.examples.javaeditor.util.JavaWhitespaceDetector;
 
@@ -48,7 +56,7 @@ public class JavaDocScanner extends RuleBasedScanner {
 
 	/**
 	 * Create a new javadoc scanner for the given color provider.
-	 * 
+	 *
 	 * @param provider the color provider
 	 */
 	 public JavaDocScanner(JavaColorProvider provider) {

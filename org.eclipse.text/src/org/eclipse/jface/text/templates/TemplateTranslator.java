@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * <p>
  * Clients may only replace the <code>createVariable</code> method of this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class TemplateTranslator {
@@ -95,7 +95,7 @@ public class TemplateTranslator {
 				SPACES +
 			")?" +																//$NON-NLS-1$
 			"\\}|\\$"); // }|$													//$NON-NLS-1$
-	
+
 	/**
 	 * @since 3.3
 	 */
@@ -131,7 +131,7 @@ public class TemplateTranslator {
 	/**
 	 * Returns an error message if an error occurred for the last translation, <code>null</code>
 	 * otherwise.
-	 * 
+	 *
 	 * @return the error message if an error occurred during the most recent translation,
 	 *         <code>null</code> otherwise
 	 */
@@ -142,7 +142,7 @@ public class TemplateTranslator {
 	/**
 	 * Translates a template to a <code>TemplateBuffer</code>. <code>null</code> is returned if
 	 * there was an error. <code>getErrorMessage()</code> retrieves the associated error message.
-	 * 
+	 *
 	 * @param template the template to translate.
 	 * @return returns the template buffer corresponding to the string
 	 * @see #getErrorMessage()
@@ -156,7 +156,7 @@ public class TemplateTranslator {
 	 * Translates a template string to <code>TemplateBuffer</code>. <code>null</code> is
 	 * returned if there was an error. <code>getErrorMessage()</code> retrieves the associated
 	 * error message.
-	 * 
+	 *
 	 * @param string the string to translate.
 	 * @return returns the template buffer corresponding to the string
 	 * @see #getErrorMessage()
@@ -168,18 +168,18 @@ public class TemplateTranslator {
 
 	/**
 	 * Internal parser.
-	 * 
+	 *
 	 * @param string the string to parse
 	 * @return the parsed <code>TemplateBuffer</code>
 	 * @throws TemplateException if the string does not conform to the template format
 	 */
 	private TemplateBuffer parse(String string) throws TemplateException {
-		
+
 		fErrorMessage= null;
 		final StringBuffer buffer= new StringBuffer(string.length());
 		final Matcher matcher= ESCAPE_PATTERN.matcher(string);
 		final Map variables= new LinkedHashMap();
-		
+
 		int complete= 0;
 		while (matcher.find()) {
 			// append any verbatim text
@@ -197,9 +197,9 @@ public class TemplateTranslator {
 				String typeName= matcher.group(2);
 				String params= matcher.group(3);
 				TemplateVariableType type= createType(typeName, params);
-				
+
 				updateOrCreateVariable(variables, name, type, buffer.length());
-				
+
 				buffer.append(name);
 			}
 			complete= matcher.end();
@@ -242,7 +242,7 @@ public class TemplateTranslator {
 	 * If there is no variable named <code>name</code>, a new variable with the given type, name
 	 * and offset is created. If one exists, the offset is added to the variable and the type is
 	 * merged with the existing type.
-	 * 
+	 *
 	 * @param variables the variables by variable name
 	 * @param name the name of the variable
 	 * @param type the variable type, <code>null</code> for not defined
@@ -263,7 +263,7 @@ public class TemplateTranslator {
 
 	/**
 	 * Creates proper {@link TemplateVariable}s from the variable descriptions.
-	 * 
+	 *
 	 * @param variables the variable descriptions by variable name
 	 * @return the corresponding variables
 	 * @since 3.3
@@ -291,14 +291,14 @@ public class TemplateTranslator {
 		fCurrentType= null; // avoid dangling reference
 		return result;
 	}
-	
+
 	/**
 	 * Hook method to create new variables. Subclasses may override to supply their custom variable
 	 * type.
 	 * <p>
 	 * Clients may replace this method.
 	 * </p>
-	 * 
+	 *
 	 * @param type the type of the new variable.
 	 * @param name the name of the new variable.
 	 * @param offsets the offsets where the variable occurs in the template
@@ -308,14 +308,14 @@ public class TemplateTranslator {
 	protected TemplateVariable createVariable(String type, String name, int[] offsets) {
 		return createVariable(fCurrentType, name, offsets);
 	}
-	
+
 	/**
 	 * Hook method to create new variables. Subclasses may override to supply their custom variable
 	 * type.
 	 * <p>
 	 * Clients may replace this method.
 	 * </p>
-	 * 
+	 *
 	 * @param type the type of the new variable.
 	 * @param name the name of the new variable.
 	 * @param offsets the offsets where the variable occurs in the template

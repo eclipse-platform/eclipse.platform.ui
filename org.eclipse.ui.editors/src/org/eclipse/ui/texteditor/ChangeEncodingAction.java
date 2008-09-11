@@ -30,11 +30,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 
-import org.eclipse.ui.editors.text.IEncodingSupport;
-
 import org.eclipse.ui.ide.dialogs.AbstractEncodingFieldEditor;
 import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
+
+import org.eclipse.ui.editors.text.IEncodingSupport;
 
 /**
  * Action for changing the encoding of the editor's

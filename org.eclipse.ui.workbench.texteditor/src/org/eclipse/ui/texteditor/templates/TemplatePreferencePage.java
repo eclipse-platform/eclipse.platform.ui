@@ -140,7 +140,7 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  */
 public abstract class TemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	
+
 	/**
 	 * Dialog to edit a template. Clients will usually instantiate, but
 	 * may also extend.
@@ -330,7 +330,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				}
 
 				fContextCombo.addModifyListener(listener);
-				
+
 				fAutoInsertCheckbox= createCheckbox(composite, TemplatesMessages.EditTemplateDialog_autoinsert);
 				fAutoInsertCheckbox.setSelection(fOriginalTemplate.isAutoInsertable());
 			}
@@ -382,7 +382,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			applyDialogFont(parent);
 			return composite;
 		}
-		
+
 		private void doTextWidgetChanged(Widget w) {
 			if (w == fNameText) {
 				fSuppressError= false;
@@ -426,7 +426,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		/**
 		 * Return the grid data for the button.
-		 * 
+		 *
 		 * @param button the button
 		 * @return the grid data
 		 */
@@ -457,14 +457,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			Button button= new Button(parent, SWT.CHECK);
 			button.setText(name);
 			button.setLayoutData(new GridData());
-			
+
 			return button;
 		}
-		
+
 		private SourceViewer createEditor(Composite parent, String pattern) {
 			SourceViewer viewer= createViewer(parent);
 			viewer.setEditable(true);
-			
+
 			IDocument document= viewer.getDocument();
 			if (document != null)
 				document.set(pattern);
@@ -533,14 +533,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 					handlerService.deactivateHandlers(handlerActivations);
 				}
 			});
-			
+
 			Expression expression= new ActiveShellExpression(fPatternEditor.getControl().getShell());
-			
+
 			TextViewerAction action= new TextViewerAction(fPatternEditor, ITextOperationTarget.UNDO);
 			action.setText(TemplatesMessages.EditTemplateDialog_undo);
 			fGlobalActions.put(ITextEditorActionConstants.UNDO, action);
 			handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.UNDO, new ActionHandler(action), expression));
-			
+
 			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.REDO);
 			action.setText(TemplatesMessages.EditTemplateDialog_redo);
 			fGlobalActions.put(ITextEditorActionConstants.REDO, action);
@@ -584,7 +584,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			Menu menu= manager.createContextMenu(text);
 			text.setMenu(menu);
 		}
-		
+
 		private void fillContextMenu(IMenuManager menu) {
 			menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_UNDO));
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, (IAction) fGlobalActions.get(ITextEditorActionConstants.UNDO));
@@ -659,11 +659,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		public Template getTemplate() {
 			return fNewTemplate;
 		}
-		
+
 		/**
 		 * Returns the content assist processor that
 		 * suggests template variables.
-		 * 
+		 *
 		 * @return the processor to suggest variables
 		 * @since 3.3
 		 */
@@ -685,8 +685,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 
 	}
-	
-	
+
+
 	/**
 	 * Label provider for templates.
 	 */
@@ -827,7 +827,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
         data.widthHint= 360;
         data.heightHint= convertHeightInCharsToPixels(10);
         tableComposite.setLayoutData(data);
-        
+
         ColumnLayout columnLayout= new ColumnLayout();
         tableComposite.setLayout(columnLayout);
 		Table table= new Table(tableComposite, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -837,7 +837,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		GC gc= new GC(getShell());
 		gc.setFont(JFaceResources.getDialogFont());
-		
+
 		TableColumn column1= new TableColumn(table, SWT.NONE);
 		column1.setText(TemplatesMessages.TemplatePreferencePage_column_name);
 		int minWidth= computeMinimumColumnWidth(gc, TemplatesMessages.TemplatePreferencePage_column_name);
@@ -859,7 +859,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		minWidth= computeMinimumColumnWidth(gc, TemplatesMessages.TemplatePreferencePage_column_autoinsert);
 		minWidth= Math.max(minWidth, computeMinimumColumnWidth(gc, TemplatesMessages.TemplatePreferencePage_on));
 		columnLayout.addColumnData(new ColumnPixelData(minWidth, false, false));
-		
+
 		gc.dispose();
 
 		fTableViewer= new CheckboxTableViewer(table);
@@ -995,7 +995,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		updateButtons();
 		Dialog.applyDialogFont(parent);
 		innerParent.layout();
-		
+
 		return parent;
 	}
 
@@ -1021,7 +1021,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	/**
 	 * Creates a separator between buttons.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return a separator
 	 */
@@ -1035,7 +1035,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		separator.setLayoutData(gd);
 		return separator;
 	}
-	
+
 
 	/**
 	 * Returns whether the formatter preference checkbox should be shown.
@@ -1065,7 +1065,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		label.setLayoutData(data);
 
 		SourceViewer viewer= createViewer(parent);
-		
+
 		viewer.setEditable(false);
 		Cursor arrowCursor= viewer.getTextWidget().getDisplay().getSystemCursor(SWT.CURSOR_ARROW);
 		viewer.getTextWidget().setCursor(arrowCursor);
@@ -1099,7 +1099,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	/**
 	 * Return the grid data for the button.
-	 * 
+	 *
 	 * @param button the button
 	 * @return the grid data
 	 */

@@ -161,7 +161,7 @@ public class TextEditProcessor {
 	 * <p>
 	 * Note that this class isn't intended to be subclassed.
 	 * </p>
-	 * 
+	 *
 	 * @param edit the text edit
 	 * @return <code>true</code> if this processor considers the given edit
 	 */

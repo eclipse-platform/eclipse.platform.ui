@@ -75,22 +75,22 @@ import org.eclipse.jface.text.TextUtilities;
  * instantiate this class and configure it before using it.
  */
 public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IContentAssistantExtension3, IContentAssistantExtension4, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
-	
-	
-	
+
+
+
 	/**
 	 * Content assist command identifier for 'select next proposal'.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final String SELECT_NEXT_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectNextProposal"; //$NON-NLS-1$
 	/**
 	 * Content assist command identifier for 'select previous proposal'.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final String SELECT_PREVIOUS_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectPreviousProposal"; //$NON-NLS-1$
-	
+
 
 	/**
 	 * A generic closer class used to monitor various interface events in order to determine whether
@@ -241,7 +241,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * implementation utilizes a thread to watch for input characters matching the activation
 	 * characters specified by the content assist processor, and if detected, will wait the
 	 * indicated delay interval before activating the content assistant.
-	 * 
+	 *
 	 * @since 3.4 protected, was added in 2.1 as private class
 	 */
 	protected class AutoAssistListener extends KeyAdapter implements Runnable, VerifyKeyListener {
@@ -310,10 +310,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			// Only act on typed characters and ignore modifier-only events
 			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
 				return;
-			
+
 			if (e.character != 0 && (e.stateMask == SWT.ALT))
 				return;
-			
+
 			// Only act on characters that are trigger candidates. This
 			// avoids computing the model selection on every keystroke
 			if (computeAllAutoActivationTriggers().indexOf(e.character) < 0) {
@@ -356,20 +356,20 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			final Control control= fContentAssistSubjectControlAdapter.getControl();
 			if (control == null)
 				return;
-			
+
 			final Display d= control.getDisplay();
 			if (d == null)
 				return;
-			
+
 			try {
 				d.syncExec(new Runnable() {
 					public void run() {
 						if (isProposalPopupActive())
 							return;
-						
+
 						if (control.isDisposed() || !control.isFocusControl())
 							return;
-						
+
 						if (showStyle == SHOW_PROPOSALS) {
 							if (!prepareToShowCompletions(true))
 								return;
@@ -476,7 +476,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		/**
 		 * Layouts the popup defined by <code>type</code> at the given widget offset.
-		 * 
+		 *
 		 * @param type the kind of popup to layout
 		 * @param offset the widget offset
 		 */
@@ -589,7 +589,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		/**
 		 * Moves <code>point</code> such that <code>rectangle</code> does not bleed outside of
 		 * <code>bounds</code>. All coordinates must have the same reference.
-		 * 
+		 *
 		 * @param point the point to move if needed
 		 * @param shellSize the size of the shell that may be moved
 		 * @param bounds the bounds
@@ -601,10 +601,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 			if (point.x < bounds.x)
 				point.x= bounds.x;
-			
+
 			if (point.y + shellSize.y > bounds.y + bounds.height)
 				point.y= bounds.y + bounds.height - shellSize.y;
-			
+
 			if (point.y < bounds.y)
 				point.y= bounds.y;
 		}
@@ -613,20 +613,20 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			// clip width
 			if (rect.width > bounds.width)
 				rect.width= bounds.width;
-			
+
 			if (rect.x + rect.width > bounds.x + bounds.width)
 				rect.x= bounds.x + bounds.width - rect.width;
 			if (rect.x < bounds.x)
 				rect.x= bounds.x;
-			
+
 			return rect;
 		}
-		
+
 		/**
 		 * Returns the display bounds for <code>shell</code> such that it appears right above
 		 * <code>offset</code>, or below it if above is not suitable. The returned bounds lie
 		 * within the monitor at the caret location and never overlap with the caret line.
-		 * 
+		 *
 		 * @param shell the shell to compute the placement for
 		 * @param preferred the preferred size for <code>shell</code>
 		 * @param offset the caret offset in the subject control
@@ -640,7 +640,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			Monitor monitor= getClosestMonitor(display, caret);
 			Rectangle bounds= monitor.getClientArea();
 			Geometry.moveInside(caret, bounds);
-			
+
 			int spaceAbove= caret.y - bounds.y;
 			int caretLowerY= caret.y + caret.height;
 			int spaceBelow= bounds.y + bounds.height - caretLowerY;
@@ -654,7 +654,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				rect= new Rectangle(caret.x, bounds.y, preferred.x, spaceAbove);
 			else
 				rect= new Rectangle(caret.x, caretLowerY, preferred.x, spaceBelow);
-			
+
 			return constrainHorizontally(rect, bounds);
 		}
 
@@ -662,7 +662,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * Returns the display bounds for <code>shell</code> such that it appears right below
 		 * <code>offset</code>, or above it if below is not suitable. The returned bounds lie
 		 * within the monitor at the caret location and never overlap with the caret line.
-		 * 
+		 *
 		 * @param shell the shell to compute the placement for
 		 * @param preferred the preferred size for <code>shell</code>
 		 * @param offset the caret offset in the subject control
@@ -698,10 +698,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				rect= new Rectangle(caret.x, bounds.y, preferred.x, spaceAbove);
 				switched= true;
 			}
-			
+
 			if (popup != null)
 				popup.switchedPositionToAbove(switched);
-			
+
 			return constrainHorizontally(rect, bounds);
 		}
 
@@ -714,7 +714,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			Rectangle subjectRectangle= new Rectangle(location.x, location.y, 1, fContentAssistSubjectControlAdapter.getLineHeight());
 			return subjectRectangle;
 		}
-		
+
 		protected Point getStackedLocation(Shell shell, Shell parent) {
 			Point p= parent.getLocation();
 			Point size= parent.getSize();
@@ -754,7 +754,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * contains the given point. If no monitor contains the point, returns the monitor that is
 		 * closest to the point. If this is ever made public, it should be moved into a separate
 		 * utility class.
-		 * 
+		 *
 		 * @param toSearch point to find (display coordinates)
 		 * @param rectangle rectangle to find (display coordinates)
 		 * @return the monitor closest to the given point
@@ -959,7 +959,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private boolean fIsStatusLineVisible;
 	/**
 	 * The last system time when auto activation performed.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private long fLastAutoActivation= Long.MIN_VALUE;
@@ -969,17 +969,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	private KeySequence fRepeatedInvocationKeySequence;
-	
+
 	/**
 	 * Maps handler to command identifiers.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private Map fHandlers;
-	
+
 	/**
 	 * Tells whether colored labels support is enabled.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private boolean fIsColoredLabelsSupportEnabled= false;
@@ -1134,7 +1134,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * This method allows subclasses to provide their own {@link AutoAssistListener}.
-	 * 
+	 *
 	 * @return a new auto assist listener
 	 * @since 3.4
 	 */
@@ -1155,7 +1155,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Gets the delay after which the content assistant is automatically invoked if the cursor is
 	 * behind an auto activation character.
-	 * 
+	 *
 	 * @return the auto activation delay
 	 * @since 3.4
 	 */
@@ -1235,7 +1235,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Returns the foreground of the context information popup.
-	 * 
+	 *
 	 *
 	 * @return the foreground of the context information popup
 	 * @since 2.0
@@ -1402,7 +1402,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public void uninstall() {
 		hide();
 		manageAutoActivation(false);
-		
+
 		if (fHandlers != null) {
 			fHandlers.clear();
 			fHandlers= null;
@@ -1451,10 +1451,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	void layout(int type, int visibleOffset) {
 		fLayoutManager.layout(type, visibleOffset);
 	}
-	
+
 	/**
 	 * Returns the layout manager.
-	 * 
+	 *
 	 * @return the layout manager
 	 * @since 3.3
 	 */
@@ -1673,7 +1673,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Prepares to show content assist proposals. It returns false if auto activation has kicked in
 	 * recently.
-	 * 
+	 *
 	 * @param isAutoActivated  whether completion was triggered by auto activation
 	 * @return <code>true</code> if the caller should continue and show the proposals,
 	 *         <code>false</code> otherwise.
@@ -1684,7 +1684,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		int gracePeriod= Math.max(fAutoActivationDelay, 200);
 		if (current < fLastAutoActivation + gracePeriod)
 			return false;
-		
+
 	    promoteKeyListener();
 		fireSessionBeginEvent(isAutoActivated);
 		return true;
@@ -2076,7 +2076,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * <li>{@link ContentAssistant#STORE_SIZE_Y}</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param dialogSettings the dialog settings
 	 * @since 3.0
 	 */
@@ -2160,10 +2160,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public void enablePrefixCompletion(boolean enabled) {
 		fIsPrefixCompletionEnabled= enabled;
 	}
-	
+
 	/**
 	 * Returns the prefix completion state.
-	 * 
+	 *
      * @return <code>true</code> if prefix completion is enabled, <code>false</code> otherwise
      * @since 3.2
      */
@@ -2200,7 +2200,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Fires a session begin event to all registered {@link ICompletionListener}s.
-	 * 
+	 *
 	 * @param isAutoActivated  <code>true</code> if this session was triggered by auto activation
 	 * @since 3.2
 	 */
@@ -2215,7 +2215,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			}
 		}
 	}
-	
+
 	/**
 	 * Fires a session restart event to all registered {@link ICompletionListener}s.
 	 *
@@ -2369,17 +2369,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Returns the repeated invocation key sequence.
-	 * 
+	 *
 	 * @return the repeated invocation key sequence or <code>null</code>, if none
 	 * @since 3.2
 	 */
 	KeySequence getRepeatedInvocationKeySequence() {
 		return fRepeatedInvocationKeySequence;
 	}
-	
+
 	/**
 	 * Returns whether proposal popup is active.
-	 * 
+	 *
 	 * @return <code>true</code> if the proposal popup is active, <code>false</code> otherwise
 	 * @since 3.4
 	 */
@@ -2389,7 +2389,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Returns whether the context information popup is active.
-	 * 
+	 *
 	 * @return <code>true</code> if the context information popup is active, <code>false</code> otherwise
 	 * @since 3.4
 	 */
@@ -2399,7 +2399,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public final IHandler getHandler(String commandId) {
@@ -2409,14 +2409,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		IHandler handler= (IHandler)fHandlers.get(commandId);
 		if (handler != null)
 			return handler;
-		
+
 		Assert.isLegal(false);
 		return null;
 	}
 
 	/**
 	 * Registers the given handler under the given command identifier.
-	 * 
+	 *
 	 * @param commandId the command identifier
 	 * @param handler the handler
 	 * @since 3.4
@@ -2429,7 +2429,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Tells whether the support for colored labels is enabled.
-	 * 
+	 *
 	 * @return <code>true</code> if the support for colored labels is enabled, <code>false</code> otherwise
 	 * @since 3.4
 	 */
@@ -2441,7 +2441,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Enables the support for colored labels in the proposal popup.
 	 * <p>Completion proposals can implement {@link ICompletionProposalExtension6}
 	 * to provide colored proposal labels.</p>
-	 * 
+	 *
 	 * @param isEnabled if <code>true</code> the support for colored labels is enabled in the proposal popup
 	 * @since 3.4
 	 */

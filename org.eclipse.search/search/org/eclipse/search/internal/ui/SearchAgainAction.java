@@ -18,10 +18,10 @@ import org.eclipse.jface.action.Action;
 class SearchAgainAction extends Action {
 
 	public SearchAgainAction() {
-		super(SearchMessages.SearchResultView_searchAgain_text); 
-		setToolTipText(SearchMessages.SearchResultView_searchAgain_tooltip); 
+		super(SearchMessages.SearchResultView_searchAgain_text);
+		setToolTipText(SearchMessages.SearchResultView_searchAgain_tooltip);
 	}
-	
+
 	public void run() {
 		Search selected= SearchManager.getDefault().getCurrentSearch();
 		if (selected != null)

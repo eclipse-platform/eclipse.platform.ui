@@ -29,19 +29,19 @@ import org.eclipse.jface.text.rules.WordRule;
  * @since 3.3
  */
 public class WordRuleTest extends TestCase {
-	
-	
+
+
 	private static class SimpleWordDetector implements IWordDetector {
 		public boolean isWordStart(char c) {
 			return !Character.isWhitespace(c);
 		}
-		
+
 		public boolean isWordPart(char c) {
 			return !Character.isWhitespace(c);
 		}
 	}
 
-	
+
 	/*
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=163116
 	 */
@@ -72,24 +72,24 @@ public class WordRuleTest extends TestCase {
 		assertTrue(i < 1000);
 
 	}
-	
+
 	/*
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=144355
 	 */
 	public void testBug144355() throws Exception {
 		IWordDetector detector= new SimpleWordDetector();
-		
+
 		String defaultTokenString= "defaultToken";
 		Token defaultToken= new Token(defaultTokenString);
-		
+
 		String testTokenStringNormal= "TestTokenString";
 		String testTokenStringDifferentCapitalization= "TestTOKENString";
 		String testTokenStringCompletelyDifferent= "XXX";
 		Token normalToken= new Token(testTokenStringNormal);
-		
+
 		WordRule rule= new WordRule(detector, defaultToken, true);
 		rule.addWord(testTokenStringNormal, normalToken);
-		
+
 		// scenario 1
 		// pre: pass in a normal string ("TestTokenString")
 		// post: expect the normal token to be returned
@@ -97,7 +97,7 @@ public class WordRuleTest extends TestCase {
 		scanner.setRules(new IRule[] {rule});
 		scanner.setRange(new Document(testTokenStringNormal), 0, testTokenStringNormal.length());
 		assertTrue(scanner.nextToken().getData().equals(testTokenStringNormal));
-		
+
 		// scenario 2
 		// pre: pass in a normal string but different capitalization ("TestTOKENString")
 		// post: expect the normal token to be returned
@@ -105,7 +105,7 @@ public class WordRuleTest extends TestCase {
 		scanner.setRules(new IRule[] {rule});
 		scanner.setRange(new Document(testTokenStringDifferentCapitalization), 0, testTokenStringDifferentCapitalization.length());
 		assertTrue(scanner.nextToken().getData().equals(testTokenStringNormal));
-		
+
 		// scenario 3
 		// pre: pass in a completely different string ("XXX")
 		// post: expect the default token to be returned because the string can't be matched
@@ -113,10 +113,10 @@ public class WordRuleTest extends TestCase {
 		scanner.setRules(new IRule[] {rule});
 		scanner.setRange(new Document(testTokenStringCompletelyDifferent), 0, testTokenStringCompletelyDifferent.length());
 		assertTrue(scanner.nextToken().getData().equals(defaultTokenString));
-		
+
 		WordRule ruleWithoutIgnoreCase= new WordRule(detector, defaultToken);
 		ruleWithoutIgnoreCase.addWord(testTokenStringNormal, normalToken);
-		
+
 		// scenario 4
 		// pre: pass in a normal string ("TestTokenString")
 		// post: expect the normal token to be returned
@@ -124,7 +124,7 @@ public class WordRuleTest extends TestCase {
 		scanner.setRules(new IRule[] {ruleWithoutIgnoreCase});
 		scanner.setRange(new Document(testTokenStringNormal), 0, testTokenStringNormal.length());
 		assertTrue(scanner.nextToken().getData().equals(testTokenStringNormal));
-		
+
 		// scenario 5
 		// pre: pass in a normal string but different capitalization ("TestTOKENString")
 		// post: expect the default token to be returned
@@ -133,69 +133,69 @@ public class WordRuleTest extends TestCase {
 		scanner.setRange(new Document(testTokenStringDifferentCapitalization), 0, testTokenStringDifferentCapitalization.length());
 		assertTrue(scanner.nextToken().getData().equals(defaultTokenString));
 	}
-	
+
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=175712
 	public void testBug175712_1() throws Exception {
 		IRule[] rules= new IRule[2];
-		
+
 		IToken stepToken= new Token(new TextAttribute(null, null, SWT.BOLD));
 		PatternRule stepRule= new PatternRule("(((", ")", stepToken, (char) 0,false);
 		stepRule.setColumnConstraint(-1);
 		rules[1]= stepRule;
-		
+
 		IToken titleToken= new Token(new TextAttribute(null, null, SWT.BOLD));
 		WordRule wordRule= new WordRule(new SimpleWordDetector());
 		wordRule.addWord("((", titleToken);
 		rules[0]= wordRule;
-		
+
 		IDocument document= new Document("((( \n((\n- Cheese\n- Wine");
 		RuleBasedScanner scanner= new RuleBasedScanner();
 		scanner.setRules(rules);
 		scanner.setRange(document, 0, document.getLength());
-		
+
 		IToken defaultToken= new Token(this);
 		scanner.setDefaultReturnToken(defaultToken);
 
 		IToken token= scanner.nextToken();
 		assertSame(defaultToken, token);
-		
+
 		token= scanner.nextToken();
 		assertSame(defaultToken, token);
-		
+
 		token= scanner.nextToken();
 		assertSame(defaultToken, token);
-		
+
 		token= scanner.nextToken();
 		assertSame(titleToken, token);
-		
+
 	}
-	
+
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=175712
 	public void testBug175712_2() throws Exception {
 		IRule[] rules= new IRule[2];
-		
+
 		IToken stepToken= new Token(new TextAttribute(null, null, SWT.BOLD));
 		PatternRule stepRule= new PatternRule("(((", ")", stepToken, (char) 0,false);
 		stepRule.setColumnConstraint(-1);
 		rules[1]= stepRule;
-		
+
 		IToken titleToken= new Token(new TextAttribute(null, null, SWT.BOLD));
 		WordRule wordRule= new WordRule(new SimpleWordDetector());
 		wordRule.addWord("((", titleToken);
 		rules[0]= wordRule;
-		
+
 		IDocument document= new Document("((\n((\n- Cheese\n- Wine");
 		RuleBasedScanner scanner= new RuleBasedScanner();
 		scanner.setRules(rules);
 		scanner.setRange(document, 0, document.getLength());
-		
+
 		IToken defaultToken= new Token(this);
 		scanner.setDefaultReturnToken(defaultToken);
-		
+
 		IToken token= scanner.nextToken();
 		assertSame(titleToken, token);
-		
+
 	}
-	
-	
+
+
 }

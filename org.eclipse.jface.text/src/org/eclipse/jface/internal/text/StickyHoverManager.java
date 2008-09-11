@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import org.eclipse.jface.util.Geometry;
+
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension3;
 import org.eclipse.jface.text.IInformationControlExtension5;
@@ -34,7 +36,6 @@ import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -72,7 +73,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 	class Closer implements IInformationControlCloser, ControlListener, MouseListener, IViewportListener, KeyListener, FocusListener, Listener {
 		//TODO: Catch 'Esc' key in fInformationControlToClose: Don't dispose, just hideInformationControl().
 		// This would allow to reuse the information control also when the user explicitly closes it.
-		
+
 		//TODO: if subject control is a Scrollable, should add selection listeners to both scroll bars
 		// (and remove the ViewPortListener, which only listens to vertical scrolling)
 
@@ -113,7 +114,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 			}
 
 			fTextViewer.addViewportListener(this);
-			
+
 			IInformationControl fInformationControlToClose= getCurrentInformationControl2();
 			if (fInformationControlToClose != null)
 				fInformationControlToClose.addFocusListener(this);
@@ -141,11 +142,11 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 				fSubjectControl.removeMouseListener(this);
 				fSubjectControl.removeKeyListener(this);
 			}
-			
+
 			IInformationControl fInformationControlToClose= getCurrentInformationControl2();
 			if (fInformationControlToClose != null)
 				fInformationControlToClose.removeFocusListener(this);
-			
+
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.MouseMove, this);
 				fDisplay.removeFilter(SWT.FocusOut, this);
@@ -207,13 +208,13 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		 */
 		public void keyReleased(KeyEvent e) {
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 		 */
 		public void focusGained(FocusEvent e) {
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 		 */
@@ -227,7 +228,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 				}
 			});
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 */
@@ -235,7 +236,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 			if (event.type == SWT.MouseMove) {
 				if (!(event.widget instanceof Control) || event.widget.isDisposed())
 					return;
-				
+
 				IInformationControl infoControl= getCurrentInformationControl2();
 				if (infoControl != null && !infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3) {
 //					if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): activeShell= " + fDisplay.getActiveShell()); //$NON-NLS-1$
@@ -249,7 +250,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 							hideInformationControl();
 						}
 					}
-					
+
 				} else {
 					/*
 					 * TODO: need better understanding of why/if this is needed.
@@ -258,7 +259,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 					if (fDisplay != null && !fDisplay.isDisposed())
 						fDisplay.removeFilter(SWT.MouseMove, this);
 				}
-				
+
 			} else if (event.type == SWT.FocusOut) {
 				if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): focusOut: " + event); //$NON-NLS-1$
 				IInformationControl iControl= getCurrentInformationControl2();
@@ -268,21 +269,21 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		}
 	}
 
-	
+
 	private final TextViewer fTextViewer;
 
-	
+
 	/**
 	 * Creates a new sticky hover manager.
-	 * 
+	 *
 	 * @param textViewer the text viewer
 	 */
 	public StickyHoverManager(TextViewer textViewer) {
 		super(new DefaultInformationControlCreator());
-		
+
 		fTextViewer= textViewer;
 		setCloser(new Closer());
-		
+
 		install(fTextViewer.getTextWidget());
 	}
 
@@ -372,5 +373,5 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		iControl.setFocus();
 		return iControl.isFocusControl();
 	}
-	
+
 }

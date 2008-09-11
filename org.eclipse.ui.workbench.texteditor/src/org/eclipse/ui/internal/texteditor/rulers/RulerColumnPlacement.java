@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 /**
  * Describes the placement specification of a contribution to the
  * <code>org.eclipse.ui.texteditor.rulerColumns</code> extension point.
- * 
+ *
  * @since 3.3
  */
 public final class RulerColumnPlacement {
@@ -48,7 +48,7 @@ public final class RulerColumnPlacement {
 	public RulerColumnPlacement(IConfigurationElement element) throws InvalidRegistryObjectException, CoreException {
 		Assert.isLegal(element != null);
 		ExtensionPointHelper helper= new ExtensionPointHelper(element);
-		
+
 		fGravity= helper.getDefaultAttribute(GRAVITY, 1f);
 		if (fGravity < 0 || fGravity > 1)
 			helper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_gravity_msg);
@@ -74,10 +74,10 @@ public final class RulerColumnPlacement {
 		}
 		return Collections.unmodifiableSet(constraints);
 	}
-	
+
 	/**
 	 * The gravity of the placement specification, a float in the range <code>[0, 1]</code>.
-	 * 
+	 *
 	 * @return the gravity of the placement specification
 	 */
 	public float getGravity() {
@@ -86,7 +86,7 @@ public final class RulerColumnPlacement {
 
 	/**
 	 * Returns the placement constraints in the order that they appear in the extension declaration.
-	 * 
+	 *
 	 * @return the unmodifiable set of placement constraints in the order that they appear in the
 	 *         extension declaration
 	 */

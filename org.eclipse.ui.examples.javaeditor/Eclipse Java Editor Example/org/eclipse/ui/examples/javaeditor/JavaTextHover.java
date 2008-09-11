@@ -11,8 +11,13 @@
 package org.eclipse.ui.examples.javaeditor;
 
 
-import org.eclipse.jface.text.*;
 import org.eclipse.swt.graphics.Point;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 
 /**
  * Example implementation for an <code>ITextHover</code> which hovers over Java code.
@@ -32,7 +37,7 @@ public class JavaTextHover implements ITextHover {
 		}
 		return JavaEditorMessages.getString("JavaTextHover.emptySelection"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on ITextHover
 	 */

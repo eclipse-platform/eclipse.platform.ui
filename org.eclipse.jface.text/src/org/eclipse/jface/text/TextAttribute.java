@@ -47,7 +47,7 @@ public class TextAttribute {
 
 	/** The text style */
 	private int style;
-	
+
 	/**
 	 * The text font.
 	 * @since 3.3
@@ -72,7 +72,7 @@ public class TextAttribute {
 		this.background= background;
 		this.style= style;
 	}
-	
+
 	/**
 	 * Creates a text attribute with the given colors and style.
 	 *
@@ -110,7 +110,7 @@ public class TextAttribute {
 		if (!(object instanceof TextAttribute))
 			return false;
 		TextAttribute a= (TextAttribute)object;
-		
+
 		return (a.style == style && equals(a.foreground, foreground) && equals(a.background, background) && equals(a.font, font));
 	}
 
@@ -169,7 +169,7 @@ public class TextAttribute {
 	public int getStyle() {
 		return style;
 	}
-	
+
 	/**
 	 * Returns the attribute's font.
 	 *

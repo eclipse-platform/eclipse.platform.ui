@@ -14,10 +14,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -30,6 +26,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -41,11 +41,10 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
-import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.NewSearchUI;
-
 import org.eclipse.search.internal.ui.util.PixelConverter;
 import org.eclipse.search.internal.ui.util.SWTUtil;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.NewSearchUI;
 
 public class ScopePart {
 
@@ -54,7 +53,7 @@ public class ScopePart {
 	private static final String STORE_SCOPE= "scope"; //$NON-NLS-1$
 	private static final String STORE_LRU_WORKING_SET_NAME= "lastUsedWorkingSetName"; //$NON-NLS-1$
 	private static final String STORE_LRU_WORKING_SET_NAMES= "lastUsedWorkingSetNames"; //$NON-NLS-1$
-	
+
 	private IDialogSettings fSettingsStore;
 	private Group fPart;
 
@@ -81,10 +80,10 @@ public class ScopePart {
 	public ScopePart(SearchDialog searchDialog, boolean searchEnclosingProjects) {
 		fSearchDialog= searchDialog;
 		fCanSearchEnclosingProjects= searchEnclosingProjects;
-		
-		fSettingsStore= SearchPlugin.getDefault().getDialogSettingsSection(DIALOG_SETTINGS_KEY);	
+
+		fSettingsStore= SearchPlugin.getDefault().getDialogSettingsSection(DIALOG_SETTINGS_KEY);
 		fScope= getStoredScope(fSettingsStore, searchEnclosingProjects);
-		
+
 		fWorkingSets= getStoredWorkingSets();
 	}
 
@@ -100,13 +99,13 @@ public class ScopePart {
 			&& scope != ISearchPageContainer.SELECTED_PROJECTS_SCOPE
 			&& scope != ISearchPageContainer.WORKSPACE_SCOPE)
 			scope= ISearchPageContainer.WORKSPACE_SCOPE;
-		
+
 		if (!canSearchEnclosingProjects && scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE)
 			scope= ISearchPageContainer.WORKSPACE_SCOPE;
-		
+
 		return scope;
 	}
-	
+
 	private IWorkingSet getWorkingSet(IWorkingSetManager workingSetManager, String storedName) {
 		if (storedName.length() == 0) {
 			IWorkbenchPage page= fSearchDialog.getWorkbenchWindow().getActivePage();
@@ -117,8 +116,8 @@ public class ScopePart {
 		}
 		return workingSetManager.getWorkingSet(storedName);
 	}
-	
-	
+
+
 	private IWorkingSet[] getStoredWorkingSets() {
 		String[] lruWorkingSetNames= fSettingsStore.getArray(STORE_LRU_WORKING_SET_NAMES);
 
@@ -150,7 +149,7 @@ public class ScopePart {
 
 	/**
 	 * Returns the scope selected in this part
-	 * 
+	 *
 	 * @return the selected scope
 	 */
 	public int getSelectedScope() {
@@ -160,7 +159,7 @@ public class ScopePart {
 	/**
 	 * Sets the selected scope.
 	 * This method must only be called on a created part.
-	 * 
+	 *
 	 * @param scope the scope to be selected in this part
 	 */
 	public void setSelectedScope(int scope) {
@@ -183,7 +182,7 @@ public class ScopePart {
 			}
 		}
 		fScope= scope;
-		
+
 		fUseWorkspace.setSelection(scope == ISearchPageContainer.WORKSPACE_SCOPE);
 		fUseSelection.setSelection(scope == ISearchPageContainer.SELECTION_SCOPE);
 		fUseProject.setSelection(scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE);
@@ -191,7 +190,7 @@ public class ScopePart {
 
 		updateSearchPageContainerActionPerformedEnablement();
 		fSettingsStore.put(STORE_SCOPE, scope);
-		
+
 	}
 
 	private void updateSearchPageContainerActionPerformedEnablement() {
@@ -200,7 +199,7 @@ public class ScopePart {
 
 	/**
 	 * Returns the selected working set of this part.
-	 * 
+	 *
 	 * @return the selected working set or null
 	 * 			- if the scope is not WORKING_SET_SCOPE
 	 * 			- if there is no working set selected
@@ -214,7 +213,7 @@ public class ScopePart {
 	/**
 	 * Sets the selected working set for this part.
 	 * This method must only be called on a created part.
-	 * 
+	 *
 	 * @param workingSets the working set to be selected
 	 */
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
@@ -255,13 +254,13 @@ public class ScopePart {
 
 	/**
 	 * Creates this scope part.
-	 * 
+	 *
 	 * @param parent a widget which will be the parent of the new instance (cannot be null)
 	 * @return Returns the created part control
 	 */
 	public Composite createPart(Composite parent) {
 		fPart= new Group(parent, SWT.NONE);
-		fPart.setText(SearchMessages.ScopePart_group_text); 
+		fPart.setText(SearchMessages.ScopePart_group_text);
 
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 4;
@@ -270,22 +269,22 @@ public class ScopePart {
 
 		fUseWorkspace= new Button(fPart, SWT.RADIO);
 		fUseWorkspace.setData(new Integer(ISearchPageContainer.WORKSPACE_SCOPE));
-		fUseWorkspace.setText(SearchMessages.ScopePart_workspaceScope_text); 
+		fUseWorkspace.setText(SearchMessages.ScopePart_workspaceScope_text);
 
 		fUseSelection= new Button(fPart, SWT.RADIO);
 		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
 		fUseSelection.setText(SearchMessages.ScopePart_selectedResourcesScope_text);
-		
+
 		boolean canSearchInSelection= canSearchInSelection();
 		fUseSelection.setEnabled(canSearchInSelection);
-		
+
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 8;
 		fUseSelection.setLayoutData(gd);
 
 		fUseProject= new Button(fPart, SWT.RADIO);
 		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
-		fUseProject.setText(SearchMessages.ScopePart_enclosingProjectsScope_text); 
+		fUseProject.setText(SearchMessages.ScopePart_enclosingProjectsScope_text);
 		fUseProject.setEnabled(fSearchDialog.getEnclosingProjectNames().length > 0);
 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -297,17 +296,17 @@ public class ScopePart {
 
 		fUseWorkingSet= new Button(fPart, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(ISearchPageContainer.WORKING_SET_SCOPE));
-		fUseWorkingSet.setText(SearchMessages.ScopePart_workingSetScope_text); 
+		fUseWorkingSet.setText(SearchMessages.ScopePart_workingSetScope_text);
 		fWorkingSetText= new Text(fPart, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fWorkingSetText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
-				e.result= SearchMessages.ScopePart_workingSetText_accessible_label; 
+				e.result= SearchMessages.ScopePart_workingSetText_accessible_label;
 			}
 		});
-		
+
 		Button chooseWorkingSet= new Button(fPart, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
-		chooseWorkingSet.setText(SearchMessages.ScopePart_workingSetChooseButton_text); 
+		chooseWorkingSet.setText(SearchMessages.ScopePart_workingSetChooseButton_text);
 		SWTUtil.setButtonDimensionHint(chooseWorkingSet);
 		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -406,7 +405,7 @@ public class ScopePart {
 			for (int i= 0; i < workingSets.length; i++) {
 				String workingSetName= workingSets[i].getLabel();
 				if (firstFound)
-					result= Messages.format(SearchMessages.ScopePart_workingSetConcatenation, new String[] { result, workingSetName }); 
+					result= Messages.format(SearchMessages.ScopePart_workingSetConcatenation, new String[] { result, workingSetName });
 				else {
 					result= workingSetName;
 					firstFound= true;

@@ -48,7 +48,7 @@ import org.eclipse.jface.text.TextPresentation;
  * It can only be used together with the {@link HyperlinkManager#FIRST}
  * or the {@link HyperlinkManager#LONGEST_REGION_FIRST} hyperlink strategy.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlinkPresenterExtension, ITextPresentationListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
@@ -133,7 +133,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public boolean canHideHyperlinks() {
@@ -302,7 +302,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 				fActiveRegion= new Region(event.getOffset(), event.getLength());
 			}
 			fRememberedPosition= null;
-			
+
 			StyledText widget= fTextViewer.getTextWidget();
 			if (widget != null && !widget.isDisposed()) {
 				widget.getDisplay().asyncExec(new Runnable() {

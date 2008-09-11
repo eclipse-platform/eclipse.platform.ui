@@ -108,7 +108,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	/**
 	 * Checks that the given range is valid.
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=69292
-	 * 
+	 *
 	 * @param offset the offset of the document range to scan
 	 * @param length the length of the document range to scan
 	 * @param documentLength the document's length

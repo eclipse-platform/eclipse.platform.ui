@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.dialogs.MessageDialog;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -32,9 +38,6 @@ import org.eclipse.jface.text.link.LinkedModeUI;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.ProposalPosition;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
 
 
 /**
@@ -191,7 +194,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 						document.addPosition(getCategory(), pos);
 						proposals[j]= new PositionBasedCompletionProposal(values[j], pos, length);
 					}
-					
+
 					if (proposals.length > 1)
 						first= new ProposalPosition(document, offsets[0] + start, length, proposals);
 					else

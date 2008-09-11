@@ -54,30 +54,30 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * An internal class that gives access to internal methods.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	class MyInternalAccessor extends InternalAccessor {
 		public IInformationControl getCurrentInformationControl() {
 			return AbstractInformationControlManager.this.getCurrentInformationControl();
 		}
-		
+
 		public void setInformationControlReplacer(InformationControlReplacer replacer) {
 			AbstractInformationControlManager.this.setInformationControlReplacer(replacer);
 		}
-		
+
 		public InformationControlReplacer getInformationControlReplacer() {
 			return AbstractInformationControlManager.this.getInformationControlReplacer();
 		}
-		
+
 		public boolean canReplace(IInformationControl control) {
 			return AbstractInformationControlManager.this.canReplace(control);
 		}
-		
+
 		public boolean isReplaceInProgress() {
 			return AbstractInformationControlManager.this.isReplaceInProgress();
 		}
-		
+
 		public void replaceInformationControl(boolean takeFocus) {
 			AbstractInformationControlManager.this.replaceInformationControl(takeFocus);
 		}
@@ -85,11 +85,11 @@ abstract public class AbstractInformationControlManager {
 		public void cropToClosestMonitor(Rectangle bounds) {
 			AbstractInformationControlManager.this.cropToClosestMonitor(bounds);
 		}
-		
+
 		public void setHoverEnrichMode(EnrichMode mode) {
 			throw new UnsupportedOperationException("only implemented in AbstractHoverInformationControlManager"); //$NON-NLS-1$
 		}
-		
+
 		public boolean getAllowMouseExit() {
 			throw new UnsupportedOperationException("only implemented in AnnotationBarHoverManager"); //$NON-NLS-1$
 		}
@@ -153,14 +153,14 @@ abstract public class AbstractInformationControlManager {
 		/**
 		 * Returns the SWT direction flag. One of {@link SWT#BOTTOM}, {@link SWT#TOP},
 		 * {@link SWT#LEFT}, {@link SWT#RIGHT}, {@link SWT#CENTER},
-		 * 
+		 *
 		 * @return the SWT direction flag
 		 * @since 3.3
 		 */
 		int getSWTFlag() {
 			return fFlag;
 		}
-		
+
 		public String toString() {
 			switch (fFlag) {
 				case SWT.BOTTOM: return "BOTTOM"; //$NON-NLS-1$
@@ -210,7 +210,7 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.0
 	 */
 	public static final String STORE_SIZE_HEIGHT= "size.height"; //$NON-NLS-1$
-	
+
 	/**
 	 * Tells whether this class and its subclasses are in debug mode.
 	 * <p>
@@ -235,7 +235,7 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * The information control.
-	 * 
+	 *
 	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
 	 * compatibility reasons.
 	 */
@@ -243,7 +243,7 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * The information control creator.
-	 * 
+	 *
 	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
 	 * compatibility reasons.
 	 */
@@ -251,7 +251,7 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * The information control closer.
-	 * 
+	 *
 	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
 	 * compatibility reasons.
 	 */
@@ -259,7 +259,7 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * Indicates that the information control has been disposed.
-	 * 
+	 *
 	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
 	 * compatibility reasons.
 	 */
@@ -268,7 +268,7 @@ abstract public class AbstractInformationControlManager {
 	/**
 	 * The information control replacer to be used when this information control
 	 * needs to be replaced with another information control.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private InformationControlReplacer fInformationControlReplacer;
@@ -353,7 +353,7 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * The dispose listener on the subject control.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private DisposeListener fSubjectControlDisposeListener;
@@ -426,11 +426,11 @@ abstract public class AbstractInformationControlManager {
 	protected void setCloser(IInformationControlCloser closer) {
 		fInformationControlCloser= closer;
 	}
-	
+
 	/**
 	 * Sets the information control replacer for this manager and disposes the
 	 * old one if set.
-	 * 
+	 *
 	 * @param replacer the information control replacer for this manager, or
 	 *            <code>null</code> if no information control replacing should
 	 *            take place
@@ -444,7 +444,7 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * Returns the current information control replacer or <code>null</code> if none has been installed.
-	 * 
+	 *
 	 * @return the current information control replacer or <code>null</code> if none has been installed
 	 * @since 3.4
 	 */
@@ -454,17 +454,17 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * Returns whether an information control replacer has been installed.
-	 * 
+	 *
 	 * @return whether an information control replacer has been installed
 	 * @since 3.4
 	 */
 	boolean hasInformationControlReplacer() {
 		return fInformationControlReplacer != null;
 	}
-	
+
 	/**
 	 * Tests whether the given information control is replaceable.
-	 * 
+	 *
 	 * @param iControl information control or <code>null</code> if none
 	 * @return <code>true</code> if information control is replaceable, <code>false</code> otherwise
 	 * @since 3.4
@@ -474,10 +474,10 @@ abstract public class AbstractInformationControlManager {
 				&& iControl instanceof IInformationControlExtension5
 				&& ((IInformationControlExtension5) iControl).getInformationPresenterControlCreator() != null;
 	}
-	
+
 	/**
 	 * Returns the current information control, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the current information control, or <code>null</code> if none
 	 * @since 3.4
 	 */
@@ -487,7 +487,7 @@ abstract public class AbstractInformationControlManager {
 
 	/**
 	 * Tells whether this manager's information control is currently being replaced.
-	 * 
+	 *
 	 * @return <code>true</code> if a replace is in progress
 	 * @since 3.4
 	 */
@@ -498,7 +498,7 @@ abstract public class AbstractInformationControlManager {
 	/**
 	 * Sets the horizontal and vertical margin to be used when laying out the
 	 * information control relative to the subject control.
-	 * 
+	 *
 	 * @param xMargin the x-margin
 	 * @param yMargin the y-Margin
 	 */
@@ -542,7 +542,7 @@ abstract public class AbstractInformationControlManager {
 	 * <li>{@link AbstractInformationControlManager#STORE_SIZE_HEIGHT}</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param dialogSettings the dialog settings
 	 * @param restoreLocation <code>true</code> iff the location is must be (re-)stored
 	 * @param restoreSize <code>true</code>iff the size is (re-)stored
@@ -645,11 +645,11 @@ abstract public class AbstractInformationControlManager {
 		setEnabled(true);
 		fDisposed= false;
 	}
-	
+
 	/**
 	 * Returns the dispose listener which gets added
 	 * to the subject control.
-	 * 
+	 *
 	 * @return the dispose listener
 	 * @since 3.1
 	 */
@@ -861,11 +861,11 @@ abstract public class AbstractInformationControlManager {
 
 		return  fSubjectControl.toDisplay(new Point(subjectArea.x + xShift, subjectArea.y + yShift));
 	}
-	
+
 	/**
 	 * Computes the area available for an information control given an anchor and the subject area
 	 * within <code>bounds</code>.
-	 * 
+	 *
 	 * @param subjectArea the subject area
 	 * @param bounds the bounds
 	 * @param anchor the anchor at the subject area
@@ -902,7 +902,7 @@ abstract public class AbstractInformationControlManager {
 		area.intersect(bounds);
 		return area;
 	}
-	
+
 	/**
 	 * Checks whether a control of the given size at the given location would be completely visible
 	 * in the given display area when laid out by using the given anchor. If not, this method tries
@@ -1024,7 +1024,7 @@ abstract public class AbstractInformationControlManager {
 			Monitor monitor= getClosestMonitor(subjectAreaDisplayRelative, testAnchor);
 			if (updateLocation(upperLeft, controlSize, monitor.getClientArea(), testAnchor))
 				return upperLeft;
-			
+
 			// compute available area for this anchor and update if better than best
 			Rectangle available= computeAvailableArea(subjectAreaDisplayRelative, monitor.getClientArea(), testAnchor);
 			Rectangle proposed= new Rectangle(upperLeft.x, upperLeft.y, controlSize.x, controlSize.y);
@@ -1035,20 +1035,20 @@ abstract public class AbstractInformationControlManager {
 				bestBounds= available;
 				bestAnchor= testAnchor;
 			}
-			
+
 			testAnchor= getNextFallbackAnchor(testAnchor);
 
 		} while (testAnchor != fAnchor && testAnchor != null);
-		
+
 		// no anchor is perfect - select the one with larges area and set the size to not overlap with the subjectArea
 		if (bestAnchor != ANCHOR_GLOBAL)
 			Geometry.set(controlSize, Geometry.getSize(bestBounds));
 		return Geometry.getLocation(bestBounds);
 	}
-	
+
 	/**
 	 * Gets the closest monitor given an anchor and the subject area.
-	 * 
+	 *
 	 * @param area the subject area
 	 * @param anchor the anchor
 	 * @return the monitor closest to the edge of <code>area</code> defined by
@@ -1068,7 +1068,7 @@ abstract public class AbstractInformationControlManager {
 	 * Copied from org.eclipse.jface.window.Window. Returns the monitor whose client area contains
 	 * the given point. If no monitor contains the point, returns the monitor that is closest to the
 	 * point. If this is ever made public, it should be moved into a separate utility class.
-	 * 
+	 *
 	 * @param display the display to search for monitors
 	 * @param rectangle the rectangle to find the closest monitor for (display coordinates)
 	 * @return the monitor closest to the given point
@@ -1150,7 +1150,7 @@ abstract public class AbstractInformationControlManager {
 			((InformationControlReplacer) this).showInformationControl(subjectArea, information);
 			return;
 		}
-		
+
 		IInformationControl informationControl= getInformationControl();
 		if (informationControl != null) {
 
@@ -1203,14 +1203,14 @@ abstract public class AbstractInformationControlManager {
 			size= Geometry.getSize(controlBounds);
 			informationControl.setLocation(location);
 			informationControl.setSize(size.x, size.y);
-			
+
 			showInformationControl(subjectArea);
 		}
 	}
 
 	/**
 	 * Crops the given bounds such that they lie completely on the closest monitor.
-	 * 
+	 *
 	 * @param bounds shell bounds to crop
 	 * @since 3.4
 	 */
@@ -1251,7 +1251,7 @@ abstract public class AbstractInformationControlManager {
 	 * Replaces this manager's information control as defined by
 	 * the information control replacer.
 	 * <strong>Must only be called when {@link #fInformationControl} instanceof {@link IInformationControlExtension3}!</strong>
-	 * 
+	 *
 	 * @param takeFocus <code>true</code> iff the replacing information control should take focus
 	 *
 	 * @since 3.4
@@ -1267,7 +1267,7 @@ abstract public class AbstractInformationControlManager {
 		}
 		hideInformationControl();
 	}
-	
+
 	/**
 	 * Disposes this manager's information control.
 	 */
@@ -1289,12 +1289,12 @@ abstract public class AbstractInformationControlManager {
 
 			setEnabled(false);
 			disposeInformationControl();
-			
+
 			if (fInformationControlReplacer != null) {
 				fInformationControlReplacer.dispose();
 				fInformationControlReplacer= null;
 			}
-			
+
 			if (fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControlDisposeListener != null)
 				fSubjectControl.removeDisposeListener(fSubjectControlDisposeListener);
 			fSubjectControl= null;
@@ -1420,7 +1420,7 @@ abstract public class AbstractInformationControlManager {
 	 * Returns an adapter that gives access to internal methods.
 	 * <p>
 	 * <strong>Note:</strong> This method is not intended to be referenced or overridden by clients.</p>
-	 * 
+	 *
 	 * @return the replaceable information control accessor
 	 * @since 3.4
 	 * @noreference This method is not intended to be referenced by clients.

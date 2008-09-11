@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,17 +16,17 @@ import org.eclipse.jface.text.IInputChangedListener;
 
 /**
  * A delayed input change listener that forwards delayed input changes to an information control replacer.
- * 
+ *
  * @since 3.4
  */
 public final class DelayedInputChangeListener implements IInputChangedListener {
-	
+
 	private final IDelayedInputChangeProvider fChangeProvider;
 	private final InformationControlReplacer fInformationControlReplacer;
 
 	/**
 	 * Creates a new listener.
-	 * 
+	 *
 	 * @param changeProvider the information control with delayed input changes
 	 * @param informationControlReplacer the information control replacer, whose information control should get the new input
 	 */

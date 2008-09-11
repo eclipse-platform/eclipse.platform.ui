@@ -102,7 +102,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 
 	/**
 	 * Collapses all annotations that overlap with the given range and are collapsed.
-	 * 
+	 *
 	 * @param offset the range offset
 	 * @param length the range length
 	 * @return <code>true</code> if any annotation has been collapse, <code>false</code>
@@ -131,7 +131,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 
 		return collapsing;
 	}
-	
+
 	/**
 	 * Expands all annotations that overlap with the given range and are collapsed. Fires a model change event if
 	 * requested.

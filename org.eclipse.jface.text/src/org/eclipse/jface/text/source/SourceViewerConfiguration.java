@@ -220,11 +220,11 @@ public class SourceViewerConfiguration {
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return new String[] { "\t", "    ", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	/**
 	 * Computes and returns the indent prefixes for tab indentation
 	 * which is represented as <code>tabSizeInSpaces</code>.
-	 * 
+	 *
 	 * @param tabWidth the display tab width
 	 * @return the indent prefixes
 	 * @see #getIndentPrefixes(ISourceViewer, String)

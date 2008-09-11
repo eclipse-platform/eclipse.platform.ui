@@ -11,10 +11,11 @@
 
 package org.eclipse.ui.internal.editors.text;
 
-import com.ibm.icu.text.Collator;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -28,6 +29,7 @@ import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
@@ -52,7 +54,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 
 		/** The preference key for the value in the store. */
 		private String fKey;
-		
+
 		/**
 		 * The display string.
 		 * @since 3.2

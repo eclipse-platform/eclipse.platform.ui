@@ -439,19 +439,19 @@ public class TextPresentation {
 			if (template.font != null)
 				target.font= template.font;
 			target.fontStyle|= template.fontStyle;
-			
+
 			if (template.metrics != null)
 				target.metrics= template.metrics;
-			
+
 			if (template.foreground != null)
 				target.foreground= template.foreground;
 			if (template.background != null)
 				target.background= template.background;
-			
+
 			target.strikeout|= template.strikeout;
 			if (template.strikeoutColor != null)
 				target.strikeoutColor= template.strikeoutColor;
-			
+
 			target.underline|= template.underline;
 			if (template.underlineStyle != SWT.NONE)
 				target.underlineStyle= template.underlineStyle;

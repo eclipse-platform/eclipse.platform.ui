@@ -346,10 +346,10 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 					r.x= 0;
 					r.y= JFaceTextUtil.computeLineHeight(styledText, 0, startLine, startLine)  - fScrollPos;
-					
+
 					r.width= d.x;
 					int lines= endLine - startLine;
-					
+
 					r.height= JFaceTextUtil.computeLineHeight(styledText, startLine, endLine + 1, (lines+1));
 
 					if (r.y < d.y && annotationAccessExtension != null)  // annotation within visible area
@@ -424,10 +424,10 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 				r.x= 0;
 				r.y= JFaceTextUtil.computeLineHeight(textWidget, 0, startLine, startLine)  - fScrollPos;
-				
+
 				r.width= dimension.x;
 				int lines= endLine - startLine;
-				
+
 				r.height= JFaceTextUtil.computeLineHeight(textWidget, startLine, endLine + 1, lines+1);
 
 				if (r.y < dimension.y && annotationAccessExtension != null)  // annotation within visible area
@@ -520,13 +520,13 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 		StyledText text= fTextViewer.getTextWidget();
 		int line= text.getLineIndex(y_coordinate);
-		
+
 		if (line == text.getLineCount() - 1) {
 			// check whether y_coordinate exceeds last line
 			if (y_coordinate > text.getLinePixel(line + 1))
 				return -1;
 		}
-		
+
 		return widgetLine2ModelLine(fTextViewer, line);
 	}
 

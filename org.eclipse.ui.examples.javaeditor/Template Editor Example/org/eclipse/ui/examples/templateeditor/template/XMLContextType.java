@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.templateeditor.template;
 
-import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.GlobalTemplateVariables;
+import org.eclipse.jface.text.templates.TemplateContextType;
 
 
 /**
@@ -23,7 +23,7 @@ public class XMLContextType extends TemplateContextType {
 	public static final String XML_CONTEXT_TYPE= "org.eclipse.ui.examples.templateeditor.xml"; //$NON-NLS-1$
 
 	/**
-	 * Creates a new XML context type. 
+	 * Creates a new XML context type.
 	 */
 	public XMLContextType() {
 		addGlobalResolvers();

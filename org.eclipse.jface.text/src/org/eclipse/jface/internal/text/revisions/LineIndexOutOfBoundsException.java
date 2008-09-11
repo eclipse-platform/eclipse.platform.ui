@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.text.revisions;
  * Thrown to indicate that an attempt to create or modify a {@link Range} failed because it would
  * have resulted in an illegal range. A range is illegal if its length is &lt;= 0 or if its start
  * line is &lt; 0.
- * 
+ *
  * @since 3.2
  */
 public final class LineIndexOutOfBoundsException extends IndexOutOfBoundsException {
@@ -29,16 +29,16 @@ public final class LineIndexOutOfBoundsException extends IndexOutOfBoundsExcepti
 
     /**
 	 * Constructs an <code>LineIndexOutOfBoundsException</code> with the specified detail message.
-	 * 
+	 *
 	 * @param s the detail message.
 	 */
 	public LineIndexOutOfBoundsException(String s) {
 		super(s);
 	}
-	
+
 	/**
-	 * Constructs a new <code>LineIndexOutOfBoundsException</code> 
-	 * object with an argument indicating the illegal index. 
+	 * Constructs a new <code>LineIndexOutOfBoundsException</code>
+	 * object with an argument indicating the illegal index.
 	 *
 	 * @param index the illegal index.
 	 */

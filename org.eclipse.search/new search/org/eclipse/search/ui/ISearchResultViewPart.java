@@ -22,30 +22,30 @@ import org.eclipse.ui.IViewPart;
  * <p>
  * This interface is not intended to be implemented by clients
  * </p>
- * 
+ *
  * @see NewSearchUI#activateSearchResultView()
  * @see NewSearchUI#getSearchResultView()
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISearchResultViewPart extends IViewPart {
 	/**
 	 * Search result pages should call this method to have the search results view contribute to
 	 * their context menus.
-	 * 
+	 *
 	 * @param menuManager the menu manager the search result view should contribute to
 	 */
 	void fillContextMenu(IMenuManager menuManager);
 	/**
 	 * Returns the <code>ISearchResultPage</code> currently shown in this
 	 * search view. Returns <code>null</code> if no page is currently shown.
-	 * 
+	 *
 	 * @return the active <code>ISearchResultPage</code> or <code>null</code>
 	 */
 	ISearchResultPage getActivePage();
-	
+
 	/**
 	 * Requests that the search view updates the label it is showing for search result
 	 * pages. Typically, a search result page will call this method when the search result

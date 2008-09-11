@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * A directed acyclic graph. See http://en.wikipedia.org/wiki/Directed_acyclic_graph
- * 
+ *
  * @since 3.3
  */
 public final class DAG {
@@ -35,7 +35,7 @@ public final class DAG {
 		 * Adds <code>val</code> to the values mapped to by <code>key</code>. If
 		 * <code>val</code> is <code>null</code>, <code>key</code> is added to the key set of
 		 * the multimap.
-		 * 
+		 *
 		 * @param key the key
 		 * @param val the value
 		 */
@@ -51,7 +51,7 @@ public final class DAG {
 
 		/**
 		 * Returns all mappings for the given key, an empty set if there are no mappings.
-		 * 
+		 *
 		 * @param key the key
 		 * @return the mappings for <code>key</code>
 		 */
@@ -67,7 +67,7 @@ public final class DAG {
 		/**
 		 * Removes all mappings for <code>key</code> and removes <code>key</code> from the key
 		 * set.
-		 * 
+		 *
 		 * @param key the key to remove
 		 * @return the removed mappings
 		 */
@@ -79,7 +79,7 @@ public final class DAG {
 		/**
 		 * Removes a mapping from the multimap, but does not remove the <code>key</code> from the
 		 * key set.
-		 * 
+		 *
 		 * @param key the key
 		 * @param val the value
 		 */
@@ -88,7 +88,7 @@ public final class DAG {
 			if (values != null)
 				values.remove(val);
 		}
-		
+
 		/*
 		 * @see java.lang.Object#toString()
 		 */
@@ -104,7 +104,7 @@ public final class DAG {
 	 * Adds a directed edge from <code>origin</code> to <code>target</code>. The vertices are not
 	 * required to exist prior to this call - if they are not currently contained by the graph, they are
 	 * automatically added.
-	 * 
+	 *
 	 * @param origin the origin vertex of the dependency
 	 * @param target the target vertex of the dependency
 	 * @return <code>true</code> if the edge was added, <code>false</code> if the
@@ -128,7 +128,7 @@ public final class DAG {
 	/**
 	 * Adds a vertex to the graph. If the vertex does not exist prior to this call, it is added with
 	 * no incoming or outgoing edges. Nothing happens if the vertex already exists.
-	 * 
+	 *
 	 * @param vertex the new vertex
 	 */
 	public void addVertex(Object vertex) {
@@ -154,7 +154,7 @@ public final class DAG {
 	/**
 	 * Returns the sources of the receiver. A source is a vertex with no incoming edges. The
 	 * returned set's iterator traverses the nodes in the order they were added to the graph.
-	 * 
+	 *
 	 * @return the sources of the receiver
 	 */
 	public Set getSources() {
@@ -164,7 +164,7 @@ public final class DAG {
 	/**
 	 * Returns the sinks of the receiver. A sink is a vertex with no outgoing edges. The returned
 	 * set's iterator traverses the nodes in the order they were added to the graph.
-	 * 
+	 *
 	 * @return the sinks of the receiver
 	 */
 	public Set getSinks() {
@@ -184,7 +184,7 @@ public final class DAG {
 
 	/**
 	 * Returns the direct children of a vertex. The returned {@link Set} is unmodifiable.
-	 * 
+	 *
 	 * @param vertex the parent vertex
 	 * @return the direct children of <code>vertex</code>
 	 */
@@ -204,7 +204,7 @@ public final class DAG {
 				return true;
 		return false;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#toString()
 	 * @since 3.3

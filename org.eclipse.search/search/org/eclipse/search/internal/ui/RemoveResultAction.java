@@ -13,19 +13,19 @@ package org.eclipse.search.internal.ui;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.swt.custom.BusyIndicator;
+
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.core.resources.IMarker;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.search.ui.ISearchResultViewEntry;
-
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.ISearchResultViewEntry;
 
 /**
  * @deprecated old search
@@ -37,35 +37,35 @@ class RemoveResultAction extends Action {
 	public RemoveResultAction(ISelectionProvider provider, boolean stringsDependOnMatchCount) {
 		fSelectionProvider= provider;
 		if (!stringsDependOnMatchCount || usePluralLabel()) {
-			setText(SearchMessages.SearchResultView_removeEntries_text); 
-			setToolTipText(SearchMessages.SearchResultView_removeEntries_tooltip); 
+			setText(SearchMessages.SearchResultView_removeEntries_text);
+			setToolTipText(SearchMessages.SearchResultView_removeEntries_tooltip);
 		}
 		else {
-			setText(SearchMessages.SearchResultView_removeEntry_text); 
-			setToolTipText(SearchMessages.SearchResultView_removeEntry_tooltip); 
+			setText(SearchMessages.SearchResultView_removeEntry_text);
+			setToolTipText(SearchMessages.SearchResultView_removeEntry_tooltip);
 		}
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
-	
+
 	public void run() {
 		final IMarker[] markers= getMarkers(fSelectionProvider.getSelection());
 		if (markers != null) {
 			BusyIndicator.showWhile(SearchPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 				public void run() {
-					try {					
+					try {
 						SearchPlugin.getWorkspace().deleteMarkers(markers);
 					} catch (CoreException ex) {
-						ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
+						ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message);
 					}
 				}
 			});
 		}
 	}
-	
+
 	private IMarker[] getMarkers(ISelection s) {
 		if (! (s instanceof IStructuredSelection) || s.isEmpty())
 			return null;
-		
+
 		IStructuredSelection selection= (IStructuredSelection)s;
 		int size= selection.size();
 		if (size <= 0)

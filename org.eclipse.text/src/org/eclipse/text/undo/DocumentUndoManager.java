@@ -53,7 +53,7 @@ import org.eclipse.jface.text.TextUtilities;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * 
+ *
  * @see IDocumentUndoManager
  * @see DocumentUndoManagerRegistry
  * @see IDocumentUndoListener
@@ -62,8 +62,8 @@ import org.eclipse.jface.text.TextUtilities;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class DocumentUndoManager implements IDocumentUndoManager {
-	
-	
+
+
 	/**
 	 * Represents an undo-able text change, described as the
 	 * replacement of some preserved text with new text.
@@ -96,7 +96,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		/**
 		 * Creates a new text change.
-		 * 
+		 *
 		 * @param manager the undo manager for this change
 		 */
 		UndoableTextChange(DocumentUndoManager manager) {
@@ -117,7 +117,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		/**
 		 * Sets the start and the end index of this change.
-		 * 
+		 *
 		 * @param start the start index
 		 * @param end the end index
 		 */
@@ -285,7 +285,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		/**
 		 * Re-applies the change described by this change that was previously
 		 * undone. Also notifies clients about the redo.
-		 * 
+		 *
 		 * @param monitor the progress monitor to use if necessary
 		 * @param uiInfo an adaptable that can provide UI info if needed
 		 * @return the status
@@ -315,7 +315,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		/**
 		 * Creates a new uncommitted text change depending on whether a compound
 		 * change is currently being executed.
-		 * 
+		 *
 		 * @return a new, uncommitted text change or a compound text change
 		 */
 		protected UndoableTextChange createCurrent() {
@@ -355,7 +355,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		/**
 		 * Attempt a commit of this change and answer true if a new fCurrent was
 		 * created as a result of the commit.
-		 * 
+		 *
 		 * @return <code>true</code> if the change was committed and created
 		 *			a new <code>fCurrent</code>, <code>false</code> if not
 		 */
@@ -370,7 +370,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		/**
 		 * Checks whether this text change is valid for undo or redo.
-		 * 
+		 *
 		 * @return <code>true</code> if the change is valid for undo or redo
 		 */
 		protected boolean isValid() {
@@ -407,7 +407,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		/**
 		 * Return the undo modification stamp
-		 * 
+		 *
 		 * @return the undo modification stamp for this change
 		 */
 		protected long getUndoModificationStamp() {
@@ -416,15 +416,15 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		/**
 		 * Return the redo modification stamp
-		 * 
+		 *
 		 * @return the redo modification stamp for this change
 		 */
 		protected long getRedoModificationStamp() {
 			return fRedoModificationStamp;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Represents an undo-able text change consisting of several individual
 	 * changes.
@@ -436,7 +436,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		/**
 		 * Creates a new compound text change.
-		 * 
+		 *
 		 * @param manager the undo manager for this change
 		 */
 		UndoableCompoundTextChange(DocumentUndoManager manager) {
@@ -445,7 +445,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		/**
 		 * Adds a new individual change to this compound change.
-		 * 
+		 *
 		 * @param change the change to be added
 		 */
 		protected void add(UndoableTextChange change) {
@@ -541,7 +541,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			fDocumentUndoManager.fCurrent= createCurrent();
 			fDocumentUndoManager.resetProcessChangeState();
 		}
-		
+
 		/*
 		 * @see org.eclipse.text.undo.UndoableTextChange#isValid()
 		 */
@@ -575,7 +575,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			return fRedoModificationStamp;
 		}
 	}
-	
+
 
 	/**
 	 * Internal listener to document changes.
@@ -643,7 +643,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 * @see IOperationHistoryListener
 	 */
 	private class HistoryListener implements IOperationHistoryListener {
-		
+
 		private IUndoableOperation fOperation;
 
 		public void historyNotification(final OperationHistoryEvent event) {
@@ -770,9 +770,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	private List fConnected;
 
 	/**
-	 * 
+	 *
 	 * Create a DocumentUndoManager for the given document.
-	 * 
+	 *
 	 * @param document the document whose undo history is being managed.
 	 */
 	public DocumentUndoManager(IDocument document) {
@@ -820,7 +820,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		}
 		fCurrent.commit();
 	}
-	
+
 	/*
 	 * @see org.eclipse.text.undo.IDocumentUndoManager#reset()
 	 */
@@ -912,7 +912,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/**
 	 * Fires a document undo event to all registered document undo listeners.
 	 * Uses a robust iterator.
-	 * 
+	 *
 	 * @param offset the document offset
 	 * @param text the text that was inserted
 	 * @param preservedText the text being replaced
@@ -951,7 +951,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 	/**
 	 * Adds the given text edit to the operation history if it is not part of a compound change.
-	 * 
+	 *
 	 * @param edit the edit to be added
 	 */
 	private void addToOperationHistory(UndoableTextChange edit) {
@@ -981,7 +981,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/**
 	 * Checks whether the given text starts with a line delimiter and
 	 * subsequently contains a white space only.
-	 * 
+	 *
 	 * @param text the text to check
 	 * @return <code>true</code> if the text is a line delimiter followed by
 	 *         whitespace, <code>false</code> otherwise
@@ -1009,7 +1009,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 	/**
 	 * Switches the state of whether there is a text listener or not.
-	 * 
+	 *
 	 * @param listen the state which should be established
 	 */
 	private void listenToTextChanges(boolean listen) {
@@ -1199,10 +1199,10 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		addListeners();
 	}
-	
+
 	/**
 	 * Reset processChange state.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void resetProcessChangeState() {
@@ -1227,7 +1227,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 	/**
 	 * Return whether or not any clients are connected to the receiver.
-	 * 
+	 *
 	 * @return <code>true</code> if the receiver is connected to
 	 * 			clients, <code>false</code> if it is not
 	 */
@@ -1258,11 +1258,11 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				((UndoableTextChange)op).fDocumentUndoManager= this;
 			}
 		}
-		
+
 		IUndoableOperation op= OperationHistoryFactory.getOperationHistory().getUndoOperation(getUndoContext());
 		if (op != null && !(op instanceof UndoableTextChange))
 			return;
-		
+
 		// Record the transfer itself as an undoable change.
 		// If the transfer results from some open operation, recording this change will
 		// cause our undo context to be added to the outer operation.  If there is no
@@ -1279,5 +1279,5 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		addToOperationHistory(cmd);
 	}
 
-	
+
 }

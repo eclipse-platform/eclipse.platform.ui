@@ -176,7 +176,7 @@ class FindReplaceDialog extends Dialog {
 
 	private Button fReplaceSelectionButton, fReplaceFindButton, fFindNextButton, fReplaceAllButton;
 	private Combo fFindField, fReplaceField;
-	
+
 	/**
 	 * Find and replace command adapters.
 	 * @since 3.3
@@ -232,7 +232,7 @@ class FindReplaceDialog extends Dialog {
 		setShellStyle(getShellStyle() ^ SWT.APPLICATION_MODAL | SWT.MODELESS);
 		setBlockOnOpen(false);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 	 * @since 3.4
@@ -289,7 +289,7 @@ class FindReplaceDialog extends Dialog {
 		shell.setText(EditorMessages.FindReplace_title);
 		// shell.setImage(null);
 	}
-	
+
 	/**
 	 * Create the button section of the find/replace dialog.
 	 *
@@ -370,7 +370,7 @@ class FindReplaceDialog extends Dialog {
 
 		Composite directionGroup= createDirectionGroup(panel);
 		setGridData(directionGroup, SWT.FILL, true, SWT.FILL, false);
-		
+
 		Composite scopeGroup= createScopeGroup(panel);
 		setGridData(scopeGroup, SWT.FILL, true, SWT.FILL, false);
 
@@ -581,7 +581,7 @@ class FindReplaceDialog extends Dialog {
 		Label findLabel= new Label(panel, SWT.LEFT);
 		findLabel.setText(EditorMessages.FindReplace_Find_label);
 		setGridData(findLabel, SWT.LEFT, false, SWT.CENTER, false);
-		
+
 		// Create the find content assist field
 		ComboContentAdapter contentAdapter= new ComboContentAdapter();
 		FindReplaceDocumentAdapterContentProposalProvider findProposer= new FindReplaceDocumentAdapterContentProposalProvider(true);
@@ -929,7 +929,7 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Returns the first line of the given selection.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return the first line of the selection
 	 */
@@ -1046,7 +1046,7 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Escapes special characters in the string, such that the resulting pattern
 	 * matches the given string.
-	 * 
+	 *
 	 * @param string the string to escape
 	 * @return a regex pattern that matches the given string
 	 */
@@ -1074,7 +1074,7 @@ class FindReplaceDialog extends Dialog {
 				case '|':
 					pattern.append('\\').append(ch);
 					break;
-					
+
 				case '\n':
 					pattern.append("\\n"); //$NON-NLS-1$
 					break;
@@ -1512,7 +1512,7 @@ class FindReplaceDialog extends Dialog {
 		gd.verticalAlignment= verticalAlignment;
 		gd.grabExcessVerticalSpace= grabExcessVerticalSpace;
 	}
-	
+
 	/**
 	 * Adds enough space in the control's layout data margin for the content assist
 	 * decoration.
@@ -1563,7 +1563,7 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Tests whether each character in the given string is a letter.
-	 * 
+	 *
 	 * @param str the string to check
 	 * @return <code>true</code> if the given string is a word
 	 * @since 3.0
@@ -1729,7 +1729,7 @@ class FindReplaceDialog extends Dialog {
 			fDialogSettings= settings.addNewSection(getClass().getName());
 		return fDialogSettings;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
 	 * @since 3.2
@@ -1742,7 +1742,7 @@ class FindReplaceDialog extends Dialog {
 			section= settings.addNewSection(sectionName);
 		return section;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
 	 * @since 3.2
@@ -1792,7 +1792,7 @@ class FindReplaceDialog extends Dialog {
 		s.put("wholeword", fWholeWordInit); //$NON-NLS-1$
 		s.put("incremental", fIncrementalInit); //$NON-NLS-1$
 		s.put("isRegEx", fIsRegExInit); //$NON-NLS-1$
-		
+
 		List history= getFindHistory();
 		String findString= getFindString();
 		if (findString.length() > 0)
@@ -1805,10 +1805,10 @@ class FindReplaceDialog extends Dialog {
 			history.add(0, replaceString);
 		writeHistory(history, s, "replacehistory"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Writes the given history into the given dialog store.
-	 * 
+	 *
 	 * @param history the history
 	 * @param settings the dialog settings
 	 * @param sectionName the section name
@@ -1826,13 +1826,13 @@ class FindReplaceDialog extends Dialog {
 				distinctItems.add(item);
 			}
 		}
-		
+
 		while (history.size() > 8)
 			history.remove(8);
-		
+
 		String[] names= new String[history.size()];
 		history.toArray(names);
 		settings.put(sectionName, names);
-		
+
 	}
 }

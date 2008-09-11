@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.templateeditor.editors;
 
+import org.eclipse.swt.custom.StyleRange;
+
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -20,9 +24,6 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationRepairer;
-import org.eclipse.swt.custom.StyleRange;
-
-import org.eclipse.core.runtime.Assert;
 
 public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPresentationRepairer {
 
@@ -30,10 +31,10 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 	protected IDocument fDocument;
 	/** The default text attribute if non is returned as data by the current token */
 	protected TextAttribute fDefaultTextAttribute;
-	
+
 	/**
 	 * Creates a new damager/repairer.
-	 * 
+	 *
 	 * @param defaultTextAttribute the default text attribute for all detected regions
 	 */
 	public NonRuleBasedDamagerRepairer(TextAttribute defaultTextAttribute) {
@@ -52,7 +53,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 	 * Returns the end offset of the line that contains the specified offset or
 	 * if the offset is inside a line delimiter, the end offset of the next
 	 * line.
-	 * 
+	 *
 	 * @param offset the offset whose line end offset must be computed
 	 * @return the line end offset for the given offset
 	 * @exception BadLocationException if offset is invalid in the current document
@@ -108,7 +109,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 
 	/**
 	 * Adds style information to the given text presentation.
-	 * 
+	 *
 	 * @param presentation the text presentation to be extended
 	 * @param offset the offset of the range to be styled
 	 * @param length the length of the range to be styled

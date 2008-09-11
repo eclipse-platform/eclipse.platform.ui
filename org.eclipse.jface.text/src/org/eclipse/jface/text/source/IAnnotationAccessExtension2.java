@@ -21,13 +21,13 @@ import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
  * @since 3.2
  */
 public interface IAnnotationAccessExtension2 {
-	
+
 	/**
 	 * Provides this annotation access with a quick assist assistant that
 	 * is used to decide whether the quick fix image should be shown.
-	 * 
+	 *
 	 * @param assistant the quick assist assistant
 	 */
 	void setQuickAssistAssistant(IQuickAssistAssistant assistant);
-	
+
 }

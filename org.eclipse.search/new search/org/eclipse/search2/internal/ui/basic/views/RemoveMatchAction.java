@@ -12,9 +12,10 @@ package org.eclipse.search2.internal.ui.basic.views;
 
 import org.eclipse.jface.action.Action;
 
-import org.eclipse.search.ui.text.*;
-
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -24,16 +25,16 @@ public class RemoveMatchAction extends Action {
 
 	public RemoveMatchAction(AbstractTextSearchViewPage page) {
 		fPage= page;
-		setText(SearchMessages.RemoveMatchAction_label); 
-		setToolTipText(SearchMessages.RemoveMatchAction_tooltip); 
+		setText(SearchMessages.RemoveMatchAction_label);
+		setToolTipText(SearchMessages.RemoveMatchAction_tooltip);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
-	
+
 	public void run() {
 		Match match= fPage.getCurrentMatch();
 		AbstractTextSearchResult result= fPage.getInput();
 		if (match != null && result != null)
 			result.removeMatch(match);
 	}
-	
+
 }

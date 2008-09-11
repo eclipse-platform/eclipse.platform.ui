@@ -202,8 +202,8 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	protected long fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
-	
-	
+
+
 	public ResourceFileBuffer(TextFileBufferManager manager) {
 		super(manager);
 	}
@@ -300,7 +300,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	public IPath getLocation() {
 		return fLocation;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#computeCommitRule()
 	 */
@@ -400,7 +400,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 					if (fStatus.isOK())
 						handleFileContentChanged(false, false);
 				}
-				
+
 				if (isDerived(fFile)) {
 					IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.DERIVED_FILE, FileBuffersMessages.ResourceFileBuffer_warning_fileIsDerived, null);
 					if (fStatus == null || fStatus.isOK())
@@ -408,7 +408,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 					else
 						fStatus= new MultiStatus(FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.STATE_VALIDATION_FAILED, new IStatus[] {fStatus, status}, FileBuffersMessages.ResourceFileBuffer_stateValidationFailed, null);
 				}
-				
+
 			} catch (RuntimeException x) {
 				fManager.fireStateChangeFailed(this);
 				throw x;
@@ -497,7 +497,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	public boolean isSynchronized() {
 		if (fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO))
 			return true;
-		
+
 		fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 		return false;
 	}

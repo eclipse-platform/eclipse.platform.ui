@@ -21,12 +21,12 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * Introduces the ability to register a selection listener on revisions and configurable rendering
  * modes.
  * </p>
- * 
+ *
  * @see IRevisionRulerColumn
  * @since 3.3
  */
 public interface IRevisionRulerColumnExtension {
-	
+
 	/**
 	 * Rendering mode type-safe enum.
 	 */
@@ -44,7 +44,7 @@ public interface IRevisionRulerColumnExtension {
 			return fName;
 		}
 	}
-	
+
 	/**
 	 * Rendering mode that assigns a unique color to each revision author.
 	 */
@@ -59,7 +59,7 @@ public interface IRevisionRulerColumnExtension {
 	RenderingMode AGE= new RenderingMode("Age"); //$NON-NLS-1$
 	/**
 	 * Rendering mode that assigns unique colors per revision author and
-	 * uses different color intensity depending on the age. 
+	 * uses different color intensity depending on the age.
 	 * <p>
 	 * Currently it selects lighter colors for older revisions and more intense
 	 * colors for more recent revisions.
@@ -70,44 +70,44 @@ public interface IRevisionRulerColumnExtension {
 
 	/**
 	 * Changes the rendering mode and triggers redrawing if needed.
-	 *  
+	 *
 	 * @param mode the rendering mode
 	 */
 	void setRevisionRenderingMode(RenderingMode mode);
-	
+
 	/**
 	 * Enables showing the revision id.
-	 *  
+	 *
 	 * @param show <code>true</code> to show the revision, <code>false</code> to hide it
 	 */
 	void showRevisionId(boolean show);
-	
+
 	/**
 	 * Enables showing the revision author.
-	 *  
+	 *
 	 * @param show <code>true</code> to show the author, <code>false</code> to hide it
 	 */
 	void showRevisionAuthor(boolean show);
-	
+
 	/**
 	 * Returns the revision selection provider.
-	 * 
+	 *
 	 * @return the revision selection provider
 	 */
 	ISelectionProvider getRevisionSelectionProvider();
-	
+
 	/**
 	 * Adds a revision listener that will be notified when the displayed revision information
 	 * changes.
-	 * 
+	 *
 	 * @param listener the listener to add
 	 */
 	void addRevisionListener(IRevisionListener listener);
-	
+
 	/**
 	 * Removes a previously registered revision listener; nothing happens if <code>listener</code>
 	 * was not registered with the receiver.
-	 * 
+	 *
 	 * @param listener the listener to remove
 	 */
 	void removeRevisionListener(IRevisionListener listener);

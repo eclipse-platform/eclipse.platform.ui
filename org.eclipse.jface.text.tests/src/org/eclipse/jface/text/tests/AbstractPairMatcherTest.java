@@ -30,27 +30,27 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
 
 /**
  * Generic test of simple character pair matchers
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractPairMatcherTest extends TestCase {
 
 	/** Constructs a new character pair matcher */
 	protected abstract ICharacterPairMatcher createMatcher(final String chars);
-	
+
 	/** Returns the partitioning treated by the matcher */
 	protected abstract String getDocumentPartitioning();
-	
+
 	public AbstractPairMatcherTest(String name) {
 		super(name);
 	}
-	
+
 	public AbstractPairMatcherTest() {
 		super();
 	}
 
 	/* --- T e s t s --- */
-	
+
 	/** Tests that the test case reader works */
 	public void testTestCaseReader() {
 		performReaderTest("#( )%", 3,  0,  "( )");
@@ -58,7 +58,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performReaderTest("( )%",  3,  -1, "( )");
 		performReaderTest("#%",    0,  0,  "");
 	}
-	
+
 	/** Very simple checks */
 	public void testSimpleMatchSameMatcher() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -70,7 +70,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "{%   }#");
 		matcher.dispose();
 	}
-	
+
 	/** Very simple checks */
 	public void testSimpleMatchDifferentMatchers() throws BadLocationException {
 		performMatch("()[]{}", "#(   )%");
@@ -80,7 +80,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch("()[]{}", "[%   ]#");
 		performMatch("()[]{}", "{%   }#");
 	}
-	
+
 	/** Close matches */
 	public void testCloseMatches() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -92,8 +92,8 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "(#()%)");
 		matcher.dispose();
 	}
-	
-	
+
+
 	/** Checks of simple situations where no matches should be found */
 	public void testIncompleteMatch() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -104,7 +104,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "%");
 		matcher.dispose();
 	}
-	
+
 	/** Test that it doesn't match across different partitions */
 	public void testPartitioned() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -120,10 +120,10 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "(% |a ) a| |b ) b| |c ) c| )#");
 		matcher.dispose();
 	}
-	
+
 	/** Test that it works properly next to partition boundaries */
 	public void testTightPartitioned() throws BadLocationException {
-		final ICharacterPairMatcher matcher= createMatcher("()[]{}");		
+		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(|b)%b|");
 		performMatch(matcher, "(%|b)b|");
 		performMatch(matcher, "|a(a|)%");
@@ -133,7 +133,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "(%|a)a||b)b||c)c|)#");
 		matcher.dispose();
 	}
-	
+
 	/** Test that nesting works properly */
 	public void testNesting() {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -151,7 +151,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "a(b(c{%d(e)f}#g[h]i)j)k");
 		matcher.dispose();
 	}
-		
+
 	/** Test a few boundary conditions */
 	public void testBoundaries() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -161,7 +161,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		assertNull(matcher.match(doc, doc.getLength() + 1));
 		matcher.dispose();
 	}
-	
+
 	public void testBug156426() {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}<>");
 		performMatch(matcher, " #( a < b )% ");
@@ -170,7 +170,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, " (% a > b )# ");
 		matcher.dispose();
 	}
-	
+
 	/* --- U t i l i t i e s --- */
 
 	/**
@@ -184,7 +184,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		assertEquals(expectedMatch, t0.fMatch);
 		assertEquals(expectedString, t0.fString);
 	}
-	
+
 	/**
 	 * Checks that the given matcher matches the input as specified.
 	 */
@@ -210,13 +210,13 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 			assertEquals(offset, region.getOffset());
 		}
 	}
-	
+
 	private void performMatch(final String delims, final String testCase) {
 		final ICharacterPairMatcher matcher= createMatcher(delims);
 		performMatch(matcher, testCase);
 		matcher.dispose();
 	}
-	
+
 	/**
 	 * Creates a text case from a string.  In the given string a '%'
 	 * represents the position of the cursor and a '#' represents the
@@ -233,35 +233,35 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		final String stripped= str.replaceAll("%", "").replaceAll("#", "");
 		return new TestCase(stripped, pos, match);
 	}
-	
+
 	private class TestCase {
-		
+
 		public final String fString;
 		public final int fPos, fMatch;
-		
+
 		public TestCase(String string, int pos, int match) {
 			fString= string;
 			fPos= pos;
 			fMatch= match;
 		}
-		
+
 		public IDocument getDocument() {
 			return new StringDocument(fString);
 		}
-		
+
 		public int getLength() {
 			return Math.abs(fPos - fMatch);
 		}
-		
+
 		public int getOffset() {
 			if (fPos > fMatch) return fMatch;
 			return fPos;
 		}
-				
+
 	}
-	
+
 	private class StringDocument extends Document {
-		
+
 		public StringDocument(String str) {
 			this.setTextStore(new StringTextStore(str));
 			this.set(str);
@@ -269,41 +269,41 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 			this.setDocumentPartitioner(getDocumentPartitioning(), part);
 			part.connect(this);
 		}
-		
+
 	}
-	
+
 	private static class StringTextStore implements ITextStore {
-		
+
 		private String fString;
-		
+
 		public StringTextStore(final String str) {
 			fString= str;
 		}
-		
+
 		public char get(int offset) {
 			return fString.charAt(offset);
 		}
-		
+
 		public String get(int offset, int length) {
 			return fString.substring(offset, offset + length);
 		}
-		
+
 		public int getLength() {
 			return fString.length();
 		}
-		
+
 		public void replace(int offset, int length, String text) {
 			throw new UnsupportedOperationException();
 		}
-		
+
 		public void set(String text) {
 			fString= text;
 		}
-		
+
 	}
 
 	private static String DEFAULT_PARTITION= IDocument.DEFAULT_CONTENT_TYPE;
-	
+
 	private static IDocumentPartitioner createPartitioner() {
 		final RuleBasedPartitionScanner scan= new RuleBasedPartitionScanner();
 		final List/*<IPredicateRule>*/ rules= new ArrayList/*<IPredicateRule>*/();

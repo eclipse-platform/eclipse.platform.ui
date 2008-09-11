@@ -190,14 +190,14 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 3.2
 	 */
 	String GOTO_NEXT_ANNOTATION_ACTION= PREFIX + "goto_next_annotation" + ACTION_POSTFIX; //$NON-NLS-1$
-	
+
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.goto_previous_annotation_action_context"</code>
 	 * @since 3.2
 	 */
 	String GOTO_PREVIOUS_ANNOTATION_ACTION= PREFIX + "goto_previous_annotation" + ACTION_POSTFIX;	 //$NON-NLS-1$
-	
+
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.FindIncremental_action_context"</code>
@@ -334,14 +334,14 @@ public interface IAbstractTextEditorHelpContextIds {
      * @since 3.1
      */
     String HIPPIE_COMPLETION_ACTION= PREFIX + "hippie_completion" + ACTION_POSTFIX; //$NON-NLS-1$
-    
+
     /**
      * Help context id for the quick assist action.
      * Value: <code>"org.eclipse.ui.quick_assist_action_context"</code>
      * @since 3.2
      */
     String QUICK_ASSIST_ACTION= PREFIX + "quick_assist" + ACTION_POSTFIX; //$NON-NLS-1$
-    
+
     /**
      * Help context id for the recenter action.
      * Value: <code>"org.eclipse.ui.recenter_action_context"</code>
@@ -355,7 +355,7 @@ public interface IAbstractTextEditorHelpContextIds {
      * @since 3.3
      */
 	String SHOW_WHITESPACE_CHARACTERS_ACTION= PREFIX + "show_whitepsace_characters" + ACTION_POSTFIX; //$NON-NLS-1$
-	
+
 	/**
 	 * Help context id for the action that displays information
 	 * for the current caret location in a sticky hover.

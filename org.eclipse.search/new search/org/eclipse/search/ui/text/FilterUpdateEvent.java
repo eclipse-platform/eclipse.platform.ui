@@ -27,10 +27,10 @@ public class FilterUpdateEvent extends SearchResultEvent {
 
 	private final Match[] fMatches;
 	private final MatchFilter[] fFilters;
-	
+
 	/**
 	 * Constructs a new {@link FilterUpdateEvent}.
-	 * 
+	 *
 	 * @param searchResult the search result concerned
 	 * @param matches the matches updated by the filter change
 	 * @param filters the currently activated filters
@@ -40,19 +40,19 @@ public class FilterUpdateEvent extends SearchResultEvent {
 		fMatches= matches;
 		fFilters= filters;
 	}
-	
+
 	/**
 	 * Returns the matches updated by the filter update.
-	 * 
+	 *
 	 * @return the matches updated by the filter update
 	 */
 	public Match[] getUpdatedMatches() {
 		return fMatches;
 	}
-	
+
 	/**
 	 * Returns the the filters currently set, or <code>null</code> if filters have been disabled.
-	 * 
+	 *
 	 * @return the filters currently set
 	 */
 	public MatchFilter[] getActiveFilters() {

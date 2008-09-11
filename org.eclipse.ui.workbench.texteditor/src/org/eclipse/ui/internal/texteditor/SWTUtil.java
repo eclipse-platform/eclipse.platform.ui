@@ -22,15 +22,15 @@ import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * Utility class to simplify access to some SWT resources.
- *  
+ *
  * @since 3.3
  */
 public class SWTUtil {
 
 	/**
 	 * Returns a width hint for the given button.
-	 * 
-	 * @param button the button 
+	 *
+	 * @param button the button
 	 * @return the width hint for the button
 	 */
 	public static int getButtonWidthHint(Button button) {
@@ -44,15 +44,15 @@ public class SWTUtil {
 	 * Sets width and height hint for the button control.
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
 	 * an instance of <code>GridData</code>.
-	 * 
+	 *
 	 * @param button	the button for which to set the dimension hint
-	 */		
+	 */
 	public static void setButtonDimensionHint(Button button) {
 		Assert.isNotNull(button);
 		Object gd= button.getLayoutData();
 		if (gd instanceof GridData) {
-			((GridData)gd).widthHint= getButtonWidthHint(button);	
-			((GridData)gd).horizontalAlignment = GridData.FILL;	 
+			((GridData)gd).widthHint= getButtonWidthHint(button);
+			((GridData)gd).horizontalAlignment = GridData.FILL;
 		}
 	}
 }

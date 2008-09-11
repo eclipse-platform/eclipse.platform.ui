@@ -49,7 +49,7 @@ import org.eclipse.ui.commands.ICommandService;
  * If the end of a compound edit is detected, any registered {@link ICompoundEditListener}s are
  * notified and the strategy is disarmed (spring-loaded).
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class CompoundEditExitStrategy {
@@ -113,7 +113,7 @@ public final class CompoundEditExitStrategy {
 			if ((event.keyCode & SWT.MODIFIER_MASK) == 0 && (event.stateMask & maskWithoutShift) == 0)
 				fireEndCompoundEdit();
 		}
-		
+
 	}
 
 	private final String[] fCommandIds;
@@ -126,7 +126,7 @@ public final class CompoundEditExitStrategy {
 	/**
 	 * Creates a new strategy, equivalent to calling
 	 * {@linkplain #CompoundEditExitStrategy(String[]) CompoundEditExitStrategy(new String[] &#x7b; commandId &#x7d;)}.
-	 * 
+	 *
 	 * @param commandId the command id of the repeatable command
 	 */
 	public CompoundEditExitStrategy(String commandId) {
@@ -134,11 +134,11 @@ public final class CompoundEditExitStrategy {
 			throw new NullPointerException("commandId"); //$NON-NLS-1$
 		fCommandIds= new String[] {commandId};
 	}
-	
+
 	/**
 	 * Creates a new strategy, ending upon execution of any command other than the ones
 	 * specified.
-	 * 
+	 *
 	 * @param commandIds the ids of the repeatable commands
 	 */
 	public CompoundEditExitStrategy(String[] commandIds) {
@@ -149,11 +149,11 @@ public final class CompoundEditExitStrategy {
 		fCommandIds= new String[commandIds.length];
 		System.arraycopy(commandIds, 0, fCommandIds, 0, commandIds.length);
 	}
-	
+
 	/**
 	 * Installs the receiver on <code>viewer</code> and arms it. After this call returns, any
 	 * registered listeners will be notified if a compound edit ends.
-	 * 
+	 *
 	 * @param viewer the viewer to install on
 	 */
 	public void arm(ITextViewer viewer) {
@@ -163,7 +163,7 @@ public final class CompoundEditExitStrategy {
 		fViewer= viewer;
 		addListeners(fViewer);
 	}
-	
+
 	/**
 	 * Disarms the receiver. After this call returns, any registered listeners will be not be
 	 * notified any more until <code>install</code> is called again. Note that the listeners are
@@ -192,12 +192,12 @@ public final class CompoundEditExitStrategy {
 		if (commandService != null)
 			commandService.addExecutionListener(fEventListener);
 	}
-	
+
 	private void removeListeners() {
 		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (commandService != null)
 			commandService.removeExecutionListener(fEventListener);
-		
+
 		if (fWidgetEventSource != null) {
 			fWidgetEventSource.removeFocusListener(fEventListener);
 			fWidgetEventSource.removeMouseListener(fEventListener);
@@ -209,7 +209,7 @@ public final class CompoundEditExitStrategy {
 	private boolean isInstalled() {
 		return fViewer != null;
 	}
-	
+
 	private void fireEndCompoundEdit() {
 		disarm();
 		Object[] listeners= fListenerList.getListeners();
@@ -223,26 +223,26 @@ public final class CompoundEditExitStrategy {
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a compound edit listener. Multiple registration is possible. Note that the receiver is
 	 * automatically disarmed before the listeners are notified.
-	 * 
+	 *
 	 * @param listener the new listener
 	 */
 	public void addCompoundListener(ICompoundEditListener listener) {
 		fListenerList.add(listener);
 	}
-	
+
 	/**
 	 * Removes a compound edit listener. If <code>listener</code> is registered multiple times, an
 	 * arbitrary instance is removed. If <code>listener</code> is not currently registered,
 	 * nothing happens.
-	 * 
+	 *
 	 * @param listener the listener to be removed.
 	 */
 	public void removeCompoundListener(ICompoundEditListener listener) {
 		fListenerList.remove(listener);
 	}
-	
+
 }

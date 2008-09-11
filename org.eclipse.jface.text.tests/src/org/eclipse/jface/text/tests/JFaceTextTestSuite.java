@@ -19,7 +19,7 @@ import org.eclipse.jface.text.tests.rules.RulesTestSuite;
 
 /**
  * Test Suite for org.eclipse.jface.text.
- * 
+ *
  * @since 3.0
  */
 public class JFaceTextTestSuite extends TestSuite {
@@ -34,7 +34,7 @@ public class JFaceTextTestSuite extends TestSuite {
 		suite.addTest(RulesTestSuite.suite());
 		suite.addTest(ReconcilerTestSuite.suite());
 		suite.addTest(DefaultPairMatcherTest.suite());
-		
+
 		return suite;
 	}
 }

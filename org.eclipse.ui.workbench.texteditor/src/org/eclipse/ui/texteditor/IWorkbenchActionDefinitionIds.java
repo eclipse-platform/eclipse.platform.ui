@@ -16,7 +16,7 @@ package org.eclipse.ui.texteditor;
  * <p>
  * This interface must not be implemented by clients.
  * </p>
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -43,7 +43,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * @deprecated As of 3.4, replaced by {@link #REVERT}
 	 */
 	public static final String REVERT_TO_SAVED= "org.eclipse.ui.edit.revertToSaved"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition id of the file revert action.
 	 * Value: <code>"org.eclipse.ui.file.revert"</code>

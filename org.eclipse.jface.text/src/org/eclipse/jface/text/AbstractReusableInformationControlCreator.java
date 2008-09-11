@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Abstract class for a reusable information control creators.
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractReusableInformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension, DisposeListener {
@@ -30,7 +30,7 @@ public abstract class AbstractReusableInformationControlCreator implements IInfo
 
 	/**
 	 * Creates the control.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @return the created information control
 	 */
@@ -45,10 +45,10 @@ public abstract class AbstractReusableInformationControlCreator implements IInfo
 			control= doCreateInformationControl(parent);
 			control.addDisposeListener(this);
 			fInformationControls.put(parent, control);
-		}			
+		}
 		return control;
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 	 */

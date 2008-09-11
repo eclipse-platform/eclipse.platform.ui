@@ -23,37 +23,37 @@ import org.eclipse.ui.IWorkingSet;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISearchPageContainer {
 
 	/**
 	 * Workspace scope (value <code>0</code>).
-	 * 
+	 *
 	 * @since 2.0
-	 */	
+	 */
 	public static final int WORKSPACE_SCOPE= 0;
 
 	/**
 	 * Selection scope (value <code>1</code>).
-	 * 
+	 *
 	 * @since 2.0
-	 */	
+	 */
 	public static final int SELECTION_SCOPE= 1;
 
 	/**
 	 * Working set scope (value <code>2</code>).
-	 * 
+	 *
 	 * @since 2.0
-	 */	
+	 */
 	public static final int WORKING_SET_SCOPE= 2;
 
 	/**
 	 * Current Project scope (value <code>3</code>).
-	 * 
+	 *
 	 * @since 3.0
-	 */	
+	 */
 	public static final int SELECTED_PROJECTS_SCOPE= 3;
 
 	/**
@@ -61,7 +61,7 @@ public interface ISearchPageContainer {
 	 *
 	 * @return the selection passed to this container when it was opened
 	 */
-	public ISelection getSelection(); 
+	public ISelection getSelection();
 
 	/**
 	 * Returns the context for the search operation.
@@ -82,24 +82,24 @@ public interface ISearchPageContainer {
 	/**
 	 * Returns search container's selected scope.
 	 * The scope is WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
-	 * 
+	 *
 	 * @return the selected scope
 	 * @since 2.0
-	 */	
+	 */
 	public int getSelectedScope();
 
 	/**
 	 * Sets the selected scope of this search page container.
 	 * The scope is WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
 	 * @param scope the newly selected scope
-	 * 
+	 *
  	 * @since 2.0
-	 */	
+	 */
 	public void setSelectedScope(int scope);
 
 	/**
 	 * Tells whether a valid scope is selected.
-	 * 
+	 *
 	 * @return a <code>true</code> if a valid scope is selected in this search page container
  	 * @since 2.0
 	 */
@@ -107,7 +107,7 @@ public interface ISearchPageContainer {
 
 	/**
 	 * Returns the selected working sets of this container.
-	 * 
+	 *
 	 * @return an array with the selected working sets or <code>null</code> if the scope is not {@link #WORKING_SET_SCOPE}
 	 * @since 2.0
 	 */
@@ -115,19 +115,19 @@ public interface ISearchPageContainer {
 
 	/**
 	 * Sets the selected working sets of this container.
-	 * 
+	 *
 	 * @param workingSets an array of IWorkingSet
 	 * @since 2.0
 	 */
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets);
-	
+
 	/**
 	 * Returns the names of the enclosing projects if selected by the container or <code>null</code>
 	 * if the scope is not {@link #SELECTED_PROJECTS_SCOPE}
-	 * 
+	 *
 	 * @return the names of the enclosing project or <code>null</code> if the scope is not {@link #SELECTED_PROJECTS_SCOPE}.
 	 * @since 3.2
 	 */
 	public String[] getSelectedProjectNames();
-	
+
 }

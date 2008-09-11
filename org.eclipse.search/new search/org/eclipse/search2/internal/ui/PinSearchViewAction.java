@@ -21,7 +21,7 @@ import org.eclipse.search.internal.ui.SearchPluginImages;
  * Pins the currently visible search view
  */
 public class PinSearchViewAction extends Action implements IUpdate {
-	
+
 	private SearchView fView = null;
 
 	/**
@@ -29,13 +29,13 @@ public class PinSearchViewAction extends Action implements IUpdate {
 	 * @param view the search view
 	 */
 	public PinSearchViewAction(SearchView view) {
-		super(SearchMessages.PinSearchViewAction_label, IAction.AS_CHECK_BOX); 
-		setToolTipText(SearchMessages.PinSearchViewAction_tooltip); 
+		super(SearchMessages.PinSearchViewAction_label, IAction.AS_CHECK_BOX);
+		setToolTipText(SearchMessages.PinSearchViewAction_tooltip);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_PIN_VIEW);
 		fView = view;
 		update();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
@@ -43,7 +43,7 @@ public class PinSearchViewAction extends Action implements IUpdate {
 		fView.setPinned(isChecked());
 		fView.updatePartName();
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */

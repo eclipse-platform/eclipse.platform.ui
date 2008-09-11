@@ -40,7 +40,7 @@ public class MockDocumentSetupParticipants {
 			append(document, getClass()+"\n");
 		}
 	}
-	
+
 	static abstract class AbstractTestDSPExtension extends AbstractTestDSP implements IDocumentSetupParticipantExtension {
 		/*
 		 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension#setup(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
@@ -49,36 +49,36 @@ public class MockDocumentSetupParticipants {
 			append(document, getClass()+"%%EXTENSION\n");
 		}
 	}
-	
+
 	public static class TestDSP1 extends AbstractTestDSP {}
 	public static class TestDSP2 extends AbstractTestDSP {}
 	public static class TestDSP3 extends AbstractTestDSP {}
-	
+
 	public static class TestDSP4 extends AbstractTestDSPExtension {}
 	public static class TestDSP5 extends AbstractTestDSPExtension {}
 	public static class TestDSP6 extends AbstractTestDSPExtension {}
-	
+
 	public static class TestDSP7 extends AbstractTestDSPExtension {
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.IFILE)
 				append(document, new StringBuffer(location.toPortableString()).reverse().toString());
 		}
 	}
-	
+
 	public static class TestDSP8 extends AbstractTestDSPExtension {
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.LOCATION)
 				append(document, new StringBuffer(location.toPortableString()).reverse().toString());
 		}
 	}
-	
+
 	public static class TestDSP9 extends AbstractTestDSPExtension {
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.NORMALIZE)
 				append(document, new StringBuffer(location.toPortableString()).reverse().toString());
 		}
 	}
-	
+
 	private static void append(IDocument document, String string) {
 		try {
 			document.replace(document.getLength(), 0, string);

@@ -94,7 +94,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 
 		if (markerDeltas.length ==  0)
 			return;
-		
+
 		if (markerDeltas.length == 1) {
 			IMarkerDelta delta= markerDeltas[0];
 			switch (delta.getKind()) {
@@ -110,7 +110,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			}
 		} else
 			batchedUpdate(markerDeltas);
-		
+
 		fireModelChanged();
 	}
 
@@ -140,14 +140,14 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 
 		if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty())
 			return;
-		
+
 		Iterator e= getAnnotationIterator(false);
 		while (e.hasNext()) {
 			Object o= e.next();
 			if (o instanceof MarkerAnnotation) {
 				MarkerAnnotation a= (MarkerAnnotation)o;
 				IMarker marker= a.getMarker();
-				
+
 				if (removedMarkers.remove(marker))
 					removeAnnotation(a, false);
 
@@ -158,10 +158,10 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 						modifyAnnotationPosition(a, p, false);
 					}
 				}
-				
+
 				if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty())
 					return;
-				
+
 			}
 		}
 

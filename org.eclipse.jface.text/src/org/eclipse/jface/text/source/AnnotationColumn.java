@@ -22,7 +22,7 @@ public final class AnnotationColumn extends AnnotationRulerColumn {
 
 	/**
 	 * Creates a new <code>AnnotationColumn</code> of the given width.
-	 * 
+	 *
 	 * @param width the width of this column
 	 * @deprecated Use
 	 *             {@link org.eclipse.jface.text.source.AnnotationRulerColumn#AnnotationRulerColumn(int)}

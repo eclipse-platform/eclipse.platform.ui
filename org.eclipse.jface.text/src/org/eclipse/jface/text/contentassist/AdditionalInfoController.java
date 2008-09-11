@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -26,7 +20,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.internal.text.InformationControlReplacer;
+
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -41,15 +42,15 @@ import org.eclipse.jface.text.IInformationControlExtension3;
  * @since 2.0
  */
 class AdditionalInfoController extends AbstractInformationControlManager {
-	
+
 	/**
 	 * A timer thread.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static abstract class Timer {
 		private static final int DELAY_UNTIL_JOB_IS_SCHEDULED= 50;
-		
+
 		/**
 		 * A <code>Task</code> is {@link Task#run() run} when {@link #delay()} milliseconds have
 		 * elapsed after it was scheduled without a {@link #reset(ICompletionProposal) reset}
@@ -69,7 +70,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	         */
 	        public abstract Task nextTask();
 		}
-		
+
 		/**
 		 * IDLE: the initial task, and active whenever the info has been shown. It cannot be run,
 		 * but specifies an infinite delay.
@@ -78,16 +79,16 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			public void run() {
 				Assert.isTrue(false);
 			}
-			
+
 			public Task nextTask() {
 				Assert.isTrue(false);
 			    return null;
 			}
-			
+
 			public long delay() {
 				return Long.MAX_VALUE;
 			}
-			
+
 			public String toString() {
 				return "IDLE"; //$NON-NLS-1$
 			}
@@ -116,15 +117,15 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				};
 				job.schedule();
 			}
-			
+
 			public Task nextTask() {
 				return SECOND_WAIT;
 			}
-			
+
 			public long delay() {
 				return DELAY_UNTIL_JOB_IS_SCHEDULED;
 			}
-			
+
 			public String toString() {
 				return "FIRST_WAIT"; //$NON-NLS-1$
 			}
@@ -138,15 +139,15 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				// show the info
 				allowShowing();
 			}
-			
+
 			public Task nextTask() {
 				return IDLE;
 			}
-			
+
 			public long delay() {
 				return fDelay - DELAY_UNTIL_JOB_IS_SCHEDULED;
 			}
-			
+
 			public String toString() {
 				return "SECOND_WAIT"; //$NON-NLS-1$
 			}
@@ -170,15 +171,15 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 					});
 				}
 			}
-			
+
 			public Task nextTask() {
 				return IDLE;
 			}
-			
+
 			public long delay() {
 				return fDelay;
 			}
-			
+
 			public String toString() {
 			    return "LEGACY_WAIT"; //$NON-NLS-1$
 			}
@@ -199,12 +200,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			public void run() {
 				Assert.isTrue(false);
 	        }
-			
+
 			public String toString() {
 				return "EXIT"; //$NON-NLS-1$
 			}
 		};
-		
+
 		/** The timer thread. */
 		private final Thread fThread;
 
@@ -212,17 +213,17 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		private Task fTask;
 		/** The next wake up time. */
 		private long fNextWakeup;
-		
+
 		private ICompletionProposal fCurrentProposal= null;
 		private Object fCurrentInfo= null;
 		private boolean fAllowShowing= false;
 
 		private final Display fDisplay;
 		private final int fDelay;
-		
+
 		/**
 		 * Creates a new timer.
-		 * 
+		 *
 		 * @param display the display to use for display thread posting.
 		 * @param delay the delay until to show additional info
 		 */
@@ -242,7 +243,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
     		}, JFaceTextMessages.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
 			fThread.start();
 		}
-		
+
 		/**
 		 * Terminates the timer thread.
 		 */
@@ -250,10 +251,10 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			schedule(EXIT, System.currentTimeMillis());
 			notifyAll();
 		}
-		
+
 		/**
 		 * Resets the timer thread as the selection has changed to a new proposal.
-		 * 
+		 *
 		 * @param p the new proposal
 		 */
 		public final synchronized void reset(ICompletionProposal p) {
@@ -269,7 +270,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 					notifyAll();
 			}
 		}
-		
+
         private Task taskOnReset(ICompletionProposal p) {
 			if (p == null)
 				return IDLE;
@@ -295,11 +296,11 @@ class AdditionalInfoController extends AbstractInformationControlManager {
         		}
         	}
         }
-        
+
         private Task currentTask() {
         	return fTask;
         }
-        
+
         private void schedule(Task task, long current) {
         	fTask= task;
         	long nextWakeup= current + task.delay();
@@ -316,7 +317,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
         ICompletionProposal getCurrentProposal() {
 	        return fCurrentProposal;
         }
-        
+
         ICompletionProposalExtension5 getCurrentProposalEx() {
         	Assert.isTrue(fCurrentProposal instanceof ICompletionProposalExtension5);
         	return (ICompletionProposalExtension5) fCurrentProposal;
@@ -345,10 +346,10 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				});
 			}
         }
-        
+
         /**
          * Called in the display thread to show additional info.
-         * 
+         *
          * @param proposal the proposal to show information about
          * @param info the information about <code>proposal</code>
          */
@@ -377,7 +378,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	}
-	
+
 	/**
 	 * Default control creator for the information control replacer.
 	 * @since 3.4
@@ -423,7 +424,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		fDelay= delay;
 		setAnchor(ANCHOR_RIGHT);
 		setFallbackAnchors(new Anchor[] { ANCHOR_RIGHT, ANCHOR_LEFT, ANCHOR_BOTTOM });
-	    
+
 	    /*
 		 * Adjust the location by one pixel towards the proposal popup, so that the single pixel
 		 * border of the additional info popup overlays with the border of the popup. This avoids
@@ -431,7 +432,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 */
 	    int spacing= -1;
 		setMargins(spacing, spacing); // see also adjustment in #computeLocation
-		
+
 		InformationControlReplacer replacer= new InformationControlReplacer(new DefaultPresenterControlCreator());
 		getInternalAccessor().setInformationControlReplacer(replacer);
 	}
@@ -452,7 +453,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		fProposalTable= (Table) control;
 		fProposalTable.addSelectionListener(fSelectionListener);
 		getInternalAccessor().getInformationControlReplacer().install(fProposalTable);
-		
+
 		fTimer= new Timer(fProposalTable.getDisplay(), fDelay) {
 			protected void showInformation(ICompletionProposal proposal, Object info) {
 				InformationControlReplacer replacer= getInternalAccessor().getInformationControlReplacer();
@@ -507,10 +508,10 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	void showInformation(ICompletionProposal proposal, Object info) {
 		if (fProposalTable == null || fProposalTable.isDisposed())
 			return;
-		
+
 		if (fProposal == proposal && ((info == null && fInformation == null) || (info != null && info.equals(fInformation))))
 			return;
-		
+
         fInformation= info;
         fProposal= proposal;
         showInformation();
@@ -537,7 +538,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 */
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 	    Point location= super.computeLocation(subjectArea, controlSize, anchor);
-	    
+
 	    /*
 		 * The location is computed using subjectControl.toDisplay(), which does not include the
 		 * trim of the subject control. As we want the additional info popup aligned with the outer
@@ -557,7 +558,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		// at least as big as the proposal table
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= subjectControl.getShell().getSize();
-		
+
 	    // AbstractInformationControlManager#internalShowInformationControl(Rectangle, Object) adds trims
 		// to the computed constraints. Need to remove them here, to make the outer bounds of the additional
 		// info shell fit the bounds of the proposal shell:
@@ -573,7 +574,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			sizeConstraint.y= size.y;
 		return sizeConstraint;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
 	 */

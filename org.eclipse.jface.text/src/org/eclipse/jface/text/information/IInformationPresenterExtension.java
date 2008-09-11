@@ -15,7 +15,7 @@ package org.eclipse.jface.text.information;
  * the ability to handle documents with multiple partitions.
  *
  * @see org.eclipse.jface.text.information.IInformationPresenter
- * 
+ *
  * @since 3.0
  */
 public interface IInformationPresenterExtension {

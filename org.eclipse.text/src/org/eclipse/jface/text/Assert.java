@@ -27,7 +27,7 @@ package org.eclipse.jface.text;
  * Note that an <code>assert</code> statement is slated to be added to the
  * Java language in JDK 1.4, rending this class obsolete.
  * </p>
- * 
+ *
  * @deprecated As of 3.3, replaced by {@link org.eclipse.core.runtime.Assert}
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

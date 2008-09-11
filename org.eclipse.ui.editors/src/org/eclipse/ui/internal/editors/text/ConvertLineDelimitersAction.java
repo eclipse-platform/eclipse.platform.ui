@@ -29,9 +29,9 @@ import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.ITextSelection;
 
-import org.eclipse.ui.editors.text.FileBufferOperationAction;
-
 import org.eclipse.ui.internal.editors.text.SelectResourcesDialog.IFilter;
+
+import org.eclipse.ui.editors.text.FileBufferOperationAction;
 
 
 /**
@@ -64,7 +64,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		return location != null && manager.isTextFileLocation(location, fStrictCheckIfTextLocation);
 	}
-	
+
 	public void selectionChanged(IAction action, ISelection selection) {
 		super.selectionChanged(action, selection);
 		fStrictCheckIfTextLocation= !(selection instanceof ITextSelection);
@@ -99,7 +99,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	/**
 	 * Checks whether the given resources array contains
 	 * only files.
-	 * 
+	 *
 	 * @param resources the array with the resources
 	 * @return <code>true</code> if there array only contains <code>IFiles</code>s
 	 * @since 3.2
@@ -112,10 +112,10 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Filters the unacceptable files.
-	 * 
+	 *
 	 * @param files the files to filter
 	 * @return an array of files
 	 * @since 3.2

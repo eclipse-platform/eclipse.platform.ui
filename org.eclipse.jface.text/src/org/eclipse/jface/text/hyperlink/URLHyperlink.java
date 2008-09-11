@@ -31,7 +31,7 @@ public class URLHyperlink implements IHyperlink {
 
 	/**
 	 * Creates a new URL hyperlink.
-	 * 
+	 *
 	 * @param region the region
 	 * @param urlString the URL string
 	 */
@@ -76,7 +76,7 @@ public class URLHyperlink implements IHyperlink {
 
 	/**
 	 * Returns the URL string of this hyperlink.
-	 * 
+	 *
 	 * @return the URL string
 	 * @since 3.2
 	 */

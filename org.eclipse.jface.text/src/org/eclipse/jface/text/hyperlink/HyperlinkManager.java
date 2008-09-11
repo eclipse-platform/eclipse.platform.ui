@@ -164,7 +164,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		text.addMouseTrackListener(this);
 
 		fTextViewer.addTextListener(this);
-		
+
 		fHyperlinkPresenter.install(fTextViewer);
 	}
 
@@ -218,7 +218,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			text.removeMouseTrackListener(this);
 		}
 		fTextViewer.removeTextListener(this);
-		
+
 		fHyperlinkPresenter.uninstall();
 
 		fHyperlinkPresenter= null;
@@ -236,7 +236,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	/**
 	 * Finds hyperlinks at the current offset.
-	 * 
+	 *
 	 * @return the hyperlinks or <code>null</code> if none.
 	 */
 	protected IHyperlink[] findHyperlinks() {
@@ -252,7 +252,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 				IHyperlinkDetector detector= fHyperlinkDetectors[i];
 				if (detector == null)
 					continue;
-				
+
 				if (detector instanceof IHyperlinkDetectorExtension2) {
 					int stateMask= ((IHyperlinkDetectorExtension2)detector).getStateMask();
 					if (stateMask != -1 && stateMask != fActiveHyperlinkStateMask)
@@ -299,7 +299,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	/**
 	 * Computes the length of the longest detected hyperlink.
-	 * 
+	 *
 	 * @param hyperlinks the list of hyperlinks
 	 * @return the length of the longest detected
 	 */
@@ -318,7 +318,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	/**
 	 * Returns the current text offset.
-	 * 
+	 *
 	 * @return the current text offset
 	 */
 	protected int getCurrentTextOffset() {
@@ -336,7 +336,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			Point p= text.getLocationAtOffset(widgetOffset);
 			if (p.x > relativePosition.x)
 				widgetOffset--;
-			
+
 			if (fTextViewer instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
 				return extension.widgetOffset2ModelOffset(widgetOffset);
@@ -440,14 +440,14 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
 				return;
 		}
-		
+
 		if (!isRegisteredStateMask(event.stateMask)) {
 			if (fActive)
 				deactivate();
-			
+
 			return;
 		}
-		
+
 		fActive= true;
 		fActiveHyperlinkStateMask= event.stateMask;
 
@@ -474,7 +474,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	/**
 	 * Checks whether the given state mask is registered.
-	 * 
+	 *
 	 * @param stateMask the state mask
 	 * @return <code>true</code> if a detector is registered for the given state mask
 	 * @since 3.3
@@ -482,7 +482,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	private boolean isRegisteredStateMask(int stateMask) {
 		if (stateMask == fHyperlinkStateMask)
 			return true;
-		
+
 		synchronized (fHyperlinkDetectors) {
 			for (int i= 0; i < fHyperlinkDetectors.length; i++) {
 				if (fHyperlinkDetectors[i] instanceof IHyperlinkDetectorExtension2) {
@@ -493,7 +493,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 	 */
@@ -514,7 +514,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		//key up
 		deactivate();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ITextListener#textChanged(TextEvent)
 	 * @since 3.2
@@ -526,7 +526,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void mouseExit(MouseEvent e) {
@@ -539,7 +539,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void mouseEnter(MouseEvent e) {
@@ -547,7 +547,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void mouseHover(MouseEvent e) {

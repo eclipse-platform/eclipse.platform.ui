@@ -64,7 +64,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
  * Configures the linked mode preferences. The preferences belong to
  * org.eclipse.ui.editors. However, as they are chiefly used in the java editor,
  * we keep the preferences here for the time being.
- * 
+ *
  * @since 3.2 (in jdt.ui since 3.1)
  */
 class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
@@ -97,7 +97,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			this.validStyles= validStyles;
 		}
 	}
-	
+
 	private static final class ItemContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
@@ -110,20 +110,20 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	
+
 	private final class ItemLabelProvider extends LabelProvider {
-		
+
 		public String getText(Object element) {
 			return ((ListItem) element).label;
 		}
 	}
-	
+
 	private static class ArrayLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			return ((String[]) element)[0].toString();
 		}
 	}
-	
+
 	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_HIGHLIGHT, "unused"};  //$NON-NLS-1$
 	final static String[] UNDERLINE= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_UNDERLINE, AnnotationPreference.STYLE_UNDERLINE};
 	final static String[] BOX= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_BOX, AnnotationPreference.STYLE_BOX};
@@ -134,7 +134,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	private ColorSelector fAnnotationForegroundColorEditor;
 
 	private Button fShowInTextCheckBox;
-	
+
 	private StructuredViewer fAnnotationTypeViewer;
 	private final ListItem[] fListModel;
 
@@ -142,13 +142,13 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	private FontMetrics fFontMetrics;
 	protected static final int INDENT= 20;
 	private OverlayPreferenceStore fStore;
-	
+
 	private ArrayList fMasterSlaveListeners= new ArrayList();
-	
+
 	private OverlayPreferenceStore getPreferenceStore() {
 		return fStore;
 	}
-	
+
 	public LinkedModeConfigurationBlock(OverlayPreferenceStore store) {
 		fStore= store;
 		final MarkerAnnotationPreferences prefs= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
@@ -162,7 +162,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
-			
+
 			if (isLinkedModeAnnotation(info)) {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getColorPreferenceKey()));
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getTextPreferenceKey()));
@@ -170,7 +170,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getHighlightPreferenceKey()));
 			}
 		}
-		
+
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return keys;
@@ -183,11 +183,11 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				|| (type.equals(TARGET))
 				|| (type.equals(EXIT));
 	}
-	
+
 	private ListItem[] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
 		ArrayList listModelItems= new ArrayList();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
-		
+
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
 			if (isLinkedModeAnnotation(info)) {
@@ -196,12 +196,12 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				listModelItems.add(new ListItem(label, null, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey(), styles));
 			}
 		}
-		
+
 		ListItem[] items= new ListItem[listModelItems.size()];
 		listModelItems.toArray(items);
 		return items;
 	}
-	
+
 
 	private List getStyles(Object type) {
 		if (type.equals(MASTER))
@@ -217,7 +217,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	/**
 	 * Creates page for hover preferences.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
@@ -225,7 +225,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		OverlayPreferenceStore store= getPreferenceStore();
 		store.load();
 		store.start();
-		
+
 		initializeDialogUnits(parent);
 
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -254,7 +254,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		gd.heightHint= convertHeightInCharsToPixels(5);
 		fAnnotationTypeViewer.getControl().setLayoutData(gd);
-		
+
 		Composite optionsComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
@@ -262,15 +262,15 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		layout.numColumns= 2;
 		optionsComposite.setLayout(layout);
 		optionsComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		
+
 		// we only allow to set either "show in text" or "highlight in text", but not both
-        
+
 		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
 		fShowInTextCheckBox.setText(TextEditorMessages.LinkedModeConfigurationBlock_labels_showIn);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fShowInTextCheckBox.setLayoutData(gd);
-		
+
 		fDecorationViewer= new ComboViewer(optionsComposite, SWT.READ_ONLY);
 		fDecorationViewer.setContentProvider(new ArrayContentProvider());
 		fDecorationViewer.setLabelProvider(new ArrayLabelProvider());
@@ -280,7 +280,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fDecorationViewer.getControl().setLayoutData(gd);
 		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, DASHED_BOX, UNDERLINE, IBEAM});
-		
+
 		label= new Label(optionsComposite, SWT.LEFT);
 		label.setText(TextEditorMessages.LinkedModeConfigurationBlock_color);
 		gd= new GridData();
@@ -292,7 +292,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
-		
+
 		createDependency(fShowInTextCheckBox, new Control[] {label, foregroundColorButton});
 
 		fAnnotationTypeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -300,12 +300,12 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				handleAnnotationListSelection();
 			}
 		});
-		
+
 		fShowInTextCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				ListItem item= getSelectedItem();
 				final boolean value= fShowInTextCheckBox.getSelection();
@@ -325,18 +325,18 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				updateDecorationViewer(item, false);
 			}
 		});
-		
+
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				ListItem item= getSelectedItem();
 				PreferenceConverter.setValue(getPreferenceStore(), item.colorKey, fAnnotationForegroundColorEditor.getColorValue());
 			}
 		});
-		
+
 		fDecorationViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			/*
@@ -345,7 +345,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			public void selectionChanged(SelectionChangedEvent event) {
 				String[] decoration= (String[]) ((IStructuredSelection) fDecorationViewer.getSelection()).getFirstElement();
 				ListItem item= getSelectedItem();
-				
+
 				if (fShowInTextCheckBox.getSelection()) {
 					if (HIGHLIGHT.equals(decoration)) {
 						getPreferenceStore().setValue(item.highlightKey, true);
@@ -359,11 +359,11 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				}
 			}
 		});
-		
+
 		return composite;
 
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
 	 * @since 3.4
@@ -379,7 +379,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param chars the number of characters
 	 * @return the number of pixels
 	 */
@@ -398,7 +398,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param chars the number of characters
 	 * @return the number of pixels
 	 */
@@ -415,7 +415,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * <p>
 	 * This method must be called before any of the dialog unit based conversion methods are called.
 	 * </p>
-	 * 
+	 *
 	 * @param testControl a control from which to obtain the current font
 	 */
     protected void initializeDialogUnits(Control testControl) {
@@ -425,26 +425,26 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
         fFontMetrics = gc.getFontMetrics();
         gc.dispose();
     }
-    
+
 	private void handleAnnotationListSelection() {
 		ListItem item= getSelectedItem();
-		
+
 		RGB rgb= PreferenceConverter.getColor(getPreferenceStore(), item.colorKey);
 		fAnnotationForegroundColorEditor.setColorValue(rgb);
-		
+
 		boolean highlight= item.highlightKey == null ? false : getPreferenceStore().getBoolean(item.highlightKey);
 		boolean showInText = item.textKey == null ? false : getPreferenceStore().getBoolean(item.textKey);
 		fShowInTextCheckBox.setSelection(showInText || highlight);
-		
+
 		updateDecorationViewer(item, true);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jdt.internal.ui.preferences.IPreferenceConfigurationBlock#initialize()
 	 */
 	public void initialize() {
 		initializeFields();
-		
+
 		fAnnotationTypeViewer.setInput(fListModel);
 		fAnnotationTypeViewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -465,16 +465,16 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		// only one case where the combo is not enabled: if both the highlight and textStyle keys are null
 		final boolean enabled= fShowInTextCheckBox.getSelection() && !(item.highlightKey == null && item.textStyleKey == null);
 		fDecorationViewer.getControl().setEnabled(enabled);
-		
+
 		if (changed) {
 			String[] selection= null;
 			ArrayList list= new ArrayList();
-			
+
 			list.addAll(item.validStyles);
-			
+
 			if (getPreferenceStore().getBoolean(item.highlightKey))
 				selection= HIGHLIGHT;
-			
+
 			// set selection
 			if (selection == null) {
 				String val= getPreferenceStore().getString(item.textStyleKey);
@@ -486,29 +486,29 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 					}
 				}
 			}
-			
+
 			fDecorationViewer.setInput(list.toArray(new Object[list.size()]));
 			if (selection == null)
 				selection= (String[]) list.get(0);
 			fDecorationViewer.setSelection(new StructuredSelection((Object) selection), true);
 		}
 	}
-	
-	
+
+
 	public void performOk() {
 		getPreferenceStore().propagate();
-		
+
 		try {
 			Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(EditorsUI.PLUGIN_ID).flush();
 		} catch (BackingStoreException e) {
 			EditorsPlugin.log(e);
 		}
 	}
-	
-	
+
+
 	public void performDefaults() {
 		getPreferenceStore().loadDefaults();
-		
+
 		/*
 		 * Only call super after updating fShowInTextCheckBox, so that
 		 * the master-slave dependencies get properly updated.
@@ -517,7 +517,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		initializeFields();
 	}
-	
+
 	public void dispose() {
 		OverlayPreferenceStore store= getPreferenceStore();
 		if (store != null) {
@@ -528,7 +528,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	protected void createDependency(final Button master, final Control slave) {
 		createDependency(master, new Control[] {slave});
 	}
-	
+
 	protected void createDependency(final Button master, final Control[] slaves) {
 		Assert.isTrue(slaves.length > 0);
 		indent(slaves[0]);
@@ -551,7 +551,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private void initializeFields() {
-		
+
         // Update slaves
         Iterator iter= fMasterSlaveListeners.iterator();
         while (iter.hasNext()) {

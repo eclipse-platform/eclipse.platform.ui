@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.keys.IBindingService;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
@@ -180,7 +181,7 @@ public final class EditorsUI {
 	 * Returns the registry that contains the hyperlink detectors contributed
 	 * by  the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectors</code>
 	 * extension point.
-	 * 
+	 *
 	 * @return the hyperlink detector registry
 	 * @since 3.3
 	 */
@@ -189,8 +190,8 @@ public final class EditorsUI {
 	}
 
 	// --------------- Status codes for this plug-in ---------------
-	
-	// NOTE: See also IEditorsStatusConstants 
+
+	// NOTE: See also IEditorsStatusConstants
 
 	/**
 	 * Editor UI plug-in status code indicating that an operation failed
@@ -198,7 +199,7 @@ public final class EditorsUI {
 	 * charset.
 	 * <p>
 	 * Value: {@value}</p>
-	 * 
+	 *
 	 * @see UnmappableCharacterException
 	 * @since 3.2
 	 */
@@ -209,7 +210,7 @@ public final class EditorsUI {
 	 * validation failed.
 	 * <p>
 	 * Value: {@value}</p>
-	 * 
+	 *
 	 * @see IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, Object)
 	 * @since 3.3
 	 */
@@ -220,12 +221,12 @@ public final class EditorsUI {
 	 * a resource is marked derived.
 	 * <p>
 	 * Value: {@value}</p>
-	 * 
+	 *
 	 * @see IResource#isDerived()
 	 * @since 3.3
 	 */
 	public static final int DERIVED_FILE= IFileBufferStatusCodes.DERIVED_FILE;
-	
+
 	/**
 	 * Returns the tool tip affordance string.
 	 *
@@ -237,7 +238,7 @@ public final class EditorsUI {
 	public static final String getTooltipAffordanceString() {
 		if (!getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE))
 			return null;
-		
+
 		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService == null)
 			return null;
@@ -245,7 +246,7 @@ public final class EditorsUI {
 		String keySequence= bindingService.getBestActiveBindingFormattedFor(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 		if (keySequence == null)
 			return ""; //$NON-NLS-1$
-		
+
 		return NLSUtility.format(TextEditorMessages.Editor_toolTip_affordance, keySequence);
 	}
 

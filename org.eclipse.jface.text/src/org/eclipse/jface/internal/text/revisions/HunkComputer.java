@@ -19,14 +19,14 @@ import org.eclipse.jface.text.source.ILineDiffer;
 
 /**
  * Computes the diff hunks from an {@link ILineDiffer}.
- *  
+ *
  * @since 3.3
  */
 public final class HunkComputer {
 	/**
 	 * Converts the line-based information of {@link ILineDiffer} into {@link Hunk}s, grouping
 	 * contiguous blocks of lines that are changed (added, deleted).
-	 * 
+	 *
 	 * @param differ the line differ to query
 	 * @param lines the number of lines to query
 	 * @return the corresponding {@link Hunk} information
@@ -69,7 +69,7 @@ public final class HunkComputer {
 				changed= 0;
 			}
 		}
-		
+
 		return (Hunk[]) hunks.toArray(new Hunk[hunks.size()]);
 	}
 	private HunkComputer() {

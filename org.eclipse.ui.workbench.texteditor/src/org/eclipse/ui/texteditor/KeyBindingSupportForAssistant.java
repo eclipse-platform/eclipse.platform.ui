@@ -39,7 +39,7 @@ import org.eclipse.ui.commands.ICommandService;
  * Clients normally don't need to use that class as the setup is done by the
  * framework.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public final class KeyBindingSupportForAssistant implements ICompletionListener {
@@ -73,7 +73,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 			}
 		}
 	}
-	
+
 
 	private List fReplacedCommands;
 	private ContentAssistantFacade fContentAssistantFacade;
@@ -81,7 +81,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 
 	/**
 	 * Creates the support for a content assistant facade.
-	 * 
+	 *
 	 * @param contentAssistFacade the content assist facade
 	 * @deprecated As of 3.5, this is a NOP since the framework installs this now
 	 */
@@ -90,7 +90,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 
 	/**
 	 * Creates the support for a content assistant facade.
-	 * 
+	 *
 	 * @param sourceViewerExtension the source viewer extension
 	 * @since 3.5
 	 */
@@ -103,7 +103,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 
 	/**
 	 * Creates the support for a content assistant facade.
-	 * 
+	 *
 	 * @param contentAssistant the content assist facade
 	 * @deprecated As of 3.5, this is a NOP since the framework installs this now
 	 */
@@ -112,7 +112,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 
 	/**
 	 * Creates the support for a quick assist assistant.
-	 * 
+	 *
 	 * @param quickAssistAssistant the quick assist assistant.
 	 */
 	public KeyBindingSupportForAssistant(IQuickAssistAssistant quickAssistAssistant) {
@@ -148,7 +148,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * The same handler instance will be returned when called a more than once
 	 * with the same command identifier.
 	 * </p>
-	 * 
+	 *
 	 * @param commandId the command identifier
 	 * @return the handler for the given command identifier
 	 */
@@ -186,7 +186,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 			fContentAssistantFacade.removeCompletionListener(this);
 			fContentAssistantFacade= null;
 		}
-		
+
 		if (fQuickAssistAssistant != null) {
 			fQuickAssistAssistant.removeCompletionListener(this);
 			fQuickAssistAssistant= null;

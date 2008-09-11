@@ -26,20 +26,20 @@ import org.eclipse.jface.text.projection.Segment;
  * @since 3.0
  */
 public class ProjectionMappingTest extends TestCase {
-	
+
 	private IDocument fMasterDocument;
 	private IDocument fSlaveDocument;
 	private String fFragmentsCategory;
 	private String fSegmentsCategory;
 	private ProjectionMapping fProjectionMapping;
-	
-	
+
+
 	public ProjectionMappingTest(String name) {
 		super(name);
 	}
-	
+
 	private String getOriginalMasterContent() {
-		return 
+		return
 			"1111111111111111111\n" +
 			"2222222222222222222\n" +
 			"3333333333333333333\n" +
@@ -50,7 +50,7 @@ public class ProjectionMappingTest extends TestCase {
 			"8888888888888888888\n" +
 			"99999999999999999999";
 	}
-	
+
 	private String getOriginalSlaveContent() {
 		StringBuffer buffer= new StringBuffer(getOriginalMasterContent());
 		buffer.delete(80, 180);
@@ -58,7 +58,7 @@ public class ProjectionMappingTest extends TestCase {
 		buffer.delete(0, 20);
 		return buffer.toString();
 	}
-	
+
 	private String getLineWrappingSlaveContent() {
 		StringBuffer buffer= new StringBuffer(getOriginalMasterContent());
 		buffer.delete(80, 180);
@@ -66,7 +66,7 @@ public class ProjectionMappingTest extends TestCase {
 		buffer.delete(10, 30); // ...111222...
 		return buffer.toString(); // "1111111111222222222\n3333333333444444444\n"
 	}
-	
+
 	private void addProjection(int fragmentOffset, int segmentOffset, int length) {
 		Fragment fragment= new Fragment(fragmentOffset, length);
 		Segment segment= new Segment(segmentOffset, length);
@@ -81,7 +81,7 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	private void createStandardProjection() {
 		fMasterDocument.set(getOriginalMasterContent());
 		fSlaveDocument.set(getOriginalSlaveContent());
@@ -94,7 +94,7 @@ public class ProjectionMappingTest extends TestCase {
 		fSlaveDocument.set(getOriginalMasterContent());
 		addProjection(0, 0, fMasterDocument.getLength());
 	}
-	
+
 	private void createLineWrappingProjection() {
 		fMasterDocument.set(getOriginalMasterContent());
 		fSlaveDocument.set(getLineWrappingSlaveContent());
@@ -102,7 +102,7 @@ public class ProjectionMappingTest extends TestCase {
 		addProjection(30, 10, 20);
 		addProjection(70, 30, 10);
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -113,9 +113,9 @@ public class ProjectionMappingTest extends TestCase {
 		fSegmentsCategory= "_segments" + fMasterDocument.hashCode();
 		fMasterDocument.addPositionCategory(fFragmentsCategory);
 		fSlaveDocument.addPositionCategory(fSegmentsCategory);
-		fProjectionMapping= new ProjectionMapping(fMasterDocument, fFragmentsCategory, fSlaveDocument, fSegmentsCategory);		
+		fProjectionMapping= new ProjectionMapping(fMasterDocument, fFragmentsCategory, fSlaveDocument, fSegmentsCategory);
 	}
-	
+
 
 	/*
 	 * @see junit.framework.TestCase#tearDown()
@@ -127,19 +127,19 @@ public class ProjectionMappingTest extends TestCase {
 		fSegmentsCategory= null;
 		fProjectionMapping= null;
 	}
-	
+
 	public void test1() {
 		// test getCoverage
-		
+
 		createStandardProjection();
 		IRegion coverage= fProjectionMapping.getCoverage();
 		assertTrue(coverage.getOffset() == 20);
 		assertTrue(coverage.getLength() == 60);
 	}
-	
+
 	public void test2() {
 		// test toOriginOffset
-		
+
 		createStandardProjection();
 		try {
 			assertEquals(20, fProjectionMapping.toOriginOffset(0));
@@ -150,19 +150,19 @@ public class ProjectionMappingTest extends TestCase {
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
-		
+
 		try {
 			fProjectionMapping.toOriginOffset(41);
 			assertTrue(false);
 		} catch (BadLocationException e) {
 		}
 	}
-	
-		
+
+
 	public void test3a() {
 		// test toOriginRegion
 		// image region inside segment
-		
+
 		createStandardProjection();
 		try {
 			IRegion origin= fProjectionMapping.toOriginRegion(new Region(5, 10));
@@ -173,11 +173,11 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test3b() {
 		// test toOriginRegion
 		// image region is segment
-		
+
 		createStandardProjection();
 		try {
 			IRegion origin= fProjectionMapping.toOriginRegion(new Region(0, 20));
@@ -188,7 +188,7 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test3c() {
 		// test toOriginRegion
 		// image region overlapping segments
@@ -200,9 +200,9 @@ public class ProjectionMappingTest extends TestCase {
 			assertEquals(new Region(20, 60), origin);
 		} catch (BadLocationException e) {
 			assertTrue(false);
-		}		
+		}
 	}
-	
+
 	public void test3d() {
 		// test toOriginRegion
 		// test null projection
@@ -213,7 +213,7 @@ public class ProjectionMappingTest extends TestCase {
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
-		
+
 		try {
 			fProjectionMapping.toOriginRegion(new Region(0, 2));
 			assertTrue(false);
@@ -226,11 +226,11 @@ public class ProjectionMappingTest extends TestCase {
 		} catch (BadLocationException e) {
 		}
 	}
-	
+
 	public void test3e() {
 		// test toOriginRegion
 		// identical projection
-		
+
 		createIdenticalProjection();
 		try {
 			IRegion origin= fProjectionMapping.toOriginRegion(new Region(0, 0));
@@ -245,29 +245,29 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test3f() {
-		// test toOriginRegion 
+		// test toOriginRegion
 		// test empty slave document
-		
+
 		fMasterDocument.set("abc\n");
 		fSlaveDocument.set("");
 		addProjection(4, 0, 0);
-		
+
 		try {
 			IRegion origin= fProjectionMapping.toOriginRegion(new Region(0, 0));
 			assertEquals(new Region(4, 0), origin); // fails, origin is (0, 4)
 		} catch (BadLocationException e) {
 			assertTrue(false);
-		}		
+		}
 	}
-	
+
 	public void test4() {
 		// test toOriginLines
-		
+
 		createLineWrappingProjection();
 		assertEquals(3, fSlaveDocument.getNumberOfLines());
-		
+
 		try {
 			IRegion lines= fProjectionMapping.toOriginLines(0);
 			assertEquals(new Region(0,2), lines);
@@ -279,14 +279,14 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test5a() {
 		// test toOriginLine
 		// test projection with no wrapped line
-		
+
 		createStandardProjection();
 		assertEquals(3, fSlaveDocument.getNumberOfLines());
-		
+
 		try {
 			assertEquals(1, fProjectionMapping.toOriginLine(0));
 			assertEquals(3, fProjectionMapping.toOriginLine(1));
@@ -295,13 +295,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test5b() {
 		// test toOriginLine
 		// test line wrapping projection
-		
+
 		createLineWrappingProjection();
-		
+
 		try {
 			assertEquals(-1, fProjectionMapping.toOriginLine(0));
 			assertEquals(-1, fProjectionMapping.toOriginLine(1));
@@ -310,12 +310,12 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test6() {
 		// test toImageOffset
-		
+
 		createStandardProjection();
-		
+
 		try {
 			// test begin of slave document
 			assertEquals(0, fProjectionMapping.toImageOffset(20));
@@ -335,15 +335,15 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	private IRegion computeImageRegion(IRegion region, boolean exact) throws BadLocationException {
 		if (exact)
 			return fProjectionMapping.toExactImageRegion(region);
 		return fProjectionMapping.toImageRegion(region);
 	}
-	
+
 	private void commonSubSection_toImageRegion(boolean exact) {
-		
+
 		try {
 			// test a region contained by a fragment
 			IRegion imageRegion= computeImageRegion(new Region(25, 10), exact);
@@ -369,18 +369,18 @@ public class ProjectionMappingTest extends TestCase {
 			// test a region at the end of the last fragment
 			imageRegion= computeImageRegion(new Region(80, 10), exact);
 			assertEquals(null, imageRegion);
-			
+
 		} catch (BadLocationException e) {
 			assertTrue(false);
-		}		
+		}
 	}
 
 	public void test7() {
 		// test toExactImageRegion
-		
+
 		createStandardProjection();
 		commonSubSection_toImageRegion(true);
-		
+
 		try {
 			// test a region surrounded by two fragments
 			IRegion imageRegion= fProjectionMapping.toExactImageRegion(new Region(40, 20));
@@ -397,18 +397,18 @@ public class ProjectionMappingTest extends TestCase {
 			// test a region starting outside a fragment and ending outside a fragment (covering two)
 			imageRegion= fProjectionMapping.toExactImageRegion(new Region(15, 70));
 			assertEquals(null, imageRegion);
-			
+
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test8() {
 		// test toImageRegion
-		
+
 		createStandardProjection();
 		commonSubSection_toImageRegion(false);
-				
+
 		try {
 			// test a region surrounded by two fragments
 			IRegion imageRegion= fProjectionMapping.toImageRegion(new Region(40, 20));
@@ -425,7 +425,7 @@ public class ProjectionMappingTest extends TestCase {
 			// test a region starting outside a fragment and ending outside a fragment (covering two)
 			imageRegion= fProjectionMapping.toImageRegion(new Region(15, 70));
 			assertEquals(new Region(0, 40), imageRegion);
-			
+
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
@@ -433,9 +433,9 @@ public class ProjectionMappingTest extends TestCase {
 
 	public void test8b() {
 		// test toImageRegion
-		
+
 		createStandardProjection();
-				
+
 		try {
 			// test a region contained by a fragment
 			IRegion imageRegion= fProjectionMapping.toClosestImageRegion(new Region(25, 10));
@@ -479,16 +479,16 @@ public class ProjectionMappingTest extends TestCase {
 			// test a region starting outside a fragment and ending outside a fragment (covering two)
 			imageRegion= fProjectionMapping.toClosestImageRegion(new Region(15, 70));
 			assertEquals(new Region(0, 40), imageRegion);
-			
+
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test9a() {
 		// test toImageLine
 		// test standard line wrapping projection
-		
+
 		createLineWrappingProjection();
 		try {
 			assertEquals( 0, fProjectionMapping.toImageLine(0));
@@ -509,15 +509,15 @@ public class ProjectionMappingTest extends TestCase {
 	public void test9b() {
 		// test toImageLine
 		// test non-line wrapping, well distributed projection of empty lines
-		
+
 		fMasterDocument.set("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		fSlaveDocument.set("\n\n\n\n\n\n");
 		addProjection(3, 0, 3);
 		addProjection(9, 3, 3);
-		
+
 		assertEquals(16, fMasterDocument.getNumberOfLines());
 		assertEquals(7, fSlaveDocument.getNumberOfLines());
-		
+
 		try {
 			assertEquals(-1, fProjectionMapping.toImageLine(0));
 			assertEquals(-1, fProjectionMapping.toImageLine(1));
@@ -537,13 +537,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertEquals(-1, fProjectionMapping.toImageLine(15));
 		} catch (BadLocationException e) {
 			assertTrue(false);
-		}		
+		}
 	}
 
 	public void test10a() {
 		// test toClosestImageLine
 		// test standard line wrapping projection
-		
+
 		createLineWrappingProjection();
 		try {
 			assertEquals(0, fProjectionMapping.toClosestImageLine(0));
@@ -558,33 +558,33 @@ public class ProjectionMappingTest extends TestCase {
 			assertEquals(2, fProjectionMapping.toClosestImageLine(9));
 		} catch (BadLocationException e) {
 			assertTrue(false);
-		}		
+		}
 	}
-	
+
 	public void test10b() {
 		// test toClosestImageLine
 		// test empty projection
-		
+
 		try {
 			assertEquals(-1, fProjectionMapping.toClosestImageLine(0));
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test10c() {
 		// test toClosestImageLine
 		// test non-line wrapping, well distributed projection of empty lines
-		
+
 		fMasterDocument.set("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 //		fSlaveDocument.set("       \n\n\n      \n\n\n      ");
 		fSlaveDocument.set("\n\n\n\n\n\n");
 		addProjection(3, 0, 3);
 		addProjection(9, 3, 3);
-		
+
 		assertEquals(16, fMasterDocument.getNumberOfLines());
 		assertEquals(7, fSlaveDocument.getNumberOfLines());
-		
+
 		try {
 			assertEquals(0, fProjectionMapping.toClosestImageLine(0));
 			assertEquals(0, fProjectionMapping.toClosestImageLine(1));
@@ -604,21 +604,21 @@ public class ProjectionMappingTest extends TestCase {
 			assertEquals(6, fProjectionMapping.toClosestImageLine(15));
 		} catch (BadLocationException e) {
 			assertTrue(false);
-		}		
+		}
 	}
-	
+
 	private void assertRegions(IRegion[] expected, IRegion[] actual) {
 		assertTrue("invalid number of regions", expected.length == actual.length);
 		for (int i= 0; i < expected.length; i++)
 			assertEquals(expected[i], actual[i]);
 	}
-	
+
 	public void test11a() {
 		// test toExactOriginRegions
 		// test the whole slave document
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(0, fSlaveDocument.getLength()));
 			IRegion[] expected= new IRegion[] {
@@ -630,13 +630,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test11b() {
 		// test toExactOriginRegions
 		// test a region completely comprised by a segment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(5, 10));
 			IRegion[] expected= new IRegion[] {
@@ -647,13 +647,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test11c() {
 		// test toExactOriginRegions
 		// test a region completely comprised by a segment at the beginning of a segment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(0, 10));
 			IRegion[] expected= new IRegion[] {
@@ -668,9 +668,9 @@ public class ProjectionMappingTest extends TestCase {
 	public void test11d() {
 		// test toExactOriginRegions
 		// test a region completely comprised by a segment at the end of a segment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(10, 10));
 			IRegion[] expected= new IRegion[] {
@@ -681,13 +681,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test11e() {
 		// test toExactOriginRegions
 		// test a complete segment
 
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(0, 20));
 			IRegion[] expected= new IRegion[] {
@@ -698,13 +698,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test11f() {
-		// test toExactOriginRegions		
+		// test toExactOriginRegions
 		// test zero-length regions
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(0, 0));
 			IRegion[] expected= new IRegion[] {
@@ -723,18 +723,18 @@ public class ProjectionMappingTest extends TestCase {
 				new Region(80, 0)
 			};
 			assertRegions(expected, actual);
-			
+
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
 	}
 
 	public void test11g() {
-		// test toExactOriginRegions		
+		// test toExactOriginRegions
 		// test a region starting in the middle of a segment and ending in the middle of another fragment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(10, 20));
 			IRegion[] expected= new IRegion[] {
@@ -746,13 +746,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test11h() {
 		// test toExactOriginRegions
 		// test a region completely comprised by a segment at the end of a segment, not the first segment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(30, 10));
 			IRegion[] expected= new IRegion[] {
@@ -763,13 +763,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test11i() {
 		// test toExactOriginRegions
 		// test a single region in the identical projection
-		
+
 		createIdenticalProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactOriginRegions(new Region(30, 10));
 			IRegion[] expected= new IRegion[] {
@@ -778,16 +778,16 @@ public class ProjectionMappingTest extends TestCase {
 			assertRegions(expected, actual);
 		} catch (BadLocationException e) {
 			assertTrue(false);
-		}	
-		
+		}
+
 	}
-	
+
 	public void test12a() {
 		// test toExactImageRegions
 		// test the whole master document
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(0, fMasterDocument.getLength()));
 			IRegion[] expected= new IRegion[] {
@@ -799,13 +799,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test12b() {
 		// test toExactImageRegions
 		// test a region completely comprised by a fragment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(25, 10));
 			IRegion[] expected= new IRegion[] {
@@ -816,13 +816,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test12c() {
 		// test toExactImageRegions
 		// test a region completely comprised by a fragment at the beginning of a fragment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(20, 10));
 			IRegion[] expected= new IRegion[] {
@@ -837,9 +837,9 @@ public class ProjectionMappingTest extends TestCase {
 	public void test12d() {
 		// test toExactImageRegions
 		// test a region completely comprised by a fragment at the end of a fragment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(30, 10));
 			IRegion[] expected= new IRegion[] {
@@ -850,13 +850,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test12e() {
 		// test toExactImageRegions
 		// test a complete fragment
 
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(20, 20));
 			IRegion[] expected= new IRegion[] {
@@ -867,13 +867,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test12f() {
-		// test toExactImageRegions		
+		// test toExactImageRegions
 		// test zero-length regions
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(20, 0));
 			IRegion[] expected= new IRegion[] {
@@ -892,18 +892,18 @@ public class ProjectionMappingTest extends TestCase {
 				new Region(40, 0)
 			};
 			assertRegions(expected, actual);
-			
+
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
 	}
 
 	public void test12g() {
-		// test toExactImageRegions		
+		// test toExactImageRegions
 		// test a region starting in the middle of a fragment and ending in the middle of another fragment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(30, 40));
 			IRegion[] expected= new IRegion[] {
@@ -915,13 +915,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test12h() {
 		// test toExactImageRegions
 		// test a region completely comprised by a fragment at the end of a fragment, not the first fragment
-		
+
 		createStandardProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(70, 10));
 			IRegion[] expected= new IRegion[] {
@@ -932,13 +932,13 @@ public class ProjectionMappingTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-	
+
 	public void test12i() {
 		// test toExactImageRegions
 		// test a single region in the identical projection
-		
+
 		createIdenticalProjection();
-		
+
 		try {
 			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(30, 10));
 			IRegion[] expected= new IRegion[] {
@@ -947,34 +947,34 @@ public class ProjectionMappingTest extends TestCase {
 			assertRegions(expected, actual);
 		} catch (BadLocationException e) {
 			assertTrue(false);
-		}	
-		
+		}
+
 	}
-	
+
 	public void test13a() {
 		// test getImageLength
 		// empty projection
 		assertEquals(0, fProjectionMapping.getImageLength());
 	}
-	
+
 	public void test13b() {
 		// test getImageLength
 		// identical projection
 		createIdenticalProjection();
 		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());
 	}
-	
+
 	public void test13c() {
 		// test getImageLength
 		// standard projection
 		createStandardProjection();
-		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());		
+		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());
 	}
 
 	public void test13d() {
 		// test getImageLength
 		// line wrapping projection
 		createLineWrappingProjection();
-		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());		
+		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());
 	}
 }

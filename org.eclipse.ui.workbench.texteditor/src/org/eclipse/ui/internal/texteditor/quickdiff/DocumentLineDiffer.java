@@ -60,6 +60,7 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRa
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifferencer;
 import org.eclipse.ui.progress.IProgressConstants;
+
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
 /**
@@ -438,7 +439,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 	/**
 	 * (Re-)initializes the differ using the current reference and <code>DiffInitializer</code>.
-	 * 
+	 *
 	 * @since 3.2 protected for testing reasons, package visible before
 	 */
 	protected synchronized void initialize() {
@@ -536,21 +537,21 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// accessing the reference document from a different thread - reference providers need
 				// to be able to deal with this.
 				left.addDocumentListener(DocumentLineDiffer.this);
-				
+
 				// create the reference copy - note that any changes on the
 				// reference will trigger re-initialization anyway
 				reference= createCopy(left);
 				if (reference == null)
 					return Status.CANCEL_STATUS;
-				
+
 				// create the actual copy
-				
+
 				Object lock= null;
 				if (right instanceof ISynchronizable)
 					lock= ((ISynchronizable) right).getLockObject();
-					
+
 				if (lock != null) {
-					// a) if we can, acquire locks in proper order and copy 
+					// a) if we can, acquire locks in proper order and copy
 					// the document
 					synchronized (lock) {
 						synchronized (DocumentLineDiffer.this) {
@@ -572,18 +573,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 						// this is an arbitrary emergency exit in case a referenced document goes nuts
 						if (i++ == 100)
 							return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(QuickDiffMessages.quickdiff_error_getting_document_content, new Object[] {left.getClass(), right.getClass()}), null);
-						
+
 						synchronized (DocumentLineDiffer.this) {
 							if (isCanceled(monitor))
 								return Status.CANCEL_STATUS;
-							
+
 							fStoredEvents.clear();
 						}
-						
+
 						// access documents non synchronized:
 						// get an exclusive copy of the actual document
 						actual= createCopy(right);
-						
+
 						synchronized (DocumentLineDiffer.this) {
 							if (isCanceled(monitor))
 								return Status.CANCEL_STATUS;
@@ -593,11 +594,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					} while (true);
 				}
 
-				IHashFunction hash= new DJBHashFunction(); 
+				IHashFunction hash= new DJBHashFunction();
 				DocumentEquivalenceClass leftEquivalent= new DocumentEquivalenceClass(reference, hash);
 				fLeftEquivalent= leftEquivalent;
 				IRangeComparator ref= new DocEquivalenceComparator(leftEquivalent, null);
-				
+
 				DocumentEquivalenceClass rightEquivalent= new DocumentEquivalenceClass(actual, hash);
 				fRightEquivalent= rightEquivalent;
 				IRangeComparator act= new DocEquivalenceComparator(rightEquivalent, null);
@@ -635,7 +636,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 							event= (DocumentEvent) fStoredEvents.remove(0);
 						}
-						
+
 						// access documents non synchronized:
 						IDocument copy= null;
 						if (event.fDocument == right)
@@ -644,15 +645,15 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 							copy= reference;
 						else
 							Assert.isTrue(false);
-						
+
 						// copy the event to inject it into our diff copies
 						// don't modify the original event! See https://bugs.eclipse.org/bugs/show_bug.cgi?id=134227
 						event= new DocumentEvent(copy, event.fOffset, event.fLength, event.fText);
 						handleAboutToBeChanged(event);
-						
+
 						// inject the event into our private copy
 						actual.replace(event.fOffset, event.fLength, event.fText);
-						
+
 						handleChanged(event);
 
 					} while (true);
@@ -731,7 +732,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			initialize();
 			return;
 		}
-		
+
 		// if a initialization is going on, we just store the events in the meantime
 		if (!isInitialized()) {
 			if (fInitializationJob != null)
@@ -774,7 +775,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	void handleAboutToBeChanged(DocumentEvent event) throws BadLocationException {
 		Assert.isTrue(fThread == null);
 		fThread= Thread.currentThread();
-		
+
 		IDocument doc= event.getDocument();
 		DocumentEquivalenceClass rightEquivalent= fRightEquivalent;
 
@@ -793,7 +794,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	public synchronized void documentChanged(DocumentEvent event) {
 		final Thread lastCurrentThread= fThread;
 		fThread= null;
-		
+
 		if (fIgnoreDocumentEvents)
 			return;
 
@@ -804,7 +805,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			initialize();
 			return;
 		}
-		
+
 		if (event != fLastUIEvent) {
 			fLastUIEvent= null;
 			return;
@@ -813,7 +814,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		if (!isInitialized())
 			return;
-		
+
 		try {
 			fThread= lastCurrentThread;
 			handleChanged(event);
@@ -878,20 +879,20 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	void handleChanged(DocumentEvent event) throws BadLocationException {
 		Assert.isTrue(fThread == Thread.currentThread());
 		fThread= null;
-		
+
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=132125
 		IDocument left= fLeftDocument;
 		DocumentEquivalenceClass leftEquivalent= fLeftEquivalent;
 		DocumentEquivalenceClass rightEquivalent= fRightEquivalent;
 		if (left == null || leftEquivalent == null || rightEquivalent == null)
 			return;
-		
+
 		// documents: left, right; modified and unchanged are either of both
 		IDocument right= event.getDocument(); // TODO two-side
 		IDocument modified= event.getDocument();
 		if (modified != left && modified != right)
 			Assert.isTrue(false);
-		
+
 		boolean leftToRight= modified == left;
 
 		String insertion= event.getText();
@@ -1097,7 +1098,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				current.shiftLeft(leftShift);
 				current.shiftRight(rightShift);
 			}
-			
+
 			fUpdateNeeded= changed;
 		}
 
@@ -1415,7 +1416,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			}
 			fRightDocument= null;
 			fRightEquivalent= null;
-			
+
 			fDifferences.clear();
 		}
 
@@ -1517,7 +1518,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		Job job= fInitializationJob;
 		if (job != null)
 			job.cancel();
-		
+
 		synchronized (this) {
 			fInitializationJob= null;
 			if (fRightDocument != null)
@@ -1526,13 +1527,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				fLeftDocument.removeDocumentListener(this);
 			fLeftDocument= null;
 			fLeftEquivalent= null;
-			
+
 			fLastDifference= null;
 			fStoredEvents.clear();
 			fDifferences.clear();
-			
+
 			fState= SUSPENDED;
-			
+
 			fireModelChanged();
 		}
 	}

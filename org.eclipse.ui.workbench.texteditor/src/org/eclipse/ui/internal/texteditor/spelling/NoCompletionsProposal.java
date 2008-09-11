@@ -22,7 +22,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * <p>
  * Applying this proposal does nothing.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public final class NoCompletionsProposal implements ICompletionProposal {

@@ -21,19 +21,19 @@ public class GapTextTest extends AbstractGapTextTest {
 		fText= new GapText(5, 10);
 		fText.set("xxxxx");
 	}
-	
+
 	public static Test suite() {
-		return new TestSuite(GapTextTest.class); 
+		return new TestSuite(GapTextTest.class);
 	}
-	
+
 	protected void tearDown () {
 		fText= null;
 	}
-	
+
 	public void testSet() {
 		assertGap(5, 10);
 	}
-		
+
 	public void testGetText1() {
 		String[] expected= {
 			"xyxxxx",
@@ -42,14 +42,14 @@ public class GapTextTest extends AbstractGapTextTest {
 			"xyxyxyxyx",
 			"xyxyxyxyxy"
 		};
-		
+
 		for (int i= 1; i < 5; i++) {
 			fText.replace(2 * i - 1, 0, "y");
 			assertContents(expected[i - 1]);
 		}
-	
+
 	}
-	
+
 	public void testGetText2() {
 		String[] expected= {
 			"yxxxxx",
@@ -58,24 +58,24 @@ public class GapTextTest extends AbstractGapTextTest {
 			"yxyxyxyxx",
 			"yxyxyxyxyx"
 		};
-		
+
 		for (int i= 1; i < 5; i++) {
 			fText.replace(2 * (i - 1), 0, "y");
 			assertContents(expected[i - 1]);
 		}
-	
+
 	}
-	
+
 	public void testInsert() {
 		fText.replace(2, 0, "y");
 		assertGap(3, 7);
-	
-		
+
+
 		for (int i= 1; i <= 4; i++) {
 			fText.replace(2 + i, 0, "y");
 			assertGap(3 + i, 7);
 		}
-	
+
 		fText.replace(7, 0, "y");
 		assertGap(8, 13);
 	}
@@ -83,39 +83,39 @@ public class GapTextTest extends AbstractGapTextTest {
 	public void testRemoveGapOverlapping() {
 		fText.replace(2, 2, null);
 		assertGap(2, 9);
-	
+
 		fText.replace(1, 2, null);
 		assertGap(1, 10);
 	}
-	
+
 	public void testRemoveGapOverlapping2() {
 		fText.replace(0, 0, "aaaaazzzzzyyyyy");
 		assertGap(15, 20);
 		assertContents("aaaaazzzzzyyyyyxxxxx");
-	
-	
+
+
 		fText.replace(5, 12, null);
 		assertGap(5, 10);
 		assertContents("aaaaaxxx");
 	}
-	
+
 	public void testRemoveRemoteFromGap() {
 		fText.replace(0, 0, "aaaaazzzzzyyyyy");
 		assertGap(15, 20);
 		assertContents("aaaaazzzzzyyyyyxxxxx");
-	
+
 		// before gap
 		fText.replace(5, 2, null);
 		assertGap(5, 12);
 		assertContents("aaaaazzzyyyyyxxxxx");
-		
+
 		// after gap
 		fText.replace(7, 10, null);
 		assertGap(7, 12);
 		assertContents("aaaaazzx");
-	
+
 	}
-	
+
 	public void testRemoveAtLeftGapEdge() {
 		fText.replace(4, 0, "xxx");
 		assertGap(7, 9);
@@ -124,7 +124,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		fText.replace(6, 1, null);
 		assertGap(6, 8);
 	}
-	
+
 	public void testRemoveAtRightGapEdge() {
 		fText.replace(4, 0, "xxx");
 		assertGap(7, 9);
@@ -133,23 +133,23 @@ public class GapTextTest extends AbstractGapTextTest {
 		fText.replace(7, 1, null);
 		assertGap(7, 9);
 	}
-	
+
 	public void testReplace() {
 		fText.replace(2, 2, "yy");
 		assertGap(4, 9);
-		
+
 		fText.replace(2, 1, "yyyyyyyyyyyy");
 		assertGap(14, 19);
-	
+
 		fText.replace(14, 0, "yyy");
 		assertGap(17, 19);
 	}
-	
+
 	public void testRemoveReallocateBeforeGap() throws Exception {
 	    fText.replace(0, 0, "yyyyyzzzzz");
 	    assertGap(10, 15);
 	    assertContents("yyyyyzzzzzxxxxx");
-	    
+
 	    fText.replace(2, 6, null);
 	    assertGap(2, 7);
 	    assertContents("yyzzxxxxx");

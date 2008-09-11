@@ -19,9 +19,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
+import org.eclipse.jface.text.templates.TemplateContextType;
 
 import org.eclipse.ui.examples.templateeditor.editors.TemplateEditorUI;
 
@@ -35,7 +35,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	/**
 	 * We watch for angular brackets since those are often part of XML
 	 * templates.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param offset the offset left of which the prefix is detected
 	 * @return the detected prefix
@@ -45,7 +45,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 		int i= offset;
 		if (i > document.getLength())
 			return ""; //$NON-NLS-1$
-		
+
 		try {
 			while (i > 0) {
 				char ch= document.getChar(i - 1);
@@ -62,7 +62,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	/**
 	 * Cut out angular brackets for relevance sorting, since the template name
 	 * does not contain the brackets.
-	 * 
+	 *
 	 * @param template the template
 	 * @param prefix the prefix
 	 * @return the relevance of the <code>template</code> for the given <code>prefix</code>
@@ -77,7 +77,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 
 	/**
 	 * Simply return all templates.
-	 * 
+	 *
 	 * @param contextTypeId the context type, ignored in this implementation
 	 * @return all templates
 	 */
@@ -87,7 +87,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 
 	/**
 	 * Return the XML context type that is supported by this plug-in.
-	 * 
+	 *
 	 * @param viewer the viewer, ignored in this implementation
 	 * @param region the region, ignored in this implementation
 	 * @return the supported XML context type
@@ -98,7 +98,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 
 	/**
 	 * Always return the default image.
-	 * 
+	 *
 	 * @param template the template, ignored in this implementation
 	 * @return the default template image
 	 */

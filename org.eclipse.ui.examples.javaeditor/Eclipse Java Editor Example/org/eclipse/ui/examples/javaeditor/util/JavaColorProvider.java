@@ -11,7 +11,9 @@
 package org.eclipse.ui.examples.javaeditor.util;
 
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -37,17 +39,17 @@ public class JavaColorProvider {
 
 	/**
 	 * Release all of the color resources held onto by the receiver.
-	 */	
+	 */
 	public void dispose() {
 		Iterator e= fColorTable.values().iterator();
 		while (e.hasNext())
 			 ((Color) e.next()).dispose();
 	}
-	
+
 	/**
 	 * Return the color that is stored in the color table under the given RGB
 	 * value.
-	 * 
+	 *
 	 * @param rgb the RGB value
 	 * @return the color stored in the color table for the given RGB value
 	 */

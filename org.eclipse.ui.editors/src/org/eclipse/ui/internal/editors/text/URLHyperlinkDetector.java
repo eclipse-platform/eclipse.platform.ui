@@ -17,7 +17,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 
 /**
  * URL hyperlink detector.
- * 
+ *
  * @since 3.1
  */
 public class URLHyperlinkDetector extends org.eclipse.jface.text.hyperlink.URLHyperlinkDetector {
@@ -29,9 +29,9 @@ public class URLHyperlinkDetector extends org.eclipse.jface.text.hyperlink.URLHy
 		IHyperlink[] result= super.detectHyperlinks(textViewer, region, canShowMultipleHyperlinks);
 		if (result == null)
 			return null;
-		
+
 		for (int i= 0; i < result.length; i++) {
-			org.eclipse.jface.text.hyperlink.URLHyperlink hyperlink= (org.eclipse.jface.text.hyperlink.URLHyperlink)result[i]; 
+			org.eclipse.jface.text.hyperlink.URLHyperlink hyperlink= (org.eclipse.jface.text.hyperlink.URLHyperlink)result[i];
 			result[i]= new URLHyperlink(hyperlink.getHyperlinkRegion(), hyperlink.getURLString());
 		}
 

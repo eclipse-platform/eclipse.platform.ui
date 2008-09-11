@@ -23,29 +23,29 @@ import org.eclipse.search.ui.ISearchQuery;
 class QueryManager {
 	private List fQueries;
 	private List fListeners;
-	
+
 	public QueryManager() {
 		super();
 		// an ArrayList should be plenty fast enough (few searches).
 		fListeners= new ArrayList();
 		fQueries= new LinkedList();
 	}
-	
+
 	public boolean hasQueries() {
 		synchronized (this) {
 			return !fQueries.isEmpty();
 		}
 	}
-	
+
 	public int getSize() {
 		synchronized (this) {
 			return fQueries.size();
 		}
 	}
-	
+
 	/**
-	 * Returns the queries in LRU order. Smaller index means more recently used. 
-	 * 
+	 * Returns the queries in LRU order. Smaller index means more recently used.
+	 *
 	 * @return all queries
 	 */
 	public ISearchQuery[] getQueries() {
@@ -69,7 +69,7 @@ class QueryManager {
 		}
 		fireAdded(query);
 	}
-	
+
 	public void addQueryListener(IQueryListener l) {
 		synchronized (fListeners) {
 			fListeners.add(l);
@@ -81,7 +81,7 @@ class QueryManager {
 			fListeners.remove(l);
 		}
 	}
-	
+
 	public void fireAdded(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
@@ -105,7 +105,7 @@ class QueryManager {
 			l.queryRemoved(query);
 		}
 	}
-	
+
 	public void fireStarting(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
@@ -149,7 +149,7 @@ class QueryManager {
 	public void queryStarting(ISearchQuery query) {
 		fireStarting(query);
 	}
-	
+
 	public void touch(ISearchQuery query) {
 		synchronized (this) {
 			if (fQueries.contains(query)) {
@@ -158,5 +158,5 @@ class QueryManager {
 			}
 		}
 	}
-	
+
 }

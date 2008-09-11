@@ -15,11 +15,10 @@ import java.util.ArrayList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.NewSearchUI;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 
 
@@ -35,11 +34,11 @@ class ShowSearchHistoryDialogAction extends Action {
 	 *	Create a new instance of this class
 	 */
 	public ShowSearchHistoryDialogAction(SearchView searchView) {
-		super(SearchMessages.ShowSearchesAction_label); 
-		setToolTipText(SearchMessages.ShowSearchesAction_tooltip); 
+		super(SearchMessages.ShowSearchesAction_label);
+		setToolTipText(SearchMessages.ShowSearchesAction_tooltip);
 		fSearchView= searchView;
 	}
-	 
+
 	public void run() {
 		ISearchQuery[] queries= NewSearchUI.getQueries();
 
@@ -48,9 +47,9 @@ class ShowSearchHistoryDialogAction extends Action {
 			ISearchResult search= queries[j].getSearchResult();
 			input.add(search);
 		}
-		
+
 		SearchHistorySelectionDialog dlg= new SearchHistorySelectionDialog(SearchPlugin.getActiveWorkbenchShell(),input);
-		
+
 		ISearchResult current= fSearchView.getCurrentSearchResult();
 		if (current != null) {
 			Object[] selected= new Object[1];

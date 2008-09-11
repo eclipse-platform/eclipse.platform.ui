@@ -24,9 +24,9 @@ import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**

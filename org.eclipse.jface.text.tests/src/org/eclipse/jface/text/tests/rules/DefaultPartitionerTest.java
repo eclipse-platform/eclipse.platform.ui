@@ -18,7 +18,7 @@ public class DefaultPartitionerTest extends FastPartitionerTest {
 	protected IDocumentPartitioner createPartitioner(IPartitionTokenScanner scanner) {
 		return new DefaultPartitioner(scanner, new String[] { DEFAULT, COMMENT });
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.tests.rules.FastPartitionerTest#testPR130900()
 	 */

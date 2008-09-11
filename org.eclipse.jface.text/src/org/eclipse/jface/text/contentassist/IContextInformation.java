@@ -32,7 +32,7 @@ import org.eclipse.swt.graphics.Image;
  * {@link org.eclipse.jface.text.contentassist.ContextInformation} as
  * the standard implementer of this interface.
  * </p>
- * 
+ *
  * @see IContentAssistProcessor
  */
 public interface IContextInformation {

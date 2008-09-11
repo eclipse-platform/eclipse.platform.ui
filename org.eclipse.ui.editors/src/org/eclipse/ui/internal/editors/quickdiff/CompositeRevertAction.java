@@ -39,7 +39,7 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 	/**
 	 * Creates an action combining the two given actions.
 	 *
-	 * @param editor the editor 
+	 * @param editor the editor
 	 * @param actions the list of actions
 	 */
 	public CompositeRevertAction(ITextEditor editor, IAction[] actions) {
@@ -48,11 +48,11 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 			Assert.isNotNull(actions[i]);
 
 		System.arraycopy(actions, 0, fActions, 0, actions.length);
-		
+
 		ISelectionProvider selectionProvider= editor.getSelectionProvider();
 		if (selectionProvider instanceof IPostSelectionProvider)
 			((IPostSelectionProvider)selectionProvider).addPostSelectionChangedListener(this);
-		
+
 		update();
 	}
 

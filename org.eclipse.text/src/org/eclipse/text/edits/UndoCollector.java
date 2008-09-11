@@ -23,7 +23,7 @@ class UndoCollector implements IDocumentListener {
 	protected UndoEdit undo;
 	private int fOffset;
 	private int fLength;
-	
+
 	/**
 	 * @since 3.1
 	 */
@@ -64,7 +64,7 @@ class UndoCollector implements IDocumentListener {
 		} catch (BadLocationException cannotHappen) {
 			Assert.isTrue(false, "Can't happen"); //$NON-NLS-1$
 		}
-		
+
 		/*
 		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=93634
 		 * If the same string is replaced on many documents (e.g. rename

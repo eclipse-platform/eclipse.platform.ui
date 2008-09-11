@@ -33,7 +33,7 @@ public class FilesOfScopeCalculator implements IResourceProxyVisitor {
 		fStatus= status;
 	}
 
-	public boolean visit(IResourceProxy proxy) {		
+	public boolean visit(IResourceProxy proxy) {
 		boolean inScope= fScope.contains(proxy);
 
 		if (inScope && proxy.getType() == IResource.FILE) {

@@ -107,11 +107,11 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	/**
 	 * Tells whether colored labels support is enabled.
 	 * Only valid while the popup is active.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private boolean fIsColoredLabelsSupportEnabled= false;
-	
+
 	private final IEditingSupport fFocusEditingSupport= new IEditingSupport() {
 
 		public boolean isOriginator(DocumentEvent event, IRegion focus) {
@@ -265,7 +265,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 //		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 //		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
-		
+
 
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
 		if (fIsColoredLabelsSupportEnabled)
@@ -543,7 +543,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				item= new TableItem(fProposalTable, SWT.NULL);
 				if (p.getImage() != null)
 					item.setImage(p.getImage());
-				
+
 				String displayString;
 				StyleRange[] styleRanges= null;
 				if (fIsColoredLabelsSupportEnabled && p instanceof ICompletionProposalExtension6) {
@@ -556,7 +556,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				item.setText(displayString);
 				if (fIsColoredLabelsSupportEnabled)
 					TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
-				
+
 				item.setData(p);
 
 				if (validate && validateProposal(document, p, endOffset, null)) {

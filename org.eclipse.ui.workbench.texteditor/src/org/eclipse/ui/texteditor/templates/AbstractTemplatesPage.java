@@ -122,7 +122,7 @@ import org.eclipse.ui.texteditor.templates.TemplatePreferencePage.EditTemplateDi
  * categories. A link to editor mode on the templates page allows to filtering
  * of the categories to only that are supported in this context.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public abstract class AbstractTemplatesPage extends Page implements ITemplatesPage {
@@ -176,7 +176,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		/**
 		 * Check whether an update of the AbstractTemplatesPage is needed
-		 * 
+		 *
 		 * @param contextTypes the context types
 		 * @return true if update is needed
 		 */
@@ -188,7 +188,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		/**
 		 * Check whether there is any change in the context types needed
-		 * 
+		 *
 		 * @param contextTypes the context types
 		 * @return true if any of the context types changed
 		 */
@@ -201,7 +201,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		}
 	}
 
-	
+
 	/**
 	 * Drop support for the editor linked to this page. When a user drops a
 	 * template into the active editor, the template is applied at the drop
@@ -217,14 +217,14 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 			event.detail= DND.DROP_COPY;
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void dragOperationChanged(DropTargetEvent event) {
 			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
-			
+
 			event.detail= DND.DROP_COPY;
 		}
 
@@ -234,7 +234,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		public void dragOver(DropTargetEvent event) {
 			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
-			
+
 			event.feedback |= DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;
 			event.detail= DND.DROP_NONE;
 			TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
@@ -249,7 +249,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		public void drop(DropTargetEvent event) {
 			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
-			
+
 			TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 			insertTemplate(selectedTemplates[0].getTemplate());
 			// The highlight of the item is removed once the drop happens -
@@ -259,7 +259,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	}
 
-	
+
 	/**
 	 * Comparator for the viewer. Sorts the templates by name and then
 	 * description and context types by names.
@@ -267,7 +267,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private static final class TemplateViewerComparator extends ViewerComparator {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
@@ -298,12 +298,12 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		}
 	}
 
-	
+
 	/**
 	 * Label provider for templates.
 	 */
 	private final class TemplateLabelProvider extends LabelProvider implements ITableLabelProvider {
-		
+
 		/*
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
@@ -345,13 +345,13 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		}
 	}
 
-	
+
 	/**
 	 * Content provider for templates. Provides all the enabled templates
 	 * defined for this editor.
 	 */
 	private final class TemplatesContentProvider implements ITreeContentProvider {
-		
+
 		/*
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
@@ -396,11 +396,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				return false;
 			else if (parentElement instanceof TemplateContextType) {
 				String contextId= ((TemplateContextType) parentElement).getId();
-				
+
 				TemplatePersistenceData[] datas= getTemplateStore().getTemplateData(false);
 				if (datas.length <= 0)
 					return false;
-				
+
 				for (int i= 0; i < datas.length; i++) {
 					if (datas[i].isEnabled() && datas[i].getTemplate().getContextTypeId().equals(contextId))
 						return true;
@@ -440,7 +440,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	
+
 
 	/** The text editor. */
 	private final ITextEditor fTextEditor;
@@ -498,10 +498,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private IAction fEditorOldPasteAction;
 	private IAction fEditorPasteAction;
 
-	
+
 	/**
 	 * Creates a new templates page.
-	 * 
+	 *
 	 * @param editor the editor
 	 * @param viewer the source viewer
 	 */
@@ -578,7 +578,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the shell in which this page is displayed.
-	 * 
+	 *
 	 * @return the shell
 	 */
 	private Shell getShell() {
@@ -589,7 +589,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Returns the image to be used for the given template.
 	 * <p>
 	 * Clients can override to provide a different image.</p>
-	 * 
+	 *
 	 * @param template the template
 	 * @return the image, must not be disposed
 	 */
@@ -601,7 +601,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Creates and opens a dialog to edit the given template.
 	 * <p
 	 * Subclasses may override this method to provide a custom dialog.</p>
-	 * 
+	 *
 	 * @param template the template being edited
 	 * @param edit <code>true</code> if the dialog allows editing
 	 * @param isNameModifiable <code>true</code> if the template name may be modified
@@ -619,7 +619,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * <p>
 	 * Subclasses can extend this method to update their own pattern viewer.
 	 * </p>
-	 * 
+	 *
 	 * @param template the template
 	 */
 	protected void updatePatternViewer(Template template) {
@@ -632,7 +632,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * pattern on the templates page.
 	 * <p>
 	 * Clients may override to provide a custom source viewer featuring e.g. syntax coloring.</p>
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @return a configured source viewer
 	 */
@@ -648,7 +648,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the pattern viewer created by createPatternViewer()
-	 * 
+	 *
 	 * @return the pattern viewer
 	 */
 	protected final SourceViewer getPatternViewer() {
@@ -659,7 +659,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * The caret position in the editor has moved into a new context type. It is
 	 * the subclasses responsibility to see that this is called only when needed
 	 * by keeping track of editor contents (eg. partitions).
-	 * 
+	 *
 	 * @param ids the ids
 	 */
 	private void updateContextTypes(String[] ids) {
@@ -670,7 +670,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Inserts the given template into the editor.
-	 * 
+	 *
 	 * @param template the template
 	 * @param document the document
 	 */
@@ -678,14 +678,14 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the context type registry used in this page.
-	 * 
+	 *
 	 * @return the context type registry
 	 */
 	abstract protected ContextTypeRegistry getContextTypeRegistry();
 
 	/**
 	 * Returns the template store used in this page.
-	 * 
+	 *
 	 * @return the template store
 	 */
 	abstract protected TemplateStore getTemplateStore();
@@ -693,31 +693,31 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	/**
 	 * Returns the preference store used to create the template store returned by
 	 * {@link AbstractTemplatesPage#getTemplateStore()}.
-	 * 
+	 *
 	 * @return the preference store
 	 */
 	abstract protected IPreferenceStore getTemplatePreferenceStore();
 
 	/**
 	 * Returns the Template preference page id to be used by this template page.
-	 * 
+	 *
 	 * @return id the preference page if or <code>null</code> if none exists
 	 */
 	abstract protected String getPreferencePageId();
 
 	/**
 	 * Returns the context type ids supported at the given document offset.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset
 	 * @return an array of supported context ids
 	 */
 	protected abstract String[] getContextTypeIds(IDocument document, int offset);
-	
+
 	/**
 	 * Returns the context type ids supported at the current
 	 * caret position of the editor.
-	 * 
+	 *
 	 * @return an array with the the supported context type ids
 	 */
 	private String[] getEditorContextTypeIds() {
@@ -730,7 +730,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	/**
 	 * Checks whether the given template is valid for the document at the given
 	 * offset and length.
-	 * 
+	 *
 	 * @param document the document
 	 * @param template the template
 	 * @param offset the offset
@@ -750,7 +750,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Setup the paste operation
-	 * 
+	 *
 	 * We get the editors Paste operation and sets up a new operation that
 	 * checks for the clipboard contents for {@link TemplatesTransfer} data.
 	 */
@@ -776,7 +776,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 			/**
 			 * Convert the clipboard contents into a template
-			 * 
+			 *
 			 * @param clipboard the clipboard
 			 * @return the template or null if contents are not valid
 			 */
@@ -961,7 +961,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Inserts the given template into the editor.
-	 * 
+	 *
 	 * @param template the template
 	 */
 	private void insertTemplate(Template template) {
@@ -971,7 +971,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Fill the toolbar.
-	 * 
+	 *
 	 * @param actionBars the action bars
 	 */
 	private void fillToolbar(IActionBars actionBars) {
@@ -989,7 +989,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Fill the view menu.
-	 * 
+	 *
 	 * @param actionBars the action bars
 	 */
 	private void fillMenu(IActionBars actionBars) {
@@ -1005,7 +1005,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Fill the context menu items.
-	 * 
+	 *
 	 * @param manager the menu manager
 	 */
 	private void fillContextMenu(IMenuManager manager) {
@@ -1023,7 +1023,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Create the tree to display templates.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 */
 	private void createTemplateTree(Composite parent) {
@@ -1079,7 +1079,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Create the tree viewer and setup the providers.
-	 * 
+	 *
 	 * @param templatesTree the tree used to show the templates
 	 */
 	private void createTreeViewer(Tree templatesTree) {
@@ -1109,7 +1109,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Setup the pattern viewer.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 */
 	private void createPatternForm(Composite parent) {
@@ -1152,7 +1152,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Check whether the template is valid for the given drop location.
-	 * 
+	 *
 	 * @param template the template
 	 * @param location the drop location
 	 * @return <code>true</code> if the template is valid
@@ -1230,7 +1230,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the currently selected templates
-	 * 
+	 *
 	 * @return selected templates
 	 */
 	private TemplatePersistenceData[] getSelectedTemplates() {
@@ -1251,7 +1251,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the context type id of the selected template.
-	 * 
+	 *
 	 * @return the context type id of the selected template or the first from the
 	 *         registry if no templates are selected
 	 */
@@ -1283,7 +1283,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the context id for the given item which is either a template or a context type.
-	 * 
+	 *
 	 * @param item the item
 	 * @return the context type id
 	 */
@@ -1298,7 +1298,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Add a template. The dialog is filled with the values from the given template.
-	 * 
+	 *
 	 * @param template the template
 	 */
 	private void addTemplate(Template template) {
@@ -1351,10 +1351,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Moves the selected template from one context to another.
-	 * 
+	 *
 	 * @param templates an array of template data
 	 * @param contextId the contextId
-	 * 
+	 *
 	 */
 	private void moveTemplates(TemplatePersistenceData[] templates, String contextId) {
 		for (int i= 0; i < templates.length; i++) {
@@ -1368,10 +1368,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Copy the selected templates to another context
-	 * 
+	 *
 	 * @param templates an array of template data
 	 * @param contextId the context id
-	 * 
+	 *
 	 */
 	private void copyTemplates(TemplatePersistenceData[] templates, String contextId) {
 		TemplatePersistenceData[] newTemplates= new TemplatePersistenceData[templates.length];
@@ -1418,7 +1418,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		DragSourceAdapter dragListener= new DragSourceAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 			 */
 			public void dragStart(DragSourceEvent event) {
@@ -1532,7 +1532,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Create a template name.
-	 * 
+	 *
 	 * @return the created template name
 	 */
 	private String createTemplateName() {
@@ -1579,7 +1579,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the document relative offset from the text widget relative point
-	 * 
+	 *
 	 * @param document the document
 	 * @param textWidget the text widget
 	 * @param point the point for which to get the offset

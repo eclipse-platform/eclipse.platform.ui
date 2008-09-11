@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
-
 import org.eclipse.ui.internal.texteditor.spelling.EmptySpellingPreferenceBlock;
 
 /**

@@ -21,7 +21,7 @@ import org.eclipse.jface.dialogs.IDialogPage;
  * button is pressed.
  * </p>
  * <p>
- * If the search page additionally implements {@link IReplacePage}, a 
+ * If the search page additionally implements {@link IReplacePage}, a
  * 'Replace' button will be shown in the search dialog.
  * </p>
  *

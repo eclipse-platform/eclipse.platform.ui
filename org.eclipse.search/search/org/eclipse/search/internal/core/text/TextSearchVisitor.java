@@ -64,29 +64,29 @@ import org.eclipse.search.ui.NewSearchUI;
  * The visitor that does the actual work.
  */
 public class TextSearchVisitor {
-	
+
 	public static class ReusableMatchAccess extends TextSearchMatchAccess {
-		
+
 		private int fOffset;
 		private int fLength;
 		private IFile fFile;
 		private CharSequence fContent;
-		
+
 		public void initialize(IFile file, int offset, int length, CharSequence content) {
 			fFile= file;
 			fOffset= offset;
 			fLength= length;
 			fContent= content;
 		}
-				
+
 		public IFile getFile() {
 			return fFile;
 		}
-		
+
 		public int getMatchOffset() {
 			return fOffset;
 		}
-		
+
 		public int getMatchLength() {
 			return fLength;
 		}
@@ -103,11 +103,11 @@ public class TextSearchVisitor {
 			return fContent.subSequence(offset, offset + length).toString(); // must pass a copy!
 		}
 	}
-	
+
 
 	private final TextSearchRequestor fCollector;
 	private final Matcher fMatcher;
-	
+
 	private IProgressMonitor fProgressMonitor;
 
 	private int fNumberOfScannedFiles;
@@ -115,30 +115,30 @@ public class TextSearchVisitor {
 	private IFile fCurrentFile;
 
 	private final MultiStatus fStatus;
-	
+
 	private final FileCharSequenceProvider fFileCharSequenceProvider;
-	
+
 	private final ReusableMatchAccess fMatchAccess;
-	
+
 	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern) {
 		fCollector= collector;
 		fStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
-		
+
 		fMatcher= searchPattern.pattern().length() == 0 ? null : searchPattern.matcher(new String());
-		
+
 		fFileCharSequenceProvider= new FileCharSequenceProvider();
 		fMatchAccess= new ReusableMatchAccess();
 	}
-	
+
 	public IStatus search(IFile[] files, IProgressMonitor monitor) {
 		fProgressMonitor= monitor == null ? new NullProgressMonitor() : monitor;
         fNumberOfScannedFiles= 0;
         fNumberOfFilesToScan= files.length;
         fCurrentFile= null;
-        
+
         Job monitorUpdateJob= new Job(SearchMessages.TextSearchVisitor_progress_updating_job) {
         	private int fLastNumberOfScannedFiles= 0;
-        	
+
         	public IStatus run(IProgressMonitor inner) {
         		while (!inner.isCanceled()) {
 					IFile file= fCurrentFile;
@@ -177,18 +177,18 @@ public class TextSearchVisitor {
             fCollector.endReporting();
         }
 	}
-		
+
 	public IStatus search(TextSearchScope scope, IProgressMonitor monitor) {
 		return search(scope.evaluateFilesInScope(fStatus), monitor);
     }
-    
+
 	private void processFiles(IFile[] files) {
 		final Map documentsInEditors;
 		if (PlatformUI.isWorkbenchRunning())
 			documentsInEditors= evalNonFileBufferDocuments();
 		else
 			documentsInEditors= Collections.EMPTY_MAP;
-		
+
         for (int i= 0; i < files.length; i++) {
         	fCurrentFile= files[i];
             boolean res= processFile(fCurrentFile, documentsInEditors);
@@ -196,7 +196,7 @@ public class TextSearchVisitor {
             	break;
 		}
 	}
-	
+
 	/**
 	 * @return returns a map from IFile to IDocument for all open, dirty editors
 	 */
@@ -245,9 +245,9 @@ public class TextSearchVisitor {
 		    if (!fCollector.acceptFile(file) || fMatcher == null) {
 		       return true;
 		    }
-		        
+
 			IDocument document= getOpenDocument(file, documentsInEditors);
-			
+
 			if (document != null) {
 				DocumentCharSequence documentCharSequence= new DocumentCharSequence(document);
 				// assume all documents are non-binary
@@ -297,10 +297,10 @@ public class TextSearchVisitor {
 		}
 		if (fProgressMonitor.isCanceled())
 			throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
-		
+
 		return true;
 	}
-	
+
 	private boolean hasBinaryContent(CharSequence seq, IFile file) throws CoreException {
 		IContentDescription desc= file.getContentDescription();
 		if (desc != null) {
@@ -309,7 +309,7 @@ public class TextSearchVisitor {
 				return false;
 			}
 		}
-		
+
 		// avoid calling seq.length() at it runs through the complete file,
 		// thus it would do so for all binary files.
 		try {
@@ -349,8 +349,8 @@ public class TextSearchVisitor {
 			fMatchAccess.initialize(null, 0, 0, new String()); // clear references
 		}
 	}
-	
-	
+
+
 	private String getExceptionMessage(Exception e) {
 		String message= e.getLocalizedMessage();
 		if (message == null) {
@@ -370,7 +370,7 @@ public class TextSearchVisitor {
 		}
 		return document;
 	}
-	
+
 	private String getCharSetName(IFile file) {
 		try {
 			return file.getCharset();

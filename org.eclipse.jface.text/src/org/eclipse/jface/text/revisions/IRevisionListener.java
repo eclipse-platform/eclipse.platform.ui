@@ -11,7 +11,7 @@
 package org.eclipse.jface.text.revisions;
 
 
-/** 
+/**
  * A listener which is notified when revision information changes.
  *
  * @see RevisionInformation
@@ -23,7 +23,7 @@ public interface IRevisionListener {
 	 * Notifies the receiver that the revision information has been updated. This typically occurs
 	 * when revision information is being displayed in an editor and the annotated document is
 	 * modified.
-	 * 
+	 *
 	 * @param e the revision event describing the change
 	 */
 	void revisionInformationChanged(RevisionEvent e);

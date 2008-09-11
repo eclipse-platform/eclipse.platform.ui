@@ -92,7 +92,7 @@ package org.eclipse.jface.text;
  * <p>
  * Clients may implement this interface and its extension interfaces or use the default
  * implementation provided by <code>AbstractDocument</code> and <code>Document</code>.</p>
- * 
+ *
  * @see org.eclipse.jface.text.IDocumentExtension
  * @see org.eclipse.jface.text.IDocumentExtension2
  * @see org.eclipse.jface.text.IDocumentExtension3

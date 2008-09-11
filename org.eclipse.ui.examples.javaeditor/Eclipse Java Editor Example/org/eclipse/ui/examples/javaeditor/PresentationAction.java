@@ -28,7 +28,7 @@ public class PresentationAction extends TextEditorAction {
 		super(JavaEditorMessages.getResourceBundle(), "TogglePresentation.", null); //$NON-NLS-1$
 		update();
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IAction
 	 */
@@ -41,7 +41,7 @@ public class PresentationAction extends TextEditorAction {
 		setChecked(!show);
 		editor.showHighlightRangeOnly(!show);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on TextEditorAction
 	 */

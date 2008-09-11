@@ -30,28 +30,27 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultViewPart;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
-
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
 public class InternalSearchUI {
-	
+
 	//The shared instance.
 	private static InternalSearchUI fgInstance;
-	
+
 	// contains all running jobs
 	private HashMap fSearchJobs;
-	
+
 	private QueryManager fSearchResultsManager;
 	private PositionTracker fPositionTracker;
-	
+
 	private SearchViewManager fSearchViewManager;
 
 	public static final Object FAMILY_SEARCH = new Object();
@@ -69,18 +68,18 @@ public class InternalSearchUI {
 			this.job= null;
 		}
 	}
-	
+
 
 	private class InternalSearchJob extends Job {
-		
+
 		private SearchJobRecord fSearchJobRecord;
-		
+
 		public InternalSearchJob(SearchJobRecord sjr) {
 			super(sjr.query.getLabel());
-			
+
 			fSearchJobRecord= sjr;
 		}
-		
+
 		protected IStatus run(IProgressMonitor monitor) {
 			fSearchJobRecord.job= this;
 			searchJobStarted(fSearchJobRecord);
@@ -91,7 +90,7 @@ public class InternalSearchUI {
 			}
 			catch (SecurityException e) {}
 			try{
-				status= fSearchJobRecord.query.run(monitor); 
+				status= fSearchJobRecord.query.run(monitor);
 			} finally {
 				try {
 					Thread.currentThread().setPriority(origPriority);
@@ -112,13 +111,13 @@ public class InternalSearchUI {
 		record.isRunning= true;
 		getSearchManager().queryStarting(record.query);
 	}
-	
+
 	private void searchJobFinished(SearchJobRecord record) {
 		record.isRunning= false;
 		fSearchJobs.remove(record);
 		getSearchManager().queryFinished(record.query);
 	}
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -127,9 +126,9 @@ public class InternalSearchUI {
 		fSearchJobs= new HashMap();
 		fSearchResultsManager= new QueryManager();
 		fPositionTracker= new PositionTracker();
-		
+
 		fSearchViewManager= new SearchViewManager(fSearchResultsManager);
-		
+
 		PlatformUI.getWorkbench().getProgressService().registerIconForFamily(SearchPluginImages.DESC_VIEW_SEARCHRES, FAMILY_SEARCH);
 	}
 
@@ -155,25 +154,25 @@ public class InternalSearchUI {
 		}
 		return null;
 	}
-	
+
 	public boolean runSearchInBackground(ISearchQuery query, ISearchResultViewPart view) {
 		if (isQueryRunning(query))
 			return false;
-		
+
 		// prepare view
 		if (view == null) {
 			getSearchViewManager().activateSearchView(true);
 		} else {
 			getSearchViewManager().activateSearchView(view);
 		}
-				
+
 		addQuery(query);
 
 		SearchJobRecord sjr= new SearchJobRecord(query, true);
 		fSearchJobs.put(query, sjr);
-				
+
 		Job job= new InternalSearchJob(sjr);
-		job.setPriority(Job.BUILD);	
+		job.setPriority(Job.BUILD);
 		job.setUser(true);
 
 		IWorkbenchSiteProgressService service= getProgressService();
@@ -182,7 +181,7 @@ public class InternalSearchUI {
 		} else {
 			job.schedule();
 		}
-		
+
 		return true;
 	}
 
@@ -195,7 +194,7 @@ public class InternalSearchUI {
 		if (isQueryRunning(query)) {
 			return Status.CANCEL_STATUS;
 		}
-		
+
 		// prepare view
 		if (view == null) {
 			getSearchViewManager().activateSearchView(true);
@@ -204,22 +203,22 @@ public class InternalSearchUI {
 		}
 
 		addQuery(query);
-		
+
 		SearchJobRecord sjr= new SearchJobRecord(query, false);
 		fSearchJobs.put(query, sjr);
-		
+
 		if (context == null)
 			context= new ProgressMonitorDialog(null);
-		
+
 		return doRunSearchInForeground(sjr, context);
 	}
-	
+
 	private IStatus doRunSearchInForeground(final SearchJobRecord rec, IRunnableContext context) {
 		try {
 			context.run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					searchJobStarted(rec);
-					try { 
+					try {
 						IStatus status= rec.query.run(monitor);
 						if (status.matches(IStatus.CANCEL)) {
 							throw new InterruptedException();
@@ -239,7 +238,7 @@ public class InternalSearchUI {
 			if (innerException instanceof CoreException) {
 				return ((CoreException) innerException).getStatus();
 			}
-			return new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.InternalSearchUI_error_unexpected, innerException);  
+			return new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.InternalSearchUI_error_unexpected, innerException);
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
 		}
@@ -248,10 +247,10 @@ public class InternalSearchUI {
 
 	public static void shutdown() {
 		InternalSearchUI instance= fgInstance;
-		if (instance != null) 
+		if (instance != null)
 			instance.doShutdown();
 	}
-	
+
 	private void doShutdown() {
 		Iterator jobRecs= fSearchJobs.values().iterator();
 		while (jobRecs.hasNext()) {
@@ -260,9 +259,9 @@ public class InternalSearchUI {
 				element.job.cancel();
 		}
 		fPositionTracker.dispose();
-		
+
 		fSearchViewManager.dispose(fSearchResultsManager);
-		
+
 	}
 
 	public void cancelSearch(ISearchQuery job) {
@@ -276,7 +275,7 @@ public class InternalSearchUI {
 	public QueryManager getSearchManager() {
 		return fSearchResultsManager;
 	}
-	
+
 	public SearchViewManager getSearchViewManager() {
 		return fSearchViewManager;
 	}
@@ -284,7 +283,7 @@ public class InternalSearchUI {
 	public PositionTracker getPositionTracker() {
 		return fPositionTracker;
 	}
-		
+
 	public void addQueryListener(IQueryListener l) {
 		getSearchManager().addQueryListener(l);
 	}
@@ -311,7 +310,7 @@ public class InternalSearchUI {
 		establishHistoryLimit();
 		getSearchManager().addQuery(query);
 	}
-	
+
 	private void establishHistoryLimit() {
 		int historyLimit= SearchPreferencePage.getHistoryLimit();
 		QueryManager searchManager= getSearchManager();
@@ -330,7 +329,7 @@ public class InternalSearchUI {
 			}
 		}
 	}
-	
+
 	public void removeAllQueries() {
 		for (Iterator queries= fSearchJobs.keySet().iterator(); queries.hasNext();) {
 			ISearchQuery query= (ISearchQuery) queries.next();
@@ -339,7 +338,7 @@ public class InternalSearchUI {
 		fSearchJobs.clear();
 		getSearchManager().removeAll();
 	}
-	
+
 	public void showSearchResult(SearchView searchView, ISearchResult result, boolean openInNew) {
 		if (openInNew) {
 			boolean isPinned= searchView.isPinned();
@@ -354,11 +353,11 @@ public class InternalSearchUI {
 			showSearchResult(searchView, result);
 		}
 	}
-	
+
 	private void showSearchResult(SearchView searchView, ISearchResult result) {
 		getSearchManager().touch(result.getQuery());
 		searchView.showSearchResult(result);
 	}
-	
-	
+
+
 }

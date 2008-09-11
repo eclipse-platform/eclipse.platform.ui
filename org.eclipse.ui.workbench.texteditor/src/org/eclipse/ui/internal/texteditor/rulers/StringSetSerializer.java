@@ -32,7 +32,7 @@ public final class StringSetSerializer {
 		}
 		return buf.toString();
 	}
-	
+
 	public static Set deserialize(String serialized) {
 		Assert.isLegal(serialized != null);
 		Set marked= new HashSet();

@@ -12,9 +12,9 @@ package org.eclipse.ui.internal.editors.text;
 
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
-
 import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
+
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 
 /**

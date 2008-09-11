@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.basic.views;
 
-import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
-
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -19,15 +17,17 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+
 public class TreeViewerNavigator implements INavigate {
 	private TreeViewer fViewer;
 	private AbstractTextSearchViewPage fPage;
-	
+
 	public TreeViewerNavigator(AbstractTextSearchViewPage page, TreeViewer viewer) {
 		fViewer= viewer;
 		fPage= page;
 	}
-	
+
 	public void navigateNext(boolean forward) {
 		TreeItem currentItem= getCurrentItem(forward);
 		if (currentItem == null)
@@ -46,7 +46,7 @@ public class TreeViewerNavigator implements INavigate {
 			internalSetSelection(nextItem);
 		}
 	}
-	
+
 	private TreeItem getFirstItem() {
 		TreeItem[] roots= fViewer.getTree().getItems();
 		if (roots.length == 0)
@@ -60,7 +60,7 @@ public class TreeViewerNavigator implements INavigate {
 		}
 		return null;
 	}
-	
+
 	private TreeItem getLastItem() {
 		TreeItem[] roots= fViewer.getTree().getItems();
 		if (roots.length == 0)
@@ -131,7 +131,7 @@ public class TreeViewerNavigator implements INavigate {
 			return child;
 		return getFirstChildWithMatches(child);
 	}
-	
+
 	private TreeItem[] getChildren(TreeItem item) {
 		fViewer.setExpandedState(item.getData(), true);
 		return item.getItems();

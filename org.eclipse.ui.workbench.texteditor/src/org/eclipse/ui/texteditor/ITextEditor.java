@@ -13,8 +13,9 @@ package org.eclipse.ui.texteditor;
 
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.ISelectionProvider;
+
+import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.ui.IEditorPart;
 

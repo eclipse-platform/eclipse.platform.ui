@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Bundle of the images used by the {@link AbstractTemplatesPage}.
- * 
+ *
  * @since 3.4
  */
 class TemplatesPageImages {
@@ -100,7 +100,7 @@ class TemplatesPageImages {
 
 	/**
 	 * Declare an Image in the registry table.
-	 * 
+	 *
 	 * @param key the key to use when registering the image
 	 * @param path the path where the image can be found. This path is relative to where this plugin
 	 *            class is found (i.e. typically the packages directory)
@@ -118,7 +118,7 @@ class TemplatesPageImages {
 
 	/**
 	 * Returns the ImageRegistry.
-	 * 
+	 *
 	 * @return image registry
 	 */
 	public static ImageRegistry getImageRegistry() {
@@ -132,16 +132,16 @@ class TemplatesPageImages {
 	 * Initialize the image registry by declaring all of the required graphics. This involves
 	 * creating JFace image descriptors describing how to create/find the image should it be needed.
 	 * The image is not actually allocated until requested.
-	 * 
+	 *
 	 * Prefix conventions Wizard Banners WIZBAN_ Preference Banners PREF_BAN_ Property Page Banners
 	 * PROPBAN_ Color toolbar CTOOL_ Enable toolbar ETOOL_ Disable toolbar DTOOL_ Local enabled
 	 * toolbar ELCL_ Local Disable toolbar DLCL_ Object large OBJL_ Object small OBJS_ View VIEW_
 	 * Product images PROD_ Misc images MISC_
-	 * 
+	 *
 	 * Where are the images? The images (typically gifs) are found in the same location as this
 	 * plugin class. This may mean the same package directory as the package holding this class. The
 	 * images are declared using this.getClass() to ensure they are looked up via this plugin class.
-	 * 
+	 *
 	 * @return the image registry
 	 * @see org.eclipse.jface.resource.ImageRegistry
 	 */
@@ -153,7 +153,7 @@ class TemplatesPageImages {
 
 	/**
 	 * Returns the image managed under the given key in this registry.
-	 * 
+	 *
 	 * @param key the image's key
 	 * @return the image managed under the given key
 	 */
@@ -163,7 +163,7 @@ class TemplatesPageImages {
 
 	/**
 	 * Returns the image descriptor for the given key in this registry.
-	 * 
+	 *
 	 * @param key the image's key
 	 * @return the image descriptor for the given key
 	 */

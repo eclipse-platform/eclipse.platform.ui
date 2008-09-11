@@ -106,7 +106,7 @@ public interface IInformationControl {
 	 * <strong>Note:</strong> The information control must not grab focus when
 	 * made visible.
 	 * </p>
-	 * 
+	 *
 	 * @param visible <code>true</code> if the control should be visible
 	 */
 	void setVisible(boolean visible);
@@ -184,7 +184,7 @@ public interface IInformationControl {
 	 * encouraged to subclass {@link AbstractInformationControl}, which does this
 	 * for free.
 	 * </p>
-	 * 
+	 *
 	 * @param listener the listener to be added
 	 */
 	void addFocusListener(FocusListener listener);

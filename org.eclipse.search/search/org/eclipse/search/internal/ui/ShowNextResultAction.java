@@ -16,17 +16,17 @@ import org.eclipse.jface.action.Action;
  * @deprecated old search
  */
 class ShowNextResultAction extends Action {
-	
+
 	private SearchResultViewer fViewer;
 
 	public ShowNextResultAction(SearchResultViewer viewer) {
-		super(SearchMessages.SearchResultView_showNext_text); 
+		super(SearchMessages.SearchResultView_showNext_text);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_NEXT);
-		setToolTipText(SearchMessages.SearchResultView_showNext_tooltip); 
+		setToolTipText(SearchMessages.SearchResultView_showNext_tooltip);
 		fViewer= viewer;
 		setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
 	}
-	
+
 	public void run() {
 		fViewer.showNextResult();
 	}

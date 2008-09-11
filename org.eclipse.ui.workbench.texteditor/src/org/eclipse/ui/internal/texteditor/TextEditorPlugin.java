@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.action.IAction;
 
-
 import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffExtensionsRegistry;
 import org.eclipse.ui.internal.texteditor.spelling.SpellingEngineRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

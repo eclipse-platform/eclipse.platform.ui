@@ -31,7 +31,7 @@ public interface ISelectionValidator {
 
 	/**
 	 * Tests whether the given post selection is still valid.
-	 * 
+	 *
 	 * @param selection the selection
 	 * @return <code>true</code> if the selection is still valid
 	 */

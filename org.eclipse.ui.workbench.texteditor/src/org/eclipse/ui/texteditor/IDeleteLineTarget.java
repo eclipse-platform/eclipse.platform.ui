@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IDocument;
  * Clients can implements that interface or use the provided default
  * implementation {@link TextViewerDeleteLineTarget}.
  * </p>
- * 
+ *
  * @since 3.4
  */
 interface IDeleteLineTarget {

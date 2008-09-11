@@ -23,10 +23,10 @@ import org.eclipse.search.ui.text.MatchFilter;
 
 
 public class MatchFilterAction extends Action implements IUpdate {
-	
+
 	private MatchFilter fFilter;
 	private AbstractTextSearchViewPage fPage;
-	
+
 	public MatchFilterAction(AbstractTextSearchViewPage page, MatchFilter filter) {
 		super(filter.getActionLabel(), IAction.AS_CHECK_BOX);
 		fPage= page;
@@ -45,7 +45,7 @@ public class MatchFilterAction extends Action implements IUpdate {
 		if (activeMatchFilters == null) {
 			return;
 		}
-		
+
 		for (int i= 0; i < activeMatchFilters.length; i++) {
 			if (!activeMatchFilters[i].equals(fFilter)) {
 				newFilters.add(activeMatchFilters[i]);
@@ -61,7 +61,7 @@ public class MatchFilterAction extends Action implements IUpdate {
 	public MatchFilter getFilter() {
 		return fFilter;
 	}
-	
+
 	private boolean isActiveMatchFilter() {
 		AbstractTextSearchResult input= fPage.getInput();
 		if (input != null) {

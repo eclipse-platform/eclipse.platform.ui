@@ -27,23 +27,23 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.ui.NewSearchUI;
 
 public class EditorOpener {
 
 	private IEditorReference fReusedEditor;
-	
+
 	public IEditorPart open(IWorkbenchPage wbPage, IFile file, boolean activate) throws PartInitException {
 		if (NewSearchUI.reuseEditor())
 			return showWithReuse(file, wbPage, getEditorID(file), activate);
 		return showWithoutReuse(file, wbPage, getEditorID(file), activate);
 	}
-	
+
 	public IEditorPart openAndSelect(IWorkbenchPage wbPage, IFile file, int offset, int length, boolean activate) throws PartInitException {
 		String editorId= null;
 		IEditorDescriptor desc= IDE.getEditorDescriptor(file);
@@ -52,14 +52,14 @@ public class EditorOpener {
 		} else {
 			editorId= desc.getId();
 		}
-		
+
 		IEditorPart editor;
 		if (NewSearchUI.reuseEditor()) {
 			editor= showWithReuse(file, wbPage, editorId, activate);
 		} else {
 			editor= showWithoutReuse(file, wbPage, editorId, activate);
 		}
-		
+
 		if (editor instanceof ITextEditor) {
 			ITextEditor textEditor= (ITextEditor) editor;
 			textEditor.selectAndReveal(offset, length);
@@ -68,7 +68,7 @@ public class EditorOpener {
 		}
 		return editor;
 	}
-	
+
 	private IEditorPart showWithoutReuse(IFile file, IWorkbenchPage wbPage, String editorID, boolean activate) throws PartInitException {
 		return IDE.openEditor(wbPage, file, editorID, activate);
 	}
@@ -80,7 +80,7 @@ public class EditorOpener {
 			return SearchPlugin.getDefault().getWorkbench().getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID).getId();
 		return desc.getId();
 	}
-	
+
 	private IEditorPart showWithReuse(IFile file, IWorkbenchPage page, String editorId, boolean activate) throws PartInitException {
 		IEditorInput input= new FileEditorInput(file);
 		IEditorPart editor= page.findEditor(input);
@@ -133,7 +133,7 @@ public class EditorOpener {
 			marker.setAttributes(attributes);
 			IDE.gotoMarker(editor, marker);
 		} catch (CoreException e) {
-			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e); 
+			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e);
 		} finally {
 			if (marker != null)
 				try {
@@ -143,5 +143,5 @@ public class EditorOpener {
 				}
 		}
 	}
-	
+
 }

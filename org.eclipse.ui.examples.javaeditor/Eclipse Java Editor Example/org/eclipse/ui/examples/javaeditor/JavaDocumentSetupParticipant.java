@@ -18,10 +18,10 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
 
 /**
- * 
+ *
  */
 public class JavaDocumentSetupParticipant implements IDocumentSetupParticipant {
-	
+
 	/**
 	 */
 	public JavaDocumentSetupParticipant() {

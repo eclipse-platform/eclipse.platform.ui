@@ -298,7 +298,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				fTextViewer.releaseWidgetToken(this);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#replaceInformationControl(boolean)
 	 * @since 3.4
@@ -350,15 +350,15 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	public boolean setFocus(IWidgetTokenOwner owner) {
 		if (! hasInformationControlReplacer())
 			return false;
-		
+
 		IInformationControl iControl= getCurrentInformationControl();
 		if (canReplace(iControl)) {
 			if (cancelReplacingDelay())
 				replaceInformationControl(true);
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
 

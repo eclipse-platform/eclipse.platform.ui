@@ -24,9 +24,9 @@ import org.eclipse.core.resources.IResource;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the search 
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the search
  * how to model search results. {@link org.eclipse.search.ui.text.AbstractTextSearchResult} and {@link org.eclipse.search.ui.text.Match} can be used to port old searches to the new API design.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISearchResultViewEntry {
@@ -53,7 +53,7 @@ public interface ISearchResultViewEntry {
 	 * Returns the number of markers grouped by this entry.
 	 *
 	 * @return	the number of markers
-	 */	
+	 */
 	public int getMatchCount();
 
 	/**
@@ -65,6 +65,6 @@ public interface ISearchResultViewEntry {
 	 *
 	 * @return	the selected marker inside this entry, or
 	 *		<code>null</code> if the entry has no markers
-	 */	
+	 */
 	public IMarker getSelectedMarker();
 }

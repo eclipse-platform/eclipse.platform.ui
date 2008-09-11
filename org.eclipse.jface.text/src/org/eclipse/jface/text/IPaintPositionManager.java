@@ -11,7 +11,6 @@
 package org.eclipse.jface.text;
 
 
-import org.eclipse.jface.text.Position;
 
 /**
  * Manages and updates positions used by {@link IPainter}s.

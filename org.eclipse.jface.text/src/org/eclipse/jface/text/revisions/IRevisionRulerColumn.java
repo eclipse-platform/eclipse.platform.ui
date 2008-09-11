@@ -25,7 +25,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
  * version 3.3 allowing to register a selection listener on revisions and a configurable rendering mode.
  * </li>
  * </ul>
- * 
+ *
  * @since 3.2
  * @see RevisionInformation
  * @see IRevisionRulerColumnExtension
@@ -33,7 +33,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
 public interface IRevisionRulerColumn extends IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension {
 	/**
 	 * Sets the revision information.
-	 * 
+	 *
 	 * @param info the new revision information, or <code>null</code> to reset the ruler
 	 */
 	void setRevisionInformation(RevisionInformation info);

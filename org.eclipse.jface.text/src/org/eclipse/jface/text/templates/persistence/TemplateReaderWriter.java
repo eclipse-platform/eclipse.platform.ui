@@ -32,6 +32,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -40,9 +43,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import org.eclipse.core.runtime.Assert;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import org.eclipse.jface.text.templates.Template;
 

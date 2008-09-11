@@ -24,7 +24,7 @@ public class JavaWordDetector implements IWordDetector {
 	public boolean isWordPart(char character) {
 		return Character.isJavaIdentifierPart(character);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IWordDetector.
 	 */

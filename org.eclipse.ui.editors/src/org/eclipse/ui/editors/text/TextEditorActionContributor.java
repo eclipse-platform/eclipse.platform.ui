@@ -19,6 +19,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.ide.IDEActionFactory;
+
 import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -56,7 +57,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 * @since 3.3
 	 */
 	private IContributionItem fQuickAssistMenuEntry;
-	
+
 	private RetargetTextEditorAction fRetargetShowInformationAction;
 
 	/**
@@ -67,7 +68,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fQuickAssistAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.QuickAssist."); //$NON-NLS-1$
 		fQuickAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
 		fQuickAssistMenuEntry= new ActionContributionItem(fQuickAssistAction);
-		
+
 		fRetargetShowInformationAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowInformation."); //$NON-NLS-1$
 		fRetargetShowInformationAction.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 	}
@@ -86,10 +87,10 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 
 		/** The global actions to be connected with editor actions */
 		IActionBars actionBars= getActionBars();
-		
+
 		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), getAction(textEditor, IDEActionFactory.ADD_TASK.getId()));
 		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), getAction(textEditor, IDEActionFactory.BOOKMARK.getId()));
-		
+
 		IAction action= getAction(textEditor, ITextEditorActionConstants.NEXT);
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_NEXT_ANNOTATION, action);
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.NEXT, action);
@@ -101,32 +102,32 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.REFRESH, action);
 
 		fChangeEncodingAction.setAction(getAction(textEditor, ITextEditorActionConstants.CHANGE_ENCODING));
-		
+
 		IAction quickAssistAction= getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST);
 		fQuickAssistAction.setAction(quickAssistAction);
 
 		if (textEditor == null)
 			return;
-		
+
 		// Update Quick Assist menu entry - for now don't show disabled entry
 		IMenuManager menuMgr= textEditor.getEditorSite().getActionBars().getMenuManager();
 		IMenuManager editMenu= menuMgr.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		if (editMenu != null) { 
+		if (editMenu != null) {
 			boolean isEnabled= quickAssistAction != null && quickAssistAction.isEnabled();
 			fQuickAssistMenuEntry.setVisible(isEnabled);
 			editMenu.update(true);
 		}
-		
+
 		fRetargetShowInformationAction.setAction(getAction(textEditor, ITextEditorActionConstants.SHOW_INFORMATION));
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.BasicTextEditorActionContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
 	 * @since 3.3
 	 */
 	public void contributeToMenu(IMenuManager menu) {
 		super.contributeToMenu(menu);
-		
+
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fQuickAssistMenuEntry);

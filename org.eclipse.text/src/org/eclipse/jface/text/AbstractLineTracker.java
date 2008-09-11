@@ -34,7 +34,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 
 	/**
 	 * Tells whether this class is in debug mode.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static final boolean DEBUG= false;
@@ -52,7 +52,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 
 	/**
 	 * Representation of replace and set requests.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected static class Request {
@@ -79,19 +79,19 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 
 	/**
 	 * The active rewrite session.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private DocumentRewriteSession fActiveRewriteSession;
 	/**
 	 * The list of pending requests.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private List fPendingRequests;
 	/**
 	 * The implementation that this tracker delegates to.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private ILineTracker fDelegate= new ListLineTracker() {
@@ -218,7 +218,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 
 	/**
 	 * Converts the implementation to be a {@link TreeLineTracker} if it isn't yet.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private void checkImplementation() {
@@ -239,7 +239,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	/**
 	 * Returns the information about the first delimiter found in the given text starting at the
 	 * given offset.
-	 * 
+	 *
 	 * @param text the text to be searched
 	 * @param offset the offset in the given text
 	 * @return the information of the first found delimiter or <code>null</code>
@@ -271,7 +271,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 
 	/**
 	 * Tells whether there's an active rewrite session.
-	 * 
+	 *
 	 * @return <code>true</code> if there is an active rewrite session, <code>false</code>
 	 *         otherwise
 	 * @since 3.1
@@ -282,7 +282,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 
 	/**
 	 * Flushes the active rewrite session.
-	 * 
+	 *
 	 * @throws BadLocationException in case the recorded requests cannot be processed correctly
 	 * @since 3.1
 	 */
@@ -306,7 +306,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 
 	/**
 	 * Checks the presence of a rewrite session and flushes it.
-	 * 
+	 *
 	 * @throws BadLocationException in case flushing does not succeed
 	 * @since 3.1
 	 */

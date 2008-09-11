@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.IAnnotationModel;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * A document provider maps between domain elements and documents. A document provider has the

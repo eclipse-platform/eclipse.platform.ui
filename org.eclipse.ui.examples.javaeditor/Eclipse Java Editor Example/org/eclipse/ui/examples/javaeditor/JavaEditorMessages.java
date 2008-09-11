@@ -29,7 +29,7 @@ public class JavaEditorMessages {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
-	
+
 	public static ResourceBundle getResourceBundle() {
 		return fgResourceBundle;
 	}

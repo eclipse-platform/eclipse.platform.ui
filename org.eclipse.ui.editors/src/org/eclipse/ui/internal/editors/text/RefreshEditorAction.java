@@ -22,7 +22,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Refresh text editor action.
- * 
+ *
  * @since 3.3
  */
 public class RefreshEditorAction extends RefreshAction implements IUpdate {

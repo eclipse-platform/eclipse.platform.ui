@@ -98,7 +98,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter#updatePresentation(org.eclipse.swt.widgets.Display,
 	 *      java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
 	 * @deprecated Use {@link #updatePresentation(Drawable, String, TextPresentation, int, int)}

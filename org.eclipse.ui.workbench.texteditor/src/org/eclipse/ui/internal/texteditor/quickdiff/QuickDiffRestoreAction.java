@@ -150,7 +150,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 
 	/**
 	 * Returns the active line.
-	 * 
+	 *
 	 * @param useRulerInfo <code>true</code> if ruler info should be used
 	 * @return the line of interest.
 	 * @since 3.1

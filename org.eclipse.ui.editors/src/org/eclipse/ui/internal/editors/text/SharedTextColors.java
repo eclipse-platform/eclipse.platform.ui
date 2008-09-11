@@ -72,16 +72,16 @@ class SharedTextColors implements ISharedTextColors {
 	public void dispose() {
 		if (fDisplayTable == null)
 			return;
-		
+
 		Iterator iter= fDisplayTable.values().iterator();
 		while (iter.hasNext())
 			dispose((Map)iter.next());
 		fDisplayTable= null;
 	}
-	
+
 	/**
 	 * Disposes the colors for the given display.
-	 * 
+	 *
 	 * @param display the display for which to dispose the colors
 	 * @since 3.3
 	 */
@@ -89,21 +89,21 @@ class SharedTextColors implements ISharedTextColors {
 		if (fDisplayTable != null)
 			dispose((Map)fDisplayTable.remove(display));
 	}
-	
+
 	/**
 	 * Disposes the given color table.
-	 * 
+	 *
 	 * @param colorTable the color table that maps <code>RGB</code> to <code>Color</code>
 	 * @since 3.3
 	 */
 	private void dispose(Map colorTable) {
 		if (colorTable == null)
 			return;
-		
+
 		Iterator iter= colorTable.values().iterator();
 		while (iter.hasNext())
 			((Color) iter.next()).dispose();
-		
+
 		colorTable.clear();
 	}
 

@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
@@ -29,10 +27,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 
+import org.eclipse.ui.editors.text.EditorsUI;
+
 /**
  * Wizard with no page that creates the untitled text file
  * and opens the text editor.
- * 
+ *
  * @since 3.1
  */
 public class UntitledTextFileWizard extends Wizard implements INewWizard {

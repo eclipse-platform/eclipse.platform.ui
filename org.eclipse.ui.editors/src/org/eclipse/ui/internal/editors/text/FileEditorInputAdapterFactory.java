@@ -11,11 +11,13 @@
 
 package org.eclipse.ui.internal.editors.text;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.ui.IFileEditorInput;
+
 import org.eclipse.ui.editors.text.ILocationProvider;
 
 /**

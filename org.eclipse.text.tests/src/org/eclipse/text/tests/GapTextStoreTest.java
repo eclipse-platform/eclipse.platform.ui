@@ -19,9 +19,9 @@ import org.eclipse.jface.text.ITextStore;
 public class GapTextStoreTest extends TextStoreTest {
 
 	public static Test suite() {
-		return new TestSuite(GapTextStoreTest.class); 
+		return new TestSuite(GapTextStoreTest.class);
 	}
-	
+
 	protected ITextStore createTextStore() {
 		return new GapTextStore(256, 4096, 0.1f);
 	}

@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -57,7 +57,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 
 	private static Map fgLabelProviders= new HashMap(5);
-	
+
 	private SearchResultViewer fViewer;
 	private Map fResponse;
 	private IMemento fMemento;
@@ -84,7 +84,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			return;
 		}
 		fViewer.saveState(memento);
-	}	
+	}
 
 	/**
 	 * Creates the search list inner viewer.
@@ -106,7 +106,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fCellEditorActionHandler.setSelectAllAction(fSelectAllAction);
 
 		fillActionBars(getViewSite().getActionBars());
-		
+
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (SearchPreferencePage.POTENTIAL_MATCH_FG_COLOR.equals(event.getProperty()) || SearchPreferencePage.EMPHASIZE_POTENTIAL_MATCHES.equals(event.getProperty()))
@@ -114,12 +114,12 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 						fViewer.updatedPotentialMatchFgColor();
 			}
 		};
-		
+
 		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fViewer.getControl(), SearchPlugin.getDefault().getSearchViewHelpContextId());
 	}
-	
+
 	/**
 	 * Returns the search result viewer.
 	 * @return the search result viewer.
@@ -127,14 +127,14 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	public SearchResultViewer getViewer() {
 		return fViewer;
 	}
-	
+
 	//---- IWorkbenchPart ------------------------------------------------------
 
 
 	public void setFocus() {
 		fViewer.getControl().setFocus();
 	}
-	
+
 	public void dispose() {
 		if (fViewer != null) {
 			SearchManager.getDefault().removeSearchChangeListener(fViewer);
@@ -148,29 +148,29 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		}
 		super.dispose();
 	}
-	
+
 	protected void setContentDescription(String title) {
 		super.setContentDescription(title);
 	}
-	
+
 	protected void setTitleToolTip(String text) {
 		super.setTitleToolTip(text);
 	}
-	
+
 	//---- Adding Action to Toolbar -------------------------------------------
-	
+
 	private void fillActionBars(IActionBars actionBars) {
 		IToolBarManager toolBar= actionBars.getToolBarManager();
 		fillToolBar(toolBar);
 		actionBars.updateActionBars();
-		
+
 		// Add selectAll action handlers.
 		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), fSelectAllAction);
 	}
 
 	private void fillToolBar(IToolBarManager tbm) {
 		fViewer.fillToolBar(tbm);
-	}	
+	}
 
 	ILabelProvider getLabelProvider(String pageId) {
 		if (pageId != null)
@@ -184,7 +184,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		IBaseLabelProvider labelProvider= fViewer.getLabelProvider();
 		if (labelProvider == null)
 			return null;
-		
+
 		return ((SearchResultLabelProvider)labelProvider).getLabelProvider();
 	}
 
@@ -200,7 +200,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 	Display getDisplay() {
 		return fViewer.getControl().getDisplay();
-	}	
+	}
 
 
 	//---- ISearchResultView --------------------------------------------------
@@ -230,7 +230,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 		Assert.isNotNull(pageId);
 		Assert.isNotNull(pluralLabelPattern);
-		Assert.isNotNull(gotoAction);		
+		Assert.isNotNull(gotoAction);
 
 		fResponse= new HashMap(500);
 		setGotoMarkerAction(gotoAction);
@@ -240,7 +240,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			oldLabelProvider.dispose();
 		fgLabelProviders.put(pageId, labelProvider);
 
-		SearchManager.getDefault().addNewSearch(		
+		SearchManager.getDefault().addNewSearch(
 			new Search(
 				pageId,
 				singularLabel,
@@ -265,7 +265,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 				IAction					gotoAction,
 				IGroupByKeyComputer		groupByKeyComputer,
 				IRunnableWithProgress	operation) {
-		
+
 		searchStarted(pageId, null, label, imageDescriptor, contributor, labelProvider, gotoAction, groupByKeyComputer, operation);
 	}
 
@@ -287,7 +287,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 		Assert.isNotNull(pageId);
 		Assert.isNotNull(pluralLabelPattern);
-		Assert.isNotNull(gotoAction);		
+		Assert.isNotNull(gotoAction);
 
 		fResponse= new HashMap(500);
 		setGotoMarkerAction(gotoAction);
@@ -297,7 +297,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			oldLabelProvider.dispose();
 		fgLabelProviders.put(pageId, labelProvider);
 
-		SearchManager.getDefault().addNewSearch(		
+		SearchManager.getDefault().addNewSearch(
 			new Search(
 				pageId,
 				singularLabel,

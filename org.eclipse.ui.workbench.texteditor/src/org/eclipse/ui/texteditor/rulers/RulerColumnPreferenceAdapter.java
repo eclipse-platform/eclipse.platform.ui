@@ -15,11 +15,12 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.internal.texteditor.rulers.StringSetSerializer;
 
 /**
  * Manages the preferences for ruler contributions stored in a preference store.
- * 
+ *
  * @since 3.3
  */
 public final class RulerColumnPreferenceAdapter {
@@ -29,7 +30,7 @@ public final class RulerColumnPreferenceAdapter {
 	/**
 	 * Creates a new preference adapter that will read and write under the specified key in the
 	 * given preference store.
-	 * 
+	 *
 	 * @param store the preference store
 	 * @param key the key
 	 */
@@ -39,10 +40,10 @@ public final class RulerColumnPreferenceAdapter {
 		fStore= store;
 		fKey= key;
 	}
-	
+
 	/**
 	 * Returns the enablement state of the given ruler contribution.
-	 * 
+	 *
 	 * @param descriptor a ruler contribution descriptor
 	 * @return <code>true</code> if the ruler is enabled, <code>false</code> otherwise
 	 */
@@ -51,10 +52,10 @@ public final class RulerColumnPreferenceAdapter {
 		String preference= fStore.getString(fKey);
 		return StringSetSerializer.deserialize(preference).contains(descriptor.getId()) ^ descriptor.getDefaultEnablement();
 	}
-	
+
 	/**
 	 * Sets the enablement state of the given ruler contribution.
-	 * 
+	 *
 	 * @param descriptor a ruler contribution descriptor
 	 * @param enabled <code>true</code> to enable the contribution, <code>false</code> to
 	 *        disable it
@@ -74,10 +75,10 @@ public final class RulerColumnPreferenceAdapter {
 			fStore.setValue(fKey, StringSetSerializer.serialize(marked));
 		}
 	}
-	
+
 	/**
 	 * Toggles the enablement state of given the ruler contribution.
-	 * 
+	 *
 	 * @param descriptor a ruler contribution descriptor
 	 */
 	public void toggle(RulerColumnDescriptor descriptor) {

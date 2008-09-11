@@ -34,8 +34,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFileBufferManager {
-	
-	
+
+
 	/**
 	 * Connects the file at the given location to this manager. After that call
 	 * successfully completed it is guaranteed that each call to <code>getFileBuffer</code>
@@ -53,7 +53,7 @@ public interface IFileBufferManager {
 	 * @deprecated As of 3.3, replaced by {@link #connect(IPath, LocationKind, IProgressMonitor)}
 	 */
 	void connect(IPath location, IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * Connects the file at the given location to this manager. After that call
 	 * successfully completed it is guaranteed that each call to <code>getFileBuffer</code>
@@ -110,7 +110,7 @@ public interface IFileBufferManager {
 	 * @deprecated As of 3.3, replaced by {@link #disconnect(IPath, LocationKind, IProgressMonitor)}
 	 */
 	void disconnect(IPath location, IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * Disconnects the file at the given location from this manager. After that
 	 * call successfully completed there is no guarantee that <code>getFileBuffer</code>
@@ -128,7 +128,7 @@ public interface IFileBufferManager {
 	 * @since 3.3
 	 */
 	void disconnect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * Disconnects the given file store from this manager. After that
 	 * call successfully completed there is no guarantee that <code>getFileBuffer</code>
@@ -142,7 +142,7 @@ public interface IFileBufferManager {
 	 * We had to use a different name than <code>disconnect</code> for this method
 	 * due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844
 	 * </p>
-	 * 
+	 *
 	 * @param fileStore the file store to be disconnected
 	 * @param monitor the progress monitor
 	 * @throws CoreException if the file could not successfully be disconnected
@@ -181,7 +181,7 @@ public interface IFileBufferManager {
 	 * @since 3.3
 	 */
 	IFileBuffer getFileBuffer(IPath location, LocationKind locationKind);
-	
+
 	/**
 	 * Returns the file buffer managed for the given file store or
 	 * <code>null</code> if there is no such file buffer.
@@ -208,7 +208,7 @@ public interface IFileBufferManager {
 	 * disconnected file buffers as buffers can be disconnected after calling
 	 * this method.
 	 * </p>
-	 * 
+	 *
 	 * @return the file buffers managed by this file buffer manager
 	 * @see #getFileStoreFileBuffers()
 	 * @since 3.4
@@ -222,7 +222,7 @@ public interface IFileBufferManager {
 	 * disconnected file buffers as buffers can be disconnected after calling
 	 * this method.
 	 * </p>
-	 * 
+	 *
 	 * @return the file buffers managed by this file buffer manager
 	 * @see #getFileBuffers()
 	 * @since 3.4

@@ -25,10 +25,10 @@ import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 /**
- * The central class for access to the Search Plug-in's User Interface. 
- * This class cannot be instantiated; all functionality is provided by 
+ * The central class for access to the Search Plug-in's User Interface.
+ * This class cannot be instantiated; all functionality is provided by
  * static methods.
- * 
+ *
  * Features provided:
  * <ul>
  * <li>convenient access to the search result view of the active workbench
@@ -37,7 +37,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
  *
  * @see ISearchResultView
  * @deprecated Part of the old ('classic') search. Since 3.0 clients can create their own search result view pages and use {@link org.eclipse.search.ui.NewSearchUI} instead.
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class SearchUI {
@@ -48,15 +48,15 @@ public final class SearchUI {
 	 */
 	public static final String PLUGIN_ID= NewSearchUI.PLUGIN_ID;
 
-	/** 
+	/**
 	 * Search marker type (value <code>"org.eclipse.search.searchmarker"</code>).
 	 *
 	 * @see org.eclipse.core.resources.IMarker
 	 * @deprecated Use {@link NewSearchUI#SEARCH_MARKER} instead.
-	 */ 
+	 */
 	public static final String SEARCH_MARKER=  NewSearchUI.SEARCH_MARKER;
 
-	/** 
+	/**
 	 * Line marker attribute (value <code>"line"</code>)
 	 * The value of the marker attribute is the line which contains the text search match.
 	 *
@@ -64,7 +64,7 @@ public final class SearchUI {
 	 */
 	public static final String LINE= "line"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Potential match marker attribute
 	 * (value <code>"potentialMatch"</code>).
 	 *  <p>
@@ -82,19 +82,19 @@ public final class SearchUI {
 	 */
 	public static final String POTENTIAL_MATCH= "potentialMatch"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Id of the Search result view
 	 * (value <code>"org.eclipse.search.SearchResultView"</code>).
 	 */
 	public static final String SEARCH_RESULT_VIEW_ID= "org.eclipse.search.SearchResultView"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Id of the new Search view
 	 * (value <code>"org.eclipse.search.ui.views.SearchView"</code>).
 	 * @deprecated Use {@link NewSearchUI#SEARCH_VIEW_ID} instead.
 	 */
 	public static final String SEARCH_VIEW_ID= NewSearchUI.SEARCH_VIEW_ID;
-	
+
 	/**
 	 * Id of the Search action set
 	 * (value <code>"org.eclipse.search.searchActionSet"</code>).
@@ -132,10 +132,10 @@ public final class SearchUI {
 			}
 			return true;
 		} catch (PartInitException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message);
 			return false;
-		}	
-	}		
+		}
+	}
 
 	/**
 	 * Opens the search dialog.
@@ -151,7 +151,7 @@ public final class SearchUI {
 	public static void openSearchDialog(IWorkbenchWindow window, String pageId) {
 		NewSearchUI.openSearchDialog(window, pageId);
 	}
-	
+
 
 	/**
 	 * Returns the search result view of the active page of the
@@ -165,7 +165,7 @@ public final class SearchUI {
 		IViewPart part= SearchPlugin.getActivePage().findView(SearchUI.SEARCH_RESULT_VIEW_ID);
 		if (part instanceof ISearchResultView)
 			return (ISearchResultView) part;
-		return null;	
+		return null;
 	}
 
 	/**
@@ -183,7 +183,7 @@ public final class SearchUI {
 	/**
 	 * Returns the preference whether editors should be reused
 	 * when showing search results.
-	 * 
+	 *
 	 * The goto action can decide to use or ignore this preference.
 	 *
 	 * @return <code>true</code> if editors should be reused for showing search results

@@ -13,7 +13,6 @@ package org.eclipse.ui.texteditor.templates;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
-
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**

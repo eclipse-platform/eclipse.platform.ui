@@ -65,7 +65,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	/**
 	 * Creates a new file buffer operation handler.
-	 * 
+	 *
 	 * @param fileBufferOperation the file buffer operation
 	 */
 	public FileBufferOperationHandler(IFileBufferOperation fileBufferOperation) {
@@ -142,7 +142,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	/**
 	 * Returns the selection of the active workbench window.
-	 * 
+	 *
 	 * @return the current selection in the active workbench window or <code>null</code>
 	 */
 	protected final ISelection getSelection() {
@@ -154,7 +154,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	/**
 	 * Returns the active workbench window.
-	 * 
+	 *
 	 * @return the active workbench window or <code>null</code> if not available
 	 */
 	protected final IWorkbenchWindow getWorkbenchWindow() {
@@ -165,7 +165,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	/**
 	 * Collects the files out of the given resources.
-	 * 
+	 *
 	 * @param resources the resources from which to get the files
 	 * @return an array of files
 	 */
@@ -181,7 +181,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	/**
 	 * Runs the given operation.
-	 * 
+	 *
 	 * @param files the file on which to run this operation
 	 * @param location the file buffer location
 	 * @param fileBufferOperation the operation to run
@@ -227,7 +227,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	/**
 	 * Returns the shell of the active workbench window.
-	 * 
+	 *
 	 * @return the shell
 	 */
 	protected final Shell getShell() {
@@ -237,7 +237,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	/**
 	 * Generates the file buffer locations out of the given files.
-	 * 
+	 *
 	 * @param files an array of files
 	 * @param progressMonitor the progress monitor
 	 * @return an array with the generated locations
@@ -261,7 +261,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	/**
 	 * Tells whether the given location is accepted by this handler.
-	 * 
+	 *
 	 * @param location a file buffer location
 	 * @return <code>true</code> if the given location is acceptable
 	 */

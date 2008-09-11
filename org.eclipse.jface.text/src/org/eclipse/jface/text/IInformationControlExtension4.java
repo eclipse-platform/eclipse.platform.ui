@@ -26,7 +26,7 @@ public interface IInformationControlExtension4 {
 	 * The implementor can specify whether the new text affects an
 	 * already visible information control.
 	 * </p>
-	 * 
+	 *
 	 * @param statusFieldText the text to be used in the optional status field
 	 *                         or <code>null</code> if the status field should be hidden
 	 * @since 3.2

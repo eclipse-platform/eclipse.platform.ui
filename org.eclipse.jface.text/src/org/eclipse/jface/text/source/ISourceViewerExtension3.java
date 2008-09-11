@@ -17,7 +17,7 @@ import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
 /**
  * Extension interface for {@link org.eclipse.jface.text.source.ISourceViewer}.<p>
  * It introduces the concept of a quick assist assistant and provides access
- * to the quick assist invocation context. It also gives access to any currently 
+ * to the quick assist invocation context. It also gives access to any currently
  * showing annotation hover.</p>
  *
  * @see IQuickAssistAssistant

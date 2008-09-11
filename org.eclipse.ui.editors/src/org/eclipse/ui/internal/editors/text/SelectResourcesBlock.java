@@ -106,7 +106,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Create an instance of this class. Use this constructor if you wish to specify the width
 	 * and/or height of the combined widget (to only hard code one of the sizing dimensions, specify
 	 * the other dimension's value as -1)
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param rootObject the root object
 	 * @param treeContentProvider the tree content provider
@@ -322,7 +322,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	private void findAllSelectedListElements(Object treeElement, String parentLabel, boolean addAll, IElementFilter filter) throws InterruptedException {
 
 		String fullLabel= null;
-	
+
 		if (addAll)
 			filter.filterElements(listContentProvider.getElements(treeElement));
 		else { //Add what we have stored

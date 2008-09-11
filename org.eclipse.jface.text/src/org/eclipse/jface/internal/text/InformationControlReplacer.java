@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,11 +32,11 @@ import org.eclipse.jface.text.IInformationControlExtension3;
  * The {@link AbstractInformationControlManager} can be configured with such a replacer by calling
  * <code>setInformationControlReplacer</code>.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public class InformationControlReplacer extends AbstractInformationControlManager {
-	
+
 	/**
 	 * Minimal width in pixels.
 	 */
@@ -45,7 +45,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 	 * Minimal height in pixels.
 	 */
 	private static final int MIN_HEIGHT= 50;
-	
+
 	/**
 	 * Default control creator.
 	 */
@@ -60,11 +60,11 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 	private boolean fDelayedInformationSet;
 	private Rectangle fReplaceableArea;
 	private Rectangle fContentBounds;
-	
-	
+
+
 	/**
 	 * Creates a new information control replacer.
-	 * 
+	 *
 	 * @param creator the default information control creator
 	 */
 	public InformationControlReplacer(IInformationControlCreator creator) {
@@ -74,7 +74,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 
 	/**
 	 * Replace the information control.
-	 * 
+	 *
 	 * @param informationPresenterControlCreator the information presenter control creator
 	 * @param contentBounds the bounds of the content area of the information control
 	 * @param information the information to show
@@ -82,7 +82,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 	 * @param takeFocus <code>true</code> iff the replacing information control should take focus
 	 */
 	public void replaceInformationControl(IInformationControlCreator informationPresenterControlCreator, Rectangle contentBounds, Object information, final Rectangle subjectArea, boolean takeFocus) {
-		
+
 		try {
 			fIsReplacing= true;
 			if (! fDelayedInformationSet)
@@ -91,11 +91,11 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 				takeFocus= true; // delayed input has been set, so the original info control must have been focused
 			fContentBounds= contentBounds;
 			fReplaceableArea= subjectArea;
-			
+
 			setCustomInformationControlCreator(informationPresenterControlCreator);
-			
+
 			takesFocusWhenVisible(takeFocus);
-		
+
 			showInformation();
 		} finally {
 			fIsReplacing= false;
@@ -105,7 +105,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 			setCustomInformationControlCreator(null);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeInformation()
 	 */
@@ -114,7 +114,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 			setInformation(fReplacableInformation, fReplaceableArea);
 			return;
 		}
-		
+
 		if (DEBUG)
 			System.out.println("InformationControlReplacer: no active replaceable"); //$NON-NLS-1$
 	}
@@ -128,40 +128,40 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 	 */
 	public void showInformationControl(Rectangle subjectArea, Object information) {
 		IInformationControl informationControl= getInformationControl();
-		
+
 		Rectangle controlBounds= fContentBounds;
 		if (informationControl instanceof IInformationControlExtension3) {
 			IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
 			Rectangle trim= iControl3.computeTrim();
 			controlBounds= Geometry.add(controlBounds, trim);
-			
+
 			/*
 			 * Ensure minimal size. Interacting with a tiny information control
 			 * (resizing, selecting text) would be a pain.
 			 */
 			controlBounds.width= Math.max(controlBounds.width, MIN_WIDTH);
 			controlBounds.height= Math.max(controlBounds.height, MIN_HEIGHT);
-			
+
 			getInternalAccessor().cropToClosestMonitor(controlBounds);
 		}
-		
+
 		Point location= Geometry.getLocation(controlBounds);
 		Point size= Geometry.getSize(controlBounds);
-		
+
 		// Caveat: some IInformationControls fail unless setSizeConstraints(..) is called with concrete values
 		informationControl.setSizeConstraints(size.x, size.y);
-		
+
 		if (informationControl instanceof IInformationControlExtension2)
 			((IInformationControlExtension2) informationControl).setInput(information);
 		else
 			informationControl.setInformation(information.toString());
-		
+
 		informationControl.setLocation(location);
 		informationControl.setSize(size.x, size.y);
-		
+
 		showInformationControl(subjectArea);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
 	 */
@@ -185,23 +185,23 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 
 	/**
 	 * Tells whether the replacer is currently replacing another information control.
-	 * 
+	 *
 	 * @return <code>true</code> while code from {@link #replaceInformationControl(IInformationControlCreator, Rectangle, Object, Rectangle, boolean)} is run
 	 */
 	public boolean isReplacing() {
 		return fIsReplacing;
 	}
-	
+
 	/**
 	 * @return the current information control, or <code>null</code> if none available
 	 */
 	public IInformationControl getCurrentInformationControl2() {
 		return getInternalAccessor().getCurrentInformationControl();
 	}
-	
+
 	/**
 	 * The number of pixels to blow up the keep-up zone.
-	 * 
+	 *
 	 * @return the margin in pixels
 	 */
 	public int getKeepUpMargin() {

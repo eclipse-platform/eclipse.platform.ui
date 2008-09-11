@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import org.eclipse.core.filebuffers.ISynchronizationContext;
-
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.filebuffers.ISynchronizationContext;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;

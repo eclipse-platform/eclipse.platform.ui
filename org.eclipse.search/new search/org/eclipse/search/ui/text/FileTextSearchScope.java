@@ -43,26 +43,26 @@ import org.eclipse.search.internal.ui.util.FileTypeEditor;
  * Clients should not instantiate or subclass this class.
  * </p>
  * @since 3.2
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class FileTextSearchScope extends TextSearchScope {
-	
+
 	private static final boolean IS_CASE_SENSITIVE_FILESYSTEM = !new File("Temp").equals(new File("temp")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Returns a scope for the workspace. The created scope contains all resources in the workspace
 	 * that match the given file name patterns. Depending on <code>includeDerived</code>, derived resources or
 	 * resources inside a derived container are part of the scope or not.
-	 * 
-	 * @param fileNamePatterns file name pattern that all files have to match <code>null</code> to include all file names.	 
+	 *
+	 * @param fileNamePatterns file name pattern that all files have to match <code>null</code> to include all file names.
 	 * @param includeDerived defines if derived files and files inside derived containers are included in the scope.
 	 * @return a scope containing all files in the workspace that match the given file name patterns.
 	 */
 	public static FileTextSearchScope newWorkspaceScope(String[] fileNamePatterns, boolean includeDerived) {
-		return new FileTextSearchScope(SearchMessages.WorkspaceScope, new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, null, fileNamePatterns, includeDerived); 
+		return new FileTextSearchScope(SearchMessages.WorkspaceScope, new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, null, fileNamePatterns, includeDerived);
 	}
-	
+
 	/**
 	 * Returns a scope for the given root resources. The created scope contains all root resources and their
 	 * children that match the given file name patterns. Depending on <code>includeDerived</code>, derived resources or
@@ -75,7 +75,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 	 */
 	public static FileTextSearchScope newSearchScope(IResource[] roots, String[] fileNamePatterns, boolean includeDerived) {
 		roots= removeRedundantEntries(roots, includeDerived);
-		
+
 		String description;
 		if (roots.length == 0) {
 			description= SearchMessages.FileTextSearchScope_scope_empty;
@@ -90,14 +90,14 @@ public final class FileTextSearchScope extends TextSearchScope {
 			description= Messages.format(label, new String[] { roots[0].getName(), roots[1].getName()});
 		}
 		return new FileTextSearchScope(description, roots, null, fileNamePatterns, includeDerived);
-	}	
+	}
 
 	/**
 	 * Returns a scope for the given working sets. The created scope contains all resources in the
 	 * working sets that match the given file name patterns. Depending on <code>includeDerived</code>, derived resources or
 	 * resources inside a derived container are part of the scope or not.
-	 * 
-	 * @param workingSets the working sets defining the scope. 
+	 *
+	 * @param workingSets the working sets defining the scope.
 	 * @param fileNamePatterns file name pattern that all files have to match <code>null</code> to include all file names.
 	 * @param includeDerived defines if derived files and files inside derived containers are included in the scope.
 	 * @return a scope containing the resources in the working set if they match the given file name patterns.
@@ -126,7 +126,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 	private final String[] fFileNamePatterns;
 	private final Matcher fPositiveFileNameMatcher;
 	private final Matcher fNegativeFileNameMatcher;
-	
+
 	private boolean fVisitDerived;
 	private IWorkingSet[] fWorkingSets;
 
@@ -139,10 +139,10 @@ public final class FileTextSearchScope extends TextSearchScope {
 		fPositiveFileNameMatcher= createMatcher(fileNamePatterns, false);
 		fNegativeFileNameMatcher= createMatcher(fileNamePatterns, true);
 	}
-	
+
 	/**
 	 * Returns the description of the scope
-	 * 
+	 *
 	 * @return the description of the scope
 	 */
 	public String getDescription() {
@@ -152,17 +152,17 @@ public final class FileTextSearchScope extends TextSearchScope {
 	/**
 	 * Returns the file name pattern configured for this scope or <code>null</code> to match
 	 * all file names.
-	 * 
+	 *
 	 * @return the file name pattern starings
 	 */
 	public String[] getFileNamePatterns() {
 		return fFileNamePatterns;
 	}
-	
+
 	/**
-	 * Returns the working-sets that were used to  configure this scope or <code>null</code> 
+	 * Returns the working-sets that were used to  configure this scope or <code>null</code>
 	 * if the scope was not created off working sets.
-	 * 
+	 *
 	 * @return the working-sets the scope is based on.
 	 */
 	public IWorkingSet[] getWorkingSets() {
@@ -172,16 +172,16 @@ public final class FileTextSearchScope extends TextSearchScope {
 	/**
 	 * Returns the content types configured for this scope or <code>null</code> to match
 	 * all content types.
-	 * 
+	 *
 	 * @return the file name pattern starings
 	 */
 	public IContentType[] getContentTypes() {
 		return null;  // to be implemented in the future
 	}
-	
+
 	/**
 	 * Returns a description describing the file name patterns and content types.
-	 * 
+	 *
 	 * @return the description of the scope
 	 */
 	public String getFilterDescription() {
@@ -199,16 +199,16 @@ public final class FileTextSearchScope extends TextSearchScope {
 		}
 		return BasicElementLabels.getFilePattern(buf.toString());
 	}
-	
+
 	/**
 	 * Returns whether derived resources are included in this search scope.
-	 * 
+	 *
 	 * @return whether derived resources are included in this search scope.
 	 */
 	public boolean includeDerived() {
 		return fVisitDerived;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.core.text.FileSearchScope#getRoots()
 	 */
@@ -223,13 +223,13 @@ public final class FileTextSearchScope extends TextSearchScope {
 		if (!fVisitDerived && proxy.isDerived()) {
 			return false; // all resources in a derived folder are considered to be derived, see bug 103576
 		}
-		
+
 		if (proxy.getType() == IResource.FILE) {
 			return matchesFileName(proxy.getName());
 		}
 		return true;
 	}
-	
+
 	private boolean matchesFileName(String fileName) {
 		if (fPositiveFileNameMatcher != null && !fPositiveFileNameMatcher.reset(fileName).matches()) {
 			return false;
@@ -239,7 +239,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 		}
 		return true;
 	}
-	
+
 	private Matcher createMatcher(String[] fileNamePatterns, boolean negativeMatcher) {
 		if (fileNamePatterns == null || fileNamePatterns.length == 0) {
 			return null;
@@ -263,7 +263,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 		}
 		return null;
 	}
-	
+
 	private static IResource[] removeRedundantEntries(IResource[] elements, boolean includeDerived) {
 		ArrayList res= new ArrayList();
 		for (int i= 0; i < elements.length; i++) {
@@ -290,7 +290,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 		}
 		return (IResource[]) res.toArray(new IResource[res.size()]);
 	}
-	
+
 	private static void addToList(ArrayList res, IResource curr, boolean includeDerived) {
 		if (!includeDerived && isDerived(curr)) {
 			return;

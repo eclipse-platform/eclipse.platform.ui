@@ -61,7 +61,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * Creates a new MatchingCharacterPainter for the given source viewer using the given character
 	 * pair matcher. The character matcher is not adopted by this painter. Thus, it is not disposed.
 	 * However, this painter requires exclusive access to the given pair matcher.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer
 	 * @param matcher the character pair matcher
 	 */
@@ -175,7 +175,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		if (gc != null) {
 
 			gc.setForeground(fColor);
-			
+
 			Rectangle bounds;
 			if (length > 0)
 				bounds= fTextWidget.getTextBounds(offset, offset + length - 1);
@@ -183,7 +183,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 				Point loc= fTextWidget.getLocationAtOffset(offset);
 				bounds= new Rectangle(loc.x, loc.y, 1, fTextWidget.getLineHeight(offset));
 			}
-			
+
 			// draw box around line segment
 			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
 

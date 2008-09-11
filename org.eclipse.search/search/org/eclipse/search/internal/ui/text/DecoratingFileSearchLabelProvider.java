@@ -33,29 +33,29 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 	private static final String HIGHLIGHT_BG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.match_highlight"; //$NON-NLS-1$
 
 	public static final Styler HIGHLIGHT_STYLE= StyledString.createColorRegistryStyler(null, HIGHLIGHT_BG_COLOR_NAME);
-	
+
 	public DecoratingFileSearchLabelProvider(FileLabelProvider provider) {
 		super(provider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator(), null);
 	}
-	
+
 	public void initialize(ColumnViewer viewer, ViewerColumn column) {
 		PlatformUI.getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getColorRegistry().addListener(this);
-		
+
 		setOwnerDrawEnabled(showColoredLabels());
-		
+
 		super.initialize(viewer, column);
 	}
-		
+
 	public void dispose() {
 		super.dispose();
 		PlatformUI.getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getColorRegistry().removeListener(this);
 	}
-	
+
 	private void refresh() {
 		ColumnViewer viewer= getViewer();
-		
+
 		if (viewer == null) {
 			return;
 		}
@@ -67,7 +67,7 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 			viewer.refresh();
 		}
 	}
-	
+
 	protected StyleRange prepareStyleRange(StyleRange styleRange, boolean applyColors) {
 		if (!applyColors && styleRange.background != null) {
 			styleRange= super.prepareStyleRange(styleRange, applyColors);
@@ -76,11 +76,11 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 		}
 		return super.prepareStyleRange(styleRange, applyColors);
 	}
-	
+
 	public static boolean showColoredLabels() {
 		return PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS);
 	}
-	
+
 	public void propertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (property.equals(JFacePreferences.QUALIFIER_COLOR) || property.equals(JFacePreferences.COUNTER_COLOR) || property.equals(JFacePreferences.DECORATIONS_COLOR)
@@ -96,6 +96,6 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 	public String getText(Object element) {
 		return getStyledText(element).getString();
 	}
-	
+
 
 }

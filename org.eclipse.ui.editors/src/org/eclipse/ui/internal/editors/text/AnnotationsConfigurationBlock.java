@@ -55,6 +55,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
@@ -101,7 +102,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 
-	
+
 	private final class ItemLabelProvider extends LabelProvider {
 
 		public String getText(Object element) {
@@ -114,7 +115,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 
-	
+
 	private static class ArrayLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			return ((String[]) element)[0].toString();
@@ -248,7 +249,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalIndent= 20;
 		fShowInTextCheckBox.setLayoutData(gd);
-		
+
 
 		fDecorationViewer= new ComboViewer(optionsComposite, SWT.READ_ONLY);
 		fDecorationViewer.setContentProvider(new ArrayContentProvider());
@@ -382,7 +383,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	/**
 	 * Applies the given data.
-	 * 
+	 *
 	 * @param data the annotation type to select in the list or <code>null</code>
 	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
 	 * @since 3.4

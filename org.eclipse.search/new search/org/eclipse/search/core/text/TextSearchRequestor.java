@@ -16,10 +16,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IFile;
 
 /**
- * Collects the results from a search engine query. 
+ * Collects the results from a search engine query.
  * Clients implement a subclass to pass to {@link TextSearchEngine#search(TextSearchScope,
  * TextSearchRequestor, java.util.regex.Pattern, org.eclipse.core.runtime.IProgressMonitor)}
- * and implement the {@link #acceptPatternMatch(TextSearchMatchAccess)} 
+ * and implement the {@link #acceptPatternMatch(TextSearchMatchAccess)}
  * method, and possibly override other life cycle methods.
  * <p>
  * The search engine calls {@link #beginReporting()} when a search starts,
@@ -41,7 +41,7 @@ import org.eclipse.core.resources.IFile;
  * @since 3.2
  */
 public abstract class TextSearchRequestor {
-	
+
 	/**
 	 * Notification sent before starting the search action.
 	 * Typically, this would tell a search requestor to clear previously
@@ -67,7 +67,7 @@ public abstract class TextSearchRequestor {
 	public void endReporting() {
 		// do nothing
 	}
-	
+
 	/**
 	 * Notification sent before search starts in the given file. This method is called for all files that are contained
 	 * in the search scope.
@@ -83,7 +83,7 @@ public abstract class TextSearchRequestor {
 	public boolean acceptFile(IFile file) throws CoreException {
 		return true;
 	}
-	
+
 	/**
 	 * Notification sent that a file might contain binary context.
 	 * It is the choice of the search engine to report binary files and it is the heuristic of the search engine to decide
@@ -96,14 +96,14 @@ public abstract class TextSearchRequestor {
 	 * <p>
 	 * The default behaviour is to skip binary files
 	 * </p>
-	 * 
+	 *
 	 * @param file the file that might be binary
 	 * @return If false, no pattern matches will be reported for the content of this file.
 	 */
 	public boolean reportBinaryFile(IFile file) {
 		return false;
 	}
-	
+
 	/**
 	 * Accepts the given search match and decides if the search should continue for this file.
 	 *

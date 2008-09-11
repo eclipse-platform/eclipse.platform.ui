@@ -27,7 +27,7 @@ import org.eclipse.core.filebuffers.LocationKind;
  * FileBuffersForNonExistingWorkspaceFiles
  */
 public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions {
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
 	 */
@@ -35,7 +35,7 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 		FileTool.delete(getPath());
 		super.tearDown();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
 	 */
@@ -44,7 +44,7 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 		IPath filePath= folder.getLocation().append("NonExistingWorkspaceFile");
 		return filePath.makeAbsolute();
 	}
-	
+
 	public void testBug118199() throws Exception {
 		IFile file= getProject().getWorkspace().getRoot().getFile(getPath());
 		assertFalse(file.exists());

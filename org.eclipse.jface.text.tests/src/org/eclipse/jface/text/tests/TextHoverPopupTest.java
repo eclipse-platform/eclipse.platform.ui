@@ -16,27 +16,27 @@ import junit.framework.TestSuite;
 
 
 public class TextHoverPopupTest extends TestCase {
-	
-		
+
+
 	public TextHoverPopupTest(String name) {
 		super(name);
 	}
-	
+
 	protected void setUp() {
 	}
-		
+
 	public static Test suite() {
-		return new TestSuite(TextHoverPopupTest.class); 
+		return new TestSuite(TextHoverPopupTest.class);
 	}
-	
+
 	protected void tearDown() {
 	}
-	
-	
+
+
 	protected int search(int[] array, int x) {
 		int low= 0;
 		int high= array.length -1;
-		
+
 		while (high > low) {
 			int offset= (low + high) / 2;
 			int lookup= array[offset];
@@ -47,10 +47,10 @@ public class TextHoverPopupTest extends TestCase {
 			else
 				low= high= offset;
 		}
-		
+
 		return high;
 	}
-	
+
 	public void testSearch() {
 		int[] values= { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		for (int i= 0; i < 10; i++) {

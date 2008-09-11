@@ -118,7 +118,7 @@ public class LinkedModeModel {
 	public static LinkedModeModel getModel(IDocument document, int offset) {
 		if (!hasInstalledModel(document))
 			return null;
-		
+
 		LinkedModeManager mgr= LinkedModeManager.getLinkedManager(new IDocument[] {document}, false);
 		if (mgr != null)
 			return mgr.getTopEnvironment();

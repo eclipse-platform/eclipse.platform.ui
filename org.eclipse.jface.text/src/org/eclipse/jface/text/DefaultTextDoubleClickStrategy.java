@@ -11,8 +11,9 @@
 
 package org.eclipse.jface.text;
 
-import com.ibm.icu.text.BreakIterator;
 import java.text.CharacterIterator;
+
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * Standard implementation of

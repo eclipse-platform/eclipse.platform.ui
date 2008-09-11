@@ -18,6 +18,8 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.jface.viewers.ISelectionProvider;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IAutoIndentStrategy;
@@ -31,6 +33,7 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.TextEvent;
@@ -41,21 +44,19 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
-import org.eclipse.jface.viewers.ISelectionProvider;
-
 
 
 
 public class TestTextViewer implements ISourceViewer, IDocumentListener {
 
-	
+
 	protected IDocument fDocument;
 	protected List fInputListeners= new ArrayList();
 	protected List fTextListeners= new ArrayList();
 	protected TextPresentation fTextPresentation;
 	protected Point fSelection= new Point(-1, -1);
 	protected String fDeletion;
-	
+
 	/**
 	 * @see ITextViewer#setDocument(IDocument, int, int)
 	 */
@@ -76,17 +77,17 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 	public void setDocument(IDocument document) {
 		IDocument oldDoc= fDocument;
 		fireTextInputChanged(oldDoc, document, true);
-		
+
 		if (oldDoc != null)
 			oldDoc.removeDocumentListener(this);
-		
+
 		fDocument= document;
-		
+
 		if (fDocument != null) {
 			fireTextChanged(new TestTextEvent(fDocument.get()));
 			fDocument.addDocumentListener(this);
 		}
-			
+
 		fireTextInputChanged(oldDoc, document, false);
 	}
 
@@ -101,10 +102,10 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 	 * @see ITextViewer#addTextInputListener(ITextInputListener)
 	 */
 	public void addTextInputListener(ITextInputListener listener) {
-		if (!fInputListeners.contains(listener)) 
+		if (!fInputListeners.contains(listener))
 			fInputListeners.add(listener);
 	}
-	
+
 	protected void fireTextInputChanged(IDocument oldDoc, IDocument newDoc, boolean about) {
 		Iterator e= new ArrayList(fInputListeners).iterator();
 		while (e.hasNext()) {
@@ -115,35 +116,35 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 				l.inputDocumentChanged(oldDoc, newDoc);
 		}
 	}
-	
+
 	/**
 	 * @see ITextViewer#changeTextPresentation(TextPresentation, boolean)
 	 */
 	public void changeTextPresentation(TextPresentation presentation, boolean p1) {
 		fTextPresentation= presentation;
 	}
-	
+
 	/**
 	 * @see ITextViewer#invalidateTextPresentation()
 	 */
 	public void invalidateTextPresentation() {
 	}
-	
+
 	public TextPresentation getTextPresentation() {
 		return fTextPresentation;
 	}
-	
+
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		try {
 			fDeletion= fDocument.get(event.getOffset(), event.getLength());
 		} catch (BadLocationException x) {
 		}
 	}
-	
+
 	public void documentChanged(DocumentEvent event) {
 		fireTextChanged(new TestTextEvent(event, fDeletion));
-	}	
-	
+	}
+
 	/**
 	 * @see ITextViewer#getFindReplaceTarget()
 	 */
@@ -247,7 +248,7 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 	 */
 	public void activatePlugins() {
 	}
-	
+
 	/**
 	 * @see ITextViewer#resetPlugins()
 	 */
@@ -341,7 +342,7 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 	public void removeTextListener(ITextListener listener) {
 		fTextListeners.remove(listener);
 	}
-	
+
 	protected void fireTextChanged(TextEvent event) {
 		Iterator e= new ArrayList(fTextListeners).iterator();
 		while (e.hasNext()) {

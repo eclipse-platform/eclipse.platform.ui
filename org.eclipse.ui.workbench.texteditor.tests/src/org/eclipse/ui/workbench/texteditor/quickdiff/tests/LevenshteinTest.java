@@ -13,10 +13,9 @@ package org.eclipse.ui.workbench.texteditor.quickdiff.tests;
 
 import java.util.Arrays;
 
-import org.eclipse.core.runtime.Assert;
-
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenshtein;
@@ -28,8 +27,8 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Ran
  * @since 3.1
  */
 public class LevenshteinTest extends TestCase {
-	
-	
+
+
 	protected void setUp() throws Exception {
 		System.out.println();
 	}
@@ -46,7 +45,7 @@ public class LevenshteinTest extends TestCase {
 		assertEditDistance(2, "a", "bb");
 
 		assertEditDistance(2, "abcdefghijklmnopqrstuvwxyz", "abcdefhijklmnogpqrstuvwxyz");
-		
+
 		assertEditDistance(16, "abcdefghijklmnopqrstuvwxyz", "abcdefwxyz");
 
 		assertEditDistance(28, "abcdefghijklmnopqrstuvwxyz", "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz");
@@ -56,13 +55,13 @@ public class LevenshteinTest extends TestCase {
 		assertEditDistance(0, "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz", "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz");
 
 		assertEditDistance(54, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-		
+
 		assertEditDistance(51, "abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc", "abc");
 
 		assertEditDistance(25, "abcdefgxxxxxxxxxxxabcabcdefgxxxxxxx", "abcabcdefg");
 
 	}
-	
+
 	public void testEditDistanceHirschberg() {
 		assertEditDistanceHirschberg(0, "", "");
 
@@ -75,7 +74,7 @@ public class LevenshteinTest extends TestCase {
 		assertEditDistanceHirschberg(2, "a", "bb");
 
 		assertEditDistanceHirschberg(2, "abcdefghijklmnopqrstuvwxyz", "abcdefhijklmnogpqrstuvwxyz");
-		
+
 		assertEditDistanceHirschberg(16, "abcdefghijklmnopqrstuvwxyz", "abcdefwxyz");
 
 		assertEditDistanceHirschberg(28, "abcdefghijklmnopqrstuvwxyz", "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz");
@@ -85,13 +84,13 @@ public class LevenshteinTest extends TestCase {
 		assertEditDistanceHirschberg(0, "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz", "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz");
 
 		assertEditDistanceHirschberg(54, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-		
+
 		assertEditDistanceHirschberg(51, "abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc", "abc");
 
 		assertEditDistanceHirschberg(25, "abcdefgxxxxxxxxxxxabcabcdefgxxxxxxx", "abcabcdefg");
 
 	}
-	
+
 	public void testEditScript() {
 		assertEditScript("", "");
 
@@ -104,7 +103,7 @@ public class LevenshteinTest extends TestCase {
 		assertEditScript("a", "bb");
 
 		assertEditScript("abcdefghijklmnopqrstuvwxyz", "abcdefhijklmnogpqrstuvwxyz");
-		
+
 		assertEditScript("abcdefghijklmnopqrstuvwxyz", "abcdefwxyz");
 
 		assertEditScript("abcdefghijklmnopqrstuvwxyz", "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz");
@@ -114,21 +113,21 @@ public class LevenshteinTest extends TestCase {
 		assertEditScript("abcdefghijklm0000000000000000000000000000nopqrstuvwxyz", "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz");
 
 		assertEditScript("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-		
+
 		assertEditScript("abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc", "abc");
 
 		assertEditScript("abcdefgxxxxxxxxxxxabcabcdefgxxxxxxx", "abcabcdefg");
 
 	}
-	
+
 	public void testInternalEditDistance() {
-		IRangeComparator c1= new SequenceComparator("abcd"); 
+		IRangeComparator c1= new SequenceComparator("abcd");
 		IRangeComparator c2= new SequenceComparator("abcd");
-		
+
 		Levenshtein levenshtein= createLevenshtein(c1, c2);
 		LevenshteinTestHelper helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
-		
+
 		// full compare
 		helper.internalEditDistance(1, 4, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 4, 3, 2, 1, 0 }, helper.getPreviousRow()));
@@ -136,29 +135,29 @@ public class LevenshteinTest extends TestCase {
 		// partial compare
 		helper.internalEditDistance(1, 2, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 2, 1, 0, 1, 2 }, helper.getPreviousRow()));
-		
+
 		helper.internalEditDistance(3, 4, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 2, 2, 2, 3, 2 }, helper.getPreviousRow()));
-		
+
 		helper.internalEditDistance(1, 4, 1, 2);
 		assertEquals(4, helper.getPreviousRow()[0]);
 		assertEquals(3, helper.getPreviousRow()[1]);
 		assertEquals(2, helper.getPreviousRow()[2]);
-		
+
 		// empty right
 		helper.internalEditDistance(1, 0, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 0, 1, 2, 3, 4 }, helper.getPreviousRow()));
-		
+
 		// empty left
 		helper.internalEditDistance(1, 4, 1, 0);
 		assertEquals(4, helper.getPreviousRow()[0]);
-		
+
 		// empty both
 		helper.internalEditDistance(1, 0, 1, 0);
 		assertEquals(0, helper.getPreviousRow()[0]);
-		
+
 		// test insertion
-		c1= new SequenceComparator("a"); 
+		c1= new SequenceComparator("a");
 		c2= new SequenceComparator("ab");
 		levenshtein= createLevenshtein(c1, c2);
 		helper= new LevenshteinTestHelper(levenshtein);
@@ -170,19 +169,19 @@ public class LevenshteinTest extends TestCase {
 		helper.internalEditDistance(2, 2, 1, 1);
 		assertTrue(Arrays.equals(new int[] { 1, 1 }, helper.getPreviousRow()));
 	}
-	
+
 	protected Levenshtein createLevenshtein(IRangeComparator left, IRangeComparator right) {
 		return new Levenshtein(left, right);
 	}
 
 	public void testInternalReverseEditDistance() {
-		IRangeComparator c1= new SequenceComparator("abcd"); 
+		IRangeComparator c1= new SequenceComparator("abcd");
 		IRangeComparator c2= new SequenceComparator("abcd");
-		
+
 		Levenshtein levenshtein= createLevenshtein(c1, c2);
 		LevenshteinTestHelper helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
-		
+
 		// full compare
 		helper.internalReverseEditDistance(1, 4, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 0, 1, 2, 3, 4 }, helper.getPreviousRow()));
@@ -190,31 +189,31 @@ public class LevenshteinTest extends TestCase {
 		// partial compare
 		helper.internalReverseEditDistance(1, 2, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 2, 3, 2, 2, 2 }, helper.getPreviousRow()));
-		
+
 		helper.internalReverseEditDistance(3, 4, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 2, 1, 0, 1, 2 }, helper.getPreviousRow()));
-		
+
 		helper.internalReverseEditDistance(1, 4, 1, 2);
 		assertEquals(4, helper.getPreviousRow()[2]);
 		assertEquals(3, helper.getPreviousRow()[1]);
 		assertEquals(2, helper.getPreviousRow()[0]);
-		
+
 		// empty right
 		helper.internalReverseEditDistance(1, 0, 1, 4);
 		assertTrue(Arrays.equals(new int[] { 4, 3, 2, 1, 0 }, helper.getPreviousRow()));
-		
+
 		// empty left
 		helper.internalReverseEditDistance(1, 4, 5, 4);
 		assertEquals(4, helper.getPreviousRow()[4]);
 		helper.internalReverseEditDistance(1, 4, 1, 0);
 		assertEquals(4, helper.getPreviousRow()[0]);
-		
+
 		// empty both
 		helper.internalReverseEditDistance(1, 0, 1, 0);
 		assertEquals(0, helper.getPreviousRow()[0]);
 
 		// test insertion
-		c1= new SequenceComparator("a"); 
+		c1= new SequenceComparator("a");
 		c2= new SequenceComparator("ab");
 		levenshtein= createLevenshtein(c1, c2);
 		helper= new LevenshteinTestHelper(levenshtein);
@@ -226,12 +225,12 @@ public class LevenshteinTest extends TestCase {
 		helper.internalReverseEditDistance(2, 2, 1, 1);
 		assertTrue(Arrays.equals(new int[] { 1, 1 }, helper.getPreviousRow()));
 	}
-	
+
 	public void testEditScriptHirschberg() {
 		assertEditScriptHirschberg("abc", "abc");
-		
+
 		assertEditScriptHirschberg("a", "b");
-		
+
 		assertEditScriptHirschberg("", "");
 
 		assertEditScriptHirschberg("a", "");
@@ -241,7 +240,7 @@ public class LevenshteinTest extends TestCase {
 		assertEditScriptHirschberg("a", "bb");
 
 		assertEditScriptHirschberg("abcdefghijklmnopqrstuvwxyz", "abcdefhijklmnogpqrstuvwxyz");
-		
+
 		assertEditScriptHirschberg("abcdefghijklmnopqrstuvwxyz", "abcdefwxyz");
 
 		assertEditScriptHirschberg("abcdefghijklmnopqrstuvwxyz", "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz");
@@ -251,20 +250,20 @@ public class LevenshteinTest extends TestCase {
 		assertEditScriptHirschberg("abcdefghijklm0000000000000000000000000000nopqrstuvwxyz", "abcdefghijklm0000000000000000000000000000nopqrstuvwxyz");
 
 		assertEditScriptHirschberg("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-		
+
 		assertEditScriptHirschberg("abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc", "abc");
 
 		assertEditScriptHirschberg("abcdefgxxxxxxxxxxxabcabcdefgxxxxxxx", "abcabcdefg");
 
 	}
-	
+
 	private void assertEditScript(String s1, String s2) {
 		SequenceComparator sc1= new SequenceComparator(s1);
 		SequenceComparator sc2= new SequenceComparator(s2);
 		RangeDifference[] expected= RangeDifferencer.findDifferences(sc1, sc2);
 		Levenshtein levenshtein= createLevenshtein(sc1,sc2);
 		RangeDifference[] tested= levenshtein.editScript();
-		
+
 		assertTrue(Arrays.equals(expected, tested));
 	}
 
@@ -274,7 +273,7 @@ public class LevenshteinTest extends TestCase {
 		RangeDifference[] expected= RangeDifferencer.findDifferences(sc1, sc2);
 		Levenshtein levenshtein= createLevenshtein(sc1,sc2);
 		RangeDifference[] tested= levenshtein.editScriptHirschberg();
-		
+
 		assertTrue(Arrays.equals(expected, tested));
 	}
 
@@ -309,8 +308,8 @@ public class LevenshteinTest extends TestCase {
 
 class SequenceComparator implements IRangeComparator {
 	private final CharSequence fSequence;
-	
-	
+
+
 	public SequenceComparator(CharSequence string) {
 		Assert.isNotNull(string);
 		fSequence= string;
@@ -327,9 +326,9 @@ class SequenceComparator implements IRangeComparator {
 	public boolean skipRangeComparison(int length, int maxLength, IRangeComparator other) {
 		return false;
 	}
-	
+
 	public String toString() {
 		return "SequenceComparator [" + fSequence + "]";
 	}
-	
+
 }

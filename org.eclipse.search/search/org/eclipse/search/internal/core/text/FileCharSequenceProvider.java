@@ -22,15 +22,15 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.resources.IFile;
 
 /**
- * 
+ *
  */
 public class FileCharSequenceProvider {
-	
+
 	private static int NUMBER_OF_BUFFERS= 3;
 	public static int BUFFER_SIZE= 2 << 18; // public for testing
-	
+
 	private FileCharSequence fReused= null;
-	
+
 	public CharSequence newCharSequence(IFile file) throws CoreException, IOException {
 		if (fReused == null) {
 			return new FileCharSequence(file);
@@ -40,7 +40,7 @@ public class FileCharSequenceProvider {
 		curr.reset(file);
 		return curr;
 	}
-	
+
 	public void releaseCharSequence(CharSequence seq) throws IOException {
 		if (seq instanceof FileCharSequence) {
 			FileCharSequence curr= (FileCharSequence) seq;
@@ -53,18 +53,18 @@ public class FileCharSequenceProvider {
 			}
 		}
 	}
-	
+
 	public static class FileCharSequenceException extends RuntimeException {
 		private static final long serialVersionUID= 1L;
 
 		/* package */ FileCharSequenceException(IOException e) {
 			super(e);
 		}
-		
+
 		/* package */ FileCharSequenceException(CoreException e) {
 			super(e);
 		}
-		
+
 		public void throwWrappedException() throws CoreException, IOException {
 			Throwable wrapped= getCause();
 			if (wrapped instanceof CoreException) {
@@ -75,14 +75,14 @@ public class FileCharSequenceProvider {
 			// not possible
 		}
 	}
-	
-	
+
+
 	private static final class CharSubSequence implements CharSequence {
-		
+
 		private final int fSequenceOffset;
 		private final int fSequenceLength;
 		private final FileCharSequence fParent;
-		
+
 		public CharSubSequence(FileCharSequence parent, int offset, int length) {
 			fParent= parent;
 			fSequenceOffset= offset;
@@ -124,7 +124,7 @@ public class FileCharSequenceProvider {
 			}
 			return fParent.subSequence(fSequenceOffset + start, fSequenceOffset + end);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
@@ -132,14 +132,14 @@ public class FileCharSequenceProvider {
 			try {
 				return fParent.getSubstring(fSequenceOffset,  fSequenceLength);
 			} catch (IOException e) {
-				throw new FileCharSequenceException(e); 
+				throw new FileCharSequenceException(e);
 			} catch (CoreException e) {
-				throw new FileCharSequenceException(e); 
+				throw new FileCharSequenceException(e);
 			}
 		}
 	}
-	
-	
+
+
 	private static final class Buffer {
 		private final char[] fBuf;
 		private int fOffset;
@@ -147,19 +147,19 @@ public class FileCharSequenceProvider {
 
 		private Buffer fNext;
 		private Buffer fPrevious;
-		
+
 		public Buffer() {
 			fBuf= new char[BUFFER_SIZE];
 			reset();
 			fNext= this;
 			fPrevious= this;
 		}
-		
+
 		public boolean contains(int pos) {
 			int offset= fOffset;
 			return offset <= pos && pos < offset + fLength;
 		}
-		
+
 		/**
 		 * Fills the buffer by reading from the given reader.
 		 * @param reader the reader to read from
@@ -174,7 +174,7 @@ public class FileCharSequenceProvider {
 				fLength= 0;
 				return true;
 			}
-			
+
 			int charsRead= res;
 			while (charsRead < BUFFER_SIZE) {
 				res= reader.read(fBuf, charsRead, BUFFER_SIZE - charsRead);
@@ -189,38 +189,38 @@ public class FileCharSequenceProvider {
 			fLength= BUFFER_SIZE;
 			return false;
 		}
-		
+
 		public char get(int pos) {
 			return fBuf[pos - fOffset];
 		}
-		
+
 		public StringBuffer append(StringBuffer buf, int start, int length) {
 			return buf.append(fBuf, start - fOffset, length);
 		}
-		
+
 		public StringBuffer appendAll(StringBuffer buf) {
 			return buf.append(fBuf, 0, fLength);
 		}
-		
+
 		public int getEndOffset() {
 			return fOffset + fLength;
 		}
-		
+
 		public void removeFromChain() {
 			fPrevious.fNext= fNext;
 			fNext.fPrevious= fPrevious;
-			
+
 			fNext= this;
 			fPrevious= this;
 		}
-		
+
 		public void insertBefore(Buffer other) {
 			fNext= other;
 			fPrevious= other.fPrevious;
 			fPrevious.fNext= this;
 			other.fPrevious= this;
 		}
-		
+
 		public Buffer getNext() {
 			return fNext;
 		}
@@ -234,30 +234,30 @@ public class FileCharSequenceProvider {
 			fLength= 0;
 		}
 	}
-	
+
 	private final class FileCharSequence implements CharSequence {
-		
+
 		private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
-		
+
 		private Reader fReader;
 		private int fReaderPos;
-		
+
 		private Integer fLength;
-	
+
 		private Buffer fMostCurrentBuffer; // access to the buffer chain
 		private int fNumberOfBuffers;
-		
+
 		private IFile fFile;
-			
+
 		public FileCharSequence(IFile file) throws CoreException, IOException {
 			fNumberOfBuffers= 0;
 			reset(file);
 		}
-		
+
 		public void reset(IFile file) throws CoreException, IOException {
 			fFile= file;
 			fLength= null; // only calculated on demand
-	
+
 			Buffer curr= fMostCurrentBuffer;
 			if (curr != null) {
 				do {
@@ -267,7 +267,7 @@ public class FileCharSequenceProvider {
 			}
 			initializeReader();
 		}
-			
+
 		private void initializeReader() throws CoreException, IOException {
 			if (fReader != null) {
 				fReader.close();
@@ -276,7 +276,7 @@ public class FileCharSequenceProvider {
 			fReader= new InputStreamReader(getInputStream(charset), charset);
 			fReaderPos= 0;
 		}
-		
+
 		private InputStream getInputStream(String charset) throws CoreException, IOException {
 			boolean ok= false;
 			InputStream contents= fFile.getContents();
@@ -298,7 +298,7 @@ public class FileCharSequenceProvider {
 								throw new IOException();
 							bytesRead += bytes;
 						} while (bytesRead < bomLength);
-						
+
 						if (!Arrays.equals(bomStore, IContentDescription.BOM_UTF_8)) {
 							// discard file reader, we were wrong, no BOM -> new stream
 							contents.close();
@@ -317,7 +317,7 @@ public class FileCharSequenceProvider {
 			}
 			return contents;
 		}
-		
+
 		private void clearReader() throws IOException {
 			if (fReader != null) {
 				fReader.close();
@@ -325,7 +325,7 @@ public class FileCharSequenceProvider {
 			fReader= null;
 			fReaderPos= Integer.MAX_VALUE;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.CharSequence#length()
 		 */
@@ -334,14 +334,14 @@ public class FileCharSequenceProvider {
 				try {
 					getBuffer(Integer.MAX_VALUE);
 				} catch (IOException e) {
-					throw new FileCharSequenceException(e); 
+					throw new FileCharSequenceException(e);
 				} catch (CoreException e) {
-					throw new FileCharSequenceException(e); 
+					throw new FileCharSequenceException(e);
 				}
 			}
 			return fLength.intValue();
 		}
-	
+
 		private Buffer getBuffer(int pos) throws IOException, CoreException {
 			Buffer curr= fMostCurrentBuffer;
 			if (curr != null) {
@@ -352,7 +352,7 @@ public class FileCharSequenceProvider {
 					curr= curr.getNext();
 				} while (curr != fMostCurrentBuffer);
 			}
-			
+
 			Buffer buf= findBufferToUse();
 			fillBuffer(buf, pos);
 			if (buf.contains(pos)) {
@@ -360,7 +360,7 @@ public class FileCharSequenceProvider {
 			}
 			return null;
 		}
-		
+
 		private Buffer findBufferToUse() {
 			if (fNumberOfBuffers < NUMBER_OF_BUFFERS) {
 				fNumberOfBuffers++;
@@ -374,12 +374,12 @@ public class FileCharSequenceProvider {
 			}
 			return fMostCurrentBuffer.getPrevious();
 		}
-	
+
 		private boolean fillBuffer(Buffer buffer, int pos) throws CoreException, IOException {
 			if (fReaderPos > pos) {
 				initializeReader();
 			}
-			
+
 			do {
 				boolean endReached= buffer.fill(fReader, fReaderPos);
 				fReaderPos= buffer.getEndOffset();
@@ -389,10 +389,10 @@ public class FileCharSequenceProvider {
 					return true;
 				}
 			} while (fReaderPos <= pos);
-	
+
 			return true;
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see java.lang.CharSequence#charAt(int)
 		 */
@@ -401,14 +401,14 @@ public class FileCharSequenceProvider {
 			if (current != null && current.contains(index)) {
 				return current.get(index);
 			}
-			
+
 			if (index < 0) {
 				throw new IndexOutOfBoundsException("index must be larger than 0"); //$NON-NLS-1$
 			}
 			if (fLength != null && index >= fLength.intValue()) {
 				throw new IndexOutOfBoundsException("index must be smaller than length"); //$NON-NLS-1$
 			}
-			
+
 			try {
 				final Buffer buffer= getBuffer(index);
 				if (buffer == null) {
@@ -424,22 +424,22 @@ public class FileCharSequenceProvider {
 				}
 				return buffer.get(index);
 			} catch (IOException e) {
-				throw new FileCharSequenceException(e); 
+				throw new FileCharSequenceException(e);
 			} catch (CoreException e) {
-				throw new FileCharSequenceException(e); 
+				throw new FileCharSequenceException(e);
 			}
 		}
-		
+
 		public String getSubstring(int start, int length) throws IOException, CoreException {
 			int pos= start;
 			int endPos= start + length;
-			
+
 			if (fLength != null && endPos > fLength.intValue()) {
 				throw new IndexOutOfBoundsException("end must be smaller than length"); //$NON-NLS-1$
 			}
-			
+
 			StringBuffer res= new StringBuffer(length);
-			
+
 			Buffer buffer= getBuffer(pos);
 			while (pos < endPos && buffer != null) {
 				int bufEnd= buffer.getEndOffset();
@@ -452,8 +452,8 @@ public class FileCharSequenceProvider {
 			}
 			return res.toString();
 		}
-		
-	
+
+
 		/* (non-Javadoc)
 		 * @see java.lang.CharSequence#subSequence(int, int)
 		 */
@@ -469,11 +469,11 @@ public class FileCharSequenceProvider {
 			}
 			return new CharSubSequence(this, start, end - start);
 		}
-		
+
 		public void close() throws IOException {
 			clearReader();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
@@ -488,9 +488,9 @@ public class FileCharSequenceProvider {
 				}
 				return res.toString();
 			} catch (IOException e) {
-				throw new FileCharSequenceException(e); 
+				throw new FileCharSequenceException(e);
 			} catch (CoreException e) {
-				throw new FileCharSequenceException(e); 
+				throw new FileCharSequenceException(e);
 			}
 		}
 	}

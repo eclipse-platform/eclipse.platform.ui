@@ -54,9 +54,9 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * @since 3.3
  */
 public class ResourceTextFileBufferManager extends TextFileBufferManager {
-	
-	
-	
+
+
+
 	public ResourceTextFileBufferManager() {
 		fRegistry= new ResourceExtensionRegistry();
 	}
@@ -104,7 +104,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 	public String getDefaultEncoding() {
 		return ResourcesPlugin.getEncoding();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.TextFileBufferManager#normalizeLocation(org.eclipse.core.runtime.IPath)
 	 */
@@ -117,7 +117,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 			return new ResourceTextFileBuffer(this);
 		return new FileStoreTextFileBuffer(this);
 	}
-	
+
 	IAnnotationModel createAnnotationModel(IFile file) {
 		Assert.isNotNull(file);
 		IAnnotationModelFactory factory= ((ResourceExtensionRegistry)fRegistry).getAnnotationModelFactory(file);
@@ -133,14 +133,14 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 			document= documentFromFactory;
 		else
 			document= new SynchronizableDocument();
-		
+
 		// Set the initial line delimiter
 		if (document instanceof IDocumentExtension4) {
 			String initalLineDelimiter= getLineDelimiterPreference(file);
 			if (initalLineDelimiter != null)
 				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
 		}
-		
+
 		final IDocumentSetupParticipant[] participants= ((ResourceExtensionRegistry)fRegistry).getDocumentSetupParticipants(file);
 		if (participants != null) {
 			for (int i= 0; i < participants.length; i++) {
@@ -168,13 +168,13 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 				SafeRunner.run(runnable);
 			}
 		}
-		
+
 		return document;
 	}
 
 	/**
 	 * Helper to get rid of deprecation warnings.
-	 * 
+	 *
 	 * @param file the file
 	 * @return the created empty document or <code>null</code> if none got created
 	 * @since 3.5
@@ -199,7 +199,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		}
 		return runnableResult[0];
 	}
-	
+
 	private String getLineDelimiterPreference(IFile file) {
 		IScopeContext[] scopeContext;
 		if (file != null && file.getProject() != null) {

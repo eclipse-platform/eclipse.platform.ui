@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.action.IAction;
+
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;

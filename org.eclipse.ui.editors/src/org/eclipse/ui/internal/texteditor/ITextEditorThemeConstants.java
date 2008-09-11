@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.texteditor;
 /**
  * Defines the constants used in the <code>org.eclipse.ui.themes</code>
  * extension contributed by this plug-in.
- * 
+ *
  * @since 3.3
  */
 public interface ITextEditorThemeConstants {

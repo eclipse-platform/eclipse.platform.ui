@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
 
 
 /**
- * 
+ *
  * @since 3.0
  */
 public class ProjectionTestSuite {

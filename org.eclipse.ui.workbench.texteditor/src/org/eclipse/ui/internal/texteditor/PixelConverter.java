@@ -20,13 +20,13 @@ import org.eclipse.jface.dialogs.Dialog;
 /**
  * Helper class to convert from various
  * dimensions into pixels.
- * 
+ *
  * @since 3.3
  */
 public class PixelConverter {
-	
+
 	private FontMetrics fFontMetrics;
-	
+
 	public PixelConverter(Control control) {
 		GC gc = new GC(control);
 		gc.setFont(control.getFont());
@@ -54,12 +54,12 @@ public class PixelConverter {
 	public int convertVerticalDLUsToPixels(int dlus) {
 		return Dialog.convertVerticalDLUsToPixels(fFontMetrics, dlus);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.dialogs.DialogPage#convertWidthInCharsToPixels(int)
 	 */
 	public int convertWidthInCharsToPixels(int chars) {
 		return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
-	}	
+	}
 
 }

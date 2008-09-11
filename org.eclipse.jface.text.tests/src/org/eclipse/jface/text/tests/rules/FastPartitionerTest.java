@@ -35,7 +35,7 @@ public class FastPartitionerTest extends TestCase {
 
 	protected static final String COMMENT= "comment";
 	protected static final String DEFAULT= IDocument.DEFAULT_CONTENT_TYPE;
-	
+
 	private IDocument fDoc;
 	private IDocumentPartitioner fPartitioner;
 
@@ -113,7 +113,7 @@ public class FastPartitionerTest extends TestCase {
 		int[] offsets= new int[] { 13, 26 };
 		assertGetContentType_InterleavingPartitions(offsets);
 	}
-	
+
 	public void testComputePartitioning() {
 		fDoc.set("docu     ment/* comment */docu     ment");
 
@@ -162,7 +162,7 @@ public class FastPartitionerTest extends TestCase {
 		int[] offsets= new int[] { 13, 26 };
 		assertComputePartitioning_InterleavingPartitions(13, 26, offsets, DEFAULT);
 	}
-	
+
 	public void testComputePartitioningSubrangeAfterBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -176,30 +176,30 @@ public class FastPartitionerTest extends TestCase {
 		int[] offsets= new int[] { };
 		assertComputePartitioning_InterleavingPartitions(1, 12, offsets, COMMENT);
 	}
-	
+
 	public void testComputePartitioningSubrangeInBoundaries2() {
 		fDoc.set("docu     ment");
 
 		int[] offsets= new int[] { };
 		assertComputePartitioning_InterleavingPartitions(1, 12, offsets, DEFAULT);
 	}
-	
+
 	public void testPR101014() throws BadLocationException {
 		fDoc.set(
-				"package pr101014;\n" + 
-				"\n" + 
-				"class X {\n" + 
-				"String s= \n" + 
-				"	/*foo*/;\n" + 
+				"package pr101014;\n" +
+				"\n" +
+				"class X {\n" +
+				"String s= \n" +
+				"	/*foo*/;\n" +
 				"}\n");
-		
+
 		int[] offsets= {41, 48};
 		assertComputePartitioning_InterleavingPartitions(offsets);
-		
+
 		fDoc.replace(40, 8, "	/*foo*/");
 		assertComputePartitioning_InterleavingPartitions(offsets);
 	}
-	
+
 	public void testPR130900() throws Exception {
 		fPartitioner.disconnect();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
@@ -212,32 +212,32 @@ public class FastPartitionerTest extends TestCase {
 		fPartitioner= createPartitioner(scanner);
 		fDoc.setDocumentPartitioner(fPartitioner);
 		fPartitioner.connect(fDoc);
-		
+
 		fDoc.set("#");
 		int[] offsets= new int[] { 0, 1 };
 		assertComputePartitioning_InterleavingPartitions(offsets);
 
     }
-	
+
 	private void assertComputePartitioning_InterleavingPartitions(int[] offsets) {
 		assertComputePartitioning_InterleavingPartitions(0, fDoc.getLength(), offsets, DEFAULT);
 	}
-	
+
 	private void assertComputePartitioning_InterleavingPartitions(int startOffset, int endOffset, int[] offsets, String startType) {
 		ITypedRegion[] regions= fPartitioner.computePartitioning(startOffset, endOffset - startOffset);
-		
+
 		String type= startType;
 		int previousOffset= startOffset;
-		
+
 		int j= 0;
 		for (int i= 0; i <= offsets.length; i++) {
 			int currentOffset= (i == offsets.length) ? endOffset : offsets[i];
 			if (currentOffset - previousOffset != 0) { // don't do empty partitions
 				ITypedRegion region= regions[j++];
-				
+
 				assertTypedRegion(region, previousOffset, currentOffset, type);
 			}
-			
+
 			// advance
 			if (type == DEFAULT)
 				type= COMMENT;
@@ -253,7 +253,7 @@ public class FastPartitionerTest extends TestCase {
 		for (int i= 0; i <= offsets.length; i++) {
 			int offset= (i == offsets.length) ? fDoc.getLength() : offsets[i];
 			assertEqualPartitionType(previousOffset, offset, type);
-			
+
 			// advance
 			if (type == DEFAULT)
 				type= COMMENT;
@@ -269,7 +269,7 @@ public class FastPartitionerTest extends TestCase {
 		for (int i= 0; i <= offsets.length; i++) {
 			int offset= (i == offsets.length) ? fDoc.getLength() : offsets[i];
 			assertEqualPartition(previousOffset, offset, type);
-			
+
 			// advance
 			if (type == DEFAULT)
 				type= COMMENT;

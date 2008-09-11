@@ -31,7 +31,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITextFileBufferManager extends IFileBufferManager {
-	
+
 	/**
 	 * The default text file buffer manager.
 	 * @since 3.3
@@ -53,7 +53,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @deprecated As of 3.3, replaced by {@link #getTextFileBuffer(IPath, LocationKind)}
 	 */
 	ITextFileBuffer getTextFileBuffer(IPath location);
-	
+
 	/**
 	 * Returns the text file buffer managed for the file at the given location
 	 * or <code>null</code> if there is no such text file buffer.
@@ -69,7 +69,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @since 3.3
 	 */
 	ITextFileBuffer getTextFileBuffer(IPath location, LocationKind locationKind);
-	
+
 	/**
 	 * Returns the text file buffer managed for the given file store
 	 * or <code>null</code> if there is no such text file buffer.
@@ -98,7 +98,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * the given one. Therefore this method should not be used in
 	 * performance critical code.
 	 * </p>
-	 * 
+	 *
 	 * @param document the document for which to find the text file buffer
 	 * @return the text file buffer managed for that document or <code>null</code>
 	 * @since 3.3
@@ -128,7 +128,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @deprecated As of 3.3, replaced by {@link #createEmptyDocument(IPath, LocationKind)}
 	 */
 	IDocument createEmptyDocument(IPath location);
-	
+
 	/**
 	 * Creates a new empty document. The document is set up in the same way as
 	 * it would be used in a text file buffer for a file at the given location.
@@ -158,7 +158,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @deprecated As of 3.3, replaced by {@link #createAnnotationModel(IPath, LocationKind)}
 	 */
 	IAnnotationModel createAnnotationModel(IPath location);
-	
+
 	/**
 	 * Creates a new annotation for the given location.
 	 * <p>

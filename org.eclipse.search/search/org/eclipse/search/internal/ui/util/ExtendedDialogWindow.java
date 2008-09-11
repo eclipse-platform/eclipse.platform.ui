@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
@@ -28,6 +26,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -43,11 +43,11 @@ import org.eclipse.search.internal.ui.SearchMessages;
 
 
 public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnableContext {
-	
+
 	private Control fContents;
 	private Button fCancelButton;
 	private List fActionButtons;
-	// The number of long running operation executed from the dialog.	
+	// The number of long running operation executed from the dialog.
 	private long fActiveRunningOperations;
 
 	// The progress monitor
@@ -73,14 +73,14 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	}
 
 	//---- Hooks to reimplement in subclasses -----------------------------------
-	
+
 	/**
 	 * @param enable Use the embedded progress monitor part
 	 */
 	public void setUseEmbeddedProgressMonitorPart(boolean enable) {
 		fUseEmbeddedProgressMonitorPart= enable;
 	}
-	
+
 	/**
 	 * Hook called when the user has pressed the button to perform
 	 * the dialog's action. If the method returns <code>false</code>
@@ -92,10 +92,10 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	protected boolean performAction(int buttonId) {
 		return true;
 	}
-	 
+
 	/**
 	 * Hook called when the user has pressed the button to cancel
-	 * the dialog. If the method returns <code>false</code> the dialog 
+	 * the dialog. If the method returns <code>false</code> the dialog
 	 * stays open. Otherwise the dialog is going to be closed.
 	 * @return If the method returns <code>false</code>
 	 * the dialog stays open.
@@ -103,7 +103,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	protected boolean performCancel() {
 		return true;
 	}
-	 
+
 	//---- UI creation ----------------------------------------------------------
 
 	/**
@@ -111,8 +111,8 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	 * @param parent The parent composite
 	 * @return The created control
 	 */
-	protected abstract Control createPageArea(Composite parent); 
-	 
+	protected abstract Control createPageArea(Composite parent);
+
 	/**
 	 * Add buttons to the dialog's button bar.
 	 *
@@ -123,14 +123,14 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	protected void createButtonsForButtonBar(Composite parent) {
 		fCancelButton= createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
-	
+
 	protected Button createActionButton(Composite parent, int id, String label,
 			boolean defaultButton) {
 		Button actionButton= createButton(parent, id, label, defaultButton);
 		fActionButtons.add(actionButton);
 		return actionButton;
 	}
-	 
+
 	/**
 	 * Creates the layout of the extended dialog window.
 	 * 	@param parent The parent composite
@@ -138,10 +138,10 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite result= (Composite) super.createDialogArea(parent);
-		
+
 		fContents= createPageArea(result);
 		fContents.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		if (fUseEmbeddedProgressMonitorPart) {
 			// Insert a progress monitor
 			fProgressMonitorPart= new ProgressMonitorPart(result, new GridLayout(), SWT.DEFAULT);
@@ -152,7 +152,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 		Label separator= new Label(result, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		return result;
 	}
 
@@ -161,15 +161,15 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 			case IDialogConstants.CANCEL_ID:
 				if (fActiveRunningOperations == 0)
 					close();
-				break;	
+				break;
 			default:
 				if (performAction(buttonId))
 					close();
 		}
 	}
-	
+
 	//---- Setters and Getters --------------------------------------------------
-	
+
 	/**
 	 * Set the enable state of the perform action button.
 	 * @param state The new state
@@ -179,11 +179,11 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 			Button element = (Button) buttons.next();
 			element.setEnabled(state);
 		}
-	} 
+	}
 
 	//---- Operation stuff ------------------------------------------------------
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
@@ -205,7 +205,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 			fActiveRunningOperations--;
 		}
 	}
-	
+
 	/**
 	 * About to start a long running operation triggered through
 	 * the wizard. So show the progress monitor and disable
@@ -218,35 +218,35 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		Shell shell= getShell();
 		if (shell != null) {
 			Display d= shell.getDisplay();
-			
+
 			// Save focus control
 			Control focusControl= d.getFocusControl();
 			if (focusControl != null && focusControl.getShell() != shell)
 				focusControl= null;
-				
+
 			// Set the busy cursor to all shells.
 			fWaitCursor= new Cursor(d, SWT.CURSOR_WAIT);
 			setDisplayCursor(d, fWaitCursor);
-					
+
 			// Set the arrow cursor to the cancel component.
 			fArrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
 			fCancelButton.setCursor(fArrowCursor);
-	
+
 			// Deactivate shell
 			savedState= saveUIState(enableCancelButton);
 			if (focusControl != null)
 				savedState.put(FOCUS_CONTROL, focusControl);
-				
+
 			if (fUseEmbeddedProgressMonitorPart) {
 				// Attach the progress monitor part to the cancel button
 				fProgressMonitorPart.attachToCancelComponent(fCancelButton);
 				fProgressMonitorPart.setVisible(true);
 			}
 		}
-		
+
 		return savedState;
 	}
-	
+
 	/**
 	 * A long running operation triggered through the wizard
 	 * was stopped either by user input or by normal end.
@@ -258,14 +258,14 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		Shell shell= getShell();
 		if (shell != null) {
 			if (fUseEmbeddedProgressMonitorPart) {
-				fProgressMonitorPart.setVisible(false);	
+				fProgressMonitorPart.setVisible(false);
 				fProgressMonitorPart.removeFromCancelComponent(fCancelButton);
 			}
-					
+
 			HashMap state= (HashMap)savedState;
 			restoreUIState(state);
-	
-			setDisplayCursor(shell.getDisplay(), null);	
+
+			setDisplayCursor(shell.getDisplay(), null);
 			fCancelButton.setCursor(null);
 			fWaitCursor.dispose();
 			fWaitCursor= null;
@@ -276,15 +276,15 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 				focusControl.setFocus();
 		}
 	}
-	
+
 	private void setDisplayCursor(Display d, Cursor c) {
 		Shell[] shells= d.getShells();
 		for (int i= 0; i < shells.length; i++)
 			shells[i].setCursor(c);
-	}	
+	}
 
 	//---- UI state save and restoring ---------------------------------------------
-	
+
 	private void restoreUIState(HashMap state) {
 		restoreEnableState(fCancelButton, state);
 		for (Iterator actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
@@ -294,7 +294,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		ControlEnableState pageState= (ControlEnableState)state.get("tabForm"); //$NON-NLS-1$
 		pageState.restore();
 	}
-	
+
 	/*
 	 * Restores the enable state of the given control.
 	 */
@@ -305,7 +305,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 				w.setEnabled(b.booleanValue());
 		}
 	}
-	
+
 	private HashMap saveUIState(boolean keepCancelEnabled) {
 		HashMap savedState= new HashMap(10);
 		saveEnableStateAndSet(fCancelButton, savedState, keepCancelEnabled);
@@ -314,16 +314,16 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 			saveEnableStateAndSet(button, savedState, false);
 		}
 		savedState.put("tabForm", ControlEnableState.disable(fContents)); //$NON-NLS-1$
-		
+
 		return savedState;
 	}
-	
+
 	private void saveEnableStateAndSet(Control w, HashMap h, boolean enabled) {
 		if (!w.isDisposed()) {
 			h.put(w, new Boolean(w.isEnabled()));
 			w.setEnabled(enabled);
-		}	
-	}	
+		}
+	}
 
 	protected void handleShellCloseEvent() {
 		if (okToClose())
@@ -340,7 +340,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		if (fActiveRunningOperations > 0) {
 			synchronized (this) {
 				fWindowClosingDialog= createClosingDialog();
-			}	
+			}
 			fWindowClosingDialog.open();
 			synchronized (this) {
 				fWindowClosingDialog= null;
@@ -349,25 +349,25 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		}
 		return true;
 	}
-	
+
 	private MessageDialog createClosingDialog() {
-		MessageDialog result= 
+		MessageDialog result=
 			new MessageDialog(
 				getShell(),
-				SearchMessages.SearchDialogClosingDialog_title,  
-				null, 
-				SearchMessages.SearchDialogClosingDialog_message,  
-				MessageDialog.QUESTION, 
-				new String[] {IDialogConstants.OK_LABEL}, 
-				0); 
-		return result;		
+				SearchMessages.SearchDialogClosingDialog_title,
+				null,
+				SearchMessages.SearchDialogClosingDialog_message,
+				MessageDialog.QUESTION,
+				new String[] {IDialogConstants.OK_LABEL},
+				0);
+		return result;
 	}
 
 	/**
-	 * @return Returns the cancel component that is to be used to cancel 
+	 * @return Returns the cancel component that is to be used to cancel
 	 * a long running operation.
 	 */
 	protected Control getCancelComponent() {
 		return fCancelButton;
-	}	
+	}
 }

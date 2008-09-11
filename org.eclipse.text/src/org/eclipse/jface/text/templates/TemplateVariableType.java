@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Value object that represents the type of a template variable. A type is defined by its name and
  * may have parameters.
- * 
+ *
  * @since 3.3
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -45,7 +45,7 @@ public final class TemplateVariableType {
 
 	/**
 	 * Returns the type name of this variable type.
-	 * 
+	 *
 	 * @return the type name of this variable type
 	 */
 	public String getName() {
@@ -54,7 +54,7 @@ public final class TemplateVariableType {
 
 	/**
 	 * Returns the unmodifiable and possibly empty list of parameters (element type: {@link String})
-	 * 
+	 *
 	 * @return the list of parameters
 	 */
 	public List getParams() {

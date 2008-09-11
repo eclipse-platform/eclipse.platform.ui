@@ -24,11 +24,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.ITextEditorExtension;
-import org.eclipse.ui.texteditor.ITextEditorExtension3;
-import org.eclipse.ui.texteditor.IUpdate;
-
 import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffMessages;
 import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.ReferenceSelectionAction;
@@ -36,6 +31,11 @@ import org.eclipse.ui.internal.texteditor.quickdiff.RestoreAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RevertBlockAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RevertSelectionAction;
+
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorExtension;
+import org.eclipse.ui.texteditor.ITextEditorExtension3;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Action to toggle the line number bar's quick diff display. When turned on, quick diff shows

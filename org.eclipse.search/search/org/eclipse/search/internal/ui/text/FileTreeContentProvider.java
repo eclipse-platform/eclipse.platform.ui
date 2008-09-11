@@ -36,12 +36,12 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private FileSearchPage fPage;
 	private AbstractTreeViewer fTreeViewer;
 	private Map fChildrenMap;
-	
+
 	FileTreeContentProvider(FileSearchPage page, AbstractTreeViewer viewer) {
 		fPage= page;
 		fTreeViewer= viewer;
 	}
-	
+
 	public Object[] getElements(Object inputElement) {
 		Object[] children= getChildren(inputElement);
 		int elementLimit= getElementLimit();
@@ -52,26 +52,26 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 		return children;
 	}
-	
+
 	private int getElementLimit() {
 		return fPage.getElementLimit().intValue();
 	}
-	
+
 	public void dispose() {
 		// nothing to do
 	}
-	
+
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput instanceof FileSearchResult) {
 			initialize((FileSearchResult) newInput);
 		}
 	}
-	
+
 	private synchronized void initialize(AbstractTextSearchResult result) {
 		fResult= result;
 		fChildrenMap= new HashMap();
 		boolean showLineMatches= !((FileSearchQuery) fResult.getQuery()).isFileNameSearch();
-		
+
 		if (result != null) {
 			Object[] elements= result.getElements();
 			for (int i= 0; i < elements.length; i++) {
@@ -109,7 +109,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	/**
 	 * returns true if the child already was a child of parent.
-	 * 
+	 *
 	 * @param parent
 	 * @param child
 	 * @return Returns <code>trye</code> if the child was added
@@ -122,16 +122,16 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 		return children.add(child);
 	}
-	
+
 	private boolean hasChild(Object parent, Object child) {
 		Set children= (Set) fChildrenMap.get(parent);
 		return children != null && children.contains(child);
 	}
-	
+
 
 	private void remove(Object element, boolean refreshViewer) {
 		// precondition here:  fResult.getMatchCount(child) <= 0
-	
+
 		if (hasChildren(element)) {
 			if (refreshViewer)
 				fTreeViewer.refresh(element);
@@ -162,8 +162,8 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 		return fResult.getMatchCount(element) > 0;
 	}
-	
-	
+
+
 	private void removeFromSiblings(Object element, Object parent) {
 		Set siblings= (Set) fChildrenMap.get(parent);
 		if (siblings != null) {
@@ -192,7 +192,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 				// change events to elements are reported in file search
 				if (fResult.getMatchCount(updatedElements[i]) > 0)
 					insert(updatedElements[i], true);
-				else 
+				else
 					remove(updatedElements[i], true);
 			} else {
 				// change events to line elements are reported in text search
@@ -226,7 +226,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		if (element instanceof LineElement) {
 			return ((LineElement) element).getParent();
 		}
-		
+
 		if (element instanceof FileMatch) {
 			FileMatch match= (FileMatch) element;
 			return match.getLineElement();

@@ -43,20 +43,20 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * 
+ *
  * @see ITextViewer
  * @see ITextInputListener
  * @see IDocumentUndoManager
  * @see MouseListener
  * @see KeyListener
  * @see DocumentUndoManager
- * 
+ *
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtension {
 
-	
+
 	/**
 	 * Internal listener to mouse and key events.
 	 */
@@ -140,7 +140,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		 */
 		public void documentUndoNotification(DocumentUndoEvent event ){
 			if (!isConnected()) return;
-			
+
 			int eventType= event.getEventType();
 			if (((eventType & DocumentUndoEvent.ABOUT_TO_UNDO) != 0) || ((eventType & DocumentUndoEvent.ABOUT_TO_REDO) != 0))  {
 				if (event.isCompound()) {
@@ -157,7 +157,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 							((TextViewer)fTextViewer).ignoreAutoEditStrategies(true);
 					}
 			    });
-				
+
 			} else if (((eventType & DocumentUndoEvent.UNDONE) != 0) || ((eventType & DocumentUndoEvent.REDONE) != 0))  {
 				fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
 					public void run() {
@@ -173,7 +173,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 					if (extension != null)
 						extension.setRedraw(true);
 				}
-				
+
 				// Reveal the change if this manager's viewer has the focus.
 				if (fTextViewer != null) {
 					StyledText widget= fTextViewer.getTextWidget();
@@ -193,16 +193,16 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 
 	/** The text viewer the undo manager is connected to */
 	private ITextViewer fTextViewer;
-	
+
 	/** The undo level */
 	private int fUndoLevel;
-	
+
 	/** The document undo manager that is active. */
 	private IDocumentUndoManager fDocumentUndoManager;
-	
+
 	/** The document that is active. */
 	private IDocument fDocument;
-	
+
 	/** The document undo listener */
 	private IDocumentUndoListener fDocumentUndoListener;
 
@@ -344,7 +344,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	public void reset() {
 		if (isConnected())
 			fDocumentUndoManager.reset();
-		
+
 	}
 
 	/*
@@ -417,7 +417,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		}
 		return null;
 	}
-	
+
 	private void connectDocumentUndoManager(IDocument document) {
 		disconnectDocumentUndoManager();
 		if (document != null) {

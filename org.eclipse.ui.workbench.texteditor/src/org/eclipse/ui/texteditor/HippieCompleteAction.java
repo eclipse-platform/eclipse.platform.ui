@@ -15,15 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -110,7 +111,7 @@ final class HippieCompleteAction extends TextEditorAction {
 
 	/** The compound edit exit strategy. */
 	private final CompoundEditExitStrategy fExitStrategy= new CompoundEditExitStrategy(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
-	
+
 	/**
 	 * Creates a new action.
 	 *
@@ -137,7 +138,7 @@ final class HippieCompleteAction extends TextEditorAction {
 		fLastCompletion= null;
 
 		ITextEditor editor= getTextEditor();
-		
+
 		if (editor != null) {
 			IRewriteTarget target= (IRewriteTarget) editor.getAdapter(IRewriteTarget.class);
 			if (target != null) {
@@ -161,15 +162,15 @@ final class HippieCompleteAction extends TextEditorAction {
 			clearState();
 			return;
 		}
-		
+
 		// advance the suggestion state
 		fLastCompletion.advance();
-		
+
 		// move the caret to the insertion point
 		ISourceViewer sourceViewer= ((AbstractTextEditor) getTextEditor()).getSourceViewer();
 		sourceViewer.setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
 		sourceViewer.revealRange(fLastCompletion.startOffset, fLastCompletion.length);
-		
+
 		fExitStrategy.arm(((AbstractTextEditor) getTextEditor()).getSourceViewer());
 	}
 
@@ -360,7 +361,7 @@ final class HippieCompleteAction extends TextEditorAction {
 			IRewriteTarget target= (IRewriteTarget) getTextEditor().getAdapter(IRewriteTarget.class);
 			if (target != null)
 				target.beginCompoundChange();
-			
+
 			fLastCompletion= new CompletionState(suggestions, getSelectionOffset());
 		}
 	}

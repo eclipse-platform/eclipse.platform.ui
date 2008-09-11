@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.texteditor.rulers.ExtensionPointHelper;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnMessages;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnPlacement;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnTarget;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension4;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -35,7 +36,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * The description of an extension to the
  * <code>org.eclipse.ui.workbench.texteditor.rulerColumns</code> extension point. Instances are
  * immutable. Instances can be obtained from a {@link RulerColumnRegistry}.
- * 
+ *
  * @since 3.3
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -84,7 +85,7 @@ public final class RulerColumnDescriptor {
 
 	/**
 	 * Creates a new descriptor.
-	 * 
+	 *
 	 * @param element the configuration element to read
 	 * @param registry the computer registry creating this descriptor
 	 * @throws InvalidRegistryObjectException if the configuration element is no longer valid
@@ -162,7 +163,7 @@ public final class RulerColumnDescriptor {
 
 	/**
 	 * Returns the name of the described extension.
-	 * 
+	 *
 	 * @return the name of the described extension
 	 */
 	public String getName() {
@@ -172,7 +173,7 @@ public final class RulerColumnDescriptor {
 	/**
 	 * Returns the image descriptor of the described extension, <code>null</code> if it does not
 	 * have an image.
-	 * 
+	 *
 	 * @return the image descriptor of the described extension or <code>null</code> for no image
 	 */
 	public ImageDescriptor getIcon() {
@@ -190,7 +191,7 @@ public final class RulerColumnDescriptor {
 	/**
 	 * Returns the default enablement of the described extension. Editors that support this
 	 * contribution should typically enable the column by default.
-	 * 
+	 *
 	 * @return the default enablement of the described extension
 	 */
 	public boolean getDefaultEnablement() {
@@ -202,7 +203,7 @@ public final class RulerColumnDescriptor {
 	 * with the global property set to <code>true</code> should typically affect all matching
 	 * editors. Changing the visibility of a column with the global property set to
 	 * <code>false</code> should only affect the current editor.
-	 * 
+	 *
 	 * @return the global property of the described extension
 	 */
 	public boolean isGlobal() {
@@ -212,7 +213,7 @@ public final class RulerColumnDescriptor {
 	/**
 	 * Returns the menu inclusion property of the described extension. A toggle menu entry should be
 	 * inluded in the ruler context menu for columns with this property set to <code>true</code>.
-	 * 
+	 *
 	 * @return the menu inclusion property of the described extension
 	 */
 	public boolean isIncludedInMenu() {
@@ -221,7 +222,7 @@ public final class RulerColumnDescriptor {
 
 	/**
 	 * Returns <code>true</code> if this contribution matches the passed editor, <code>false</code> if not.
-	 * 
+	 *
 	 * @param editor the editor to check
 	 * @return <code>true</code> if this contribution targets the passed editor
 	 */
@@ -232,7 +233,7 @@ public final class RulerColumnDescriptor {
 		IWorkbenchPartSite site= editor.getSite();
 		if (site != null && target.matchesEditorId(site.getId()))
 			return true;
-		
+
 		if (target.matchesClass(editor.getClass()))
 			return true;
 
@@ -243,7 +244,7 @@ public final class RulerColumnDescriptor {
 
 	/**
 	 * Creates a {@link IContributedRulerColumn} instance as described by the receiver. This may load the contributing plug-in.
-	 * 
+	 *
 	 * @param editor the editor that loads the contributed column
 	 * @return the instantiated column
 	 * @throws CoreException as thrown by {@link IConfigurationElement#createExecutableExtension(String)}
@@ -302,7 +303,7 @@ public final class RulerColumnDescriptor {
 	/**
 	 * Returns the content type of the editor's input, <code>null</code> if the editor input or
 	 * the document provider is <code>null</code> or the content type cannot be determined.
-	 * 
+	 *
 	 * @param editor the editor to get the content type from
 	 * @return the content type of the editor's input, <code>null</code> if it cannot be
 	 *         determined

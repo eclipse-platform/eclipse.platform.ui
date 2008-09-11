@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * This class is not intended to be serialized.
  * </p>
- * 
+ *
  * @deprecated No longer used, create a {@link CoreException} instead
  * @since 2.1
  */

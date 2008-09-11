@@ -25,7 +25,7 @@ import org.eclipse.jface.text.TextUtilities;
  * <p>
  * Clients may instantiate and extend this class.
  * </p>
- * 
+ *
  * @see TemplateVariableResolver
  * @see TemplateBuffer
  * @since 3.0
@@ -86,7 +86,7 @@ public class TemplateVariable {
 	public TemplateVariable(TemplateVariableType type, String name, String defaultValue, int[] offsets) {
 		this(type, name, new String[] { defaultValue }, offsets);
 	}
-	
+
 	/**
 	 * Creates a template variable with multiple possible values. The type is
 	 * used as the name of the template.
@@ -110,7 +110,7 @@ public class TemplateVariable {
 	public TemplateVariable(String type, String name, String[] values, int[] offsets) {
 		this(new TemplateVariableType(type), name, values, offsets);
 	}
-	
+
 	/**
 	 * Creates a template variable with multiple possible values.
 	 *
@@ -150,7 +150,7 @@ public class TemplateVariable {
 	public TemplateVariableType getVariableType() {
 		return fType;
 	}
-	
+
 	/**
 	 * Returns the name of the variable.
 	 *
@@ -173,7 +173,7 @@ public class TemplateVariable {
 	/**
 	 * Returns the possible values for this variable. The returned array is owned by this variable
 	 * and must not be modified. The array is not empty.
-	 * 
+	 *
 	 * @return the possible values for this variable
 	 */
 	public String[] getValues() {
@@ -188,12 +188,12 @@ public class TemplateVariable {
 	public int getLength() {
 	 	return getDefaultValue().length();
 	}
-	
+
 	/**
 	 * Returns the initial length of the variable. The initial length is the lenght as it occurred
 	 * in the template pattern and is used when resolving a template to update the pattern with the
 	 * resolved values of the variable.
-	 * 
+	 *
 	 * @return the initial length of the variable
 	 * @since 3.3
 	 */
@@ -223,7 +223,7 @@ public class TemplateVariable {
 	/**
 	 * Resolves the variable to a single value. This is a shortcut for
 	 * <code>setValues(new String[] { value })</code>.
-	 * 
+	 *
 	 * @param value the new default value
 	 */
 	public final void setValue(String value) {
@@ -233,7 +233,7 @@ public class TemplateVariable {
 	/**
 	 * Resolves the variable to several possible values for this variable, with the first being the
 	 * default value.
-	 * 
+	 *
 	 * @param values a non-empty array of values
 	 */
 	public void setValues(String[] values) {
@@ -261,10 +261,10 @@ public class TemplateVariable {
 	public boolean isUnambiguous() {
 	 	return fIsUnambiguous;
 	}
-	
+
 	/**
 	 * Sets the <em>resolved</em> flag of the variable.
-	 * 
+	 *
 	 * @param resolved the new <em>resolved</em> state
 	 * @since 3.3
 	 */
@@ -275,7 +275,7 @@ public class TemplateVariable {
 	/**
 	 * Returns <code>true</code> if the variable has been resolved, <code>false</code>
 	 * otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the variable has been resolved, <code>false</code> otherwise
 	 * @since 3.3
 	 */

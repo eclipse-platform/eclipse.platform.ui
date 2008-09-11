@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 
 /**
  * Test Suite org.eclipse.text.tests.link.
- * 
+ *
  * @since 3.0
  */
 public class LinkTestSuite {

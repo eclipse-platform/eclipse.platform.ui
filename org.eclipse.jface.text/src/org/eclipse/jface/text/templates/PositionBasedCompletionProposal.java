@@ -29,7 +29,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 
 /**
  * A position based completion proposal.
- * 
+ *
  * @since 3.0
  */
 final class PositionBasedCompletionProposal implements ICompletionProposal, ICompletionProposalExtension2 {

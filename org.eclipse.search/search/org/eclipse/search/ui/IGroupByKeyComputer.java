@@ -15,16 +15,16 @@ import org.eclipse.core.resources.IMarker;
 /**
  * Computes the key by which the markers in the search result view
  * are grouped.
- * 
+ *
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
- * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page 
+ *
+ * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page
  * how to group search results.
  */
 public interface IGroupByKeyComputer {
-	
+
 	/**
 	 * Computes and returns key by which the given marker is grouped.
 	 *

@@ -31,7 +31,7 @@ import org.eclipse.ui.dialogs.TypeFilteringDialog;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 public class FileTypeEditor extends SelectionAdapter implements DisposeListener {
-	
+
 	private Combo fTextField;
 	private Button fBrowseButton;
 
@@ -55,12 +55,12 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 	public FileTypeEditor(Combo textField, Button browseButton) {
 		fTextField= textField;
 		fBrowseButton= browseButton;
-		
+
 		fTextField.addDisposeListener(this);
 		fBrowseButton.addDisposeListener(this);
 		fBrowseButton.addSelectionListener(this);
 	}
-	
+
 	public void widgetDisposed(DisposeEvent event) {
 		Widget widget= event.widget;
 		if (widget == fTextField)
@@ -68,12 +68,12 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 		else if (widget	== fBrowseButton)
 			fBrowseButton= null;
 	}
-	
+
 	public void widgetSelected(SelectionEvent event) {
 		if (event.widget == fBrowseButton)
 			handleBrowseButton();
 	}
-	
+
 	public String[] getFileTypes() {
 		Set result= new HashSet();
 		StringTokenizer tokenizer= new StringTokenizer(fTextField.getText(), TYPE_DELIMITER);

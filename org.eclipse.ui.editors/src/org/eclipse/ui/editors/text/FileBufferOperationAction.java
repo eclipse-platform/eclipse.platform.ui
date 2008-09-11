@@ -105,7 +105,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 				}
 			}
 		}
-		
+
 		if (selection instanceof ITextSelection) {
 			IWorkbenchWindow window= getWorkbenchWindow();
 			if (window != null) {
@@ -222,7 +222,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 
 	/**
 	 * Tells whether this action accepts the given location.
-	 * 
+	 *
 	 * @param location the location
 	 * @return <code>true</code> if the given location is acceptable
 	 */

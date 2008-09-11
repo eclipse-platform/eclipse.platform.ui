@@ -30,7 +30,7 @@ import org.eclipse.core.commands.operations.IUndoContext;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see DocumentUndoManagerRegistry
  * @see IDocumentUndoListener
  * @see org.eclipse.jface.text.IDocument
@@ -52,7 +52,7 @@ public interface IDocumentUndoManager {
 	 * background thread. Any UI access occurring inside the implementation must
 	 * be properly synchronized using the techniques specified by the client's
 	 * widget library.</p>
-	 * 
+	 *
 	 * @param listener the document undo listener to be added as a listener
 	 */
 	void addDocumentUndoListener(IDocumentUndoListener listener);
@@ -62,14 +62,14 @@ public interface IDocumentUndoManager {
 	 * <p>
 	 * Removing a listener which is not registered has no effect
 	 * </p>
-	 * 
+	 *
 	 * @param listener the document undo listener to be removed
 	 */
 	void removeDocumentUndoListener(IDocumentUndoListener listener);
 
 	/**
 	 * Returns the undo context registered for this document
-	 * 
+	 *
 	 * @return the undo context registered for this document
 	 */
 	IUndoContext getUndoContext();
@@ -83,7 +83,7 @@ public interface IDocumentUndoManager {
 	 * Connects to the undo manager. Used to signify that a client is monitoring
 	 * the history kept by the undo manager. This message has no effect if the
 	 * client is already connected.
-	 * 
+	 *
 	 * @param client the object connecting to the undo manager
 	 */
 	void connect(Object client);
@@ -93,7 +93,7 @@ public interface IDocumentUndoManager {
 	 * longer monitoring the history kept by the undo manager. If all clients
 	 * have disconnected from the undo manager, the undo history will be
 	 * deleted.
-	 * 
+	 *
 	 * @param client the object disconnecting from the undo manager
 	 */
 	void disconnect(Object client);
@@ -114,11 +114,11 @@ public interface IDocumentUndoManager {
 	/**
 	 * Sets the limit of the undo history to the specified value. The provided
 	 * limit will supersede any previously set limit.
-	 * 
+	 *
 	 * @param undoLimit the length of this undo manager's history
 	 */
 	void setMaximalUndoLevel(int undoLimit);
-	
+
 	/**
 	 * Resets the history of the undo manager. After that call,
 	 * there aren't any undo-able or redo-able text changes.
@@ -142,27 +142,27 @@ public interface IDocumentUndoManager {
 
 	/**
 	 * Rolls back the most recently executed text change.
-	 * 
+	 *
 	 * @throws ExecutionException if an exception occurred during undo
 	 */
 	void undo() throws ExecutionException;
 
 	/**
 	 * Repeats the most recently rolled back text change.
-	 * 
+	 *
 	 * @throws ExecutionException if an exception occurred during redo
 	 */
 	void redo() throws ExecutionException;
 
 	/**
 	 * Transfers the undo history from the specified document undo manager to
-	 * this undo manager.  This message should only be used when it is known 
+	 * this undo manager.  This message should only be used when it is known
 	 * that the content of the document of the original undo manager when the
-	 * last undo operation was recorded is the same as this undo manager's 
+	 * last undo operation was recorded is the same as this undo manager's
 	 * current document content, since the undo history is based on document
-	 * indexes.  It is the responsibility of the caller 
-	 * to ensure that this call is used correctly.  
-	 * 
+	 * indexes.  It is the responsibility of the caller
+	 * to ensure that this call is used correctly.
+	 *
 	 * @param manager the document undo manger whose history is to be transferred to the receiver
 	 */
 	public void transferUndoHistory(IDocumentUndoManager manager);

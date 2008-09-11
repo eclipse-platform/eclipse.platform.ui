@@ -18,11 +18,11 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.preference.PreferencePage;
 
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 
 

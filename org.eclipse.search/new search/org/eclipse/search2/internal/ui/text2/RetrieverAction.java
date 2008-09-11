@@ -1,19 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2006 Wind River Systems and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Markus Schorn - initial API and implementation 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Markus Schorn - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.search2.internal.ui.text2;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.StyledText;
@@ -27,6 +23,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -46,13 +46,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 import org.eclipse.search2.internal.ui.SearchMessages;
 
@@ -75,7 +75,7 @@ abstract public class RetrieverAction extends Action {
 			ISearchQuery query= createQuery(provider, searchForString);
 			if (query != null) {
 				NewSearchUI.runQueryInBackground(query);
-			}	
+			}
 		} catch (OperationCanceledException ex) {
 			// action cancelled
 		} catch (CoreException e) {
@@ -90,7 +90,7 @@ abstract public class RetrieverAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private Shell getShell() {
 		IWorkbenchPart part= getActivePart();
 		if (part != null) {
@@ -155,13 +155,13 @@ abstract public class RetrieverAction extends Action {
 			sel= combo.getText();
 			Point selection= combo.getSelection();
 			sel= sel.substring(selection.x, selection.y);
-		} 
+		}
 		if (control instanceof CCombo) {
 			CCombo combo= (CCombo) control;
 			sel= combo.getText();
 			Point selection= combo.getSelection();
 			sel= sel.substring(selection.x, selection.y);
-		} 
+		}
 		else if (control instanceof Text) {
 			Text text= (Text) control;
 			sel= text.getSelectionText();
@@ -195,7 +195,7 @@ abstract public class RetrieverAction extends Action {
 				sel= s[0];
 			}
 		}
-		
+
 		if (sel != null) {
 			sel= trimSearchString(sel);
 		}
@@ -319,5 +319,5 @@ abstract public class RetrieverAction extends Action {
 		}
 		return searchFor == null ? "" : searchFor; //$NON-NLS-1$
 	}
-	
+
 }

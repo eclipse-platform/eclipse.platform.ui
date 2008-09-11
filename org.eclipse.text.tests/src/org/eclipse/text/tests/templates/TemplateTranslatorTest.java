@@ -201,7 +201,7 @@ public class TemplateTranslatorTest extends TestCase {
 		assertEquals("type", vars[0].getType());
 		assertEquals(Collections.singletonList("param"), vars[0].getVariableType().getParams());
 	}
-	
+
 	public void testMultiParameterizedTypeTemplate2() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("foo ${var:type(param)} bar ${var} end");
 		assertNull(fTranslator.getErrorMessage());
@@ -220,12 +220,12 @@ public class TemplateTranslatorTest extends TestCase {
 		assertEquals("type", vars[0].getType());
 		assertEquals(Collections.singletonList("param"), vars[0].getVariableType().getParams());
 	}
-	
+
 	public void testIllegallyParameterizedTypeTemplate() throws Exception {
 		ensureFailure("foo ${var:type(param)} bar ${var:type(other)} end");
 		ensureFailure("foo ${var:type(param)} bar ${var:type} end");
 	}
-	
+
 	public void testParameterizedTypeTemplateWithWhitespace() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("foo ${ var : type ( param1 , param2 , param3 ) } bar");
 		assertNull(fTranslator.getErrorMessage());
@@ -247,7 +247,7 @@ public class TemplateTranslatorTest extends TestCase {
 		params.add("param3");
 		assertEquals(params, vars[0].getVariableType().getParams());
 	}
-	
+
 	public void testQualifiedTypeTemplate() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("foo ${ var : qual.type ( qual.param1, qual.param2 ) } bar");
 		assertNull(fTranslator.getErrorMessage());
@@ -268,7 +268,7 @@ public class TemplateTranslatorTest extends TestCase {
 		params.add("qual.param2");
 		assertEquals(params, vars[0].getVariableType().getParams());
 	}
-	
+
 	public void testTextParameterTemplate() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("foo ${ var : qual.type ( 'a parameter 1', qual.param2, 'a parameter ''3' ) } bar");
 		assertNull(fTranslator.getErrorMessage());
@@ -290,7 +290,7 @@ public class TemplateTranslatorTest extends TestCase {
 		params.add("a parameter '3");
 		assertEquals(params, vars[0].getVariableType().getParams());
 	}
-	
+
 	public void testIllegalSyntax4() throws Exception {
 		ensureFailure("foo ${var:} bar");
 	}

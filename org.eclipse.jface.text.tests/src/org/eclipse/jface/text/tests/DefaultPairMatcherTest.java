@@ -14,20 +14,20 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.jface.text.IDocumentExtension3;
-import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
+import org.eclipse.jface.text.source.ICharacterPairMatcher;
 
 /**
  * Tests for the default pair matcher.
- * 
+ *
  * @since 3.3
  */
 public class DefaultPairMatcherTest extends AbstractPairMatcherTest {
 
 	public static Test suite() {
-		return new TestSuite(DefaultPairMatcherTest.class); 
+		return new TestSuite(DefaultPairMatcherTest.class);
 	}
-	
+
 	protected ICharacterPairMatcher createMatcher(String chars) {
 		return new DefaultCharacterPairMatcher(chars.toCharArray(),
 				getDocumentPartitioning());
@@ -40,5 +40,5 @@ public class DefaultPairMatcherTest extends AbstractPairMatcherTest {
 	protected String getDocumentPartitioning() {
 		return IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
-	
+
 }

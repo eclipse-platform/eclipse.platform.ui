@@ -38,7 +38,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		fTracker= null;
 		fText= null;
 	}
-	
+
 	protected int getLineOffset(int line, int[] lines) {
 		int offset= 0;
 		for (int i= 0; i < line; i++)
@@ -242,32 +242,32 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		assertTrue(line == 5);
 	}
 
-	
+
 	public void testDeleteEmptyLine() throws Exception {
 		set("x\nx\n\nx\n\n");
-		
+
 		int[] lengths= new int[] { 1, 1, 0, 1, 0, 0 };
 		checkLines(lengths);
 		for (int line= lengths.length - 1; line >= 0; line--)
 			fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
-		
+
 	}
-	
+
 	public void testDeleteLinesFromEnd() throws Exception {
 		set("x\nx\n\nx\n\n");
-		
+
 		int[] lengths= new int[] { 1, 1, 0, 1, 0, 0 };
 		checkLines(lengths);
 		for (int line= lengths.length - 1; line >= 0; line--)
 			fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
-		
+
 	}
-	
+
 	public void testDeleteLines() throws Exception {
 		String content= "";
 		for (int i= 0; i < 50; i++) {
 			fTracker.set(content + "x\nx\n\nx\n\n");
-			
+
 			int lines= fTracker.getNumberOfLines();
 			for (int line= 0; line < lines; line++)
 				fTracker.replace(fTracker.getLineOffset(0), fTracker.getLineLength(0), null);
@@ -275,13 +275,13 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		content= "";
 		for (int i= 0; i < 50; i++) {
 			fTracker.set(content + "x\nx\n\nx\n\n");
-			
+
 			int lines= fTracker.getNumberOfLines();
 			for (int line= lines - 1; line >= 0; line--)
 				fTracker.replace(fTracker.getLineOffset(line), fTracker.getLineLength(line), null);
 		}
 	}
-	
+
 	public void testSet() throws Exception {
 		String content= "";
 		for (int i= 0; i < 35; i++) {
@@ -290,20 +290,20 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 				lenghts[j]= j;
 			for (int j= 0; j < i; j++)
 				content += "x";
-			
+
 			set(content);
 			checkLines(lenghts);
-			
+
 			content += "\n";
 		}
 	}
-	
+
 	public void testFunnyLastLineCompatibility() throws Exception {
 		/* empty last line */
 		set("x\n");
 		int[] offsets= { 0, 2 };
 		int[] lengths= { 1, 0 };
-		
+
 		assertEquals("invalid number of lines, ", lengths.length, fTracker.getNumberOfLines());
 		assertEquals("invalid number of lines, ", lengths.length, fTracker.getNumberOfLines(0, fText.getLength()));
 		for (int i= 0; i < lengths.length; i++) {
@@ -316,7 +316,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fail();
 		} catch (Exception e) {
 		}
-		
+
 		try {
 			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
 			fail();
@@ -336,22 +336,22 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			int offset= offsets[i];
 			assertEquals("length of line: " + i, len, line.getLength());
 			assertEquals("offset of line: " + i, offset, line.getOffset());
-			
+
 			line= fTracker.getLineInformationOfOffset(offset);
 			if ( i == lengths.length - 1) { // phantom line cannot be queried by offset
 				len= lengths[i - 1];
 				offset= offsets[i - 1];
-			}			
+			}
 			assertEquals("length of line: " + i, len, line.getLength());
 			assertEquals("offset of line: " + i, offset, line.getOffset());
 		}
-		
+
 		try {
 			fTracker.getLineInformation(lengths.length);
 			fail();
 		} catch (Exception e) {
 		}
-		
+
 		try {
 			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
 			fail();
@@ -359,23 +359,23 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		}
 
 	}
-	
+
 	public void testNoDelimiterLine() throws Exception {
 	    set("abcef");
 	    checkLines(new int[] { 5 });
-	    
+
 	    replace(0, 0, ""); // switch to TreeLineTracker
 	    checkLines(new int[] { 5 });
     }
-	
+
 	public void testFunnyLastLineCompatibility2() throws Exception {
 		/* empty last line */
 		set("x\n");
 		replace(0, 2, "x\n");
-		
+
 		int[] offsets= { 0, 2 };
 		int[] lengths= { 1, 0 };
-		
+
 		assertEquals("invalid number of lines, ", lengths.length, fTracker.getNumberOfLines());
 		assertEquals("invalid number of lines, ", lengths.length, fTracker.getNumberOfLines(0, fText.getLength()));
 		for (int i= 0; i < lengths.length; i++) {
@@ -388,14 +388,14 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fail();
 		} catch (Exception e) {
 		}
-		
+
 		try {
 			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
 			fail();
 		} catch (Exception e) {
 		}
-		
-		
+
+
 		/* phantom last line when the last line is not empty */
 		set("x\nx");
 		offsets= new int[] { 0, 2, 3 };
@@ -408,30 +408,30 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			int offset= offsets[i];
 			assertEquals("length of line: " + i, len, line.getLength());
 			assertEquals("offset of line: " + i, offset, line.getOffset());
-			
+
 			line= fTracker.getLineInformationOfOffset(offset);
 			if ( i == lengths.length - 1) { // phantom line cannot be queried by offset
 				len= lengths[i - 1];
 				offset= offsets[i - 1];
-			}			
+			}
 			assertEquals("length of line: " + i, len, line.getLength());
 			assertEquals("offset of line: " + i, offset, line.getOffset());
 		}
-		
+
 		try {
 			fTracker.getLineInformation(lengths.length);
 			fail();
 		} catch (Exception e) {
 		}
-		
+
 		try {
 			fTracker.getLineInformationOfOffset(offsets[offsets.length] + 1);
 			fail();
 		} catch (Exception e) {
 		}
-		
+
 	}
-	
+
 	public void testNegativeOffset() throws Exception {
 		try {
 			assertEquals(-1, fTracker.getLineNumberOfOffset(-1));
@@ -443,7 +443,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fail();
 		} catch (BadLocationException e) {
 		}
-		
+
 		try {
 			assertEquals(-1, fTracker.getLineNumberOfOffset(-1000));
 			fail();
@@ -453,28 +453,28 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fTracker.getLineInformationOfOffset(-1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
-		
+		}
+
 		try {
 			fTracker.getLineInformationOfOffset(1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
+		}
 		try {
 			fTracker.getLineNumberOfOffset(1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
+		}
 		try {
 			fTracker.getLineOffset(-1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
+		}
 		try {
 			fTracker.getLineInformation(-1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
+		}
 	}
 	public void testNegativeOffset2() throws Exception {
 		replace(0, 0, "x");
@@ -488,7 +488,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fail();
 		} catch (BadLocationException e) {
 		}
-		
+
 		try {
 			assertEquals(-1, fTracker.getLineNumberOfOffset(-1000));
 			fail();
@@ -498,27 +498,27 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fTracker.getLineInformationOfOffset(-1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
-		
+		}
+
 		try {
 			fTracker.getLineInformationOfOffset(1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
+		}
 		try {
 			fTracker.getLineNumberOfOffset(1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
+		}
 		try {
 			fTracker.getLineOffset(-1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
+		}
 		try {
 			fTracker.getLineInformation(-1000);
 			fail();
 		} catch (BadLocationException e) {
-		}		
+		}
 	}
 }

@@ -24,7 +24,7 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 	public JavaAutoIndentStrategy() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IAutoIndentStrategy
 	 */
@@ -35,10 +35,10 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			smartInsertAfterBracket(d, c);
 		}
 	}
-	
+
 	/**
 	 * Returns whether or not the given text ends with one of the documents legal line delimiters.
-	 * 
+	 *
 	 * @param d the document
 	 * @param txt the text
 	 * @return <code>true</code> if <code>txt</code> ends with one of the document's line delimiters, <code>false</code> otherwise
@@ -49,10 +49,10 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			return TextUtilities.endsWith(delimiters, txt) > -1;
 		return false;
 	}
-	
+
 	/**
 	 * Returns the line number of the next bracket after end.
-	 * 
+	 *
 	 * @param document - the document being parsed
 	 * @param line - the line to start searching back from
 	 * @param end - the end position to search back from
@@ -65,7 +65,7 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		int start= document.getLineOffset(line);
 		int brackcount= getBracketCount(document, start, end, false) - closingBracketIncrease;
 
-		// sum up the brackets counts of each line (closing brackets count negative, 
+		// sum up the brackets counts of each line (closing brackets count negative,
 		// opening positive) until we find a line the brings the count to zero
 		while (brackcount < 0) {
 			line--;
@@ -78,11 +78,11 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		}
 		return line;
 	}
-	
+
 	/**
-	 * Returns the bracket value of a section of text. Closing brackets have a value of -1 and 
+	 * Returns the bracket value of a section of text. Closing brackets have a value of -1 and
 	 * open brackets have a value of 1.
-	 * 
+	 *
 	 * @param document - the document being parsed
 	 * @param start - the start position for the search
 	 * @param end - the end position for the search
@@ -105,7 +105,7 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 							// a comment starts, advance to the comment end
 							begin= getCommentEnd(document, begin + 1, end);
 						} else if (next == '/') {
-							// '//'-comment: nothing to do anymore on this line 
+							// '//'-comment: nothing to do anymore on this line
 							begin= end;
 						}
 					}
@@ -138,10 +138,10 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		}
 		return bracketcount;
 	}
-	
+
 	/**
 	 * Returns the end position of a comment starting at the given <code>position</code>.
-	 * 
+	 *
 	 * @param document - the document being parsed
 	 * @param position - the start position for the search
 	 * @param end - the end position for the search
@@ -161,10 +161,10 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		}
 		return end;
 	}
-	
+
 	/**
 	 * Returns the content of the given line without the leading whitespace.
-	 * 
+	 *
 	 * @param document - the document being parsed
 	 * @param line - the line being searched
 	 * @return the content of the given line without the leading whitespace
@@ -179,10 +179,10 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the position of the <code>character</code> in the <code>document</code> after <code>position</code>.
-	 * 
+	 *
 	 * @param document - the document being parsed
 	 * @param position - the position to start searching from
 	 * @param end - the end of the document
@@ -204,7 +204,7 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		}
 		return end;
 	}
-	
+
 	/**
 	 * Set the indent of a new line based on the command provided in the supplied document.
 	 * @param document - the document being parsed
@@ -241,7 +241,7 @@ public class JavaAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			System.out.println(JavaEditorMessages.getString("AutoIndent.error.bad_location_1")); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Set the indent of a bracket based on the command provided in the supplied document.
 	 * @param document - the document being parsed

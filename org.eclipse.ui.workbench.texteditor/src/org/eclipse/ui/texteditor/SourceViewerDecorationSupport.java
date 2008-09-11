@@ -120,7 +120,7 @@ public class SourceViewerDecorationSupport {
 					textWidget.redraw();
 					return;
 				}
-				
+
 				char ch= textWidget.getTextRange(offset, 1).charAt(0);
 				if (ch == '\r' || ch == '\n') {
 					// at the end of a line, redraw up to the next line start
@@ -133,25 +133,25 @@ public class SourceViewerDecorationSupport {
 						textWidget.redraw();
 						return;
 					}
-					
+
 					int nextLineOffset= textWidget.getOffsetAtLine(nextLine);
 					length= nextLineOffset - offset;
 				} else {
 					length= 1;
 				}
-				
+
 				textWidget.redrawRange(offset, length, true);
 			}
 		}
 	}
-	
+
 
 	/**
 	 * The box drawing strategy.
 	 * @since 3.0
 	 */
 	private static ITextStyleStrategy fgBoxStrategy= new AnnotationPainter.BoxStrategy(SWT.BORDER_SOLID);
-	
+
 	/**
 	 * The dashed box drawing strategy.
 	 * @since 3.3
@@ -333,7 +333,7 @@ public class SourceViewerDecorationSupport {
 	private Object getAnnotationDecorationType(Object annotationType) {
 		if (areAnnotationsHighlighted(annotationType))
 			return null;
-		
+
 		if (areAnnotationsShown(annotationType) && fPreferenceStore != null) {
 			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null) {
@@ -407,7 +407,7 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Sets the character pair matcher for the matching character painter.
-	 * 
+	 *
 	 * @param pairMatcher the character pair matcher
 	 */
 	public void setCharacterPairMatcher(ICharacterPairMatcher pairMatcher) {
@@ -473,7 +473,7 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Sets the symbolic font name that is used for computing the margin width.
-	 * 
+	 *
 	 * @param symbolicFontName the symbolic font name
 	 */
 	public void setSymbolicFontName(String symbolicFontName) {
@@ -883,10 +883,10 @@ public class SourceViewerDecorationSupport {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Tells whether annotations are highlighted in the source viewer for the given type.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @return <code>true</code> if the annotations are highlighted
 	 * @since 3.0

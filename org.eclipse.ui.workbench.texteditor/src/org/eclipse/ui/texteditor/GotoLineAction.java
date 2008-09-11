@@ -81,7 +81,7 @@ public class GotoLineAction extends TextEditorAction {
 	/**
 	 * Standard input dialog with custom dialog bounds
 	 * strategy and settings.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	static class GotoLineDialog extends InputDialog {
@@ -92,7 +92,7 @@ public class GotoLineAction extends TextEditorAction {
 		public GotoLineDialog(Shell parent, String title, String message, String initialValue, IInputValidator validator) {
 			super(parent, title, message, initialValue, validator);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
 		 * @since 3.2
@@ -105,7 +105,7 @@ public class GotoLineAction extends TextEditorAction {
 				section= settings.addNewSection(sectionName);
 			return section;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
 		 * @since 3.2

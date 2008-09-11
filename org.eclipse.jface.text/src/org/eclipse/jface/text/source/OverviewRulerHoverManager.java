@@ -53,12 +53,12 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 		Point location= getHoverEventLocation();
 		int line= getVerticalRulerInfo().toDocumentLineNumber(location.y);
 		IAnnotationHover hover= getAnnotationHover();
-		
+
 		IInformationControlCreator controlCreator= null;
 		if (hover instanceof IAnnotationHoverExtension)
 			controlCreator= ((IAnnotationHoverExtension)hover).getHoverControlCreator();
 		setCustomInformationControlCreator(controlCreator);
-		
+
 		setInformation(hover.getHoverInfo(getSourceViewer(), line), computeArea(location.y));
 	}
 

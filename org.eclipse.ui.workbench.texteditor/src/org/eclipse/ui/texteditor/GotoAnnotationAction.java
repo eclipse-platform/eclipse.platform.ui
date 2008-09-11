@@ -22,7 +22,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -51,7 +51,7 @@ public class GotoAnnotationAction extends TextEditorAction {
 		fForward= forward;
 		setHelpContextId(fForward ? IAbstractTextEditorHelpContextIds.GOTO_NEXT_ANNOTATION_ACTION : IAbstractTextEditorHelpContextIds.GOTO_PREVIOUS_ANNOTATION_ACTION);
 	}
-	
+
 	/**
 	 * Creates a new action for the given text editor. The action configures its
 	 * visual representation from the given resource bundle.
@@ -73,7 +73,7 @@ public class GotoAnnotationAction extends TextEditorAction {
 		if (editor instanceof ITextEditorExtension4)
 			((ITextEditorExtension4)editor).gotoAnnotation(fForward);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
 	 * @since 3.2
@@ -93,7 +93,7 @@ public class GotoAnnotationAction extends TextEditorAction {
 			setEnabled(false);
 			return;
 		}
-		
+
 		IAnnotationModel model= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 		setEnabled(model != null);
 	}

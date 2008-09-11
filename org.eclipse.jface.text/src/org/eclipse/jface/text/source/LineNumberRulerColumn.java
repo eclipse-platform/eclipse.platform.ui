@@ -157,7 +157,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		/**
 		 * Called when line drag selection started. Adds mouse move and track
 		 * listeners to this column's control.
-		 * 
+		 *
 		 * @param expandExistingSelection if <code>true</code> the existing selection will be expanded,
 		 * 			otherwise a new selection is started
 		 */
@@ -195,7 +195,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			} catch (BadLocationException x) {
 			}
 		}
-	
+
 		/**
 		 * Called when line drag selection stopped. Removes all previously
 		 * installed listeners from this column's control.
@@ -216,13 +216,13 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 				IDocument document= fCachedTextViewer.getDocument();
 				IRegion lineInfo= document.getLineInformation(lineNumber);
-				
+
 				Display display= fCachedTextWidget.getDisplay();
 				Point absolutePosition= display.getCursorLocation();
 				Point relativePosition= fCachedTextWidget.toControl(absolutePosition);
 
 				int offset;
-				
+
 				if (relativePosition.x < 0)
 					offset= lineInfo.getOffset();
 				else {
@@ -295,7 +295,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				autoScroll(SWT.UP);
 				return true;
 			}
-	
+
 			stopAutoScroll();
 			return false;
 		}
@@ -699,7 +699,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 	/**
 	 * Returns the view port height in lines.
-	 * 
+	 *
 	 * @return the view port height in lines
 	 * @deprecated as of 3.2 the number of lines in the viewport cannot be computed because
 	 *             StyledText supports variable line heights
@@ -707,12 +707,12 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	protected int getVisibleLinesInViewport() {
 		return getVisibleLinesInViewport(fCachedTextWidget);
 	}
-	
+
 
 	/**
 	 * Returns <code>true</code> if the viewport displays the entire viewer contents, i.e. the
 	 * viewer is not vertically scrollable.
-	 * 
+	 *
 	 * @return <code>true</code> if the viewport displays the entire contents, <code>false</code> otherwise
 	 * @since 3.2
 	 */
@@ -729,10 +729,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 */
 	void doPaint(GC gc, ILineRange visibleLines) {
 		Display display= fCachedTextWidget.getDisplay();
-		
+
 		// draw diff info
 		int y= -JFaceTextUtil.getHiddenTopLinePixels(fCachedTextWidget);
-		
+
 		int lastLine= end(visibleLines);
 		for (int line= visibleLines.getStartLine(); line < lastLine; line++) {
 			int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, line);
@@ -749,7 +749,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private static int end(ILineRange range) {
 		return range.getStartLine() + range.getNumberOfLines();
 	}
-	
+
 	/**
 	 * Computes the string to be printed for <code>line</code>. The default implementation returns
 	 * <code>Integer.toString(line + 1)</code>.
@@ -783,7 +783,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		int offset= fCachedTextWidget.getOffsetAtLine(widgetLine);
 		int widgetBaseline= fCachedTextWidget.getBaseline(offset);
-		
+
 		FontMetrics fm= gc.getFontMetrics();
 		int fontBaseline= fm.getAscent() + fm.getLeading();
 		int baselineBias= widgetBaseline - fontBaseline;
@@ -877,7 +877,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 	/**
 	 * Returns the number of lines in the view port.
-	 * 
+	 *
 	 * @param textWidget the styled text widget
 	 * @return the number of lines visible in the view port <code>-1</code> if there's no client
 	 *         area
@@ -897,5 +897,5 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 		return -1;
 	}
-	
+
 }

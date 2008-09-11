@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Describes one placement constraint of a contribution to the
  * <code>org.eclipse.ui.texteditor.rulerColumns</code> extension point.
- * 
+ *
  * @since 3.3
  */
 public final class RulerColumnPlacementConstraint {
@@ -24,7 +24,7 @@ public final class RulerColumnPlacementConstraint {
 
 	/**
 	 * Creates a new constraint.
-	 * 
+	 *
 	 * @param id the id of the referenced contribution
 	 * @param before <code>true</code> if the specifying should come <i>before</i>,
 	 *        <code>false</code> if it should come <i>after</i> the contribution referenced by
@@ -38,7 +38,7 @@ public final class RulerColumnPlacementConstraint {
 
 	/**
 	 * Returns the identifier of the referenced column contribution.
-	 * 
+	 *
 	 * @return the identifier of the referenced column contribution
 	 */
 	public String getId() {
@@ -48,7 +48,7 @@ public final class RulerColumnPlacementConstraint {
 	/**
 	 * Returns <code>true</code> if the receiver is a <i>before</i> constraint,
 	 * <code>false</code> if it is an <i>after</i> constraint.
-	 * 
+	 *
 	 * @return <code>true</code> if the receiver is a <i>before</i> constraint,
 	 *         <code>false</code> if it is an <i>after</i> constraint
 	 */

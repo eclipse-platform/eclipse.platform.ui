@@ -26,7 +26,7 @@ final class RulerMessages extends NLS {
 	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_title;
 	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_message;
 	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_rememberquestion;
-	
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RulerMessages.class);
 	}

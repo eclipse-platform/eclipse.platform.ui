@@ -478,7 +478,7 @@ public abstract class TextEdit {
 
 	/**
 	 * Hook called before this edit gets added to the passed parent.
-	 * 
+	 *
 	 * @param parent the parent text edit
 	 */
 	void aboutToBeAdded(TextEdit parent) {
@@ -525,7 +525,7 @@ public abstract class TextEdit {
 	/**
 	 * Adds the string representation of this text edit without
 	 * children information to the given string buffer.
-	 * 
+	 *
 	 * @param buffer	the string buffer
 	 * @param indent	the indent level in number of spaces
 	 * @since 3.3
@@ -557,7 +557,7 @@ public abstract class TextEdit {
 	/**
 	 * Adds the string representation for this text edit
 	 * and its children to the given string buffer.
-	 * 
+	 *
 	 * @param buffer	the string buffer
 	 * @param indent	the indent level in number of spaces
 	 * @since 3.3
@@ -572,7 +572,7 @@ public abstract class TextEdit {
 			}
 		}
 	}
-	
+
 	//---- Copying -------------------------------------------------------------
 
 	/**
@@ -877,7 +877,7 @@ public abstract class TextEdit {
 
 	/**
 	 * Performs the consistency check.
-	 * 
+	 *
 	 * @param processor the text edit processor
 	 * @param document the document to be manipulated
 	 */
@@ -886,7 +886,7 @@ public abstract class TextEdit {
 
 	/**
 	 * Traverses the source computation.
-	 * 
+	 *
 	 * @param processor the text edit processor
 	 * @param document the document to be manipulated
 	 */
@@ -895,7 +895,7 @@ public abstract class TextEdit {
 
 	/**
 	 * Performs the source computation.
-	 * 
+	 *
 	 * @param processor the text edit processor
 	 * @param document the document to be manipulated
 	 */

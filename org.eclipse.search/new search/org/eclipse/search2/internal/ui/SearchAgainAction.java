@@ -10,28 +10,27 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
+import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.search.internal.ui.SearchPluginImages;
-
 class SearchAgainAction extends Action {
 	private SearchView fView;
-	
+
 	public SearchAgainAction(SearchView view) {
-		setText(SearchMessages.SearchAgainAction_label); 
-		setToolTipText(SearchMessages.SearchAgainAction_tooltip); 
+		setText(SearchMessages.SearchAgainAction_label);
+		setToolTipText(SearchMessages.SearchAgainAction_tooltip);
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_AGAIN);
-		fView= view;	
+		fView= view;
 	}
 
 	public void run() {
@@ -47,7 +46,7 @@ class SearchAgainAction extends Action {
 					ProgressMonitorDialog pmd= new ProgressMonitorDialog(shell);
 					IStatus status= NewSearchUI.runQueryInForeground(pmd, query, fView);
 					if (!status.isOK() && status.getSeverity() != IStatus.CANCEL) {
-						ErrorDialog.openError(shell, SearchMessages.SearchAgainAction_Error_title, SearchMessages.SearchAgainAction_Error_message, status); 
+						ErrorDialog.openError(shell, SearchMessages.SearchAgainAction_Error_title, SearchMessages.SearchAgainAction_Error_message, status);
 					}
 				}
 			}

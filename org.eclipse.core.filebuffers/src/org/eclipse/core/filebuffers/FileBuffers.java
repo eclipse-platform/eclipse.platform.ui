@@ -60,7 +60,7 @@ public final class FileBuffers {
 	/**
 	 * File buffer plug-in ID
 	 * (value <code>"org.eclipse.core.filebuffers"</code>).
-	 * 
+	 *
 	 * @since 3.3.
 	 */
 	public static final String PLUGIN_ID= FileBuffersPlugin.PLUGIN_ID;
@@ -122,7 +122,7 @@ public final class FileBuffers {
 			normalized= location;
 		else
 			normalized= normalizeLocation(location);
-		
+
 		if (normalized.segmentCount() >= 2) {
 			// @see IContainer#getFile for the required number of segments
 			IFile file= WORKSPACE_ROOT.getFile(normalized);
@@ -151,7 +151,7 @@ public final class FileBuffers {
 	 * exists no workspace file, the normalized form is the
 	 * {@link IPath#makeAbsolute() absolute} form of the location.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param pathOrLocation the path or location to be normalized
 	 * @return the normalized form of <code>pathOrLocation</code>
 	 */
@@ -198,7 +198,7 @@ public final class FileBuffers {
 		}
 		return EFS.getLocalFileSystem().getStore(location);
 	}
-	
+
 	/**
 	 * Returns the file in the local file system for the given location.
 	 * <p>

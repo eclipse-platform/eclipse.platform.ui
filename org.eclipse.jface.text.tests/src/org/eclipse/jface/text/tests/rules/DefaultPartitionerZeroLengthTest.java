@@ -32,7 +32,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 
 	private static final String COMMENT= "comment";
 	private static final String DEFAULT= IDocument.DEFAULT_CONTENT_TYPE;
-	
+
 	private IDocument fDoc;
 	private FastPartitioner fPartitioner;
 
@@ -106,7 +106,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		int[] offsets= new int[] { 13, 26 };
 		assertGetZeroLengthContentType_InterleavingPartitions(offsets);
 	}
-	
+
 	public void testComputeZeroLengthPartitioning() {
 		fDoc.set("docu     ment/* comment */docu     ment");
 
@@ -155,7 +155,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		int[] offsets= new int[] { 13, 26 };
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(13, 26, offsets, DEFAULT);
 	}
-	
+
 	public void testComputePartitioningSubrangeAfterBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -169,31 +169,31 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		int[] offsets= new int[] { };
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(1, 12, offsets, COMMENT);
 	}
-	
+
 	public void testComputePartitioningSubrangeInBoundaries2() {
 		fDoc.set("docu     ment");
 
 		int[] offsets= new int[] { };
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(1, 12, offsets, DEFAULT);
 	}
-	
+
 	private void assertComputeZeroLengthPartitioning_InterleavingPartitions(int[] offsets) {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(0, fDoc.getLength(), offsets, DEFAULT);
 	}
 
 	private void assertComputeZeroLengthPartitioning_InterleavingPartitions(int startOffset, int endOffset, int[] offsets, String startType) {
 		ITypedRegion[] regions= fPartitioner.computePartitioning(startOffset, endOffset - startOffset, true);
-		
+
 		String type= startType;
 		int previousOffset= startOffset;
-		
+
 		assertEquals(offsets.length + 1, regions.length);
 		for (int i= 0; i <= offsets.length; i++) {
 			int currentOffset= (i == offsets.length) ? endOffset : offsets[i];
 			ITypedRegion region= regions[i];
-			
+
 			assertTypedRegion(region, previousOffset, currentOffset, type);
-			
+
 			// advance
 			if (type == DEFAULT)
 				type= COMMENT;
@@ -209,7 +209,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		for (int i= 0; i <= offsets.length; i++) {
 			int offset= (i == offsets.length) ? fDoc.getLength() : offsets[i];
 			assertEqualPartitionType(previousOffset, offset, type);
-			
+
 			// advance
 			if (type == DEFAULT)
 				type= COMMENT;
@@ -225,7 +225,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		for (int i= 0; i <= offsets.length; i++) {
 			int offset= (i == offsets.length) ? fDoc.getLength() : offsets[i];
 			assertEqualPartition(previousOffset, offset, type);
-			
+
 			// advance
 			if (type == DEFAULT)
 				type= COMMENT;

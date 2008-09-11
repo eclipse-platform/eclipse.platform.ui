@@ -13,10 +13,11 @@ package org.eclipse.search2.internal.ui.text;
 
 import java.util.HashMap;
 
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 public class AnnotationManagers {
 	static {
@@ -53,11 +54,11 @@ public class AnnotationManagers {
 	public static void addSearchResult(IWorkbenchWindow window, AbstractTextSearchResult newResult) {
 		getWindowAnnotationManager(window).addSearchResult(newResult);
 	}
-	
+
 	public static void removeSearchResult(IWorkbenchWindow window, AbstractTextSearchResult result) {
 		getWindowAnnotationManager(window).removeSearchResult(result);
 	}
-	
+
 	private static WindowAnnotationManager getWindowAnnotationManager(IWorkbenchWindow window) {
 		WindowAnnotationManager mgr= (WindowAnnotationManager) fgManagerMap.get(window);
 		if (mgr == null) {
@@ -66,6 +67,6 @@ public class AnnotationManagers {
 		}
 		return mgr;
 	}
-	
+
 
 }

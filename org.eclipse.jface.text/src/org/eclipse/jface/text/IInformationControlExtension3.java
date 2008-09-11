@@ -47,7 +47,7 @@ public interface IInformationControlExtension3 {
 	 * information control's actual content area. It includes all borders of the
 	 * control and other static content placed around the content area (e.g. a
 	 * toolbar).
-	 * 
+	 *
 	 * @return The receiver's trim. <code>x</code> and <code>y</code> denote
 	 *         the upper left corner of the trimming relative to this control's
 	 *         location i.e. this will most likely be negative values.

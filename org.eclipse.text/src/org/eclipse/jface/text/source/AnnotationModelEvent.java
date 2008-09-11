@@ -11,12 +11,12 @@
 package org.eclipse.jface.text.source;
 
 
-import org.eclipse.jface.text.Position;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.jface.text.Position;
 
 
 /**

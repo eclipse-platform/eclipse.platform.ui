@@ -119,14 +119,14 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 
 	/**
 	 * An optional quick assist processor.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private IQuickAssistAssistant fQuickAssistAssistant;
 
 	/**
 	 * Returns a new default marker annotation access with the given preferences.
-	 * 
+	 *
 	 * @param markerAnnotationPreferences the marker annotation preference
 	 * @deprecated As of 3.0, replaced by
 	 *             {@link org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess#DefaultMarkerAnnotationAccess()}
@@ -178,17 +178,17 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated use <code>Annotation.getType()</code>
 	 */
-	
+
 	public Object getType(Annotation annotation) {
 		return annotation.getType();
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated assumed to always return <code>true</code>
 	 */
 	public boolean isMultiLine(Annotation annotation) {
@@ -197,7 +197,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated assumed to always return <code>true</code>
 	 */
 	public boolean isTemporary(Annotation annotation) {
@@ -222,11 +222,11 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 			IAnnotationPresentation presentation= (IAnnotationPresentation) annotation;
 			return presentation.getLayer();
 		}
-		
+
 		AnnotationPreference preference= getAnnotationPreference(annotation);
 		if (preference != null)
 			return preference.getPresentationLayer();
-		
+
 		// backward compatibility, ignore exceptions, just return default layer
 		try {
 
@@ -332,7 +332,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * defined in {@link org.eclipse.ui.ISharedImages}.
 	 * <p>
 	 * The symbolic image name must be one of the
-	 * 
+	 *
 	 * @param symbolicImageName the symbolic image name, which must be one of
 	 *            the valid values defined for the <code>symbolicIcon</code>
 	 *            attribute in the
@@ -423,7 +423,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * Checks whether there's a quick assist assistant and if so,
 	 * whether the assistant has a possible fix for the given
 	 * annotation.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return <code>true</code> if there is quick fix
 	 * @since 3.2

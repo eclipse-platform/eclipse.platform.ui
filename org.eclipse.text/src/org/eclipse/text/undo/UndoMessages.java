@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.text.undo;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Helper class to get NLSed messages.

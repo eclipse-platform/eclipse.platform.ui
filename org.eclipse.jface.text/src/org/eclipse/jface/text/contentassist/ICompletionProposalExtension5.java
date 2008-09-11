@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <ul>
  * <li>Allow background computation of the additional info.</li>
  * </ul>
- * 
+ *
  * @since 3.2
  */
 public interface ICompletionProposalExtension5 {
@@ -33,7 +33,7 @@ public interface ICompletionProposalExtension5 {
 	 * {@link ICompletionProposalExtension3#getInformationControlCreator()} is implemented, the
 	 * information will be passed to a custom information control for display.
 	 * </p>
-	 * 
+	 *
 	 * @param monitor a monitor to report progress and to watch for
 	 *        {@link IProgressMonitor#isCanceled() cancelation}.
 	 * @return the additional information, <code>null</code> for no information

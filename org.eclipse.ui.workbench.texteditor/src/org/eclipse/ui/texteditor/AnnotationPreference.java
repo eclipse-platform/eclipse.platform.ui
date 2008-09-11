@@ -105,13 +105,13 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	public static final String STYLE_BOX= "BOX"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constant defining dashed box decoration for the show in text style preference.
 	 * @since 3.3
 	 */
 	public static final String STYLE_DASHED_BOX= "DASHED_BOX"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constant defining underline decoration for the show in text style preference.
 	 * @since 3.0
@@ -1089,7 +1089,7 @@ public class AnnotationPreference {
 	public void setQuickFixImageDescriptor(ImageDescriptor descriptor) {
 		setValue(QUICK_FIX_IMAGE_DESCRIPTOR, descriptor);
 	}
-	
+
 	/**
 	 * Returns the Quick Fix image descriptor for the image to be drawn in the vertical ruler. The provided
 	 * image is only used, if <code>getAnnotationImageProvider</code> returns <code>null</code>.
@@ -1100,5 +1100,5 @@ public class AnnotationPreference {
 	public ImageDescriptor getQuickFixImageDescriptor() {
 		return (ImageDescriptor) getValue(QUICK_FIX_IMAGE_DESCRIPTOR);
 	}
-	
+
 }

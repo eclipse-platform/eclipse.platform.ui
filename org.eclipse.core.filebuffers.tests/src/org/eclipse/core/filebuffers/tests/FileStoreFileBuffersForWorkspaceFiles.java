@@ -37,7 +37,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * FileBuffersForWorkspaceFiles
  */
 public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
-	
+
 	protected IPath createPath(IProject project) throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		IFile file= ResourceHelper.createFile(folder, "WorkspaceFile", "content");
@@ -78,11 +78,11 @@ public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 		ResourceHelper.createFolder("project/folderA/folderB/folderC");
 		IPath path= new Path("/project/folderA/folderB/folderC/MovedWorkspaceFile");
 		file.move(path, true, false, null);
-		
+
 		file= FileBuffers.getWorkspaceFileAtLocation(path);
 		if (file != null && file.exists())
 			return path;
-		
+
 		return null;
 	}
 

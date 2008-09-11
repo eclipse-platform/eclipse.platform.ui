@@ -87,7 +87,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		 * decoration drawn in drawing mode. This can usually be accomplished by calling
 		 * {@linkplain StyledText#redrawRange(int, int, boolean) textWidget.redrawRange(offset, length, true)}.</li>
 		 * </ul>
-		 * 
+		 *
 		 * @param annotation the annotation to be drawn
 		 * @param gc the graphics context, <code>null</code> when in clearing mode
 		 * @param textWidget the text widget to draw on
@@ -100,7 +100,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 	/**
 	 * Squiggles drawing strategy.
-	 * 
+	 *
 	 * @since 3.0
 	 * @deprecated As of 3.4, replaced by {@link AnnotationPainter.UnderlineStrategy}
 	 */
@@ -123,7 +123,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				right.x= rect.x + rect.width;
 
 				int[] polyline= computePolyline(left, right, textWidget.getBaseline(offset), textWidget.getLineHeight(offset));
-				
+
 				gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 				gc.setLineStyle(SWT.LINE_SOLID);
 				gc.setForeground(color);
@@ -198,26 +198,26 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			// do nothing
 		}
 	}
-	
-	
+
+
 	/**
 	 * A text style painting strategy draws the decoration for an annotation
 	 * onto the text widget by applying a {@link TextStyle} on a given
 	 * {@link StyleRange}.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public interface ITextStyleStrategy {
 
 		/**
 		 * Applies a text style on the given <code>StyleRange</code>.
-		 * 
+		 *
 		 * @param styleRange the style range on which to apply the text style
 		 * @param annotationColor the color of the annotation
 		 */
 		void applyTextStyle(StyleRange styleRange, Color annotationColor);
 	}
-	
+
 
 	/**
 	 * @since 3.4
@@ -228,14 +228,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 
-	
+
 	/**
 	 * Underline text style strategy.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final class UnderlineStrategy implements ITextStyleStrategy {
-		
+
 		int fUnderlineStyle;
 
 		public UnderlineStrategy(int style) {
@@ -250,27 +250,27 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 
-	
+
 	/**
 	 * Box text style strategy.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final class BoxStrategy implements ITextStyleStrategy {
-		
+
 		int fBorderStyle;
 
 		public BoxStrategy(int style) {
 			Assert.isLegal(style == SWT.BORDER_DASH || style == SWT.BORDER_DASH || style == SWT.BORDER_SOLID);
 			fBorderStyle= style;
 		}
-		
+
 		public void applyTextStyle(StyleRange styleRange, Color annotationColor) {
 			styleRange.borderStyle= fBorderStyle;
 			styleRange.borderColor= annotationColor;
 		}
 	}
-	
+
 
 	/**
 	 * Implementation of <code>IRegion</code> that can be reused
@@ -292,7 +292,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/**
 	 * This strategy is used to mark the <code>null</code> value in the chache
 	 * maps.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static final IDrawingStrategy NULL_STRATEGY= new NullStrategy();
@@ -303,14 +303,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private static final Object SQUIGGLES= new Object();
 	/**
 	 * The squiggly painter strategy.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static final ITextStyleStrategy HIGHLIGHTING_STRATEGY= new HighlightingStrategy();
 
 	/**
 	 * The highlighting text style strategy id.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static final Object HIGHLIGHTING= new Object();
@@ -374,7 +374,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private Object fHighlightedDecorationsMapLock= new Object();
 	/**
 	 * Maps an annotation type to its registered color.
-	 * 
+	 *
 	 * @see #setAnnotationTypeColor(Object, Color)
 	 */
 	private Map fAnnotationType2Color= new HashMap();
@@ -418,7 +418,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private boolean fInputDocumentAboutToBeChanged;
 	/**
 	 * Maps annotation types to painting strategy identifiers.
-	 * 
+	 *
 	 * @see #addAnnotationType(Object, Object)
 	 * @since 3.0
 	 */
@@ -431,7 +431,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 	/**
 	 * Maps painting strategy identifiers to painting strategies.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private Map fPaintingStrategyId2PaintingStrategy= new HashMap();
@@ -441,7 +441,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.3
 	 */
 	private ReusableRegion fReusableRegion= new ReusableRegion();
-	
+
 	/**
 	 * Creates a new annotation painter for the given source viewer and with the
 	 * given annotation access. The painter is not initialized, i.e. no
@@ -538,7 +538,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		int highlightAnnotationRangeStart= Integer.MAX_VALUE;
 		int highlightAnnotationRangeEnd= -1;
-		
+
 		int drawRangeStart= Integer.MAX_VALUE;
 		int drawRangeEnd= -1;
 
@@ -571,9 +571,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					Decoration decoration= (Decoration)entry.getValue();
 					drawDecoration(decoration, null, annotation, clippingRegion, document);
 				}
-				
+
 				decorationsMap.clear();
-				
+
 				highlightedDecorationsMap.clear();
 
 				e= fModel.getAnnotationIterator();
@@ -602,7 +602,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 							drawRangeEnd= Math.max(drawRangeEnd, position.offset + position.length);
 						}
 					}
-					
+
 				}
 
 				// Update existing annotations
@@ -611,7 +611,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					Annotation annotation= changedAnnotations[i];
 
 					boolean isHighlighting= false;
-					
+
 					Decoration decoration= (Decoration)highlightedDecorationsMap.get(annotation);
 
 					if (decoration != null) {
@@ -678,7 +678,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, pp.fPosition.offset);
 						highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, pp.fPosition.offset + pp.fPosition.length);
 					}
-					
+
 				}
 			}
 
@@ -749,7 +749,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		adaptToDocumentLength(fCurrentHighlightAnnotationRange);
 		adaptToDocumentLength(fTotalHighlightAnnotationRange);
 	}
-	
+
 	/**
 	 * Updates the remembered decoration ranges.
 	 *
@@ -760,20 +760,20 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private void updateDrawRanges(int drawRangeStart, int drawRangeEnd, boolean isWorldChange) {
 		if (drawRangeStart != Integer.MAX_VALUE) {
-			
+
 			int maxRangeStart= drawRangeStart;
 			int maxRangeEnd= drawRangeEnd;
-			
+
 			if (fTotalDrawRange != null) {
 				maxRangeStart= Math.min(maxRangeStart, fTotalDrawRange.offset);
 				maxRangeEnd= Math.max(maxRangeEnd, fTotalDrawRange.offset + fTotalDrawRange.length);
 			}
-			
+
 			if (fTotalDrawRange == null)
 				fTotalDrawRange= new Position(0);
 			if (fCurrentDrawRange == null)
 				fCurrentDrawRange= new Position(0);
-			
+
 			if (isWorldChange) {
 				fTotalDrawRange.offset= drawRangeStart;
 				fTotalDrawRange.length= drawRangeEnd - drawRangeStart;
@@ -793,7 +793,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				fCurrentDrawRange= null;
 			}
 		}
-		
+
 		adaptToDocumentLength(fCurrentDrawRange);
 		adaptToDocumentLength(fTotalDrawRange);
 	}
@@ -840,7 +840,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		Position position= fModel.getPosition(annotation);
 		if (position == null || position.isDeleted())
 			return null;
-		
+
 		if (decoration == null)
 			decoration= new Decoration();
 
@@ -852,15 +852,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		} else {
 			decoration.fLayer= IAnnotationAccessExtension.DEFAULT_LAYER;
 		}
-		
+
 		decoration.fPaintingStrategy= paintingStrategy;
-		
+
 		return decoration;
 	}
 
 	/**
 	 * Returns the painting strategy for the given annotation.
-	 * 
+	 *
 	 * @param type the annotation type
 	 * @return the annotation painter
 	 * @since 3.0
@@ -1136,7 +1136,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			};
 			fSourceViewer.addTextInputListener(fTextInputListener);
 		}
-		
+
 	}
 
 	/**
@@ -1166,7 +1166,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * The given id can be referenced when adding annotation types, see
 	 * {@link #addAnnotationType(Object, Object)}.
 	 * </p>
-	 * 
+	 *
 	 * @param id the identifier under which the strategy can be referenced, not <code>null</code>
 	 * @param strategy the new strategy
 	 * @since 3.4
@@ -1263,12 +1263,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fCachedAnnotationType2PaintingStrategy.clear();
 			fCachedAnnotationType2PaintingStrategy= null;
 		}
-		
+
 		if (fAnnotationType2PaintingStrategyId != null) {
 			fAnnotationType2PaintingStrategyId.clear();
 			fAnnotationType2PaintingStrategyId= null;
 		}
-		
+
 		fTextWidget= null;
 		fSourceViewer= null;
 		fAnnotationAccess= null;
@@ -1348,10 +1348,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		IRegion clippingRegion= computeClippingRegion(event, false);
 		if (clippingRegion == null)
 			return;
-		
+
 		int vOffset= clippingRegion.getOffset();
 		int vLength= clippingRegion.getLength();
-		
+
 		final GC gc= event != null ? event.gc : null;
 
 		// Clone decorations
@@ -1368,7 +1368,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		ArrayList toBeDrawn= new ArrayList(10);
 		for (Iterator e = decorations.iterator(); e.hasNext();) {
 			Map.Entry entry= (Map.Entry)e.next();
-			
+
 			Annotation a= (Annotation)entry.getKey();
 			Decoration pp = (Decoration)entry.getValue();
 			// prune any annotation that is not drawable or does not need drawing
@@ -1390,7 +1390,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			}
 		}
 	}
-	
+
 	private void drawDecoration(Decoration pp, GC gc, Annotation annotation, IRegion clippingRegion, IDocument document) {
 		if (clippingRegion == null)
 			return;
@@ -1428,12 +1428,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		} catch (BadLocationException x) {
 		}
 	}
-	
+
 	/**
 	 * Computes the model (document) region that is covered by the paint event's clipping region. If
 	 * <code>event</code> is <code>null</code>, the model range covered by the visible editor
 	 * area (viewport) is returned.
-	 * 
+	 *
 	 * @param event the paint event or <code>null</code> to use the entire viewport
 	 * @param isClearing tells whether the clipping is need for clearing an annotation
 	 * @return the model region comprised by either the paint event's clipping region or the
@@ -1442,21 +1442,21 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private IRegion computeClippingRegion(PaintEvent event, boolean isClearing) {
 		if (event == null) {
-			
+
 			if (!isClearing && fCurrentDrawRange != null)
 				return new Region(fCurrentDrawRange.offset, fCurrentDrawRange.length);
-			
+
 			// trigger a repaint of the entire viewport
 			int vOffset= getInclusiveTopIndexStartOffset();
 			if (vOffset == -1)
 				return null;
-			
+
 			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
 			int vLength= getExclusiveBottomIndexEndOffset() - vOffset;
-			
+
 			return new Region(vOffset, vLength);
 		}
-		
+
 		int widgetOffset;
 		try {
 			int widgetClippingStartOffset= fTextWidget.getOffsetAtLocation(new Point(0, event.y));
@@ -1470,7 +1470,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				widgetOffset= 0;
 			}
 		}
-		
+
 		int widgetEndOffset;
 		try {
 			int widgetClippingEndOffset= fTextWidget.getOffsetAtLocation(new Point(0, event.y + event.height));
@@ -1489,9 +1489,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				widgetEndOffset= fTextWidget.getCharCount();
 			}
 		}
-		
+
 		IRegion clippingRegion= getModelRange(widgetOffset, widgetEndOffset - widgetOffset);
-		
+
 		return clippingRegion;
 	}
 
@@ -1510,7 +1510,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/**
 	 * Returns the widget region that corresponds to the
 	 * given offset and length in the viewer's document.
-	 * 
+	 *
 	 * @param modelOffset the model offset
 	 * @param modelLength the model length
 	 * @return the corresponding widget region
@@ -1556,11 +1556,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
 			return extension.widgetRange2ModelRange(new Region(offset, length));
 		}
-		
+
 		IRegion region= fSourceViewer.getVisibleRegion();
 		return new Region(region.getOffset() + offset, length);
 	}
-	
+
 	/**
 	 * Checks whether the intersection of the given text ranges
 	 * is empty or not.

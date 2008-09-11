@@ -441,7 +441,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (bounds.width < size.x)
 			// we don't fit on the screen - try again and wrap
 			size= fContextInfoText.computeSize(bounds.width - PAD, SWT.DEFAULT, true);
-		
+
 		size.x += TEXT_PAD;
 		fContextInfoText.setSize(size);
 		fContextInfoText.setLocation(1,1);
@@ -544,7 +544,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Returns the minimal required height for the popup, may return 0 if the popup has not been
 	 * created yet.
-	 * 
+	 *
 	 * @return the minimal height
 	 * @since 3.3
 	 */

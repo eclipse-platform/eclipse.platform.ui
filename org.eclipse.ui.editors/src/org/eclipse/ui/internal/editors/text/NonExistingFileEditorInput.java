@@ -20,11 +20,10 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
-
-import org.eclipse.ui.editors.text.ILocationProvider;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
+
+import org.eclipse.ui.editors.text.ILocationProvider;
 
 /**
  * @since 3.1

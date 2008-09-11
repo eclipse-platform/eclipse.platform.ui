@@ -365,7 +365,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			((ITextViewerExtension) fTextViewer).prependVerifyKeyListener(this);
 		else
 			text.addVerifyKeyListener(this);
-		
+
 		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (commandService != null)
 			commandService.addExecutionListener(this);

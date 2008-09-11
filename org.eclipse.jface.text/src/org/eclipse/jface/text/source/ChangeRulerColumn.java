@@ -114,9 +114,9 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 		}
 	}
-	
+
 	/**
-	 * The view(port) listener. 
+	 * The view(port) listener.
 	 */
 	private final InternalListener fInternalListener= new InternalListener();
 	/**
@@ -149,7 +149,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	private IAnnotationModel fAnnotationModel;
 	/** The width of the change ruler column. */
 	private final int fWidth= 5;
-	
+
 	/** Cache for the actual scroll position in pixels */
 	private int fScrollPos;
 	/** The buffer for double buffering */
@@ -159,17 +159,17 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 	/**
 	 * Creates a new ruler column.
-	 * 
+	 *
 	 * @deprecated since 3.2 use {@link #ChangeRulerColumn(ISharedTextColors)} instead
 	 */
 	public ChangeRulerColumn() {
 		fRevisionPainter= null;
 		fDiffPainter= new DiffPainter(this, null);
 	}
-	
+
 	/**
 	 * Creates a new revision ruler column.
-	 * 
+	 *
 	 * @param sharedColors the colors to look up RGBs
 	 * @since 3.2
 	 */
@@ -178,7 +178,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		fRevisionPainter= new RevisionPainter(this, sharedColors);
 		fDiffPainter= new DiffPainter(this, null); // no shading
 	}
-	
+
 	/**
 	 * Returns the System background color for list widgets.
 	 *
@@ -225,7 +225,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			fCachedTextViewer.addViewportListener(fInternalListener);
 			fCachedTextViewer.addTextListener(fInternalListener);
 		}
-		
+
 		fRevisionPainter.setParentRuler(parentRuler);
 		fDiffPainter.setParentRuler(parentRuler);
 
@@ -287,7 +287,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 	/**
 	 * Returns the view port height in lines.
-	 * 
+	 *
 	 * @return the view port height in lines
 	 * @deprecated as of 3.2 the number of lines in the viewport cannot be computed because
 	 *             StyledText supports variable line heights
@@ -300,7 +300,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/**
 	 * Returns <code>true</code> if the viewport displays the entire viewer contents, i.e. the
 	 * viewer is not vertically scrollable.
-	 * 
+	 *
 	 * @return <code>true</code> if the viewport displays the entire contents, <code>false</code> otherwise
 	 * @since 3.2
 	 */
@@ -485,10 +485,10 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/**
 	 * Computes the document based line range visible in the text widget.
-	 * 
+	 *
 	 * @return the document based line range visible in the text widget
 	 * @since 3.2
 	 */
@@ -496,35 +496,35 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		IDocument doc= fCachedTextViewer.getDocument();
 		if (doc == null)
 			return null;
-		
+
 		int topLine;
 		IRegion coverage;
-		
+
 		if (fCachedTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
-			
+
 			// ITextViewer.getTopIndex returns the fully visible line, but we want the partially
 			// visible one
 			int widgetTopLine= JFaceTextUtil.getPartialTopIndex(fCachedTextWidget);
 			topLine= extension.widgetLine2ModelLine(widgetTopLine);
-			
+
 			coverage= extension.getModelCoverage();
-			
+
 		} else {
-			topLine= JFaceTextUtil.getPartialTopIndex(fCachedTextViewer); 
+			topLine= JFaceTextUtil.getPartialTopIndex(fCachedTextViewer);
 			coverage= fCachedTextViewer.getVisibleRegion();
 		}
-		
+
 		int bottomLine= fCachedTextViewer.getBottomIndex();
 		if (bottomLine != -1)
 			++ bottomLine;
-		
+
 		// clip by coverage window
 		try {
 			int firstLine= doc.getLineOfOffset(coverage.getOffset());
 			if (firstLine > topLine)
 				topLine= firstLine;
-			
+
 			int lastLine= doc.getLineOfOffset(coverage.getOffset() + coverage.getLength());
 			if (lastLine < bottomLine || bottomLine == -1)
 				bottomLine= lastLine;
@@ -532,11 +532,11 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			x.printStackTrace();
 			return null;
 		}
-		
+
 		ILineRange visibleModelLines= new LineRange(topLine, bottomLine - topLine + 1);
 		return visibleModelLines;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumn#setRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation)
 	 */
@@ -547,7 +547,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 	/**
      * Returns the revision selection provider.
-     * 
+     *
      * @return the revision selection provider
      * @since 3.2
      */

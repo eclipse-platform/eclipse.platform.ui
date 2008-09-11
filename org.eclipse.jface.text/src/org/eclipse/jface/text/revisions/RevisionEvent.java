@@ -18,17 +18,17 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * Clients may use but not instantiate this class.
  * </p>
- * 
+ *
  * @since 3.3
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class RevisionEvent {
-	
+
 	private final RevisionInformation fInformation;
 
 	/**
 	 * Creates a new event.
-	 * 
+	 *
 	 * @param information the revision info
 	 */
 	public RevisionEvent(RevisionInformation information) {
@@ -38,7 +38,7 @@ public final class RevisionEvent {
 
 	/**
 	 * Returns the revision information that has changed.
-	 * 
+	 *
 	 * @return the revision information that has changed
 	 */
 	public RevisionInformation getRevisionInformation() {

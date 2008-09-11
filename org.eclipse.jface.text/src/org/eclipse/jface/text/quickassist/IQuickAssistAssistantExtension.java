@@ -21,7 +21,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
  * 	<li>allows to get a handler for the given command identifier</li>
  * 	<li>allows to enable support for colored labels in the proposal popup</li>
  * </ul>
- * 
+ *
  * @since 3.4
  */
 public interface IQuickAssistAssistantExtension {
@@ -32,7 +32,7 @@ public interface IQuickAssistAssistantExtension {
 	 * The same handler instance will be returned when called a more than once
 	 * with the same command identifier.
 	 * </p>
-	 * 
+	 *
 	 * @param commandId the command identifier
 	 * @return the handler for the given command identifier
 	 * @throws IllegalArgumentException if the command is not supported by this
@@ -46,7 +46,7 @@ public interface IQuickAssistAssistantExtension {
 	 * Enables the support for colored labels in the proposal popup.
 	 * <p>Completion proposals can implement {@link ICompletionProposalExtension6}
 	 * to provide colored proposal labels.</p>
-	 * 
+	 *
 	 * @param isEnabled if <code>true</code> the support for colored labels is enabled in the proposal popup
 	 * @since 3.4
 	 */

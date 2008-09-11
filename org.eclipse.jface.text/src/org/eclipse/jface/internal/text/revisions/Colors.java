@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text.revisions;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * Utility for color operations.
- * 
+ *
  * @since 3.3
  */
 public final class Colors {
@@ -30,7 +30,7 @@ public final class Colors {
 	/**
 	 * Returns the human-perceived brightness of a color as float in [0.0, 1.0]. The used RGB
 	 * weights come from http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html#RTFToC9.
-	 * 
+	 *
 	 * @param rgb the color
 	 * @return the gray-scale value
 	 */
@@ -43,7 +43,7 @@ public final class Colors {
 	 * are lightened. Depending on the hue, the brightness range within the RGB gamut may be
 	 * different, outside values are clipped. Note that this is an approximation; the returned RGB
 	 * is not guaranteed to have the requested {@link #brightness(RGB) brightness}.
-	 * 
+	 *
 	 * @param color the color to normalize
 	 * @param brightness the requested brightness, in [0,&nbsp;1]
 	 * @return a normalized version of <code>color</code>
@@ -61,7 +61,7 @@ public final class Colors {
 	/**
 	 * Converts an {@link RGB} to an <a href="http://en.wikipedia.org/wiki/HSL_color_space">HSI</a>
 	 * triplet.
-	 * 
+	 *
 	 * @param color the color to convert
 	 * @return the HSI float array of length 3
 	 */
@@ -82,7 +82,7 @@ public final class Colors {
 				hue = (g  - b) / delta;
 			} else {
 				if (g == max) {
-					hue = 2 + (b - r) / delta;	
+					hue = 2 + (b - r) / delta;
 				} else {
 					hue = 4 + (r - g) / delta;
 				}
@@ -95,7 +95,7 @@ public final class Colors {
 
 	/**
 	 * Converts a <a href="http://en.wikipedia.org/wiki/HSL_color_space">HSI</a> triplet to an RGB.
-	 * 
+	 *
 	 * @param hsi the HSI values
 	 * @return the RGB corresponding to the HSI spec
 	 */
@@ -105,7 +105,7 @@ public final class Colors {
 		float saturation= hsi[1];
 		float intensity= hsi[2];
 		if (saturation == 0) {
-			r = g = b = intensity; 
+			r = g = b = intensity;
 		} else {
 			float temp2= intensity < 0.5f ? intensity * (1.0f + saturation) : (intensity + saturation) - (intensity * saturation);
 			float temp1= 2f * intensity - temp2;
@@ -119,7 +119,7 @@ public final class Colors {
 
 		int red = (int)(r * 255 + 0.5);
 		int green = (int)(g * 255 + 0.5);
-		int blue = (int)(b * 255 + 0.5);	
+		int blue = (int)(b * 255 + 0.5);
 		return new RGB(red, green, blue);
 	}
 
@@ -145,7 +145,7 @@ public final class Colors {
 	 * @param bg the background color
 	 * @param fg the foreground color
 	 * @param factor the mixing factor, must be in [0,&nbsp;1]
-	 * 
+	 *
 	 * @return the interpolated color
 	 */
 	public static RGB blend(RGB bg, RGB fg, float factor) {
@@ -166,7 +166,7 @@ public final class Colors {
 	 * <p>
 	 * The returned array has size <code>steps</code>, and the color at index 0 is <code>start</code>, the color
 	 * at index <code>steps&nbsp;-&nbsp;1</code> is <code>end</code>.
-	 * 
+	 *
 	 * @param start the start color of the palette
 	 * @param end the end color of the palette
 	 * @param steps the requested size, must be &gt; 0
@@ -176,14 +176,14 @@ public final class Colors {
 		Assert.isLegal(start != null);
 		Assert.isLegal(end != null);
 		Assert.isLegal(steps > 0);
-		
+
 		if (steps == 1)
 			return new RGB[] { start };
 
 		float step= 1.0f / (steps - 1);
 		RGB[] gradient= new RGB[steps];
 		for (int i= 0; i < steps; i++)
-			gradient[i]= blend(start, end, step * i); 
+			gradient[i]= blend(start, end, step * i);
 
 		return gradient;
 	}
@@ -204,7 +204,7 @@ public final class Colors {
 	 * {@link SWT#COLOR_YELLOW yellow}, {@link SWT#COLOR_CYAN cyan},
 	 * {@link SWT#COLOR_MAGENTA magenta}.
 	 * </p>
-	 * 
+	 *
 	 * @param steps the requested size, must be &gt;= 2
 	 * @return an array of <code>steps</code> colors evenly distributed on the color wheel
 	 */
@@ -228,7 +228,7 @@ public final class Colors {
 	 * {@link SWT#COLOR_YELLOW yellow}, {@link SWT#COLOR_CYAN cyan},
 	 * {@link SWT#COLOR_MAGENTA magenta}.
 	 * </p>
-	 * 
+	 *
 	 * @param index the index of the color, must be &gt;= 0
 	 * @return a color hue in [0&#176;,&nbsp;360&#176;)
 	 * @see RGB#RGB(float, float, float)
@@ -239,7 +239,7 @@ public final class Colors {
 		 * Base 3 gives a nice partitioning for RGB colors with red, green, blue being the colors
 		 * 0,1,2, and yellow, cyan, magenta colors 3,4,5.
 		 */
-		final int base= 3; 
+		final int base= 3;
 		final float range= 360f;
 
 		// partition the baseRange by using the least significant bit to select one half of the

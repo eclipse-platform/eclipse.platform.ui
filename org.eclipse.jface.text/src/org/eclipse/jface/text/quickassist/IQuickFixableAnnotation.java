@@ -25,7 +25,7 @@ import org.eclipse.jface.text.source.Annotation;
  * </p>
  * <p>
  * This interface can be implemented by clients.</p>
- * 
+ *
  * @since 3.2
  */
 public interface IQuickFixableAnnotation {
@@ -33,7 +33,7 @@ public interface IQuickFixableAnnotation {
 	/**
 	 * Sets whether there are quick fixes available for
 	 * this annotation.
-	 * 
+	 *
 	 * @param state <code>true</code> if there are quick fixes available, false otherwise
 	 */
 	void setQuickFixable(boolean state);
@@ -45,7 +45,7 @@ public interface IQuickFixableAnnotation {
 	 * called at least once but it can also be hard-coded, e.g. always
 	 * return <code>true</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the state has been set
 	 */
 	boolean isQuickFixableStateSet();
@@ -55,7 +55,7 @@ public interface IQuickFixableAnnotation {
 	 * <p>
 	 * <strong>Note:</strong> This method must only be called
 	 * if {@link #isQuickFixableStateSet()} returns <code>true</code>.</p>
-	 * 
+	 *
 	 * @return <code>true</code> if this annotation offers quick fixes
 	 * @throws AssertionFailedException if called when {@link #isQuickFixableStateSet()} is <code>false</code>
 	 */

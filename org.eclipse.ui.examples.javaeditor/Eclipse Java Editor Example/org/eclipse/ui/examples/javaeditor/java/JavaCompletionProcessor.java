@@ -15,7 +15,13 @@ import java.text.MessageFormat;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.contentassist.*;
+import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ContextInformation;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
+import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
  * Example Java completion processor.
@@ -43,7 +49,7 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 		public void install(IContextInformation info, ITextViewer viewer, int offset) {
 			fInstallOffset= offset;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.contentassist.IContextInformationPresenter#updatePresentation(int, TextPresentation)
 		 */
@@ -68,7 +74,7 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 		}
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */
@@ -80,28 +86,28 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 				MessageFormat.format(JavaEditorMessages.getString("CompletionProcessor.ContextInfo.value.pattern"), new Object[] { new Integer(i), new Integer(documentOffset - 5), new Integer(documentOffset + 5)})); //$NON-NLS-1$
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return new char[] { '.', '(' };
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */
 	public char[] getContextInformationAutoActivationCharacters() {
 		return new char[] { '#' };
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */
 	public IContextInformationValidator getContextInformationValidator() {
 		return fValidator;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IContentAssistProcessor
 	 */

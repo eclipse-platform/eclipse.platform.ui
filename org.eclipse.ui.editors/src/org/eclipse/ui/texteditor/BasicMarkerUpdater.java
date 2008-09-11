@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-
-import org.eclipse.core.resources.IMarker;
 
 
 /**

@@ -295,7 +295,7 @@ public class RangeDifference {
 			fRegion= new DiffRegion(this, 0, differences, source);
 		return fRegion;
 	}
-	
+
 	/*
 	 * @since 3.2
 	 */
@@ -323,11 +323,11 @@ public class RangeDifference {
 			default:
 				break;
 		}
-		
+
 		buf.append(", Left: [" + fLeftStart + "+" + fLeftLength + ")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		buf.append(", Right: [" + fRightStart + "+" + fRightLength + ")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		buf.append("]"); //$NON-NLS-1$
-		
+
 		return buf.toString();
 	}
 }

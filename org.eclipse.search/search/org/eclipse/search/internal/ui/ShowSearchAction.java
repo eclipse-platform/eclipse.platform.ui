@@ -17,10 +17,10 @@ import org.eclipse.jface.action.Action;
  */
 class ShowSearchAction extends Action {
 	private Search fSearch;
-	
+
 	/**
 	 *	Create a new instance of this class
-	 * @param search 
+	 * @param search
 	 */
 	public ShowSearchAction(Search search) {
 		fSearch= search;

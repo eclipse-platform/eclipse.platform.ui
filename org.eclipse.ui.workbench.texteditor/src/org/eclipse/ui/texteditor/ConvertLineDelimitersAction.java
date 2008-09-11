@@ -127,7 +127,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		/**
 		 * Returns a new runnable for converting all line delimiters in the
 		 * <code>rewriteTarget</code> to <code>lineDelimter</code>.
-		 * 
+		 *
 		 * @param rewriteTarget the rewrite target
 		 * @param lineDelimiter the line delimiter
 		 */

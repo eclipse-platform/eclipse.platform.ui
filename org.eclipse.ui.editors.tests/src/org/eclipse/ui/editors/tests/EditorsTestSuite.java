@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
 
 /**
  * Test Suite for org.eclipse.ui.editors.
- * 
+ *
  * @since 3.0
  */
 public class EditorsTestSuite extends TestSuite {

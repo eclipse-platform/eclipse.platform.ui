@@ -36,15 +36,15 @@ import org.eclipse.ui.dialogs.SelectionDialog;
  * Dialog that shows a list of items with icon and label.
  */
 public class ListDialog extends SelectionDialog {
-	
+
 	private static final int WIDTH_IN_CHARACTERS= 55;
-	
+
 	private IStructuredContentProvider fContentProvider;
 	private ILabelProvider fLabelProvider;
 	private Object fInput;
 	private TableViewer fViewer;
 	private boolean fCreateCancelButton= true;
-	
+
 	public ListDialog(Shell parent, Object input, String title, String message, IStructuredContentProvider sp, ILabelProvider lp) {
 		super(parent);
 		setTitle(title);
@@ -53,24 +53,24 @@ public class ListDialog extends SelectionDialog {
 		fContentProvider= sp;
 		fLabelProvider= lp;
 	}
-	
+
 	public void setCreateCancelButton(boolean value) {
 		fCreateCancelButton= value;
 	}
-	
+
 	/*
 	 * Overrides method from Dialog
 	 */
 	protected Label createMessageArea(Composite composite) {
 		Label label = new Label(composite,SWT.WRAP);
-		label.setText(getMessage()); 
+		label.setText(getMessage());
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
 		label.setLayoutData(gd);
 		applyDialogFont(label);
 		return label;
 	}
-	
+
 	/*
 	 * Overrides method from Dialog
 	 */
@@ -99,7 +99,7 @@ public class ListDialog extends SelectionDialog {
 		applyDialogFont(table);
 		return table;
 	}
-	
+
 	/*
 	 * Overrides method from Dialog
 	 */
@@ -107,9 +107,9 @@ public class ListDialog extends SelectionDialog {
 		if (! fCreateCancelButton)
 			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		else
-			super.createButtonsForButtonBar(parent);	
-	}	
-	
+			super.createButtonsForButtonBar(parent);
+	}
+
 	/*
 	 * Overrides method from Dialog
 	 */

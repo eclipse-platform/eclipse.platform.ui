@@ -63,7 +63,7 @@ import org.eclipse.jface.util.Geometry;
  * They should also extend {@link #computeTrim()} if they create a content area
  * with additional trim (e.g. scrollbars) and override {@link #getInformationPresenterControlCreator()}.
  * </p>
- * 
+ *
  * @since 3.4
  */
 public abstract class AbstractInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5 {
@@ -74,7 +74,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	private final Composite fContentComposite;
 	/** Whether the information control is resizable. */
 	private final boolean fResizable;
-	
+
 	/** Composite containing the status line content or <code>null</code> if none. */
 	private Composite fStatusComposite;
 	/** Separator between content and status line or <code>null</code> if none. */
@@ -85,17 +85,17 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	private final ToolBarManager fToolBarManager;
 	/** Status line toolbar or <code>null</code> if none. */
 	private ToolBar fToolBar;
-	
+
 	/** Listener for shell activation and deactivation. */
 	private Listener fShellListener;
 	/** All focus listeners registered to this information control. */
 	private ListenerList fFocusListeners= new ListenerList(ListenerList.IDENTITY);
-	
+
 	/** Size constraints, x is the maxWidth and y is the maxHeight, or <code>null</code> if not set. */
 	private Point fSizeConstraints;
 	/** The size of the resize handle if already set, -1 otherwise */
 	private int fResizeHandleSize;
-	
+
 	/**
 	 * Creates an abstract information control with the given shell as parent.
 	 * The control will not be resizable and optionally show a status line with
@@ -103,7 +103,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * <p>
 	 * <em>Important: Subclasses are required to call {@link #create()} at the end of their constructor.</em>
 	 * </p>
-	 * 
+	 *
 	 * @param parentShell the parent of this control's shell
 	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 */
@@ -118,7 +118,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * <p>
 	 * <em>Important: Subclasses are required to call {@link #create()} at the end of their constructor.</em>
 	 * </p>
-	 * 
+	 *
 	 * @param parentShell the parent of this control's shell
 	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
 	 */
@@ -131,7 +131,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * <p>
 	 * <em>Important: Subclasses are required to call {@link #create()} at the end of their constructor.</em>
 	 * </p>
-	 * 
+	 *
 	 * @param parentShell the parent of this control's shell
 	 * @param isResizable <code>true</code> if the control should be resizable
 	 */
@@ -149,47 +149,47 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * <p>
 	 * <strong>Important:</strong>: Subclasses are required to call {@link #create()} at the end of their constructor.
 	 * </p>
-	 * 
+	 *
 	 * @param parentShell the parent of this control's shell
 	 * @param shellStyle style of this control's shell
 	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
-	 * 
+	 *
 	 * @deprecated clients should use one of the public constructors
 	 */
 	AbstractInformationControl(Shell parentShell, int shellStyle, final String statusFieldText, final ToolBarManager toolBarManager) {
 		Assert.isTrue(statusFieldText == null || toolBarManager == null);
 		fResizeHandleSize= -1;
 		fToolBarManager= toolBarManager;
-		
+
 		if ((shellStyle & SWT.NO_TRIM) != 0)
 			shellStyle&= ~(SWT.NO_TRIM | SWT.SHELL_TRIM); // make sure we get the OS border but no other trims
-		
+
 		fResizable= (shellStyle & SWT.RESIZE) != 0; // on GTK, Shell removes SWT.RESIZE if SWT.ON_TOP is set
 		fShell= new Shell(parentShell, shellStyle);
 		Display display= fShell.getDisplay();
 		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		Color background= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		setColor(fShell, foreground, background);
-		
+
 		GridLayout layout= new GridLayout(1, false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		layout.verticalSpacing= 0;
 		fShell.setLayout(layout);
-		
+
 		fContentComposite= new Composite(fShell, SWT.NONE);
 		fContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fContentComposite.setLayout(new FillLayout());
 		setColor(fContentComposite, foreground, background);
-		
+
 		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
 	}
 
 	private void createStatusComposite(final String statusFieldText, final ToolBarManager toolBarManager, Color foreground, Color background) {
 		if (toolBarManager == null && statusFieldText == null)
 			return;
-		
+
 		fStatusComposite= new Composite(fShell, SWT.NONE);
 		GridData gridData= new GridData(SWT.FILL, SWT.BOTTOM, true, false);
 		fStatusComposite.setLayoutData(gridData);
@@ -198,10 +198,10 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		statusLayout.marginWidth= 0;
 		statusLayout.verticalSpacing= 1;
 		fStatusComposite.setLayout(statusLayout);
-		
+
 		fSeparator= new Label(fStatusComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		fSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		if (statusFieldText != null) {
 			createStatusLabel(statusFieldText, foreground, background);
 		} else {
@@ -213,39 +213,39 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fStatusLabel= new Label(fStatusComposite, SWT.RIGHT);
 		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		fStatusLabel.setText(statusFieldText);
-		
+
 		FontData[] fontDatas= JFaceResources.getDialogFont().getFontData();
 		for (int i= 0; i < fontDatas.length; i++) {
 			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
 		}
 		fStatusLabel.setFont(new Font(fStatusLabel.getDisplay(), fontDatas));
-		
+
 		fStatusLabel.setForeground(fStatusLabel.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 		fStatusLabel.setBackground(background);
 		setColor(fStatusComposite, foreground, background);
 	}
-	
+
 	private void createToolBar(ToolBarManager toolBarManager) {
 		final Composite bars= new Composite(fStatusComposite, SWT.NONE);
 		bars.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		
+
 		GridLayout layout= new GridLayout(3, false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		layout.horizontalSpacing= 0;
 		layout.verticalSpacing= 0;
 		bars.setLayout(layout);
-		
+
 		fToolBar= toolBarManager.createControl(bars);
 		GridData gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		fToolBar.setLayoutData(gd);
-		
+
 		Composite spacer= new Composite(bars, SWT.NONE);
 		gd= new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint= 0;
 		gd.heightHint= 0;
 		spacer.setLayoutData(gd);
-		
+
 		addMoveSupport(spacer);
 		addResizeSupportIfNecessary(bars);
 	}
@@ -258,11 +258,11 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		final boolean isWin= platform.equals("win32"); //$NON-NLS-1$
 		if (!isWin && !platform.equals("gtk")) //$NON-NLS-1$
 			return;
-		
+
 		final Canvas resizer= new Canvas(bars, SWT.NONE);
-		
+
 		int size= getResizeHandleSize(bars);
-		
+
 		GridData data= new GridData(SWT.END, SWT.END, false, true);
 		data.widthHint= size;
 		data.heightHint= size;
@@ -285,7 +285,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 					for (int i= 0; i <= 2; i++)
 						for (int j= 0; j <= 2 - i; j++)
 							e.gc.fillRectangle(end - 4 * i, end - 4 * j, 2, 2);
-					
+
 				} else {
 					// draw diagonal lines
 					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
@@ -299,12 +299,12 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				}
 			}
 		});
-		
-		final boolean isRTL= (resizer.getShell().getStyle() & SWT.RIGHT_TO_LEFT) != 0; 
+
+		final boolean isRTL= (resizer.getShell().getStyle() & SWT.RIGHT_TO_LEFT) != 0;
 		resizer.setCursor(new Cursor(resizer.getDisplay(), isRTL ? SWT.CURSOR_SIZESW : SWT.CURSOR_SIZESE));
 		MouseAdapter resizeSupport= new MouseAdapter() {
 			private MouseMoveListener fResizeListener;
-			
+
 			public void mouseDown(MouseEvent e) {
 				Rectangle shellBounds= fShell.getBounds();
 				final int shellX= shellBounds.x;
@@ -329,7 +329,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				};
 				resizer.addMouseMoveListener(fResizeListener);
 			}
-			
+
 			public void mouseUp(MouseEvent e) {
 				resizer.removeMouseMoveListener(fResizeListener);
 				fResizeListener= null;
@@ -348,13 +348,13 @@ public abstract class AbstractInformationControl implements IInformationControl,
 			sliderH.dispose();
 			fResizeHandleSize= Math.min(width, height);
 		}
-		
+
 		return fResizeHandleSize;
 	}
 
 	/**
 	 * Adds support to move the shell by dragging the given control.
-	 * 
+	 *
 	 * @param control the control that can be used to move the shell
 	 */
 	private void addMoveSupport(final Control control) {
@@ -390,7 +390,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	/**
 	 * Utility to set the foreground and the background color of the given
 	 * control
-	 * 
+	 *
 	 * @param control the control to modify
 	 * @param foreground the color to use for the foreground
 	 * @param background the color to use for the background
@@ -402,17 +402,17 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 	/**
 	 * The shell of the popup window.
-	 * 
+	 *
 	 * @return the shell used for the popup window
 	 */
 	protected final Shell getShell() {
 		return fShell;
 	}
-	
+
 	/**
 	 * The toolbar manager used to manage the toolbar, or <code>null</code> if
 	 * no toolbar is shown.
-	 * 
+	 *
 	 * @return the tool bar manager or <code>null</code>
 	 */
 	protected final ToolBarManager getToolBarManager() {
@@ -443,11 +443,11 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * The given <code>parent</code> comes with a {@link FillLayout}.
 	 * Subclasses may set a different layout.
 	 * </p>
-	 * 
+	 *
 	 * @param parent the container of the content
 	 */
 	protected abstract void createContent(Composite parent);
-	
+
 	/**
 	 * Sets the information to be presented by this information control.
 	 * <p>
@@ -455,16 +455,16 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * or implement {@link IInformationControlExtension2}.
 	 *
 	 * @param information the information to be presented
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
 	 */
 	public void setInformation(String information) {
-		
+
 	}
-	
+
 	/**
 	 * Returns whether the information control is resizable.
-	 * 
+	 *
 	 * @return <code>true</code> if the information control is resizable,
 	 *         <code>false</code> if it is not resizable.
 	 */
@@ -478,7 +478,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	public void setVisible(boolean visible) {
 		if (fShell.isVisible() == visible)
 			return;
-		
+
 		fShell.setVisible(visible);
 	}
 
@@ -510,10 +510,10 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		fSizeConstraints= new Point(maxWidth, maxHeight);
 	}
-	
+
 	/**
 	 * Returns the size constraints.
-	 * 
+	 *
 	 * @return the size constraints or <code>null</code> if not set
 	 * @see #setSizeConstraints(int, int)
 	 */
@@ -529,7 +529,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		Point constrains= getSizeConstraints();
 		if (constrains == null)
 			return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		
+
 		return fShell.computeSize(constrains.x, constrains.y, true);
 	}
 
@@ -537,7 +537,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * Computes the trim (status text and tool bar are considered as trim).
 	 * Subclasses can extend this method to add additional trim (e.g. scroll
 	 * bars for resizable information controls).
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 */
 	public Rectangle computeTrim() {
@@ -617,7 +617,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	/**
 	 * This default implementation sets the focus on the popup shell.
 	 * Subclasses can override or extend.
-	 * 
+	 *
 	 * @see IInformationControl#setFocus()
 	 */
 	public void setFocus() {
@@ -673,10 +673,10 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * shown if the information control has been created with a non-null status
 	 * field text.
 	 * </p>
-	 * 
+	 *
 	 * @param statusFieldText the text to be used in the optional status field
 	 *        or <code>null</code> if the status field should be hidden
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.IInformationControlExtension4#setStatusText(java.lang.String)
 	 */
 	public void setStatusText(String statusFieldText) {
@@ -689,7 +689,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 			}
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
 	 */
@@ -723,7 +723,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * Computes the size constraints based on the
 	 * {@link JFaceResources#getDialogFont() dialog font}. Subclasses can
 	 * override or extend.
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
 	 */
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
@@ -735,5 +735,5 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 		return new Point(widthInChars * width, heightInChars * height);
 	}
-	
+
 }

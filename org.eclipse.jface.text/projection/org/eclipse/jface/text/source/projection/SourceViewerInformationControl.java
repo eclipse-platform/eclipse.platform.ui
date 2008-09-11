@@ -78,7 +78,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * styles are applied to the created shell. The given styles are applied to the created styled
 	 * text widget. The text widget will be initialized with the given font. The status field will
 	 * contain the given text or be hidden.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param isResizable <code>true</code> if resizable
 	 * @param symbolicFontName the symbolic font name
@@ -336,7 +336,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	public boolean hasContents() {
 		return fText.getCharCount() > 0;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 * @since 3.4
@@ -349,7 +349,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 	/**
 	 * Adds the internal trimmings to the given trim of the shell.
-	 * 
+	 *
 	 * @param trim the shell's trim, will be updated
 	 * @since 3.4
 	 */
@@ -418,7 +418,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	public boolean isVisible() {
 		return fShell != null && !fShell.isDisposed() && fShell.isVisible();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
 	 */

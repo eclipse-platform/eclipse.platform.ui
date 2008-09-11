@@ -12,7 +12,7 @@ package org.eclipse.search.ui;
 
 /**
  * An extension interface to <code>ISearchPage</code>. If clients implement
- * <code>IReplacePage</code> in addition to <code>ISearchPage</code>, a 
+ * <code>IReplacePage</code> in addition to <code>ISearchPage</code>, a
  * "Replace" button will be shown in the search dialog.
  *
  * @since 3.0
@@ -27,5 +27,5 @@ public interface IReplacePage {
 	 * @return <code>true</code> if the dialog can be closed after execution
 	 */
 	public boolean performReplace();
-	
+
 }

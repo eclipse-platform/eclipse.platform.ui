@@ -21,7 +21,7 @@ import org.eclipse.jface.text.source.ISourceViewerExtension2;
 
 /**
  * Standard implementation of {@link org.eclipse.jface.text.ITextHover}.
- * 
+ *
  * @since 3.2
  */
 public class DefaultTextHover implements ITextHover {
@@ -31,24 +31,24 @@ public class DefaultTextHover implements ITextHover {
 
 	/**
 	 * Creates a new annotation hover.
-	 * 
+	 *
 	 * @param sourceViewer this hover's annotation model
 	 */
 	public DefaultTextHover(ISourceViewer sourceViewer)  {
 		Assert.isNotNull(sourceViewer);
 		fSourceViewer= sourceViewer;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.4, replaced by {@link ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)}
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IAnnotationModel model= getAnnotationModel(fSourceViewer);
 		if (model == null)
 			return null;
-		
+
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation a= (Annotation) e.next();
@@ -61,7 +61,7 @@ public class DefaultTextHover implements ITextHover {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -71,18 +71,18 @@ public class DefaultTextHover implements ITextHover {
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return findWord(textViewer.getDocument(), offset);
 	}
-	
+
 	/**
 	 * Tells whether the annotation should be included in
 	 * the computation.
-	 * 
+	 *
 	 * @param annotation the annotation to test
 	 * @return <code>true</code> if the annotation is included in the computation
 	 */
 	protected boolean isIncluded(Annotation annotation) {
 		return true;
 	}
-	
+
 	private IAnnotationModel getAnnotationModel(ISourceViewer viewer) {
 		if (viewer instanceof ISourceViewerExtension2) {
 			ISourceViewerExtension2 extension= (ISourceViewerExtension2) viewer;
@@ -90,7 +90,7 @@ public class DefaultTextHover implements ITextHover {
 		}
 		return viewer.getAnnotationModel();
 	}
-	
+
 	private IRegion findWord(IDocument document, int offset) {
 		int start= -2;
 		int end= -1;

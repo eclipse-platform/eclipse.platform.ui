@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+
 import org.eclipse.ui.texteditor.spelling.SpellingEngineDescriptor;
 
 /**

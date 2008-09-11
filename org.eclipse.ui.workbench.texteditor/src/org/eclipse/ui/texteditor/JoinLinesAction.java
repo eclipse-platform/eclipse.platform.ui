@@ -25,17 +25,17 @@ import org.eclipse.jface.text.ITextSelection;
 /**
  * Action for joining two or more lines together by deleting the
  * line delimiters and trimming the whitespace between them.
- * 
+ *
  * @since 3.3
  */
 public class JoinLinesAction extends TextEditorAction {
 
 	private String fJoint= null;
-	
-	
+
+
 	/**
 	 * Creates a line joining action.
-	 * 
+	 *
 	 * @param bundle the resource bundle for UI strings
 	 * @param prefix the prefix for the property keys into <code>bundle</code>
 	 * @param editor the editor
@@ -52,7 +52,7 @@ public class JoinLinesAction extends TextEditorAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		
+
 		ITextEditor editor= getTextEditor();
 		if (editor == null)
 			return;
@@ -77,12 +77,12 @@ public class JoinLinesAction extends TextEditorAction {
 		} catch (BadLocationException e) {
 			// should not happen
 		}
-		
+
 	}
 
 	/**
 	 * Returns the editor's document.
-	 * 
+	 *
 	 * @param editor the editor
 	 * @return the editor's document
 	 */
@@ -101,7 +101,7 @@ public class JoinLinesAction extends TextEditorAction {
 
 	/**
 	 * Returns the editor's selection.
-	 * 
+	 *
 	 * @param editor the editor
 	 * @return the editor's selection
 	 */
@@ -117,7 +117,7 @@ public class JoinLinesAction extends TextEditorAction {
 
 		return (ITextSelection) selection;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
 	 */
@@ -137,7 +137,7 @@ public class JoinLinesAction extends TextEditorAction {
 
 	/**
 	 * Joins several text lines to one line.
-	 * 
+	 *
 	 * @param document the document
 	 * @param startLine the start line
 	 * @param endLine the end line
@@ -173,17 +173,17 @@ public class JoinLinesAction extends TextEditorAction {
 		lineLength= lineLength - getLineDelimiterLength(document, line);
 		if (!ignoreLeadingWhitespace)
 			return document.get(lineOffset, lineLength).trim();
-		
+
 		while (lineLength > 0 && Character.isWhitespace(document.getChar(lineOffset + lineLength - 1)))
 			lineLength--;
-		
+
 		return document.get(lineOffset, lineLength);
 	}
-	
+
 	private int getLineDelimiterLength(IDocument document, int line) throws BadLocationException {
 		String lineDelimiter= document.getLineDelimiter(line);
 		return lineDelimiter != null ? lineDelimiter.length() : 0;
-		
+
 	}
 
 }

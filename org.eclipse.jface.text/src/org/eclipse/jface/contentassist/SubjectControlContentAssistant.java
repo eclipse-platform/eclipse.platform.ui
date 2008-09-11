@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Assert;
  * Usually, clients instantiate this class and configure it before using it.
  *
  * @since 3.0
- * @deprecated As of 3.2, replaced by Platform UI's field assist support * 
+ * @deprecated As of 3.2, replaced by Platform UI's field assist support *
  */
 public class SubjectControlContentAssistant extends org.eclipse.jface.text.contentassist.ContentAssistant implements ISubjectControlContentAssistant {
 

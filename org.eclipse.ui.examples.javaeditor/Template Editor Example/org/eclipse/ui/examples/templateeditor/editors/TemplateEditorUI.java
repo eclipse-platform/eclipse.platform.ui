@@ -23,11 +23,12 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
-import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
-import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.examples.javaeditor.JavaEditorExamplePlugin;
 import org.eclipse.ui.examples.templateeditor.template.XMLContextType;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
+import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -35,21 +36,21 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class TemplateEditorUI  {
 	/** Key to store custom templates. */
 	private static final String CUSTOM_TEMPLATES_KEY= "org.eclipse.ui.examples.templateeditor.customtemplates"; //$NON-NLS-1$
-	
+
 	/** The shared instance. */
 	private static TemplateEditorUI fInstance;
-	
+
 	/** The template store. */
 	private TemplateStore fStore;
 	/** The context type registry. */
 	private ContributionContextTypeRegistry fRegistry;
-	
+
 	private TemplateEditorUI() {
 	}
 
 	/**
 	 * Returns the shared instance.
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static TemplateEditorUI getDefault() {
@@ -60,7 +61,7 @@ public class TemplateEditorUI  {
 
 	/**
 	 * Returns this plug-in's template store.
-	 * 
+	 *
 	 * @return the template store of this plug-in instance
 	 */
 	public TemplateStore getTemplateStore() {
@@ -77,7 +78,7 @@ public class TemplateEditorUI  {
 
 	/**
 	 * Returns this plug-in's context type registry.
-	 * 
+	 *
 	 * @return the context type registry for this plug-in instance
 	 */
 	public ContextTypeRegistry getContextTypeRegistry() {

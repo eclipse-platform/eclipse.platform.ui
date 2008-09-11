@@ -26,7 +26,7 @@ public final class IntHash extends Hash {
 		if (obj instanceof IntHash) {
 			return fHash == ((IntHash) obj).fHash;
 		}
-		
+
 		return false;
 	}
 

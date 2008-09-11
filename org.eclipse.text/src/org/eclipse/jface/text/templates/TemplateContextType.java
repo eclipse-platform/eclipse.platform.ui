@@ -78,7 +78,7 @@ public class TemplateContextType {
 
 	/**
 	 * Returns the id of the context type.
-	 * 
+	 *
 	 * @return the id of the receiver
 	 */
 	public String getId() {
@@ -260,7 +260,7 @@ public class TemplateContextType {
 
 	/**
 	 * Resolves a single variable in a context. Resolving is delegated to the registered resolver.
-	 * 
+	 *
 	 * @param variable the variable to resolve
 	 * @param context the context in which to resolve the variable
 	 * @since 3.3

@@ -40,7 +40,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 
 	/**
 	 * Creates a new diff region.
-	 * 
+	 *
 	 * @param difference the range difference
 	 * @param offset the offset
 	 * @param differences the list of diffrences

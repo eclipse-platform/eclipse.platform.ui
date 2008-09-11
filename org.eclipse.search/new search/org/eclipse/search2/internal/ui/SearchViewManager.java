@@ -21,26 +21,25 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-
 /**
- * 
+ *
  */
 public class SearchViewManager {
-	
+
 	private IQueryListener fNewQueryListener;
 	private int fViewCount= 0;
-	
+
 	private LinkedList fLRUSearchViews;
-	
-	
+
+
 	public SearchViewManager(QueryManager queryManager) {
 		fNewQueryListener= new IQueryListener() {
 
@@ -51,20 +50,20 @@ public class SearchViewManager {
 			public void queryRemoved(ISearchQuery query) {}
 			public void queryStarting(ISearchQuery query) {}
 			public void queryFinished(ISearchQuery query) {}
-			
+
 		};
-		
+
 		queryManager.addQueryListener(fNewQueryListener);
-		
+
 		fLRUSearchViews= new LinkedList();
-		
+
 	}
-	
+
 	public void dispose(QueryManager queryManager) {
 		queryManager.removeQueryListener(fNewQueryListener);
 	}
-	
-	
+
+
 	protected boolean showNewSearchQuery(ISearchQuery query) {
 		if (!fLRUSearchViews.isEmpty()) {
 			SearchView view= (SearchView) fLRUSearchViews.getFirst();
@@ -76,7 +75,7 @@ public class SearchViewManager {
 
 	public ISearchResultViewPart activateSearchView(boolean useForNewSearch) {
 		IWorkbenchPage activePage= SearchPlugin.getActivePage();
-		
+
 		String defaultPerspectiveId= NewSearchUI.getDefaultPerspectiveId();
 		if (defaultPerspectiveId != null) {
 			IWorkbenchWindow window= activePage.getWorkbenchWindow();
@@ -101,12 +100,12 @@ public class SearchViewManager {
 				}
 				return (ISearchResultViewPart) activePage.showView(NewSearchUI.SEARCH_VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 			} catch (PartInitException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
-			}	
+				ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message);
+			}
 		}
 		return null;
 	}
-	
+
 	public boolean isShown(ISearchQuery query) {
 		for (Iterator iter= fLRUSearchViews.iterator(); iter.hasNext();) {
 			SearchView view= (SearchView) iter.next();
@@ -117,15 +116,15 @@ public class SearchViewManager {
 		}
 		return false;
 	}
-	
+
 	public void activateSearchView(ISearchResultViewPart viewPart) {
 		try {
 			IWorkbenchPage activePage= viewPart.getSite().getPage();
 			String secondaryId= viewPart.getViewSite().getSecondaryId();
 			activePage.showView(NewSearchUI.SEARCH_VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 		} catch (PartInitException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
-		}	
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message);
+		}
 	}
 
 	private ISearchResultViewPart findLRUSearchResultView(IWorkbenchPage page, boolean avoidPinnedViews) {
@@ -149,14 +148,14 @@ public class SearchViewManager {
 					if (view != null && (!avoidPinnedViews || !view.isPinned())) {
 						return view;
 					}
-					
+
 				}
 			}
 		}
 		return null;
 	}
-	
-	
+
+
 	public void searchViewActivated(SearchView view) {
 		fLRUSearchViews.remove(view);
 		fLRUSearchViews.addFirst(view);
@@ -175,7 +174,7 @@ public class SearchViewManager {
 	}
 
 
-	
-	
-	
+
+
+
 }

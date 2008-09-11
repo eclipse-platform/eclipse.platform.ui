@@ -18,11 +18,11 @@ import org.eclipse.jface.action.Action;
 class RemoveAllResultsAction extends Action {
 
 	public RemoveAllResultsAction() {
-		super(SearchMessages.SearchResultView_removeAllResults_text); 
-		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);		
-		setToolTipText(SearchMessages.SearchResultView_removeAllResults_tooltip); 
+		super(SearchMessages.SearchResultView_removeAllResults_text);
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);
+		setToolTipText(SearchMessages.SearchResultView_removeAllResults_tooltip);
 	}
-	
+
 	public void run() {
 		SearchManager.getDefault().removeAllResults();
 	}

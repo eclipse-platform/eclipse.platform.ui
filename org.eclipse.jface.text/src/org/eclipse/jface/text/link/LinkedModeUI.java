@@ -624,8 +624,8 @@ public class LinkedModeUI {
 
 		}
 	};
-	
-	
+
+
 	/** Whether this UI is in simple highlighting mode or not. */
 	private boolean fSimple;
 
@@ -985,7 +985,7 @@ public class LinkedModeUI {
 		final StyledText widget= fCurrentTarget.fWidget;
 		if (widget == null || widget.isDisposed())
 			return;
-		
+
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132263
 		widget.getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -1048,7 +1048,7 @@ public class LinkedModeUI {
 
 	/**
 	 * Returns all possible content types of <code>document</code>.
-	 * 
+	 *
 	 * @param document the document
 	 * @return all possible content types of <code>document</code>
 	 * @throws BadPartitioningException if partitioning is invalid for this document
@@ -1067,7 +1067,7 @@ public class LinkedModeUI {
 		}
 		return document.getLegalContentTypes();
 	}
-	
+
 	private void createAnnotationModel() {
 		if (fCurrentTarget.fAnnotationModel == null) {
 			LinkedPositionAnnotations lpa= new LinkedPositionAnnotations();
@@ -1286,7 +1286,7 @@ public class LinkedModeUI {
 	 * Enables the support for colored labels in the proposal popup.
 	 * <p>Completion proposals can implement {@link ICompletionProposalExtension6}
 	 * to provide colored proposal labels.</p>
-	 * 
+	 *
 	 * @param isEnabled if <code>true</code> the support for colored labels is enabled in the proposal popup
 	 * @since 3.4
 	 */

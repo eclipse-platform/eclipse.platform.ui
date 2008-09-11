@@ -88,7 +88,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 			updateStatusFields();
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#validateEditorInputState()
 	 * @since 3.3
@@ -131,7 +131,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 
 	/**
 	 * Helper to get rid of deprecation warnings.
-	 * 
+	 *
 	 * @param parent the parent
 	 * @param status the status
 	 * @return the control

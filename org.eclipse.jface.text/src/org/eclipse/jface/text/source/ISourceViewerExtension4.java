@@ -18,7 +18,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
  * <p>
  * It introduces API to access a minimal set of content assistant APIs.</li>
  * </p>
- * 
+ *
  * @see IContentAssistant
  * @since 3.4
  */
@@ -26,7 +26,7 @@ public interface ISourceViewerExtension4 {
 
 	/**
 	 * Returns a facade for this viewer's content assistant.
-	 * 
+	 *
 	 * @return a content assistant facade or <code>null</code> if none is
 	 *         configured
 	 */

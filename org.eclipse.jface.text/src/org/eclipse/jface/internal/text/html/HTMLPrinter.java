@@ -171,12 +171,12 @@ public class HTMLPrinter {
 	private static void appendStyleSheetURL(StringBuffer buffer, String styleSheet) {
 		if (styleSheet == null)
 			return;
-		
+
 		buffer.append("<head><style CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
 		buffer.append(styleSheet);
 		buffer.append("</style></head>"); //$NON-NLS-1$
 	}
-	
+
 	private static void appendStyleSheetURL(StringBuffer buffer, URL styleSheetURL) {
 		if (styleSheetURL == null)
 			return;
@@ -204,7 +204,7 @@ public class HTMLPrinter {
 		appendColors(pageProlog, FG_COLOR_RGB, BG_COLOR_RGB);
 		buffer.insert(position,  pageProlog.toString());
 	}
-	
+
 	public static void insertPageProlog(StringBuffer buffer, int position, String styleSheet) {
 		insertPageProlog(buffer, position, null, null, styleSheet);
 	}
@@ -252,7 +252,7 @@ public class HTMLPrinter {
 		if (paragraphReader != null)
 			addParagraph(buffer, read(paragraphReader));
 	}
-	
+
 	/**
 	 * Replaces the following style attributes of the font definition of the <code>html</code>
 	 * element:
@@ -267,7 +267,7 @@ public class HTMLPrinter {
 	 * <p>
 	 * If the listed font attributes are not contained in the passed style list, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param styles CSS style definitions
 	 * @param fontData the font information to use
 	 * @return the modified style definitions
@@ -276,10 +276,10 @@ public class HTMLPrinter {
 	public static String convertTopLevelFont(String styles, FontData fontData) {
 		boolean bold= (fontData.getStyle() & SWT.BOLD) != 0;
 		boolean italic= (fontData.getStyle() & SWT.ITALIC) != 0;
-		
+
 		// See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
 		String size= Integer.toString(fontData.getHeight()) + ("carbon".equals(SWT.getPlatform()) ? "px" : "pt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
+
 		String family= "'" + fontData.getName() + "',sans-serif"; //$NON-NLS-1$ //$NON-NLS-2$
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-size:\\s*)\\d+pt(\\;?.*\\})", "$1" + size + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-weight:\\s*)\\w+(\\;?.*\\})", "$1" + (bold ? "bold" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$

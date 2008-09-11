@@ -24,19 +24,19 @@ import org.eclipse.jface.text.source.LineRange;
  * <p>
  * This class is neither intended to be instantiated nor subclassed.
  * </p>
- * 
+ *
  * @since 3.3
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class JFaceTextUtil {
-	
+
 	private JFaceTextUtil() {
 		// Do not instantiate
 	}
 
 	/**
 	 * Computes the line height for the given line range.
-	 * 
+	 *
 	 * @param textWidget the <code>StyledText</code> widget
 	 * @param startLine the start line
 	 * @param endLine the end line (exclusive)
@@ -46,7 +46,7 @@ public final class JFaceTextUtil {
 	public static int computeLineHeight(StyledText textWidget, int startLine, int endLine, int lineCount) {
 		return getLinePixel(textWidget, endLine) - getLinePixel(textWidget, startLine);
 	}
-	
+
 	/**
 	 * Returns the last fully visible line of the widget. The exact semantics of "last fully visible
 	 * line" are:
@@ -54,39 +54,39 @@ public final class JFaceTextUtil {
 	 * <li>the last line of which the last pixel is visible, if any
 	 * <li>otherwise, the only line that is partially visible
 	 * </ul>
-	 * 
+	 *
 	 * @param widget the widget
 	 * @return the last fully visible line
 	 */
 	public static int getBottomIndex(StyledText widget) {
 		int lastPixel= computeLastVisiblePixel(widget);
-		
+
 		// bottom is in [0 .. lineCount - 1]
 		int bottom= widget.getLineIndex(lastPixel);
 
 		// bottom is the first line - no more checking
 		if (bottom == 0)
 			return bottom;
-		
+
 		int pixel= widget.getLinePixel(bottom);
 		// bottom starts on or before the client area start - bottom is the only visible line
 		if (pixel <= 0)
 			return bottom;
-		
+
 		int offset= widget.getOffsetAtLine(bottom);
 		int height= widget.getLineHeight(offset);
-		
+
 		// bottom is not showing entirely - use the previous line
 		if (pixel + height - 1 > lastPixel)
 			return bottom - 1;
-		
+
 		// bottom is fully visible and its last line is exactly the last pixel
 		return bottom;
 	}
 
 	/**
 	 * Returns the index of the first (possibly only partially) visible line of the widget
-	 * 
+	 *
 	 * @param widget the widget
 	 * @return the index of the first line of which a pixel is visible
 	 */
@@ -94,7 +94,7 @@ public final class JFaceTextUtil {
 		// see StyledText#getPartialTopIndex()
 		int top= widget.getTopIndex();
 		int pixels= widget.getLinePixel(top);
-		
+
 		// FIXME remove when https://bugs.eclipse.org/bugs/show_bug.cgi?id=123770 is fixed
 		if (pixels == -widget.getLineHeight(widget.getOffsetAtLine(top))) {
 			top++;
@@ -103,13 +103,13 @@ public final class JFaceTextUtil {
 
 		if (pixels > 0)
 			top--;
-		
+
 		return top;
 	}
 
 	/**
 	 * Returns the index of the last (possibly only partially) visible line of the widget
-	 * 
+	 *
 	 * @param widget the text widget
 	 * @return the index of the last line of which a pixel is visible
 	 */
@@ -122,7 +122,7 @@ public final class JFaceTextUtil {
 
 	/**
 	 * Returns the last visible pixel in the widget's client area.
-	 * 
+	 *
 	 * @param widget the widget
 	 * @return the last visible pixel in the widget's client area
 	 */
@@ -134,11 +134,11 @@ public final class JFaceTextUtil {
 //			lastPixel -= 4;
 		return lastPixel;
 	}
-	
+
 	/**
 	 * Returns the line index of the first visible model line in the viewer. The line may be only
 	 * partially visible.
-	 * 
+	 *
 	 * @param viewer the text viewer
 	 * @return the first line of which a pixel is visible, or -1 for no line
 	 */
@@ -147,7 +147,7 @@ public final class JFaceTextUtil {
 		int widgetTop= getPartialTopIndex(widget);
 		return widgetLine2ModelLine(viewer, widgetTop);
 	}
-	
+
 	/**
 	 * Returns the last, possibly partially, visible line in the view port.
 	 *
@@ -163,7 +163,7 @@ public final class JFaceTextUtil {
 	/**
 	 * Returns the range of lines that is visible in the viewer, including any partially visible
 	 * lines.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @return the range of lines that is visible in the viewer, <code>null</code> if no lines are
 	 *         visible
@@ -180,7 +180,7 @@ public final class JFaceTextUtil {
 	 * Converts a widget line into a model (i.e. {@link IDocument}) line using the
 	 * {@link ITextViewerExtension5} if available, otherwise by adapting the widget line to the
 	 * viewer's {@link ITextViewer#getVisibleRegion() visible region}.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param widgetLine the widget line to convert.
 	 * @return the model line corresponding to <code>widgetLine</code> or -1 to signal that there
@@ -202,12 +202,12 @@ public final class JFaceTextUtil {
 		}
 		return modelLine;
 	}
-	
+
 	/**
 	 * Converts a model (i.e. {@link IDocument}) line into a widget line using the
 	 * {@link ITextViewerExtension5} if available, otherwise by adapting the model line to the
 	 * viewer's {@link ITextViewer#getVisibleRegion() visible region}.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param modelLine the model line to convert.
 	 * @return the widget line corresponding to <code>modelLine</code> or -1 to signal that there
@@ -240,7 +240,7 @@ public final class JFaceTextUtil {
 	/**
 	 * Returns the number of hidden pixels of the first partially visible line. If there is no
 	 * partially visible line, zero is returned.
-	 * 
+	 *
 	 * @param textWidget the widget
 	 * @return the number of hidden pixels of the first partial line, always &gt;= 0
 	 */
@@ -248,14 +248,14 @@ public final class JFaceTextUtil {
 		int top= getPartialTopIndex(textWidget);
 		return -textWidget.getLinePixel(top);
 	}
-	
+
 	/*
 	 * @see StyledText#getLinePixel(int)
 	 */
 	public static int getLinePixel(StyledText textWidget, int line) {
 		return textWidget.getLinePixel(line);
 	}
-	
+
 	/*
 	 * @see StyledText#getLineIndex(int)
 	 */
@@ -267,7 +267,7 @@ public final class JFaceTextUtil {
 	/**
 	 * Returns <code>true</code> if the widget displays the entire contents, i.e. it cannot
 	 * be vertically scrolled.
-	 * 
+	 *
 	 * @param widget the widget
 	 * @return <code>true</code> if the widget displays the entire contents, i.e. it cannot
 	 *         be vertically scrolled, <code>false</code> otherwise
@@ -275,7 +275,7 @@ public final class JFaceTextUtil {
 	public static boolean isShowingEntireContents(StyledText widget) {
 		if (widget.getTopPixel() != 0) // more efficient shortcut
 			return false;
-		
+
 		int lastVisiblePixel= computeLastVisiblePixel(widget);
 		int lastPossiblePixel= widget.getLinePixel(widget.getLineCount());
 		return lastPossiblePixel <= lastVisiblePixel;
@@ -288,7 +288,7 @@ public final class JFaceTextUtil {
 	 * @param region the region whose graphical extend must be computed
 	 * @param textViewer the text viewer containing the region
 	 * @return the graphical extend of the given region in the given viewer
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static Rectangle computeArea(IRegion region, ITextViewer textViewer) {
@@ -299,7 +299,7 @@ public final class JFaceTextUtil {
 			start= widgetRegion.getOffset();
 			end= start + widgetRegion.getLength();
 		}
-		
+
 		StyledText styledText= textViewer.getTextWidget();
 		Rectangle bounds;
 		if (end > 0 && start < end)
@@ -308,7 +308,7 @@ public final class JFaceTextUtil {
 			Point loc= styledText.getLocationAtOffset(start);
 			bounds= new Rectangle(loc.x, loc.y, getAverageCharWidth(textViewer.getTextWidget()), styledText.getLineHeight(start));
 		}
-		
+
 		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 
@@ -319,7 +319,7 @@ public final class JFaceTextUtil {
 	 * @param region the document region
 	 * @param textViewer the viewer containing the region
 	 * @return the corresponding widget region
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static IRegion modelRange2WidgetRange(IRegion region, ITextViewer textViewer) {
@@ -327,22 +327,22 @@ public final class JFaceTextUtil {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) textViewer;
 			return extension.modelRange2WidgetRange(region);
 		}
-		
+
 		IRegion visibleRegion= textViewer.getVisibleRegion();
 		int start= region.getOffset() - visibleRegion.getOffset();
 		int end= start + region.getLength();
 		if (end > visibleRegion.getLength())
 			end= visibleRegion.getLength();
-		
+
 		return new Region(start, end - start);
 	}
 
 	/**
 	 * Returns the average character width of the given control's font.
-	 * 
+	 *
 	 * @param control the control to calculate the average char width for
 	 * @return the average character width of the controls font
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static int getAverageCharWidth(Control control) {

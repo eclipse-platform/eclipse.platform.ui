@@ -22,7 +22,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * <p>
  * Subclasses must have a zero-argument constructor so that they can be created by
  * {@link IConfigurationElement#createExecutableExtension(String)}.</p>
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractContributedRulerColumn implements IContributedRulerColumn {
@@ -31,7 +31,7 @@ public abstract class AbstractContributedRulerColumn implements IContributedRule
 	/** The target editor. */
 	private ITextEditor fEditor;
 
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.rulers.IContributedRulerColumn#getDescriptor()
 	 */

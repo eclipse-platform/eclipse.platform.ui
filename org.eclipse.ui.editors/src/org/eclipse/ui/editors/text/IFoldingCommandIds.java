@@ -18,7 +18,7 @@ package org.eclipse.ui.editors.text;
  * This interface contains constants only; it is not intended to be
  * implemented.
  * </p>
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -56,16 +56,16 @@ public interface IFoldingCommandIds {
 	 * Identifier of the "collapse all folded regions" command.
 	 * <p>
 	 * Value: {@value}.</p>
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String FOLDING_COLLAPSE_ALL = "org.eclipse.ui.edit.text.folding.collapse_all"; //$NON-NLS-1$
-	
+
 	/**
 	 * Identifier of the "restore folding structure" command.
 	 * <p>
 	 * Value: {@value}.</p>
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String FOLDING_RESTORE= "org.eclipse.ui.edit.text.folding.restore"; //$NON-NLS-1$

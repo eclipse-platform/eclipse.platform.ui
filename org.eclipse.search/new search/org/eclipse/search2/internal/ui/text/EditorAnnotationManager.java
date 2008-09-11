@@ -25,6 +25,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -40,25 +41,25 @@ import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
 
 public class EditorAnnotationManager implements ISearchResultListener {
-	
+
 	private ArrayList fResults;
 	private IEditorPart fEditor;
 	private Highlighter fHighlighter; // initialized lazy
-	
+
 	public static final int HIGHLLIGHTER_ANY= 0;
 	public static final int HIGHLIGHTER_MARKER= 1;
 	public static final int HIGHLIGHTER_ANNOTATION= 2;
 	public static final int HIGHLIGHTER_EDITOR_ACCESS= 3;
 	private static int fgHighlighterType= HIGHLLIGHTER_ANY;
-	
-	
+
+
 	public EditorAnnotationManager(IEditorPart editorPart) {
 		Assert.isNotNull(editorPart);
 		fEditor= editorPart;
 		fHighlighter= null; // lazy initialization
 		fResults= new ArrayList(3);
 	}
-	
+
 
 	public static final void debugSetHighlighterType(int type) {
 		fgHighlighterType= type;
@@ -69,21 +70,21 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		removeAllAnnotations();
 		if (fHighlighter != null)
 			fHighlighter.dispose();
-		
+
 		for (int i= 0; i < fResults.size(); i++) {
 			((AbstractTextSearchResult) fResults.get(i)).removeListener(this);
 		}
 		fResults.clear();
 	}
-	
+
 	public synchronized void doEditorInputChanged() {
 		removeAllAnnotations();
-		
+
 		if (fHighlighter != null) {
 			fHighlighter.dispose();
 			fHighlighter= null;
 		}
-		
+
 		for (int i= 0; i < fResults.size(); i++) {
 			AbstractTextSearchResult curr= (AbstractTextSearchResult) fResults.get(i);
 			addAnnotations(curr);
@@ -96,24 +97,24 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			((AbstractTextSearchResult) fResults.get(i)).removeListener(this);
 		}
 		fResults.clear();
-		
+
 		for (int i= 0; i < results.size(); i++) {
 			addSearchResult((AbstractTextSearchResult) results.get(i));
 		}
 	}
-	
+
 	public synchronized void addSearchResult(AbstractTextSearchResult result) {
 		fResults.add(result);
 		result.addListener(this);
 		addAnnotations(result);
 	}
-	
+
 	public synchronized void removeSearchResult(AbstractTextSearchResult result) {
 		fResults.remove(result);
 		result.removeListener(this);
 		removeAnnotations(result);
 	}
-	
+
 
 	public synchronized void searchResultChanged(SearchResultEvent e) {
 		ISearchResult searchResult= e.getSearchResult();
@@ -146,12 +147,12 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		if (adapter == null) {
 			return null;
 		}
-		
+
 		// optimize the array-length == 1 case (most common)
 		if (matches.length == 1) {
 			return adapter.isShownInEditor(matches[0], fEditor) ? matches : null;
 		}
-		
+
 		ArrayList matchesInEditor= null; // lazy initialization
 		for (int i= 0; i < matches.length; i++) {
 			Match curr= matches[i];
@@ -197,7 +198,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		if (fgHighlighterType == HIGHLIGHTER_ANNOTATION) {
 			IAnnotationModel model= getAnnotationModel(editor);
 			if (model != null)
-				return new AnnotationHighlighter(model, getDocument(editor));		
+				return new AnnotationHighlighter(model, getDocument(editor));
 		} else if (fgHighlighterType == HIGHLIGHTER_MARKER) {
 			IEditorInput input= editor.getEditorInput();
 			if (input instanceof IFileEditorInput) {
@@ -205,7 +206,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 				if (file != null)
 					return new MarkerHighlighter(file);
 			}
-			
+
 		} else if (fgHighlighterType == HIGHLIGHTER_EDITOR_ACCESS) {
 			ISearchEditorAccess access= (ISearchEditorAccess) editor.getAdapter(ISearchEditorAccess.class);
 			if (access != null)
@@ -223,10 +224,10 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			return;
 		addAnnotations(matches);
 	}
-	
+
 	private void removeAnnotations(AbstractTextSearchResult result) {
 		removeAllAnnotations();
-		
+
 		for (int i= 0; i < fResults.size(); i++) {
 			AbstractTextSearchResult curr= (AbstractTextSearchResult) fResults.get(i);
 			if (curr != result) {
@@ -249,11 +250,11 @@ public class EditorAnnotationManager implements ISearchResultListener {
 
 	private static IAnnotationModel getAnnotationModel(IWorkbenchPart part) {
 		IAnnotationModel model= null;
-		model= (IAnnotationModel) part.getAdapter(IAnnotationModel.class); 
+		model= (IAnnotationModel) part.getAdapter(IAnnotationModel.class);
 		if (model == null) {
 			ITextEditor textEditor= null;
 			if (part instanceof ITextEditor) {
-				textEditor= (ITextEditor) part; 
+				textEditor= (ITextEditor) part;
 			}
 			if (textEditor != null) {
 				IDocumentProvider dp= textEditor.getDocumentProvider();
@@ -266,11 +267,11 @@ public class EditorAnnotationManager implements ISearchResultListener {
 
 	private static IDocument getDocument(IWorkbenchPart part) {
 		IDocument doc= null;
-		doc= (IDocument) part.getAdapter(IDocument.class); 
+		doc= (IDocument) part.getAdapter(IDocument.class);
 		if (doc == null) {
 			ITextEditor textEditor= null;
 			if (part instanceof ITextEditor) {
-				textEditor= (ITextEditor) part; 
+				textEditor= (ITextEditor) part;
 			}
 			if (textEditor != null) {
 				IDocumentProvider dp= textEditor.getDocumentProvider();

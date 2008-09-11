@@ -24,25 +24,25 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests the FindReplaceDialog.
- * 
+ *
  * @since 3.1
  */
 public class FindReplaceDialogTest extends TestCase {
-	
+
 	private Accessor fFindReplaceDialog;
-	
-	
+
+
 	public FindReplaceDialogTest(String name) {
 		super(name);
 	}
-	
-	
+
+
 	protected void setUp() {
 		Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		fFindReplaceDialog= new Accessor("org.eclipse.ui.texteditor.FindReplaceDialog", getClass().getClassLoader(), new Object[] {shell});
 		fFindReplaceDialog.invoke("create", null);
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite= new TestSuite();
 		suite.addTest(new FindReplaceDialogTest("testInitialButtonState"));
@@ -50,12 +50,12 @@ public class FindReplaceDialogTest extends TestCase {
 		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfNotWord"));
 		return suite;
 	}
-	
+
 	protected void tearDown () {
 		fFindReplaceDialog.invoke("close", null);
 		fFindReplaceDialog= null;
 	}
-	
+
 	public void testInitialButtonState() {
 		Boolean value;
 		value= (Boolean)fFindReplaceDialog.invoke("isWholeWordSearch", null);
@@ -73,7 +73,7 @@ public class FindReplaceDialogTest extends TestCase {
 		checkbox= (Button)fFindReplaceDialog.get("fWholeWordCheckBox");
 		assertFalse(checkbox.isEnabled()); // there's no word in the Find field
 	}
-	
+
 	public void testDisableWholeWordIfRegEx() {
 		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
 		findField.setText("word");
@@ -83,7 +83,7 @@ public class FindReplaceDialogTest extends TestCase {
 
 		assertTrue(isRegExCheckBox.isEnabled());
 		assertTrue(wholeWordCheckbox.isEnabled());
-		
+
 		fFindReplaceDialog.set("fIsTargetSupportingRegEx", true);
 		isRegExCheckBox.setSelection(true);
 		wholeWordCheckbox.setSelection(true);
@@ -91,11 +91,11 @@ public class FindReplaceDialogTest extends TestCase {
 
 		assertTrue(isRegExCheckBox.isEnabled());
 		assertFalse(wholeWordCheckbox.isEnabled());
-		
+
 		// XXX: enable once https://bugs.eclipse.org/bugs/show_bug.cgi?id=72462 has been fixed
 //		assertFalse(wholeWordCheckbox.getSelection());
 	}
-	
+
 	public void testDisableWholeWordIfNotWord() {
 		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
 		Button isRegExCheckBox= (Button)fFindReplaceDialog.get("fIsRegExCheckBox");
@@ -105,7 +105,7 @@ public class FindReplaceDialogTest extends TestCase {
 		isRegExCheckBox.setSelection(false);
 		wholeWordCheckbox.setSelection(true);
 		fFindReplaceDialog.invoke("updateButtonState", null);
-		
+
 		findField.setText("word");
 		assertTrue(isRegExCheckBox.isEnabled());
 		assertTrue(wholeWordCheckbox.isEnabled());
@@ -114,7 +114,7 @@ public class FindReplaceDialogTest extends TestCase {
 		findField.setText("no word");
 		assertTrue(isRegExCheckBox.isEnabled());
 		assertFalse(wholeWordCheckbox.isEnabled());
-		
+
 		// XXX: enable once https://bugs.eclipse.org/bugs/show_bug.cgi?id=72462 has been fixed
 //		assertFalse(wholeWordCheckbox.getSelection());
 	}

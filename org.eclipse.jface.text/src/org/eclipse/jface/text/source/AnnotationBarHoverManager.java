@@ -62,7 +62,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 	/**
 	 * The information control closer for the hover information. Closes the information control as soon as the mouse pointer leaves the subject area, a mouse button is pressed, the user presses a key, or the subject control is resized or moved.
-	 * 
+	 *
 	 * @since 3.0
 	 * @deprecated As of 3.4, no longer used as closer from super class is used
 	 */
@@ -126,7 +126,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.getShell().addShellListener(this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
-				
+
 				fDisplay= fSubjectControl.getDisplay();
 				if (!fDisplay.isDisposed() && fHideOnMouseWheel) {
 					fHasWheelFilter= true;
@@ -152,18 +152,18 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
 			}
-			
+
 			if (fDisplay != null && !fDisplay.isDisposed() && fHasWheelFilter)
 				fDisplay.removeFilter(SWT.MouseWheel, this);
 			fHasWheelFilter= false;
-			
+
 			fDisplay= null;
-			
+
 		}
 
 		/**
 		 * Stops the information control and if <code>delayRestart</code> is set allows restart only after a certain delay.
-		 * 
+		 *
 		 * @param delayRestart <code>true</code> if restart should be delayed
 		 * @deprecated As of 3.4, replaced by {@link #stop()}. Note that <code>delayRestart</code> was never honored.
 		 */
@@ -198,7 +198,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		public void mouseDoubleClick(MouseEvent event) {
 			hideInformationControl();
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 * @since 3.2
@@ -300,11 +300,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	protected boolean fAllowMouseExit= false;
 	/**
 	 * Whether we should hide the over on mouse wheel action.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private boolean fHideOnMouseWheel= true;
-	
+
 	/**
 	 * The current annotation hover.
 	 * @since 3.2
@@ -379,7 +379,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		}
 
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#showInformationControl(org.eclipse.swt.graphics.Rectangle)
 	 * @since 3.2
@@ -388,7 +388,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	    super.showInformationControl(subjectArea);
 	    fCurrentHover= getHover(getHoverEvent());
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
 	 * @since 3.2
@@ -469,11 +469,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			Rectangle size= text.getClientArea();
 			Rectangle trim= text.computeTrim(0, 0, 0, 0);
 			int height= size.height - trim.height;
-			
+
 			int lines= JFaceTextUtil.getLineIndex(text, height) - text.getTopIndex();
-			
+
 			int bottomLine= topLine + lines;
-			
+
 			int rangeBottomLine= getWidgetLineNumber(lineRange.getStartLine() + lineRange.getNumberOfLines() - 1);
 			int bottomDelta= Math.max(rangeBottomLine - bottomLine, 0);
 
@@ -744,7 +744,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * <p>
 	 * <strong>Note:</strong> This method is not intended to be referenced or overridden by clients.
 	 * </p>
-	 * 
+	 *
 	 * @return the replaceable information control accessor
 	 * @since 3.4
 	 * @noreference This method is not intended to be referenced by clients.
@@ -755,23 +755,23 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			public IInformationControl getCurrentInformationControl() {
 				return AnnotationBarHoverManager.super.getInternalAccessor().getCurrentInformationControl();
 			}
-			
+
 			public void setInformationControlReplacer(InformationControlReplacer replacer) {
 				AnnotationBarHoverManager.super.getInternalAccessor().setInformationControlReplacer(replacer);
 			}
-			
+
 			public InformationControlReplacer getInformationControlReplacer() {
 				return AnnotationBarHoverManager.super.getInternalAccessor().getInformationControlReplacer();
 			}
-			
+
 			public boolean canReplace(IInformationControl control) {
 				return AnnotationBarHoverManager.super.getInternalAccessor().canReplace(control);
 			}
-			
+
 			public boolean isReplaceInProgress() {
 				return AnnotationBarHoverManager.super.getInternalAccessor().isReplaceInProgress();
 			}
-			
+
 			public void replaceInformationControl(boolean takeFocus) {
 				AnnotationBarHoverManager.super.getInternalAccessor().replaceInformationControl(takeFocus);
 			}
@@ -779,11 +779,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			public void cropToClosestMonitor(Rectangle bounds) {
 				AnnotationBarHoverManager.super.getInternalAccessor().cropToClosestMonitor(bounds);
 			}
-			
+
 			public void setHoverEnrichMode(EnrichMode mode) {
 				AnnotationBarHoverManager.super.getInternalAccessor().setHoverEnrichMode(mode);
 			}
-			
+
 			public boolean getAllowMouseExit() {
 				return fAllowMouseExit;
 			}

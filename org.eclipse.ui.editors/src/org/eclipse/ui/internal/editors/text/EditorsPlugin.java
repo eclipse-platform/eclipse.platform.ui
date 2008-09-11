@@ -11,28 +11,31 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import org.osgi.framework.BundleContext;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import org.eclipse.jface.text.source.ISharedTextColors;
+
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.themes.IThemeManager;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
-import org.eclipse.ui.themes.IThemeManager;
 
-import org.osgi.framework.BundleContext;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
@@ -97,7 +100,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	private SpellingService fSpellingService;
-	
+
 	/**
 	 * The hyperlink detector registry.
 	 * @since 3.3
@@ -156,7 +159,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fAnnotationTypeHierarchy= new AnnotationTypeHierarchy();
 		return fAnnotationTypeHierarchy;
 	}
-	
+
 	/**
 	 * Sets the marker annotation preferences.
 	 * <p>
@@ -170,7 +173,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		Assert.isTrue(fMarkerAnnotationPreferences == null);
 		fMarkerAnnotationPreferences= markerAnnotationPreferences;
 	}
-	
+
 	/**
 	 * Tells whether the marker annotation preferences are initialized.
 	 *
@@ -192,14 +195,14 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			new MarkerAnnotationPreferences().getAnnotationPreferences(); // force creation of shared preferences
 		return fMarkerAnnotationPreferences;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 * @since 3.3
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		if (PlatformUI.isWorkbenchRunning()) {
 			fThemeListener= new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
@@ -226,7 +229,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 				PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
 			fThemeListener= null;
 		}
-		
+
 		fAnnotationTypeLookup= null;
 		fAnnotationPreferenceLookup= null;
 		fAnnotationTypeHierarchy= null;
@@ -252,7 +255,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * Returns the registry that contains the hyperlink detectors contributed
 	 * by  the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectors</code>
 	 * extension point.
-	 * 
+	 *
 	 * @return the hyperlink detector registry
 	 * @since 3.3
 	 */
@@ -261,7 +264,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fHyperlinkDetectorRegistry= new HyperlinkDetectorRegistry(getPreferenceStore());
 		return fHyperlinkDetectorRegistry;
 	}
-	
+
 	/**
 	 * Returns the content assist additional info focus affordance string.
 	 *
@@ -274,8 +277,8 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	public static final String getAdditionalInfoAffordanceString() {
 		if (!EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE))
 			return null;
-		
+
 		return TextEditorMessages.EditorsPlugin_additionalInfo_affordance;
 	}
-	
+
 }

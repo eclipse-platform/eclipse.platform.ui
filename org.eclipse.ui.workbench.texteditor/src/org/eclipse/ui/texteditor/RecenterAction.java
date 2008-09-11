@@ -12,8 +12,9 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.custom.StyledText;
+
+import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * An action to handle emacs-like recenter.
@@ -22,7 +23,7 @@ import org.eclipse.swt.custom.StyledText;
  * @since 3.3
  */
 public class RecenterAction extends TextEditorAction {
-	
+
 	/**
 	 * Creates a new action for the given text editor. The action configures its
 	 * visual representation from the given resource bundle.

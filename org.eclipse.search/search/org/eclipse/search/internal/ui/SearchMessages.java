@@ -27,7 +27,7 @@ public final class SearchMessages extends NLS {
 	public static String FileTextSearchScope_scope_single;
 	public static String FileTextSearchScope_scope_double;
 	public static String FileTextSearchScope_scope_multiple;
-	
+
 	public static String FileTextSearchScope_ws_scope_empty;
 	public static String FileTextSearchScope_ws_scope_single;
 	public static String FileTextSearchScope_ws_scope_double;

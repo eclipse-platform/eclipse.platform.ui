@@ -66,17 +66,17 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
-	
-	
+
+
 	/**
 	 * An information presenter determines the style presentation
 	 * of information displayed in the default information control.
 	 * The interface can be implemented by clients.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public interface IInformationPresenterExtension {
-		
+
 		/**
 		 * Updates the given presentation of the given information and
 		 * thereby may manipulate the information to be displayed. The manipulation
@@ -98,7 +98,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		 */
 		String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
-	
+
 
 	/**
 	 * Inner border thickness in pixels.
@@ -112,7 +112,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	private final IInformationPresenter fPresenter;
 	/** A cached text presentation */
 	private final TextPresentation fPresentation= new TextPresentation();
-	
+
 	/**
 	 * Additional styles to use for the text control.
 	 * @since 3.4, previously called <code>fTextStyle</code>
@@ -122,7 +122,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	/**
 	 * Creates a default information control with the given shell as parent. An information
 	 * presenter that can handle simple HTML is used to process the information to be displayed.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param isResizeable <code>true</code> if the control should be resizable
 	 * @since 3.4
@@ -137,7 +137,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	/**
 	 * Creates a default information control with the given shell as parent. An information
 	 * presenter that can handle simple HTML is used to process the information to be displayed.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 * @since 3.4
@@ -150,7 +150,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * Creates a default information control with the given shell as parent. The
 	 * given information presenter is used to process the information to be
 	 * displayed.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 * @param presenter the presenter to be used, or <code>null</code> if no presenter should be used
@@ -167,7 +167,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * Creates a resizable default information control with the given shell as parent. An
 	 * information presenter that can handle simple HTML is used to process the information to be
 	 * displayed.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
 	 * @since 3.4
@@ -180,7 +180,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * Creates a resizable default information control with the given shell as
 	 * parent. The given information presenter is used to process the
 	 * information to be displayed.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
 	 * @param presenter the presenter to be used, or <code>null</code> if no presenter should be used
@@ -220,7 +220,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * given information presenter is used to process the information to be
 	 * displayed. The given styles are applied to the created styled text
 	 * widget.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
@@ -236,7 +236,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * given information presenter is used to process the information to be
 	 * displayed. The given styles are applied to the created styled text
 	 * widget.
-	 * 
+	 *
 	 * @param parentShell the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
@@ -256,7 +256,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * Creates a default information control with the given shell as parent. The
 	 * given information presenter is used to process the information to be
 	 * displayed.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param textStyles the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
@@ -270,7 +270,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * Creates a default information control with the given shell as parent. The
 	 * given information presenter is used to process the information to be
 	 * displayed.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param textStyles the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
@@ -295,14 +295,14 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		fText.setFont(JFaceResources.getDialogFont());
 		FillLayout layout= (FillLayout)parent.getLayout();
 		if (fText.getWordWrap()) {
-			// indent does not work for wrapping StyledText, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56342 and https://bugs.eclipse.org/bugs/show_bug.cgi?id=115432 
+			// indent does not work for wrapping StyledText, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56342 and https://bugs.eclipse.org/bugs/show_bug.cgi?id=115432
 			layout.marginHeight= INNER_BORDER;
 			layout.marginWidth= INNER_BORDER;
 		} else {
 			fText.setIndent(INNER_BORDER);
 		}
 	}
-	
+
 	/*
 	 * @see IInformationControl#setInformation(String)
 	 */
@@ -311,7 +311,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 			fText.setText(content);
 		} else {
 			fPresentation.clear();
-			
+
 			int maxWidth= -1;
 			int maxHeight= -1;
 			Point constraints= getSizeConstraints();
@@ -331,7 +331,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 			}
 			if (isResizable())
 				maxHeight= Integer.MAX_VALUE;
-			
+
 			if (fPresenter instanceof IInformationPresenterExtension)
 				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fText, content, fPresentation, maxWidth, maxHeight);
 			else
@@ -359,7 +359,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 					setSize(currentSize.x, currentSize.y); // restore previous size
 			}
 		}
-		
+
 		super.setVisible(visible);
 	}
 
@@ -372,10 +372,10 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		Point constraints= getSizeConstraints();
 		if (constraints != null && fText.getWordWrap())
 			widthHint= constraints.x;
-		
+
 		return getShell().computeSize(widthHint, SWT.DEFAULT, true);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControl#computeTrim()
 	 */
@@ -428,5 +428,5 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 			}
 		};
 	}
-	
+
 }

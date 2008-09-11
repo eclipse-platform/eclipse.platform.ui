@@ -32,14 +32,15 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
 import org.eclipse.jface.text.source.IVerticalRulerListener;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * The annotation ruler contribution. Encapsulates an {@link AnnotationRulerColumn} as a
@@ -47,7 +48,7 @@ import org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn;
  * delegate itself, it {@link AbstractDecoratedTextEditor} creates it using its
  * <code>createAnnotationRulerColumn()</code> method and sets it via
  * {@link #setDelegate(IVerticalRulerColumn)}.
- * 
+ *
  * @since 3.3
  */
 public class AnnotationColumn extends AbstractContributedRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
@@ -56,7 +57,7 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 	/** The width of the vertical ruler. */
 	private final static int VERTICAL_RULER_WIDTH= 12;
 
-	
+
 	private IVerticalRulerColumn fDelegate;
 	private final MarkerAnnotationPreferences fAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 	private IPropertyChangeListener fPropertyListener;
@@ -137,7 +138,7 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 					column.addAnnotationType(preference.getAnnotationType());
 			}
 			column.addAnnotationType(Annotation.TYPE_UNKNOWN);
-			
+
 			// link to preference store
 			fPropertyListener= new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
@@ -156,7 +157,7 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 			store.addPropertyChangeListener(fPropertyListener);
 		}
 	}
-	
+
 	/**
 	 * Returns the annotation preference for which the given
 	 * preference matches a vertical ruler preference key.
@@ -183,7 +184,7 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 
 	/**
 	 * Sets the compatibility delegate. Called by {@link AbstractDecoratedTextEditor}.
-	 * 
+	 *
 	 * @param column the delegate column implementation
 	 */
 	public void setDelegate(IVerticalRulerColumn column) {

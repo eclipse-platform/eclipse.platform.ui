@@ -24,7 +24,7 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 public class ScannerColumnTest extends TestCase {
 
 	private IDocument fDocument;
-	
+
 	protected void setUp() throws Exception {
 		fDocument= new Document("scanner test");
 	}
@@ -36,15 +36,15 @@ public class ScannerColumnTest extends TestCase {
 	public void testRuleBasedScannerColumnRead() {
 		_testScannerColumnRead(new RuleBasedScanner());
 	}
-	
+
 	public void testRuleBasedScannerColumnUnread() {
 		_testScannerColumnUnread(new RuleBasedScanner());
 	}
-	
+
 	public void testBufferedRuleBasedScannerColumnRead() {
 		_testScannerColumnRead(new BufferedRuleBasedScanner(100));
 	}
-	
+
 	public void testBufferedRuleBasedScannerColumnUnread() {
 		_testScannerColumnUnread(new BufferedRuleBasedScanner(100));
 	}

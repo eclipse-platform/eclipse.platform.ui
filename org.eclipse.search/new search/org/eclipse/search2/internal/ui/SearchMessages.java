@@ -19,7 +19,7 @@ public final class SearchMessages extends NLS {
 	private SearchMessages() {
 		// Do not instantiate
 	}
-	
+
     static {
         NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
     }

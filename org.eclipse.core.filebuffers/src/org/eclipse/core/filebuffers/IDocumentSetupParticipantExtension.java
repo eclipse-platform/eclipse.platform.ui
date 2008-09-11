@@ -18,18 +18,18 @@ import org.eclipse.jface.text.IDocument;
 /**
  * Extension interface for
  * {@link org.eclipse.core.filebuffers.IDocumentSetupParticipant}.
- * 
+ *
  * <p>
  * This interface is additionally implemented by
  * {@link IDocumentSetupParticipant}'s which would like to alter their behavior
  * based on the location of the file being opened.
  * </p>
- * 
+ *
  * <p>
  * Note that when participants implement this interface, the original method
  * from {@link IDocumentSetupParticipant} will never be called.
  * </p>
- * 
+ *
  * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant
  * @since 3.4
  */
@@ -37,7 +37,7 @@ public interface IDocumentSetupParticipantExtension {
 
 	/**
 	 * Sets up the document to be ready for use by a text file buffer.
-	 * 
+	 *
 	 * @param document the document to be set up
 	 * @param location a path of the resource backing the new document
 	 * @param locationKind the kind of the given location

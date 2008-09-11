@@ -20,7 +20,7 @@ import org.eclipse.jface.text.ITextStore;
 
 /**
  * Correctness tests for {@link ITextStore} implementations.
- * 
+ *
  * @since 3.3
  */
 public abstract class TextStoreTest extends TestCase {
@@ -38,12 +38,12 @@ public abstract class TextStoreTest extends TestCase {
 	protected ILineTracker createTracker() {
 		return new ConfigurableLineTracker(new String[]{"\n"});
 	}
-	
+
 	protected final void replace(int offset, int length, String text) throws BadLocationException {
 		fTextStore.replace(offset, length, text);
 		fTracker.replace(offset, length, text);
 	}
-	
+
 	protected final void set(String text) {
 		fTextStore.set(text);
 		fTracker.set(text);
@@ -132,7 +132,7 @@ public abstract class TextStoreTest extends TestCase {
 
 		replace(13, 0, "y");
 		assertTextStoreContents("x\nxyyyy\nxy\ny\ny\nx\nx\n");
-		
+
 		replace(11, 5, "y\nxyz");
 		assertTextStoreContents("x\nxyyyy\nxy\ny\nxyz\nx\n");
 	}
@@ -248,7 +248,7 @@ public abstract class TextStoreTest extends TestCase {
 	public void testDeleteEmptyLine() throws Exception {
 		set("x\nx\n\nx\n\n");
 		assertTextStoreContents("x\nx\n\nx\n\n");
-		
+
 		String[] expected= {
 				"",
 				"x\n",
@@ -287,7 +287,7 @@ public abstract class TextStoreTest extends TestCase {
 		for (int i= 0; i < 50; i++) {
 			content += "x\nx\n\nx\n\n";
 			set(content);
-			
+
 			String expected= content;
 			int lines= fTracker.getNumberOfLines();
 			for (int line= lines - 1; line >= 0; line--) {
@@ -305,7 +305,7 @@ public abstract class TextStoreTest extends TestCase {
 		for (int i= 0; i < 50; i++) {
 			content += "xxxxxxxxxxxxxx";
 			set(content);
-			
+
 			String expected= content;
 			int lines= fTracker.getNumberOfLines();
 			for (int line= 0; line < lines; line++) {
@@ -320,7 +320,7 @@ public abstract class TextStoreTest extends TestCase {
 		for (int i= 0; i < 50; i++) {
 			content += "xxxxxxxxxxxxxx";
 			set(content);
-			
+
 			String expected= content;
 			int lines= fTracker.getNumberOfLines();
 			for (int line= lines - 1; line >= 0; line--) {
@@ -332,7 +332,7 @@ public abstract class TextStoreTest extends TestCase {
 			}
 		}
 	}
-	
+
 	public void testSet() throws Exception {
 		String content= "";
 		for (int i= 0; i < 35; i++) {

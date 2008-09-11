@@ -26,7 +26,7 @@ public interface IDocumentProviderExtension2 {
 
 	/**
 	 * Sets this providers progress monitor.
-	 * 
+	 *
 	 * @param progressMonitor the progress monitor
 	 */
 	void setProgressMonitor(IProgressMonitor progressMonitor);

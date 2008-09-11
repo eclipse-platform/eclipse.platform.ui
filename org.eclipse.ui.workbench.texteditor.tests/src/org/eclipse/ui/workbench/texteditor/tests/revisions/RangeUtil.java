@@ -16,9 +16,9 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.eclipse.jface.text.source.ILineRange;
-
 import org.eclipse.jface.internal.text.revisions.Range;
+
+import org.eclipse.jface.text.source.ILineRange;
 
 class RangeUtil extends Assert {
 	private RangeUtil() {}

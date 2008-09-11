@@ -13,9 +13,10 @@ package org.eclipse.ui.internal.editors.text;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -23,9 +24,9 @@ import org.eclipse.core.filebuffers.manipulation.RemoveTrailingWhitespaceOperati
 
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.editors.text.FileBufferOperationHandler;
-
 import org.eclipse.ui.internal.editors.text.SelectResourcesDialog.IFilter;
+
+import org.eclipse.ui.editors.text.FileBufferOperationHandler;
 
 
 /**
@@ -71,11 +72,11 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Checks whether the given resources array contains
 	 * only files.
-	 * 
+	 *
 	 * @param resources the array with the resources
 	 * @return <code>true</code> if there array only contains <code>IFiles</code>s
 	 * @since 3.2
@@ -88,10 +89,10 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Filters the unacceptable files.
-	 * 
+	 *
 	 * @param files the files to filter
 	 * @return an array of files
 	 * @since 3.2

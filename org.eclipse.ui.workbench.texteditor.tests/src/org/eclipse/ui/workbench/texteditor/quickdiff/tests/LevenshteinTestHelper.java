@@ -17,7 +17,7 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Lev
 
 /**
  * Accessor for package private methods in Levenshtein.
- * 
+ *
  * @since 3.1
  */
 public final class LevenshteinTestHelper {

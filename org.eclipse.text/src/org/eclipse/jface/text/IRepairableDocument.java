@@ -23,8 +23,8 @@ package org.eclipse.jface.text;
  * <li> {@link org.eclipse.jface.text.IRepairableDocumentExtension} since version 3.4
  *      adds the ability to query whether the repairable document needs to be repaired.</li>
  * </ul>
- * 
- * 
+ *
+ *
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IRepairableDocumentExtension
  * @since 3.0
