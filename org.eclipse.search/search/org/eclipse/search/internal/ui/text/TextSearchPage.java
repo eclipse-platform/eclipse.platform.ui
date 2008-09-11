@@ -584,7 +584,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		if (selection instanceof ITextSelection && !selection.isEmpty()) {
 			String text= ((ITextSelection) selection).getText();
 			if (text != null) {
-				fPattern.setText(insertEscapeChars(text));
+				if (fIsRegExSearch)
+					fPattern.setText(escapeForRegExPattern(text));
+				else
+					fPattern.setText(insertEscapeChars(text));
 				
 				if (getPreviousExtensions().length > 0) {
 					fExtensions.setText(getPreviousExtensions()[0]);
@@ -630,6 +633,73 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
 		return sbOut.toString();
 	}
+	
+	/**
+	 * Escapes special characters in the string, such that the resulting pattern
+	 * matches the given string.
+	 * 
+	 * @param string the string to escape
+	 * @return a regex pattern that matches the given string
+	 * @since 3.5
+	 */
+	private static String escapeForRegExPattern(String string) {
+		//implements https://bugs.eclipse.org/bugs/show_bug.cgi?id=44422
+
+		StringBuffer pattern= new StringBuffer(string.length() + 16);
+		int length= string.length();
+		if (length > 0 && string.charAt(0) == '^')
+			pattern.append('\\');
+		for (int i= 0; i < length; i++) {
+			char ch= string.charAt(i);
+			switch (ch) {
+				case '\\':
+				case '(':
+				case ')':
+				case '[':
+				case ']':
+				case '{':
+				case '}':
+				case '.':
+				case '?':
+				case '*':
+				case '+':
+				case '|':
+					pattern.append('\\').append(ch);
+					break;
+					
+				case '\n':
+					pattern.append("\\n"); //$NON-NLS-1$
+					break;
+				case '\r':
+					pattern.append("\\r"); //$NON-NLS-1$
+					break;
+				case '\t':
+					pattern.append("\\t"); //$NON-NLS-1$
+					break;
+				case '\f':
+					pattern.append("\\f"); //$NON-NLS-1$
+					break;
+				case 0x07:
+					pattern.append("\\a"); //$NON-NLS-1$
+					break;
+				case 0x1B:
+					pattern.append("\\e"); //$NON-NLS-1$
+					break;
+
+				default:
+					if (0 <= ch && ch < 0x20) {
+						pattern.append("\\x"); //$NON-NLS-1$
+						pattern.append(Integer.toHexString(ch).toUpperCase());
+					} else {
+						pattern.append(ch);
+					}
+			}
+		}
+		if (length > 0 && string.charAt(length - 1) == '$')
+			pattern.insert(pattern.length() - 1, '\\');
+		return pattern.toString();
+	}
+	
 
 	private String getExtensionFromEditor() {
 		IEditorPart ep= SearchPlugin.getActivePage().getActiveEditor();
