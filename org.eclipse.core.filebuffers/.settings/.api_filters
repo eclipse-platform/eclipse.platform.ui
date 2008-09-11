@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.filebuffers" version="2">
+    <resource path="src/org/eclipse/core/filebuffers/ITextFileBufferManager.java" type="org.eclipse.core.filebuffers.ITextFileBufferManager">
+        <filter id="404901960">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.filebuffers.ITextFileBufferManager"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
