@@ -85,9 +85,9 @@ public class BrowserIntroPartImplementation extends
 		{
             setToolTipText(Messages.Browser_reduce_tooltip); 
             setImageDescriptor(ImageUtil
-                .createImageDescriptor("full/elcl16/reduce.gif")); //$NON-NLS-1$
-            //setDisabledImageDescriptor(ImageUtil
-                    //.createImageDescriptor("full/dlcl16/reduce.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/elcl16/reduce_font.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/reduce_font.gif")); //$NON-NLS-1$
         	int scalePercent = FontSelection.getScalePercentage();
             setEnabled(scalePercent > -40);
         }
@@ -104,9 +104,9 @@ public class BrowserIntroPartImplementation extends
 		{
             setToolTipText(Messages.Browser_magnify_tooltip); 
             setImageDescriptor(ImageUtil
-                .createImageDescriptor("full/elcl16/magnify.gif")); //$NON-NLS-1$
-            //setDisabledImageDescriptor(ImageUtil
-                    //.createImageDescriptor("full/dlcl16/magnify.gif")); //$NON-NLS-1$
+                .createImageDescriptor("full/elcl16/magnify_font.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/magnify_font.gif")); //$NON-NLS-1$
         	int scalePercent = FontSelection.getScalePercentage();
             setEnabled(scalePercent < 100);
         }
