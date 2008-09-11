@@ -118,11 +118,11 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 			 * (non-Javadoc)
 			 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
 			 */
-			protected void openEditor(IEditorDescriptor editor, boolean openUsingDescriptor) {
+			protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
 				computeResult();
 				setResult(Collections.EMPTY_LIST);
 				close();
-				super.openEditor(editor, openUsingDescriptor);
+				super.openEditor(editorDescriptor, openUsingDescriptor);
 			}
 		};
 		subMenu.add(openWithMenu);
@@ -174,11 +174,11 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 					 * (non-Javadoc)
 					 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
 					 */
-					protected void openEditor(IEditorDescriptor editor, boolean openUsingDescriptor) {
+					protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
 						computeResult();
 						setResult(Collections.EMPTY_LIST);
 						close();
-						super.openEditor(editor, openUsingDescriptor);
+						super.openEditor(editorDescriptor, openUsingDescriptor);
 					}
 				};
 
