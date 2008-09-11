@@ -10,7 +10,6 @@
  *     Benjamin Muskalla -	Bug 29633 [EditorMgmt] "Open" menu should
  *     						have Open With-->Other
  *******************************************************************************/
-
 package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
@@ -42,11 +41,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 
+
 /**
  * This class is used to allow the user to select a dialog from the set of
  * internal and external editors.
- * @since 3.3
  * 
+ * @since 3.3
  */
 
 public final class EditorSelectionDialog extends Dialog {
@@ -503,5 +503,13 @@ public final class EditorSelectionDialog extends Dialog {
 			updateEnableState();
 		}
 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 * @since 3.4
+	 */
+	protected boolean isResizable() {
+		return true;
 	}
 }
