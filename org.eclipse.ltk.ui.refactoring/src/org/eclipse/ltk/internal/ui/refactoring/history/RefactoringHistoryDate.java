@@ -13,7 +13,7 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 
 /**
  * Date node of a refactoring history.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryDate extends RefactoringHistoryNode {
@@ -29,7 +29,7 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 
 	/**
 	 * Creates a new refactoring history node.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent node, or <code>null</code>
 	 * @param stamp
@@ -70,7 +70,7 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 
 	/**
 	 * Returns the time stamp.
-	 * 
+	 *
 	 * @return the time stamp
 	 */
 	public long getTimeStamp() {

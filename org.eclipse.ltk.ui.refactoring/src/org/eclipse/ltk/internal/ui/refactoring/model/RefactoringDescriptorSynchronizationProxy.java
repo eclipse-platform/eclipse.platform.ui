@@ -21,7 +21,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 /**
  * Wrapper which wraps a refactoring descriptor proxy and adds synchronization
  * information to it.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringDescriptorSynchronizationProxy extends RefactoringDescriptorProxy {
@@ -42,7 +42,7 @@ public final class RefactoringDescriptorSynchronizationProxy extends Refactoring
 	 * reflects the direction of the difference between the two or three
 	 * versions of the refactoring descriptor.
 	 * </p>
-	 * 
+	 *
 	 * @param proxy
 	 *            the descriptor proxy to encapsulate
 	 * @param project
@@ -50,7 +50,7 @@ public final class RefactoringDescriptorSynchronizationProxy extends Refactoring
 	 *            associated with
 	 * @param direction
 	 *            the direction of the difference
-	 * 
+	 *
 	 * @see IThreeWayDiff#getDirection()
 	 */
 	public RefactoringDescriptorSynchronizationProxy(final RefactoringDescriptorProxy proxy, final String project, final int direction) {
@@ -83,9 +83,9 @@ public final class RefactoringDescriptorSynchronizationProxy extends Refactoring
 	 * direction of the difference between the two or three versions of the
 	 * refactoring descriptor.
 	 * </p>
-	 * 
+	 *
 	 * @return the direction of the difference
-	 * 
+	 *
 	 * @see IThreeWayDiff#getDirection()
 	 */
 	public int getDirection() {

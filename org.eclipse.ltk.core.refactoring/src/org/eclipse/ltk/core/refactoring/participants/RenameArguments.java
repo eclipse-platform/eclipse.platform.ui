@@ -18,19 +18,19 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RenameArguments extends RefactoringArguments {
-	
+
 	private String fNewName;
 	private boolean fUpdateReferences;
-	
+
 	/**
 	 * Creates new rename arguments.
-	 * 
+	 *
 	 * @param newName the new name of the element to be renamed
 	 * @param updateReferences <code>true</code> if reference
 	 *  updating is requested; <code>false</code> otherwise
@@ -40,19 +40,19 @@ public class RenameArguments extends RefactoringArguments {
 		fNewName= newName;
 		fUpdateReferences= updateReferences;
 	}
-	
+
 	/**
 	 * Returns the new element name.
-	 * 
+	 *
 	 * @return the new element name
 	 */
 	public String getNewName() {
 		return fNewName;
 	}
-	
+
 	/**
 	 * Returns whether reference updating is requested or not.
-	 * 
+	 *
 	 * @return returns <code>true</code> if reference
 	 *  updating is requested; <code>false</code> otherwise
 	 */
@@ -62,7 +62,7 @@ public class RenameArguments extends RefactoringArguments {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public String toString() {

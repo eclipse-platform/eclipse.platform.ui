@@ -34,7 +34,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 	private static final String HEIGHT= "height"; //$NON-NLS-1$
 
 	private IDialogSettings fSettings;
-	
+
 	/*
 	 * note: this field must not be initialized - setter is called in the call to super
 	 * and java initializes fields 'after' the call to super is made. So initializing
@@ -44,7 +44,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 
 	/**
 	 * Creates a new refactoring wizard dialog with the given wizard.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param wizard the refactoring wizard
 	 */
@@ -55,10 +55,10 @@ public class RefactoringWizardDialog extends WizardDialog {
 			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 			wizard.setDialogSettings(settings);
 		}
-		
+
 		int width= 600;
 		int height= 400;
-		
+
 		String settingsSectionId= DIALOG_SETTINGS + '.'+ wizard.getRefactoring().getName();
 		fSettings= settings.getSection(settingsSectionId);
 		if (fSettings == null) {
@@ -91,7 +91,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 		super.configureShell(newShell);
 		getRefactoringWizard().getRefactoring().setValidationContext(newShell);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -99,7 +99,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 		storeCurrentSize();
 		super.cancelPressed();
 	}
-	
+
 	/*
 	 * @see WizardDialog#finishPressed()
 	 */
@@ -135,7 +135,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 	public void makeNextButtonDefault() {
 		fMakeNextButtonDefault= true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.wizard.WizardDialog#getButton(int)
 	 */

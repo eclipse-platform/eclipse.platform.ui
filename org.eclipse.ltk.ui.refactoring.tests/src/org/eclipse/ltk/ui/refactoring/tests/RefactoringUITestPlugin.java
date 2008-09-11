@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class RefactoringUITestPlugin extends AbstractUIPlugin {
-	
+
 	private static RefactoringUITestPlugin fgDefault;
-	
+
 	public RefactoringUITestPlugin() {
 		fgDefault= this;
 	}
@@ -26,16 +26,16 @@ public class RefactoringUITestPlugin extends AbstractUIPlugin {
 	public static RefactoringUITestPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	public static String getPluginId() {
 		return "org.eclipse.ltk.ui.refactoring.tests"; //$NON-NLS-1$
-	}	
-	
+	}
+
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR,  "Internal Error", e)); 
+		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR,  "Internal Error", e));
 	}
 }

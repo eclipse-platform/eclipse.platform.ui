@@ -10,20 +10,19 @@
  ******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
 import org.eclipse.core.resources.IResource;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ltk.ui.refactoring.resource.RenameResourceWizard;
 

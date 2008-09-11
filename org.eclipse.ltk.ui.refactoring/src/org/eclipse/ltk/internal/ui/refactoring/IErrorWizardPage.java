@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.jface.wizard.IWizardPage;
+
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 /**
  * Interface for a refactoring error wizard page.
- * 
+ *
  * @since 3.2
  */
 public interface IErrorWizardPage extends IWizardPage {
@@ -26,14 +26,14 @@ public interface IErrorWizardPage extends IWizardPage {
 
 	/**
 	 * Returns the page's refactoring status.
-	 * 
+	 *
 	 * @return the refactoring status
 	 */
 	public RefactoringStatus getStatus();
 
 	/**
 	 * Sets the page's refactoring status to the given value.
-	 * 
+	 *
 	 * @param status
 	 *            the refactoring status
 	 */

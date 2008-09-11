@@ -27,9 +27,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -47,9 +45,9 @@ import org.eclipse.ltk.internal.core.refactoring.resource.MoveResourcesProcessor
  * <p>
  * Note: this class is not intended to be subclassed or instantiated by clients.
  * </p>
- * 
+ *
  * @since 3.4
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class MoveResourcesDescriptor extends RefactoringDescriptor {
@@ -63,8 +61,8 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 	 * </p>
 	 */
 	public static final String ID= "org.eclipse.ltk.core.refactoring.move.resources"; //$NON-NLS-1$
-	
-	
+
+
 	/** The destination */
 	private IPath fDestinationPath;
 
@@ -90,7 +88,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Sets the destination container to move the resources in.
-	 * 
+	 *
 	 * @param container
 	 *            the destination
 	 */
@@ -101,7 +99,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Sets the path of the destination container to move the resources in.
-	 * 
+	 *
 	 * @param path
 	 *            the destination path
 	 */
@@ -109,11 +107,11 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 		Assert.isNotNull(path);
 		fDestinationPath= path;
 	}
-	
+
 	/**
 	 * Returns the destination container to move the resources in.
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 *            the destination container to move the resource in
 	 */
 	public IPath getDestinationPath() {
@@ -122,7 +120,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Sets the paths of the resources to move. The resources must be of type {@link IFile} or {@link IFolder}.
-	 * 
+	 *
 	 * @param resourcePaths
 	 *            the paths of the resource to move
 	 */
@@ -135,7 +133,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Sets the resources to move. The resources must be of type {@link IFile} or {@link IFolder}.
-	 * 
+	 *
 	 * @param resources
 	 *            the resource to move
 	 */
@@ -149,10 +147,10 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 		}
 		setResourcePathsToMove(paths);
 	}
-	
+
 	/**
 	 * Returns the resource to move.
-	 *  
+	 *
 	 * @return
 	 *          the resource to move
 	 */
@@ -161,17 +159,17 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 	}
 
 	/**
-	 * 	If set to <code>true</code>, move will also update references. The default is to update references. 
-	 * 
+	 * 	If set to <code>true</code>, move will also update references. The default is to update references.
+	 *
 	 * @param updateReferences  <code>true</code> if this move will update references
 	 */
 	public void setUpdateReferences(boolean updateReferences) {
 		fUpdateReferences= updateReferences;
 	}
-	
+
 	/**
 	 * Returns if move will also update references
-	 * 
+	 *
 	 * @return returns <code>true</code> if this move will update references
 	 */
 	public boolean isUpdateReferences() {
@@ -195,14 +193,14 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 			status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_destination_not_exists, BasicElementLabels.getPathLabel(destinationPath, false)));
 			return null;
 		}
-		
+
 
 		IPath[] paths= getResourcePathsToMove();
 		if (paths == null) {
 			status.addFatalError(RefactoringCoreMessages.MoveResourcesDescriptor_error_moved_not_set);
 			return null;
 		}
-		
+
 		IResource[] resources= new IResource[paths.length];
 		for (int i= 0; i < paths.length; i++) {
 			IPath path= paths[i];
@@ -221,11 +219,11 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 			}
 			resources[i]= resource;
 		}
-		
+
 		MoveResourcesProcessor processor= new MoveResourcesProcessor(resources);
 		processor.setDestination((IContainer) destination);
 		processor.setUpdateReferences(isUpdateReferences());
-		
+
 		return new MoveRefactoring(processor);
 	}
 }

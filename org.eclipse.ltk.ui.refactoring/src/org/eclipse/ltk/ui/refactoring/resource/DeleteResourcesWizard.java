@@ -10,16 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.resource;
 
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.ltk.core.refactoring.participants.DeleteRefactoring;
-
-import org.eclipse.ltk.internal.core.refactoring.Resources;
-import org.eclipse.ltk.internal.core.refactoring.resource.DeleteResourcesProcessor;
-import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -29,10 +19,18 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.wizard.IWizardPage;
 
+import org.eclipse.ltk.core.refactoring.participants.DeleteRefactoring;
+import org.eclipse.ltk.internal.core.refactoring.Resources;
+import org.eclipse.ltk.internal.core.refactoring.resource.DeleteResourcesProcessor;
+import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 
@@ -45,7 +43,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 	/**
 	 * Creates a {@link DeleteResourcesWizard}
-	 * 
+	 *
 	 * @param resources the resources to delete
 	 */
 	public DeleteResourcesWizard(IResource[] resources) {
@@ -76,7 +74,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			initializeDialogUnits(parent);
 
 			Point defaultSpacing= LayoutConstants.getSpacing();
-			
+
 			Composite composite= new Composite(parent, SWT.NONE);
 			GridLayout gridLayout= new GridLayout(2, false);
 			gridLayout.horizontalSpacing= defaultSpacing.x * 2;
@@ -85,17 +83,17 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			composite.setLayout(gridLayout);
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			composite.setFont(parent.getFont());
-						
+
 			Image image= parent.getDisplay().getSystemImage(SWT.ICON_QUESTION);
 			Label imageLabel = new Label(composite, SWT.NULL);
 			imageLabel.setBackground(image.getBackground());
 			imageLabel.setImage(image);
 			imageLabel.setLayoutData(new GridData(SWT.CENTER, SWT.BEGINNING, false, false));
-			
+
 			IResource[] resources= fRefactoringProcessor.getResourcesToDelete();
 			Label label= new Label(composite, SWT.WRAP);
 			label.setFont(composite.getFont());
-			
+
 			if (Resources.containsOnlyProjects(resources)) {
 				if (resources.length == 1) {
 					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single_project, BasicElementLabels.getResourceName(resources[0])));
@@ -118,7 +116,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			GridData gridData= new GridData(SWT.FILL, SWT.FILL, true, false);
 			gridData.widthHint= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			label.setLayoutData(gridData);
-			
+
 			Composite supportArea= new Composite(composite, SWT.NONE);
 			supportArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 			gridLayout= new GridLayout(1, false);
@@ -126,7 +124,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			gridLayout.verticalSpacing= defaultSpacing.y;
 
 			supportArea.setLayout(gridLayout);
-						
+
 			if (Resources.containsOnlyProjects(resources)) {
 				fDeleteContentsButton= new Button(supportArea, SWT.CHECK);
 				fDeleteContentsButton.setFont(composite.getFont());
@@ -136,7 +134,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			}
 			setControl(composite);
 		}
-		
+
 		private boolean containsLinkedResource(IResource[] resources) {
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];

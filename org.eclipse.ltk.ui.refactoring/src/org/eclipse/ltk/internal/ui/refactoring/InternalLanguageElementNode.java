@@ -17,13 +17,12 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.jface.text.IRegion;
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.GroupCategorySet;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
-
-import org.eclipse.jface.text.IRegion;
-
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode.ChildNode;
@@ -32,7 +31,7 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 
 	private List/*<ChildNode>*/ fChildren;
 	private GroupCategorySet fGroupCategories;
-	
+
 	protected InternalLanguageElementNode(PreviewNode parent) {
 		super(parent);
 	}
@@ -43,7 +42,7 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 			return null;
 		return element.getChangePreviewViewerDescriptor();
 	}
-	
+
 	void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
 		InternalTextEditChangeNode element= getTextEditChangeNode();
 		if (element != null) {
@@ -58,18 +57,18 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 			viewer.setInput(null);
 		}
 	}
-	
+
 	void setEnabled(boolean enabled) {
 		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
 			PreviewNode element= (PreviewNode)iter.next();
 			element.setEnabled(enabled);
 		}
 	}
-	
+
 	void setEnabledShallow(boolean enabled) {
 		// do nothing. We don't manage an own enablement state.
 	}
-	
+
 	int getActive() {
 		Assert.isTrue(fChildren.size() > 0);
 		int result= ((PreviewNode)fChildren.get(0)).getActive();
@@ -81,19 +80,19 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		}
 		return result;
 	}
-	
+
 	PreviewNode[] getChildren() {
 		if (fChildren == null)
 			return PreviewNode.EMPTY_CHILDREN;
 		return (PreviewNode[]) fChildren.toArray(new PreviewNode[fChildren.size()]);
 	}
-	
+
 	boolean hasOneGroupCategory(List categories) {
 		if (fChildren == null)
 			return false;
 		return getGroupCategorySet().containsOneCategory(categories);
 	}
-	
+
 	boolean hasDerived() {
 		if (fChildren == null)
 			return false;
@@ -104,7 +103,7 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		}
 		return false;
 	}
-	
+
 	private GroupCategorySet getGroupCategorySet() {
 		if (fGroupCategories == null) {
 			fGroupCategories= GroupCategorySet.NONE;
@@ -123,13 +122,13 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		}
 		return fGroupCategories;
 	}
-	
+
 	protected void internalAddChild(ChildNode child) {
 		if (fChildren == null)
 			fChildren= new ArrayList(2);
 		fChildren.add(child);
 	}
-	
+
 	private List collectTextEditBasedChangeGroups(List categories) {
 		List result= new ArrayList(10);
 		PreviewNode[] children= getChildren();
@@ -145,10 +144,10 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the text region the of this language element node.
-	 * 
+	 *
 	 * @return the text region of this language element node
 	 * @throws CoreException if the source region can't be obtained
 	 */

@@ -12,17 +12,16 @@ package org.eclipse.ltk.internal.ui.refactoring.scripting;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+
 /**
  * Wizard to show the global refactoring history
- * 
+ *
  * @since 3.2
  */
 public final class ShowRefactoringHistoryWizard extends Wizard {
@@ -67,7 +66,7 @@ public final class ShowRefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Returns the refactoring history to create a script from.
-	 * 
+	 *
 	 * @return the refactoring history.
 	 */
 	public RefactoringHistory getRefactoringHistory() {
@@ -90,7 +89,7 @@ public final class ShowRefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Sets the refactoring history to use.
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history to use
 	 */

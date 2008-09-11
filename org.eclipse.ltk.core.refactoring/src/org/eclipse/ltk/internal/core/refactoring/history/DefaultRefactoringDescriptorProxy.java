@@ -16,7 +16,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
  * Default implementation of a refactoring descriptor proxy.
- * 
+ *
  * @since 3.2
  */
 final class DefaultRefactoringDescriptorProxy extends RefactoringDescriptorProxy {
@@ -32,7 +32,7 @@ final class DefaultRefactoringDescriptorProxy extends RefactoringDescriptorProxy
 
 	/**
 	 * Creates a new default refactoring descriptor proxy.
-	 * 
+	 *
 	 * @param description
 	 *            the description
 	 * @param project

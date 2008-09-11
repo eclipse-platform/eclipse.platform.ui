@@ -21,19 +21,17 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
-
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
  * Tree content provider for the browse refactoring history control.
- * 
+ *
  * @since 3.2
  */
 public final class BrowseRefactoringHistoryContentProvider extends RefactoringHistoryContentProvider {
@@ -61,7 +59,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	/**
 	 * Creates a new browse refactoring history content provider.
-	 * 
+	 *
 	 * @param configuration
 	 *            the refactoring history control configuration
 	 */
@@ -113,7 +111,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	/**
 	 * Returns the refactoring histories.
-	 * 
+	 *
 	 * @return the map of projects to refactoring histories
 	 */
 	private Map getRefactoringHistories() {
@@ -146,7 +144,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	/**
 	 * Returns the refactoring descriptor proxies for the specified project.
-	 * 
+	 *
 	 * @param project
 	 *            the project
 	 * @return the refactoring history, or <code>null</code> if no history is
@@ -159,7 +157,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	/**
 	 * Returns the refactoring history content provider for the specified node.
-	 * 
+	 *
 	 * @param node
 	 *            the refactoring history node
 	 * @return the refactoring history content provider, or <code>null</code>
@@ -167,7 +165,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	private RefactoringHistoryContentProvider getRefactoringHistoryContentProvider(final RefactoringHistoryNode node) {
 		Assert.isNotNull(node);
 		final RefactoringHistoryNode root= getRootNode(node);
-		
+
 		String projectName= null;
 		if (root instanceof RefactoringHistoryProject) {
 			projectName= ((RefactoringHistoryProject) root).getProject();
@@ -190,7 +188,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	/**
 	 * Returns the refactoring history content provider for the specified
 	 * project.
-	 * 
+	 *
 	 * @param project
 	 *            the project
 	 * @return the refactoring history content provider
@@ -208,7 +206,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	/**
 	 * Returns the refactoring history entries for the specified project.
-	 * 
+	 *
 	 * @param project
 	 *            the project
 	 * @return the refactoring history entries
@@ -280,7 +278,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	/**
 	 * Returns the root node of the specified node.
-	 * 
+	 *
 	 * @param node
 	 *            the refactoring history node
 	 * @return the root node, or the node itself
@@ -312,7 +310,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	/**
 	 * Should the refactoring history be sorted by projects?
-	 * 
+	 *
 	 * @return <code>true</code> if it should be sorted by projects,
 	 *         <code>false</code> otherwise
 	 */
@@ -322,7 +320,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	/**
 	 * Determines whether the refactoring history should be sorted by projects.
-	 * 
+	 *
 	 * @param sort
 	 *            <code>true</code> to sort by projects, <code>false</code>
 	 *            otherwise

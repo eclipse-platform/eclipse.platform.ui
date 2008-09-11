@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ package org.eclipse.ltk.core.refactoring;
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IRefactoringStatusEntryComparator {
@@ -41,7 +41,7 @@ public interface IRefactoringStatusEntryComparator {
 	 * implies that <tt>sgn(compare(x, z))==sgn(compare(y, z))</tt> for all
 	 * <tt>z</tt>.
 	 * </p>
-	 * 
+	 *
 	 * @param entry1 the first refactoring status entry to be compared.
 	 * @param entry2 the second refactoring status entry to be compared.
 	 * @return a negative integer, zero, or a positive integer as the first

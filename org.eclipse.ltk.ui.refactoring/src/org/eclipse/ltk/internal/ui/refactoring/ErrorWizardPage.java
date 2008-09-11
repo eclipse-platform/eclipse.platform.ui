@@ -11,15 +11,10 @@
 
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.Dialog;
@@ -29,6 +24,10 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
+import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
 
@@ -36,20 +35,20 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
  * Presents the list of failed preconditions to the user
  */
 public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWizardPage {
-		
+
 	protected RefactoringStatus fStatus;
 	protected RefactoringStatusViewer fViewer;
-	
+
 	/**
 	 * Creates a new error wizard page.
 	 */
 	public ErrorWizardPage() {
 		super(PAGE_NAME);
 	}
-	
+
 	/**
 	 * Creates a new error wizard page.
-	 * 
+	 *
 	 * @param wizard
 	 *            <code>true</code> if the page belongs to a conventional
 	 *            wizard, <code>false</code> otherwise
@@ -57,7 +56,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 	public ErrorWizardPage(boolean wizard) {
 		super(PAGE_NAME, wizard);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -67,16 +66,16 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			final int severity= fStatus.getSeverity();
 			setPageComplete(severity < RefactoringStatus.FATAL);
 			if (severity >= RefactoringStatus.FATAL) {
-				setDescription(RefactoringUIMessages.ErrorWizardPage_cannot_proceed); 
+				setDescription(RefactoringUIMessages.ErrorWizardPage_cannot_proceed);
 			} else if (severity >= RefactoringStatus.INFO) {
-				setDescription(Messages.format(RefactoringUIMessages.ErrorWizardPage_confirm, new String[] {getLabelAsText(IDialogConstants.NEXT_LABEL), getLabelAsText(IDialogConstants.FINISH_LABEL)})); 
+				setDescription(Messages.format(RefactoringUIMessages.ErrorWizardPage_confirm, new String[] {getLabelAsText(IDialogConstants.NEXT_LABEL), getLabelAsText(IDialogConstants.FINISH_LABEL)}));
 			} else {
 				setDescription(""); //$NON-NLS-1$
 			}
 		} else {
 			setPageComplete(true);
 			setDescription(""); //$NON-NLS-1$
-		}	
+		}
 	}
 
 	protected String getLabelAsText(String label) {
@@ -90,9 +89,9 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 	public RefactoringStatus getStatus() {
 		return fStatus;
 	}
-	
+
 	//---- UI creation ----------------------------------------------------------------------
-	
+
 	/* (non-Javadoc)
 	 * Method declared in IWizardPage.
 	 */
@@ -100,9 +99,9 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 		initializeDialogUnits(parent);
 		setControl(fViewer= new RefactoringStatusViewer(parent, SWT.NONE));
 		Dialog.applyDialogFont(fViewer);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IRefactoringHelpContextIds.REFACTORING_ERROR_WIZARD_PAGE);			
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IRefactoringHelpContextIds.REFACTORING_ERROR_WIZARD_PAGE);
 	}
-	
+
 	//---- Reimplementation of WizardPage methods ------------------------------------------
 
 	/* (non-Javadoc)
@@ -120,7 +119,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 		}
 		super.setVisible(visible);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in IWizardPage.
 	 */
@@ -130,7 +129,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 		return fStatus != null && fStatus.getSeverity() < RefactoringStatus.FATAL &&
 			   isPageComplete() && super.getNextPage() != null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in IWizardPage.
 	 */
@@ -143,10 +142,10 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 		}
 		if (change == null)
 			return this;
-			
+
 		return super.getNextPage();
 	}
-	
+
 	/* (non-JavaDoc)
 	 * Method defined in RefactoringWizardPage
 	 */
@@ -167,12 +166,12 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			return false;
 		RefactoringStatus fValidationStatus= operation.getValidationStatus();
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
-			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
+			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(),
 				Messages.format(
-					RefactoringUIMessages.RefactoringUI_cannot_execute, 
+					RefactoringUIMessages.RefactoringUI_cannot_execute,
 					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
 			return true;
 		}
 		return true;
-	}	
+	}
 }

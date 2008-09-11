@@ -45,7 +45,7 @@ public class UndoManager implements IUndoManager {
 	private ListenerList fListeners;
 	// Maximum numbers of undos on the refactoring undo stack.
 	private static final int MAX_UNDO_REDOS= 5;
-	
+
 	private static class NullQuery implements IValidationCheckResultQuery {
 		public boolean proceed(RefactoringStatus status) {
 			return true;
@@ -81,7 +81,7 @@ public class UndoManager implements IUndoManager {
 		if (fListeners.size() == 0)
 			fListeners= null;
 	}
-	
+
 	public void aboutToPerformChange(final Change change) {
 		if (fListeners == null)
 			return;
@@ -98,7 +98,7 @@ public class UndoManager implements IUndoManager {
 			});
 		}
 	}
-	
+
 	/**
 	 * @deprecated use #changePerformed(Change, boolean) instead
 	 */
@@ -118,7 +118,7 @@ public class UndoManager implements IUndoManager {
 			});
 		}
 	}
-	
+
 	public void changePerformed(Change change, boolean successful) {
 		// the listeners don't care about success or not.
 		changePerformed(change);
@@ -126,7 +126,7 @@ public class UndoManager implements IUndoManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IUndoManager#shutdown()
 	 */
 	public void shutdown() {
@@ -356,7 +356,7 @@ public class UndoManager implements IUndoManager {
 			((IUndoManagerListener)listeners[i]).redoStackChanged(this);
 		}
 	}
-	
+
 	private void sendDispose(Collection collection) {
 		for (Iterator iter= collection.iterator(); iter.hasNext();) {
 			final Change change= (Change)iter.next();
@@ -371,13 +371,13 @@ public class UndoManager implements IUndoManager {
 			SafeRunner.run(r);
 		}
 	}
-	
+
 	//---- testing methods ---------------------------------------------
-	
+
 	public boolean testHasNumberOfUndos(int number) {
 		return fUndoChanges.size() == number;
 	}
-	
+
 	public boolean testHasNumberOfRedos(int number) {
 		return fRedoChanges.size() == number;
 	}

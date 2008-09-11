@@ -18,19 +18,19 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CopyArguments extends RefactoringArguments {
 
 	private Object fDestination;
 	private final ReorgExecutionLog fLog;
-	
+
 	/**
 	 * Creates new copy arguments.
-	 * 
+	 *
 	 * @param destination the destination of the copy
 	 * @param log the log for the execution of the reorg refactoring
 	 */
@@ -40,28 +40,28 @@ public class CopyArguments extends RefactoringArguments {
 		fDestination= destination;
 		fLog= log;
 	}
-	
+
 	/**
 	 * Returns the destination of the move
-	 * 
+	 *
 	 * @return the move's destination
 	 */
 	public Object getDestination() {
 		return fDestination;
 	}
-	
+
 	/**
 	 * Returns the resource execution log.
-	 * 
+	 *
 	 * @return the resource execution log
 	 */
 	public ReorgExecutionLog getExecutionLog() {
 		return fLog;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public String toString() {

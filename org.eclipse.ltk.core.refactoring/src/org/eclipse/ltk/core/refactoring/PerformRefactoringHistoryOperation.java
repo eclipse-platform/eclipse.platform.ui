@@ -20,7 +20,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
@@ -35,14 +34,14 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * Note: this class is not intended to be instantiated or extended outside of
  * the refactoring framework.
  * </p>
- * 
+ *
  * @see org.eclipse.core.resources.IWorkspace
  * @see PerformRefactoringOperation
  * @see RefactoringHistory
  * @see RefactoringHistoryService
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -56,7 +55,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 
 	/**
 	 * Creates a new perform refactoring history operation.
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history
 	 */
@@ -68,7 +67,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	/**
 	 * Hook method which is called when the specified refactoring is going to be
 	 * executed.
-	 * 
+	 *
 	 * @param refactoring
 	 *            the refactoring about to be executed
 	 * @param descriptor
@@ -88,7 +87,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 * refactoring descriptor. The refactoring must be in an initialized state
 	 * at the return of the method call. The default implementation delegates
 	 * the task to the refactoring descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @param status
@@ -100,24 +99,24 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 *         descriptor
 	 * @throws CoreException
 	 *             if an error occurs while creating the refactoring instance
-	 * @deprecated since 3.4. Override {@link #createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead 
+	 * @deprecated since 3.4. Override {@link #createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead
 	 */
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status) throws CoreException {
 		Assert.isNotNull(descriptor);
 		return descriptor.createRefactoring(status);
 	}
-	
+
 	/**
 	 * Method which is called to create a refactoring instance from a
 	 * refactoring descriptor. The refactoring must be in an initialized state
 	 * at the return of the method call. The default implementation delegates
 	 * the task to the refactoring descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @param status
 	 *            a refactoring status to describe the outcome of the
-	 *            initialization   
+	 *            initialization
 	 * @param monitor
 	 *            the progress monitor to use
 	 * @return the refactoring, or <code>null</code> if this refactoring
@@ -126,7 +125,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 *         descriptor
 	 * @throws CoreException
 	 *             if an error occurs while creating the refactoring instance
-	 *             
+	 *
 	 * @since 3.4
 	 */
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
@@ -142,7 +141,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 
 	/**
 	 * Returns the execution status. Guaranteed not to be <code>null</code>.
-	 * 
+	 *
 	 * @return the status of the session
 	 */
 	public final RefactoringStatus getExecutionStatus() {
@@ -152,7 +151,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	/**
 	 * Hook method which is called when the specified refactoring has been
 	 * performed.
-	 * 
+	 *
 	 * @param refactoring
 	 *            the refactoring which has been performed
 	 * @param monitor

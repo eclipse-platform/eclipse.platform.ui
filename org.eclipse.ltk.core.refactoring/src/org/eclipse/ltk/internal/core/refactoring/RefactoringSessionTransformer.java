@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
-import com.ibm.icu.text.Collator;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,6 +20,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.ibm.icu.text.Collator;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -30,15 +36,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
 /**
  * Transformer for XML-based refactoring histories.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringSessionTransformer {
@@ -76,7 +76,7 @@ public final class RefactoringSessionTransformer {
 
 	/**
 	 * Creates a new refactoring session transformer.
-	 * 
+	 *
 	 * @param projects
 	 *            <code>true</code> to include project information,
 	 *            <code>false</code> otherwise
@@ -88,7 +88,7 @@ public final class RefactoringSessionTransformer {
 	/**
 	 * Adds the attributes specified in the list to the node, in ascending order
 	 * of their names.
-	 * 
+	 *
 	 * @param node
 	 *            the node
 	 * @param list
@@ -115,7 +115,7 @@ public final class RefactoringSessionTransformer {
 	 * {@link RefactoringSessionTransformer#endRefactoring()}. If the
 	 * transformer is already processing a refactoring, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            the unique identifier of the refactoring
 	 * @param stamp
@@ -194,7 +194,7 @@ public final class RefactoringSessionTransformer {
 	 * {@link RefactoringSessionTransformer#endSession()}. If the transformer
 	 * is already processing a session, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param comment
 	 *            the comment associated with the refactoring session, or
 	 *            <code>null</code>
@@ -231,12 +231,12 @@ public final class RefactoringSessionTransformer {
 	 * <p>
 	 * If no refactoring is currently processed, this call has no effect.
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            the non-empty name of the argument
 	 * @param value
 	 *            the value of the argument
-	 * 
+	 *
 	 * @throws CoreException
 	 *             if an error occurs while creating a new argument
 	 */
@@ -288,7 +288,7 @@ public final class RefactoringSessionTransformer {
 	 * This method must only be called once during the life time of a
 	 * transformer.
 	 * </p>
-	 * 
+	 *
 	 * @return the object representing the refactoring session, or
 	 *         <code>null</code> if no session has been transformed
 	 */

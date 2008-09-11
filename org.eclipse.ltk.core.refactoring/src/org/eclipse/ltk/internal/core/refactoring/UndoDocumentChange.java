@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
-import org.eclipse.text.edits.TextEdit;
-import org.eclipse.text.edits.UndoEdit;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.UndoEdit;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -24,39 +24,39 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class UndoDocumentChange extends Change {
-	
+
 	private String fName;
 	private UndoEdit fUndo;
 	private IDocument fDocument;
 	private int fLength;
-	
+
 	public UndoDocumentChange(String name, IDocument document, UndoEdit undo) {
 		fName= name;
 		fUndo= undo;
 		fDocument= document;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public Object getModifiedElement() {
 		return null;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void initializeValidationData(IProgressMonitor pm) {
 		fLength= fDocument.getLength();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -68,7 +68,7 @@ public class UndoDocumentChange extends Change {
 		pm.worked(1);
 		return result;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

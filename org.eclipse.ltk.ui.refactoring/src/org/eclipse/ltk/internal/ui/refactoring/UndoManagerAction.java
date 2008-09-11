@@ -12,11 +12,11 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -42,7 +42,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 	private IAction fAction;
 	private IWorkbenchWindow fWorkbenchWindow;
 	private UndoManagerAdapter fUndoManagerListener;
-	
+
 	protected static abstract class Query implements IValidationCheckResultQuery  {
 		private Shell fParent;
 		private String fTitle;
@@ -75,25 +75,25 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 
 	protected UndoManagerAction() {
 	}
-	
+
 	protected abstract IRunnableWithProgress createOperation(Shell parent);
-	
+
 	protected abstract UndoManagerAdapter createUndoManagerListener();
-	
+
 	protected abstract String getName();
-	
+
 	protected IWorkbenchWindow getWorkbenchWindow() {
 		return fWorkbenchWindow;
 	}
-	
+
 	protected IAction getAction() {
 		return fAction;
 	}
-	
+
 	protected boolean isHooked() {
 		return fAction != null;
 	}
-	
+
 	protected void hookListener(IAction action) {
 		if (isHooked())
 			return;
@@ -101,7 +101,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		fUndoManagerListener= createUndoManagerListener();
 		RefactoringCore.getUndoManager().addListener(fUndoManagerListener);
 	}
-	
+
 	protected String shortenText(String text, int patternLength) {
 		int length= text.length();
 		final int finalLength = MAX_LENGTH + patternLength;
@@ -114,7 +114,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		result.append(text.substring(length - mid));
 		return result.toString();
 	}
-			
+
 	/* (non-Javadoc)
 	 * Method declared in IActionDelegate
 	 */
@@ -125,14 +125,14 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		fAction= null;
 		fUndoManagerListener= null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in IActionDelegate
 	 */
 	public void init(IWorkbenchWindow window) {
 		fWorkbenchWindow= window;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in IActionDelegate
 	 */
@@ -147,8 +147,8 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 			RefactoringCore.getUndoManager().flush();
 			ExceptionHandler.handle(e,
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				RefactoringUIMessages.UndoManagerAction_internal_error_title,  
-				RefactoringUIMessages.UndoManagerAction_internal_error_message); 
+				RefactoringUIMessages.UndoManagerAction_internal_error_title,
+				RefactoringUIMessages.UndoManagerAction_internal_error_message);
 		} catch (InterruptedException e) {
 			// Operation isn't cancelable.
 		} catch (OperationCanceledException e) {

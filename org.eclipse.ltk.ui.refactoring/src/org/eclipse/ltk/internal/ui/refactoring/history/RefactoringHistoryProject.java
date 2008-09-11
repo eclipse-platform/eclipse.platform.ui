@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * Project of a refactoring history.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryProject extends RefactoringHistoryNode {
@@ -24,12 +24,12 @@ public final class RefactoringHistoryProject extends RefactoringHistoryNode {
 
 	/**
 	 * Creates a new refactoring history project.
-	 * 
+	 *
 	 * @param project
 	 */
 	public RefactoringHistoryProject(final String project) {
 		Assert.isNotNull(project);
-		Assert.isTrue(!"".equals(project)); //$NON-NLS-1$		
+		Assert.isTrue(!"".equals(project)); //$NON-NLS-1$
 		fProject= project;
 	}
 
@@ -60,7 +60,7 @@ public final class RefactoringHistoryProject extends RefactoringHistoryNode {
 
 	/**
 	 * Returns the project.
-	 * 
+	 *
 	 * @return the project
 	 */
 	public String getProject() {

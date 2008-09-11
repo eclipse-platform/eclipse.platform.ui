@@ -22,9 +22,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -42,9 +40,9 @@ import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcesso
  * <p>
  * Note: this class is not intended to be subclassed or instantiated by clients.
  * </p>
- * 
+ *
  * @since 3.4
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class RenameResourceDescriptor extends RefactoringDescriptor {
@@ -58,8 +56,8 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 	 * </p>
 	 */
 	public static final String ID= "org.eclipse.ltk.core.refactoring.rename.resource"; //$NON-NLS-1$
-	
-	
+
+
 	/** The name attribute */
 	private String fNewName;
 
@@ -84,7 +82,7 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Sets the new name to rename the resource to.
-	 * 
+	 *
 	 * @param name
 	 *            the non-empty new name to set
 	 */
@@ -93,11 +91,11 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 		Assert.isLegal(!"".equals(name), "Name must not be empty"); //$NON-NLS-1$//$NON-NLS-2$
 		fNewName= name;
 	}
-	
+
 	/**
 	 * Returns the new name to rename the resource to.
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 *            the new name to rename the resource to
 	 */
 	public String getNewName() {
@@ -113,11 +111,11 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 	 * <p>
 	 * The default is to associate the refactoring with the workspace.
 	 * </p>
-	 * 
+	 *
 	 * @param project
 	 *            the non-empty project name to set, or <code>null</code> for
 	 *            the workspace
-	 * 
+	 *
 	 * @see #getProject()
 	 */
 	public void setProject(final String project) {
@@ -130,7 +128,7 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 	 * Note: If the resource to be renamed is of type {@link IResource#PROJECT},
 	 * clients are required to to set the project name to <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param resourcePath
 	 *            the resource to be renamed
 	 */
@@ -138,10 +136,10 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 		Assert.isNotNull(resourcePath);
 		fResourcePath= resourcePath;
 	}
-	
+
 	/**
 	 * Returns the path of the resource to rename.
-	 *  
+	 *
 	 * @return
 	 *          the path of the resource to rename
 	 */
@@ -150,8 +148,8 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 	}
 
 	/**
-	 * 	If set to <code>true</code>, this rename will also update references. The default is to update references. 
-	 * 
+	 * 	If set to <code>true</code>, this rename will also update references. The default is to update references.
+	 *
 	 * @param updateReferences  <code>true</code> if this rename will update references
 	 */
 	public void setUpdateReferences(boolean updateReferences) {
@@ -160,7 +158,7 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Returns if this rename will also update references
-	 * 
+	 *
 	 * @return returns <code>true</code> if this rename will update references
 	 */
 	public boolean isUpdateReferences() {
@@ -176,13 +174,13 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 			status.addFatalError(RefactoringCoreMessages.RenameResourceDescriptor_error_path_not_set);
 			return null;
 		}
-		
+
 		IResource resource= ResourcesPlugin.getWorkspace().getRoot().findMember(resourcePath);
 		if (resource == null || !resource.exists()) {
 			status.addFatalError(Messages.format(RefactoringCoreMessages.RenameResourceDescriptor_error_resource_not_existing, BasicElementLabels.getPathLabel(resourcePath, false)));
 			return null;
 		}
-		
+
 		String newName= getNewName();
 		if (newName == null || newName.length() == 0) {
 			status.addFatalError(RefactoringCoreMessages.RenameResourceDescriptor_error_name_not_defined);
@@ -191,7 +189,7 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 		RenameResourceProcessor processor= new RenameResourceProcessor(resource);
 		processor.setNewResourceName(newName);
 		processor.setUpdateReferences(isUpdateReferences());
-		
+
 		return new RenameRefactoring(processor);
 	}
 }

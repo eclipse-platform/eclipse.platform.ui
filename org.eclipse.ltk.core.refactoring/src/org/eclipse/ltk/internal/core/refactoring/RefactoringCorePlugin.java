@@ -7,19 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
- *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> -
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring]
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -27,22 +29,19 @@ import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
-
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistorySerializer;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
-
-import org.osgi.framework.BundleContext;
 
 public class RefactoringCorePlugin extends Plugin {
-	
+
 	private static RefactoringCorePlugin fgDefault;
 	private static IUndoManager fgUndoManager= null;
-	
+
 	private static IUndoContext fRefactoringUndoContext;
-	
+
 	private IRefactoringHistoryListener fRefactoringHistoryListener= null;
-	
+
 	public RefactoringCorePlugin() {
 		fgDefault= this;
 	}
@@ -50,11 +49,11 @@ public class RefactoringCorePlugin extends Plugin {
 	public static RefactoringCorePlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	public static String getPluginId() {
 		return RefactoringCore.ID_PLUGIN;
 	}
-	
+
 	public static IUndoContext getUndoContext() {
 		if (fRefactoringUndoContext == null) {
 			fRefactoringUndoContext= new RefactoringUndoContext();
@@ -67,50 +66,50 @@ public class RefactoringCorePlugin extends Plugin {
 		}
 		return fRefactoringUndoContext;
 	}
-	
+
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	public static void log(Throwable t) {
 		IStatus status= new Status(
-			IStatus.ERROR, getPluginId(), 
-			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
-			RefactoringCoreMessages.RefactoringCorePlugin_internal_error,  
+			IStatus.ERROR, getPluginId(),
+			IRefactoringCoreStatusCodes.INTERNAL_ERROR,
+			RefactoringCoreMessages.RefactoringCorePlugin_internal_error,
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
-	
+
 	public static void logRemovedListener(Throwable t) {
 		IStatus status= new Status(
-			IStatus.ERROR, getPluginId(), 
-			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
-			RefactoringCoreMessages.RefactoringCorePlugin_listener_removed,  
+			IStatus.ERROR, getPluginId(),
+			IRefactoringCoreStatusCodes.INTERNAL_ERROR,
+			RefactoringCoreMessages.RefactoringCorePlugin_listener_removed,
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
-	
+
 	public static void logRemovedParticipant(ParticipantDescriptor descriptor, Throwable t) {
 		IStatus status= new Status(
-			IStatus.ERROR, getPluginId(), 
+			IStatus.ERROR, getPluginId(),
 			IRefactoringCoreStatusCodes.PARTICIPANT_DISABLED,
 			Messages.format(
-				RefactoringCoreMessages.RefactoringCorePlugin_participant_removed,  
+				RefactoringCoreMessages.RefactoringCorePlugin_participant_removed,
 				descriptor.getId()),
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
-	
+
 	public static void logErrorMessage(String message) {
 		log(new Status(IStatus.ERROR, getPluginId(), IRefactoringCoreStatusCodes.INTERNAL_ERROR, message, null));
 	}
-	
+
 	public static IUndoManager getUndoManager() {
 		if (fgUndoManager == null)
 			fgUndoManager= createUndoManager();
 		return fgUndoManager;
 	}
-	
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		RefactoringContributionManager.getInstance().connect();
@@ -119,7 +118,7 @@ public class RefactoringCorePlugin extends Plugin {
 		fRefactoringHistoryListener= new RefactoringHistorySerializer();
 		service.addHistoryListener(fRefactoringHistoryListener);
 	}
-	
+
 	public void stop(BundleContext context) throws Exception {
 		if (fRefactoringUndoContext != null) {
 			IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
@@ -136,10 +135,10 @@ public class RefactoringCorePlugin extends Plugin {
 		RefactoringContributionManager.getInstance().disconnect();
 		super.stop(context);
 	}
-	
+
 	/**
 	 * Creates a new empty undo manager.
-	 * 
+	 *
 	 * @return a new undo manager
 	 */
 	private static IUndoManager createUndoManager() {

@@ -27,14 +27,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.resources.IStorage;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
 /**
  * Combined storage and stream merger for refactoring history index files.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringIndexMerger implements IStorageMerger {
@@ -88,7 +87,7 @@ public final class RefactoringIndexMerger implements IStorageMerger {
 
 	/**
 	 * Performs the actual merge operation.
-	 * 
+	 *
 	 * @param output
 	 *            the output stream
 	 * @param encoding

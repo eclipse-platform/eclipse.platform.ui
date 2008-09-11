@@ -16,7 +16,6 @@ import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorDiff;
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryDiff;
@@ -34,9 +33,9 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryDiff;
  * used in team synchronization views may use this class as a basis for
  * refactoring-aware synchronization label providers.
  * </p>
- * 
+ *
  * @see org.eclipse.team.ui.mapping.SynchronizationLabelProvider
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractSynchronizationLabelProvider extends SynchronizationLabelProvider {
@@ -69,11 +68,11 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 	 * direction of the difference between the two or three versions of the
 	 * refactoring history object.
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            the refactoring history object
 	 * @return the direction of the difference
-	 * 
+	 *
 	 * @see IThreeWayDiff#getDirection()
 	 */
 	protected int getDirection(Object element) {
@@ -110,11 +109,11 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 	 * kind of difference between the two or three versions of the refactoring
 	 * history object.
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            the refactoring history object
 	 * @return the kind of difference
-	 * 
+	 *
 	 * @see IDiff#getKind()
 	 */
 	protected int getKind(Object element) {

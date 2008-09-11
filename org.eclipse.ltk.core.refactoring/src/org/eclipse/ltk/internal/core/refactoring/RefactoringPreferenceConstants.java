@@ -12,7 +12,7 @@ package org.eclipse.ltk.internal.core.refactoring;
 
 /**
  * Constants for refactoring preferences keys.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringPreferenceConstants {

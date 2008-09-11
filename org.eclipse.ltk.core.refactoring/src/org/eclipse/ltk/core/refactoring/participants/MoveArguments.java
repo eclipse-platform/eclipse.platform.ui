@@ -18,19 +18,19 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MoveArguments extends RefactoringArguments {
-	
+
 	private Object fDestination;
 	private boolean fUpdateReferences;
-	
+
 	/**
 	 * Creates new move arguments.
-	 * 
+	 *
 	 * @param destination the destination of the move
 	 * @param updateReferences <code>true</code> if reference
 	 *  updating is requested; <code>false</code> otherwise
@@ -40,29 +40,29 @@ public class MoveArguments extends RefactoringArguments {
 		fDestination= destination;
 		fUpdateReferences= updateReferences;
 	}
-	
+
 	/**
 	 * Returns the destination of the move
-	 * 
+	 *
 	 * @return the move's destination
 	 */
 	public Object getDestination() {
 		return fDestination;
 	}
-	
+
 	/**
 	 * Returns whether reference updating is requested or not.
-	 * 
+	 *
 	 * @return returns <code>true</code> if reference
 	 *  updating is requested; <code>false</code> otherwise
 	 */
 	public boolean getUpdateReferences() {
 		return fUpdateReferences;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public String toString() {

@@ -20,21 +20,20 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-import org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages;
-import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
+
 /**
  * Action to reject a pending refactoring and to just store it in the history.
- * 
+ *
  * @since 3.2
  */
 public final class RejectRefactoringsAction extends Action {
@@ -47,7 +46,7 @@ public final class RejectRefactoringsAction extends Action {
 
 	/**
 	 * Creates a new reject refactorings action.
-	 * 
+	 *
 	 * @param context
 	 *            the synchronization context
 	 */
@@ -104,7 +103,7 @@ public final class RejectRefactoringsAction extends Action {
 
 	/**
 	 * Sets the refactoring descriptor proxies to accept.
-	 * 
+	 *
 	 * @param proxies
 	 *            the refactoring descriptor proxies
 	 */

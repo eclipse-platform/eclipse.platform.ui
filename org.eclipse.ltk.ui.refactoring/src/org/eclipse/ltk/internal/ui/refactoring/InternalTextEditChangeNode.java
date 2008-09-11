@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
-
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode.ChildNode;
 
@@ -27,19 +26,19 @@ public abstract class InternalTextEditChangeNode extends AbstractChangeNode {
 	int getActive() {
 		return getCompositeChangeActive();
 	}
-	
+
 	boolean hasOneGroupCategory(List categories) {
 		return ((TextEditBasedChange)getChange()).hasOneGroupCategory(categories);
 	}
-	
+
 	protected TextEditBasedChange getTextEditBasedChange() {
 		return (TextEditBasedChange)getChange();
 	}
-	
+
 	final PreviewNode[] doCreateChildren() {
 		return createChildNodes();
 	}
-	
+
 	protected static TextEditChangeNode internalGetTextEditChangeNode(PreviewNode node) {
 		PreviewNode element= node.getParent();
 		while(!(element instanceof TextEditChangeNode) && element != null) {
@@ -47,6 +46,6 @@ public abstract class InternalTextEditChangeNode extends AbstractChangeNode {
 		}
 		return (TextEditChangeNode)element;
 	}
-	
+
 	protected abstract ChildNode[] createChildNodes();
 }

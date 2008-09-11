@@ -12,7 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 
 /**
  * Collection node of a refactoring history.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryCollection extends RefactoringHistoryNode {

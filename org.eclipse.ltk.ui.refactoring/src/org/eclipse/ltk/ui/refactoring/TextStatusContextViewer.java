@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
-import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
@@ -23,13 +19,18 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 /**
  * An abstract base implementation of a status context viewer that presents
@@ -40,7 +41,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * and {@link #setInput(IDocument, IRegion)} to set the title text and image and to
  * populate the source viewer.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class TextStatusContextViewer implements IStatusContextViewer {
@@ -52,18 +53,18 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 
 	/**
 	 * Returns the internal source viewer.
-	 * 
+	 *
 	 * @return the internal source viewer or <code>null</code> if the
 	 *  source viewer hasn't been created yet
 	 */
 	protected SourceViewer getSourceViewer() {
 		return fSourceViewer;
 	}
-	
+
 	/**
 	 * Hook to create the source viewer used to present the textual context
 	 * information.
-	 * 
+	 *
 	 * @param parent the composite to be used as the source viewer's
 	 *  parent
 	 * @return the source viewer to be used
@@ -77,8 +78,8 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 	 * viewer. The image and text is determined by retrieving the <code>
 	 * IWorkbenchAdapter</code> for the given element. If the element doen't
 	 * provide a <code>IWorkbenchAdapter</code> or if the element is <code>
-	 * null</code> the image is reset and a default label is shown.  
-	 * 
+	 * null</code> the image is reset and a default label is shown.
+	 *
 	 * @param element the element providing the image and label for the title.
 	 *  Can be <code>null</code> to reset the image and text
 	 */
@@ -93,7 +94,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 			}
 		}
 		if (title == null || title.length() == 0)
-			title= RefactoringUIMessages.RefactoringStatusViewer_Problem_context; 
+			title= RefactoringUIMessages.RefactoringStatusViewer_Problem_context;
 		fLabel.setText(title);
 		if (fPaneImage != null) {
 			fPaneImage.dispose();
@@ -104,11 +105,11 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 		}
 		fLabel.setImage(fPaneImage);
 	}
-	
+
 	/**
 	 * Sets the input of the source viewer to the given document and reveals the
 	 * region determined by the given parameter region.
-	 * 
+	 *
 	 * @param document the document to present
 	 * @param region the region to reveal.
 	 */
@@ -133,7 +134,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 				ctrl.setRedraw(true);
 		}
 	}
-	
+
 	//---- Methods defined in IStatusContextViewer -------------------------------
 
 	/**

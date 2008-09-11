@@ -17,11 +17,11 @@ package org.eclipse.ltk.core.refactoring;
  * <p>
  * Note: this interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.core.runtime.Status
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRefactoringCoreStatusCodes {
@@ -34,7 +34,7 @@ public interface IRefactoringCoreStatusCodes {
 	/**
 	 * Status code (value 10001) indicating that a bad location exception has
 	 * occurred during change execution.
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.BadLocationException
 	 */
 	public static final int BAD_LOCATION= 10001;
@@ -54,7 +54,7 @@ public interface IRefactoringCoreStatusCodes {
 	/**
 	 * Status code (value 10004) indicating that a refactoring history has been
 	 * read which does not contain version information.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final int MISSING_REFACTORING_HISTORY_VERSION= 10004;
@@ -62,7 +62,7 @@ public interface IRefactoringCoreStatusCodes {
 	/**
 	 * Status code (value 10005) indicating that a refactoring history with an
 	 * unsupported version has been read.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final int UNSUPPORTED_REFACTORING_HISTORY_VERSION= 10005;
@@ -70,7 +70,7 @@ public interface IRefactoringCoreStatusCodes {
 	/**
 	 * Status code (value 10006) indicating that a general error has occurred
 	 * during I/O of a refactoring history.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final int REFACTORING_HISTORY_IO_ERROR= 10006;
@@ -78,28 +78,28 @@ public interface IRefactoringCoreStatusCodes {
 	/**
 	 * Status code (value 10007) indicating that the format of a refactoring
 	 * history contains errors.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final int REFACTORING_HISTORY_FORMAT_ERROR= 10007;
-	
+
 	/**
-	 * 
+	 *
 	 * Status code (value 10008) indicating that participants are disabled
 	 * because a refactoring threw an exception.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final int REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS= 10008;
 
 	/**
-	 * 
+	 *
 	 * Status code (value 10009) indicating that a participant was disabled, either
 	 * due to an exception or other reason logged elsewhere.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final int PARTICIPANT_DISABLED= 10009;
 
-	
+
 }

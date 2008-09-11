@@ -10,28 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusEntryFilter;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 
+import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusEntryFilter;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
  * Error page for refactoring history wizards.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
@@ -85,7 +83,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
 	/**
 	 * Returns the current refactoring.
-	 * 
+	 *
 	 * @return the current refactoring
 	 */
 	public Refactoring getRefactoring() {
@@ -94,7 +92,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
 	/**
 	 * Returns the refactoring history wizard.
-	 * 
+	 *
 	 * @return the refactoring history wizard
 	 */
 	protected RefactoringHistoryWizard getRefactoringHistoryWizard() {
@@ -106,7 +104,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
 	/**
 	 * Is the next wizard page disabled?
-	 * 
+	 *
 	 * @return <code>true</code> if disabled, <code>false</code> otherwise
 	 */
 	public boolean isNextPageDisabled() {
@@ -122,7 +120,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
 	/**
 	 * Sets the status entry filter.
-	 * 
+	 *
 	 * @param filter
 	 *            the status entry filter to set
 	 */
@@ -133,7 +131,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
 	/**
 	 * Determines whether the next wizard page is disabled.
-	 * 
+	 *
 	 * @param disable
 	 *            <code>true</code> to disable, <code>false</code> otherwise
 	 */
@@ -150,7 +148,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
 	/**
 	 * Sets the current refactoring.
-	 * 
+	 *
 	 * @param refactoring
 	 *            the current refactoring, or <code>null</code>
 	 */
@@ -176,7 +174,7 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 
 	/**
 	 * Sets the title of the page according to the refactoring.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor, or <code>null</code>
 	 * @param current

@@ -14,7 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class AllTests {
-	
+
 	public static Test suite() {
 		TestSuite suite= new TestSuite("All LTK Refactoring UI Tests"); //$NON-NLS-1$
 		suite.addTestSuite(EmptySuite.class);

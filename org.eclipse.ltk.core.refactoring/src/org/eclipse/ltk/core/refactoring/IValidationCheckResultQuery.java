@@ -23,28 +23,28 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * The interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface IValidationCheckResultQuery {
 
 	/**
 	 * Returns whether the undo proceeds or not. This method is called if the
-	 * validation check returned a status greater than <code>OK</code> and less 
+	 * validation check returned a status greater than <code>OK</code> and less
 	 * than <code>FATAL</code>.
-	 * 
+	 *
 	 * @param status the refactoring status returned from {@link Change#isValid(IProgressMonitor)}
-	 * 
+	 *
 	 * @return <code>true</code> if the undo should proceed; <code>false</code>
 	 *  otherwise
 	 */
 	public boolean proceed(RefactoringStatus status);
-	
+
 	/**
 	 * Called when the validation check returned a fatal error. In this case the
 	 * undo can't proceed. The hook can be used to present a corresponding dialog
 	 * to the user.
-	 * 
+	 *
 	 * @param status the refactoring status returned from {@link Change#isValid(IProgressMonitor)}
 	 */
 	public void stopped(RefactoringStatus status);

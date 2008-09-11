@@ -23,7 +23,6 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourceChange;
 import org.eclipse.ltk.core.refactoring.resource.ResourceChange;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -33,7 +32,7 @@ import org.eclipse.ltk.internal.core.refactoring.resource.undostates.ResourceUnd
 /**
  * Undo a resource delete change.  This uses the {@link ResourceUndoState}
  * to reverse the change.
- * 
+ *
  * @since 3.4
  */
 public class UndoDeleteResourceChange extends Change {
@@ -67,7 +66,7 @@ public class UndoDeleteResourceChange extends Change {
 			String message= Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_already_exists, BasicElementLabels.getResourceName(fResourceState.getName()));
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), message));
 		}
-		
+
 		IResource created= fResourceState.createResource(pm);
 		created.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(pm, 1));
 		DeleteResourceChange change= new DeleteResourceChange(created.getFullPath(), true, false);

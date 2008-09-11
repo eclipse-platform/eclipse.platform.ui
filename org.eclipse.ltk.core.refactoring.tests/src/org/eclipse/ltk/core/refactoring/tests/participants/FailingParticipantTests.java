@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
- *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> -
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring]
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.participants;
 
@@ -133,7 +133,7 @@ public class FailingParticipantTests extends TestCase {
 		Assert.assertTrue("No exception generated", exception);
 
 		//System.out.println(ElementRenameProcessor.fHistory);
-		
+
 		Assert.assertTrue("Working participant not created", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_CREATE));
 		Assert.assertFalse("Working participant executed", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKING_EXEC));
 		Assert.assertTrue("Working participant pre not created pre", ElementRenameProcessor.fHistory.contains(ElementRenameProcessor.WORKINGPRE_CREATEPRE));

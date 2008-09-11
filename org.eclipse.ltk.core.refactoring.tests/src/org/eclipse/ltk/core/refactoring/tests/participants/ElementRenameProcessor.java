@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
- *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> -
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring]
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.participants;
 
@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.ParticipantManager;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;

@@ -10,18 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-
 import java.text.Format;
 import java.util.Date;
 import java.util.Locale;
 
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+
 import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.viewers.LabelProvider;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
@@ -30,12 +35,6 @@ import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDate;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEntry;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryNode;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringImageDescriptor;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-
-import org.eclipse.jface.viewers.LabelProvider;
 
 /**
  * Label provider to display a refactoring history. This label provider can be
@@ -46,13 +45,13 @@ import org.eclipse.jface.viewers.LabelProvider;
  * Note: this class is not indented to be subclassed outside the refactoring
  * framework.
  * </p>
- * 
+ *
  * @see IRefactoringHistoryControl
  * @see RefactoringHistoryControlConfiguration
  * @see RefactoringHistoryContentProvider
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefactoringHistoryLabelProvider extends LabelProvider {
@@ -86,7 +85,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 
 	/**
 	 * Creates a new refactoring history label provider.
-	 * 
+	 *
 	 * @param configuration
 	 *            the refactoring history control configuration to use
 	 */
@@ -102,7 +101,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 
 	/**
 	 * Decorates the image for the specified element.
-	 * 
+	 *
 	 * @param image
 	 *            the image to decorate
 	 * @param element
@@ -156,7 +155,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 
 	/**
 	 * Returns a cached date format for the current locale.
-	 * 
+	 *
 	 * @return a cached date format for the current locale
 	 */
 	private DateFormat getDateFormat() {
@@ -167,7 +166,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 
 	/**
 	 * Returns the label for the specified refactoring descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @return the label of the descriptor

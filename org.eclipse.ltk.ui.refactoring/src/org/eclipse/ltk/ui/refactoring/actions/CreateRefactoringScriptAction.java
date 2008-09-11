@@ -37,11 +37,11 @@ import org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages;
 
 /**
  * Action to open the dialog to create a refactoring script from the refactoring history.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public final class CreateRefactoringScriptAction implements IWorkbenchWindowActionDelegate {
@@ -54,7 +54,7 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 
 	/**
 	 * Shows the create script wizard.
-	 * 
+	 *
 	 * @param window
 	 *            the workbench window
 	 */

@@ -27,20 +27,20 @@ import org.eclipse.ltk.ui.refactoring.RefactoringUI;
  * <p>
  * Note: this interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see RefactoringHistoryControlConfiguration
  * @see RefactoringHistoryContentProvider
  * @see RefactoringHistoryLabelProvider
- * 
+ *
  * @since 3.3
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISortableRefactoringHistoryControl extends IRefactoringHistoryControl {
 
 	/**
 	 * Is sorting by date enabled?
-	 * 
+	 *
 	 * @return <code>true</code> if it is enabled, <code>false</code>
 	 *         otherwise
 	 */
@@ -48,7 +48,7 @@ public interface ISortableRefactoringHistoryControl extends IRefactoringHistoryC
 
 	/**
 	 * Is sorting by projects enabled?
-	 * 
+	 *
 	 * @return <code>true</code> if it is enabled, <code>false</code>
 	 *         otherwise
 	 */

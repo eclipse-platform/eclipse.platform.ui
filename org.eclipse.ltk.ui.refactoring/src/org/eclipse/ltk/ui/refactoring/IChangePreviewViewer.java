@@ -29,35 +29,35 @@ import org.eclipse.swt.widgets.Control;
  * Clients of this interface should call <code>createControl</code> before calling
  * <code>setInput</code>.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface IChangePreviewViewer {
 
 	/**
-	 * Creates the preview viewer's widget hierarchy. This method 
+	 * Creates the preview viewer's widget hierarchy. This method
 	 * is only called once. Method <code>getControl()</code>
 	 * should be used to retrieve the widget hierarchy.
-	 * 
+	 *
 	 * @param parent the parent for the widget hierarchy
-	 * 
+	 *
 	 * @see #getControl()
 	 */
 	public void createControl(Composite parent);
-	
+
 	/**
 	 * Returns the preview viewer's SWT control.
-	 * 
+	 *
 	 * @return the preview viewer's SWT control or <code>null</code>
 	 *  is the widget hierarchy hasn't been created yet
 	 */
-	public Control getControl();	
-	
+	public Control getControl();
+
 	/**
 	 * Sets the preview viewer's input element.
-	 * 
+	 *
 	 * @param input the input element
 	 */
-	public void setInput(ChangePreviewViewerInput input);	
+	public void setInput(ChangePreviewViewerInput input);
 }
 

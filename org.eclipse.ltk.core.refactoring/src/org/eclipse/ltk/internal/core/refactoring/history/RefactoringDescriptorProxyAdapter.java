@@ -19,7 +19,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 /**
  * Adapter class which adapts refactoring descriptors to refactoring descriptor
  * proxies.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringDescriptorProxyAdapter extends RefactoringDescriptorProxy {
@@ -29,7 +29,7 @@ public final class RefactoringDescriptorProxyAdapter extends RefactoringDescript
 
 	/**
 	 * Creates a new refactoring descriptor proxy adapter.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the descriptor to encapsulate
 	 */

@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * Note: this class is not intended to be subclassed
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class GroupCategorySet {
-	
+
 	/**
 	 * Constant representing a group category set containing no
 	 * group categories.
@@ -45,14 +45,14 @@ public class GroupCategorySet {
 			return Collections.EMPTY_LIST;
 		}
 	};
-	
+
 	/**
 	 * Creates a new group category set containing the union of the given two
 	 * group category sets
-	 * 
+	 *
 	 * @param one the first set of group categories
 	 * @param two the second set of group categories
-	 * 
+	 *
 	 * @return the union
 	 */
 	public static GroupCategorySet union(GroupCategorySet one, GroupCategorySet two) {
@@ -67,27 +67,27 @@ public class GroupCategorySet {
 			return two;
 		if (two == NONE)
 			return one;
-		
+
 		Set combined= new HashSet();
 		combined.addAll(one.asList());
 		combined.addAll(two.asList());
 		return new GroupCategorySet(combined);
 	}
-	
+
 	private List/*<GroupCategory>*/ fContent;
-	
+
 	private GroupCategorySet() {
 		fContent= Collections.EMPTY_LIST;
 	}
-	
+
 	private GroupCategorySet(Set/*<GroupCategory>*/ categories) {
 		fContent= new ArrayList(categories);
 	}
-	
+
 	/**
 	 * Creates a new list of group categories initialized
 	 * with the given group category.
-	 * 
+	 *
 	 * @param category the first category
 	 */
 	public GroupCategorySet(GroupCategory category) {
@@ -95,11 +95,11 @@ public class GroupCategorySet {
 		fContent= new ArrayList(1);
 		fContent.add(category);
 	}
-	
+
 	/**
 	 * Creates a new set of group categories initialized
 	 * from the given array of group categories
-	 * 
+	 *
 	 * @param categories the initial group categories
 	 */
 	public GroupCategorySet(GroupCategory[] categories) {
@@ -114,23 +114,23 @@ public class GroupCategorySet {
 	/**
 	 * Returns whether the given category is contained
 	 * in this set of group categories
-	 * 
+	 *
 	 * @param category the category to test containment for
-	 * 
+	 *
 	 * @return <code>true</code> if the category is contained
 	 *  in this set; otherwise <code>false</code>
 	 */
 	public boolean contains(GroupCategory category) {
 		return fContent.contains(category);
 	}
-	
+
 	/**
 	 * Returns whether one of the given categories is contained
 	 * in this set of group categories
-	 * 
+	 *
 	 * @param categories the categories to test containment for
-	 * 
-	 * @return <code>true</code> if one of the given categories is 
+	 *
+	 * @return <code>true</code> if one of the given categories is
 	 *  contained in this set; otherwise <code>false</code>
 	 */
 	public boolean containsOneCategory(List/*<GroupCategory>*/ categories) {
@@ -141,11 +141,11 @@ public class GroupCategorySet {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Converts the group categories into a a unmodifiable 
+	 * Converts the group categories into a a unmodifiable
 	 * list.
-	 * 
+	 *
 	 * @return an unmodifiable list containing all group
 	 *  categories
 	 */

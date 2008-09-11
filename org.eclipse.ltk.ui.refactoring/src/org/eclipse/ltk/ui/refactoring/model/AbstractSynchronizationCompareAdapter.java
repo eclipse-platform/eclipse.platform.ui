@@ -14,13 +14,12 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.ui.mapping.SynchronizationCompareAdapter;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
-import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareInput;
-import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
-
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareInput;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 
 /**
  * Partial implementation of a refactoring-aware synchronization compare adapter.
@@ -34,9 +33,9 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  * team synchronization views may extend this class to provide specific compare
  * inputs for their model elements.
  * </p>
- * 
+ *
  * @see SynchronizationCompareAdapter
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractSynchronizationCompareAdapter extends SynchronizationCompareAdapter {
@@ -58,13 +57,13 @@ public abstract class AbstractSynchronizationCompareAdapter extends Synchronizat
 	 * kind of difference between the two or three versions of the refactoring
 	 * descriptor.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the synchronization context
 	 * @param proxy
 	 *            the refactoring descriptor proxy
 	 * @return the kind of difference
-	 * 
+	 *
 	 * @see ICompareInput#getKind()
 	 */
 	protected int getKind(final ISynchronizationContext context, final RefactoringDescriptorProxy proxy) {

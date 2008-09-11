@@ -14,22 +14,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.AbstractHandler;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.core.commands.AbstractHandler;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-
 import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
 public abstract class AbstractResourcesHandler extends AbstractHandler {
 

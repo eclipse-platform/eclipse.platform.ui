@@ -10,16 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
-import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.DisposeEvent;
@@ -32,6 +22,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
@@ -39,6 +31,12 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
+import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 import org.eclipse.ltk.ui.refactoring.history.ISortableRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
@@ -47,7 +45,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 /**
  * Control which is capable of browsing elements of a refactoring history. The
  * refactoring history can be sorted by project or by timestamps.
- * 
+ *
  * @since 3.2
  */
 public class SortableRefactoringHistoryControl extends RefactoringHistoryControl implements ISortableRefactoringHistoryControl {
@@ -102,7 +100,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 	/**
 	 * Creates a new browse refactoring history control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param configuration
@@ -161,7 +159,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 	/**
 	 * Creates the deselect all button of the control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -199,7 +197,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 	/**
 	 * Creates the select all button of the control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -263,7 +261,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 	/**
 	 * Returns the deselect all button.
-	 * 
+	 *
 	 * @return the deselect all button, or <code>null</code>
 	 */
 	public Button getDeselectAllButton() {
@@ -279,7 +277,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 	/**
 	 * Returns the select all button.
-	 * 
+	 *
 	 * @return the select all button, or <code>null</code>
 	 */
 	public Button getSelectAllButton() {
@@ -288,7 +286,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 
 	/**
 	 * Returns the toolbar manager of this control
-	 * 
+	 *
 	 * @return the toolbar manager
 	 */
 	protected ToolBarManager getToolBarManager() {

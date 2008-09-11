@@ -11,18 +11,18 @@
 package org.eclipse.ltk.core.refactoring;
 
 /**
- * A <code>RefactoringStatusContext</code> can be used to annotate a 
- * {@link RefactoringStatusEntry} with additional information 
+ * A <code>RefactoringStatusContext</code> can be used to annotate a
+ * {@link RefactoringStatusEntry} with additional information
  * typically presented in the user interface.
  * <p>
  * To present a context in the user interface a corresponding context
  * viewer can be registered via the extension point <code>
- * org.eclipse.ltk.ui.refactoring.statusContextViewers</code>. 
+ * org.eclipse.ltk.ui.refactoring.statusContextViewers</code>.
  * </p>
  * <p>
  * This class may be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class RefactoringStatusContext {
@@ -30,14 +30,14 @@ public abstract class RefactoringStatusContext {
 	 * Returns the element that corresponds directly to this context,
 	 * or <code>null</code> if there is no corresponding element.
 	 * <p>
-	 * For example, the corresponding element of a context for a problem 
+	 * For example, the corresponding element of a context for a problem
 	 * detected in an <code>IResource</code> would be the resource itself.
 	 * <p>
 	 *
 	 * @return the corresponding element
 	 */
 	public abstract Object getCorrespondingElement();
-	
+
 	/*
 	 * @see java.lang.Object#toString()
 	 */

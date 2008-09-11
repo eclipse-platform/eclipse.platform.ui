@@ -21,7 +21,7 @@ import org.eclipse.ltk.core.refactoring.resource.MoveResourcesDescriptor;
 
 /**
  * Refactoring contribution for the move resources refactoring.
- * 
+ *
  * @since 3.4
  */
 public final class MoveResourcesRefactoringContribution extends RefactoringContribution {
@@ -44,7 +44,7 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 	 * Key used for the new resource name
 	 */
 	private static final String ATTRIBUTE_DESTINATION= "destination"; //$NON-NLS-1$
-	
+
 	/**
 	 * Key used for the 'update references' property
 	 */
@@ -105,9 +105,9 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 				throw new IllegalArgumentException("Can not restore MoveResourceDescriptor from map, destination missing"); //$NON-NLS-1$
 			}
 			IPath destPath= ResourceProcessors.handleToResourcePath(project, destination);
-			
+
 			boolean updateReferences= "true".equals(arguments.get(ATTRIBUTE_UPDATE_REFERENCES)); //$NON-NLS-1$
-			
+
 			MoveResourcesDescriptor descriptor= new MoveResourcesDescriptor();
 			descriptor.setProject(project);
 			descriptor.setDescription(description);

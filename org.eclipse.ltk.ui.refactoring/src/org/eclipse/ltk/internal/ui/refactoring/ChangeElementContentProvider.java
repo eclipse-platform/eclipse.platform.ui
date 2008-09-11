@@ -18,14 +18,14 @@ import org.eclipse.jface.viewers.Viewer;
  * objects in a tree viewer.
  */
 class ChangeElementContentProvider  implements ITreeContentProvider {
-	
+
 	/* non Java-doc
 	 * @see ITreeContentProvider#inputChanged
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// do nothing
 	}
-	
+
 	/* non Java-doc
 	 * @see ITreeContentProvider#getChildren
 	 */
@@ -33,14 +33,14 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 		PreviewNode element= (PreviewNode)o;
 		return element.getChildren();
 	}
-	
+
 	/* non Java-doc
 	 * @see ITreeContentProvider#getParent
 	 */
 	public Object getParent(Object element){
 		return ((PreviewNode)element).getParent();
 	}
-	
+
 	/* non Java-doc
 	 * @see ITreeContentProvider#hasChildren
 	 */
@@ -48,17 +48,17 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 		Object[] children= getChildren(element);
 		return children != null && children.length > 0;
 	}
-	
+
 	/* non Java-doc
 	 * @see ITreeContentProvider#dispose
 	 */
 	public void dispose(){
 	}
-	
+
 	/* non Java-doc
 	 * @see ITreeContentProvider#getElements
 	 */
 	public Object[] getElements(Object element){
 		return getChildren(element);
-	}	
+	}
 }

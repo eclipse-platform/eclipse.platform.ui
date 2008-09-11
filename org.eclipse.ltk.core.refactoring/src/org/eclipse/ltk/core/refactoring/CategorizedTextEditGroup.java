@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
-
-import org.eclipse.core.runtime.Assert;
 
 /**
  * A special text edit group that manages an additional set of
@@ -21,15 +21,15 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * Note: this class is not intended to be subclassed
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CategorizedTextEditGroup extends TextEditGroup {
 
 	private GroupCategorySet fGroupCategories;
-	
+
 	/**
 	 * Creates a new text edit group with the given name and group
 	 * categories.
@@ -60,7 +60,7 @@ public class CategorizedTextEditGroup extends TextEditGroup {
 	}
 
 	/**
-	 * Creates a new text edit group with the given name, array of edits 
+	 * Creates a new text edit group with the given name, array of edits
 	 * and a set of group categories.
 	 *
 	 * @param name the name of the text edit group. Must be
@@ -76,7 +76,7 @@ public class CategorizedTextEditGroup extends TextEditGroup {
 
 	/**
 	 * Returns the set of group categories.
-	 * 
+	 *
 	 * @return the group categories of this text edit group
 	 */
 	public GroupCategorySet getGroupCategorySet() {

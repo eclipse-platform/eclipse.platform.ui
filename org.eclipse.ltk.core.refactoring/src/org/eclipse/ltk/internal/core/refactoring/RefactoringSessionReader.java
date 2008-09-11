@@ -20,18 +20,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
-import org.eclipse.ltk.core.refactoring.RefactoringContribution;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
-
-import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescriptor;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -42,9 +30,20 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+import org.eclipse.ltk.core.refactoring.RefactoringContribution;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
+import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescriptor;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
+
 /**
  * Refactoring session reader for XML-based refactoring sessions.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringSessionReader extends DefaultHandler {
@@ -59,7 +58,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	private final String fProject;
 
 	private final boolean fCreateDefaultDescriptors;
-	
+
 	/**
 	 * The current list of refactoring descriptors, or <code>null</code>
 	 * (element type: <code>RefactoringDescriptor</code>)
@@ -76,7 +75,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 
 	/**
 	 * Creates a new refactoring session reader.
-	 * 
+	 *
 	 * @param createDefaultDescriptors
 	 *            <code>true</code> iff {@link DefaultRefactoringDescriptor}s should be created,
 	 *            <code>false</code> if {@link RefactoringContribution#createDescriptor(String, String, String, String, Map, int)}
@@ -95,7 +94,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 
 	/**
 	 * Creates a new parser from the specified factory.
-	 * 
+	 *
 	 * @param factory
 	 *            the parser factoring to use
 	 * @return the created parser
@@ -124,7 +123,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 
 	/**
 	 * Reads a refactoring history descriptor from the specified input object.
-	 * 
+	 *
 	 * @param source
 	 *            the input source
 	 * @return a corresponding refactoring history descriptor, or
@@ -175,7 +174,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				message,
 				exception));
 	}
-	
+
 	/*
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
@@ -249,7 +248,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			if (fRefactoringDescriptors == null)
 				fRefactoringDescriptors= new ArrayList();
 			fRefactoringDescriptors.add(descriptor);
-			
+
 		} else if (IRefactoringSerializationConstants.ELEMENT_SESSION.equals(qualifiedName)) {
 			fSessionFound= true;
 			final String version= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);

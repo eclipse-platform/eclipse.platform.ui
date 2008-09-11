@@ -14,14 +14,14 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Implementation for a refactoring preview change filter.
- * 
+ *
  * @since 3.2
  */
 public class RefactoringPreviewChangeFilter {
 
 	/**
 	 * Is the specified change accepted by the filter?
-	 * 
+	 *
 	 * @param change
 	 *            the change to test
 	 * @return <code>true</code> if it is accepted for preview,

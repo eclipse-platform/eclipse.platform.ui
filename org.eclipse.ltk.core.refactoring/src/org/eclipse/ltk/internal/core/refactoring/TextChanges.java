@@ -18,15 +18,15 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * Helper class for text file changes.
  */
 public class TextChanges {
-	
+
 	private TextChanges() {
 		// no instance
 	}
-	
+
 	public static RefactoringStatus isValid(IDocument document, int length) {
 		RefactoringStatus result= new RefactoringStatus();
 		if (length != document.getLength()) {
-			result.addFatalError(RefactoringCoreMessages.TextChanges_error_document_content_changed); 
+			result.addFatalError(RefactoringCoreMessages.TextChanges_error_document_content_changed);
 		}
 		return result;
 	}

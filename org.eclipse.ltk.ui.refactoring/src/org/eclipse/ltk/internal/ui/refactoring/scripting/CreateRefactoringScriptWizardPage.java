@@ -12,21 +12,14 @@ package org.eclipse.ltk.internal.ui.refactoring.scripting;
 
 import java.net.URI;
 
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.history.SortableRefactoringHistoryControl;
-import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -36,11 +29,16 @@ import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.history.SortableRefactoringHistoryControl;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
  * First page of the create refactoring script wizard.
- * 
+ *
  * @since 3.2
  */
 public final class CreateRefactoringScriptWizardPage extends WizardPage {
@@ -68,7 +66,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 
 	/**
 	 * Creates a new create refactoring script wizard page.
-	 * 
+	 *
 	 * @param wizard
 	 *            the associated wizard
 	 */

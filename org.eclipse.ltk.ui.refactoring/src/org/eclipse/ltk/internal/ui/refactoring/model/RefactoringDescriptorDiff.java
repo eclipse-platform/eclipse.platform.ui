@@ -17,12 +17,11 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 
 /**
  * Diff of a refactoring.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringDescriptorDiff implements IThreeWayDiff {
@@ -38,7 +37,7 @@ public final class RefactoringDescriptorDiff implements IThreeWayDiff {
 
 	/**
 	 * Creates a new refactoring descriptor diff node.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @param kind
@@ -55,7 +54,7 @@ public final class RefactoringDescriptorDiff implements IThreeWayDiff {
 
 	/**
 	 * Returns the refactoring descriptor.
-	 * 
+	 *
 	 * @return the refactoring descriptor
 	 */
 	public RefactoringDescriptorProxy getDescriptor() {

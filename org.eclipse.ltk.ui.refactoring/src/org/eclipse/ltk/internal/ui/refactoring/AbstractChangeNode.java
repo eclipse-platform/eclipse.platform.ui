@@ -18,13 +18,11 @@ import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
@@ -47,15 +45,15 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		}
 		return new DefaultChangeNode(parent, change);
 	}
-	
+
 	public static PreviewNode createNode(PreviewNode parent, Change change) {
 		return createNode(parent, null, change);
 	}
-	
+
 	/**
 	 * Creates a new <code>AbstractChangeNode</code> for the given
 	 * change.
-	 * 
+	 *
 	 * @param parent the change nodes's parent or <code>null
 	 * 	</code> if the change node doesn't have a parent
 	 * @param change the actual change. Argument must not be
@@ -66,49 +64,49 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		Assert.isNotNull(change);
 		fChange= change;
 	}
-	
+
 	/**
 	 * Returns the underlying <code>Change</code> object.
-	 * 
+	 *
 	 * @return the underlying change
 	 */
 	Change getChange() {
 		return fChange;
 	}
-	
+
 	PreviewNode[] getChildren() {
 		if (fChildren == null) {
 			fChildren= doCreateChildren();
 		}
 		return fChildren;
 	}
-	
+
 	abstract PreviewNode[] doCreateChildren();
-	
+
 	public String getText() {
 		return fChange.getName();
 	}
-	
+
 	public ImageDescriptor getImageDescriptor() {
 		return RefactoringPluginImages.DESC_OBJS_DEFAULT_CHANGE;
 	}
-	
+
 	ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		return ChangePreviewViewerDescriptor.get(fChange);
 	}
-	
+
 	void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException {
 		viewer.setInput(new ChangePreviewViewerInput(fChange));
 	}
-	
+
 	void setEnabled(boolean enabled) {
 		fChange.setEnabled(enabled);
 	}
-	
+
 	void setEnabledShallow(boolean enabled) {
 		fChange.setEnabledShallow(enabled);
 	}
-	
+
 	boolean hasOneGroupCategory(List categories) {
 		PreviewNode[] children= getChildren();
 		for (int i= 0; i < children.length; i++) {
@@ -117,7 +115,7 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		}
 		return false;
 	}
-	
+
 	boolean hasDerived() {
 		if (hasDerivedResourceChange(fChange))
 			return true;
@@ -140,8 +138,8 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		}
 		return result;
 	}
-	
-	int getCompositeChangeActive() {		
+
+	int getCompositeChangeActive() {
 		if (fChildren != null && fChildren.length > 0) {
 			int result= fChildren[0].getActive();
 			for (int i= 1; i < fChildren.length; i++) {
@@ -158,7 +156,7 @@ public abstract class AbstractChangeNode extends PreviewNode {
 	/**
 	 * Returns <code>true</code> iff the change node contains a derived
 	 * resource.
-	 * 
+	 *
 	 * @param change the change
 	 * @return whether the change contains a derived resource
 	 */

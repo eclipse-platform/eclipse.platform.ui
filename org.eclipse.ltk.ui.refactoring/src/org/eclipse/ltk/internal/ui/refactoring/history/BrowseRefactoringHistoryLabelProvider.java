@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 
@@ -25,7 +25,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 
 /**
  * Label provider for the browse refactoring history control
- * 
+ *
  * @since 3.2
  */
 public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHistoryLabelProvider {
@@ -38,7 +38,7 @@ public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHist
 
 	/**
 	 * Creates a new browse refactoring history label provider.
-	 * 
+	 *
 	 * @param configuration
 	 *            the refactoring history control configuration
 	 */
@@ -69,7 +69,7 @@ public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHist
 		}
 		return fDelegateLabelProvider.getText(element);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider#dispose()
 	 */

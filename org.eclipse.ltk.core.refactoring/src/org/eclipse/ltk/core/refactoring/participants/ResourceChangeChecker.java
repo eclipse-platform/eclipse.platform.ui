@@ -33,34 +33,34 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * checker supersedes the {@link ValidateEditChecker}. So if clients
  * add their content changes to this checker there is no need to add
  * them to the {@link ValidateEditChecker} as well.
- * <p> 
+ * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
  *
  * @see ResourceChangeValidator
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ResourceChangeChecker implements IConditionChecker {
 
 	private IResourceChangeDescriptionFactory fDeltaFactory;
-	
+
 	public ResourceChangeChecker() {
 		fDeltaFactory= ResourceChangeValidator.getValidator().createDeltaFactory();
 	}
-	
+
 	/**
-	 * A helper method to check a set of changed files. 
-	 * 
+	 * A helper method to check a set of changed files.
+	 *
 	 * @param files the array of files that change
 	 * @param monitor a progress monitor to report progress or <code>null</code>
 	 *  if progress reporting is not desired
-	 *  
+	 *
 	 * @return a refactoring status containing the detect problems
 	 * @throws CoreException a {@link CoreException} if an error occurs
-	 * 
+	 *
 	 * @see ResourceChangeValidator#validateChange(IResourceDelta, IProgressMonitor)
 	 */
 	public static RefactoringStatus checkFilesToBeChanged(IFile[] files, IProgressMonitor monitor) throws CoreException {
@@ -70,17 +70,17 @@ public class ResourceChangeChecker implements IConditionChecker {
 		}
 		return checker.check(monitor);
 	}
-	
+
 	/**
-	 * Returns the delta factory to be used to record resource 
+	 * Returns the delta factory to be used to record resource
 	 * operations.
-	 * 
+	 *
 	 * @return the delta factory
 	 */
 	public IResourceChangeDescriptionFactory getDeltaFactory() {
 		return fDeltaFactory;
 	}
-	
+
 	public RefactoringStatus check(IProgressMonitor monitor) throws CoreException {
 		IStatus status= ResourceChangeValidator.getValidator().validateChange(fDeltaFactory.getDelta(), monitor);
 		return createFrom(status);
@@ -106,11 +106,11 @@ public class ResourceChangeChecker implements IConditionChecker {
 		});
 		return (IFile[]) result.toArray(new IFile[result.size()]);
 	}
-		
+
 	private static final boolean isSet(int flags, int flag) {
 		return (flags & flag) == flag;
 	}
-	
+
 	private static RefactoringStatus createFrom(IStatus status) {
 		if (status.isOK())
 			return new RefactoringStatus();

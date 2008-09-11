@@ -82,7 +82,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionTransformer;
 
 /**
  * Manager for persistable refactoring histories.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryManager {
@@ -102,7 +102,7 @@ public final class RefactoringHistoryManager {
 	 * All arguments contained in the map are checked according to the rules of
 	 * {@link RefactoringDescriptor}.
 	 * </p>
-	 * 
+	 *
 	 * @param arguments
 	 *            the argument map
 	 * @throws CoreException
@@ -133,7 +133,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Creates a new core exception representing an I/O error.
-	 * 
+	 *
 	 * @param exception
 	 *            the throwable to wrap
 	 * @return the core exception
@@ -144,7 +144,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Escapes the specified string for the history index.
-	 * 
+	 *
 	 * @param string
 	 *            the string for the history index
 	 * @return the escaped string
@@ -166,7 +166,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Returns the argument map of the specified descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @return the argument map, or <code>null</code>
@@ -183,7 +183,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Reads refactoring descriptor proxies.
-	 * 
+	 *
 	 * @param store
 	 *            the file store to read
 	 * @param project
@@ -250,7 +250,7 @@ public final class RefactoringHistoryManager {
 	 * <p>
 	 * The refactoring descriptor proxies are returned in no particular order.
 	 * </p>
-	 * 
+	 *
 	 * @param stream
 	 *            the input stream where to read from
 	 * @param project
@@ -290,7 +290,7 @@ public final class RefactoringHistoryManager {
 	 * <p>
 	 * The refactoring descriptors are returned in no particular order.
 	 * </p>
-	 * 
+	 *
 	 * @param stream
 	 *            the input stream where to read from
 	 * @return An array of refactoring descriptor proxies
@@ -305,7 +305,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Reads default refactoring descriptors from the specified input stream.
-	 * 
+	 *
 	 * @param stream
 	 *            the input stream where to read from
 	 * @param collection
@@ -329,7 +329,7 @@ public final class RefactoringHistoryManager {
 	/**
 	 * Removes the refactoring history index tree spanned by the specified file
 	 * store.
-	 * 
+	 *
 	 * @param store
 	 *            the file store spanning the history index tree
 	 * @param monitor
@@ -377,7 +377,7 @@ public final class RefactoringHistoryManager {
 	/**
 	 * Sorts the refactoring descriptor proxies in ascending order of their time
 	 * stamps.
-	 * 
+	 *
 	 * @param descriptors
 	 *            the refactoring descriptors
 	 */
@@ -400,7 +400,7 @@ public final class RefactoringHistoryManager {
 	/**
 	 * Sorts the refactoring descriptor proxies in ascending order of their time
 	 * stamps.
-	 * 
+	 *
 	 * @param proxies
 	 *            the refactoring descriptor proxies
 	 */
@@ -423,7 +423,7 @@ public final class RefactoringHistoryManager {
 	/**
 	 * Sorts the refactoring descriptor proxies in descending order of their
 	 * time stamps.
-	 * 
+	 *
 	 * @param proxies
 	 *            the refactoring descriptor proxies
 	 */
@@ -446,7 +446,7 @@ public final class RefactoringHistoryManager {
 	/**
 	 * Returns a path representing the history part for the specified time
 	 * stamp.
-	 * 
+	 *
 	 * @param stamp
 	 *            the time stamp
 	 * @return A path representing the folder of the history part
@@ -464,7 +464,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Transforms the specified refactoring descriptor into a DOM node.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the descriptor to transform
 	 * @param projects
@@ -500,7 +500,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Un-escapes the specified string from the history index.
-	 * 
+	 *
 	 * @param string
 	 *            the string from the history index
 	 * @return the un-escaped string
@@ -527,7 +527,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Writes the specified index entry to the refactoring history.
-	 * 
+	 *
 	 * @param file
 	 *            the history index file
 	 * @param proxies
@@ -565,7 +565,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Writes refactoring descriptor proxies to the specified output stream.
-	 * 
+	 *
 	 * @param stream
 	 *            the output stream where to write to
 	 * @param proxies
@@ -598,7 +598,7 @@ public final class RefactoringHistoryManager {
 
 		/**
 		 * Creates a new DOM writer on the given output writer.
-		 * 
+		 *
 		 * @param output the output writer
 		 */
 		public DOMWriter(Writer output) {
@@ -613,7 +613,7 @@ public final class RefactoringHistoryManager {
 
 		/**
 		 * Prints the given element.
-		 * 
+		 *
 		 * @param element the element to print
 		 */
 		public void printElement(Element element) {
@@ -733,7 +733,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Writes refactoring session descriptor to the specified output stream.
-	 * 
+	 *
 	 * @param stream
 	 *            the output stream where to write to
 	 * @param descriptor
@@ -806,7 +806,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Creates a new refactoring history manager.
-	 * 
+	 *
 	 * @param store
 	 *            the history file store
 	 * @param name
@@ -822,7 +822,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Adds the specified refactoring descriptor to the refactoring history.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor to add
 	 * @param sort
@@ -918,7 +918,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Returns the cached refactoring history document.
-	 * 
+	 *
 	 * @param path
 	 *            the path of the document
 	 * @param input
@@ -942,7 +942,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Returns the cached refactoring session descriptor.
-	 * 
+	 *
 	 * @param store
 	 *            the file store of the descriptor
 	 * @param projectName
@@ -974,7 +974,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Reads the refactoring history from disk.
-	 * 
+	 *
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
@@ -1010,7 +1010,7 @@ public final class RefactoringHistoryManager {
 	 * All refactoring descriptors must be from the history entry denoted by the
 	 * specified path.
 	 * </p>
-	 * 
+	 *
 	 * @param proxies
 	 *            the refactoring descriptors
 	 * @param path
@@ -1098,7 +1098,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Removes refactoring descriptors from the managed history.
-	 * 
+	 *
 	 * @param proxies
 	 *            the refactoring descriptors
 	 * @param monitor
@@ -1141,7 +1141,7 @@ public final class RefactoringHistoryManager {
 	/**
 	 * Requests the resolved refactoring descriptor associated with the given
 	 * proxy.
-	 * 
+	 *
 	 * @param proxy
 	 *            the refactoring descriptor proxy
 	 * @param monitor
@@ -1189,7 +1189,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Sets the comment of the specified refactoring.
-	 * 
+	 *
 	 * @param proxy
 	 *            the refactoring descriptor proxy
 	 * @param comment
@@ -1252,7 +1252,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Writes the specified document node into the refactoring history.
-	 * 
+	 *
 	 * @param file
 	 *            the refactoring history file
 	 * @param document

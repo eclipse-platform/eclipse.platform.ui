@@ -13,12 +13,12 @@ package org.eclipse.ltk.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.framework.BundleContext;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
 
 import org.eclipse.jface.resource.ImageRegistry;
 
@@ -29,13 +29,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.ui.refactoring.IRefactoringUIStatusCodes;
-import org.osgi.framework.BundleContext;
 
 public class RefactoringUIPlugin extends AbstractUIPlugin {
-	
+
 	private static RefactoringUIPlugin fgDefault;
-	
+
 	public RefactoringUIPlugin() {
 		fgDefault= this;
 	}
@@ -43,47 +43,47 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 	public static RefactoringUIPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	public static String getPluginId() {
 		return "org.eclipse.ltk.ui.refactoring"; //$NON-NLS-1$
 	}
-	
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		RefactoringCore.internalSetQueryFactory(new UIQueryFactory(RefactoringCore.getQueryFactory()));
 	}
-	
+
 	public void stop(BundleContext context) throws Exception {
 		RefactoringCore.internalSetQueryFactory(null);
 		super.stop(context);
 	}
-	
+
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	public static void log(Throwable t) {
 		IStatus status= new Status(
-			IStatus.ERROR, getPluginId(), 
-			IRefactoringUIStatusCodes.INTERNAL_ERROR, 
-			RefactoringUIMessages.RefactoringUIPlugin_internal_error,  
+			IStatus.ERROR, getPluginId(),
+			IRefactoringUIStatusCodes.INTERNAL_ERROR,
+			RefactoringUIMessages.RefactoringUIPlugin_internal_error,
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
-	
+
 	public static void logErrorMessage(String message) {
 		log(new Status(IStatus.ERROR, getPluginId(), IRefactoringUIStatusCodes.INTERNAL_ERROR, message, null));
-	}	
-	
+	}
+
 	public static void logRemovedListener(Throwable t) {
 		IStatus status= new Status(
-			IStatus.ERROR, getPluginId(), 
-			IRefactoringUIStatusCodes.INTERNAL_ERROR, 
-			RefactoringUIMessages.RefactoringUIPlugin_listener_removed,  
+			IStatus.ERROR, getPluginId(),
+			IRefactoringUIStatusCodes.INTERNAL_ERROR,
+			RefactoringUIMessages.RefactoringUIPlugin_listener_removed,
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
-	
+
 	public static IEditorPart[] getInstanciatedEditors() {
 		List result= new ArrayList(0);
 		IWorkbench workbench= getDefault().getWorkbench();
@@ -100,9 +100,9 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 			}
 		}
 		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
-	}	
-	
+	}
+
 	protected ImageRegistry createImageRegistry() {
 		return RefactoringPluginImages.getImageRegistry();
-	}	
+	}
 }

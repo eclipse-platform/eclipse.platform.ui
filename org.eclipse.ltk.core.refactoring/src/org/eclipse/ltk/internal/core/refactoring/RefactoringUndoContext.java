@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.core.commands.operations.IUndoContext;
+
+import org.eclipse.core.resources.ResourcesPlugin;
 
 public class RefactoringUndoContext implements IUndoContext {
 
 	public String getLabel() {
-		return RefactoringCoreMessages.RefactoringUndoContext_label; 
+		return RefactoringCoreMessages.RefactoringUndoContext_label;
 	}
 
 	public boolean matches(IUndoContext context) {

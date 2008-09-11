@@ -13,11 +13,11 @@ package org.eclipse.ltk.internal.ui.refactoring;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -34,22 +34,22 @@ import org.eclipse.ltk.ui.refactoring.IRefactoringUIStatusCodes;
 public class ExceptionHandler {
 
 	private static ExceptionHandler fgInstance= new ExceptionHandler();
-	
+
 	/**
 	 * Logs the given exception using the platform's logging mechanism. The exception is
 	 * logged as an error with the error code <code>JavaStatusConstants.INTERNAL_ERROR</code>.
-	 * 
+	 *
 	 * @param t the throwable to log
 	 * @param message the detail message
 	 */
 	public static void log(Throwable t, String message) {
-		RefactoringUIPlugin.log(new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 
+		RefactoringUIPlugin.log(new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(),
 			IRefactoringUIStatusCodes.INTERNAL_ERROR, message, t));
 	}
-	
+
 	/**
-	 * Handles the given <code>CoreException</code>. 
-	 * 
+	 * Handles the given <code>CoreException</code>.
+	 *
 	 * @param e the <code>CoreException</code> to be handled
 	 * @param parent the dialog window's parent shell
 	 * @param title the dialog window's window title
@@ -58,10 +58,10 @@ public class ExceptionHandler {
 	public static void handle(CoreException e, Shell parent, String title, String message) {
 		fgInstance.perform(e, parent, title, message);
 	}
-	
+
 	/**
-	 * Handles the given <code>InvocationTargetException</code>. 
-	 * 
+	 * Handles the given <code>InvocationTargetException</code>.
+	 *
 	 * @param e the <code>InvocationTargetException</code> to be handled
 	 * @param parent the dialog window's parent shell
 	 * @param title the dialog window's window title
@@ -72,7 +72,7 @@ public class ExceptionHandler {
 	}
 
 	//---- Hooks for subclasses to control exception handling ------------------------------------
-	
+
 	protected void perform(CoreException e, Shell shell, String title, String message) {
 		RefactoringUIPlugin.log(e);
 		IStatus status= e.getStatus();
@@ -98,7 +98,7 @@ public class ExceptionHandler {
 	}
 
 	//---- Helper methods -----------------------------------------------------------------------
-	
+
 	private void displayMessageDialog(String exceptionMessage, Shell shell, String title, String message) {
 		StringWriter msg= new StringWriter();
 		if (message != null) {
@@ -106,9 +106,9 @@ public class ExceptionHandler {
 			msg.write("\n\n"); //$NON-NLS-1$
 		}
 		if (exceptionMessage == null || exceptionMessage.length() == 0)
-			msg.write(RefactoringUIMessages.ExceptionHandler_seeErrorLogMessage); 
+			msg.write(RefactoringUIMessages.ExceptionHandler_seeErrorLogMessage);
 		else
 			msg.write(exceptionMessage);
-		MessageDialog.openError(shell, title, msg.toString());			
-	}	
+		MessageDialog.openError(shell, title, msg.toString());
+	}
 }

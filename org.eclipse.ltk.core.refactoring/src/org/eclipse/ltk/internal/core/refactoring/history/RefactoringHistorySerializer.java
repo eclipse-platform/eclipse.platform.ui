@@ -12,12 +12,12 @@ package org.eclipse.ltk.internal.core.refactoring.history;
 
 import java.net.URI;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,14 +27,13 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
-
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * Refactoring history listener which continuously persists the global
  * refactoring history in the different history locations.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistorySerializer implements IRefactoringHistoryListener {
@@ -93,7 +92,7 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 
 	/**
 	 * Processes the history event.
-	 * 
+	 *
 	 * @param store
 	 *            the file store
 	 * @param event

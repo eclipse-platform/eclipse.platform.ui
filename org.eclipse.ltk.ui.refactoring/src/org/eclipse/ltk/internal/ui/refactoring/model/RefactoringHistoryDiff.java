@@ -20,7 +20,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 /**
  * Diff of a refactoring history.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryDiff implements IThreeWayDiff {
@@ -36,7 +36,7 @@ public final class RefactoringHistoryDiff implements IThreeWayDiff {
 
 	/**
 	 * Creates a new refactoring history diff.
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring descriptor
 	 * @param kind
@@ -81,7 +81,7 @@ public final class RefactoringHistoryDiff implements IThreeWayDiff {
 
 	/**
 	 * Returns the refactoring history.
-	 * 
+	 *
 	 * @return the refactoring history
 	 */
 	public RefactoringHistory getRefactoringHistory() {

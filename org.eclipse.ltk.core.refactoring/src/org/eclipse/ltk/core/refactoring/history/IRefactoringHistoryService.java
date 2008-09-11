@@ -43,16 +43,16 @@ import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
  * <p>
  * Note: this interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see RefactoringCore
  * @see IRefactoringHistoryListener
  * @see IRefactoringExecutionListener
- * 
+ *
  * @see RefactoringHistory
  * @see RefactoringDescriptorProxy
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRefactoringHistoryService {
@@ -62,7 +62,7 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * If the listener is already registered with the service, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to add
 	 */
@@ -73,7 +73,7 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * If the listener is already registered with the service, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to add
 	 */
@@ -113,7 +113,7 @@ public interface IRefactoringHistoryService {
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
 	 * </p>
-	 * 
+	 *
 	 * @param project
 	 *            the project, which must exist
 	 * @param monitor
@@ -137,7 +137,7 @@ public interface IRefactoringHistoryService {
 	 * {@link RefactoringDescriptorProxy#requestDescriptor(IProgressMonitor)}
 	 * which try to request a descriptor from the returned refactoring history.
 	 * </p>
-	 * 
+	 *
 	 * @param project
 	 *            the project, which must exist
 	 * @param start
@@ -161,7 +161,7 @@ public interface IRefactoringHistoryService {
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
 	 * </p>
-	 * 
+	 *
 	 * @param projects
 	 *            the projects, which must exist
 	 * @param monitor
@@ -185,7 +185,7 @@ public interface IRefactoringHistoryService {
 	 * {@link RefactoringDescriptorProxy#requestDescriptor(IProgressMonitor)}
 	 * which try to request a descriptor from the returned refactoring history.
 	 * </p>
-	 * 
+	 *
 	 * @param projects
 	 *            the projects, which must exist
 	 * @param start
@@ -209,7 +209,7 @@ public interface IRefactoringHistoryService {
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
 	 * </p>
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code> if no
 	 *            progress monitoring or cancelation is desired
@@ -223,7 +223,7 @@ public interface IRefactoringHistoryService {
 	 * Clients must connect to the refactoring history service first before
 	 * calling this method.
 	 * </p>
-	 * 
+	 *
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
@@ -244,7 +244,7 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * It is the responsibility of the caller to close the input stream.
 	 * </p>
-	 * 
+	 *
 	 * @param stream
 	 *            a <code>UTF-8</code> input stream where to read the
 	 *            refactoring history from
@@ -264,11 +264,11 @@ public interface IRefactoringHistoryService {
 	 *             <li>An I/O error occurs while reading the refactoring
 	 *             history from the input stream.</li>
 	 *             </ul>
-	 * 
+	 *
 	 * @see RefactoringDescriptor#NONE
 	 * @see RefactoringDescriptor#STRUCTURAL_CHANGE
 	 * @see RefactoringDescriptor#BREAKING_CHANGE
-	 * 
+	 *
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 * @see IRefactoringCoreStatusCodes#UNSUPPORTED_REFACTORING_HISTORY_VERSION
 	 * @see IRefactoringCoreStatusCodes#MISSING_REFACTORING_HISTORY_VERSION
@@ -280,7 +280,7 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * If the listener is not registered with the service, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to remove
 	 */
@@ -291,7 +291,7 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * If the listener is not registered with the service, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to remove
 	 */
@@ -304,7 +304,7 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * It is the responsibility of the caller to close the output stream.
 	 * </p>
-	 * 
+	 *
 	 * @param proxies
 	 *            the refactoring descriptor proxies
 	 * @param stream
@@ -328,11 +328,11 @@ public interface IRefactoringHistoryService {
 	 *             <li>An I/O error occurs while writing the refactoring
 	 *             descriptors to the output stream.</li>
 	 *             </ul>
-	 * 
+	 *
 	 * @see RefactoringDescriptor#NONE
 	 * @see RefactoringDescriptor#STRUCTURAL_CHANGE
 	 * @see RefactoringDescriptor#BREAKING_CHANGE
-	 * 
+	 *
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
@@ -343,7 +343,7 @@ public interface IRefactoringHistoryService {
 	 * <p>
 	 * It is the responsibility of the caller to close the output stream.
 	 * </p>
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring session descriptor to write
 	 * @param stream
@@ -361,7 +361,7 @@ public interface IRefactoringHistoryService {
 	 *             <li>An I/O error occurs while writing the refactoring
 	 *             descriptors to the output stream.</li>
 	 *             </ul>
-	 * 
+	 *
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */

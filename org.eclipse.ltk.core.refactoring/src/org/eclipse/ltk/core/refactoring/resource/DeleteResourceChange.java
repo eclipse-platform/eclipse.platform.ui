@@ -18,19 +18,18 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.LocationKind;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -52,7 +51,7 @@ public class DeleteResourceChange extends ResourceChange {
 
 	/**
 	 * Delete a resource.
-	 * 
+	 *
 	 * @param resourcePath the resource path
 	 * @param forceOutOfSync if <code>true</code>, deletes the resource with {@link IResource#FORCE}
 	 */
@@ -62,11 +61,11 @@ public class DeleteResourceChange extends ResourceChange {
 
 	/**
 	 * Delete a resource.
-	 * 
+	 *
 	 * @param resourcePath the project path
 	 * @param forceOutOfSync if <code>true</code>, deletes the resource with {@link IResource#FORCE}
-	 * @param deleteContent if <code>true</code> delete the project contents. 
-	 * The content delete is not undoable. This setting only applies to projects and is not used when deleting files or folders. 
+	 * @param deleteContent if <code>true</code> delete the project contents.
+	 * The content delete is not undoable. This setting only applies to projects and is not used when deleting files or folders.
 	 */
 	public DeleteResourceChange(IPath resourcePath, boolean forceOutOfSync, boolean deleteContent) {
 		fResourcePath= resourcePath;
@@ -99,16 +98,16 @@ public class DeleteResourceChange extends ResourceChange {
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		if (pm == null)
 			pm= new NullProgressMonitor();
-		
+
 		pm.beginTask("", 10); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.DeleteResourceChange_deleting);	
-		
+		pm.setTaskName(RefactoringCoreMessages.DeleteResourceChange_deleting);
+
 		try {
 			IResource resource= getResource();
 			if (resource == null || !resource.exists()) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), RefactoringCoreMessages.DeleteResourceChange_error_resource_not_exists));
 			}
-			
+
 			// make sure all files inside the resource are saved so restoring works
 			if (resource.isAccessible()) {
 				resource.accept(new IResourceVisitor() {
@@ -125,7 +124,7 @@ public class DeleteResourceChange extends ResourceChange {
 					}
 				}, IResource.DEPTH_INFINITE, false);
 			}
-			
+
 			ResourceUndoState desc= ResourceUndoState.fromResource(resource);
 			if (resource instanceof IProject) {
 				((IProject) resource).delete(fDeleteContent, fForceOutOfSync, new SubProgressMonitor(pm, 10));
@@ -158,7 +157,7 @@ public class DeleteResourceChange extends ResourceChange {
 			pm.done();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getDescriptor()
 	 */
@@ -168,7 +167,7 @@ public class DeleteResourceChange extends ResourceChange {
 
 	/**
 	 * Sets the change descriptor to be returned by {@link Change#getDescriptor()}.
-	 * 
+	 *
 	 * @param descriptor the change descriptor
 	 */
 	public void setDescriptor(ChangeDescriptor descriptor) {

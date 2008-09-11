@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.resource;
 
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
-
-import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -27,8 +19,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jface.wizard.IWizardPage;
 
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
+import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 
@@ -41,7 +39,7 @@ public class RenameResourceWizard extends RefactoringWizard {
 
 	/**
 	 * Creates a {@link RenameResourceWizard}.
-	 * 
+	 *
 	 * @param resource
 	 *             the resource to rename. The resource must exist.
 	 */

@@ -25,6 +25,9 @@ import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.ResourceMappingMerger;
 import org.eclipse.team.core.mapping.provider.MergeStatus;
 
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,20 +43,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMergeWizard;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -62,6 +51,15 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMergeWizard;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
@@ -77,9 +75,9 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  * associated with their model provider may extend this class to implement
  * language-specific project dependency rules.
  * </p>
- * 
+ *
  * @see org.eclipse.team.core.mapping.IResourceMappingMerger
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractResourceMappingMerger extends ResourceMappingMerger {
@@ -89,7 +87,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 
 		/**
 		 * Creates a new refactoring history model merge configuration.
-		 * 
+		 *
 		 * @param project
 		 *            the project, or <code>null</code>
 		 */
@@ -125,7 +123,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 
 	/**
 	 * Returns the shell of the active workbench window.
-	 * 
+	 *
 	 * @return the active shell
 	 */
 	private static Shell getActiveShell() {
@@ -140,7 +138,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 
 	/**
 	 * Returns the projects affected by the specified refactoring history.
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history
 	 * @return the affected projects, or <code>null</code> if the entire
@@ -164,7 +162,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 
 	/**
 	 * Return a shell that can be used by the operation to display dialogs, etc.
-	 * 
+	 *
 	 * @return a shell
 	 */
 	private static Shell getDialogShell() {
@@ -183,7 +181,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 
 	/**
 	 * Creates a new abstract refactoring model merger.
-	 * 
+	 *
 	 * @param provider
 	 *            the model provider
 	 */
@@ -204,7 +202,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 * Returning a status of severity {@link IStatus#ERROR} will terminate the
 	 * merge process.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the merge context
 	 * @param monitor
@@ -255,7 +253,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 
 	/**
 	 * Creates a merge status.
-	 * 
+	 *
 	 * @param context
 	 *            the merge context
 	 * @param status
@@ -278,7 +276,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 * merger should execute the incoming refactorings in order to fix up
 	 * references in dependent projects.
 	 * </p>
-	 * 
+	 *
 	 * @param projects
 	 *            the projects associated with the incoming refactorings in the
 	 *            synchronization scope.
@@ -288,7 +286,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 
 	/**
 	 * Returns the diffs from the merge context.
-	 * 
+	 *
 	 * @param context
 	 *            the merge context
 	 * @return the diffs, or an empty array
@@ -313,7 +311,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 
 	/**
 	 * Returns the incoming refactoring history from the diffs.
-	 * 
+	 *
 	 * @param diffs
 	 *            the diffs
 	 * @param monitor
@@ -363,7 +361,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	/**
 	 * Retrieves the refactoring descriptors contained in the specified file
 	 * revision.
-	 * 
+	 *
 	 * @param revision
 	 *            the file revision
 	 * @param descriptors
@@ -439,7 +437,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 * Subclasses may extend this method to perform any special processing. The
 	 * default implementation does nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the merge context
 	 * @param monitor

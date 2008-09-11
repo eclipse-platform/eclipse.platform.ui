@@ -79,10 +79,10 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * Note: this class is indented to be subclassed by clients to provide
  * specialized refactoring descriptors for particular refactorings.
  * </p>
- * 
+ *
  * @see RefactoringDescriptorProxy
  * @see IRefactoringHistoryService
- * 
+ *
  * @since 3.2
  */
 public abstract class RefactoringDescriptor implements Comparable {
@@ -181,7 +181,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Creates a new refactoring descriptor.
-	 * 
+	 *
 	 * @param id
 	 *            the unique id of the refactoring
 	 * @param project
@@ -237,7 +237,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * The returned refactoring must be in an initialized state, i.e. ready to
 	 * be executed via {@link PerformRefactoringOperation}.
 	 * </p>
-	 * 
+	 *
 	 * @param status
 	 *            a refactoring status used to describe the outcome of the
 	 *            initialization
@@ -267,7 +267,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * This information is used in the user interface to show additional details
 	 * about the performed refactoring.
 	 * </p>
-	 * 
+	 *
 	 * @return the details comment, or the empty string
 	 */
 	public final String getComment() {
@@ -279,7 +279,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * <p>
 	 * This information is used to label a refactoring in the user interface.
 	 * </p>
-	 * 
+	 *
 	 * @return the description
 	 */
 	public final String getDescription() {
@@ -288,7 +288,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Returns the flags.
-	 * 
+	 *
 	 * @return the flags
 	 */
 	public final int getFlags() {
@@ -297,7 +297,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Returns the refactoring id.
-	 * 
+	 *
 	 * @return the refactoring id.
 	 */
 	public final String getID() {
@@ -306,7 +306,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Returns the project name.
-	 * 
+	 *
 	 * @return the non-empty name of the project, or <code>null</code>
 	 */
 	public final String getProject() {
@@ -315,7 +315,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Returns the time stamp.
-	 * 
+	 *
 	 * @return the time stamp, or <code>-1</code> if no time information is
 	 *         available
 	 */
@@ -339,7 +339,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * Note: This API must not be extended or reimplemented and should not be
 	 * called from outside the refactoring framework.
 	 * </p>
-	 * 
+	 *
 	 * @param comment
 	 *            the comment to set, or <code>null</code> for no comment
 	 */
@@ -353,10 +353,10 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * Note: This API must not be extended or reimplemented and should not be
 	 * called from outside the refactoring framework.
 	 * </p>
-	 * 
+	 *
 	 * @param description
 	 *            the non-empty description of the refactoring to set
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void setDescription(final String description) {
@@ -371,10 +371,10 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * Note: This API must not be extended or reimplemented and should not be
 	 * called from outside the refactoring framework.
 	 * </p>
-	 * 
+	 *
 	 * @param flags
 	 *            the flags to set, or <code>NONE</code> to clear the flags
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void setFlags(final int flags) {
@@ -388,7 +388,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * Note: This API must not be extended or reimplemented and should not be
 	 * called from outside the refactoring framework.
 	 * </p>
-	 * 
+	 *
 	 * @param project
 	 *            the non-empty project name to set, or <code>null</code> for
 	 *            the workspace
@@ -405,7 +405,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * Note: This API must not be extended or reimplemented and should not be
 	 * called from outside the refactoring framework.
 	 * </p>
-	 * 
+	 *
 	 * @param stamp
 	 *            the time stamp to set
 	 */

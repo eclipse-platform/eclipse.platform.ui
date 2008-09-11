@@ -10,24 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.resource;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
-
-import org.eclipse.ltk.internal.core.refactoring.Messages;
-import org.eclipse.ltk.internal.core.refactoring.resource.MoveResourcesProcessor;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -42,6 +35,11 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
+import org.eclipse.ltk.internal.core.refactoring.Messages;
+import org.eclipse.ltk.internal.core.refactoring.resource.MoveResourcesProcessor;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 
@@ -54,7 +52,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 
 	/**
 	 * Creates a {@link MoveResourcesWizard}.
-	 * 
+	 *
 	 * @param resources
 	 *             the resources to move. The resources must exist.
 	 */
@@ -63,7 +61,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 		setDefaultPageTitle(RefactoringUIMessages.MoveResourcesWizard_page_title);
 		setWindowTitle(RefactoringUIMessages.MoveResourcesWizard_window_title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
 	 */
@@ -71,7 +69,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 		MoveResourcesProcessor processor= (MoveResourcesProcessor) getRefactoring().getAdapter(MoveResourcesProcessor.class);
 		addPage(new MoveResourcesRefactoringConfigurationPage(processor));
 	}
-	
+
 
 	private static class MoveResourcesRefactoringConfigurationPage extends UserInputWizardPage {
 
@@ -88,7 +86,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 		 */
 		public void createControl(Composite parent) {
 			initializeDialogUnits(parent);
-			
+
 			Composite composite= new Composite(parent, SWT.NONE);
 			composite.setLayout(new GridLayout(2, false));
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -102,7 +100,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 				label.setText(Messages.format(RefactoringUIMessages.MoveResourcesWizard_description_multiple, new Integer(resourcesToMove.length)));
 			}
 			label.setLayoutData(new GridData());
-			
+
 			fDestinationField= new TreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 			GridData gd= new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1);
 			gd.widthHint= convertWidthInCharsToPixels(40);
@@ -141,19 +139,19 @@ public class MoveResourcesWizard extends RefactoringWizard {
 				if (getErrorMessage() != null) {
 					setErrorMessage(null); // no error messages until user interacts
 				}
-				
+
 			}
 			super.setVisible(visible);
 		}
-		
+
 		private final void validatePage() {
 			RefactoringStatus status;
-			
+
 			IStructuredSelection selection= (IStructuredSelection) fDestinationField.getSelection();
 			Object firstElement= selection.getFirstElement();
 			if (firstElement instanceof IContainer) {
 				status= fRefactoringProcessor.validateDestination((IContainer) firstElement);
-				
+
 			} else {
 				status= new RefactoringStatus();
 				status.addError(RefactoringUIMessages.MoveResourcesWizard_error_no_selection);

@@ -38,10 +38,10 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 
 public class ChangeExceptionHandler {
-	
+
 	private Shell fParent;
 	private String fName;
-	
+
 	private static class RefactorErrorDialog extends ErrorDialog {
 		public RefactorErrorDialog(Shell parentShell, String dialogTitle, String dialogMessage, IStatus status, int displayMask) {
 			super(parentShell, dialogTitle, dialogMessage, status, displayMask);
@@ -67,12 +67,12 @@ public class ChangeExceptionHandler {
 			return result;
 		}
 	}
-	
+
 	public ChangeExceptionHandler(Shell parent, Refactoring refactoring) {
 		fParent= parent;
 		fName= refactoring.getName();
 	}
-	
+
 	public void handle(Change change, RuntimeException exception) {
 		RefactoringUIPlugin.log(exception);
 		IStatus status= null;
@@ -85,12 +85,12 @@ public class ChangeExceptionHandler {
 		}
 		handle(change, status);
 	}
-	
+
 	public void handle(Change change, CoreException exception) {
 		RefactoringUIPlugin.log(exception);
 		handle(change, exception.getStatus());
 	}
-	
+
 	private void handle(Change change, IStatus status) {
 		if (change instanceof CompositeChange) {
 			Change undo= ((CompositeChange)change).getUndoUntilException();
@@ -113,7 +113,7 @@ public class ChangeExceptionHandler {
 			status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
 		dialog.open();
 	}
-	
+
 	private void performUndo(final Change undo) {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {

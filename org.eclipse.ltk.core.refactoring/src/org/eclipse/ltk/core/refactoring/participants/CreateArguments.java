@@ -11,27 +11,27 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 /**
- * Create arguments describe the data that a processor 
+ * Create arguments describe the data that a processor
  * provides to its create participants.
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- *  
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CreateArguments extends RefactoringArguments {
-	
+
 	/**
 	 * Creates a new create arguments object.
 	 */
 	public CreateArguments() {
 	}
-    
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.2
 	 */
     public String toString() {

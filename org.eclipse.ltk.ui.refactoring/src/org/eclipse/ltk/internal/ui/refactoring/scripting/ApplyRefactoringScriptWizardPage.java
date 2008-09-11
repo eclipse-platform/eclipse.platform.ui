@@ -19,16 +19,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-
-import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
-import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -37,14 +27,23 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+
 /**
  * First page of the apply refactoring script wizard.
- * 
+ *
  * @since 3.2
  */
 public final class ApplyRefactoringScriptWizardPage extends WizardPage {
@@ -63,7 +62,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 
 	/**
 	 * Creates a new apply refactoring script wizard page.
-	 * 
+	 *
 	 * @param wizard
 	 *            the associated wizard
 	 */

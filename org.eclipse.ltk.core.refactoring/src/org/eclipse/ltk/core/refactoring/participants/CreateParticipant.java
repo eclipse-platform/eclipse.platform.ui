@@ -19,11 +19,11 @@ package org.eclipse.ltk.core.refactoring.participants;
  * org.eclipse.ltk.core.refactoring.createParticipants</code>. Extensions to
  * this extension point must therefore extend this abstract class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class CreateParticipant extends RefactoringParticipant {
-	
+
 	private CreateArguments fArguments;
 
 	/**
@@ -32,10 +32,10 @@ public abstract class CreateParticipant extends RefactoringParticipant {
 	protected final void initialize(RefactoringArguments arguments) {
 		fArguments= (CreateArguments)arguments;
 	}
-	
+
 	/**
 	 * Returns the create arguments.
-	 * 
+	 *
 	 * @return the create arguments
 	 */
 	public CreateArguments getArguments() {

@@ -24,7 +24,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -40,12 +39,12 @@ public class MoveResourceChange extends ResourceChange {
 	private final IContainer fTarget;
 	private final long fStampToRestore;
 	private final Change fRestoreSourceChange;
-	
+
 	private ChangeDescriptor fDescriptor;
-	
+
 	/**
 	 * Creates the change.
-	 * 
+	 *
 	 * @param source the resource to move
 	 * @param target the container the resource is moved to. An existing resource at the destination will be
 	 * replaced.
@@ -56,7 +55,7 @@ public class MoveResourceChange extends ResourceChange {
 
 	/**
 	 * Creates the change.
-	 * 
+	 *
 	 * @param source the resource to move
 	 * @param target the container the resource is moved to. An existing resource at the destination will be
 	 * replaced.
@@ -69,7 +68,7 @@ public class MoveResourceChange extends ResourceChange {
 		fTarget= target;
 		fStampToRestore= stampToRestore;
 		fRestoreSourceChange= restoreSourceChange;
-		
+
 		// We already present a dialog to the user if he
 		// moves read-only resources. Since moving a resource
 		// doesn't do a validate edit (it actually doesn't
@@ -87,7 +86,7 @@ public class MoveResourceChange extends ResourceChange {
 
 	/**
 	 * Sets the change descriptor to be returned by {@link Change#getDescriptor()}.
-	 * 
+	 *
 	 * @param descriptor the change descriptor
 	 */
 	public void setDescriptor(ChangeDescriptor descriptor) {
@@ -101,11 +100,11 @@ public class MoveResourceChange extends ResourceChange {
 		try {
 			if (monitor == null)
 				monitor= new NullProgressMonitor();
-			
+
 			monitor.beginTask(getName(), 4);
 
 			Change deleteUndo= null;
-			
+
 			// delete destination if required
 			IResource resourceAtDestination= fTarget.findMember(fSource.getName());
 			if (resourceAtDestination != null && resourceAtDestination.exists()) {
@@ -113,18 +112,18 @@ public class MoveResourceChange extends ResourceChange {
 			} else {
 				monitor.worked(1);
 			}
-			
+
 			// move resource
 			long currentStamp= fSource.getModificationStamp();
 			IPath destinationPath= fTarget.getFullPath().append(fSource.getName());
 			fSource.move(destinationPath, IResource.KEEP_HISTORY | IResource.SHALLOW, new SubProgressMonitor(monitor, 2));
 			resourceAtDestination= ResourcesPlugin.getWorkspace().getRoot().findMember(destinationPath);
-			
+
 			// restore timestamp at destination
 			if (fStampToRestore != IResource.NULL_STAMP) {
 				resourceAtDestination.revertModificationStamp(fStampToRestore);
 			}
-			
+
 			// restore file at source
 			if (fRestoreSourceChange != null) {
 				performSourceRestore(new SubProgressMonitor(monitor, 1));
@@ -164,14 +163,14 @@ public class MoveResourceChange extends ResourceChange {
 			monitor.done();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.resource.ResourceChange#getModifiedResource()
 	 */
 	protected IResource getModifiedResource() {
 		return fSource;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */

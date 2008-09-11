@@ -28,12 +28,12 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  * <p>
  * Note: this class is not intended to be instantiated by clients.
  * </p>
- * 
+ *
  * @see IRefactoringHistoryListener
  * @see IRefactoringHistoryService
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class RefactoringHistoryEvent {
@@ -73,7 +73,7 @@ public final class RefactoringHistoryEvent {
 
 	/**
 	 * Creates a new refactoring history event.
-	 * 
+	 *
 	 * @param service
 	 *            the refactoring history service
 	 * @param type
@@ -98,7 +98,7 @@ public final class RefactoringHistoryEvent {
 	 * discriminated by their special id
 	 * {@link RefactoringDescriptor#ID_UNKNOWN};
 	 * </p>
-	 * 
+	 *
 	 * @return the refactoring descriptor proxy
 	 */
 	public RefactoringDescriptorProxy getDescriptor() {
@@ -107,7 +107,7 @@ public final class RefactoringHistoryEvent {
 
 	/**
 	 * Returns the event type.
-	 * 
+	 *
 	 * @return the event type
 	 */
 	public int getEventType() {
@@ -116,7 +116,7 @@ public final class RefactoringHistoryEvent {
 
 	/**
 	 * Returns the refactoring history service.
-	 * 
+	 *
 	 * @return the refactoring history service
 	 */
 	public IRefactoringHistoryService getHistoryService() {

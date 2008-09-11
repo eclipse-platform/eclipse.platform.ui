@@ -21,25 +21,26 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ltk.ui.refactoring.resource.DeleteResourcesWizard;
 
 public class DeleteResourcesRefactoringAction extends Action implements IActionDelegate {
-	
+
 	/*
 	 <extension
 	     point="org.eclipse.ui.popupMenus">
 	  <objectContribution
 	        objectClass="org.eclipse.core.resources.IResource"
-			adaptable="true"      
+			adaptable="true"
 	        id="org.eclipse.ltk.ui.refactoring.examples.DeleteResourcesRefactoringAction">
 	     <action
 	           label="Delete Resources... (ltk.ui.refactoring.examples)"
@@ -49,14 +50,14 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 	           enablesFor="*"
 	           id="DeleteResourcesRefactoringAction">
 	     </action>
-	  </objectContribution>	  
-	  
+	  </objectContribution>
+
 	</extension>
 	 */
-	
-	
+
+
 	private IResource[] fResources;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -65,7 +66,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 		if (fResources != null && isDeleteAvailable(fResources)) {
 			try {
 				DeleteResourcesWizard refactoringWizard= new DeleteResourcesWizard(fResources);
-				
+
 				RefactoringWizardOpenOperation op= new RefactoringWizardOpenOperation(refactoringWizard);
 				op.run(shell, "Delete resources");
 			} catch (InterruptedException e) {
@@ -83,7 +84,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -148,6 +149,6 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 		res.add(resource);
 		return true;
 	}
-	
+
 
 }

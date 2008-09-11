@@ -10,29 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
-import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
+import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
  * Control which is capable of displaying and editing the global workspace
  * refactoring history.
- * 
+ *
  * @since 3.2
  */
 public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryControl {
@@ -45,7 +43,7 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 
 	/**
 	 * Creates a new show refactoring history control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param configuration
@@ -74,7 +72,7 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 
 	/**
 	 * Creates the delete all button of the control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -93,7 +91,7 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 
 	/**
 	 * Creates the delete button of the control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param alignment
@@ -159,7 +157,7 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 
 	/**
 	 * Returns the delete all button.
-	 * 
+	 *
 	 * @return the delete all button, or <code>null</code>
 	 */
 	public Button getDeleteAllButton() {
@@ -168,7 +166,7 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 
 	/**
 	 * Returns the delete button.
-	 * 
+	 *
 	 * @return the delete button, or <code>null</code>
 	 */
 	public Button getDeleteButton() {

@@ -22,7 +22,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  * This class should be subclassed by clients wishing to provide special
  * refactoring arguments for special participants.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class RefactoringArguments {
@@ -32,15 +32,15 @@ public abstract class RefactoringArguments {
 	 */
 	protected RefactoringArguments() {
 	}
-	
+
 	/**
 	 * Returns a string representation of these arguments suitable for debugging
 	 * purposes only.
 	 * <p>
 	 * Subclasses should reimplement this method.
 	 * </p>
-	 * 
-	 * @return a debug string 
+	 *
+	 * @return a debug string
 	 * @since 3.2
 	 */
 	public String toString() {

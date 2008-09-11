@@ -19,28 +19,28 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * An opaque list to manage sharable participants.
  * <p>
  * The list is managed by the refactoring itself. Clients typically
- * only pass the list to the corresponding method defined in 
+ * only pass the list to the corresponding method defined in
  * {@link org.eclipse.ltk.core.refactoring.participants.ParticipantManager}
  * </p>
- * <p> 
+ * <p>
  * Note: this class is not intended to be extended or instantiated by clients.
  * </p>
- * 
+ *
  * @see ISharableParticipant
  * @see org.eclipse.ltk.core.refactoring.participants.ProcessorBasedRefactoring
  * @see org.eclipse.ltk.core.refactoring.participants.ParticipantManager
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class SharableParticipants {
-	
+
 	private Map fMap= new HashMap();
-	
+
 	/* package */ void put(ParticipantDescriptor descriptor, RefactoringParticipant participant) {
-		fMap.put(descriptor, participant);		
+		fMap.put(descriptor, participant);
 	}
 	/* package */ RefactoringParticipant get(ParticipantDescriptor descriptor) {
 		return (RefactoringParticipant)fMap.get(descriptor);

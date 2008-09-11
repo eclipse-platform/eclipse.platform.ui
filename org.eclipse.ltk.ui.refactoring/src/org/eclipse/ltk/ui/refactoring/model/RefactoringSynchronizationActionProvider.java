@@ -21,29 +21,28 @@ import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.core.refactoring.model.AbstractRefactoringDescriptorResourceMapping;
 import org.eclipse.ltk.core.refactoring.model.AbstractRefactoringHistoryResourceMapping;
-
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorProxyAdapter;
 import org.eclipse.ltk.internal.ui.refactoring.actions.AcceptRefactoringsAction;
 import org.eclipse.ltk.internal.ui.refactoring.actions.RejectRefactoringsAction;
-
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * Refactoring-aware synchronization action provider which contributes an action
@@ -61,9 +60,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * <code>org.eclipse.ui.navigator.viewer</code> extension points in order to
  * participate in the team synchronization viewers.
  * </p>
- * 
+ *
  * @see org.eclipse.team.ui.mapping.SynchronizationActionProvider
- * 
+ *
  * @since 3.2
  */
 public class RefactoringSynchronizationActionProvider extends SynchronizationActionProvider {
@@ -76,7 +75,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 
 		/**
 		 * Creates a new synchronization handler delegate.
-		 * 
+		 *
 		 * @param handler
 		 *            the delegate handler
 		 */
@@ -110,7 +109,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 
 	/**
 	 * Gets the refactoring represented by the specified proxy.
-	 * 
+	 *
 	 * @param scope
 	 *            the synchronization scope
 	 * @param proxy
@@ -130,7 +129,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 
 	/**
 	 * Returns the currently selected refactorings.
-	 * 
+	 *
 	 * @param context
 	 *            the synchronization context
 	 * @param configuration
@@ -163,7 +162,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 
 	/**
 	 * Gets the refactorings represented by the specified history.
-	 * 
+	 *
 	 * @param scope
 	 *            the synchronization scope
 	 * @param history
@@ -183,7 +182,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 
 	/**
 	 * Is the specified refactoring in the scope?
-	 * 
+	 *
 	 * @param scope
 	 *            the synchronization scope
 	 * @param proxy
@@ -205,7 +204,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	/**
 	 * Returns whether any refactorings from the given synchronization context
 	 * are selected.
-	 * 
+	 *
 	 * @param context
 	 *            the synchronization context
 	 * @param configuration
@@ -239,7 +238,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	/**
 	 * Does the specified refactoring history contain any refactorings in the
 	 * scope?
-	 * 
+	 *
 	 * @param scope
 	 *            the synchronization scope
 	 * @param history

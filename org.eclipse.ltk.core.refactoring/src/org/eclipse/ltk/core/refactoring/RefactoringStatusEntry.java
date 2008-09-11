@@ -23,18 +23,18 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * generic data pointer. The context object is used to provide context information for
  * the problem itself. An example context is a tuple consisting of the resource that contains
  * the problem and a corresponding line number.
- * <p> 
+ * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefactoringStatusEntry {
-	
-	/** 
-	 * A special problem code indicating that no problem code is provided. If 
+
+	/**
+	 * A special problem code indicating that no problem code is provided. If
 	 * <code>NO_CODE</code> is used then the plug-in identifier can be <code>
 	 * null</code>
 	 */
@@ -48,7 +48,7 @@ public class RefactoringStatusEntry {
 
 	/** A plug-in specific problem code */
 	private final int fCode;
-	
+
 	/** A plug-in identifier to make the problem code unique */
 	private final String fPluginId;
 
@@ -60,10 +60,10 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Creates a new refactoring status entry. The context is set to <code>
-	 * null</code> the problem code is set to <code>NO_CODE</code>, the 
-	 * plug-in identifier is set to <code>null</code> and the data pointer 
+	 * null</code> the problem code is set to <code>NO_CODE</code>, the
+	 * plug-in identifier is set to <code>null</code> and the data pointer
 	 * is set to <code>null</code> as well.
-	 * 
+	 *
 	 * @param severity the severity
 	 * @param msg the message
 	 */
@@ -75,7 +75,7 @@ public class RefactoringStatusEntry {
 	 * Creates a new refactoring status entry. The problem code is set to <code>
 	 * NO_CODE</code>, the plug-in identifier is set to <code>null</code> and
 	 * the data pointer is set to <code>null</code> as well.
-	 * 
+	 *
 	 * @param severity the severity
 	 * @param msg the message
 	 * @param context the context. Can be <code>null</code>
@@ -86,7 +86,7 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Creates a new refactoring status entry.
-	 * 
+	 *
 	 * @param severity the severity
 	 * @param msg the message
 	 * @param context the context. Can be <code>null</code>
@@ -101,7 +101,7 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Creates a new refactoring status entry.
-	 * 
+	 *
 	 * @param severity the severity
 	 * @param msg the message
 	 * @param context the context. Can be <code>null</code>
@@ -126,7 +126,7 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Returns the message of the status entry.
-	 * 
+	 *
 	 * @return the message
 	 */
 	public String getMessage() {
@@ -135,9 +135,9 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Returns the severity level.
-	 * 
+	 *
 	 * @return the severity level
-	 * 
+	 *
 	 * @see RefactoringStatus#INFO
 	 * @see RefactoringStatus#WARNING
 	 * @see RefactoringStatus#ERROR
@@ -151,7 +151,7 @@ public class RefactoringStatusEntry {
 	 * Returns the context which can be used to show more detailed information regarding
 	 * this status entry in the UI. The method may return <code>null</code> indicating
 	 * that no context is available.
-	 * 
+	 *
 	 * @return the status entry's context
 	 */
 	public RefactoringStatusContext getContext() {
@@ -162,27 +162,27 @@ public class RefactoringStatusEntry {
 	 * Returns the plug-in identifier associated with the
 	 * problem code. Might return <code>null</code> if the
 	 * problem code equals <code>NO_CODE</code>.
-	 * 
+	 *
 	 * @return the plug-in identifier
 	 */
 	public String getPluginId() {
 		return fPluginId;
 	}
-	
+
 	/**
 	 * Returns the problem code.
-	 * 
+	 *
 	 * @return the problem code
 	 */
 	public int getCode() {
 		return fCode;
 	}
-	
+
 	/**
 	 * Returns the application defined entry data associated
-	 * with the receiver, or <code>null</code> if it has not 
+	 * with the receiver, or <code>null</code> if it has not
 	 * been set.
-	 * 
+	 *
 	 * @return the entry data
 	 */
 	public Object getData() {
@@ -191,7 +191,7 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Returns whether the entry represents a fatal error or not.
-	 * 
+	 *
 	 * @return <code>true</code> if (severity ==<code>RefactoringStatus.FATAL</code>)
 	 */
 	public boolean isFatalError() {
@@ -200,7 +200,7 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Returns whether the entry represents an error or not.
-	 * 
+	 *
 	 * @return <code>true</code> if (severity ==<code>RefactoringStatus.ERROR</code>).
 	 */
 	public boolean isError() {
@@ -209,7 +209,7 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Returns whether the entry represents a warning or not.
-	 * 
+	 *
 	 * @return <code>true</code> if (severity ==<code>RefactoringStatus.WARNING</code>).
 	 */
 	public boolean isWarning() {
@@ -218,7 +218,7 @@ public class RefactoringStatusEntry {
 
 	/**
 	 * Returns whether the entry represents an information or not.
-	 * 
+	 *
 	 * @return <code>true</code> if (severity ==<code>RefactoringStatus.INFO</code>).
 	 */
 	public boolean isInfo() {
@@ -236,9 +236,9 @@ public class RefactoringStatusEntry {
 	 * <code>org.eclipse.ltk.core.refactoring</code> will be used in the
 	 * returned status.
 	 * </p>
-	 * 
+	 *
 	 * @return the corresponding status
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public IStatus toStatus() {

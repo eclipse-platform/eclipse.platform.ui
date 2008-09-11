@@ -23,9 +23,6 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.resource.RenameResourceChange;
-import org.eclipse.ltk.core.refactoring.resource.RenameResourceDescriptor;
-
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.ParticipantManager;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
@@ -33,7 +30,8 @@ import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
 import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
-
+import org.eclipse.ltk.core.refactoring.resource.RenameResourceChange;
+import org.eclipse.ltk.core.refactoring.resource.RenameResourceDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -41,7 +39,7 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
 
 /**
  * A rename processor for {@link IResource}. The processor will rename the resource and
- * load rename participants if references should be renamed as well. 
+ * load rename participants if references should be renamed as well.
  *
  * @since 3.4
  */
@@ -54,23 +52,23 @@ public class RenameResourceProcessor extends RenameProcessor {
 
 	/**
 	 * Creates a new rename resource processor.
-	 * 
-	 * @param resource the resource to rename. 
+	 *
+	 * @param resource the resource to rename.
 	 */
 	public RenameResourceProcessor(IResource resource) {
 		if (resource == null || !resource.exists()) {
 			throw new IllegalArgumentException("resource must not be null and must exist"); //$NON-NLS-1$
 		}
-		
+
 		fResource= resource;
 		fRenameArguments= null;
 		fUpdateReferences= true;
 		setNewResourceName(resource.getName()); // Initialize new name
 	}
-	
+
 	/**
 	 * Returns the resource this processor was created on
-	 * 
+	 *
 	 * @return the resource to rename
 	 */
 	public IResource getResource() {
@@ -79,7 +77,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 
 	/**
 	 * Returns the new resource name
-	 * 
+	 *
 	 * @return the new resource name
 	 */
 	public String getNewResourceName() {
@@ -88,32 +86,32 @@ public class RenameResourceProcessor extends RenameProcessor {
 
 	/**
 	 * Sets the new resource name
-	 * 
+	 *
 	 * @param newName the new resource name
 	 */
 	public void setNewResourceName(String newName) {
 		Assert.isNotNull(newName);
 		fNewResourceName= newName;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the refactoring processor also updates references
-	 * 
+	 *
 	 * @return <code>true</code> if the refactoring processor also updates references
 	 */
 	public boolean isUpdateReferences() {
 		return fUpdateReferences;
 	}
-	
+
 	/**
 	 * Specifies if the refactoring processor also updates references. The default behaviour is to update references.
-	 * 
+	 *
 	 * @param updateReferences <code>true</code> if the refactoring processor should also updates references
 	 */
 	public void setUpdateReferences(boolean updateReferences) {
 		fUpdateReferences= updateReferences;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -128,10 +126,10 @@ public class RenameResourceProcessor extends RenameProcessor {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
 			fRenameArguments= new RenameArguments(getNewResourceName(), isUpdateReferences());
-			
+
 			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
-			
+
 			ResourceModifications.buildMoveDelta(deltaFactory, fResource, fRenameArguments);
 
 			return new RefactoringStatus();
@@ -143,7 +141,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	/**
 	 * Validates if the a name is valid. This method does not change the name settings on the refactoring. It is intended to be used
 	 * in a wizard to validate user input.
-	 * 
+	 *
 	 * @param newName the name to validate
 	 * @return returns the resulting status of the validation
 	 */
@@ -178,8 +176,8 @@ public class RenameResourceProcessor extends RenameProcessor {
 		descriptor.setUpdateReferences(isUpdateReferences());
 		return descriptor;
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */

@@ -33,11 +33,11 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 /**
  * {@link FileUndoState} is a lightweight description that describes a file to be
  * created.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class FileUndoState extends AbstractResourceUndoState {
 
@@ -51,7 +51,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 	 * Create a {@link FileUndoState} that can be used to later restore the given
 	 * file. The file typically already exists, but this constructor will not
 	 * fail if the file does not exist.
-	 * 
+	 *
 	 * @param file
 	 *            the file to be restored.
 	 */
@@ -75,7 +75,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 	 * path is specified, this file should represent a link to another location.
 	 * The content description describes any state that should be used when the
 	 * file resource is created.
-	 * 
+	 *
 	 * @param file
 	 *            the file to be described
 	 * @param linkLocation
@@ -106,7 +106,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 			this.fileContentDescription= new IFileContentDescription() {
 				/*
 				 * (non-Javadoc)
-				 * 
+				 *
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#exists()
 				 */
 				public boolean exists() {
@@ -115,7 +115,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 
 				/*
 				 * (non-Javadoc)
-				 * 
+				 *
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getContents()
 				 */
 				public InputStream getContents() throws CoreException {
@@ -124,7 +124,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 
 				/*
 				 * (non-Javadoc)
-				 * 
+				 *
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getCharset()
 				 */
 				public String getCharset() throws CoreException {
@@ -196,7 +196,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 	 * Get the file state that matches this file description. The local time
 	 * stamp is used to try to find a matching file state. If none can be found,
 	 * the most recent copy of the file state is used.
-	 * @param states 
+	 * @param states
 	 * @return  best guess state
 	 */
 	private IFileState getMatchingFileState(IFileState[] states) {

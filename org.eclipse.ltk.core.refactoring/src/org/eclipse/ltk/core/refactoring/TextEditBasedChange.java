@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ed Swartz <ed.swartz@nokia.com> - 
+ *     Ed Swartz <ed.swartz@nokia.com> -
  *         (bug 157203: [ltk] [patch] TextEditBasedChange/TextChange provides incorrect diff when one side is empty)
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditCopier;
 import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.text.edits.TextEditProcessor;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -33,7 +33,7 @@ import org.eclipse.ltk.internal.core.refactoring.Changes;
 
 /**
  * An abstract base implementation of a change which is based on text edits.
- * 
+ *
  * @since 3.2
  */
 public abstract class TextEditBasedChange extends Change {
@@ -47,7 +47,7 @@ public abstract class TextEditBasedChange extends Change {
 
 		private TextEdit[] fExcludes;
 		private TextEdit[] fIncludes;
-		
+
 		protected LocalTextEditProcessor(IDocument document, TextEdit root, int flags) {
 			super(document, root, flags);
 		}
@@ -107,7 +107,7 @@ public abstract class TextEditBasedChange extends Change {
 	}
 
 	/**
-	 * A special object denoting all edits managed by the change. This even 
+	 * A special object denoting all edits managed by the change. This even
 	 * includes those edits not managed by a {@link TextEditBasedChangeGroup}.
 	 */
 	static final TextEditBasedChangeGroup[] ALL_EDITS= new TextEditBasedChangeGroup[0];
@@ -115,26 +115,26 @@ public abstract class TextEditBasedChange extends Change {
 	/** The list of change groups */
 	private List fChangeGroups;
 	private GroupCategorySet fCombiedGroupCategories;
-	
+
 	/** The name of the change */
 	private String fName;
-	
+
 	/** The text type */
 	private String fTextType;
-	
+
 	/** Should the positions of edits be tracked during change generation? */
 	private boolean fTrackEdits;
 
 	/**
-	 * Creates a new abstract text edit change with the specified name.  The name is a 
-	 * human-readable value that is displayed to users.  The name does not 
+	 * Creates a new abstract text edit change with the specified name.  The name is a
+	 * human-readable value that is displayed to users.  The name does not
 	 * need to be unique, but it must not be <code>null</code>.
 	 * <p>
 	 * The text type of this text edit change is set to <code>txt</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param name the name of the text edit change
-	 * 
+	 *
 	 * @see #setTextType(String)
 	 */
 	protected TextEditBasedChange(String name) {
@@ -146,9 +146,9 @@ public abstract class TextEditBasedChange extends Change {
 
 	/**
 	 * Adds a {@link TextEditBasedChangeGroup text edit change group}.
-	 * The edits managed by the given text edit change group must be part of 
-	 * the change's root edit. 
-	 * 
+	 * The edits managed by the given text edit change group must be part of
+	 * the change's root edit.
+	 *
 	 * @param group the text edit change group to add
 	 */
 	public void addChangeGroup(TextEditBasedChangeGroup group) {
@@ -161,24 +161,24 @@ public abstract class TextEditBasedChange extends Change {
 
 	/**
 	 * Adds a {@link TextEditGroup text edit group}. This method is a convenience
-	 * method for calling <code>change.addChangeGroup(new 
+	 * method for calling <code>change.addChangeGroup(new
 	 * TextEditBasedChangeGroup(change, group));</code>.
-	 * 
+	 *
 	 * @param group the text edit group to add
 	 */
 	public void addTextEditGroup(TextEditGroup group) {
 		addChangeGroup(new TextEditBasedChangeGroup(this, group));
 	}
-	
+
 	/**
-	 * Returns <code>true</code> if the change has one of the given group 
+	 * Returns <code>true</code> if the change has one of the given group
 	 * categories. Otherwise <code>false</code> is returned.
 	 *
 	 * @param groupCategories the group categories to check
-	 * 
+	 *
 	 * @return whether the change has one of the given group
 	 *  categories
-	 *  
+	 *
 	 * @since 3.2
 	 */
 	public boolean hasOneGroupCategory(List groupCategories) {
@@ -193,9 +193,9 @@ public abstract class TextEditBasedChange extends Change {
 	}
 
 	/**
-	 * Returns the {@link TextEditBasedChangeGroup text edit change groups} managed by this 
+	 * Returns the {@link TextEditBasedChangeGroup text edit change groups} managed by this
 	 * buffer change.
-	 * 
+	 *
 	 * @return the text edit change groups
 	 */
 	public final TextEditBasedChangeGroup[] getChangeGroups() {
@@ -214,7 +214,7 @@ public abstract class TextEditBasedChange extends Change {
 						// empty: show nothing
 						return ""; //$NON-NLS-1$
 					}
-					
+
 					endLine= Math.min(
 						document.getLineOfOffset(region.getOffset()) + surroundingLines - 1,
 						document.getNumberOfLines() - 1);
@@ -223,12 +223,12 @@ public abstract class TextEditBasedChange extends Change {
 						document.getLineOfOffset(region.getOffset() + region.getLength() - 1) + surroundingLines,
 						document.getNumberOfLines() - 1);
 				}
-				
+
 				int offset= document.getLineInformation(startLine).getOffset();
 				IRegion endLineRegion= document.getLineInformation(endLine);
 				int length = endLineRegion.getOffset() + endLineRegion.getLength() - offset;
 				return document.get(offset, length);
-				
+
 			} else {
 				return document.get(region.getOffset(), region.getLength());
 			}
@@ -236,15 +236,15 @@ public abstract class TextEditBasedChange extends Change {
 			throw Changes.asCoreException(e);
 		}
 	}
-	
+
 	/**
 	 * Returns the current content of the document this text
 	 * change is associated with.
-	 * 
+	 *
 	 * @param pm a progress monitor to report progress or <code>null</code>
 	 *  if no progress reporting is desired
 	 * @return the current content of the text edit change
-	 * 
+	 *
 	 * @exception CoreException if the content can't be accessed
 	 */
 	public abstract String getCurrentContent(IProgressMonitor pm) throws CoreException;
@@ -258,35 +258,35 @@ public abstract class TextEditBasedChange extends Change {
 	 *   </li>
 	 *   <li>if <code>expandRegionToFullLine</code> is <code>true</code>
 	 *       then the region determined by the parameter <code>region</code>
-	 *       is extended to cover full lines. 
+	 *       is extended to cover full lines.
 	 *   </li>
 	 *   <li>if <code>surroundingLines</code> &gt; 0 then the given number
 	 *       of surrounding lines is added. The value of <code>surroundingLines
 	 *       </code> is only considered if <code>expandRegionToFullLine</code>
 	 *       is <code>true</code>
 	 *   </li>
-	 * </ul> 
-	 * 
+	 * </ul>
+	 *
 	 * @param region the starting region for the text to be returned
 	 * @param expandRegionToFullLine if <code>true</code> is passed the region
 	 *  is extended to cover full lines
-	 * @param surroundingLines the number of surrounding lines to be added to 
+	 * @param surroundingLines the number of surrounding lines to be added to
 	 *  the clipping region. Is only considered if <code>expandRegionToFullLine
 	 *  </code> is <code>true</code>
 	 * @param pm a progress monitor to report progress or <code>null</code>
 	 *  if no progress reporting is desired
-	 * 
+	 *
 	 * @return the current content of the text edit change clipped to a region
 	 *  determined by the given parameters.
-	 * 
+	 *
 	 * @throws CoreException if an exception occurs while accessing the current content
 	 */
 	public abstract String getCurrentContent(IRegion region, boolean expandRegionToFullLine, int surroundingLines, IProgressMonitor pm) throws CoreException;
-	
+
 	/**
 	 * Returns whether preview edits are remembered for further region
 	 * tracking or not.
-	 * 
+	 *
 	 * @return <code>true</code> if executed text edits are remembered
 	 * during preview generation; otherwise <code>false</code>
 	 */
@@ -304,7 +304,7 @@ public abstract class TextEditBasedChange extends Change {
 	/**
 	 * Returns a preview of the text edit change clipped to a specific region.
 	 * The preview is created by applying the text edits managed by the
-	 * given array of {@link TextEditBasedChangeGroup text edit change groups}. 
+	 * given array of {@link TextEditBasedChangeGroup text edit change groups}.
 	 * The region is determined as follows:
 	 * <ul>
 	 *   <li>if <code>expandRegionToFullLine</code> is <code>false</code>
@@ -312,49 +312,49 @@ public abstract class TextEditBasedChange extends Change {
 	 *   </li>
 	 *   <li>if <code>expandRegionToFullLine</code> is <code>true</code>
 	 *       then the region determined by the parameter <code>region</code>
-	 *       is extended to cover full lines. 
+	 *       is extended to cover full lines.
 	 *   </li>
 	 *   <li>if <code>surroundingLines</code> &gt; 0 then the given number
 	 *       of surrounding lines is added. The value of <code>surroundingLines
 	 *       </code> is only considered if <code>expandRegionToFullLine</code>
 	 *       is <code>true</code>
 	 *   </li>
-	 * </ul> 
-	 * 
+	 * </ul>
+	 *
 	 * @param changeGroups a set of change groups for which a preview is to be
 	 *  generated
 	 * @param region the starting region for the clipping
 	 * @param expandRegionToFullLine if <code>true</code> is passed the region
 	 *  is extended to cover full lines
-	 * @param surroundingLines the number of surrounding lines to be added to 
+	 * @param surroundingLines the number of surrounding lines to be added to
 	 *  the clipping region. Is only considered if <code>expandRegionToFullLine
 	 *  </code> is <code>true</code>
 	 * @param pm a progress monitor to report progress or <code>null</code>
 	 *  if no progress reporting is desired
-	 * 
+	 *
 	 * @return the current content of the text change clipped to a region
 	 *  determined by the given parameters.
-	 * 
+	 *
 	 * @throws CoreException if an exception occurs while generating the preview
-	 * 
+	 *
 	 * @see #getCurrentContent(IRegion, boolean, int, IProgressMonitor)
 	 */
 	public abstract String getPreviewContent(TextEditBasedChangeGroup[] changeGroups, IRegion region, boolean expandRegionToFullLine, int surroundingLines, IProgressMonitor pm) throws CoreException;
 
 	/**
 	 * Returns the preview content as a string.
-	 * 
+	 *
 	 * @param pm a progress monitor to report progress or <code>null</code>
 	 *  if no progress reporting is desired
-	 * @return the preview 
-	 * 
+	 * @return the preview
+	 *
 	 * @throws CoreException if the preview can't be created
 	 */
 	public abstract String getPreviewContent(IProgressMonitor pm) throws CoreException;
 
 	/**
 	 * Returns the text edit change's text type.
-	 * 
+	 *
 	 * @return the text edit change's text type
 	 */
 	public String getTextType() {
@@ -385,9 +385,9 @@ public abstract class TextEditBasedChange extends Change {
 	}
 
 	/**
-	 * Controls whether the text edit change should keep executed edits during 
+	 * Controls whether the text edit change should keep executed edits during
 	 * preview generation.
-	 * 
+	 *
 	 * @param keep if <code>true</code> executed preview edits are kept
 	 */
 	public void setKeepPreviewEdits(boolean keep) {
@@ -400,10 +400,10 @@ public abstract class TextEditBasedChange extends Change {
 	 * and the preview content in the user interface. Content merge viewers
 	 * are defined via the extension point <code>org.eclipse.compare.contentMergeViewers</code>.
 	 * <p>
-	 * The default text type is <code>txt</code>. 
+	 * The default text type is <code>txt</code>.
 	 * </p>
-	 * 
-	 * @param type the text type. If <code>null</code> is passed the text type is 
+	 *
+	 * @param type the text type. If <code>null</code> is passed the text type is
 	 *  reseted to the default text type <code>txt</code>.
 	 */
 	public void setTextType(String type) {

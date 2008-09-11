@@ -18,18 +18,18 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RenameRefactoring extends ProcessorBasedRefactoring {
 
 	private RenameProcessor fProcessor;
-	
+
 	/**
 	 * Creates a new rename refactoring with the given rename processor.
-	 * 
+	 *
 	 * @param processor the rename processor
 	 */
 	public RenameRefactoring(RenameProcessor processor) {
@@ -37,7 +37,7 @@ public class RenameRefactoring extends ProcessorBasedRefactoring {
 		Assert.isNotNull(processor);
 		fProcessor= processor;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

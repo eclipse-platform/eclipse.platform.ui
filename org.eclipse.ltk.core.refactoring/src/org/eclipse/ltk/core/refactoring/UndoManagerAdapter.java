@@ -25,7 +25,7 @@ public class UndoManagerAdapter implements IUndoManagerListener {
 	 */
 	public void undoStackChanged(IUndoManager manager) {
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

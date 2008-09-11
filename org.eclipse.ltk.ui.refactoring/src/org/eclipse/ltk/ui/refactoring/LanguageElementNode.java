@@ -12,10 +12,9 @@ package org.eclipse.ltk.ui.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.ltk.internal.ui.refactoring.InternalLanguageElementNode;
-
 import org.eclipse.jface.text.IRegion;
 
+import org.eclipse.ltk.internal.ui.refactoring.InternalLanguageElementNode;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode.ChildNode;
 
 /**
@@ -26,15 +25,15 @@ import org.eclipse.ltk.ui.refactoring.TextEditChangeNode.ChildNode;
  * <p>
  * Clients may extend this class.
  * </p>
- *  
+ *
  * @since 3.2
  */
 public abstract class LanguageElementNode extends InternalLanguageElementNode {
 
 	/**
-	 * Creates a new <code>LanguageElementNode</code> using the 
+	 * Creates a new <code>LanguageElementNode</code> using the
 	 * given <code>TextEditChangeGroup</code> as a parent.
-	 * 
+	 *
 	 * @param parent the parent of this node
 	 */
 	protected LanguageElementNode(TextEditChangeNode parent) {
@@ -42,9 +41,9 @@ public abstract class LanguageElementNode extends InternalLanguageElementNode {
 	}
 
 	/**
-	 * Creates a new <code>LanguageElementNode</code> using the 
+	 * Creates a new <code>LanguageElementNode</code> using the
 	 * given <code>ChildNode</code> as a parent.
-	 * 
+	 *
 	 * @param parent the parent of this node
 	 */
 	protected LanguageElementNode(ChildNode parent) {
@@ -53,27 +52,27 @@ public abstract class LanguageElementNode extends InternalLanguageElementNode {
 
 	/**
 	 * Adds the given <code>ChildNode<code> to this <code>LanguageElementNode</code>
-	 * 
+	 *
 	 * @param child the child to add
 	 */
 	public void addChild(ChildNode child) {
 		internalAddChild(child);
 	}
-	
+
 	/**
 	 * Returns the text region the of this language element node.
-	 * 
+	 *
 	 * @return the text region of this language element node
 	 * @throws CoreException if the source region can't be obtained
 	 */
 	public abstract IRegion getTextRange() throws CoreException;
-	
+
 	/**
 	 * This is an internal method which should not be called by
 	 * subclasses.
-	 * 
+	 *
 	 * @param child the child node to add
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void internalAddChild(ChildNode child) {

@@ -17,21 +17,12 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
-import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages;
-import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
-import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMergeWizard;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
@@ -39,11 +30,18 @@ import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.model.ModelMessages;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMergeWizard;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
  * Action to accept pending refactorings to execute them on the local workspace.
- * 
+ *
  * @since 3.2
  */
 public final class AcceptRefactoringsAction extends Action {
@@ -53,7 +51,7 @@ public final class AcceptRefactoringsAction extends Action {
 
 		/**
 		 * Creates a new refactoring history accept configuration.
-		 * 
+		 *
 		 * @param project
 		 *            the project, or <code>null</code>
 		 */
@@ -104,7 +102,7 @@ public final class AcceptRefactoringsAction extends Action {
 
 	/**
 	 * Creates a new accept refactorings action.
-	 * 
+	 *
 	 * @param context
 	 *            the synchronization context
 	 * @param shell
@@ -174,7 +172,7 @@ public final class AcceptRefactoringsAction extends Action {
 
 	/**
 	 * Sets the refactoring descriptor proxies to accept.
-	 * 
+	 *
 	 * @param proxies
 	 *            the refactoring descriptor proxies
 	 */

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -20,9 +23,6 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -42,7 +42,7 @@ public class FileStatusContextViewer extends TextStatusContextViewer {
 		super.createControl(parent);
 		getSourceViewer().configure(new SourceViewerConfiguration());
 	}
-	
+
 	public void setInput(RefactoringStatusContext context) {
 		FileStatusContext fc= (FileStatusContext)context;
 		IFile file= fc.getFile();
@@ -55,11 +55,11 @@ public class FileStatusContextViewer extends TextStatusContextViewer {
 			setInput(document, new Region(0, 0));
 		}
 	}
-	
+
 	protected SourceViewer createSourceViewer(Composite parent) {
 	    return new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 	}
-	
+
 	private IDocument getDocument(IFile file) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath path= file.getFullPath();
@@ -76,6 +76,6 @@ public class FileStatusContextViewer extends TextStatusContextViewer {
 		} catch (CoreException e) {
 			RefactoringUIPlugin.log(e);
 		}
-		return new Document(RefactoringUIMessages.FileStatusContextViewer_error_reading_file); 
-	}	
+		return new Document(RefactoringUIMessages.FileStatusContextViewer_error_reading_file);
+	}
 }

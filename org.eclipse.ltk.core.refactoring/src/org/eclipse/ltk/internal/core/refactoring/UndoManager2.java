@@ -34,7 +34,7 @@ import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class UndoManager2 implements IUndoManager {
-	
+
 	private class OperationHistroyListener implements IOperationHistoryListener {
 		public void historyNotification(OperationHistoryEvent event) {
 			IUndoableOperation op= event.getOperation();
@@ -77,7 +77,7 @@ public class UndoManager2 implements IUndoManager {
 			}
 		}
 	}
-	
+
 	private static class NullQuery implements IValidationCheckResultQuery {
 		public boolean proceed(RefactoringStatus status) {
 			return true;
@@ -86,7 +86,7 @@ public class UndoManager2 implements IUndoManager {
 			// do nothing
 		}
 	}
-	
+
 	private static class QueryAdapter implements IAdaptable {
 		private IValidationCheckResultQuery fQuery;
 		public QueryAdapter(IValidationCheckResultQuery query) {
@@ -98,19 +98,19 @@ public class UndoManager2 implements IUndoManager {
 			return null;
 		}
 	}
-	
+
 	private IOperationHistory fOperationHistroy;
 	private IOperationHistoryListener fOperationHistoryListener;
-	
+
 	private boolean fIsOpen;
 	private TriggeredOperations fActiveOperation;
-	
+
 	private ListenerList fListeners;
 
 	public UndoManager2() {
 		fOperationHistroy= OperationHistoryFactory.getOperationHistory();
 	}
-	
+
 	public void addListener(IUndoManagerListener listener) {
 		if (fListeners == null) {
 			fListeners= new ListenerList(ListenerList.IDENTITY);
@@ -248,7 +248,7 @@ public class UndoManager2 implements IUndoManager {
 	public void shutdown() {
 		// nothing to do since we have a shared undo manager anyways.
 	}
-	
+
 	private void handleException(ExecutionException e) throws CoreException {
 		Throwable cause= e.getCause();
 		if (cause instanceof CoreException) {
@@ -262,7 +262,7 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	//---- event firing methods -------------------------------------------------
-	
+
 	private void fireAboutToPerformChange(final Change change) {
 		if (fListeners == null)
 			return;
@@ -279,7 +279,7 @@ public class UndoManager2 implements IUndoManager {
 			});
 		}
 	}
-	
+
 	private void fireChangePerformed(final Change change) {
 		if (fListeners == null)
 			return;
@@ -296,7 +296,7 @@ public class UndoManager2 implements IUndoManager {
 			});
 		}
 	}
-	
+
 	private void fireUndoStackChanged() {
 		if (fListeners == null)
 			return;
@@ -330,13 +330,13 @@ public class UndoManager2 implements IUndoManager {
 			});
 		}
 	}
-	
+
 	//---- testing methods ---------------------------------------------
-	
+
 	public boolean testHasNumberOfUndos(int number) {
 		return fOperationHistroy.getUndoHistory(RefactoringCorePlugin.getUndoContext()).length == number;
 	}
-	
+
 	public boolean testHasNumberOfRedos(int number) {
 		return fOperationHistroy.getRedoHistory(RefactoringCorePlugin.getUndoContext()).length == number;
 	}

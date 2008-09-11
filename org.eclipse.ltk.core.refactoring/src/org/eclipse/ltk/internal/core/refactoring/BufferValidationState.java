@@ -13,15 +13,15 @@ package org.eclipse.ltk.internal.core.refactoring;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -31,7 +31,7 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public abstract class BufferValidationState {
-	
+
 	protected final IFile fFile;
 	protected final boolean fExisted;
 	protected final boolean fDerived;
@@ -43,7 +43,7 @@ public abstract class BufferValidationState {
 		private long fValue;
 		public static final int FILE= 1;
 		public static final int DOCUMENT= 2;
-		
+
 		public static ModificationStamp createFile(long value) {
 			return new ModificationStamp(FILE, value);
 		}
@@ -72,7 +72,7 @@ public abstract class BufferValidationState {
 		ITextFileBuffer buffer= getBuffer(file);
 		if (buffer == null) {
 			return new ModificationStampValidationState(file);
-		} else { 
+		} else {
 			IDocument document= buffer.getDocument();
 			if (document instanceof IDocumentExtension4) {
 				return new ModificationStampValidationState(file);
@@ -85,19 +85,19 @@ public abstract class BufferValidationState {
 			}
 		}
 	}
-	
+
 	public boolean wasDirty() {
 		return fWasDirty;
 	}
-	
+
 	public boolean wasDerived() {
 		return fDerived;
 	}
-	
+
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
 		return isValid(needsSaving, false);
 	}
-	
+
 	public RefactoringStatus isValid(boolean needsSaving, boolean resilientForDerived) throws CoreException {
 		if (resilientForDerived && fDerived) {
 			return new RefactoringStatus();
@@ -105,24 +105,24 @@ public abstract class BufferValidationState {
 		if (!fExisted) {
 			if (fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
-					RefactoringCoreMessages.TextChanges_error_existing, 
+					RefactoringCoreMessages.TextChanges_error_existing,
 					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
 		} else {
 			if (!fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
-					RefactoringCoreMessages.TextChanges_error_not_existing, 
+					RefactoringCoreMessages.TextChanges_error_not_existing,
 					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
 		}
 		if (needsSaving) {
 			if (fFile.isReadOnly()) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
-					RefactoringCoreMessages.TextChanges_error_read_only, 
+					RefactoringCoreMessages.TextChanges_error_read_only,
 					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
-			} else if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) { 
+			} else if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
-					RefactoringCoreMessages.TextChanges_error_outOfSync, 
+					RefactoringCoreMessages.TextChanges_error_outOfSync,
 					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
-			} 			
+			}
 		}
 		if (fEncoding == null) {
 			return RefactoringStatus.createFatalErrorStatus(Messages.format(
@@ -135,11 +135,11 @@ public abstract class BufferValidationState {
 		}
 		return new RefactoringStatus();
 	}
-	
+
 	public void dispose() {
 	}
-	
-	
+
+
 	protected BufferValidationState(IFile file) {
 		fFile= file;
 		fExisted= file.exists();
@@ -153,29 +153,29 @@ public abstract class BufferValidationState {
 		}
 		fEncoding= encoding;
 	}
-	
+
 	protected IDocument getDocument() {
 		ITextFileBuffer buffer= getBuffer(fFile);
 		if (buffer == null)
 			return null;
 		return buffer.getDocument();
-		
+
 	}
-	
+
 	protected static boolean isDirty(IFile file) {
 		ITextFileBuffer buffer= getBuffer(file);
 		if (buffer == null)
 			return false;
 		return buffer.isDirty();
 	}
-	
+
 	protected static ITextFileBuffer getBuffer(IFile file) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath path= file.getFullPath();
 		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
 		return buffer;
 	}
-	
+
 	protected ModificationStamp getModificationStamp() {
 		ITextFileBuffer buffer= getBuffer(fFile);
 		if (buffer == null) {
@@ -193,15 +193,15 @@ public abstract class BufferValidationState {
 
 /**
  * Buffer validation state for dirty files whose document does not support
- * modification stamps. 
+ * modification stamps.
  */
 class NoStampValidationState extends BufferValidationState {
-	
+
 	private IDocumentListener fDocumentListener;
 	private FileBufferListener fFileBufferListener;
 	private boolean fChanged;
 	private long fContentStamp= IResource.NULL_STAMP;
-	
+
 	class DocumentChangedListener implements IDocumentListener {
 		public void documentAboutToBeChanged(DocumentEvent event) {
 		}
@@ -209,12 +209,12 @@ class NoStampValidationState extends BufferValidationState {
 			NoStampValidationState.this.documentChanged();
 		}
 	}
-	
+
 	class FileBufferListener implements IFileBufferListener {
 		public void bufferCreated(IFileBuffer buffer) {
 			// begin https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
 			if (buffer.getLocation().equals(fFile.getFullPath()) && buffer instanceof ITextFileBuffer) {
-				ITextFileBuffer textBuffer= (ITextFileBuffer)buffer;				
+				ITextFileBuffer textBuffer= (ITextFileBuffer)buffer;
 				if (fDocumentListener == null)
 					fDocumentListener= new DocumentChangedListener();
 				textBuffer.getDocument().addDocumentListener(fDocumentListener);
@@ -250,7 +250,7 @@ class NoStampValidationState extends BufferValidationState {
 		public void stateChangeFailed(IFileBuffer buffer) {
 		}
 	}
-	
+
 	public NoStampValidationState(IFile file) {
 		super(file);
 		fContentStamp= file.getModificationStamp();
@@ -264,19 +264,19 @@ class NoStampValidationState extends BufferValidationState {
 		RefactoringStatus result= super.isValid(needsSaving, resilientForDerived);
 		if (result.hasFatalError())
 			return result;
-		// If we have initialized the content stamp with the null stamp then we can't compare it with 
-		// the current stamp since a change executed later could have set a concrete stamp for the 
+		// If we have initialized the content stamp with the null stamp then we can't compare it with
+		// the current stamp since a change executed later could have set a concrete stamp for the
 		// current content
-		// if (fChanged || (fContentStamp != IResource.NULL_STAMP && fContentStamp != fFile.getModificationStamp()) 
-		if (fChanged || fContentStamp != fFile.getModificationStamp()) { 
+		// if (fChanged || (fContentStamp != IResource.NULL_STAMP && fContentStamp != fFile.getModificationStamp())
+		if (fChanged || fContentStamp != fFile.getModificationStamp()) {
 			result.addFatalError(Messages.format(
-				RefactoringCoreMessages.TextChanges_error_content_changed, 
+				RefactoringCoreMessages.TextChanges_error_content_changed,
 				BasicElementLabels.getPathLabel(fFile.getFullPath(), false)
-				)); 
+				));
 		}
 		return result;
 	}
-	
+
 	public void dispose() {
 		if (fFileBufferListener != null) {
 			FileBuffers.getTextFileBufferManager().removeFileBufferListener(fFileBufferListener);
@@ -289,7 +289,7 @@ class NoStampValidationState extends BufferValidationState {
 			fDocumentListener= null;
 		}
 	}
-	
+
 	private void documentChanged() {
 		fChanged= true;
 		getDocument().removeDocumentListener(fDocumentListener);
@@ -303,39 +303,39 @@ class NoStampValidationState extends BufferValidationState {
  * Buffer validation state based on modification stamp.
  */
 class ModificationStampValidationState extends BufferValidationState {
-	
+
 	private ModificationStamp fModificationStamp;
-	
+
 	public ModificationStampValidationState(IFile file) {
 		super(file);
 		fModificationStamp= getModificationStamp();
 	}
-	
+
 	public RefactoringStatus isValid(boolean needsSaving, boolean resilientForDerived) throws CoreException {
 		RefactoringStatus result= super.isValid(needsSaving, resilientForDerived);
 		if (result.hasFatalError())
 			return result;
 		ModificationStamp currentStamp= getModificationStamp();
 		// we don't need to check the kind here since the document stamp
-		// and file stamp are in sync for documents implementing 
+		// and file stamp are in sync for documents implementing
 		// IDocumentExtension4. If both are file stamps the file must
 		// not be dirty
 		if (fModificationStamp.getValue() != currentStamp.getValue()
-			// we know here that the stamp value are equal. However, if 
+			// we know here that the stamp value are equal. However, if
 			// the stamp is a null stamp then the king must be equal as well.
-			|| (fModificationStamp.isFileStamp() 
-				&& fModificationStamp.getValue() == IResource.NULL_STAMP 
+			|| (fModificationStamp.isFileStamp()
+				&& fModificationStamp.getValue() == IResource.NULL_STAMP
 				&& !currentStamp.isFileStamp())
-			|| (fModificationStamp.isDocumentStamp() 
-				&& fModificationStamp.getValue() == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP 
+			|| (fModificationStamp.isDocumentStamp()
+				&& fModificationStamp.getValue() == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP
 				&& !currentStamp.isDocumentStamp())
-			|| (fModificationStamp.isFileStamp() 
+			|| (fModificationStamp.isFileStamp()
 				&& currentStamp.isFileStamp() && isDirty(fFile))) {
 			result.addFatalError(Messages.format(
-				RefactoringCoreMessages.TextChanges_error_content_changed, 
+				RefactoringCoreMessages.TextChanges_error_content_changed,
 				BasicElementLabels.getPathLabel(fFile.getFullPath(), false)
-				)); 
-			
+				));
+
 		}
 		return result;
 	}
@@ -344,7 +344,7 @@ class ModificationStampValidationState extends BufferValidationState {
 /*
 class SavedBufferValidationState extends BufferValidationState {
 	private long fModificationStamp;
-	
+
 	public SavedBufferValidationState(IFile file) {
 		super(file);
 		fModificationStamp= file.getModificationStamp();
@@ -359,13 +359,13 @@ class SavedBufferValidationState extends BufferValidationState {
 			result.addFatalError(Messages.format(
 				RefactoringCoreMessages.TextChanges_error_content_changed, //$NON-NLS-1$
 				fFile.getFullPath().toString()
-				)); 
+				));
 		} else if (fFile.isReadOnly()) {
 			result.addFatalError(Messages.format(
 				RefactoringCoreMessages.TextChanges_error_read_only, //$NON-NLS-1$
 				fFile.getFullPath().toString()
 				));
-		} else if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) { 
+		} else if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) {
 			result.addFatalError(Messages.format(
 				RefactoringCoreMessages.TextChanges_error_outOfSync, //$NON-NLS-1$
 				fFile.getFullPath().toString()
@@ -374,10 +374,10 @@ class SavedBufferValidationState extends BufferValidationState {
 			result.addFatalError(Messages.format(
 				RefactoringCoreMessages.TextChanges_error_unsaved_changes, //$NON-NLS-1$
 				fFile.getFullPath().toString()
-				)); 
+				));
 		}
 		return result;
 	}
-	
+
 }
 */

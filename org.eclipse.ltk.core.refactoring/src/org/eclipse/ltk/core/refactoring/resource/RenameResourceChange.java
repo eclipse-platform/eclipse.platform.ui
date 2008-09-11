@@ -19,7 +19,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -34,12 +33,12 @@ public class RenameResourceChange extends ResourceChange {
 	private final String fNewName;
 	private final IPath fResourcePath;
 	private final long fStampToRestore;
-	
+
 	private ChangeDescriptor fDescriptor;
 
 	/**
 	 * Creates the change.
-	 * 
+	 *
 	 * @param resourcePath the path of the resource to rename
 	 * @param newName the new name. Must not be empty.
 	 */
@@ -49,7 +48,7 @@ public class RenameResourceChange extends ResourceChange {
 
 	/**
 	 * Creates the change with a time stamp to restore.
-	 * 
+	 *
 	 * @param resourcePath  the path of the resource to rename
 	 * @param newName the new name. Must not be empty.
 	 * @param stampToRestore the time stamp to restore or {@link IResource#NULL_STAMP} to not restore the
@@ -59,7 +58,7 @@ public class RenameResourceChange extends ResourceChange {
 		if (resourcePath == null || newName == null || newName.length() == 0) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		fResourcePath= resourcePath;
 		fNewName= newName;
 		fStampToRestore= stampToRestore;
@@ -76,13 +75,13 @@ public class RenameResourceChange extends ResourceChange {
 
 	/**
 	 * Sets the change descriptor to be returned by {@link Change#getDescriptor()}.
-	 * 
+	 *
 	 * @param descriptor the change descriptor
 	 */
 	public void setDescriptor(ChangeDescriptor descriptor) {
 		fDescriptor= descriptor;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.resource.ResourceChange#getModifiedResource()
@@ -97,10 +96,10 @@ public class RenameResourceChange extends ResourceChange {
 	public String getName() {
 		return Messages.format(RefactoringCoreMessages.RenameResourceChange_name, new String[] { BasicElementLabels.getPathLabel(fResourcePath, false), BasicElementLabels.getResourceName(fNewName) });
 	}
-	
+
 	/**
 	 * Returns the new name.
-	 * 
+	 *
 	 * @return return the new name
 	 */
 	public String getNewName() {

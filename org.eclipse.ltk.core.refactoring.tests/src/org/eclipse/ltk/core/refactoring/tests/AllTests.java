@@ -14,10 +14,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ltk.core.refactoring.tests.history.RefactoringHistoryTests;
+import org.eclipse.ltk.core.refactoring.tests.participants.ParticipantTests;
 import org.eclipse.ltk.core.refactoring.tests.resource.ResourceRefactoringTests;
 import org.eclipse.ltk.core.refactoring.tests.scripting.RefactoringScriptingTests;
-
-import org.eclipse.ltk.core.refactoring.tests.participants.ParticipantTests;
 
 public class AllTests {
 

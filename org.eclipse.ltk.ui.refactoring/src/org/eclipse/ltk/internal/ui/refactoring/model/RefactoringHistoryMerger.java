@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IStorage;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
-
 import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
 import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
@@ -36,7 +35,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
 /**
  * Stream merger for refactoring history files.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryMerger implements IStorageMerger {
@@ -88,7 +87,7 @@ public final class RefactoringHistoryMerger implements IStorageMerger {
 
 	/**
 	 * Performs the actual merge operation.
-	 * 
+	 *
 	 * @param output
 	 *            the output stream
 	 * @param target

@@ -18,13 +18,13 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
  * An <code>IResourceMapper</code> provides methods to map an original
  * resource to its refactored counterparts.
  * <p>
- * An <code>IResourceMapper</code> can be obtained via  
- * {@link RefactoringProcessor#getAdapter(Class)}. 
+ * An <code>IResourceMapper</code> can be obtained via
+ * {@link RefactoringProcessor#getAdapter(Class)}.
  * </p>
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IResourceMapper {
@@ -35,9 +35,9 @@ public interface IResourceMapper {
 	 * Note that the returned resource might not yet exist
 	 * when the method is called.
 	 * </p>
-	 * 
+	 *
 	 * @param element the resource to be refactored
-	 * 
+	 *
 	 * @return the refactored element for the given element
 	 */
 	IResource getRefactoredResource(IResource element);

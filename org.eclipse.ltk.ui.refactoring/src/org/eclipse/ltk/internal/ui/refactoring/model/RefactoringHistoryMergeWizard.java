@@ -32,10 +32,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
@@ -50,7 +48,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
  * otherwise changed files which happened during the execution of the
  * refactorings.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWizard {
@@ -108,7 +106,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 
 	/**
 	 * Creates a new refactoring history merge wizard.
-	 * 
+	 *
 	 * @param caption
 	 *            the caption of the wizard window
 	 * @param title
@@ -144,7 +142,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 
 	/**
 	 * Returns the added files.
-	 * 
+	 *
 	 * @return the added files
 	 */
 	public Set getAddedFiles() {
@@ -153,7 +151,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 
 	/**
 	 * Returns the changed files.
-	 * 
+	 *
 	 * @return the changed files
 	 */
 	public Set getChangedFiles() {
@@ -162,7 +160,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 
 	/**
 	 * Returns the removed files.
-	 * 
+	 *
 	 * @return the removed files
 	 */
 	public Set getRemovedFiles() {
@@ -189,7 +187,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	/**
 	 * Resolves the conflicts which have been introduced by the executed
 	 * refactorings.
-	 * 
+	 *
 	 * @param context
 	 *            the merge context
 	 */

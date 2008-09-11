@@ -16,15 +16,15 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ltk.ui.refactoring.IStatusContextViewer;
 
 public class StatusContextViewerDescriptor extends AbstractDescriptor {
-	
+
 	private static final String EXT_ID= "statusContextViewers"; //$NON-NLS-1$
-	
+
 	private static DescriptorManager fgDescriptions= new DescriptorManager(EXT_ID, "context") { //$NON-NLS-1$
 		protected AbstractDescriptor createDescriptor(IConfigurationElement element) {
 			return new StatusContextViewerDescriptor(element);
 		}
 	};
-	
+
 	public static StatusContextViewerDescriptor get(Object element) throws CoreException {
 		return (StatusContextViewerDescriptor)fgDescriptions.getDescriptor(element);
 	}
@@ -32,8 +32,8 @@ public class StatusContextViewerDescriptor extends AbstractDescriptor {
 	public StatusContextViewerDescriptor(IConfigurationElement element) {
 		super(element);
 	}
-	
+
 	public IStatusContextViewer createViewer() throws CoreException {
 		return (IStatusContextViewer)fConfigurationElement.createExecutableExtension(CLASS);
-	}	
+	}
 }

@@ -34,9 +34,9 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * <p>
  * Clients may subclass this class.
  * </p>
- * 
+ *
  * @see Change
- * 
+ *
  * @since 3.0
  */
 public class CompositeChange extends Change {
@@ -48,18 +48,18 @@ public class CompositeChange extends Change {
 
 	/**
 	 * Creates a new composite change with the given name.
-	 * 
+	 *
 	 * @param name the human readable name of the change. Will
-	 *  be used to display the change in the user interface 
+	 *  be used to display the change in the user interface
 	 */
 	public CompositeChange(String name) {
 		this(name, new ArrayList(2));
 	}
-	
+
 	/**
 	 * Creates a new composite change with the given name and array
 	 * of children.
-	 * 
+	 *
 	 * @param name the human readable name of the change. Will
 	 *  be used to display the change in the user interface
 	 * @param children the initial array of children
@@ -68,17 +68,17 @@ public class CompositeChange extends Change {
 		this(name, new ArrayList(children.length));
 		addAll(children);
 	}
-			
+
 	private CompositeChange(String name, List changes) {
 		Assert.isNotNull(name);
 		Assert.isNotNull(changes);
 		fName= name;
 		fChanges= changes;
 	}
-	
+
 	/**
 	 * Returns whether this change is synthetic or not.
-	 * 
+	 *
 	 * @return <code>true</code>if this change is synthetic; otherwise
 	 *  <code>false</code>
 	 */
@@ -92,18 +92,18 @@ public class CompositeChange extends Change {
 	public void markAsSynthetic() {
 		fIsSynthetic= true;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
 	 * Adds the given change to the list of children. The change to be added
 	 * can be <code>null</code>. Adding a "null" change does nothing.
-	 * 
+	 *
 	 * @param change the change to add
 	 */
 	public void add(Change change) {
@@ -113,10 +113,10 @@ public class CompositeChange extends Change {
 			change.setParent(this);
 		}
 	}
-	
+
 	/**
 	 * Adds all changes in the given array to the list of children.
-	 * 
+	 *
 	 * @param changes the changes to add
 	 */
 	public void addAll(Change[] changes) {
@@ -124,12 +124,12 @@ public class CompositeChange extends Change {
 			add(changes[i]);
 		}
 	}
-	
+
 	/**
 	 * Merges the children of the given composite change into this
 	 * change. This means the changes are removed from the given
 	 * composite change and added to this change.
-	 * 
+	 *
 	 * @param change the change to merge
 	 */
 	public void merge(CompositeChange change) {
@@ -140,12 +140,12 @@ public class CompositeChange extends Change {
 			add(other);
 		}
 	}
-	
+
 	/**
 	 * Removes the given change from the list of children.
 	 *
 	 * @param change the change to remove
-	 * 
+	 *
 	 * @return <code>true</code> if the change contained the given
 	 *  child; otherwise <code>false</code> is returned
 	 */
@@ -156,15 +156,15 @@ public class CompositeChange extends Change {
 			change.setParent(null);
 		}
 		return result;
-		
+
 	}
-	
+
 	/**
 	 * Removes all changes from this composite change.
-	 * 
+	 *
 	 * @return the list of changes removed from this composite
 	 * change
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public Change[] clear() {
@@ -172,17 +172,17 @@ public class CompositeChange extends Change {
 		fChanges.clear();
 		return result;
 	}
-	
+
 	/**
-	 * Returns the children managed by this composite change. 
-	 * 
+	 * Returns the children managed by this composite change.
+	 *
 	 * @return the children of this change or an empty array if no
 	 *  children exist
 	 */
 	public Change[] getChildren() {
 		return (Change[])fChanges.toArray(new Change[fChanges.size()]);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -190,7 +190,7 @@ public class CompositeChange extends Change {
 	 * </p>
 	 * <p>
 	 * Client are allowed to extend this method.
-	 * </p> 
+	 * </p>
 	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
@@ -198,16 +198,16 @@ public class CompositeChange extends Change {
 			((Change)iter.next()).setEnabled(enabled);
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The composite change sends <code>initializeValidationData</code> to all its 
+	 * The composite change sends <code>initializeValidationData</code> to all its
 	 * children.
 	 * </p>
 	 * <p>
 	 * Client are allowed to extend this method.
-	 * </p> 
+	 * </p>
 	 */
 	public void initializeValidationData(IProgressMonitor pm) {
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
@@ -217,7 +217,7 @@ public class CompositeChange extends Change {
 			pm.worked(1);
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -228,7 +228,7 @@ public class CompositeChange extends Change {
 	 * </p>
 	 * <p>
 	 * Client are allowed to extend this method.
-	 * </p> 
+	 * </p>
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
@@ -245,7 +245,7 @@ public class CompositeChange extends Change {
 		pm.done();
 		return result;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -257,13 +257,13 @@ public class CompositeChange extends Change {
 	 * </p>
 	 * <p>
 	 * Client are allowed to extend this method.
-	 * </p> 
+	 * </p>
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		fUndoUntilException= null;
 		List undos= new ArrayList(fChanges.size());
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.CompositeChange_performingChangesTask_name); 
+		pm.setTaskName(RefactoringCoreMessages.CompositeChange_performingChangesTask_name);
 		Change change= null;
 		boolean canceled= false;
 		try {
@@ -271,7 +271,7 @@ public class CompositeChange extends Change {
 				change= (Change)iter.next();
 				if (canceled && !internalProcessOnCancel(change))
 					continue;
-				
+
 				if (change.isEnabled()) {
 					Change undoChange= null;
 					try {
@@ -325,7 +325,7 @@ public class CompositeChange extends Change {
 			throw e;
 		}
 	}
-	
+
 	private void handleUndos(Change failedChange, List undos) {
 		if (undos == null) {
 			fUndoUntilException= null;
@@ -344,7 +344,7 @@ public class CompositeChange extends Change {
 		Collections.reverse(undos);
 		fUndoUntilException= createUndoChange((Change[]) undos.toArray(new Change[undos.size()]));
 	}
-	
+
 	/**
 	 * Note: this is an internal method and should not be overridden outside of
 	 * the refactoring framework.
@@ -352,10 +352,10 @@ public class CompositeChange extends Change {
 	 * The method gets called if one of the changes managed by this
 	 * composite change generates an exception when performed.
 	 * </p>
-	 * 
+	 *
 	 * @param change the change that caused the exception
 	 * @param t the exception itself
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void internalHandleException(Change change, Throwable t) {
@@ -375,7 +375,7 @@ public class CompositeChange extends Change {
 	 *  continue on cancel; otherwise <code>false</code>
      *
      * @since 3.1
-     * 
+     *
      * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected boolean internalContinueOnCancel() {
@@ -387,16 +387,16 @@ public class CompositeChange extends Change {
 	 * the refactoring framework.
 	 * <p>
 	 * The method gets called if the execution of this change got canceled,
-	 * but <code>internalContinueOnCancel</code> returned true. 
+	 * but <code>internalContinueOnCancel</code> returned true.
 	 * </p>
 	 *
 	 * @param change the change to perform
 	 *
 	 * @return <code>true</code> if the given change should be performed although
 	 *  the execution got canceled; otherwise <code>false</code>
-	 *  
+	 *
 	 * @since 3.1
-	 * 
+	 *
      * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected boolean internalProcessOnCancel(Change change) {
@@ -423,7 +423,7 @@ public class CompositeChange extends Change {
 			});
 		}
 	}
-	
+
 	/**
 	 * Returns the undo object containing all undo changes of those children
 	 * that got successfully executed while performing this change. Returns
@@ -437,23 +437,23 @@ public class CompositeChange extends Change {
 	public Change getUndoUntilException() {
 		return fUndoUntilException;
 	}
-		
+
 	/**
 	 * Hook to create an undo change. The method should be overridden
 	 * by clients which provide their own composite change to create
 	 * a corresponding undo change.
-	 * 
+	 *
 	 * @param childUndos the child undo. The undo edits appear in the
 	 *  list in the reverse order of their execution. So the first
 	 *  change in the array is the undo change of the last change
 	 *  that got executed.
-	 * 
+	 *
 	 * @return the undo change
 	 */
 	protected Change createUndoChange(Change[] childUndos) {
 		return new CompositeChange(getName(), childUndos);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -470,7 +470,7 @@ public class CompositeChange extends Change {
 		}
 		return result.toArray();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -480,7 +480,7 @@ public class CompositeChange extends Change {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public ChangeDescriptor getDescriptor() {

@@ -39,23 +39,23 @@ import org.eclipse.ltk.internal.core.refactoring.history.UnknownRefactoringDescr
  * The operation should be executed via the run method offered by
  * <code>IWorkspace</code> to achieve proper delta batching.
  * </p>
- * <p> 
+ * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CreateChangeOperation implements IWorkspaceRunnable {
 
 	private Refactoring fRefactoring;
-	
+
 	private CheckConditionsOperation fCheckConditionOperation;
 	private int fConditionCheckingFailedSeverity;
-	
+
 	private Change fChange;
-	
+
 	/**
 	 * Creates a new operation with the given refactoring. No condition checking
 	 * is performed before creating the change object. It is assumed that the
@@ -69,20 +69,20 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 		Assert.isNotNull(refactoring);
 		fRefactoring= refactoring;
 	}
-	
+
 	/**
 	 * Creates a new operation with the given {@link CheckConditionsOperation}. When
 	 * performed the operation first checks the conditions as specified by the <code>
-	 * CheckConditionsOperation</code>. Depending on the result of the condition 
+	 * CheckConditionsOperation</code>. Depending on the result of the condition
 	 * checking a change object is created or not.
-	 * 
+	 *
 	 * @param operation the condition checking operation
 	 * @param checkFailedSeverity the severity from which on the condition checking is
 	 *  interpreted as failed. The passed value must be greater than {@link RefactoringStatus#OK}
-	 *  and less than or equal {@link RefactoringStatus#FATAL}. 
+	 *  and less than or equal {@link RefactoringStatus#FATAL}.
 	 *  The standard value from which on a condition check should is to be interpreted as
 	 *  failed can be accessed via {@link RefactoringCore#getConditionCheckingFailedSeverity()}.
-	 * 
+	 *
 	 */
 	public CreateChangeOperation(CheckConditionsOperation operation, int checkFailedSeverity) {
 		Assert.isNotNull(operation);
@@ -91,12 +91,12 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 		Assert.isTrue (checkFailedSeverity > RefactoringStatus.OK && checkFailedSeverity <= RefactoringStatus.FATAL);
 		fConditionCheckingFailedSeverity= checkFailedSeverity;
 	}
-	
+
 	/**
 	 * Returns the condition checking failed severity used by this operation.
-	 * 
+	 *
 	 * @return the condition checking failed severity
-	 * 
+	 *
 	 * @see RefactoringStatus
 	 */
 	public int getConditionCheckingFailedSeverity() {
@@ -139,10 +139,10 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	}
 
 	/**
-	 * Returns the outcome of the operation or <code>null</code> if an exception 
+	 * Returns the outcome of the operation or <code>null</code> if an exception
 	 * occurred when performing the operation or the operation hasn't been
 	 * performed yet.
-	 * 
+	 *
 	 * @return the created change or <code>null</code>
 	 */
 	public Change getChange() {
@@ -166,11 +166,11 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 		}
 		return fChange;
 	}
-	
+
 	/**
 	 * Returns the status of the condition checking. Returns <code>null</code> if
 	 * no condition checking has been requested.
-	 * 
+	 *
 	 * @return the status of the condition checking
 	 */
 	public RefactoringStatus getConditionCheckingStatus() {
@@ -178,18 +178,18 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 			return fCheckConditionOperation.getStatus();
 		return null;
 	}
-	
+
 	/**
 	 * Returns the condition checking style as set to the {@link CheckConditionsOperation}.
 	 * If no condition checking operation is provided (e.g. the change is created directly
-	 * by calling {@link Refactoring#createChange(IProgressMonitor)} then {@link 
+	 * by calling {@link Refactoring#createChange(IProgressMonitor)} then {@link
 	 * CheckConditionsOperation#NONE} is returned.
-	 * 
+	 *
 	 * @return the condition checking style
 	 */
 	public int getConditionCheckingStyle() {
 		if (fCheckConditionOperation != null)
-			return fCheckConditionOperation.getStyle(); 
+			return fCheckConditionOperation.getStyle();
 		return CheckConditionsOperation.NONE;
 	}
 }

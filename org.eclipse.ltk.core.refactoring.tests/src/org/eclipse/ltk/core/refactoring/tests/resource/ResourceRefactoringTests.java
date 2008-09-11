@@ -24,7 +24,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.MoveResourceChange;
 import org.eclipse.ltk.core.refactoring.resource.MoveResourcesDescriptor;
-
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 
 public class ResourceRefactoringTests extends TestCase {
@@ -35,7 +34,7 @@ public class ResourceRefactoringTests extends TestCase {
 		suite.addTestSuite(ResourceRefactoringUndoTests.class);
 		return suite;
 	}
-	
+
 	private SimpleTestProject fProject;
 
 	protected void setUp() throws Exception {
@@ -47,23 +46,23 @@ public class ResourceRefactoringTests extends TestCase {
 	}
 
 	public void testMoveChange1() throws Exception {
-		
+
 		String content= "hello";
-		
+
 		IFolder testFolder= fProject.createFolder("test");
 		IFile file= fProject.createFile(testFolder, "myFile.txt", content);
 
 		IFolder destination= fProject.createFolder("dest");
-		
+
 		Change undoChange= perform(new MoveResourceChange(file, destination));
 
 		IResource movedResource= assertMove(file, destination, content);
-		
+
 		perform(undoChange);
 
 		assertMove(movedResource, file.getParent(), content);
 	}
-	
+
 	public void testMoveChange2() throws Exception {
 
 		String content= "hello";
@@ -84,23 +83,23 @@ public class ResourceRefactoringTests extends TestCase {
 		assertMove(movedResource, testFolder.getParent(), null);
 		assertTrue(testFolder.getFile("myFile.txt").exists());
 	}
-	
+
 	public void testMoveChange3() throws Exception {
 		// move with overwrite
-		
+
 		String content1= "hello";
 		String content2= "world";
-		
+
 		IFolder testFolder= fProject.createFolder("test");
 		IFile file1= fProject.createFile(testFolder, "myFile.txt", content1);
 
 		IFolder destination= fProject.createFolder("dest");
 		IFile file2= fProject.createFile(destination, "myFile.txt", content2);
-		
+
 		Change undoChange= perform(new MoveResourceChange(file1, destination));
 
 		IResource movedResource= assertMove(file1, destination, content1);
-		
+
 		perform(undoChange);
 
 		assertMove(movedResource, file1.getParent(), content1);
@@ -131,7 +130,7 @@ public class ResourceRefactoringTests extends TestCase {
 
 		assertMove(movedResource, file.getParent(), content);
 	}
-	
+
 	public void testMoveRefactoring2() throws Exception {
 
 		String content= "hello";
@@ -157,7 +156,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertMove(movedResource, testFolder.getParent(), null);
 		assertTrue(testFolder.getFile("myFile.txt").exists());
 	}
-	
+
 	public void testMoveRefactoring3() throws Exception {
 		// move with overwrite
 
@@ -185,7 +184,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertMove(movedResource, file1.getParent(), content1);
 		assertTrue(content2.equals(fProject.getContent(file2)));
 	}
-	
+
 
 	private Change perform(Change change) throws CoreException {
 		PerformChangeOperation op= new PerformChangeOperation(change);
@@ -198,25 +197,25 @@ public class ResourceRefactoringTests extends TestCase {
 		RefactoringStatus status= new RefactoringStatus();
 		Refactoring refactoring= descriptor.createRefactoring(status);
 		assertTrue(status.isOK());
-		
+
 		PerformRefactoringOperation op= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 		op.run(null);
 		RefactoringStatus validationStatus= op.getValidationStatus();
 		assertTrue(!validationStatus.hasFatalError() && !validationStatus.hasError());
 		return op.getUndoChange();
 	}
-	
+
 	private IResource assertMove(IResource source, IContainer destination, String content) throws CoreException, IOException {
 		IResource res= destination.findMember(source.getName());
 
 		assertTrue(res != null);
 		assertTrue(res.getType() == source.getType());
-		
+
 		if (res instanceof IFile) {
 			assertTrue(content.equals(fProject.getContent((IFile) res)));
 		}
 		return res;
 	}
-	
-	
+
+
 }

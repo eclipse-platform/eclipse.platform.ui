@@ -26,65 +26,65 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
  * The operation should be executed via the run method offered by
  * <code>IWorkspace</code> to achieve proper delta batching.
  * </p>
- * <p> 
+ * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.core.resources.IWorkspace
- * 
- * @since 3.0 
- * 
+ *
+ * @since 3.0
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class PerformRefactoringOperation implements IWorkspaceRunnable {
-	
+
 	private int fStyle;
 	private Refactoring fRefactoring;
-	
+
 	private RefactoringStatus fPreconditionStatus;
 	private RefactoringStatus fValidationStatus;
 	private Change fUndo;
-	
+
 	/**
 	 * Create a new perform refactoring operation. The operation will not
-	 * perform the refactoring if the refactoring's condition checking returns 
-	 * an error	of severity {@link RefactoringStatus#FATAL}. 
-	 * 
+	 * perform the refactoring if the refactoring's condition checking returns
+	 * an error	of severity {@link RefactoringStatus#FATAL}.
+	 *
 	 * @param refactoring the refactoring to perform
-	 * @param style the condition checking style as defined by 
-	 *  {@link CheckConditionsOperation} 
+	 * @param style the condition checking style as defined by
+	 *  {@link CheckConditionsOperation}
 	 */
 	public PerformRefactoringOperation(Refactoring refactoring, int style) {
 		Assert.isNotNull(refactoring);
 		fRefactoring= refactoring;
 		fStyle= style;
 	}
-	
+
 	/**
 	 * Return the refactoring status of the condition checking.
-	 * 
+	 *
 	 * @return the refactoring status of the condition checking or <code>null</code>
 	 *  if the operation hasn't been performed yet
 	 */
 	public RefactoringStatus getConditionStatus() {
 		return fPreconditionStatus;
 	}
-	
+
 	/**
 	 * Returns the refactoring status of the change's validation checking
 	 * or <code>null</code> if a change couldn't be created or the operation
-	 * hasn't been performed yet.  
+	 * hasn't been performed yet.
 	 *
 	 * @return the refactoring status of the change's validation checking
 	 */
 	public RefactoringStatus getValidationStatus() {
 		return fValidationStatus;
 	}
-	
+
 	/**
 	 * The undo object or <code>null</code> if no undo exists. The undo
 	 * object is initialize via the call {@link Change#initializeValidationData(IProgressMonitor)}
-	 * 
+	 *
 	 * @return the undo object or <code>null</code>
 	 */
 	public Change getUndoChange() {

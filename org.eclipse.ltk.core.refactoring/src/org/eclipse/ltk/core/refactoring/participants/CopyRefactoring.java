@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CopyRefactoring extends ProcessorBasedRefactoring {
@@ -29,19 +29,19 @@ public class CopyRefactoring extends ProcessorBasedRefactoring {
 
 	/**
 	 * Creates a new copy refactoring with the given copy processor.
-	 * 
+	 *
 	 * @param processor the copy processor
 	 */
 	public CopyRefactoring(CopyProcessor processor) {
 		super(processor);
 		Assert.isNotNull(processor);
-		fProcessor= processor; 
+		fProcessor= processor;
 	}
-	
+
 	/**
 	 * Returns the copy processor associated with this copy refactoring.
-	 * 
-	 * @return returns the copy processor associated with this copy refactoring 
+	 *
+	 * @return returns the copy processor associated with this copy refactoring
 	 */
 	public CopyProcessor getCopyProcessor() {
 		return fProcessor;

@@ -52,11 +52,11 @@ import org.eclipse.core.runtime.Assert;
  * Note: this class is not indented to be subclassed outside the refactoring
  * framework.
  * </p>
- * 
+ *
  * @see RefactoringDescriptor
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefactoringSessionDescriptor {
@@ -75,7 +75,7 @@ public class RefactoringSessionDescriptor {
 
 	/**
 	 * Creates a new refactoring session descriptor.
-	 * 
+	 *
 	 * @param descriptors
 	 *            the refactoring descriptors in executed order, or the empty
 	 *            array
@@ -97,7 +97,7 @@ public class RefactoringSessionDescriptor {
 
 	/**
 	 * Returns the comment.
-	 * 
+	 *
 	 * @return the comment, or the empty string
 	 */
 	public final String getComment() {
@@ -106,7 +106,7 @@ public class RefactoringSessionDescriptor {
 
 	/**
 	 * Returns the refactoring descriptors.
-	 * 
+	 *
 	 * @return the array of refactoring descriptors in executed order, or the
 	 *         empty array
 	 */
@@ -118,7 +118,7 @@ public class RefactoringSessionDescriptor {
 
 	/**
 	 * Returns the version tag.
-	 * 
+	 *
 	 * @return the version tag
 	 */
 	public final String getVersion() {

@@ -18,7 +18,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
  * Adaptor factory for refactoring model support.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringModelAdapterFactory implements IAdapterFactory {

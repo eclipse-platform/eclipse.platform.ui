@@ -20,10 +20,10 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
  * <p>
  * Note: this interface is intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see IRefactoringHistoryService
  * @see RefactoringHistoryEvent
- * 
+ *
  * @since 3.2
  */
 public interface IRefactoringHistoryListener {
@@ -37,7 +37,7 @@ public interface IRefactoringHistoryListener {
 	 * <p>
 	 * The event object is valid only for the duration of this method.
 	 * </p>
-	 * 
+	 *
 	 * @param event
 	 *            the refactoring history event
 	 */

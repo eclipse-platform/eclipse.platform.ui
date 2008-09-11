@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
- *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> -
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring]
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
@@ -101,17 +101,17 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String DeleteResourcesProcessor_description_single;
 
 	public static String DeleteResourcesProcessor_processor_name;
-	
+
 	public static String DeleteResourcesProcessor_warning_out_of_sync_container;
 
 	public static String DeleteResourcesProcessor_warning_out_of_sync_file;
 
 	public static String FileDescription_NewFileProgress;
-	
+
 	public static String FileDescription_ContentsCouldNotBeRestored;
-	
+
 	public static String FolderDescription_NewFolderProgress;
-	
+
 	public static String FolderDescription_SavingUndoInfoProgress;
 
 	public static String NullChange_name;

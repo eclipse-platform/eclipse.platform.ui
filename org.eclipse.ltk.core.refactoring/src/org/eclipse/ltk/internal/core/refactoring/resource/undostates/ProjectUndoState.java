@@ -27,11 +27,11 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 /**
  * {@link ProjectUndoState} is a lightweight description that describes a project to
  * be created.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class ProjectUndoState extends ContainerUndoState {
 
@@ -40,7 +40,7 @@ public class ProjectUndoState extends ContainerUndoState {
 
 	/**
 	 * Create a {@link ProjectUndoState} from a specified project.
-	 * 
+	 *
 	 * @param project
 	 *            The project to be described. The project must exist.
 	 */
@@ -65,7 +65,7 @@ public class ProjectUndoState extends ContainerUndoState {
 	/**
 	 * Create a {@link ProjectUndoState} from a specified IProjectDescription. Used
 	 * when the project does not yet exist.
-	 * 
+	 *
 	 * @param projectDescription
 	 *            the project description for the future project
 	 */

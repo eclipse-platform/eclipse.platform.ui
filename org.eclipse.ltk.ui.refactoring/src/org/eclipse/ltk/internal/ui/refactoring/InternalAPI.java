@@ -11,9 +11,9 @@
 package org.eclipse.ltk.internal.ui.refactoring;
 
 public final class InternalAPI {
-	
+
 	public static final InternalAPI INSTANCE= new InternalAPI();
-	
+
 	private InternalAPI() {
 		// no instances outside this class.
 	}

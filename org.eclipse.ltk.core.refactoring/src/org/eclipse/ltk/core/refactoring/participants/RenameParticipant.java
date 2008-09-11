@@ -20,7 +20,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  * org.eclipse.ltk.core.refactoring.renameParticipants</code>.
  * Extensions to this extension point must therefore extend this abstract class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class RenameParticipant extends RefactoringParticipant {
@@ -33,10 +33,10 @@ public abstract class RenameParticipant extends RefactoringParticipant {
 	protected final void initialize(RefactoringArguments arguments) {
 		fArguments= (RenameArguments)arguments;
 	}
-	
+
 	/**
 	 * Returns the rename arguments.
-	 * 
+	 *
 	 * @return the rename arguments
 	 */
 	public RenameArguments getArguments() {

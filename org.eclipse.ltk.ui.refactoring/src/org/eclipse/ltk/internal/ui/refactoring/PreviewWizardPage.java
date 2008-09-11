@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import com.ibm.icu.text.Collator;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,16 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.GroupCategory;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
-import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
-
-import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -47,6 +36,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -74,6 +65,13 @@ import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.compare.CompareUI;
 
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.GroupCategory;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
+import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
@@ -81,19 +79,19 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
 
 /**
  * Presents the changes made by the refactoring.
- * Consists of a tree of changes and a compare viewer that shows the differences. 
+ * Consists of a tree of changes and a compare viewer that shows the differences.
  */
 public class PreviewWizardPage extends RefactoringWizardPage implements IPreviewWizardPage {
 
 	private static final String PREVIEW_WIZARD_PAGE_HIDE_DERIVED= "PreviewWizardPage.hide.derived"; //$NON-NLS-1$
 	protected static final String PREVIOUS_CHANGE_ID= "org.eclipse.ltk.ui.refactoring.previousChange"; //$NON-NLS-1$
 	protected static final String NEXT_CHANGE_ID= "org.eclipse.ltk.ui.refactoring.nextChange"; //$NON-NLS-1$
-	
+
 	private static class NullPreviewer implements IChangePreviewViewer {
 		private Label fLabel;
 		public void createControl(Composite parent) {
 			fLabel= new Label(parent, SWT.CENTER | SWT.FLAT);
-			fLabel.setText(RefactoringUIMessages.PreviewWizardPage_no_preview); 
+			fLabel.setText(RefactoringUIMessages.PreviewWizardPage_no_preview);
 		}
 		public void refresh() {
 		}
@@ -103,35 +101,35 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		public void setInput(ChangePreviewViewerInput input) {
 		}
 	}
-	
+
 	private class NextChange extends Action {
 		public NextChange() {
 			setId(NEXT_CHANGE_ID);
 			setImageDescriptor(CompareUI.DESC_ETOOL_NEXT);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_NEXT);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_NEXT);
-			setToolTipText(RefactoringUIMessages.PreviewWizardPage_next_Change); 
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);			
+			setToolTipText(RefactoringUIMessages.PreviewWizardPage_next_Change);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);
 		}
 		public void run() {
-			fTreeViewer.revealNext();	
+			fTreeViewer.revealNext();
 		}
 	}
-	
+
 	private class PreviousChange extends Action {
 		public PreviousChange() {
 			setId(PREVIOUS_CHANGE_ID);
 			setImageDescriptor(CompareUI.DESC_ETOOL_PREV);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_PREV);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_PREV);
-			setToolTipText(RefactoringUIMessages.PreviewWizardPage_previous_Change); 
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);			
-		}	
+			setToolTipText(RefactoringUIMessages.PreviewWizardPage_previous_Change);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);
+		}
 		public void run() {
 			fTreeViewer.revealPrevious();
 		}
 	}
-	
+
 	private class FilterAction extends Action {
 
 		private FilterDropDownAction fOwner;
@@ -198,7 +196,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		private FilterAction[] fFilterActions;
 		private Action fActiveAction;
 		private HideDerivedAction fHideDerivedAction;
-		
+
 		public FilterDropDownAction() {
 			setImageDescriptor(RefactoringPluginImages.DESC_ELCL_FILTER);
 			setDisabledImageDescriptor(RefactoringPluginImages.DESC_DLCL_FILTER);
@@ -228,7 +226,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		public void dispose() {
 			if (fMenu != null) {
 				fMenu.dispose();
-				fMenu= null;				
+				fMenu= null;
 			}
 		}
 		public Menu getMenu(Control parent) {
@@ -266,7 +264,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 				showPreview(fCurrentSelection);
 		}
 	}
-	
+
 	protected Change fChange;
 	private List/*<GroupCategory>*/ fActiveGroupCategories;
 	private boolean fDerivedFilterActive;
@@ -284,7 +282,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private ChangePreviewViewerDescriptor fCurrentDescriptor;
 	private IChangePreviewViewer fCurrentPreviewViewer;
 	private IChangePreviewViewer fNullPreviewer;
-	
+
 	/**
 	 * Creates a new preview wizard page.
 	 */
@@ -295,7 +293,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	/**
 	 * Creates a new preview wizard page.
-	 * 
+	 *
 	 * @param wizard
 	 *            <code>true</code> if the page belongs to a conventional
 	 *            wizard, <code>false</code> otherwise
@@ -313,7 +311,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	public void setChange(Change change) {
 		if (fChange == change)
 			return;
-		
+
 		fChange= change;
 		if (fChange instanceof CompositeChange) {
 			fTreeViewerInputChange= (CompositeChange)fChange;
@@ -327,15 +325,15 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	/**
 	 * Creates the tree viewer to present the hierarchy of changes. Subclasses may override
 	 * to create their own custom tree viewer.
-	 * 
+	 *
 	 * @param parent the tree viewer's parent
-	 * 
+	 *
 	 * @return the tree viewer to present the hierarchy of changes
 	 */
 	protected ChangeElementTreeViewer createTreeViewer(Composite parent) {
 		return new ChangeElementTreeViewer(parent);
 	}
-	
+
 	/**
 	 * Creates the content provider used to fill the tree of changes. Subclasses may override
 	 * to create their own custom tree content provider.
@@ -345,7 +343,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	protected ITreeContentProvider createTreeContentProvider() {
 		return new ChangeElementContentProvider();
 	}
-	
+
 	/**
 	 * Creates the label provider used to render the tree of changes. Subclasses may override
 	 * to create their own custom label provider.
@@ -356,7 +354,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		// return new ChangeElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT | JavaElementLabelProvider.SHOW_SMALL_ICONS);
 		return new ChangeElementLabelProvider();
 	}
-	
+
 	protected ViewerComparator createTreeComparator() {
 		return new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -378,7 +376,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			}
 		};
 	}
-	
+
 	/* (non-JavaDoc)
 	 * Method defined in RefactoringWizardPage
 	 */
@@ -392,22 +390,22 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		RefactoringStatus fValidationStatus= operation.getValidationStatus();
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
 			RefactoringWizard wizard= getRefactoringWizard();
-			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
+			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(),
 				Messages.format(
-					RefactoringUIMessages.RefactoringUI_cannot_execute, 
+					RefactoringUIMessages.RefactoringUI_cannot_execute,
 					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
 			return true;
 		}
 		return true;
-	} 
-	
+	}
+
 	/* (non-JavaDoc)
 	 * Method defined in IWizardPage
 	 */
 	public boolean canFlipToNextPage() {
 		return false;
 	}
-	
+
 	/* (Non-JavaDoc)
 	 * Method defined in IWizardPage
 	 */
@@ -426,9 +424,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		GridLayout layout= new GridLayout();
 		layout.marginHeight= 0; layout.marginWidth= 0;
 		result.setLayout(layout);
-		
+
 		SashForm sashForm= new SashForm(result, SWT.VERTICAL);
-		
+
 		fTreeViewerPane= new ViewerPane(sashForm, SWT.BORDER | SWT.FLAT);
 		ToolBarManager tbm= fTreeViewerPane.getToolBarManager();
 		fNextAction= new NextChange();
@@ -442,7 +440,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fFilterDropDownAction= new FilterDropDownAction();
 		tbm.add(fFilterDropDownAction);
 		tbm.update(true);
-		
+
 		fTreeViewer= createTreeViewer(fTreeViewerPane);
 		fTreeViewer.setContentProvider(createTreeContentProvider());
 		fTreeViewer.setLabelProvider(createTreeLabelProvider());
@@ -452,15 +450,15 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fTreeViewerPane.setContent(fTreeViewer.getControl());
 		setHideDerived(fDerivedFilterActive);
 		setTreeViewerInput();
-		updateTreeViewerPaneTitle(); 
-		
+		updateTreeViewerPaneTitle();
+
 		fPreviewContainer= new PageBook(sashForm, SWT.NONE);
 		fNullPreviewer= new NullPreviewer();
 		fNullPreviewer.createControl(fPreviewContainer);
 		fPreviewContainer.showPage(fNullPreviewer.getControl());
 		fCurrentPreviewViewer= fNullPreviewer;
 		fCurrentDescriptor= null;
-		
+
 		sashForm.setWeights(new int[]{33, 67});
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= convertWidthInCharsToPixels(80);
@@ -468,7 +466,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		Dialog.applyDialogFont(result);
 		return result;
 	}
-	
+
 	private Control createNullPage(Composite parent) {
 		Composite result= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -476,12 +474,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		result.setLayout(layout);
 		Label label= new Label(result, SWT.CENTER);
-		label.setText(RefactoringUIMessages.PreviewWizardPage_no_source_code_change); 
+		label.setText(RefactoringUIMessages.PreviewWizardPage_no_source_code_change);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Dialog.applyDialogFont(result);
 		return result;
 	}
-	
+
 	/* (Non-JavaDoc)
 	 * Method defined in IWizardPage
 	 */
@@ -519,7 +517,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		if (refactoringWizard != null)
 			refactoringWizard.internalSetPreviewShown(InternalAPI.INSTANCE, visible);
 	}
-	
+
 	private PreviewNode getFirstNonCompositeChange(ITreeContentProvider provider, ViewerComparator comparator, AbstractChangeNode input) {
 		PreviewNode focus= input;
 		Change change= input.getChange();
@@ -535,7 +533,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 		return focus;
 	}
-	
+
 	protected void setTreeViewerInput() {
 		if (fTreeViewer == null)
 			return;
@@ -545,7 +543,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 		fTreeViewer.setInput(input);
 	}
-	
+
 	private ICheckStateListener createCheckStateListener() {
 		return new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event){
@@ -564,7 +562,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			}
 		};
 	}
-		
+
 	private ISelectionChangedListener createSelectionChangedListener() {
 		return new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -580,7 +578,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 				}
 			}
 		};
-	}	
+	}
 
 	private void showPreview(PreviewNode element) {
 		try {
@@ -600,7 +598,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					element.feedInput(newViewer, fActiveGroupCategories);
 					if (fCurrentPreviewViewer != null && fCurrentPreviewViewer != fNullPreviewer)
 						fCurrentPreviewViewer.getControl().dispose();
-					fCurrentPreviewViewer= newViewer;				
+					fCurrentPreviewViewer= newViewer;
 					fPreviewContainer.showPage(fCurrentPreviewViewer.getControl());
 				} else {
 					element.feedInput(fCurrentPreviewViewer, fActiveGroupCategories);
@@ -609,11 +607,11 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		} catch (CoreException e) {
 			showNullPreviewer();
 			ExceptionHandler.handle(e, getShell(),
-						RefactoringUIMessages.PreviewWizardPage_refactoring, 
-						RefactoringUIMessages.PreviewWizardPage_Internal_error); 
+						RefactoringUIMessages.PreviewWizardPage_refactoring,
+						RefactoringUIMessages.PreviewWizardPage_Internal_error);
 		}
 	}
-	
+
 	private void showNullPreviewer() {
 		fCurrentDescriptor= null;
 		fCurrentPreviewViewer= fNullPreviewer;
@@ -623,7 +621,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	/**
 	 * Returns <code>true</code> if the preview page will show any changes when
 	 * it becomes visible. Otherwise <code>false</code> is returned.
-	 * 
+	 *
 	 * @return whether the preview has changes or not
 	 */
 	public boolean hasChanges() {
@@ -647,13 +645,13 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	}
 
 	//---- manage group categories --------------------------------------------
-	
+
 	private Collection/*<GroupCategory>*/ collectGroupCategories() {
 		Set/*<GroupCategory>*/ result= new HashSet();
 		collectGroupCategories(result, fChange);
 		return result;
 	}
-	
+
 	private void collectGroupCategories(Set/*<GroupCategory>*/ result, Change change) {
 		if (change instanceof TextEditBasedChange) {
 			TextEditBasedChangeGroup[] groups= ((TextEditBasedChange)change).getChangeGroups();
@@ -667,7 +665,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			}
 		}
 	}
-	
+
 	private void setActiveGroupCategory(GroupCategory category) {
 		if (fActiveGroupCategories == null) {
 			fActiveGroupCategories= new ArrayList(1);
@@ -682,7 +680,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	private void updateTreeViewerPaneTitle() {
 		String derivedMessage= null;
 		String groupFilterMessage= null;
-		
+
 		if (fDerivedFilterActive) {
 			if (fTreeViewer != null && fTreeViewer.getInput() instanceof PreviewNode) {
 				if (((PreviewNode) fTreeViewer.getInput()).hasDerived()) {
@@ -694,16 +692,16 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			GroupCategory groupCategory= (GroupCategory) fActiveGroupCategories.get(0);
 			groupFilterMessage= Messages.format(RefactoringUIMessages.PreviewWizardPage_changes_filter_category, groupCategory.getName());
 		}
-		
+
 		String title;
 		if (groupFilterMessage == null && derivedMessage == null) {
 			title= RefactoringUIMessages.PreviewWizardPage_changes;
-			
+
 		} else if (groupFilterMessage != null && derivedMessage != null) {
 			title= Messages.format(
 					RefactoringUIMessages.PreviewWizardPage_changes_filtered2,
 					new Object[] { groupFilterMessage, derivedMessage });
-			
+
 		} else if (groupFilterMessage != null) {
 			title= Messages.format(
 					RefactoringUIMessages.PreviewWizardPage_changes_filtered,
@@ -713,16 +711,16 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					RefactoringUIMessages.PreviewWizardPage_changes_filtered,
 					derivedMessage);
 		}
-		
+
 		fTreeViewerPane.setText(title);
 	}
-	
+
 	private void clearGroupCategories() {
 		fActiveGroupCategories= null;
 		fTreeViewer.setGroupCategory(null);
-		updateTreeViewerPaneTitle(); 
+		updateTreeViewerPaneTitle();
 	}
-	
+
 	private void setHideDerived(boolean hide) {
 		fDerivedFilterActive= hide;
 		fTreeViewer.setHideDerived(hide);

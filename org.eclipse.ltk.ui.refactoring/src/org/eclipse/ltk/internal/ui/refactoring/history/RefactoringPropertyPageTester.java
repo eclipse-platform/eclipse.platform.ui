@@ -12,14 +12,13 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import java.net.URI;
 
+import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.core.expressions.PropertyTester;
-
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,7 +28,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
 
 /**
  * Property tester for the 'refactoringPropertiesEnabled' property.
- * 
+ *
  * @since 3.3
  */
 public final class RefactoringPropertyPageTester extends PropertyTester {

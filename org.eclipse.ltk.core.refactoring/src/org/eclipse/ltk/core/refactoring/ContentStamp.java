@@ -21,7 +21,7 @@ package org.eclipse.ltk.core.refactoring;
  * stamps. They are managed by the framework itself.
  * </p>
  * <p>
- * In version 3.0 not all files in the workspace are annotated with a content stamp. The 
+ * In version 3.0 not all files in the workspace are annotated with a content stamp. The
  * refactoring framework only adds content stamp to those files where necessary. As of
  * version 3.1 the content stamps are mapped to the resource's modification stamp.
  * </p>
@@ -32,18 +32,18 @@ package org.eclipse.ltk.core.refactoring;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class ContentStamp {
 
 	/**
 	 * Checks whether the stamp is the null stamp or not. A null stamp
-	 * is generated for files which either don't exist or exist in a 
+	 * is generated for files which either don't exist or exist in a
 	 * closed project.
-	 * 
+	 *
 	 * @return whether the stamp is the null stamp or not.
 	 */
 	public abstract boolean isNullStamp();

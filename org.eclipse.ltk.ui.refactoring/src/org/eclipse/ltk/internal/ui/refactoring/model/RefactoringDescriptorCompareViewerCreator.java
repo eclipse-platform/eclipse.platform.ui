@@ -20,7 +20,7 @@ import org.eclipse.compare.IViewerCreator;
 
 /**
  * Compare viewer creator for refactoring descriptor compare viewers.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringDescriptorCompareViewerCreator implements IViewerCreator {

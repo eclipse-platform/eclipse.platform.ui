@@ -22,14 +22,14 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 /**
  * Default implementation of a refactoring history.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryImplementation extends RefactoringHistory {
 
 	/**
 	 * Returns a hash code value for the array
-	 * 
+	 *
 	 * @param array
 	 *            the array to create a hash code value for
 	 * @return a hash code value for the array
@@ -51,7 +51,7 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 
 	/**
 	 * Creates a new refactoring history implementation.
-	 * 
+	 *
 	 * @param proxies
 	 *            the refactoring descriptor proxies
 	 */
@@ -79,7 +79,7 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 
 	/**
 	 * Returns the descriptor proxies, in no particular order.
-	 * 
+	 *
 	 * @return the descriptor proxies
 	 */
 	RefactoringDescriptorProxy[] getDescriptorProxies() {

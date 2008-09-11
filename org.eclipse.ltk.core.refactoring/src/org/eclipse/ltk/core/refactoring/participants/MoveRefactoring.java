@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MoveRefactoring extends ProcessorBasedRefactoring {
@@ -29,19 +29,19 @@ public class MoveRefactoring extends ProcessorBasedRefactoring {
 
 	/**
 	 * Creates a new move refactoring with the given move processor.
-	 * 
+	 *
 	 * @param processor the move processor
 	 */
 	public MoveRefactoring(MoveProcessor processor) {
 		super(processor);
 		Assert.isNotNull(processor);
-		fProcessor= processor; 
+		fProcessor= processor;
 	}
-	
+
 	/**
 	 * Returns the move processor associated with this move refactoring.
-	 * 
-	 * @return returns the move processor associated with this move refactoring 
+	 *
+	 * @return returns the move processor associated with this move refactoring
 	 */
 	public MoveProcessor getMoveProcessor() {
 		return fProcessor;

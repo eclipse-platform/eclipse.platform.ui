@@ -12,36 +12,36 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 /**
  * Enumeration representing the finish result
- * 
+ *
  * @since 3.0
  */
 public class FinishResult {
 	private int fValue;
-	
+
 	private FinishResult(int value) {
 		fValue= value;
 	}
-	
+
 	public static FinishResult createException() {
 		return new FinishResult(0);
 	}
-	
+
 	public boolean isException() {
 		return fValue == 0;
 	}
-	
+
 	public static FinishResult createInterrupted() {
 		return new FinishResult(1);
 	}
-	
+
 	public boolean isInterrupted() {
 		return fValue == 1;
 	}
-	
+
 	public static FinishResult createOK() {
 		return new FinishResult(2);
 	}
-	
+
 	public boolean isOK() {
 		return fValue == 2;
 	}

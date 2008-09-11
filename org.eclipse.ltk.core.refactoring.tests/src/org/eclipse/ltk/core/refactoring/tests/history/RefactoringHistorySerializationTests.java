@@ -33,7 +33,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorProxyAdapter;
 
 public class RefactoringHistorySerializationTests extends TestCase {

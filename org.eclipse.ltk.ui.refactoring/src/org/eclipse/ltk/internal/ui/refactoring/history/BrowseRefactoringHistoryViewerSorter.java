@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * Viewer sorter for the browse refactoring history control.
- * 
+ *
  * @since 3.2
  */
 public final class BrowseRefactoringHistoryViewerSorter extends ViewerComparator {

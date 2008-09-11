@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IFile;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -46,35 +45,35 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * should only be called once for all files modified by the processor and all
  * participants.
  * </p>
- * <p> 
+ * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CheckConditionsContext {
-	
+
 	private Map fCheckers= new HashMap();
-	
+
 	/**
 	 * Returns the condition checker of the given type.
-	 * 
+	 *
 	 * @param clazz the type of the condition checker
-	 * 
+	 *
 	 * @return the condition checker or <code>null</code> if
 	 *  no checker is registered for the given type
 	 */
 	public IConditionChecker getChecker(Class clazz) {
 		return (IConditionChecker)fCheckers.get(clazz);
 	}
-	
+
 	/**
 	 * Adds the given condition checker. An exception will be
 	 * thrown if a checker of the same type already exists in
 	 * this context.
-	 * 
+	 *
 	 * @param checker the checker to add
 	 * @throws CoreException if a checker of the same type already
 	 *  exists
@@ -84,21 +83,21 @@ public class CheckConditionsContext {
 		if (old != null) {
 			fCheckers.put(checker.getClass(), old);
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
-				IRefactoringCoreStatusCodes.CHECKER_ALREADY_EXISTS_IN_CONTEXT, 
-				Messages.format(RefactoringCoreMessages.CheckConditionContext_error_checker_exists, checker.getClass().toString()), 
-				null));  
+				IRefactoringCoreStatusCodes.CHECKER_ALREADY_EXISTS_IN_CONTEXT,
+				Messages.format(RefactoringCoreMessages.CheckConditionContext_error_checker_exists, checker.getClass().toString()),
+				null));
 		}
 	}
-	
+
 	/**
 	 * Checks the condition of all registered condition checkers and returns a
 	 * merge status result.
-	 * 
-	 * @param pm a progress monitor or <code>null</code> if no progress 
+	 *
+	 * @param pm a progress monitor or <code>null</code> if no progress
 	 *  reporting is desired
-	 * 
+	 *
 	 * @return the combined status result
-	 * 
+	 *
 	 * @throws CoreException if an error occurs during condition checking
 	 */
 	public RefactoringStatus check(IProgressMonitor pm) throws CoreException {
@@ -110,7 +109,7 @@ public class CheckConditionsContext {
 		Collections.sort(values, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				// Note there can only be one ResourceOperationChecker. So it
-				// is save to not test the case that both objects are 
+				// is save to not test the case that both objects are
 				// ResourceOperationChecker
 				if (o1 instanceof ResourceChangeChecker)
 					return -1;
@@ -128,7 +127,7 @@ public class CheckConditionsContext {
 		}
 		return result;
 	}
-	
+
 	private void mergeResourceOperationAndValidateEdit() throws CoreException {
 		ValidateEditChecker validateEditChecker= (ValidateEditChecker) getChecker(ValidateEditChecker.class);
 		if (validateEditChecker == null)
@@ -136,7 +135,7 @@ public class CheckConditionsContext {
 		ResourceChangeChecker resourceChangeChecker= (ResourceChangeChecker) getChecker(ResourceChangeChecker.class);
 		if (resourceChangeChecker == null)
 			return;
-		
+
 		IFile[] changedFiles= resourceChangeChecker.getChangedFiles();
 		validateEditChecker.addFiles(changedFiles);
 	}

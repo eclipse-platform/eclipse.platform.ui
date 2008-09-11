@@ -20,11 +20,11 @@ import org.eclipse.ltk.core.refactoring.IValidationCheckResultQueryFactory;
 public class UIQueryFactory implements IValidationCheckResultQueryFactory {
 
 	private IValidationCheckResultQueryFactory fCoreQueryFactory;
-	
+
 	public UIQueryFactory(IValidationCheckResultQueryFactory coreFactory) {
 		fCoreQueryFactory= coreFactory;
 	}
-	
+
 	public IValidationCheckResultQuery create(IAdaptable context) {
 		if (context != null) {
 			Shell parent= (Shell)context.getAdapter(Shell.class);

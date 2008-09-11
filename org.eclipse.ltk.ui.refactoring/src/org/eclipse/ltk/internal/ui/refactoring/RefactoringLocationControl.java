@@ -12,20 +12,20 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.util.LinkedList;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizard;
 
 /**
  * Control which maintains a selectable location field with persisted history.
- * 
+ *
  * @since 3.2
  */
 public class RefactoringLocationControl extends Composite {
@@ -44,7 +44,7 @@ public class RefactoringLocationControl extends Composite {
 
 	/**
 	 * Creates a new refactoring location control.
-	 * 
+	 *
 	 * @param wizard
 	 *            the wizard
 	 * @param parent
@@ -68,7 +68,7 @@ public class RefactoringLocationControl extends Composite {
 
 	/**
 	 * Creates a new grid data.
-	 * 
+	 *
 	 * @param flag
 	 *            the flags to use
 	 * @param hspan
@@ -86,7 +86,7 @@ public class RefactoringLocationControl extends Composite {
 
 	/**
 	 * Returns the combo control.
-	 * 
+	 *
 	 * @return the combo control
 	 */
 	public Combo getControl() {
@@ -95,7 +95,7 @@ public class RefactoringLocationControl extends Composite {
 
 	/**
 	 * Returns the text of this control.
-	 * 
+	 *
 	 * @return the text
 	 */
 	public String getText() {
@@ -149,7 +149,7 @@ public class RefactoringLocationControl extends Composite {
 
 	/**
 	 * Sets the text of this control.
-	 * 
+	 *
 	 * @param text
 	 *            the text to set
 	 */

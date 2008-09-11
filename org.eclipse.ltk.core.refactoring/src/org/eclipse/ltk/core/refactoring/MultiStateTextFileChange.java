@@ -20,16 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
-import org.eclipse.text.edits.TextEditCopier;
-import org.eclipse.text.edits.TextEditGroup;
-import org.eclipse.text.edits.TextEditProcessor;
-import org.eclipse.text.edits.UndoEdit;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -40,12 +30,22 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.TextEditCopier;
+import org.eclipse.text.edits.TextEditGroup;
+import org.eclipse.text.edits.TextEditProcessor;
+import org.eclipse.text.edits.UndoEdit;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -70,20 +70,20 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * A multi state text file change is a special change object that applies a sequence of {@link TextEdit
- * text edit trees} to a document. The multi state text file change manages the text edit trees. 
+ * text edit trees} to a document. The multi state text file change manages the text edit trees.
  * <p>
  * A multi state text file change offers the ability to access the original content of
  * the document as well as creating a preview of the change. The edit
  * trees get copied when creating any kind of preview. Therefore no region
  * updating on the original edit trees takes place when requesting a preview
- * (for more information on region updating see class {@link TextEdit TextEdit}. 
- * If region tracking is required for a preview it can be enabled via a call 
+ * (for more information on region updating see class {@link TextEdit TextEdit}.
+ * If region tracking is required for a preview it can be enabled via a call
  * to the method {@link #setKeepPreviewEdits(boolean) setKeepPreviewEdits}.
  * If enabled the multi state text file change keeps the copied edit trees executed for the
  * preview allowing clients to map an original edit to an executed edit. The
  * executed edit can then be used to determine its position in the preview.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class MultiStateTextFileChange extends TextEditBasedChange {
@@ -249,7 +249,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 * <p>
 	 * The default text type is <code>txt</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            the name of the composite text file change
 	 * @param file
@@ -266,7 +266,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	/**
 	 * Acquires a document from the file buffer manager.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use
 	 * @return the document
@@ -297,7 +297,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 * the contents of the text change are retrieved and stored internally
 	 * in this composite text change.
 	 * </p>
-	 * 
+	 *
 	 * @param change
 	 *            the text change to add
 	 */
@@ -350,7 +350,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	/**
 	 * Creates the corresponding text edit to the event.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 * @param offset
@@ -410,7 +410,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 * <p>
 	 * The returned document should not be modified.
 	 * </p>
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @return the current document, or the empty document
@@ -747,7 +747,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/**
 	 * Returns a document representing the preview of the refactored buffer,
 	 * after the application of the change object.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use, or <code>null</code>
 	 * @return the preview document, or an empty document
@@ -794,7 +794,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	/**
 	 * Returns the save mode of this change.
-	 * 
+	 *
 	 * @return the save mode
 	 */
 	public final int getSaveMode() {
@@ -826,7 +826,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			if (fValidationState == null)
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "MultiStateTextFileChange has not been initialialized")); //$NON-NLS-1$
 
-			
+
 			final ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			fDirty= buffer != null && buffer.isDirty();
 
@@ -846,7 +846,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	/**
 	 * Does the change need saving?
-	 * 
+	 *
 	 * @return <code>true</code> if it needs saving, <code>false</code>
 	 *         otherwise
 	 */
@@ -893,7 +893,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	/**
 	 * Performs the changes on the specified document.
-	 * 
+	 *
 	 * @param document
 	 *            the document to perform the changes on
 	 * @param undoList
@@ -917,7 +917,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	/**
 	 * Releases the document.
-	 * 
+	 *
 	 * @param document
 	 *            the document to release
 	 * @param monitor
@@ -945,7 +945,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 	/**
 	 * Sets the save mode.
-	 * 
+	 *
 	 * @param mode
 	 *            The mode to set
 	 */

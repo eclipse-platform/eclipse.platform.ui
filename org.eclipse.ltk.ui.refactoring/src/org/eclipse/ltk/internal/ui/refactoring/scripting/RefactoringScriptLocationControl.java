@@ -14,12 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringLocationControl;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -33,12 +27,18 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizard;
 
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringLocationControl;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
+
 /**
  * Control to specify the location of a refactoring script.
- * 
+ *
  * @since 3.2
  */
 public class RefactoringScriptLocationControl extends Composite {
@@ -69,7 +69,7 @@ public class RefactoringScriptLocationControl extends Composite {
 
 	/**
 	 * Creates a new refactoring script location control.
-	 * 
+	 *
 	 * @param wizard
 	 *            the parent wizard
 	 * @param parent
@@ -147,7 +147,7 @@ public class RefactoringScriptLocationControl extends Composite {
 
 	/**
 	 * Creates a new grid data.
-	 * 
+	 *
 	 * @param flag
 	 *            the flags to use
 	 * @param hspan
@@ -165,7 +165,7 @@ public class RefactoringScriptLocationControl extends Composite {
 
 	/**
 	 * Returns the chosen refactoring script location.
-	 * 
+	 *
 	 * @return the refactoring script location, or <code>null</code> if no
 	 *         refactoring script has been chosen, or the refactoring script
 	 *         should be taken from the clipboard
@@ -223,7 +223,7 @@ public class RefactoringScriptLocationControl extends Composite {
 
 	/**
 	 * Sets the refactoring script location to choose.
-	 * 
+	 *
 	 * @param uri
 	 *            the refactoring script location, or <code>null</code> if no
 	 *            refactoring script has been chosen, or the refactoring script

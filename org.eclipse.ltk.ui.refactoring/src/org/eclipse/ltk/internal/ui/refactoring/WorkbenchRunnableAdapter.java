@@ -28,35 +28,35 @@ import org.eclipse.jface.operation.IThreadListener;
 
 /**
  * An <code>IRunnableWithProgress</code> that adapts an <code>IWorkspaceRunnable</code>
- * so that is can be executed inside <code>IRunnableContext</code>. <code>OperationCanceledException</code> 
+ * so that is can be executed inside <code>IRunnableContext</code>. <code>OperationCanceledException</code>
  * thrown by the adapted runnable are caught and re-thrown as a <code>InterruptedException</code>.
  */
 public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadListener {
-	
+
 	private IWorkspaceRunnable fWorkspaceRunnable;
 	private ISchedulingRule fRule;
 	private boolean fTransfer;
-	
+
 	/**
-	 * Runs a workspace runnable with the given lock or <code>null</code> 
+	 * Runs a workspace runnable with the given lock or <code>null</code>
 	 * to run with no lock at all.
-	 * 
+	 *
 	 * @param runnable the workspace runnable
 	 * @param rule the scheduling rule
 	 */
 	public WorkbenchRunnableAdapter(IWorkspaceRunnable runnable, ISchedulingRule rule) {
 		this(runnable, rule, true);
 	}
-	
+
 	/**
-	 * Runs a workspace runnable with the given lock or <code>null</code> 
+	 * Runs a workspace runnable with the given lock or <code>null</code>
 	 * to run with no lock at all.
-	 * 
+	 *
 	 * @param runnable the workspace runnable
 	 * @param rule the scheduling rule
-	 * @param transfer <code>true</code> if the rule is to be transfered 
+	 * @param transfer <code>true</code> if the rule is to be transfered
 	 *  to the model context thread. Otherwise <code>false</code>
-	 *  
+	 *
 	 *  @since 3.1
 	 */
 	public WorkbenchRunnableAdapter(IWorkspaceRunnable runnable, ISchedulingRule rule, boolean transfer) {
@@ -66,7 +66,7 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 		fRule= rule;
 		fTransfer= transfer;
 	}
-	
+
 	public ISchedulingRule getSchedulingRule() {
 		return fRule;
 	}

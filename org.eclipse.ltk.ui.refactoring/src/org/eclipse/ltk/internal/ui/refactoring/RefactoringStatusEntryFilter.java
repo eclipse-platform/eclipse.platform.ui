@@ -14,14 +14,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
 /**
  * Implementation for a refactoring status entry filter.
- * 
+ *
  * @since 3.2
  */
 public class RefactoringStatusEntryFilter {
 
 	/**
 	 * Is the specified status entry accepted by the filter?
-	 * 
+	 *
 	 * @param entry
 	 *            the status entry to test
 	 * @return <code>true</code> if it is accepted for preview,

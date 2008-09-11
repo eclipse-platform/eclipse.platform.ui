@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorProxyAdapter;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
@@ -58,9 +57,9 @@ import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchr
  * provider used in team synchronization views may use this class as a basis for
  * refactoring-aware synchronization content providers.
  * </p>
- * 
+ *
  * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractSynchronizationContentProvider extends SynchronizationContentProvider {
@@ -73,7 +72,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 	 * repository, or are pending refactorings to execute on the local
 	 * workspace).
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the synchronization context to use
 	 * @param project

@@ -12,24 +12,23 @@ package org.eclipse.ltk.internal.ui.refactoring.model;
 
 import org.eclipse.team.core.diff.IThreeWayDiff;
 
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.PlatformObject;
-
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-
-import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+
 /**
  * Compare input which represents a pending refactoring.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringDescriptorCompareInput extends PlatformObject implements ICompareInput {
@@ -80,7 +79,7 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 
 	/**
 	 * Creates a new refactoring descriptor compare input.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @param kind
@@ -119,7 +118,7 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 
 	/**
 	 * Returns the refactoring descriptor.
-	 * 
+	 *
 	 * @return the refactoring descriptor
 	 */
 	public RefactoringDescriptorProxy getDescriptor() {

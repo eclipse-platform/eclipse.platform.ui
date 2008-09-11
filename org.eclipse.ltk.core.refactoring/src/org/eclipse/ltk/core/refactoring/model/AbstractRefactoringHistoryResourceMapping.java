@@ -28,7 +28,6 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
@@ -39,10 +38,10 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryServi
  * Note: this class is intended to be implemented by clients which need to
  * enhance a model provider with a refactoring model.
  * </p>
- * 
+ *
  * @see ResourceMapping
  * @see ModelProvider
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractRefactoringHistoryResourceMapping extends ResourceMapping {
@@ -55,7 +54,7 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 
 	/**
 	 * Creates a new abstract refactoring history resource mapping.
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history
 	 */
@@ -103,7 +102,7 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 	 * This method only returns a meaningful result if the history contains
 	 * refactorings of a single project.
 	 * </p>
-	 * 
+	 *
 	 * @return the associated resource, or <code>null</code> if the
 	 *         refactoring history contains workspace refactoring descriptors
 	 *         only, or if it contains refactoring descriptors from multiple

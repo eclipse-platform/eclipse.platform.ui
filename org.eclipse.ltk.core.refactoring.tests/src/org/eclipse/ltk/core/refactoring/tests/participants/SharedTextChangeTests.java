@@ -12,9 +12,6 @@ package org.eclipse.ltk.core.refactoring.tests.participants;
 
 import junit.framework.TestCase;
 
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -22,6 +19,9 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.ReplaceEdit;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
@@ -41,7 +41,7 @@ import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 public class SharedTextChangeTests extends TestCase {
 
 	private SimpleTestProject fProject;
-	
+
 	private static class Participant extends RenameParticipant {
 		private IFile fFile;
 		protected boolean initialize(Object element) {
@@ -60,11 +60,11 @@ public class SharedTextChangeTests extends TestCase {
 			return null;
 		}
 	}
-	
+
 	private static class Processor extends RenameProcessor {
 
 		private IFile fFile;
-		
+
 		public Processor(IFile file) {
 			fFile= file;
 		}
@@ -111,7 +111,7 @@ public class SharedTextChangeTests extends TestCase {
 		super.setUp();
 		fProject= new SimpleTestProject();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -119,7 +119,7 @@ public class SharedTextChangeTests extends TestCase {
 		fProject.delete();
 		super.tearDown();
 	}
-	
+
 	public void testSharedUpdating() throws Exception {
 		IFolder folder= fProject.createFolder("test");
 		IFile file= fProject.createFile(folder, "test.txt", "section one section two");

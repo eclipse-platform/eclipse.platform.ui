@@ -19,42 +19,42 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 /**
  * A refactoring change that does nothing. The reverse change of a
  * <code>NullChange</code> is a <code>NullChange</code>.
- * <p> 
+ * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class NullChange extends Change {
 
 	private String fName;
-	
+
 	/**
 	 * Creates a new <code>NullChange</code> with a default name.
 	 */
 	public NullChange() {
-		this(RefactoringCoreMessages.NullChange_name); 
+		this(RefactoringCoreMessages.NullChange_name);
 	}
 
 	/**
 	 * Creates a new <code>NullChange</code> with the given name.
-	 * 
+	 *
 	 * @param name the human readable name of this change
 	 */
 	public NullChange(String name) {
 		Assert.isNotNull(name);
 		fName= name;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -68,7 +68,7 @@ public class NullChange extends Change {
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		return new RefactoringStatus();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

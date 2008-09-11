@@ -23,7 +23,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 
 /**
  * Dialog to edit the details of a refactoring.
- * 
+ *
  * @since 3.2
  */
 public final class EditRefactoringDetailsDialog extends Dialog {
@@ -42,7 +42,7 @@ public final class EditRefactoringDetailsDialog extends Dialog {
 
 	/**
 	 * Creates a new edit details dialog.
-	 * 
+	 *
 	 * @param shell
 	 *            the parent shell, or <code>null</code>
 	 * @param title
@@ -119,7 +119,7 @@ public final class EditRefactoringDetailsDialog extends Dialog {
 
 	/**
 	 * Returns the current details.
-	 * 
+	 *
 	 * @return the current details
 	 */
 	public String getDetails() {

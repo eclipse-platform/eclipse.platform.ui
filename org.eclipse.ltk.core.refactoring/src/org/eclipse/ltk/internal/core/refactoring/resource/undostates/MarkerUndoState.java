@@ -21,23 +21,23 @@ import org.eclipse.core.resources.IResource;
 /**
  * {@link MarkerUndoState} is a lightweight description of a marker that can be used
  * to describe a marker to be created or updated.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class MarkerUndoState {
 
 	protected IResource resource;
-	
+
 	private String type;
 	private Map attributes;
 
 	/**
-	 * 
+	 *
 	 * Create a {@link MarkerUndoState} from the specified marker.
-	 * 
+	 *
 	 * @param marker
 	 *            the marker to be described
 	 * @throws CoreException
@@ -52,7 +52,7 @@ public class MarkerUndoState {
 	/**
 	 * Create a {@link MarkerUndoState} from the specified marker type, attributes,
 	 * and resource.
-	 * 
+	 *
 	 * @param type
 	 *            the type of marker to be created.
 	 * @param attributes
@@ -68,7 +68,7 @@ public class MarkerUndoState {
 
 	/**
 	 * Create a marker from the marker description.
-	 * 
+	 *
 	 * @return the created marker
 	 * @throws CoreException
 	 */
@@ -80,7 +80,7 @@ public class MarkerUndoState {
 
 	/**
 	 * Update an existing marker using the attributes in the marker description.
-	 * 
+	 *
 	 * @param marker
 	 *            the marker to be updated
 	 * @throws CoreException
@@ -91,7 +91,7 @@ public class MarkerUndoState {
 
 	/**
 	 * Return the resource associated with this marker.
-	 * 
+	 *
 	 * @return the resource associated with this marker
 	 */
 	public IResource getResource() {
@@ -100,7 +100,7 @@ public class MarkerUndoState {
 
 	/**
 	 * Return the marker type associated with this marker.
-	 * 
+	 *
 	 * @return the string marker type of this marker
 	 */
 	public String getType() {

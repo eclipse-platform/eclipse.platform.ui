@@ -15,20 +15,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -37,55 +36,55 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
 /**
  * Abstract change for resource based changes. The change controls the resource time stamp
  * and read only state of the resource and makes sure it is not changed before executing the change.
- * 
+ *
  * @since 3.4
  */
 public abstract class ResourceChange extends Change {
 
 	/**
 	 * The default validation method. It tests the modified element for existence and makes sure it has not been modified
-	 * since the change has been created. 
+	 * since the change has been created.
 	 */
 	public static final int VALIDATE_DEFAULT= 0;
-	
+
 	/**
 	 * The 'not read only' validation method performs the default validations (see {@link #VALIDATE_DEFAULT}) and additionally ensures that the element
 	 * is not read only.
 	 */
 	public static final int VALIDATE_NOT_READ_ONLY= 1 << 0;
-	
+
 	/**
 	 * The 'not dirty' validation method performs the default validations (see {@link #VALIDATE_DEFAULT}) and additionally ensures that the element
 	 * does not contain unsaved modifications.
 	 */
 	public static final int VALIDATE_NOT_DIRTY= 1 << 1;
-	
+
 	/**
 	 * The 'save if dirty' validation method performs the default validations (see {@link #VALIDATE_DEFAULT}) and will
 	 * save all unsaved modifications to the resource.
 	 */
 	public static final int SAVE_IF_DIRTY= 1 << 2;
-	
+
 	private long fModificationStamp;
 	private boolean fReadOnly;
 	private int fValidationMethod;
-	
+
 	/**
-	 * Creates the resource change. The modification state will be 
+	 * Creates the resource change. The modification state will be
 	 */
 	public ResourceChange() {
 		fModificationStamp= IResource.NULL_STAMP;
 		fReadOnly= false;
 		fValidationMethod= VALIDATE_DEFAULT;
 	}
-	
+
 	/**
-	 * Returns the resource of this change. 
-	 *  
+	 * Returns the resource of this change.
+	 *
 	 * @return the resource of this change
 	 */
 	protected abstract IResource getModifiedResource();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -96,14 +95,14 @@ public abstract class ResourceChange extends Change {
 			fReadOnly= Resources.isReadOnly(resource);
 		}
 	}
-	
+
 	/**
 	 * Sets the validation methods used when the current resource is validated in {@link #isValid(IProgressMonitor)}.
 	 * <p>
 	 * By default the validation method is {@link #VALIDATE_DEFAULT}. Change implementors can add {@link #VALIDATE_NOT_DIRTY},
 	 *  {@link #VALIDATE_NOT_READ_ONLY} or {@link #SAVE_IF_DIRTY}.
 	 * </p>
-	 * 
+	 *
 	 * @param validationMethod the validation method used in {@link #isValid(IProgressMonitor)}.
 	 * Supported validation methods currently are:
 	 * <ul><li>{@link #VALIDATE_DEFAULT}</li>
@@ -158,7 +157,7 @@ public abstract class ResourceChange extends Change {
 
 	/**
 	 * Utility method to validate a resource to be modified.
-	 * 
+	 *
 	 * @param result the status where the result will be added to
 	 * @param resource the resource to validate
 	 * @param validationMethod the validation method used in {@link #isValid(IProgressMonitor)}.
@@ -189,12 +188,12 @@ public abstract class ResourceChange extends Change {
 
 	private static void checkExistence(RefactoringStatus status, IResource element) {
 		if (element == null) {
-			status.addFatalError(RefactoringCoreMessages.ResourceChange_error_no_input); 
+			status.addFatalError(RefactoringCoreMessages.ResourceChange_error_no_input);
 		} else if (!element.exists()) {
-			status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_does_not_exist, BasicElementLabels.getPathLabel(element.getFullPath(), false))); 
+			status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_does_not_exist, BasicElementLabels.getPathLabel(element.getFullPath(), false)));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
 	 */
@@ -202,14 +201,14 @@ public abstract class ResourceChange extends Change {
 		return getModifiedResource();
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		return getName();
 	}
-	
+
 	private long getModificationStamp(IResource resource) {
 		if (!(resource instanceof IFile))
 			return resource.getModificationStamp();
@@ -226,7 +225,7 @@ public abstract class ResourceChange extends Change {
 			}
 		}
 	}
-	
+
 	private static ITextFileBuffer getBuffer(IFile file) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		return manager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);

@@ -19,14 +19,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * Clients should be aware that the methods defined by this interface can be
  * called from a non-user interface thread.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public interface IRefactoringDescriptorDeleteQuery {
 
 	/**
 	 * Have any refactoring descriptors been deleted?
-	 * 
+	 *
 	 * @return <code>true</code> if any descriptors have been deleted,
 	 *         <code>true</code> otherwise
 	 */
@@ -41,7 +41,7 @@ public interface IRefactoringDescriptorDeleteQuery {
 	 * entire operation which this deletion is part of is considered to be
 	 * aborted.
 	 * </p>
-	 * 
+	 *
 	 * @param proxy
 	 *            the refactoring descriptor proxy to delete
 	 * @return a refactoring status describing the outcome of the user prompt

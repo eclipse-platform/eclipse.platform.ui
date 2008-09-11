@@ -16,17 +16,17 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * IFileContentDescription is a description of a file's content.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public interface IFileContentDescription {
 	/**
 	 * Returns an open input stream on the contents of the file described. The
 	 * client is responsible for closing the stream when finished.
-	 * 
+	 *
 	 * @return an input stream containing the contents of the file
 	 * @throws CoreException
 	 *             any CoreException encountered retrieving the contents
@@ -36,7 +36,7 @@ public interface IFileContentDescription {
 	/**
 	 * Returns whether this file content description still exists. If it does
 	 * not exist, it will be unable to produce the contents.
-	 * 
+	 *
 	 * @return <code>true</code> if this description exists, and
 	 *         <code>false</code> if it does not
 	 */
@@ -46,12 +46,12 @@ public interface IFileContentDescription {
 	 * Returns the name of a charset encoding to be used when decoding the
 	 * contents into characters. Returns <code>null</code> if a charset
 	 * has not been explicitly specified.
-	 * 
+	 *
 	 * @return the name of a charset, or <code>null</code>
 	 * @throws CoreException
 	 *             any CoreException encountered while determining the character
 	 *             set
-	 * 
+	 *
 	 */
 	public String getCharset() throws CoreException;
 }

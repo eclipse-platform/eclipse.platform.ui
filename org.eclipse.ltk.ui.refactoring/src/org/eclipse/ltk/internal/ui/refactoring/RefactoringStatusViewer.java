@@ -9,16 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
-import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
-
-import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
-import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
-
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.SashForm;
@@ -30,6 +21,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
@@ -48,6 +41,11 @@ import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.compare.CompareUI;
 
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
+import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
+import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 import org.eclipse.ltk.ui.refactoring.IStatusContextViewer;
 
 
@@ -68,7 +66,7 @@ public class RefactoringStatusViewer extends SashForm {
 			return fLabel;
 		}
 	}
-	
+
 	private class NextProblem extends Action {
 		public NextProblem() {
 			setImageDescriptor(CompareUI.DESC_ETOOL_NEXT);
@@ -90,7 +88,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setEnabled(enabled);
 		}
 	}
-	
+
 	private class PreviousProblem extends Action {
 		public PreviousProblem() {
 			setImageDescriptor(CompareUI.DESC_ETOOL_PREV);
@@ -111,7 +109,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setEnabled(enabled);
 		}
 	}
-	
+
 	private static class RefactoringStatusSorter extends ViewerComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int r1= ((RefactoringStatusEntry)e1).getSeverity();
@@ -124,7 +122,7 @@ public class RefactoringStatusViewer extends SashForm {
 		}
 
 	}
-	
+
 	private RefactoringStatus fStatus;
 	private TableViewer fTableViewer;
 	private PageBook fContextViewerContainer;
@@ -132,10 +130,10 @@ public class RefactoringStatusViewer extends SashForm {
 	private IStatusContextViewer fCurrentContextViewer;
 	private NullContextViewer fNullContextViewer;
 	private RefactoringStatusEntryFilter fFilter= null;
-	
+
 	private NextProblem fNextProblem;
 	private PreviousProblem fPreviousProblem;
-	
+
 	public RefactoringStatusViewer(Composite parent, int style) {
 		super(parent, style | SWT.VERTICAL);
 		createContents();
@@ -143,7 +141,7 @@ public class RefactoringStatusViewer extends SashForm {
 
 	/**
 	 * Sets the status entry filter.
-	 * 
+	 *
 	 * @param filter
 	 *            the status entry filter to set, or <code>null</code>
 	 */
@@ -153,7 +151,7 @@ public class RefactoringStatusViewer extends SashForm {
 
 	/**
 	 * Sets the refactoring status.
-	 * 
+	 *
 	 * @param status the refactoring status.
 	 */
 	public void setStatus(RefactoringStatus status){
@@ -174,7 +172,7 @@ public class RefactoringStatusViewer extends SashForm {
 			fPreviousProblem.update();
 		}
 	}
-	
+
 	/**
 	 * Returns the currently used <tt>RefactoringStatus</tt>.
 	 * @return the <tt>RefactoringStatus</tt>
@@ -182,19 +180,19 @@ public class RefactoringStatusViewer extends SashForm {
 	public RefactoringStatus getStatus() {
 		return fStatus;
 	}
-	
+
 	//---- UI creation ----------------------------------------------------------------------
-	
+
 	public Point computeSize (int wHint, int hHint, boolean changed) {
 		PixelConverter converter= new PixelConverter(this);
 		return new Point(converter.convertWidthInCharsToPixels(90), converter.convertHeightInCharsToPixels(25));
 	}
-	
+
 	private void createContents() {
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1; layout.marginWidth= 0; layout.marginHeight= 0;
 		setLayout(layout);
-		
+
 		ViewerPane contextPane= new ViewerPane(this, SWT.BORDER | SWT.FLAT);
 		contextPane.setText(RefactoringUIMessages.RefactoringStatusViewer_Found_problems);
 		ToolBarManager tbm= contextPane.getToolBarManager();
@@ -203,7 +201,7 @@ public class RefactoringStatusViewer extends SashForm {
 		tbm.update(true);
 		createTableViewer(contextPane);
 		contextPane.setContent(fTableViewer.getControl());
-		
+
 		fContextViewerContainer= new PageBook(this, SWT.NONE);
 		fNullContextViewer= new NullContextViewer();
 		fNullContextViewer.createControl(fContextViewerContainer);
@@ -211,10 +209,10 @@ public class RefactoringStatusViewer extends SashForm {
 		fCurrentContextViewer= fNullContextViewer;
 		fCurrentContextViewer= fNullContextViewer;
 		fCurrentDescriptor= null;
-		
+
 		setWeights(new int[]{35, 65});
 	}
-	
+
 	private  void createTableViewer(Composite parent) {
 		fTableViewer= new TableViewer(new Table(parent, SWT.SINGLE | SWT.H_SCROLL));
 		fTableViewer.setLabelProvider(new RefactoringStatusEntryLabelProvider());
@@ -237,7 +235,7 @@ public class RefactoringStatusViewer extends SashForm {
 		// Add a column so that we can pack it in setVisible.
 		TableColumn tc= new TableColumn(tableControl, SWT.NONE);
 		tc.setResizable(false);
-		
+
 		tableControl.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result= RefactoringUIMessages.RefactoringStatusViewer_Found_problems;
@@ -253,7 +251,7 @@ public class RefactoringStatusViewer extends SashForm {
 		Object first= ((IStructuredSelection) s).getFirstElement();
 		if (! (first instanceof RefactoringStatusEntry))
 			return;
-		
+
 		RefactoringStatusEntry entry= (RefactoringStatusEntry)first;
 		showContextViewer(entry);
 	}
@@ -290,21 +288,21 @@ public class RefactoringStatusViewer extends SashForm {
 			}
 		}
 	}
-	
+
 	private void showNullContextViewer() {
 		fCurrentContextViewer= fNullContextViewer;
 		fCurrentDescriptor= null;
 		fContextViewerContainer.showPage(fCurrentContextViewer.getControl());
 	}
-	
+
 	//---- Helpers ----------------------------------------------------------------------------------------
-	
+
 	private RefactoringStatusEntry getFirstEntry() {
 		if (fStatus == null || !fStatus.hasEntries())
 			return null;
 		return fStatus.getEntryAt(0);
 	}
-		
+
 	private void revealElement(boolean next) {
 		Table table= fTableViewer.getTable();
 		int numberOfItems= table.getItemCount();

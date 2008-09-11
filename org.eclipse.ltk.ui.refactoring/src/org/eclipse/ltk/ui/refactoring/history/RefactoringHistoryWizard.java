@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
-import com.ibm.icu.text.MessageFormat;
-
 import java.lang.reflect.InvocationTargetException;
 import java.text.ChoiceFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -30,6 +36,21 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.jface.action.LegacyActionTools;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.wizard.WizardPage;
+
+import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
@@ -43,7 +64,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
@@ -62,27 +82,6 @@ import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryErrorPage;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryOverviewPage;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.wizard.IWizardContainer;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.jface.wizard.WizardPage;
-
-import org.eclipse.ui.PlatformUI;
 
 /**
  * A default implementation of a refactoring history wizard. Refactoring history
@@ -107,10 +106,10 @@ import org.eclipse.ui.PlatformUI;
  * <p>
  * Note: this class is intended to be extended by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.ltk.core.refactoring.Refactoring
  * @see org.eclipse.ltk.core.refactoring.history.RefactoringHistory
- * 
+ *
  * @since 3.2
  */
 public class RefactoringHistoryWizard extends Wizard {
@@ -176,7 +175,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 		/**
 		 * Sets the title of the page according to the refactoring.
-		 * 
+		 *
 		 * @param descriptor
 		 *            the refactoring descriptor, or <code>null</code>
 		 * @param current
@@ -304,7 +303,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * history control configuration are set before opening the wizard in a
 	 * dialog.
 	 * </p>
-	 * 
+	 *
 	 * @param overview
 	 *            <code>true</code> to show an overview of the refactorings,
 	 *            <code>false</code> otherwise
@@ -314,7 +313,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *            the title of the overview page
 	 * @param description
 	 *            the description of the overview page
-	 * 
+	 *
 	 * @see #setConfiguration(RefactoringHistoryControlConfiguration)
 	 * @see #setInput(RefactoringHistory)
 	 */
@@ -346,14 +345,14 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@link #RefactoringHistoryWizard(boolean, String, String, String)} with
 	 * the first argument equal to <code>true</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param caption
 	 *            the caption of the wizard window
 	 * @param title
 	 *            the title of the overview page
 	 * @param description
 	 *            the description of the overview page
-	 * 
+	 *
 	 * @see #setConfiguration(RefactoringHistoryControlConfiguration)
 	 * @see #setInput(RefactoringHistory)
 	 */
@@ -376,10 +375,10 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Returning a status of severity {@link RefactoringStatus#FATAL} will
 	 * terminate the execution of the refactorings.
 	 * </p>
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use
-	 * 
+	 *
 	 * @return a status describing the outcome of the operation
 	 */
 	protected RefactoringStatus aboutToPerformHistory(final IProgressMonitor monitor) {
@@ -401,7 +400,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Returning a status of severity {@link RefactoringStatus#FATAL} will
 	 * terminate the execution of the current refactoring.
 	 * </p>
-	 * 
+	 *
 	 * @param refactoring
 	 *            the refactoring about to be executed
 	 * @param descriptor
@@ -418,7 +417,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * Clients must contribute their wizard pages by re-implementing
 	 * {@link #addUserDefinedPages()}.
 	 */
@@ -485,7 +484,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Checks the specified kind of conditions of the refactoring.
-	 * 
+	 *
 	 * @param refactoring
 	 *            the refactoring to check its conditions
 	 * @param monitor
@@ -513,7 +512,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Creates the change for the specified refactoring.
-	 * 
+	 *
 	 * @param refactoring
 	 *            the refactoring
 	 * @param monitor
@@ -542,7 +541,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Subclasses may reimplement this method to customize the initialization of
 	 * a refactoring.
 	 * </p>
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @param status
@@ -567,7 +566,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@link #aboutToPerformRefactoring(Refactoring, RefactoringDescriptor, IProgressMonitor)}.
 	 * Implementors can replace this implementation.
 	 * </p>
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor
 	 * @param status
@@ -580,7 +579,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *         descriptor
 	 * @throws CoreException
 	 *             if an error occurs while creating the refactoring instance
-	 *             
+	 *
 	 * @since 3.4
 	 */
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
@@ -617,10 +616,10 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Fires the about to perform history event.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use
-	 * 
+	 *
 	 * @return a status describing the outcome of the operation
 	 */
 	private RefactoringStatus fireAboutToPerformHistory(final IProgressMonitor monitor) {
@@ -644,9 +643,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>
-	 * 
+	 *
 	 * @return the error wizard page
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final IErrorWizardPage getErrorPage() {
@@ -744,9 +743,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>
-	 * 
+	 *
 	 * @return the preview wizard page
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final IPreviewWizardPage getPreviewPage() {
@@ -764,7 +763,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Returns the refactoring descriptor of the current refactoring.
-	 * 
+	 *
 	 * @return the refactoring descriptor, or <code>null</code>
 	 */
 	private RefactoringDescriptorProxy getRefactoringDescriptor() {
@@ -776,7 +775,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Returns the refactoring descriptors in their order of execution.
-	 * 
+	 *
 	 * @return the refactoring descriptors
 	 */
 	private RefactoringDescriptorProxy[] getRefactoringDescriptors() {
@@ -792,7 +791,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Returns the first page of a refactoring.
-	 * 
+	 *
 	 * @return the first page, or <code>null</code>
 	 */
 	private IWizardPage getRefactoringPage() {
@@ -906,10 +905,10 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * <p>
 	 * Subclasses may reimplement this method to perform any special processing.
 	 * </p>
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use
-	 * 
+	 *
 	 * @return a status describing the outcome of the operation
 	 */
 	protected RefactoringStatus historyPerformed(final IProgressMonitor monitor) {
@@ -919,7 +918,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Is the current refactoring the last one?
-	 * 
+	 *
 	 * @return <code>true</code> if it is the last one, <code>false</code>
 	 *         otherwise
 	 */
@@ -929,7 +928,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Is the current refactoring the second last one?
-	 * 
+	 *
 	 * @return <code>true</code> if it is the second last one,
 	 *         <code>false</code> otherwise
 	 */
@@ -1107,7 +1106,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>
-	 * 
+	 *
 	 * @param change
 	 *            the change displayed in the preview
 	 * @param refactoring
@@ -1138,7 +1137,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	/**
 	 * Performs the change previously displayed in the preview using the
 	 * specified change operation.
-	 * 
+	 *
 	 * @param operation
 	 *            the change operation
 	 * @param refactoring
@@ -1175,7 +1174,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Prepares the error page to be displayed.
-	 * 
+	 *
 	 * @param status
 	 *            the refactoring status
 	 * @param descriptor
@@ -1203,7 +1202,7 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Prepares the preview page to be displayed.
-	 * 
+	 *
 	 * @param status
 	 *            the refactoring status
 	 * @param descriptor
@@ -1238,7 +1237,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Returning a status of severity {@link RefactoringStatus#FATAL} will
 	 * terminate the execution of the refactorings.
 	 * </p>
-	 * 
+	 *
 	 * @param refactoring
 	 *            the refactoring which has been performed
 	 * @param monitor
@@ -1259,7 +1258,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Subclasses may reimplement this method to perform any special filtering
 	 * of preview changes.
 	 * </p>
-	 * 
+	 *
 	 * @param change
 	 *            the change to select
 	 * @return <code>true</code> if the change passes the filter,
@@ -1276,7 +1275,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Subclasses may reimplement this method to perform any special filtering
 	 * of status entries on error pages.
 	 * </p>
-	 * 
+	 *
 	 * @param entry
 	 *            the status entry to select
 	 * @return <code>true</code> if the status entry passes the filter,
@@ -1291,7 +1290,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * <p>
 	 * This method must be called before opening the wizard in a dialog.
 	 * </p>
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration to set
 	 */
@@ -1305,7 +1304,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * <p>
 	 * This method must be called before opening the wizard in a dialog.
 	 * </p>
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history
 	 */

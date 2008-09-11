@@ -12,21 +12,19 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
+
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
-
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryErrorPage;
-
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardPage;
-
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
  * Preview page for refactoring history wizards.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
@@ -97,7 +95,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/**
 	 * Returns the current refactoring.
-	 * 
+	 *
 	 * @return the current refactoring
 	 */
 	public Refactoring getRefactoring() {
@@ -106,7 +104,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/**
 	 * Returns the refactoring history wizard.
-	 * 
+	 *
 	 * @return the refactoring history wizard
 	 */
 	protected RefactoringHistoryWizard getRefactoringHistoryWizard() {
@@ -118,7 +116,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/**
 	 * Is the next wizard page disabled?
-	 * 
+	 *
 	 * @return <code>true</code> if disabled, <code>false</code> otherwise
 	 */
 	public boolean isNextPageDisabled() {
@@ -134,7 +132,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/**
 	 * Sets the preview change filter.
-	 * 
+	 *
 	 * @param filter
 	 *            the preview change filter to set
 	 */
@@ -145,7 +143,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/**
 	 * Determines whether the next wizard page is disabled.
-	 * 
+	 *
 	 * @param disable
 	 *            <code>true</code> to disable, <code>false</code> otherwise
 	 */
@@ -162,7 +160,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/**
 	 * Sets the current refactoring.
-	 * 
+	 *
 	 * @param refactoring
 	 *            the current refactoring, or <code>null</code>
 	 */
@@ -172,7 +170,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/**
 	 * Sets the status of the change generation.
-	 * 
+	 *
 	 * @param status
 	 *            the status
 	 */
@@ -183,7 +181,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 
 	/**
 	 * Sets the title of the page according to the refactoring.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor, or <code>null</code>
 	 * @param current

@@ -27,9 +27,9 @@ public class RefactoringStatusEntryLabelProvider extends LabelProvider{
 				return RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_FATAL);
 			else if (entry.isError())
 				return RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_ERROR);
-			else if (entry.isWarning())	
+			else if (entry.isWarning())
 				return RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_WARNING);
-			else 
+			else
 				return RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_INFO);
 		}
 }

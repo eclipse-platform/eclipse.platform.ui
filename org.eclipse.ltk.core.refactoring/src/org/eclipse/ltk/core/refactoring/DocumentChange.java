@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
-import org.eclipse.text.edits.UndoEdit;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.text.edits.UndoEdit;
 
 import org.eclipse.jface.text.IDocument;
 
@@ -27,24 +27,24 @@ import org.eclipse.ltk.internal.core.refactoring.UndoDocumentChange;
  * is still valid. So as long as its length hasn't changed the text edits
  * managed have a valid range and can be applied to the document. The
  * same applies to the undo change returned from the perform method.
- * 
- * <p> 
+ *
+ * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class DocumentChange extends TextChange {
 
 	private IDocument fDocument;
 	private int fLength;
-	
+
 	/**
-	 * Creates a new <code>DocumentChange</code> for the given 
+	 * Creates a new <code>DocumentChange</code> for the given
 	 * {@link IDocument}.
-	 * 
+	 *
 	 * @param name the change's name. Has to be a human readable name.
 	 * @param document the document this change is working on
 	 */
@@ -53,14 +53,14 @@ public class DocumentChange extends TextChange {
 		Assert.isNotNull(document);
 		fDocument= document;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public Object getModifiedElement(){
 		return fDocument;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -69,7 +69,7 @@ public class DocumentChange extends TextChange {
 		// we can only remember its length.
 		fLength= fDocument.getLength();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -86,26 +86,26 @@ public class DocumentChange extends TextChange {
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
 		return fDocument;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void commit(IDocument document, IProgressMonitor pm) throws CoreException {
 		// do nothing
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
 		//do nothing
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	protected Change createUndoChange(UndoEdit edit) {
 		return new UndoDocumentChange(getName(), fDocument, edit);
-	}	
+	}
 }
 

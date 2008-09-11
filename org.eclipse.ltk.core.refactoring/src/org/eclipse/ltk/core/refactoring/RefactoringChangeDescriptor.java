@@ -18,9 +18,9 @@ package org.eclipse.ltk.core.refactoring;
  * <p>
  * Note: this class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefactoringChangeDescriptor extends ChangeDescriptor {
@@ -31,7 +31,7 @@ public class RefactoringChangeDescriptor extends ChangeDescriptor {
 	/**
 	 * Creates the <code>RefactoringChangeDescriptor</code> with the
 	 * {@link RefactoringDescriptor} that originated the change.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the {@link RefactoringDescriptor} that originated the change.
 	 */
@@ -41,7 +41,7 @@ public class RefactoringChangeDescriptor extends ChangeDescriptor {
 
 	/**
 	 * Returns the {@link RefactoringDescriptor} that originated the change.
-	 * 
+	 *
 	 * @return the {@link RefactoringDescriptor} that originated the change.
 	 */
 	public RefactoringDescriptor getRefactoringDescriptor() {

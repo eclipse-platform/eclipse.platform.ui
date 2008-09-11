@@ -20,27 +20,27 @@ import org.eclipse.ltk.core.refactoring.Change;
  * <p>
  * This class is not intended to be extended outside the refactoring framework.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ChangePreviewViewerInput {
 	private Change fChange;
-	
+
 	/**
 	 * Creates a new input object for the given change.
-	 * 
+	 *
 	 * @param change the change object
 	 */
 	public ChangePreviewViewerInput(Change change) {
 		Assert.isNotNull(change);
 		fChange= change;
 	}
-	
+
 	/**
 	 * Returns the change of this input object.
-	 * 
+	 *
 	 * @return the change of this input object
 	 */
 	public Change getChange() {

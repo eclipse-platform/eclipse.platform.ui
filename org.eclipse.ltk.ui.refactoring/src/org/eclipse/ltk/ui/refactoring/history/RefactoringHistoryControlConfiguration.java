@@ -12,9 +12,8 @@ package org.eclipse.ltk.ui.refactoring.history;
 
 import org.eclipse.core.resources.IProject;
 
-import org.eclipse.ltk.ui.refactoring.RefactoringUI;
-
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
 /**
  * Configuration object for a refactoring history control.
@@ -22,14 +21,14 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
  * Note: this class is intended to be subclassed by clients wishing to control
  * the configuration behavior of their refactoring history control.
  * </p>
- * 
+ *
  * @see RefactoringUI#createRefactoringHistoryControl(org.eclipse.swt.widgets.Composite,
  *      RefactoringHistoryControlConfiguration)
- * 
+ *
  * @see IRefactoringHistoryControl
  * @see RefactoringHistoryLabelProvider
  * @see RefactoringHistoryContentProvider
- * 
+ *
  * @since 3.2
  */
 public class RefactoringHistoryControlConfiguration {
@@ -45,7 +44,7 @@ public class RefactoringHistoryControlConfiguration {
 
 	/**
 	 * Creates a new refactoring history control configuration.
-	 * 
+	 *
 	 * @param project
 	 *            the project, or <code>null</code> for the workspace
 	 * @param time
@@ -63,7 +62,7 @@ public class RefactoringHistoryControlConfiguration {
 
 	/**
 	 * Returns the label of a collection of refactorings.
-	 * 
+	 *
 	 * @return the collection label
 	 */
 	public String getCollectionLabel() {
@@ -73,7 +72,7 @@ public class RefactoringHistoryControlConfiguration {
 	/**
 	 * Returns the text of the comment field below the refactoring history tree,
 	 * if the currently selected refactoring descriptor provides no comment.
-	 * 
+	 *
 	 * @return the comment caption
 	 */
 	public String getCommentCaption() {
@@ -82,7 +81,7 @@ public class RefactoringHistoryControlConfiguration {
 
 	/**
 	 * Returns the content provider to use.
-	 * 
+	 *
 	 * @return the content provider to use
 	 */
 	public RefactoringHistoryContentProvider getContentProvider() {
@@ -97,7 +96,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: formatted date </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the day pattern
 	 */
 	public String getDayPattern() {
@@ -106,7 +105,7 @@ public class RefactoringHistoryControlConfiguration {
 
 	/**
 	 * Returns the label provider to use.
-	 * 
+	 *
 	 * @return the label provider to use
 	 */
 	public RefactoringHistoryLabelProvider getLabelProvider() {
@@ -121,7 +120,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: month name </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the last month pattern
 	 */
 	public String getLastMonthPattern() {
@@ -136,7 +135,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: week number </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the last week pattern
 	 */
 	public String getLastWeekPattern() {
@@ -151,7 +150,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: month name </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the month pattern
 	 */
 	public String getMonthPattern() {
@@ -160,7 +159,7 @@ public class RefactoringHistoryControlConfiguration {
 
 	/**
 	 * Returns the project of the refactoring history being displayed.
-	 * 
+	 *
 	 * @return the project, or <code>null</code> for the workspace
 	 */
 	public final IProject getProject() {
@@ -176,7 +175,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: name of project </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the project pattern
 	 */
 	public String getProjectPattern() {
@@ -192,7 +191,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: description of refactoring</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the refactoring pattern
 	 */
 	public String getRefactoringPattern() {
@@ -207,7 +206,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: month name </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the this month pattern
 	 */
 	public String getThisMonthPattern() {
@@ -222,7 +221,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: week number </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the this week pattern
 	 */
 	public String getThisWeekPattern() {
@@ -237,7 +236,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: formatted date </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the today pattern
 	 */
 	public String getTodayPattern() {
@@ -252,7 +251,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: week number </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the week pattern
 	 */
 	public String getWeekPattern() {
@@ -262,7 +261,7 @@ public class RefactoringHistoryControlConfiguration {
 	/**
 	 * Returns the caption of the refactoring history tree if refactorings of
 	 * more than one project are displayed.
-	 * 
+	 *
 	 * @return the workspace caption
 	 */
 	public String getWorkspaceCaption() {
@@ -277,7 +276,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: year number </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the year pattern
 	 */
 	public String getYearPattern() {
@@ -292,7 +291,7 @@ public class RefactoringHistoryControlConfiguration {
 	 * <li> {0}: formatted date </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the yesterday pattern
 	 */
 	public String getYesterdayPattern() {
@@ -301,7 +300,7 @@ public class RefactoringHistoryControlConfiguration {
 
 	/**
 	 * Returns whether the control should make the refactorings checkable.
-	 * 
+	 *
 	 * @return <code>true</code> if the control should make refactorings
 	 *         checkable, <code>false</code> otherwise
 	 */
@@ -311,7 +310,7 @@ public class RefactoringHistoryControlConfiguration {
 
 	/**
 	 * Returns whether the control should display time information.
-	 * 
+	 *
 	 * @return <code>true</code> to display time information,
 	 *         <code>false</code> otherwise
 	 */

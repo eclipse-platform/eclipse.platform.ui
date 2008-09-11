@@ -16,23 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.IProject;
-
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
@@ -49,6 +32,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IProject;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -69,6 +60,13 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.compare.Splitter;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
@@ -76,7 +74,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 
 /**
  * Control which is capable of displaying refactoring histories.
- * 
+ *
  * @since 3.2
  */
 public class RefactoringHistoryControl extends Composite implements IRefactoringHistoryControl {
@@ -86,7 +84,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 		/**
 		 * Creates a new refactoring history label.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent control
 		 * @param style
@@ -118,7 +116,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 		/**
 		 * Creates a new refactoring history tree viewer.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent control
 		 * @param style
@@ -169,7 +167,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 		/**
 		 * Returns the children of the specified element.
-		 * 
+		 *
 		 * @param element
 		 *            the element
 		 * @return the children of the element
@@ -180,7 +178,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 		/**
 		 * Reconciles the check state of the specified element and dependencies.
-		 * 
+		 *
 		 * @param element
 		 *            the changed element
 		 */
@@ -202,7 +200,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 		/**
 		 * Reconciles the check state of the specified element and dependencies.
-		 * 
+		 *
 		 * @param element
 		 *            the changed element
 		 * @param checked
@@ -229,7 +227,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 		/**
 		 * Determines whether the specified element is checked.
-		 * 
+		 *
 		 * @param element
 		 *            the element
 		 * @param checked
@@ -246,7 +244,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 		/**
 		 * Determines whether the specified element is grayed.
-		 * 
+		 *
 		 * @param element
 		 *            the element
 		 * @param grayed
@@ -264,7 +262,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		/**
 		 * Determines whether the subtree of the specified element is rendered
 		 * grayed.
-		 * 
+		 *
 		 * @param element
 		 *            the element specifying the subtree
 		 * @param grayed
@@ -315,7 +313,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Creates a new refactoring history control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param configuration
@@ -349,7 +347,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Creates the button bar at the bottom of the component.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -420,7 +418,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Creates the detail label of the control
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -435,7 +433,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Creates the detail pane of the control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the detail pane
@@ -460,7 +458,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Creates the history viewer of the control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the history viewer
@@ -475,7 +473,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Creates the button bar at the right of the component.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -485,7 +483,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Creates the selection label of the control
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -499,7 +497,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Creates the toolbar of the control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 */
@@ -526,7 +524,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Returns the number of columns to use for the container layout.
-	 * 
+	 *
 	 * @return the number of columns
 	 */
 	protected int getContainerColumns() {
@@ -535,7 +533,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Returns the content provider to use.
-	 * 
+	 *
 	 * @return the content provider
 	 */
 	protected RefactoringHistoryContentProvider getContentProvider() {
@@ -551,7 +549,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Returns the refactoring descriptors covered by the specified node.
-	 * 
+	 *
 	 * @param element
 	 *            the refactoring history element
 	 * @return the collection of covered descriptors
@@ -565,7 +563,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Computes the refactoring descriptors covered by the specified node.
-	 * 
+	 *
 	 * @param element
 	 *            the refactoring history element
 	 * @param set
@@ -593,7 +591,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Returns the number of columns to use for the detail pane layout.
-	 * 
+	 *
 	 * @return the number of columns
 	 */
 	protected int getDetailColumns() {
@@ -602,7 +600,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Returns the text to be displayed in the history pane.
-	 * 
+	 *
 	 * @return the text in the history pane
 	 */
 	private String getHistoryPaneText() {
@@ -617,7 +615,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Returns the input of the refactoring history control.
-	 * 
+	 *
 	 * @return the input, or <code>null</code>
 	 */
 	public final RefactoringHistory getInput() {
@@ -626,7 +624,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Returns the label provider to use.
-	 * 
+	 *
 	 * @return the label provider
 	 */
 	protected RefactoringHistoryLabelProvider getLabelProvider() {
@@ -662,7 +660,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	/**
 	 * Handles the selection changed event.
-	 * 
+	 *
 	 * @param selection
 	 *            the new selection
 	 */

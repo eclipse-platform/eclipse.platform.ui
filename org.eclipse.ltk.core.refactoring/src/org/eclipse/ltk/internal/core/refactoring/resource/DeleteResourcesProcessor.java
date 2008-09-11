@@ -29,9 +29,6 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.resource.DeleteResourceChange;
-import org.eclipse.ltk.core.refactoring.resource.DeleteResourcesDescriptor;
-
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.DeleteArguments;
 import org.eclipse.ltk.core.refactoring.participants.DeleteProcessor;
@@ -39,7 +36,8 @@ import org.eclipse.ltk.core.refactoring.participants.ParticipantManager;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
-
+import org.eclipse.ltk.core.refactoring.resource.DeleteResourceChange;
+import org.eclipse.ltk.core.refactoring.resource.DeleteResourcesDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -47,7 +45,7 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
 
 /**
  * A delete processor for {@link IResource resources}. The processor will delete the resources and
- * load delete participants if references should be deleted as well. 
+ * load delete participants if references should be deleted as well.
  *
  * @since 3.4
  */
@@ -75,7 +73,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 	/**
 	 * Returns the resources to delete.
-	 * 
+	 *
 	 * @return the resources to delete.
 	 */
 	public IResource[] getResourcesToDelete() {
@@ -83,7 +81,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	}
 
 	/**
-	 * Delete projects contents. 
+	 * Delete projects contents.
 	 * @return <code>true</code> if this will delete the project contents.  The content delete is not undoable.
 	 */
 	public boolean isDeleteContents() {
@@ -249,7 +247,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		}
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
-	
+
 	private static void addToList(ArrayList result, IResource curr) {
 		IPath currPath= curr.getFullPath();
 		for (int k= result.size() - 1; k >= 0 ; k--) {
@@ -264,6 +262,6 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		}
 		result.add(curr);
 	}
-	
-	
+
+
 }

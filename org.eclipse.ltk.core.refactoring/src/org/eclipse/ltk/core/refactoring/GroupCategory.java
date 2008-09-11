@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * Note: this class is not intended to be subclassed
  * </p>
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class GroupCategory {
-	
+
 	private String fId;
 	private String fName;
 	private String fDescription;
@@ -32,7 +32,7 @@ public class GroupCategory {
 	/**
 	 * Creates a new group category with the given name and
 	 * description.
-	 * 
+	 *
 	 * @param id a unique identifier
 	 * @param name the name
 	 * @param description the description
@@ -45,25 +45,25 @@ public class GroupCategory {
 		fName= name;
 		fDescription= description;
 	}
-	
+
 	/**
 	 * Returns the name of the group category.
-	 * 
+	 *
 	 * @return the name
 	 */
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
 	 * Returns the description of the group category.
-	 * 
+	 *
 	 * @return the description
 	 */
 	public String getDescription() {
 		return fDescription;
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -71,7 +71,7 @@ public class GroupCategory {
 			return false;
 		return fId.equals(((GroupCategory)obj).fId);
 	}
-	
+
 	public int hashCode() {
 		return fId.hashCode();
 	}

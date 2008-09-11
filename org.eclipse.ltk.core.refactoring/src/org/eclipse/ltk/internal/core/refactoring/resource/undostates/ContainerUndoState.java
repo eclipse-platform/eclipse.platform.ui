@@ -32,17 +32,17 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 /**
  * ContainerUndoState is a lightweight description that describes a container
  * to be created.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public abstract class ContainerUndoState extends AbstractResourceUndoState {
 
 	protected String name;
 	protected URI location;
-	
+
 	private String defaultCharSet;
 	private AbstractResourceUndoState[] members;
 
@@ -51,7 +51,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	 * can be used to create the container. The returned ContainerState
 	 * should represent any non-existing parents in addition to the specified
 	 * container.
-	 * 
+	 *
 	 * @param container
 	 *            the handle of the container to be described
 	 * @return a container description describing the container and any
@@ -118,7 +118,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	 * Typically used when the container handle represents a resource that
 	 * actually exists, although it will not fail if the resource is
 	 * non-existent.
-	 * 
+	 *
 	 * @param container
 	 *            the container to be described
 	 */
@@ -148,7 +148,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 
 	/**
 	 * Create any child resources known by this container description.
-	 * 
+	 *
 	 * @param parentHandle
 	 *            the handle of the created parent
 	 * @param monitor
@@ -198,7 +198,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 
 	/**
 	 * Return the name of the container described by this ContainerState.
-	 * 
+	 *
 	 * @return the name of the container.
 	 */
 	public String getName() {
@@ -207,7 +207,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 
 	/**
 	 * Return the first folder found that has no child folders.
-	 * 
+	 *
 	 * @return the container description for the first child in the receiver
 	 *         that is a leaf, or this container if there are no children.
 	 */
@@ -229,7 +229,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	/**
 	 * Add the specified resource description as a member of this resource
 	 * description
-	 * 
+	 *
 	 * @param member
 	 *            the resource description considered a member of this
 	 *            container.
@@ -257,7 +257,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 
 	/**
 	 * Set the location to which this container is linked.
-	 * 
+	 *
 	 * @param location
 	 *            the location URI, or <code>null</code> if there is no link
 	 */

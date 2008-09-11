@@ -23,23 +23,23 @@ import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.ltk.core.refactoring.ContentStamp;
 
 public class ContentStamps {
-	
+
 	private static class ContentStampImpl extends ContentStamp {
 		private int fKind;
 		private long fValue;
 		private long fFileStamp;
-		
+
 		public static final int FILE= 1;
 		public static final int DOCUMENT= 2;
-		
+
 		private static ContentStamp createFileStamp(long value) {
 			return new ContentStampImpl(FILE, value, value);
 		}
-		
+
 		private static ContentStamp createDocumentStamp(long value, long fileValue) {
 			return new ContentStampImpl(DOCUMENT, value, fileValue);
 		}
-		
+
 		private ContentStampImpl(int kind, long value, long filestamp) {
 			fKind= kind;
 			fValue= value;
@@ -72,7 +72,7 @@ public class ContentStamps {
 			return "Stamp: " + fValue; //$NON-NLS-1$
 		}
 	}
-	
+
 	private static class NullContentStamp extends ContentStamp {
 		public boolean isNullStamp() {
 			return true;
@@ -81,22 +81,22 @@ public class ContentStamps {
 			return "Null Stamp"; //$NON-NLS-1$
 		}
 	}
-	
+
 	public static final ContentStamp NULL_CONTENT_STAMP= new NullContentStamp();
-	
+
 	public static ContentStamp get(IFile file, IDocument document) {
 		if (document instanceof IDocumentExtension4) {
 			long stamp= ((IDocumentExtension4)document).getModificationStamp();
 			if (stamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP)
 				return NULL_CONTENT_STAMP;
-			return ContentStampImpl.createDocumentStamp(stamp, file.getModificationStamp()); 
+			return ContentStampImpl.createDocumentStamp(stamp, file.getModificationStamp());
 		}
 		long stamp= file.getModificationStamp();
 		if (stamp == IResource.NULL_STAMP)
 			return NULL_CONTENT_STAMP;
 		return ContentStampImpl.createFileStamp(stamp);
 	}
-	
+
 	public static void set(IFile file, ContentStamp s) throws CoreException {
 		if (!(s instanceof ContentStampImpl))
 			return;
@@ -105,7 +105,7 @@ public class ContentStamps {
 		Assert.isTrue(value != IResource.NULL_STAMP);
 		file.revertModificationStamp(value);
 	}
-	
+
 	public static boolean set(IDocument document, ContentStamp s) throws CoreException {
 		if (!(s instanceof ContentStampImpl))
 			return false;
@@ -119,5 +119,5 @@ public class ContentStamps {
 			}
 		}
 		return false;
-	}	
+	}
 }

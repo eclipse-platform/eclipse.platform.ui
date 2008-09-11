@@ -25,14 +25,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 /**
  * Base implementation of {@link ResourceUndoState} that describes the common
  * attributes of a resource to be created.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 abstract class AbstractResourceUndoState extends ResourceUndoState {
-	
+
 	protected IContainer parent;
 	protected long localTimeStamp= IResource.NULL_STAMP;
 
@@ -50,7 +50,7 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 
 	/**
 	 * Create a resource state from the specified resource.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to be described
 	 */
@@ -91,7 +91,7 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 	 * Restore any saved attributed of the specified resource. This method is
 	 * called after the existent resource represented by the receiver has been
 	 * created.
-	 * 
+	 *
 	 * @param resource
 	 *            the newly created resource
 	 * @throws CoreException

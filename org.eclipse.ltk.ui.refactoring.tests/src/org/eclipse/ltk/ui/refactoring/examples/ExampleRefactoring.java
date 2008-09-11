@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.examples;
 
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+
+import org.eclipse.core.resources.IFile;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
@@ -36,31 +36,31 @@ public class ExampleRefactoring extends Refactoring {
 	private IFile fFile;
 	private String fOldText;
 	private String fNewText;
-	
+
 	private Change fChange;
-	
+
 	public ExampleRefactoring(IFile file) {
 		fFile= file;
 		fChange= null;
 		fOldText= null;
 		fNewText= null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#getName()
 	 */
 	public String getName() {
 		return "Make replaces";
 	}
-	
+
 	public void setNewText(String text) {
 		fNewText= text;
 	}
-	
+
 	public void setOldText(String text) {
 		fOldText= text;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -81,16 +81,16 @@ public class ExampleRefactoring extends Refactoring {
 		if (fNewText == null || fNewText.length() == 0) {
 			return RefactoringStatus.createFatalErrorStatus("New text must be set and not empty");
 		}
-		
+
 		TextFileChange change= new TextFileChange(getName(), fFile);
 		change.setEdit(new MultiTextEdit());
-		
+
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(fFile.getFullPath(), LocationKind.IFILE, null);
 		try {
 			ITextFileBuffer textFileBuffer= manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			String content= textFileBuffer.getDocument().get();
-			
+
 			int i= 0;
 			int count= 1;
 			while (i < content.length()) {
@@ -109,13 +109,13 @@ public class ExampleRefactoring extends Refactoring {
 				return RefactoringStatus.createErrorStatus("No matches found for '" + fOldText +"'");
 			}
 			fChange= change;
-			
+
 		} finally {
 			manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, null);
 		}
 		return new RefactoringStatus();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */

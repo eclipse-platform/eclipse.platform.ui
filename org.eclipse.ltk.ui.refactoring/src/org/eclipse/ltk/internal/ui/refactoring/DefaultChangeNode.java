@@ -13,15 +13,15 @@ package org.eclipse.ltk.internal.ui.refactoring;
 import org.eclipse.ltk.core.refactoring.Change;
 
 public class DefaultChangeNode extends AbstractChangeNode {
-	
+
 	public DefaultChangeNode(PreviewNode parent, Change change) {
 		super(parent, change);
 	}
-	
+
 	int getActive() {
 		return getDefaultChangeActive();
 	}
-	
+
 	PreviewNode[] doCreateChildren() {
 		return EMPTY_CHILDREN;
 	}

@@ -14,7 +14,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
 /**
  * Interface for constants related to refactoring serialization.
- * 
+ *
  * @since 3.2
  */
 public interface IRefactoringSerializationConstants {

@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
 /**
@@ -33,13 +32,13 @@ import org.eclipse.ltk.ui.refactoring.RefactoringUI;
  * <p>
  * Note: this interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see RefactoringHistoryControlConfiguration
  * @see RefactoringHistoryContentProvider
  * @see RefactoringHistoryLabelProvider
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRefactoringHistoryControl {
@@ -50,7 +49,7 @@ public interface IRefactoringHistoryControl {
 	 * If the listener is already registered with the control, or the control
 	 * has no checkable viewer or has not yet been created, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to register
 	 */
@@ -62,7 +61,7 @@ public interface IRefactoringHistoryControl {
 	 * If the listener is already registered with the control or has not yet
 	 * been created, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to register
 	 */
@@ -75,7 +74,7 @@ public interface IRefactoringHistoryControl {
 	 * history control. It is called only once. Method <code>getControl()</code>
 	 * should be used to retrieve the widget hierarchy.
 	 * </p>
-	 * 
+	 *
 	 * @see #getControl()
 	 */
 	public void createControl();
@@ -87,9 +86,9 @@ public interface IRefactoringHistoryControl {
 	 * tree viewer, this method is equivalent to
 	 * {@link #getSelectedDescriptors()}.
 	 * </p>
-	 * 
+	 *
 	 * @return the selected refactoring descriptors, or an empty array.
-	 * 
+	 *
 	 * @see IRefactoringHistoryControl#getSelectedDescriptors()
 	 * @see RefactoringHistoryControlConfiguration#isCheckableViewer()
 	 */
@@ -97,7 +96,7 @@ public interface IRefactoringHistoryControl {
 
 	/**
 	 * Returns the SWT control of this refactoring history control.
-	 * 
+	 *
 	 * @return the SWT control, or <code>null</code> if the control's widget
 	 *         hierarchy has not yet been created
 	 */
@@ -105,7 +104,7 @@ public interface IRefactoringHistoryControl {
 
 	/**
 	 * Returns the selected refactoring descriptors.
-	 * 
+	 *
 	 * @return the selected refactoring descriptors, or an empty array.
 	 */
 	public RefactoringDescriptorProxy[] getSelectedDescriptors();
@@ -115,7 +114,7 @@ public interface IRefactoringHistoryControl {
 	 * <p>
 	 * If the listener is not registered with this control, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to unregister
 	 */
@@ -126,7 +125,7 @@ public interface IRefactoringHistoryControl {
 	 * <p>
 	 * If the listener is not registered with this control, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to unregister
 	 */
@@ -139,10 +138,10 @@ public interface IRefactoringHistoryControl {
 	 * tree viewer, this method is equivalent to
 	 * {@link #setSelectedDescriptors(RefactoringDescriptorProxy[])}.
 	 * </p>
-	 * 
+	 *
 	 * @param descriptors
 	 *            the refactoring descriptors to check, or an empty array
-	 * 
+	 *
 	 * @see IRefactoringHistoryControl#setSelectedDescriptors(RefactoringDescriptorProxy[])
 	 * @see RefactoringHistoryControlConfiguration#isCheckableViewer()
 	 */
@@ -150,7 +149,7 @@ public interface IRefactoringHistoryControl {
 
 	/**
 	 * Sets the refactoring history of this control.
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history, or <code>null</code> to clear the
 	 *            viewer input
@@ -159,7 +158,7 @@ public interface IRefactoringHistoryControl {
 
 	/**
 	 * Sets the selected refactoring descriptors.
-	 * 
+	 *
 	 * @param descriptors
 	 *            the refactoring descriptors to select, or an empty array
 	 */

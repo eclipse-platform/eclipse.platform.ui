@@ -24,7 +24,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  * The main purpose of this class is type safety for the generic move
  * refactoring
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class MoveProcessor extends RefactoringProcessor {

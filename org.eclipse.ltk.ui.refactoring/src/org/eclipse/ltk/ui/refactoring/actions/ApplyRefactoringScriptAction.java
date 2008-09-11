@@ -27,11 +27,11 @@ import org.eclipse.ltk.internal.ui.refactoring.scripting.ApplyRefactoringScriptW
 
 /**
  * Action to apply a refactoring script to the workspace.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public final class ApplyRefactoringScriptAction implements IWorkbenchWindowActionDelegate {
@@ -44,7 +44,7 @@ public final class ApplyRefactoringScriptAction implements IWorkbenchWindowActio
 
 	/**
 	 * Shows the apply script wizard.
-	 * 
+	 *
 	 * @param window
 	 *            the workbench window
 	 */

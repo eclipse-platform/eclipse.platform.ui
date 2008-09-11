@@ -53,9 +53,9 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	private RefactoringWizard fWizard;
 	private IWizardPage fCurrentPage;
 	private IWizardPage fVisiblePage;
-	
+
 	private boolean fMakeNextButtonDefault;
-	
+
 	private PageBook fPageContainer;
 	private PageBook fStatusContainer;
 	private MessageBox fMessageBox;
@@ -71,11 +71,11 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	private IDialogSettings fSettings;
 	private boolean fHasAdditionalPages;
 	private Rectangle fInitialSize;
-	
+
 	private static final String DIALOG_SETTINGS= "RefactoringWizard.preview"; //$NON-NLS-1$
 	private static final String WIDTH= "width"; //$NON-NLS-1$
 	private static final String HEIGHT= "height"; //$NON-NLS-1$
-	
+
 	private static class MessageBox extends Composite {
 		private Label fImage;
 		private Label fText;
@@ -141,7 +141,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			return result.toString();
 		}
 	}
-	
+
 	private static class PageBook extends Composite {
 		private StackLayout fLayout;
 		public PageBook(Composite parent, int style) {
@@ -158,7 +158,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			return fLayout.topControl;
 		}
 	}
-	
+
 	public RefactoringWizardDialog2(Shell shell, RefactoringWizard wizard) {
 		super(shell);
 		Assert.isNotNull(wizard);
@@ -198,7 +198,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		} catch (NumberFormatException e) {
 		}
 	}
-	
+
 	private void saveSize() {
 		if (fCurrentPage instanceof PreviewWizardPage) {
 			Control control= fCurrentPage.getControl().getParent();
@@ -207,7 +207,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			fSettings.put(HEIGHT, size.y);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#getButton(int)
 	 */
@@ -216,11 +216,11 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	}
 
 	//---- IRefactoringWizardDialog ------------------------------------
-	
+
 	public void makeNextButtonDefault() {
 		fMakeNextButtonDefault= true;
 	}
-	
+
 	//---- IWizardContainer --------------------------------------------
 
 	/* (non-Javadoc)
@@ -301,7 +301,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	public IWizardPage getCurrentPage() {
 		return fCurrentPage;
 	}
-	
+
 	//---- IRunnableContext --------------------------------------------
 
 	/* (non-Javadoc)
@@ -314,7 +314,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			Object state = null;
 			if(fActiveRunningOperations == 0)
 				state = aboutToStart(fork && cancelable);
-		
+
 			fActiveRunningOperations++;
 			try {
 				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
@@ -326,7 +326,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			}
 		}
 	}
-	
+
 	private Object aboutToStart(boolean cancelable) {
 		Map savedState = null;
 		Shell shell= getShell();
@@ -335,24 +335,24 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			Control focusControl = getShell().getDisplay().getFocusControl();
 			if (focusControl != null && focusControl.getShell() != getShell())
 				focusControl = null;
-				
+
 			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
 			fWaitCursor = new Cursor(d, SWT.CURSOR_WAIT);
 			setDisplayCursor(d, fWaitCursor);
-					
+
 			// Set the arrow cursor to the cancel component.
 			fArrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
 			cancelButton.setCursor(fArrowCursor);
-	
+
 			boolean hasProgressMonitor= fProgressMonitorPart != null;
-	
+
 			// Deactivate shell
 			savedState= saveUIState(hasProgressMonitor && cancelable);
 			if (focusControl != null)
 				savedState.put("focus", focusControl); //$NON-NLS-1$
-			
+
 			if (hasProgressMonitor) {
 				fProgressMonitorPart.attachToCancelComponent(cancelButton);
 				fStatusContainer.showPage(fProgressMonitorPart);
@@ -362,7 +362,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		}
 		return savedState;
 	}
-	
+
 	private Map saveUIState(boolean keepCancelEnabled) {
 		Map savedState= new HashMap(10);
 		saveEnableStateAndSet(getButton(PREVIEW_ID), savedState, "preview", false); //$NON-NLS-1$
@@ -373,14 +373,14 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		savedState.put("page", ControlEnableState.disable(fVisiblePage.getControl())); //$NON-NLS-1$
 		return savedState;
 	}
-	
+
 	private void saveEnableStateAndSet(Control w, Map h, String key, boolean enabled) {
 		if (w != null) {
 			h.put(key, Boolean.valueOf(w.getEnabled()));
 			w.setEnabled(enabled);
 		}
 	}
-	
+
 	private void setDisplayCursor(Display d, Cursor c) {
 		Shell[] shells= d.getShells();
 		for (int i= 0; i < shells.length; i++)
@@ -391,14 +391,14 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		Shell shell= getShell();
 		if (shell != null) {
 			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
-			
+
 			if (fProgressMonitorPart != null)
 				fProgressMonitorPart.removeFromCancelComponent(cancelButton);
-				
+
 			fStatusContainer.showPage(fMessageBox);
 			Map state = (Map)savedState;
 			restoreUIState(state);
-	
+
 			setDisplayCursor(shell.getDisplay(), null);
 			cancelButton.setCursor(null);
 			fWaitCursor.dispose();
@@ -410,7 +410,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 				focusControl.setFocus();
 		}
 	}
-	
+
 	private void restoreUIState(Map state) {
 		restoreEnableState(getButton(PREVIEW_ID), state, "preview");//$NON-NLS-1$
 		restoreEnableState(getButton(IDialogConstants.OK_ID), state, "ok");//$NON-NLS-1$
@@ -420,7 +420,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		ControlEnableState pageState = (ControlEnableState) state.get("page");//$NON-NLS-1$
 		pageState.restore();
 	}
-	
+
 	private void restoreEnableState(Control w, Map h, String key) {
 		if (w != null) {
 			Boolean b = (Boolean) h.get(key);
@@ -428,9 +428,9 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 				w.setEnabled(b.booleanValue());
 		}
 	}
-	
+
 	//---- Dialog -----------------------------------------------------------
-	
+
 	public boolean close() {
 		fWizard.dispose();
 		return super.close();
@@ -473,18 +473,18 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		makeVisible(fCurrentPage);
 		updateButtons();
 	}
-	
+
 	protected void handleShellCloseEvent() {
 		if (fActiveRunningOperations == 0)	{
 			if (fWizard.performCancel())
 				super.handleShellCloseEvent();
 		}
 	}
-	
+
 	private boolean isPreviewPageActive() {
 		return IPreviewWizardPage.PAGE_NAME.equals(fCurrentPage.getName());
 	}
-	
+
 	private void nextOrPreviewPressed() {
 		IWizardPage current= fCurrentPage;
 		saveInitialSize();
@@ -498,7 +498,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 				return;
 			}
 		}
-		
+
 		showCurrentPage();
 	}
 
@@ -509,7 +509,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			fInitialSize= getShell().getBounds();
 		}
 	}
-	
+
 	private boolean isFirstPage() {
 		IWizardPage[] pages= fWizard.getPages();
 		return (fCurrentPage.equals(pages[0]));
@@ -523,7 +523,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 
 		showCurrentPage();
 	}
-	
+
 	private boolean showErrorDialog(ErrorWizardPage page) {
 		RefactoringStatusDialog dialog= new RefactoringStatusDialog(getShell(), page,
 			fWizard.internalShowBackButtonOnStatusDialog(InternalAPI.INSTANCE));
@@ -538,14 +538,14 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		}
 		return false;
 	}
-	
+
 	private void resize() {
-		
+
 		if (isFirstPage()) {
 			getShell().setBounds(fInitialSize);
 			return;
 		}
-		
+
 		Control control= fPageContainer.getTopPage();
 		Point size= control.getSize();
 		int dw= Math.max(0, fPreviewWidth - size.x);
@@ -557,7 +557,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		Rectangle clientRect= shell.getMonitor().getClientArea();
 		rect.x= Math.max(clientRect.x, rect.x - dx);
 		rect.y= Math.max(clientRect.y, rect.y - dy);
-		
+
 		// limit with and height to monitor
 		rect.width= Math.min(rect.width + dw, clientRect.width);
 		rect.height= Math.min(rect.height + dh, clientRect.height);
@@ -572,12 +572,12 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		if (ye > clientRect.height) {
 			rect.y-= ye - clientRect.height;
 		}
-		
+
 		shell.setBounds(rect);
 	}
-	
+
 	//---- UI construction ---------------------------------------------------
-	
+
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		String title= fWizard.getDefaultPageTitle();
@@ -586,7 +586,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		newShell.setText(title);
 		fWizard.getRefactoring().setValidationContext(newShell);
 	}
-	
+
 	protected Control createContents(Composite parent) {
 		Composite result= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -594,10 +594,10 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		layout.verticalSpacing= 0; layout.horizontalSpacing= 0;
 		result.setLayout(layout);
 		result.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		// initialize the dialog units
 		initializeDialogUnits(result);
-	
+
 		fPageContainer= new PageBook(result, SWT.NONE);
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		fPageContainer.setLayoutData(gd);
@@ -607,7 +607,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			gd.widthHint= fPreviewWidth;
 			gd.heightHint= fPreviewHeight;
 		}
-		
+
 		fStatusContainer= new PageBook(result, SWT.NONE);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(fWizard.getMessageLineWidthInChars());
@@ -616,20 +616,20 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			createProgressMonitorPart();
 		createMessageBox();
 		fStatusContainer.showPage(fMessageBox);
-		
+
 		buttonBar= createButtonBar(result);
-		
+
 		if (fCurrentPage != null) {
 			fCurrentPage.createControl(fPageContainer);
 			makeVisible(fCurrentPage);
 			updateMessage();
 			updateButtons();
 		}
-		
+
 		applyDialogFont(result);
 		return result;
 	}
-	
+
 	private void createProgressMonitorPart() {
 		// Insert a progress monitor
 		GridLayout pmlayout= new GridLayout();
@@ -637,13 +637,13 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		pmlayout.marginHeight= 0;
 		fProgressMonitorPart= new ProgressMonitorPart(fStatusContainer, pmlayout);
 	}
-	
+
 	private void createMessageBox() {
 		fMessageBox= new MessageBox(fStatusContainer, SWT.NONE);
 	}
-	
+
 	protected void createButtonsForButtonBar(Composite parent) {
-		
+
 		if (fHasAdditionalPages)
 			createPreviousAndNextButtons(parent);
 		else
@@ -668,7 +668,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		Button okButton= getButton(IDialogConstants.OK_ID);
 		okButton.setFocus();
 	}
-	
+
     private void createPreviewButton(Composite parent) {
 		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.internalHasPreviewPage(InternalAPI.INSTANCE)) {
 			Button preview= createButton(parent, PREVIEW_ID, RefactoringUIMessages.RefactoringWizardDialog2_buttons_preview_label, false);
@@ -686,7 +686,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 
 	private Composite createPreviousAndNextButtons(Composite parent) {
 		// Copied from Wizard Dialog.
-		
+
 		// increment the number of columns in the button bar
 		((GridLayout) parent.getLayout()).numColumns+= 2; // parent is assumed to have a GridLayout (see javadoc of Dialog#createButton(..))
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -726,7 +726,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 
 		return composite;
 	}
-	
+
 	private void makeVisible(IWizardPage page) {
 		if (fVisiblePage == page)
 			return;

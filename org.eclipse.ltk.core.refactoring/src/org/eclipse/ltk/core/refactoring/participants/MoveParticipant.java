@@ -20,23 +20,23 @@ package org.eclipse.ltk.core.refactoring.participants;
  * org.eclipse.ltk.core.refactoring.moveParticipants</code>.
  * Extensions to this extension point must therefore extend this abstract class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class MoveParticipant extends RefactoringParticipant {
 
 	private MoveArguments fArguments;
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	protected final void initialize(RefactoringArguments arguments) {
 		fArguments= (MoveArguments)arguments;
 	}
-	
+
 	/**
 	 * Returns the move arguments.
-	 * 
+	 *
 	 * @return the move arguments
 	 */
 	public MoveArguments getArguments() {

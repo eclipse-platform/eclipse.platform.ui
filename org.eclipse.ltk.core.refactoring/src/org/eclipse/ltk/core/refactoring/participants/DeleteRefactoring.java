@@ -19,16 +19,16 @@ import org.eclipse.core.runtime.Assert;
  * This class is not intended to be subclassed by clients.
  * </p>
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class DeleteRefactoring extends ProcessorBasedRefactoring {
 
 	private DeleteProcessor fProcessor;
-	
+
 	/**
 	 * Constructs a new delete refactoring for the given processor.
-	 * 
+	 *
 	 * @param processor the delete processor
 	 */
 	public DeleteRefactoring(DeleteProcessor processor) {
@@ -36,7 +36,7 @@ public class DeleteRefactoring extends ProcessorBasedRefactoring {
 		Assert.isNotNull(processor);
 		fProcessor= processor;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

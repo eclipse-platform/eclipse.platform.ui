@@ -26,7 +26,7 @@ public class FailingParticipant2 extends RenameParticipant {
 		/** This class is not intended to be serialized. */
 		private static final long serialVersionUID= 1L;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

@@ -16,6 +16,8 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.osgi.service.prefs.BackingStoreException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
@@ -35,15 +37,11 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringExecutionEvent;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
-
+import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorProxyAdapter;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-
-import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
-
-import org.osgi.service.prefs.BackingStoreException;
 
 public class RefactoringHistoryServiceTests extends TestCase {
 

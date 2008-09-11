@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+
 /**
  * Image descriptor for decorated refactoring descriptors.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringDescriptorImageDescriptor extends CompositeImageDescriptor {
@@ -40,7 +40,7 @@ public final class RefactoringDescriptorImageDescriptor extends CompositeImageDe
 
 	/**
 	 * Creates a new refactoring descriptor image descriptor.
-	 * 
+	 *
 	 * @param image
 	 *            the base image
 	 * @param flags
@@ -88,7 +88,7 @@ public final class RefactoringDescriptorImageDescriptor extends CompositeImageDe
 
 	/**
 	 * Returns the image data for the specified descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the image descriptor
 	 * @return the image data

@@ -20,14 +20,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 
 /**
  * Default implementation of a refactoring descriptor.
  * This refactoring descriptor can only be used as temporary storage to transfer
- * refactoring descriptor data. {@link #createRefactoring(RefactoringStatus)} always returns null. 
- * 
+ * refactoring descriptor data. {@link #createRefactoring(RefactoringStatus)} always returns null.
+ *
  * @since 3.2
  */
 public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
@@ -37,7 +36,7 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Creates a new default refactoring descriptor.
-	 * 
+	 *
 	 * @param id
 	 *            the unique id of the refactoring
 	 * @param project
@@ -59,7 +58,7 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @return always null
 	 */
 	public Refactoring createRefactoring(final RefactoringStatus status) throws CoreException {
@@ -69,7 +68,7 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Returns the argument map
-	 * 
+	 *
 	 * @return the argument map.
 	 */
 	public Map getArguments() {

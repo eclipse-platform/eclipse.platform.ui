@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,26 +30,22 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
-
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 
 /**
  * Helper class to implement shared functionality to edit refactoring histories.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryEditHelper {
@@ -57,7 +55,7 @@ public final class RefactoringHistoryEditHelper {
 
 		/**
 		 * Returns the refactoring history to use.
-		 * 
+		 *
 		 * @param monitor
 		 *            the progress monitor to use
 		 * @return the refactoring history
@@ -67,7 +65,7 @@ public final class RefactoringHistoryEditHelper {
 
 	/**
 	 * Returns the projects affected by the specified refactoring descriptors.
-	 * 
+	 *
 	 * @param descriptors
 	 *            the refactoring descriptors
 	 * @return the affected projects, or <code>null</code> if the entire
@@ -92,7 +90,7 @@ public final class RefactoringHistoryEditHelper {
 
 	/**
 	 * Prompts the user to delete refactorings from the history.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell to use
 	 * @param context

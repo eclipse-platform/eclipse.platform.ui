@@ -14,7 +14,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
  * Refactoring entry of a refactoring history.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
@@ -27,7 +27,7 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 
 	/**
 	 * Creates a new refactoring history entry.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent node, or <code>null</code>
 	 * @param proxy
@@ -51,7 +51,7 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 
 	/**
 	 * Returns the refactoring descriptor.
-	 * 
+	 *
 	 * @return the refactoring descriptor
 	 */
 	public RefactoringDescriptorProxy getDescriptor() {

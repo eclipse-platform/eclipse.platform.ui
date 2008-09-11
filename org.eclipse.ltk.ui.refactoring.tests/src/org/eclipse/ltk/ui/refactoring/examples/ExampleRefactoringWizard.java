@@ -14,7 +14,7 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 
 public class ExampleRefactoringWizard extends RefactoringWizard {
-	
+
 	public ExampleRefactoringWizard(ExampleRefactoring refactoring, int flags) {
 		super(refactoring, flags);
 		setDefaultPageTitle("My Example Refactoring");

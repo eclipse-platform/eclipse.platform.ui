@@ -23,14 +23,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * Contribution manager for refactorings.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringContributionManager implements IRegistryChangeListener {
@@ -49,7 +48,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 
 	/**
 	 * Returns the singleton instance of the refactoring contribution manager.
-	 * 
+	 *
 	 * @return the singleton instance
 	 */
 	public static RefactoringContributionManager getInstance() {
@@ -67,7 +66,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	/**
 	 * The refactoring contribution cache (element type:
 	 * &lt;RefactoringContribution, <code>String&gt;</code>)
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private Map fIdCache= null;
@@ -88,7 +87,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 
 	/**
 	 * Creates a new refactoring descriptor for the specified input data.
-	 * 
+	 *
 	 * @param id
 	 *            the unique id of the refactoring
 	 * @param project
@@ -102,7 +101,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	 * @param flags
 	 *            the flags
 	 * @return the refactoring descriptor
-	 * @throws IllegalArgumentException if the argument map contains invalid keys/values 
+	 * @throws IllegalArgumentException if the argument map contains invalid keys/values
 	 */
 	public RefactoringDescriptor createDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) throws IllegalArgumentException {
 		Assert.isNotNull(id);
@@ -125,7 +124,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	/**
 	 * Returns the refactoring contribution for the refactoring with the
 	 * specified id.
-	 * 
+	 *
 	 * @param id
 	 *            the unique id of the refactoring
 	 * @return the refactoring contribution, or <code>null</code> if no
@@ -141,11 +140,11 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 
 	/**
 	 * Returns the refactoring id for the specified refactoring contribution.
-	 * 
+	 *
 	 * @param contribution
 	 *            the refactoring contribution
 	 * @return the corresonding refactoring id
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public String getRefactoringId(final RefactoringContribution contribution) {
@@ -156,7 +155,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 
 	/**
 	 * Populates the refactoring contribution cache if necessary.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private void populateCache() {

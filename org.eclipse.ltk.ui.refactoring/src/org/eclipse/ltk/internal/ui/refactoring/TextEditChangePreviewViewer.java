@@ -14,18 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.runtime.AssertionFailedException;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
-
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.GroupCategory;
-import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
-import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -33,10 +21,18 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -49,27 +45,31 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.GroupCategory;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 
 	private ComparePreviewer fViewer;
-	
+
 	private static class TextEditBasedChangeInput extends ChangePreviewViewerInput {
 		TextEditBasedChangeGroup group;
 		int surroundingLines;
-		
+
 		TextEditBasedChangeGroup[] groups;
 		IRegion range;
-		
+
 		GroupCategory groupCategory;
-		
+
 		public TextEditBasedChangeInput(Change change) {
 			super(change);
 		}
 	}
-	
+
 	private static class ComparePreviewer extends CompareViewerSwitchingPane {
 		private CompareConfiguration fCompareConfiguration;
 		private String fLabel;
@@ -79,9 +79,9 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			super(parent, SWT.BORDER | SWT.FLAT, true);
 			fCompareConfiguration= new CompareConfiguration();
 			fCompareConfiguration.setLeftEditable(false);
-			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.ComparePreviewer_original_source); 
+			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.ComparePreviewer_original_source);
 			fCompareConfiguration.setRightEditable(false);
-			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_refactored_source); 
+			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_refactored_source);
 			addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					if (fImage != null && !fImage.isDisposed())
@@ -119,10 +119,10 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			}
 		}
 	}
-	
+
 	private static class CompareElement implements ITypedElement, IEncodedStreamContentAccessor, IResourceProvider {
 		// we use an encoding that preserves Unicode across the stream
-		private static final String ENCODING= "UTF-8";	//$NON-NLS-1$ 
+		private static final String ENCODING= "UTF-8";	//$NON-NLS-1$
 		private String fContent;
 		private String fType;
 		private IResource fResource;
@@ -132,7 +132,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			fResource= resource;
 		}
 		public String getName() {
-			return RefactoringUIMessages.ComparePreviewer_element_name; 
+			return RefactoringUIMessages.ComparePreviewer_element_name;
 		}
 		public Image getImage() {
 			return null;
@@ -154,18 +154,18 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			return fResource;
 		}
 	}
-	
+
 	public static ChangePreviewViewerInput createInput(TextEditBasedChange change) {
 		return new ChangePreviewViewerInput(change);
 	}
-	
+
 	public static ChangePreviewViewerInput createInput(Change change, TextEditBasedChangeGroup group, int surroundingLines) {
 		TextEditBasedChangeInput input= new TextEditBasedChangeInput(change);
 		input.group= group;
 		input.surroundingLines= surroundingLines;
 		return input;
 	}
-	
+
 	public static ChangePreviewViewerInput createInput(Change change, TextEditBasedChangeGroup[] groups, IRegion range) {
 		TextEditBasedChangeInput input= new TextEditBasedChangeInput(change);
 		input.groups= groups;
@@ -197,7 +197,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 					TextEditBasedChange editChange= extended.groups[0].getTextEditChange();
 					TextEditBasedChangeGroup[] groups= extended.groups;
 					if (extended.groupCategory != null) {
-						
+
 					}
 					setInput(editChange, editChange.getCurrentContent(extended.range, true, 0, new NullProgressMonitor()),
 						editChange.getPreviewContent(groups, extended.range, true, 0, new NullProgressMonitor()),
@@ -223,7 +223,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 	public void refresh() {
 		fViewer.getViewer().refresh();
 	}
-	
+
 	private void setInput(TextEditBasedChange change, String left, String right, String type) {
 		Object element= change.getModifiedElement();
 		IResource resource= null;
@@ -242,9 +242,9 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			fViewer.setLabel(null);
 			fViewer.setImageDescriptor(null);
 		}
-		
-		fViewer.setInput(new DiffNode( 
-			new CompareElement(left, type, resource), 
+
+		fViewer.setInput(new DiffNode(
+			new CompareElement(left, type, resource),
 			new CompareElement(right, type, resource)));
-	}	
+	}
 }

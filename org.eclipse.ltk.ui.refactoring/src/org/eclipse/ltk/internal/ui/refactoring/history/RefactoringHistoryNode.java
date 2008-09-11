@@ -12,7 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 
 /**
  * Node of a refactoring history.
- * 
+ *
  * @since 3.2
  */
 public abstract class RefactoringHistoryNode {
@@ -75,14 +75,14 @@ public abstract class RefactoringHistoryNode {
 
 	/**
 	 * Returns the node kind.
-	 * 
+	 *
 	 * @return the node kind
 	 */
 	public abstract int getKind();
 
 	/**
 	 * Returns the parent node.
-	 * 
+	 *
 	 * @return the parent node, or <code>null</code>
 	 */
 	public abstract RefactoringHistoryNode getParent();

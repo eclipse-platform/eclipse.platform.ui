@@ -20,21 +20,21 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * across the main processor and all its associated participants.
  * <p>
  * This interface should be implemented by clients wishing to provide a
- * special refactoring processor with special shared condition checks. 
+ * special refactoring processor with special shared condition checks.
  * </p>
- * 
+ *
  * @see org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext
- * 
- * @since 3.0 
+ *
+ * @since 3.0
  */
 public interface IConditionChecker {
 
 	/**
 	 * Performs the actual condition checking.
-	 * 
+	 *
 	 * @param monitor a progress monitor to report progress
 	 * @return the outcome of the condition check
-	 * 
+	 *
 	 * @throws CoreException if an error occurred during condition
 	 *  checking. The check is interpreted as failed if this happens
 	 */

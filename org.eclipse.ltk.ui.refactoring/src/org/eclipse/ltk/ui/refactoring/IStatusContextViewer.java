@@ -35,31 +35,31 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
  * @since 3.0
  */
 public interface IStatusContextViewer {
-	
+
 	/**
-	 * Creates the status viewer's widget hierarchy. This method 
-	 * is only called once. Method <code>getControl()</code> should 
+	 * Creates the status viewer's widget hierarchy. This method
+	 * is only called once. Method <code>getControl()</code> should
 	 * be used to retrieve the widget hierarchy.
-	 * 
+	 *
 	 * @param parent the parent for the widget hierarchy
-	 * 
+	 *
 	 * @see #getControl()
 	 */
 	public void createControl(Composite parent);
-	
+
 	/**
 	 * Returns the status context viewer's SWT control.
-	 * 
+	 *
 	 * @return the status context viewer's SWT control or <code>null</code>
 	 *  is the widget hierarchy hasn't been created yet
 	 */
-	public Control getControl();	
-	
+	public Control getControl();
+
 	/**
 	 * Sets the status context viewer's input element.
-	 * 
+	 *
 	 * @param input the input element
 	 */
-	public void setInput(RefactoringStatusContext input);	
+	public void setInput(RefactoringStatusContext input);
 }
 

@@ -16,16 +16,15 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryCollection;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryDate;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEntry;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryNode;
-
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Tree content provider to display a refactoring history. This content provider
@@ -36,12 +35,12 @@ import org.eclipse.jface.viewers.Viewer;
  * Note: this class is not indented to be subclassed outside the refactoring
  * framework.
  * </p>
- * 
+ *
  * @see IRefactoringHistoryControl
  * @see RefactoringHistoryControlConfiguration
- * 
+ *
  * @since 3.2
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefactoringHistoryContentProvider implements ITreeContentProvider {
@@ -55,7 +54,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * <p>
 	 * The array must be sorted in descending order.
 	 * </p>
-	 * 
+	 *
 	 * @param array
 	 *            the array, sorted in descending order, to search for the
 	 *            number
@@ -82,7 +81,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the index of the specified root kind in the structure.
-	 * 
+	 *
 	 * @param structure
 	 *            the structure
 	 * @param kind
@@ -111,7 +110,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Creates a new refactoring history content provider.
-	 * 
+	 *
 	 * @param configuration
 	 *            the refactoring history control configuration
 	 */
@@ -210,7 +209,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	/**
 	 * Returns the refactoring descriptor proxies, sorted in descending order of
 	 * their time stamps, and caches time stamp information.
-	 * 
+	 *
 	 * @return the refactoring descriptor proxies
 	 */
 	private RefactoringDescriptorProxy[] getRefactoringDescriptorProxies() {
@@ -230,14 +229,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the refactoring history days.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent node, or <code>null</code>
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp. inclusive
-	 * 
+	 *
 	 * @return the refactoring history days
 	 */
 	private Object[] getRefactoringHistoryDays(final RefactoringHistoryDate parent, final long start, final long end) {
@@ -271,14 +270,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the refactoring history entries.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent node, or <code>null</code>
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp. inclusive
-	 * 
+	 *
 	 * @return the refactoring history entries
 	 */
 	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryDate parent, final long start, final long end) {
@@ -292,10 +291,10 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the refactoring history entries.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent node, or <code>null</code>
-	 * 
+	 *
 	 * @return the refactoring history entries
 	 */
 	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryNode parent) {
@@ -308,14 +307,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the refactoring history months.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent node, or <code>null</code>
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp. inclusive
-	 * 
+	 *
 	 * @return the refactoring history months
 	 */
 	private Object[] getRefactoringHistoryMonths(final RefactoringHistoryDate parent, final long start, final long end) {
@@ -350,7 +349,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the refactoring history range for the specified time stamps.
-	 * 
+	 *
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
@@ -366,14 +365,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the refactoring history weeks.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent node, or <code>null</code>
 	 * @param start
 	 *            the start time stamp, inclusive
 	 * @param end
 	 *            the end time stamp. inclusive
-	 * 
+	 *
 	 * @return the refactoring history weeks
 	 */
 	private Object[] getRefactoringHistoryWeeks(final RefactoringHistoryDate parent, final long start, final long end) {
@@ -408,7 +407,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Computes and returns the refactoring root structure if necessary.
-	 * 
+	 *
 	 * @param stamp
 	 *            the time stamp of the oldest refactoring
 	 * @return the refactoring root structure
@@ -494,7 +493,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * This method must only be called for refactoring histories with associated
 	 * time information.
 	 * </p>
-	 * 
+	 *
 	 * @return the refactoring history root elements
 	 */
 	public Object[] getRootElements() {

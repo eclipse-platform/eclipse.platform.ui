@@ -28,11 +28,11 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 
 	public ChangeElementLabelProvider() {
 	}
-		
+
 	public Image getImage(Object object) {
 		return manageImageDescriptor(((PreviewNode)object).getImageDescriptor());
 	}
-	
+
 	public String getText(Object object) {
 		String text= ((PreviewNode)object).getText();
 		if (isDerived(object)) {
@@ -41,7 +41,7 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 			return text;
 		}
 	}
-	
+
 	public Font getFont(Object element) {
 		if (isDerived(element)) {
 			return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
@@ -54,7 +54,7 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 		PreviewNode node= (PreviewNode)element;
 		return node.hasDerived();
 	}
-	
+
 	public void dispose() {
 		for (Iterator iter= fDescriptorImageMap.values().iterator(); iter.hasNext(); ) {
 			Image image= (Image)iter.next();
@@ -62,7 +62,7 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 		}
 		super.dispose();
 	}
-	
+
 	private Image manageImageDescriptor(ImageDescriptor descriptor) {
 		Image image= (Image)fDescriptorImageMap.get(descriptor);
 		if (image == null) {

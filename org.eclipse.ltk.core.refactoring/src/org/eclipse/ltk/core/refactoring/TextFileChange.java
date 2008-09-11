@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
-import org.eclipse.text.edits.UndoEdit;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -20,12 +18,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.text.edits.UndoEdit;
 
 import org.eclipse.jface.text.IDocument;
 
@@ -38,49 +38,49 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * A special {@link TextChange} that operates on a <code>IFile</code>.
  * <p>
  * As of 3.1 the content stamp managed by a text file change maps to the modification
- * stamp of its underlying <code>IFile</code>. Undoing a text file change will 
- * roll back the modification stamp of a resource to its original value using 
+ * stamp of its underlying <code>IFile</code>. Undoing a text file change will
+ * roll back the modification stamp of a resource to its original value using
  * the new API {@link org.eclipse.core.resources.IResource#revertModificationStamp(long)}
  * </p>
  * <p>
- * The class should be subclassed by clients which need to perform 
- * special operation when acquiring or releasing a document. 
+ * The class should be subclassed by clients which need to perform
+ * special operation when acquiring or releasing a document.
  * </p>
- * @since 3.0 
+ * @since 3.0
  */
 public class TextFileChange extends TextChange {
-	
-	/** 
-	 * Flag (value 1) indicating that the file's save state has to be kept. This means an 
-	 * unsaved file is still unsaved after performing the change and a saved one 
-	 * will be saved. 
+
+	/**
+	 * Flag (value 1) indicating that the file's save state has to be kept. This means an
+	 * unsaved file is still unsaved after performing the change and a saved one
+	 * will be saved.
 	 */
 	public static final int KEEP_SAVE_STATE= 1 << 0;
-	
+
 	/**
 	 * Flag (value 2) indicating that the file is to be saved after the change has been applied.
 	 */
 	public static final int FORCE_SAVE= 1 << 1;
-	
+
 	/**
 	 * Flag (value 4) indicating that the file will not be saved after the change has been applied.
 	 */
 	public static final int LEAVE_DIRTY= 1 << 2;
-	
-	
+
+
 	// the file to change
 	private IFile fFile;
 	private int fSaveMode= KEEP_SAVE_STATE;
-	
+
 	// the mapped text buffer
 	private int fAcquireCount;
 	private ITextFileBuffer fBuffer;
 	private BufferValidationState fValidationState;
 	private ContentStamp fContentStamp;
-	
+
 	/**
 	 * Creates a new <code>TextFileChange</code> for the given file.
-	 * 
+	 *
 	 * @param name the change's name mainly used to render the change in the UI
 	 * @param file the file this text change operates on
 	 */
@@ -89,45 +89,45 @@ public class TextFileChange extends TextChange {
 		Assert.isNotNull(file);
 		fFile= file;
 	}
-	
+
 	/**
 	 * Sets the save state. Must be one of <code>KEEP_SAVE_STATE</code>,
 	 * <code>FORCE_SAVE</code> or <code>LEAVE_DIRTY</code>.
-	 * 
+	 *
 	 * @param saveMode indicating how save is handled when the document
 	 *  gets committed
 	 */
 	public void setSaveMode(int saveMode) {
 		fSaveMode= saveMode;
 	}
-	
+
 	/**
 	 * Returns the save state set via {@link #setSaveMode(int)}.
-	 * 
+	 *
 	 * @return the save state
 	 */
 	public int getSaveMode() {
 		return fSaveMode;
 	}
-	
+
 	/**
 	 * Returns the <code>IFile</code> this change is working on.
-	 * 
+	 *
 	 * @return the file this change is working on
 	 */
 	public IFile getFile() {
 		return fFile;
 	}
-	
+
 	/**
-	 * Hook to create an undo change for the given undo edit and content stamp. 
-	 * This hook gets called while performing the change to construct the 
+	 * Hook to create an undo change for the given undo edit and content stamp.
+	 * This hook gets called while performing the change to construct the
 	 * corresponding undo change object.
-	 * 
+	 *
 	 * @param edit the {@link UndoEdit} to create an undo change for
 	 * @param stampToRestore the content stamp to restore when the undo
 	 *  edit is executed.
-	 * 
+	 *
 	 * @return the undo change or <code>null</code> if no undo change can
 	 *  be created. Returning <code>null</code> results in the fact that
 	 *  the whole change tree can't be undone. So returning <code>null</code>
@@ -137,7 +137,7 @@ public class TextFileChange extends TextChange {
 	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) {
 		return new UndoTextFileChange(getName(), fFile, edit, stampToRestore, fSaveMode);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -151,7 +151,7 @@ public class TextFileChange extends TextChange {
 			return null;
 		return new Object[] { modifiedElement };
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -165,7 +165,7 @@ public class TextFileChange extends TextChange {
 			monitor.done();
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -176,7 +176,7 @@ public class TextFileChange extends TextChange {
 			monitor.beginTask("", 1); //$NON-NLS-1$
 			if (fValidationState == null)
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "TextFileChange has not been initialialized")); //$NON-NLS-1$
-			
+
 			boolean needsSaving= needsSaving();
 			RefactoringStatus result= fValidationState.isValid(needsSaving);
 			if (needsSaving) {
@@ -199,7 +199,7 @@ public class TextFileChange extends TextChange {
 			fValidationState.dispose();
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -207,7 +207,7 @@ public class TextFileChange extends TextChange {
 		fAcquireCount++;
 		if (fAcquireCount > 1)
 			return fBuffer.getDocument();
-		
+
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath path= fFile.getFullPath();
 		manager.connect(path, LocationKind.IFILE, pm);
@@ -216,7 +216,7 @@ public class TextFileChange extends TextChange {
 		fContentStamp= ContentStamps.get(fFile, result);
 		return result;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -229,7 +229,7 @@ public class TextFileChange extends TextChange {
 			fBuffer.commit(pm, false);
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -241,7 +241,7 @@ public class TextFileChange extends TextChange {
 		}
 		fAcquireCount--;
  	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -251,7 +251,7 @@ public class TextFileChange extends TextChange {
 
 	/**
 	 * Is the document currently acquired?
-	 * 
+	 *
 	 * @return <code>true</code> if the document is currently acquired,
 	 *         <code>false</code> otherwise
 	 * @since 3.2
@@ -259,14 +259,14 @@ public class TextFileChange extends TextChange {
 	protected boolean isDocumentAcquired() {
 		return fAcquireCount > 0;
 	}
-		
+
 	/**
 	 * Has the document been modified since it has been first acquired by the change?
-	 * 
+	 *
 	 * @return Returns true if the document has been modified since it got acquired by the change.
 	 * <code>false</code> is returned if the document has not been acquired yet, or has been released
 	 * already.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected boolean isDocumentModified() {
@@ -284,7 +284,7 @@ public class TextFileChange extends TextChange {
 	 * <code>FORCE_SAVE</code> flag is enabled, or the underlying file is not
 	 * dirty and <code>KEEP_SAVE_STATE</code> is enabled.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if it needs saving according to its dirty
 	 *         state and the save mode flags, <code>false</code> otherwise
 	 * @since 3.3

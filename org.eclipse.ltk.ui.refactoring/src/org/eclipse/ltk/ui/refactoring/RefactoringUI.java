@@ -10,22 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.Dialog;
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
 import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryControl;
 import org.eclipse.ltk.internal.ui.refactoring.history.SortableRefactoringHistoryControl;
-
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.Dialog;
-
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.ISortableRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
@@ -36,9 +34,9 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefactoringUI {
@@ -54,7 +52,7 @@ public class RefactoringUI {
 	 * <li>{@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID}:
 	 * if the user has pressed the back button.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param status
 	 *            the status to present
 	 * @param parent
@@ -63,7 +61,7 @@ public class RefactoringUI {
 	 * @param windowTitle
 	 *            the dialog's window title
 	 * @return a dialog to present a refactoring status.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static Dialog createLightWeightStatusDialog(RefactoringStatus status, Shell parent, String windowTitle) {
@@ -74,13 +72,13 @@ public class RefactoringUI {
 	 * Creates a control capable of presenting a refactoring history. Clients of
 	 * this method can assume that the returned composite is an instance of
 	 * {@link IRefactoringHistoryControl}.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param configuration
 	 *            the refactoring history control configuration
 	 * @return the refactoring history control
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static Composite createRefactoringHistoryControl(Composite parent, RefactoringHistoryControlConfiguration configuration) {
@@ -98,7 +96,7 @@ public class RefactoringUI {
 	 * <li>{@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID}:
 	 * if the user has pressed the back button.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param status
 	 *            the status to present
 	 * @param parent
@@ -121,13 +119,13 @@ public class RefactoringUI {
 	 * of {@link org.eclipse.jface.wizard.IWizardContainer IWizardContainer}.
 	 * However the dialog is not necessarily an instance of
 	 * {@link org.eclipse.jface.wizard.WizardDialog WizardDialog}.
-	 * 
+	 *
 	 * @param wizard
 	 *            the refactoring wizard to create a dialog for
 	 * @param parent
 	 *            the parent of the created dialog or <code>null</code> to
 	 *            create a top-level dialog
-	 * 
+	 *
 	 * @return the dialog
 	 */
 	/* package */static Dialog createRefactoringWizardDialog(RefactoringWizard wizard, Shell parent) {
@@ -143,13 +141,13 @@ public class RefactoringUI {
 	 * Creates a control capable of presenting a refactoring history. Clients of
 	 * this method can assume that the returned composite is an instance of
 	 * {@link ISortableRefactoringHistoryControl}.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param configuration
 	 *            the refactoring history control configuration
 	 * @return the refactoring history control
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static Composite createSortableRefactoringHistoryControl(Composite parent, RefactoringHistoryControlConfiguration configuration) {
@@ -161,10 +159,10 @@ public class RefactoringUI {
 	 * operations in open editors into one undo object. The operation batches
 	 * the undo operations for those editors that implement the interface
 	 * {@link org.eclipse.jface.text.IRewriteTarget}.
-	 * 
+	 *
 	 * @param change
 	 *            the change to perform
-	 * 
+	 *
 	 * @return a special perform change operation that knows how to batch undo
 	 *         operations for open editors if they implement
 	 *         <code>IRewriteTarget

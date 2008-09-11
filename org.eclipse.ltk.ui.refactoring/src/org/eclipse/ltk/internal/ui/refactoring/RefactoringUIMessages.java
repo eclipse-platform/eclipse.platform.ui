@@ -59,14 +59,14 @@ public final class RefactoringUIMessages extends NLS {
 	public static String DeleteResourcesWizard_label_multi;
 
 	public static String DeleteResourcesWizard_label_single;
-	
+
 	public static String DeleteResourcesWizard_label_multi_linked;
 
-	public static String DeleteResourcesWizard_label_single_linked;	
-	
+	public static String DeleteResourcesWizard_label_single_linked;
+
 	public static String DeleteResourcesWizard_label_multi_projects;
 
-	public static String DeleteResourcesWizard_label_single_project;		
+	public static String DeleteResourcesWizard_label_single_project;
 
 	public static String DeleteResourcesWizard_outOfSync;
 

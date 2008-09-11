@@ -26,10 +26,10 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  * <p>
  * Note: this class may be extended to provide different implementations
  * </p>
- * 
+ *
  * @see IRefactoringHistoryService
  * @see RefactoringDescriptorProxy
- * 
+ *
  * @since 3.2
  */
 public abstract class RefactoringHistory extends PlatformObject {
@@ -37,14 +37,14 @@ public abstract class RefactoringHistory extends PlatformObject {
 	/**
 	 * Returns the refactoring descriptors of this history, in descending order
 	 * of their time stamps.
-	 * 
+	 *
 	 * @return the refactoring descriptors, or an empty array
 	 */
 	public abstract RefactoringDescriptorProxy[] getDescriptors();
 
 	/**
 	 * Is the refactoring history empty?
-	 * 
+	 *
 	 * @return <code>true</code> if the history is empty, <code>false</code>
 	 *         otherwise
 	 */
@@ -56,7 +56,7 @@ public abstract class RefactoringHistory extends PlatformObject {
 	 * <p>
 	 * The current refactoring history remains unchanged.
 	 * </p>
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history
 	 * @return the resulting refactoring history

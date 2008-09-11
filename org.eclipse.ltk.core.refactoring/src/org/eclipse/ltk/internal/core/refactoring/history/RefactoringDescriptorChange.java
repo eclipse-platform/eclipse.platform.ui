@@ -17,14 +17,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 /**
  * Wrapper change for refactorings which returns an unknown refactoring
  * descriptor in case the refactoring does not provide one.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringDescriptorChange extends CompositeChange {
 
 	/**
 	 * Creates a new refactoring descriptor change.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the change
 	 */

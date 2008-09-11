@@ -19,25 +19,26 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ltk.ui.refactoring.resource.MoveResourcesWizard;
 
 public class MoveResourcesRefactoringAction extends Action implements IActionDelegate {
-	
+
 	/*
 	 <extension
 	     point="org.eclipse.ui.popupMenus">
 	  <objectContribution
 	        objectClass="org.eclipse.core.resources.IResource"
-			adaptable="true"      
+			adaptable="true"
 	        id="org.eclipse.ltk.ui.refactoring.examples.MoveResourcesRefactoringAction">
 	     <action
 	           label="Move Resources... (ltk.ui.refactoring.examples)"
@@ -50,10 +51,10 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 	  </objectContribution>
 	</extension>
 	 */
-	
-	
+
+
 	private IResource[] fResources;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -62,7 +63,7 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 		if (fResources != null && isMoveAvailable(fResources)) {
 			try {
 				MoveResourcesWizard refactoringWizard= new MoveResourcesWizard(fResources);
-				
+
 				RefactoringWizardOpenOperation op= new RefactoringWizardOpenOperation(refactoringWizard);
 				op.run(shell, "Move resources");
 			} catch (InterruptedException e) {
@@ -80,7 +81,7 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -110,6 +111,6 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 		}
 		return (IResource[]) res.toArray(new IResource[res.size()]);
 	}
-	
+
 
 }

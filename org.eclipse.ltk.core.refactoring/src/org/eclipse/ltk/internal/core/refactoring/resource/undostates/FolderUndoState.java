@@ -29,11 +29,11 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 /**
  * {@link FolderUndoState} is a lightweight description that describes a folder to be
  * created.
- * 
+ *
  * This class is not intended to be instantiated or used by clients.
- * 
+ *
  * @since 3.4
- * 
+ *
  */
 public class FolderUndoState extends ContainerUndoState {
 
@@ -41,7 +41,7 @@ public class FolderUndoState extends ContainerUndoState {
 	 * Create a {@link FolderUndoState} from the specified folder handle. Typically
 	 * used when the folder handle represents a resource that actually exists,
 	 * although it will not fail if the resource is non-existent.
-	 * 
+	 *
 	 * @param folder
 	 *            the folder to be described
 	 */
@@ -53,7 +53,7 @@ public class FolderUndoState extends ContainerUndoState {
 	 * Create a {@link FolderUndoState} from the specified folder handle. If the
 	 * folder to be created should be linked to a different location, specify
 	 * the location.
-	 * 
+	 *
 	 * @param folder
 	 *            the folder to be described
 	 * @param linkLocation

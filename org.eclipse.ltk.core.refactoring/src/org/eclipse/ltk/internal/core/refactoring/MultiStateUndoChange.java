@@ -12,9 +12,6 @@ package org.eclipse.ltk.internal.core.refactoring;
 
 import java.util.LinkedList;
 
-import org.eclipse.text.edits.TextEdit;
-import org.eclipse.text.edits.UndoEdit;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,12 +20,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.UndoEdit;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -50,7 +50,7 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
  * MultiStateTextFileChange</code>
  * to provide a proper undo change object.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class MultiStateUndoChange extends Change {
@@ -71,7 +71,7 @@ public class MultiStateUndoChange extends Change {
 
 	/**
 	 * Create a new multi state undo change object.
-	 * 
+	 *
 	 * @param name
 	 *            the human readable name of the change
 	 * @param file
@@ -82,7 +82,7 @@ public class MultiStateUndoChange extends Change {
 	 *            the edit representing the undo modifications
 	 * @param saveMode
 	 *            the save mode as specified by {@link TextFileChange}
-	 * 
+	 *
 	 * @see TextFileChange#KEEP_SAVE_STATE
 	 * @see TextFileChange#FORCE_SAVE
 	 * @see TextFileChange#LEAVE_DIRTY
@@ -105,14 +105,14 @@ public class MultiStateUndoChange extends Change {
 	 * <p>
 	 * Subclasses may override it to create a different undo change.
 	 * </p>
-	 * 
+	 *
 	 * @param edits
 	 *            the {@link UndoEdit undo edit} to create a undo change for
 	 * @param stampToRestore
 	 *            the content stamp to restore when the undo edit is executed.
-	 * 
+	 *
 	 * @return the undo change
-	 * 
+	 *
 	 * @throws CoreException
 	 *             if an undo change can't be created
 	 */
@@ -155,9 +155,9 @@ public class MultiStateUndoChange extends Change {
 
 	/**
 	 * Returns the change's save mode.
-	 * 
+	 *
 	 * @return the change's save mode
-	 * 
+	 *
 	 * @see TextFileChange#KEEP_SAVE_STATE
 	 * @see TextFileChange#FORCE_SAVE
 	 * @see TextFileChange#LEAVE_DIRTY

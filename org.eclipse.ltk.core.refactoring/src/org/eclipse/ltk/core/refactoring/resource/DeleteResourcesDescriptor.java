@@ -25,9 +25,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.core.refactoring.participants.DeleteRefactoring;
-
 import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -45,9 +43,9 @@ import org.eclipse.ltk.internal.core.refactoring.resource.DeleteResourcesProcess
  * <p>
  * Note: this class is not intended to be subclassed or instantiated by clients.
  * </p>
- * 
+ *
  * @since 3.4
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -88,7 +86,7 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 	/**
 	 * The paths to the resources to be deleted.  The resources can be {@link IProject} or
 	 * a mixture of {@link IFile} and {@link IFolder}.
-	 * 
+	 *
 	 * @param resourcePath paths of the resources to be deleted
 	 */
 	public void setResourcePaths(IPath[] resourcePath) {
@@ -100,7 +98,7 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 	/**
 	 * The resources to be deleted.  They can be {@link IProject} or a mixture of {@link IFile}
 	 * and {@link IFolder}.
-	 * 
+	 *
 	 * @param resources IResources to be deleted
 	 */
 	public void setResources(IResource[] resources) {
@@ -114,8 +112,8 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 	}
 
 	/**
-	 * <code>true</code> is returned if projects contents are also deleted. 
-	 * 
+	 * <code>true</code> is returned if projects contents are also deleted.
+	 *
 	 * @return <code>true</code> if this will delete the project contents.  The content delete is not undoable.
 	 */
 	public boolean isDeleteContents() {
@@ -124,7 +122,7 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * If set to <code>true</code>, delete will also delete project contents.
-	 * 
+	 *
 	 * @param deleteContents <code>true</code> if this will delete the project contents.  The content delete is not undoable.
 	 */
 	public void setDeleteContents(boolean deleteContents) {

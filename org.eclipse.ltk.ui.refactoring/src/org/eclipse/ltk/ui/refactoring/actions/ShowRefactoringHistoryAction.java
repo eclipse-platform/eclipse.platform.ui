@@ -36,11 +36,11 @@ import org.eclipse.ltk.internal.ui.refactoring.scripting.ShowRefactoringHistoryW
 
 /**
  * Action to show the global refactoring history.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.3
  */
 public final class ShowRefactoringHistoryAction implements IWorkbenchWindowActionDelegate {
@@ -53,7 +53,7 @@ public final class ShowRefactoringHistoryAction implements IWorkbenchWindowActio
 
 	/**
 	 * Shows the refactoring history wizard.
-	 * 
+	 *
 	 * @param window
 	 *            the workbench window
 	 */

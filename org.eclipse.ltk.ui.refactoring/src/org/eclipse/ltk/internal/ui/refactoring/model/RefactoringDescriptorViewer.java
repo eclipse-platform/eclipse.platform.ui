@@ -10,26 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.model;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.NullProgressMonitor;
-
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
-import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.jface.text.TextSelection;
+
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+
 /**
  * Viewer which displays a summary of a pending refactoring.
- * 
+ *
  * @since 3.2
  */
 public class RefactoringDescriptorViewer extends Viewer {
@@ -42,7 +43,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 
 	/**
 	 * Creates a new refactoring descriptor viewer.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param style
@@ -72,16 +73,16 @@ public class RefactoringDescriptorViewer extends Viewer {
 
 	/**
 	 * Returns the input text for the specified refactoring descriptor proxy.
-	 * 
+	 *
 	 * @param proxy
 	 *            the refactoring descriptor proxy, or <code>null</code>
 	 * @return the input text
 	 */
 	protected String getInputText(final RefactoringDescriptorProxy proxy) {
 		final StringBuffer buffer= new StringBuffer();
-		
+
 		// XXX: should use style sheet and set dialog font.
-		
+
 		HTMLPrinter.insertPageProlog(buffer, 0);
 		if (proxy != null) {
 			HTMLPrinter.addSmallHeader(buffer, HTMLPrinter.convertToHTMLContent(proxy.getDescription()));

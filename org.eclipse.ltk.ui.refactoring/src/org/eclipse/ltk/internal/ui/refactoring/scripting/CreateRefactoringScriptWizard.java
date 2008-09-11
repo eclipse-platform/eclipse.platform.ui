@@ -26,28 +26,16 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -56,9 +44,20 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.Wizard;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+
 /**
  * Wizard to create a refactoring script.
- * 
+ *
  * @since 3.2
  */
 public final class CreateRefactoringScriptWizard extends Wizard {
@@ -119,7 +118,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 
 	/**
 	 * Returns the refactoring history to create a script from.
-	 * 
+	 *
 	 * @return the refactoring history.
 	 */
 	public RefactoringHistory getRefactoringHistory() {
@@ -128,7 +127,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 
 	/**
 	 * Performs the actual refactoring script export.
-	 * 
+	 *
 	 * @return <code>true</code> if the wizard can be finished,
 	 *         <code>false</code> otherwise
 	 */
@@ -251,7 +250,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 
 	/**
 	 * Sets the selected refactoring descriptors.
-	 * 
+	 *
 	 * @param proxies
 	 *            the selected refactoring descriptors
 	 */
@@ -265,7 +264,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 
 	/**
 	 * Sets the refactoring history to use.
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history to use
 	 */
@@ -276,7 +275,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 
 	/**
 	 * Sets the refactoring script location.
-	 * 
+	 *
 	 * @param location
 	 *            the refactoring script location, or <code>null</code>
 	 */
@@ -290,7 +289,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	/**
 	 * Determines whether the wizard should save the refactoring script to the
 	 * clipboard.
-	 * 
+	 *
 	 * @param clipboard
 	 *            <code>true</code> to save the script to clipboard,
 	 *            <code>false</code> otherwise
@@ -304,7 +303,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 
 	/**
 	 * Writes the refactoring descriptor proxies to the specified output stream.
-	 * 
+	 *
 	 * @param writable
 	 *            the refactoring descriptor proxies
 	 * @param stream

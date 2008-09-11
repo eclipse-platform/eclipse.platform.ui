@@ -11,11 +11,13 @@
 package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+
+import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
 public class ValidationCheckResultQuery implements IValidationCheckResultQuery  {
@@ -47,7 +49,7 @@ public class ValidationCheckResultQuery implements IValidationCheckResultQuery  
 	}
 	private String getFullMessage(String errorMessage) {
 		return Messages.format(
-			RefactoringUIMessages.ValidationCheckResultQuery_error_message,  
+			RefactoringUIMessages.ValidationCheckResultQuery_error_message,
 			errorMessage);
 	}
 }

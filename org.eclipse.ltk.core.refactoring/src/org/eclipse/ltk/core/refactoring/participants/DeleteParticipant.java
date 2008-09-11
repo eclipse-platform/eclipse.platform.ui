@@ -20,7 +20,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  * org.eclipse.ltk.core.refactoring.deleteParticipants</code>.
  * Extensions to this extension point must therefore extend this abstract class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class DeleteParticipant extends RefactoringParticipant {
@@ -36,7 +36,7 @@ public abstract class DeleteParticipant extends RefactoringParticipant {
 
 	/**
 	 * Returns the delete arguments.
-	 * 
+	 *
 	 * @return the delete arguments
 	 */
 	public DeleteArguments getArguments() {

@@ -16,11 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -28,6 +23,11 @@ import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -45,15 +45,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourcesDescriptor;
 import org.eclipse.ltk.core.refactoring.resource.RenameResourceDescriptor;
-
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
-
 import org.eclipse.ltk.core.refactoring.tests.FileSystemHelper;
-
 import org.eclipse.ltk.core.refactoring.tests.participants.ElementRenameProcessor;
 import org.eclipse.ltk.core.refactoring.tests.participants.ElementRenameRefactoring;
-
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 public class ResourceRefactoringUndoTests extends TestCase {
 

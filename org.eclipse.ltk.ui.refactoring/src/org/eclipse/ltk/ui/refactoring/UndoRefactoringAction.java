@@ -42,12 +42,12 @@ import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
  * allowed to instantiate the class or to reference it from an action
  * set.
  * </p>
- * 
+ *
  * @deprecated This action is now longer needed. Undo is now performed via the
  *  global undo/redo stack provided by <code>org.eclipse.core.commands</code>.
- * 
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class UndoRefactoringAction extends UndoManagerAction {
@@ -67,7 +67,7 @@ public class UndoRefactoringAction extends UndoManagerAction {
 		// PR: 1GEWDUH: ITPJCORE:WINNT - Refactoring - Unable to undo refactoring change
 		return RefactoringUIMessages.UndoRefactoringAction_name;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in UndoManagerAction
 	 */
@@ -89,7 +89,7 @@ public class UndoRefactoringAction extends UndoManagerAction {
 			}
 		};
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in UndoManagerAction
 	 */
@@ -112,7 +112,7 @@ public class UndoRefactoringAction extends UndoManagerAction {
 			}
 		};
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared in IActionDelegate
 	 */
@@ -130,7 +130,7 @@ public class UndoRefactoringAction extends UndoManagerAction {
 			}
 		}
 	}
-	
+
 	private String getActionText() {
 		return shortenText(Messages.format(
 			RefactoringUIMessages.UndoRefactoringAction_extendedLabel,

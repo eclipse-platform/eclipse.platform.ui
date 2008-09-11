@@ -38,7 +38,6 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
-
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -54,7 +53,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * <p>Since 3.4, this class is non abstract and can be instantiated. {@link #getProcessor()} will
  * return the processor passed in {@link #ProcessorBasedRefactoring(RefactoringProcessor)} or
  * the processor set by {@link #setProcessor(RefactoringProcessor)}.
- * 
+ *
  * @since 3.0
  */
 public class ProcessorBasedRefactoring extends Refactoring {
@@ -63,36 +62,36 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	private static final String PERF_CREATE_CHANGES= "org.eclipse.ltk.core.refactoring/perf/participants/createChanges"; //$NON-NLS-1$
 
 	private RefactoringProcessor fProcessor;
-	
+
 	private List/*<RefactoringParticipant>*/ fParticipants;
-	
+
 	private List/*<RefactoringParticipant>*/ fPreChangeParticipants; // can be null
-	
+
 	private Map/*<Object, TextChange>*/ fTextChangeMap;
-	
+
 	private static final List/*<RefactoringParticipant>*/ EMPTY_PARTICIPANTS= Collections.EMPTY_LIST;
 
 	private static class ProcessorChange extends CompositeChange {
 		private Map/*<Change, RefactoringParticipant>*/ fParticipantMap;
 		private List/*<RefactoringParticipant>*/ fPreChangeParticipants; // can be null
-		
+
 		public ProcessorChange(String name) {
 			super(name);
 			markAsSynthetic();
 		}
-		
+
 		public void setParticipantMap(Map/*<Change, RefactoringParticipant>*/ map) {
 			fParticipantMap= map;
 		}
-		
+
 		public void setPreChangeParticipants(List/*<RefactoringParticipant>*/ list) {
 			fPreChangeParticipants= list;
 		}
-		
+
 		protected void internalHandleException(Change change, Throwable e) {
 			if (e instanceof OperationCanceledException)
 				return;
-				
+
 			RefactoringParticipant participant= (RefactoringParticipant) fParticipantMap.get(change);
 			if (participant != null) {
 				disableParticipant(participant, e);
@@ -111,11 +110,11 @@ public class ProcessorBasedRefactoring extends Refactoring {
 				}
 			}
 		}
-		
+
 		protected boolean internalContinueOnCancel() {
 			return true;
 		}
-		
+
 		protected boolean internalProcessOnCancel(Change change) {
 			RefactoringParticipant participant= (RefactoringParticipant) fParticipantMap.get(change);
 			if (participant == null)
@@ -123,19 +122,19 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			return participant.getDescriptor().processOnCancel();
 		}
 	}
-	
+
 	/**
 	 * Creates a new processor based refactoring. Clients must override {@link #getProcessor()} to return a processor or set the
 	 * processor with {@link #setProcessor(RefactoringProcessor)}.
-	 * 
+	 *
 	 * @deprecated use {@link #ProcessorBasedRefactoring(RefactoringProcessor)} instead
 	 */
 	protected ProcessorBasedRefactoring() {
 	}
-	
+
 	/**
 	 * Creates a new processor based refactoring.
-	 * 
+	 *
 	 * @param processor the refactoring's main processor
 	 *
 	 * @since 3.4 public, was added in 3.1 as protected method
@@ -143,32 +142,32 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	public ProcessorBasedRefactoring(RefactoringProcessor processor) {
 		setProcessor(processor);
 	}
-	
+
 	/**
 	 * Return the processor associated with this refactoring. The
 	 * method must not return <code>null</code>. Implementors can override this method
 	 * to return the processor to be used by this refactoring. Since 3.4, this method returns the processor passed in
 	 * {@link #ProcessorBasedRefactoring(RefactoringProcessor)} or by {@link #setProcessor(RefactoringProcessor)}.
-	 * 
+	 *
 	 * @return the processor associated with this refactoring
 	 */
 	public RefactoringProcessor getProcessor() {
 		return fProcessor;
 	}
-	
+
 	/**
 	 * Sets the processor associated with this refactoring. The
 	 * processor must not be <code>null</code>.
-	 * 
+	 *
 	 * @param processor the processor associated with this refactoring
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public void setProcessor(RefactoringProcessor processor) {
 		processor.setRefactoring(this);
 		fProcessor= processor;
 	}
-	
+
 	/**
 	 * Checks whether the refactoring is applicable to the elements to be
 	 * refactored or not.
@@ -183,14 +182,14 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	public final boolean isApplicable() throws CoreException {
 		return getProcessor().isApplicable();
 	}
-		
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getName() {
 		return getProcessor().getProcessorName();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -200,7 +199,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		RefactoringStatus result= new RefactoringStatus();
 		pm.beginTask("", 10); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_initial_conditions);
-		
+
 		result.merge(getProcessor().checkInitialConditions(new SubProgressMonitor(pm, 8)));
 		if (result.hasFatalError()) {
 			pm.done();
@@ -209,7 +208,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		pm.done();
 		return result;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -218,10 +217,10 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 		CheckConditionsContext context= createCheckConditionsContext();
-		
+
 		pm.beginTask("", 9); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_final_conditions);
-		
+
 		result.merge(getProcessor().checkFinalConditions(new SubProgressMonitor(pm, 5), context));
 		if (result.hasFatalError()) {
 			pm.done();
@@ -229,7 +228,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		}
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
-		
+
 		SharableParticipants sharableParticipants= new SharableParticipants(); // must not be shared when checkFinalConditions is called again
 		RefactoringParticipant[] loadedParticipants= getProcessor().loadParticipants(result, sharableParticipants);
 		if (loadedParticipants == null || loadedParticipants.length == 0) {
@@ -245,10 +244,10 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			return result;
 		}
 		IProgressMonitor sm= new SubProgressMonitor(pm, 2);
-		
+
 		sm.beginTask("", fParticipants.size()); //$NON-NLS-1$
 		for (Iterator iter= fParticipants.iterator(); iter.hasNext() && !result.hasFatalError(); ) {
-			
+
 			RefactoringParticipant participant= (RefactoringParticipant) iter.next();
 
 			final PerformanceStats stats= PerformanceStats.getStats(PERF_CHECK_CONDITIONS, getName() + ", " + participant.getName()); //$NON-NLS-1$
@@ -279,7 +278,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		pm.done();
 		return result;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -291,16 +290,16 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
-		
+
 		fTextChangeMap= new HashMap();
 		addToTextChangeMap(processorChange);
-		
+
 		List/*<Change>*/ changes= new ArrayList();
 		List/*<Change>*/ preChanges= new ArrayList();
 		Map/*<Change, RefactoringParticipant>*/ participantMap= new HashMap();
 		for (Iterator iter= fParticipants.iterator(); iter.hasNext();) {
 			final RefactoringParticipant participant= (RefactoringParticipant) iter.next();
-			
+
 			try {
 				final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_CHANGES, getName() + ", " + participant.getName()); //$NON-NLS-1$
 				stats.startRun();
@@ -318,13 +317,13 @@ public class ProcessorBasedRefactoring extends Refactoring {
 					participantMap.put(preChange, participant);
 					addToTextChangeMap(preChange);
 				}
-				
+
 				if (change != null) {
 					changes.add(change);
 					participantMap.put(change, participant);
 					addToTextChangeMap(change);
 				}
-				
+
 			} catch (CoreException e) {
 				disableParticipant(participant, e);
 				throw e;
@@ -335,13 +334,13 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
 		}
-		
+
 		fTextChangeMap= null;
-		
+
 		Change postChange= getProcessor().postCreateChange(
 			(Change[])changes.toArray(new Change[changes.size()]),
 			new SubProgressMonitor(pm, 1));
-		
+
 		ProcessorChange result= new ProcessorChange(getName());
 		result.addAll((Change[]) preChanges.toArray(new Change[preChanges.size()]));
 		result.add(processorChange);
@@ -352,16 +351,16 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			result.add(postChange);
 		return result;
 	}
-	
+
 	/**
 	 * Returns the text change for the given element or <code>null</code>
 	 * if a text change doesn't exist. This method only returns a valid
 	 * result during change creation. Outside of change creation always
 	 * <code>null</code> is returned.
-	 * 
+	 *
 	 * @param element the element to be modified for which a text change
 	 *  is requested
-	 * 
+	 *
 	 * @return the text change or <code>null</code> if no text change exists
 	 *  for the element
 	 *
@@ -372,7 +371,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			return null;
 		return (TextChange) fTextChangeMap.get(element);
 	}
-	
+
 	/**
 	 * Adapts the refactoring to the given type. The adapter is resolved
 	 * as follows:
@@ -383,9 +382,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	 *       requested type.</li>
 	 *   <li>the request is delegated to the super class.</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param clazz the adapter class to look up
-	 * 
+	 *
 	 * @return the requested adapter or <code>null</code>if no adapter
 	 *  exists.
 	 */
@@ -396,30 +395,30 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			return getProcessor();
 		return super.getAdapter(clazz);
 	}
-	
+
 	/* non java-doc
 	 * for debugging only
 	 */
 	public String toString() {
 		return getName();
 	}
-	
+
 	//---- Helper methods ---------------------------------------------------------------------
-	
+
 	private CheckConditionsContext createCheckConditionsContext() throws CoreException {
 		CheckConditionsContext result= new CheckConditionsContext();
 		result.add(new ValidateEditChecker(getValidationContext()));
 		result.add(new ResourceChangeChecker());
 		return result;
 	}
-	
-	
+
+
 	private static void disableParticipant(final RefactoringParticipant participant, Throwable e) {
 		ParticipantDescriptor descriptor= participant.getDescriptor();
 		descriptor.disable();
 		RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
 	}
-	
+
 	private void addToTextChangeMap(Change change) {
 		if (change instanceof TextChange) {
 			Object element= ((TextChange) change).getModifiedElement();

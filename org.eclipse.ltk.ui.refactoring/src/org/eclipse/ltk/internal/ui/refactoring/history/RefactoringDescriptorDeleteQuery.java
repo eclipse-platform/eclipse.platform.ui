@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.core.resources.IProject;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
@@ -24,15 +29,9 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages;
 
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
-
 /**
  * Default implementation of a refactoring descriptor delete query.
- * 
+ *
  * @since 3.3
  */
 public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
@@ -57,7 +56,7 @@ public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescr
 
 	/**
 	 * Creates a new refactoring descriptor delete query.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell to use
 	 * @param project

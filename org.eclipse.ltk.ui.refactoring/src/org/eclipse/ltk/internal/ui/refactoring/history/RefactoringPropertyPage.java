@@ -13,6 +13,19 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import org.osgi.service.prefs.BackingStoreException;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,33 +39,6 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ProjectScope;
-
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
-import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
-import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
-import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper.IRefactoringHistoryProvider;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -70,13 +56,25 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
 
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
+import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper.IRefactoringHistoryProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
-
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Property page for a project's refactoring history.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringPropertyPage extends PropertyPage {
@@ -220,7 +218,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 	/**
 	 * Returns the project currently associated with this property page.
-	 * 
+	 *
 	 * @return the currently associated project, or <code>null</code>
 	 */
 	private IProject getCurrentProject() {
@@ -229,7 +227,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 	/**
 	 * Returns the preferences for the specified context.
-	 * 
+	 *
 	 * @param manager
 	 *            the working copy manager
 	 * @param context
@@ -245,7 +243,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 	/**
 	 * Handles the input event.
-	 * 
+	 *
 	 * @param context
 	 *            the runnable context to use
 	 * @param project
@@ -276,7 +274,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 	/**
 	 * Returns whether a project has an shared refactoring history.
-	 * 
+	 *
 	 * @return <code>true</code> if the project contains an shared project
 	 *         history, <code>false</code> otherwise
 	 */
@@ -304,7 +302,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		final IProject project= getCurrentProject();
 		if (project == null || fManager == null)
 			return true; // not contributed on a project or no control created
-		
+
 		if (fNewSettings) {
 			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 			IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
@@ -342,7 +340,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 	/**
 	 * Prompts the user to delete the project refactoring history.
-	 * 
+	 *
 	 * @param context
 	 *            the runnable context to use
 	 * @param project
@@ -400,7 +398,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 	/**
 	 * Sets the preference for a certain context.
-	 * 
+	 *
 	 * @param manager
 	 *            the working copy manager
 	 * @param context

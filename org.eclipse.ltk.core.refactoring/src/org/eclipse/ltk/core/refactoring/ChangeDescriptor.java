@@ -18,7 +18,7 @@ package org.eclipse.ltk.core.refactoring;
  * Note: this class is indented to be subclassed by clients to provide
  * specialized descriptors for particular changes.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class ChangeDescriptor {

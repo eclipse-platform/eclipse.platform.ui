@@ -31,15 +31,15 @@ package org.eclipse.ltk.core.refactoring.participants;
  * <p>
  * Clients may implement this interface to tag participants as shared.
  * </p>
- * 
+ *
  * @see RefactoringParticipant
- * @since 3.0 
+ * @since 3.0
  */
 public interface ISharableParticipant {
 
 	/**
 	 * Adds the given element and argument to the refactoring participant.
-	 * 
+	 *
 	 * @param element the element to add
 	 * @param arguments the corresponding arguments
 	 */

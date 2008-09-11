@@ -17,7 +17,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Image descriptor which encapsulates an image.
- * 
+ *
  * @since 3.2
  */
 public final class RefactoringImageDescriptor extends ImageDescriptor {
@@ -27,7 +27,7 @@ public final class RefactoringImageDescriptor extends ImageDescriptor {
 
 	/**
 	 * Creates a new refactoring image descriptor.
-	 * 
+	 *
 	 * @param image
 	 *            the image to describe
 	 */

@@ -67,7 +67,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * with refactorings for which no corresponding refactoring contribution has
  * been registered.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public abstract class RefactoringContribution {
@@ -91,13 +91,13 @@ public abstract class RefactoringContribution {
 	 * Note: this method is supposed to be reimplemented by clients wishing to
 	 * provide customizable refactoring descriptors.
 	 * </p>
-	 * 
+	 *
 	 * @return the refactoring descriptor, or <code>null</code> if the
 	 *         refactoring represented by this contribution does not expose
 	 *         customizable refactoring descriptors
-	 * 
+	 *
 	 * @see #createDescriptor(String, String, String, String, Map, int)
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public RefactoringDescriptor createDescriptor() {
@@ -116,7 +116,7 @@ public abstract class RefactoringContribution {
 	 * values for which the refactoring contribution has been registered with
 	 * the extension point.
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            the unique id of the refactoring
 	 * @param project
@@ -137,9 +137,9 @@ public abstract class RefactoringContribution {
 	 * @param flags
 	 *            the flags of the refactoring descriptor
 	 * @return the refactoring descriptor
-	 * 
-	 * @throws IllegalArgumentException if the argument map contains invalid keys/values 
-	 * 
+	 *
+	 * @throws IllegalArgumentException if the argument map contains invalid keys/values
+	 *
 	 * @see #retrieveArgumentMap(RefactoringDescriptor)
 	 */
 	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) throws IllegalArgumentException;
@@ -154,11 +154,11 @@ public abstract class RefactoringContribution {
 	 * Note: this method is not intended to be extended or reimplemented by
 	 * clients.
 	 * </p>
-	 * 
+	 *
 	 * @return the unique id of the refactoring
-	 * 
+	 *
 	 * @since 3.3
-	 * 
+	 *
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
 	public String getId() {
@@ -194,11 +194,11 @@ public abstract class RefactoringContribution {
 	 * refactoring descriptors which have been obtained by a previous call to
 	 * {@link #createDescriptor(String, String, String, String, Map, int)}.
 	 * </p>
-	 * 
+	 *
 	 * @param descriptor
 	 *            the refactoring descriptor to retrieve its argument map
 	 * @return the argument map of the specified refactoring descriptor
-	 * 
+	 *
 	 * @see #createDescriptor(String, String, String, String, Map, int)
 	 */
 	public Map retrieveArgumentMap(final RefactoringDescriptor descriptor) {

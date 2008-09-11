@@ -14,12 +14,6 @@ import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardContainer;
@@ -27,12 +21,16 @@ import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
 /**
  * Wizard to apply a refactoring script.
- * 
+ *
  * @since 3.2
  */
 public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard implements IWorkbenchWizard {
@@ -126,7 +124,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 
 	/**
 	 * Returns the refactoring history to apply.
-	 * 
+	 *
 	 * @return the refactoring history to apply, or <code>null</code>
 	 */
 	public RefactoringHistory getRefactoringHistory() {
@@ -135,7 +133,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 
 	/**
 	 * Returns the location of the refactoring script.
-	 * 
+	 *
 	 * @return the location of the script, or <code>null</code>
 	 */
 	public URI getRefactoringScript() {
@@ -172,7 +170,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 
 	/**
 	 * Sets the refactoring history to apply.
-	 * 
+	 *
 	 * @param history
 	 *            the refactoring history to apply, or <code>null</code>
 	 */
@@ -185,7 +183,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 
 	/**
 	 * Sets the location of the refactoring script.
-	 * 
+	 *
 	 * @param uri
 	 *            the location of the script, or <code>null</code>
 	 */

@@ -36,7 +36,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 
 	private Display fDisplay;
 	private IWizardContainer fWizardContainer;
-	
+
 	public UIPerformChangeOperation(Display display, Change change, IWizardContainer container) {
 		super(change);
 		fDisplay= display;
@@ -48,7 +48,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 		fDisplay= display;
 		fWizardContainer= container;
 	}
-	
+
 	protected void executeChange(final IProgressMonitor pm) throws CoreException {
 		if (fDisplay != null && !fDisplay.isDisposed()) {
 			final Throwable[] exception= new Throwable[1];
