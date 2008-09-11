@@ -12,27 +12,27 @@ package org.eclipse.core.internal.expressions;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+
 public class SystemTestExpression extends Expression {
 
 	private String fProperty;
 	private String fExpectedValue;
-	
+
 	private static final String ATT_PROPERTY= "property"; //$NON-NLS-1$
-	
+
 	/**
 	 * The seed for the hash code for all system test expressions.
 	 */
 	private static final int HASH_INITIAL= SystemTestExpression.class.getName().hashCode();
-	
+
 	public SystemTestExpression(IConfigurationElement element) throws CoreException {
 		fProperty= element.getAttribute(ATT_PROPERTY);
 		Expressions.checkAttribute(ATT_PROPERTY, fProperty);
@@ -53,10 +53,10 @@ public class SystemTestExpression extends Expression {
 		fProperty= property;
 		fExpectedValue= expectedValue;
 	}
-	
+
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		String str= System.getProperty(fProperty);
-		if (str == null) 
+		if (str == null)
 			return EvaluationResult.FALSE;
 		return EvaluationResult.valueOf(str.equals(fExpectedValue));
 	}
@@ -68,7 +68,7 @@ public class SystemTestExpression extends Expression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof SystemTestExpression))
 			return false;
-		
+
 		final SystemTestExpression that= (SystemTestExpression)object;
 		return this.fProperty.equals(that.fProperty)
 				&& this.fExpectedValue.equals(that.fExpectedValue);
@@ -78,9 +78,9 @@ public class SystemTestExpression extends Expression {
 		return HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode()
 			* HASH_FACTOR + fProperty.hashCode();
 	}
-	
+
 	// ---- Debugging ---------------------------------------------------
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

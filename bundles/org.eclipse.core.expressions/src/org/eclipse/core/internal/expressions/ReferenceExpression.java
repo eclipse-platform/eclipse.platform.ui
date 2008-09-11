@@ -12,20 +12,20 @@ package org.eclipse.core.internal.expressions;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+
 /**
  * This class makes use of the <b>org.eclipse.core.expressions.definitions</b>
  * extension point to evaluate the current context against pre-defined
  * expressions. It provides core expression re-use.
- * 
+ *
  * @since 3.3
  */
 public class ReferenceExpression extends Expression {

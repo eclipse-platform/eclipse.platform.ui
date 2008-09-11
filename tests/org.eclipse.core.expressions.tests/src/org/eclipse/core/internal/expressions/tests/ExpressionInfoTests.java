@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.expressions.ExpressionInfo;
-
 import org.eclipse.core.internal.expressions.AdaptExpression;
 import org.eclipse.core.internal.expressions.AndExpression;
 import org.eclipse.core.internal.expressions.CountExpression;
@@ -40,28 +39,28 @@ public class ExpressionInfoTests extends TestCase {
 	}
 
 	// ---- test merging ------------------------------------------------------------------------
-	
+
 	public void testMergeEmpty() {
 		ExpressionInfo info= new ExpressionInfo();
 		info.merge(new ExpressionInfo());
 		assertNoAccess(info);
 	}
-	
+
 	public void testMergeDefaultVariable() {
 		ExpressionInfo info;
 		ExpressionInfo other;
-		
+
 		info= new ExpressionInfo();
 		info.markDefaultVariableAccessed();
 		info.merge(new ExpressionInfo());
 		assertDefaultAccessOnly(info);
-		
+
 		info= new ExpressionInfo();
 		other= new ExpressionInfo();
 		other.markDefaultVariableAccessed();
 		info.merge(other);
 		assertDefaultAccessOnly(info);
-		
+
 		info= new ExpressionInfo();
 		other= new ExpressionInfo();
 		info.markDefaultVariableAccessed();
@@ -69,22 +68,22 @@ public class ExpressionInfoTests extends TestCase {
 		info.merge(other);
 		assertDefaultAccessOnly(info);
 	}
-	
+
 	public void testMergeSystemProperty() {
 		ExpressionInfo info;
 		ExpressionInfo other;
-		
+
 		info= new ExpressionInfo();
 		info.markSystemPropertyAccessed();
 		info.merge(new ExpressionInfo());
 		assertSystemPropertyOnly(info);
-		
+
 		info= new ExpressionInfo();
 		other= new ExpressionInfo();
 		other.markSystemPropertyAccessed();
 		info.merge(other);
 		assertSystemPropertyOnly(info);
-		
+
 		info= new ExpressionInfo();
 		other= new ExpressionInfo();
 		info.markSystemPropertyAccessed();
@@ -92,29 +91,29 @@ public class ExpressionInfoTests extends TestCase {
 		info.merge(other);
 		assertSystemPropertyOnly(info);
 	}
-	
+
 	public void testMergeVariableNames() {
 		ExpressionInfo info;
 		ExpressionInfo other;
-		
+
 		info= new ExpressionInfo();
 		info.addVariableNameAccess("variable");
 		info.merge(new ExpressionInfo());
 		assertVariableAccess(info, "variable");
-		
+
 		info= new ExpressionInfo();
 		other= new ExpressionInfo();
 		other.addVariableNameAccess("variable");
 		info.merge(other);
 		assertVariableAccess(info, "variable");
-		
+
 		info= new ExpressionInfo();
 		info.addVariableNameAccess("variable");
 		other= new ExpressionInfo();
 		other.addVariableNameAccess("variable");
 		info.merge(other);
 		assertVariableAccess(info, "variable");
-		
+
 		info= new ExpressionInfo();
 		info.addVariableNameAccess("variable_one");
 		other= new ExpressionInfo();
@@ -122,7 +121,7 @@ public class ExpressionInfoTests extends TestCase {
 		info.merge(other);
 		assertVariableAccess(info, new String[] {"variable_one", "variable_two"});
 	}
-	
+
 	public void testMergePropertyNames() {
 		ExpressionInfo info;
 		ExpressionInfo other;
@@ -152,29 +151,29 @@ public class ExpressionInfoTests extends TestCase {
 		info.merge(other);
 		assertPropertyAccess(info, new String[] { "prop1", "prop2" }, false);
 	}
-	
+
 	public void testMergeMisbehavingExpressionTypes() {
 		ExpressionInfo info;
 		ExpressionInfo other;
-		
+
 		info= new ExpressionInfo();
 		info.addMisBehavingExpressionType(WithExpression.class);
 		info.merge(new ExpressionInfo());
 		assertMisbehavedExpressionTypes(info, new Class[] {WithExpression.class});
-		
+
 		info= new ExpressionInfo();
 		other= new ExpressionInfo();
 		other.addMisBehavingExpressionType(WithExpression.class);
 		info.merge(other);
 		assertMisbehavedExpressionTypes(info, new Class[] {WithExpression.class});
-		
+
 		info= new ExpressionInfo();
 		info.addMisBehavingExpressionType(WithExpression.class);
 		other= new ExpressionInfo();
 		other.addMisBehavingExpressionType(WithExpression.class);
 		info.merge(other);
 		assertMisbehavedExpressionTypes(info, new Class[] {WithExpression.class});
-		
+
 		info= new ExpressionInfo();
 		info.addMisBehavingExpressionType(WithExpression.class);
 		other= new ExpressionInfo();
@@ -182,9 +181,9 @@ public class ExpressionInfoTests extends TestCase {
 		info.merge(other);
 		assertMisbehavedExpressionTypes(info, new Class[] {WithExpression.class, ResolveExpression.class});
 	}
-	
+
 	// ---- test expression ---------------------------------------------------------------------
-	
+
 	public void testCountExpression() {
 		assertDefaultAccessOnly((new CountExpression("10")).computeExpressionInfo());
 	}
@@ -192,55 +191,55 @@ public class ExpressionInfoTests extends TestCase {
 	public void testEqualsExpression() {
 		assertDefaultAccessOnly((new EqualsExpression(new Object())).computeExpressionInfo());
 	}
-	
+
 	public void testInstanceofExpression() {
 		assertDefaultAccessOnly((new InstanceofExpression("java.lang.Object")).computeExpressionInfo());
 	}
-	
+
 	public void testNotExpression() {
 		assertDefaultAccessOnly((new NotExpression(new CountExpression("10"))).computeExpressionInfo());
 	}
-	
+
 	public void testSystemExpression() {
 		assertSystemPropertyOnly((new SystemTestExpression("property", "value")).computeExpressionInfo());
 	}
-	
+
 	public void testTestExpression() {
 		assertPropertyAccess((new TestExpression("namespace", "property", null,
 				new Object())).computeExpressionInfo(), "namespace.property", true);
 	}
-	
+
 	// ---- composite expressions ---------------------------------------------------------
-	
+
 	public void testAdaptExpression() throws Exception {
 		assertDefaultAccessOnly(new AdaptExpression("java.lang.Object").computeExpressionInfo());
 	}
-	
+
 	public void testAndExpression() throws Exception {
 		AndExpression and= new AndExpression();
 		assertNoAccess(and.computeExpressionInfo());
 		and.add(new CountExpression("10"));
 		assertDefaultAccessOnly(and.computeExpressionInfo());
 	}
-	
+
 	public void testIterateExpression() throws Exception {
 		assertDefaultAccessOnly(new IterateExpression("or").computeExpressionInfo());
 	}
-	
+
 	public void testResolveExpression() {
 		ResolveExpression resolve= new ResolveExpression("variable", null);
 		assertNoAccess(resolve.computeExpressionInfo());
 		resolve.add(new CountExpression("10"));
 		assertVariableAccess(resolve.computeExpressionInfo(), "variable");
 	}
-	
+
 	public void testWithExpression() {
 		WithExpression with= new WithExpression("variable");
 		assertNoAccess(with.computeExpressionInfo());
 		with.add(new CountExpression("10"));
 		assertVariableAccess(with.computeExpressionInfo(), "variable");
 	}
-	
+
 	private void assertDefaultAccessOnly(ExpressionInfo info) {
 		assertTrue("Accesses default variable", info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
@@ -256,7 +255,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
 		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 	}
-	
+
 	private void assertNoAccess(ExpressionInfo info) {
 		assertFalse("Doesn't accesses default variable", info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
@@ -264,7 +263,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
 		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 	}
-	
+
 	private void assertVariableAccess(ExpressionInfo info, String variable) {
 		assertFalse("Doesn't accesses default variable", info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
@@ -274,7 +273,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
 		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 	}
-	
+
 	private void assertVariableAccess(ExpressionInfo info, String[] variables) {
 		assertFalse("Doesn't accesses default variable", info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
@@ -286,7 +285,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
 		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 	}
-	
+
 	private void assertPropertyAccess(ExpressionInfo info, String property, boolean defaultVariable) {
 		assertEquals("Accesses default variable", defaultVariable, info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
@@ -296,7 +295,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
 		assertEquals("No variable accesses", 0, info.getAccessedVariableNames().length);
 	}
-	
+
 	private void assertPropertyAccess(ExpressionInfo info, String[] properties, boolean defaultVariable) {
 		assertEquals("Accesses default variable", defaultVariable, info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
@@ -308,7 +307,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
 		assertEquals("No variable accesses", 0, info.getAccessedVariableNames().length);
 	}
-	
+
 	private void assertMisbehavedExpressionTypes(ExpressionInfo info, Class[] types) {
 		assertFalse("Doesn't accesses default variable", info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());

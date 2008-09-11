@@ -13,10 +13,10 @@ package org.eclipse.core.internal.expressions.tests;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdapterFactory;
-
 import org.eclipse.core.expressions.ICountable;
 import org.eclipse.core.expressions.IIterable;
+
+import org.eclipse.core.runtime.IAdapterFactory;
 
 
 public class CollectionAdapterFactory implements IAdapterFactory {
@@ -27,14 +27,14 @@ public class CollectionAdapterFactory implements IAdapterFactory {
 				public Iterator iterator() {
 					return ((ExpressionTests.CollectionWrapper)adaptableObject).collection.iterator();
 				}
-			};			
+			};
 		}
 		if (adapterType.equals(ICountable.class) && adaptableObject instanceof ExpressionTests.CollectionWrapper) {
 			return new ICountable() {
 				public int count() {
 					return ((ExpressionTests.CollectionWrapper)adaptableObject).collection.size();
 				}
-			};			
+			};
 		}
 		return null;
 	}

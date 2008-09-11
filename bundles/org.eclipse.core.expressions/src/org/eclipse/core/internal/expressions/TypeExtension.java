@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.core.expressions.IPropertyTester;
 import org.eclipse.core.expressions.PropertyTester;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+
 public class TypeExtension {
-	
+
 	private static final TypeExtension[] EMPTY_TYPE_EXTENSION_ARRAY= new TypeExtension[0];
 
 	/* a special property tester instance that is used to signal that method searching has to continue */
@@ -38,39 +38,39 @@ public class TypeExtension {
 			return false;
 		}
 	};
-		
+
 	/* a special type extension instance that marks the end of an evaluation chain */
 	private static final TypeExtension END_POINT= new TypeExtension() {
 		/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String name, boolean staticMethod, boolean forcePluginActivation) throws CoreException {
 			return CONTINUE;
 		}
 	};
-		
+
 	/* the type this extension is extending */
 	private Class fType;
 	/* the list of associated extenders */
 	private IPropertyTester[] fExtenders;
-	
+
 	/* the extension associated with <code>fType</code>'s super class */
 	private TypeExtension fExtends;
-	/* the extensions associated with <code>fTypes</code>'s interfaces */ 
+	/* the extensions associated with <code>fTypes</code>'s interfaces */
 	private TypeExtension[] fImplements;
-	
+
 	private TypeExtension() {
 		// special constructor to create the CONTINUE instance
 	}
-	
+
 	/* package */ TypeExtension(Class type) {
 		Assert.isNotNull(type);
 		fType= type;
 	}
-	
+
 	/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String method, boolean staticMethod, boolean forcePluginActivation) throws CoreException {
 		if (fExtenders == null) {
 			fExtenders= manager.loadTesters(fType);
 		}
 		IPropertyTester result;
-		
+
 		// handle extenders associated with this type extender
 		for (int i= 0; i < fExtenders.length; i++) {
 			IPropertyTester extender= fExtenders[i];
@@ -99,7 +99,7 @@ public class TypeExtension {
 						fExtenders[i]= null;
 						throw new CoreException(new ExpressionStatus(
 							ExpressionStatus.TYPE_EXTENDER_INCORRECT_TYPE,
-							ExpressionMessages.TypeExtender_incorrectType,  
+							ExpressionMessages.TypeExtender_incorrectType,
 							e));
 					}
 				} else {
@@ -107,11 +107,11 @@ public class TypeExtension {
 				}
 			}
 		}
-		
+
 		// there is no inheritance for static methods
-		if (staticMethod) 
+		if (staticMethod)
 			return CONTINUE;
-		
+
 		// handle extends chain
 		if (fExtends == null) {
 			Class superClass= fType.getSuperclass();
@@ -124,7 +124,7 @@ public class TypeExtension {
 		result= fExtends.findTypeExtender(manager, namespace, method, staticMethod, forcePluginActivation);
 		if (result != CONTINUE)
 			return result;
-		
+
 		// handle implements chain
 		if (fImplements == null) {
 			Class[] interfaces= fType.getInterfaces();
@@ -134,7 +134,7 @@ public class TypeExtension {
 				fImplements= new TypeExtension[interfaces.length];
 				for (int i= 0; i < interfaces.length; i++) {
 					fImplements[i]= manager.get(interfaces[i]);
-				}				
+				}
 			}
 		}
 		for (int i= 0; i < fImplements.length; i++) {

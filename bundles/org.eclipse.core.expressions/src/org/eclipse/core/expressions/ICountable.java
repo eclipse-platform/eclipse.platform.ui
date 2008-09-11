@@ -16,18 +16,18 @@ import org.eclipse.core.runtime.IAdapterManager;
 /**
  * Objects that are adaptable to <code>ICountable</code> can be used
  * as the default variable in a count expression.
- * 
+ *
  * @see IAdaptable
  * @see IAdapterManager
- * 
+ *
  * @since 3.3
  */
 public interface ICountable {
 
 	/**
 	 * Returns the number of elements.
-	 * 
-	 * @return the number of elements 
+	 *
+	 * @return the number of elements
 	 */
 	public int count();
 }

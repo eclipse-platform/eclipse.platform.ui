@@ -12,14 +12,14 @@ package org.eclipse.core.internal.expressions;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class EqualsExpression extends Expression {
 	/**
@@ -27,13 +27,13 @@ public class EqualsExpression extends Expression {
 	 */
 	private static final int HASH_INITIAL= EqualsExpression.class.getName().hashCode();
 
-	private Object fExpectedValue; 
-	
+	private Object fExpectedValue;
+
 	public EqualsExpression(Object expectedValue) {
 		Assert.isNotNull(expectedValue);
 		fExpectedValue= expectedValue;
 	}
-	
+
 	public EqualsExpression(IConfigurationElement element) throws CoreException {
 		String value= element.getAttribute(ATT_VALUE);
 		Expressions.checkAttribute(ATT_VALUE, value);
@@ -58,7 +58,7 @@ public class EqualsExpression extends Expression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof EqualsExpression))
 			return false;
-		
+
 		final EqualsExpression that= (EqualsExpression)object;
 		return this.fExpectedValue.equals(that.fExpectedValue);
 	}

@@ -12,15 +12,15 @@ package org.eclipse.core.internal.expressions;
 
 import org.w3c.dom.Element;
 
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.expressions.ExpressionInfo;
-import org.eclipse.core.expressions.IEvaluationContext;
 
 public class AdaptExpression extends CompositeExpression {
 
@@ -30,9 +30,9 @@ public class AdaptExpression extends CompositeExpression {
 	 * The seed for the hash code for all adapt expressions.
 	 */
 	private static final int HASH_INITIAL= AdaptExpression.class.getName().hashCode();
-	
+
 	private String fTypeName;
-	
+
 	public AdaptExpression(IConfigurationElement configElement) throws CoreException {
 		fTypeName= configElement.getAttribute(ATT_TYPE);
 		Expressions.checkAttribute(ATT_TYPE, fTypeName);
@@ -51,7 +51,7 @@ public class AdaptExpression extends CompositeExpression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof AdaptExpression))
 			return false;
-		
+
 		final AdaptExpression that= (AdaptExpression)object;
 		return this.fTypeName.equals(that.fTypeName)
 				&& equals(this.fExpressions, that.fExpressions);
@@ -61,7 +61,7 @@ public class AdaptExpression extends CompositeExpression {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
 			* HASH_FACTOR + fTypeName.hashCode();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see Expression#evaluate(IVariablePool)
 	 */
@@ -76,7 +76,7 @@ public class AdaptExpression extends CompositeExpression {
 		} else {
 			if (!manager.hasAdapter(var, fTypeName))
 				return EvaluationResult.FALSE;
-		
+
 			adapted= manager.getAdapter(var, fTypeName);
 		}
 		// the adapted result is null but hasAdapter returned true check
@@ -90,12 +90,12 @@ public class AdaptExpression extends CompositeExpression {
 		}
 		return evaluateAnd(new DefaultVariable(context, adapted));
 	}
-	
+
 	public void collectExpressionInfo(ExpressionInfo info) {
 		// Although the default variable is passed to the children of this
 		// expression as an instance of the adapted type it is OK to only
 		// mark a default variable access.
 		info.markDefaultVariableAccessed();
 		super.collectExpressionInfo(info);
-	}	
+	}
 }

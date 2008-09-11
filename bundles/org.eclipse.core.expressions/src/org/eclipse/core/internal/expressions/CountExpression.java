@@ -14,14 +14,14 @@ import java.util.Collection;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.ICountable;
 import org.eclipse.core.expressions.IEvaluationContext;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 
 public class CountExpression extends Expression {
@@ -37,10 +37,10 @@ public class CountExpression extends Expression {
 	 * The seed for the hash code for all count expressions.
 	 */
 	private static final int HASH_INITIAL= CountExpression.class.getName().hashCode();
-	
+
 	private int fMode;
 	private int fSize;
-	
+
 	public CountExpression(IConfigurationElement configElement) {
 		String size = configElement.getAttribute(ATT_VALUE);
 		initializeSize(size);
@@ -54,7 +54,7 @@ public class CountExpression extends Expression {
 	public CountExpression(String size) {
 		initializeSize(size);
 	}
-	
+
 	private void initializeSize(String size) {
 		if (size == null)
 			size= "*"; //$NON-NLS-1$
@@ -111,7 +111,7 @@ public class CountExpression extends Expression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof CountExpression))
 			return false;
-		
+
 		final CountExpression that= (CountExpression)object;
 		return (this.fMode == that.fMode) && (this.fSize == that.fSize);
 	}

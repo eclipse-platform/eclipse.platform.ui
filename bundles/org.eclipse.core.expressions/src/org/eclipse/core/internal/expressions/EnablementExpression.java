@@ -12,17 +12,17 @@ package org.eclipse.core.internal.expressions;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class EnablementExpression extends CompositeExpression {
 
 	/**
 	 * Creates a {@link EnablementExpression}.
-	 * 
+	 *
 	 * @param configElement the configuration element
 	 */
 	public EnablementExpression(IConfigurationElement configElement) {
@@ -31,7 +31,7 @@ public class EnablementExpression extends CompositeExpression {
 
 	/**
 	 * Creates a {@link EnablementExpression}.
-	 * 
+	 *
 	 * @param element the XML element
 	 */
 	public EnablementExpression(Element element) {
@@ -41,11 +41,11 @@ public class EnablementExpression extends CompositeExpression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof EnablementExpression))
 			return false;
-		
+
 		final EnablementExpression that= (EnablementExpression)object;
 		return equals(this.fExpressions, that.fExpressions);
-	} 
-	
+	}
+
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		long start= 0;
 		if (Expressions.TRACING)

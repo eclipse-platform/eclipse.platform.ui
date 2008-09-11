@@ -12,10 +12,10 @@ package org.eclipse.core.internal.expressions.propertytester;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.core.expressions.PropertyTester;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.core.expressions.PropertyTester;
 
 /**
  * A property tester for testing platform properties. Can test whether or
@@ -29,7 +29,7 @@ import org.eclipse.core.expressions.PropertyTester;
  * <p>
  */
 public class PlatformPropertyTester extends PropertyTester {
-	
+
 	private static final String PROPERTY_PRODUCT = "product"; //$NON-NLS-1$
 	private static final String PROPERTY_IS_BUNDLE_INSTALLED = "isBundleInstalled"; //$NON-NLS-1$
 	private static final String PROPERTY_BUNDLE_STATE = "bundleState"; //$NON-NLS-1$
@@ -58,7 +58,7 @@ public class PlatformPropertyTester extends PropertyTester {
 		}
 		return false;
 	}
-	
+
 	private boolean bundleState(int bundleState, Object expectedValue) {
 		if ("UNINSTALLED".equals(expectedValue)) { //$NON-NLS-1$
 			return bundleState == Bundle.UNINSTALLED;

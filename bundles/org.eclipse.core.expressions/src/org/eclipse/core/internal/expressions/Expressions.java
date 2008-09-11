@@ -18,14 +18,14 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ICountable;
+import org.eclipse.core.expressions.IIterable;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ICountable;
-import org.eclipse.core.expressions.IIterable;
 
 public class Expressions {
 
@@ -33,25 +33,25 @@ public class Expressions {
 	 * Cache to optimize instanceof computation. Map of String->Map(String, Boolean).
 	 */
 	private static final Map knownClasses = new HashMap();
-	
+
 	/* debugging flag to enable tracing */
 	public static final boolean TRACING;
 	static {
 		String value= Platform.getDebugOption("org.eclipse.core.expressions/tracePropertyResolving"); //$NON-NLS-1$
 		TRACING= value != null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
 	}
-	
+
 	private Expressions() {
 		// no instance
 	}
-	
+
 	public static boolean isInstanceOf(Object element, String type) {
 		// null isn't an instanceof of anything.
 		if (element == null)
 			return false;
-		return isSubtype(element.getClass(), type); 
+		return isSubtype(element.getClass(), type);
 	}
-	
+
 	private static synchronized boolean isSubtype(Class clazz, String type) {
 		String clazzName = clazz.getName();
 		Map nameMap = (Map) knownClasses.get(clazzName);
@@ -79,18 +79,18 @@ public class Expressions {
 		for (int i= 0; i < interfaces.length; i++) {
 			if (uncachedIsSubtype(interfaces[i], type))
 				return true;
-		} 
+		}
 		return false;
 	}
-	
+
 	public static void checkAttribute(String name, String value) throws CoreException {
 		if (value == null) {
 			throw new CoreException(new ExpressionStatus(
-				ExpressionStatus.MISSING_ATTRIBUTE, 
-				Messages.format(ExpressionMessages.Expression_attribute_missing, name))); 
+				ExpressionStatus.MISSING_ATTRIBUTE,
+				Messages.format(ExpressionMessages.Expression_attribute_missing, name)));
 		}
 	}
-	
+
 	public static void checkAttribute(String name, String value, String[] validValues) throws CoreException {
 		checkAttribute(name, value);
 		for (int i= 0; i < validValues.length; i++) {
@@ -98,35 +98,35 @@ public class Expressions {
 				return;
 		}
 		throw new CoreException(new ExpressionStatus(
-			ExpressionStatus.WRONG_ATTRIBUTE_VALUE, 
-			Messages.format(ExpressionMessages.Expression_attribute_invalid_value, value))); 
+			ExpressionStatus.WRONG_ATTRIBUTE_VALUE,
+			Messages.format(ExpressionMessages.Expression_attribute_invalid_value, value)));
 	}
-	
+
 	public static void checkCollection(Object var, Expression expression) throws CoreException {
 		if (var instanceof Collection)
 			return;
 		throw new CoreException(new ExpressionStatus(
-			ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION, 
-			Messages.format(ExpressionMessages.Expression_variable_not_a_collection, expression.toString()))); 
+			ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION,
+			Messages.format(ExpressionMessages.Expression_variable_not_a_collection, expression.toString())));
 	}
-	
+
 	public static void checkList(Object var, Expression expression) throws CoreException {
 		if (var instanceof List)
 			return;
 		throw new CoreException(new ExpressionStatus(
-			ExpressionStatus.VARIABLE_IS_NOT_A_LIST, 
-			Messages.format(ExpressionMessages.Expression_variable_not_a_list, expression.toString()))); 
+			ExpressionStatus.VARIABLE_IS_NOT_A_LIST,
+			Messages.format(ExpressionMessages.Expression_variable_not_a_list, expression.toString())));
 	}
-	
+
 	/**
 	 * Converts the given variable into an <code>IIterable</code>. If a corresponding adapter can't be found an
 	 * exception is thrown. If the corresponding adapter isn't loaded yet, <code>null</code> is returned.
-	 * 
-	 * @param var the variable to turn into an <code>IIterable</code> 
+	 *
+	 * @param var the variable to turn into an <code>IIterable</code>
 	 * @param expression the expression referring to the variable
-	 * 
+	 *
 	 * @return the <code>IIterable</code> or <code>null<code> if a corresponding adapter isn't loaded yet
-	 *  
+	 *
 	 * @throws CoreException if the var can't be adapted to an <code>IIterable</code>
 	 */
 	public static IIterable getAsIIterable(Object var, Expression expression) throws CoreException {
@@ -137,25 +137,25 @@ public class Expressions {
 			IIterable result= (IIterable)manager.getAdapter(var, IIterable.class);
 			if (result != null)
 				return result;
-			
+
 			if (manager.queryAdapter(var, IIterable.class.getName()) == IAdapterManager.NOT_LOADED)
 				return null;
-			
+
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION,
-				Messages.format(ExpressionMessages.Expression_variable_not_iterable, expression.toString()))); 
+				Messages.format(ExpressionMessages.Expression_variable_not_iterable, expression.toString())));
 		}
 	}
-	
+
 	/**
 	 * Converts the given variable into an <code>ICountable</code>. If a corresponding adapter can't be found an
 	 * exception is thrown. If the corresponding adapter isn't loaded yet, <code>null</code> is returned.
-	 * 
-	 * @param var the variable to turn into an <code>ICountable</code> 
+	 *
+	 * @param var the variable to turn into an <code>ICountable</code>
 	 * @param expression the expression referring to the variable
-	 * 
+	 *
 	 * @return the <code>ICountable</code> or <code>null<code> if a corresponding adapter isn't loaded yet
-	 *  
+	 *
 	 * @throws CoreException if the var can't be adapted to an <code>ICountable</code>
 	 */
 	public static ICountable getAsICountable(Object var, Expression expression) throws CoreException {
@@ -166,16 +166,16 @@ public class Expressions {
 			ICountable result= (ICountable)manager.getAdapter(var, ICountable.class);
 			if (result != null)
 				return result;
-			
+
 			if (manager.queryAdapter(var, ICountable.class.getName()) == IAdapterManager.NOT_LOADED)
 				return null;
-			
+
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION,
-				Messages.format(ExpressionMessages.Expression_variable_not_countable, expression.toString()))); 
+				Messages.format(ExpressionMessages.Expression_variable_not_countable, expression.toString())));
 		}
 	}
-	
+
 	public static boolean getOptionalBooleanAttribute(IConfigurationElement element, String attributeName) {
 		String value= element.getAttribute(attributeName);
 		if (value == null)
@@ -191,9 +191,9 @@ public class Expressions {
 	}
 
 	//---- Argument parsing --------------------------------------------
-	
+
 	public static final Object[] EMPTY_ARGS= new Object[0];
-	
+
 	public static Object[] getArguments(IConfigurationElement element, String attributeName) throws CoreException {
 		String args= element.getAttribute(attributeName);
 		if (args != null) {
@@ -223,12 +223,12 @@ public class Expressions {
 		result.add(convertArgument(args.substring(start).trim()));
 		return result.toArray();
 	}
-	
+
 	private static int findNextComma(String str, int start) throws CoreException {
 		boolean inString= false;
 		for (int i= start; i < str.length(); i++) {
 			char ch= str.charAt(i);
-			if (ch == ',' && ! inString) 
+			if (ch == ',' && ! inString)
 				return i;
 			if (ch == '\'') {
 				if (!inString) {
@@ -246,12 +246,12 @@ public class Expressions {
 		}
 		if (inString)
 			throw new CoreException(new ExpressionStatus(
-				ExpressionStatus.STRING_NOT_TERMINATED, 
-				Messages.format(ExpressionMessages.Expression_string_not_terminated, str))); 
-			
+				ExpressionStatus.STRING_NOT_TERMINATED,
+				Messages.format(ExpressionMessages.Expression_string_not_terminated, str)));
+
 		return -1;
 	}
-		
+
 	public static Object convertArgument(String arg) throws CoreException {
 		if (arg == null) {
 			return null;
@@ -285,8 +285,8 @@ public class Expressions {
 			if (ch == '\'') {
 				if (i == str.length() - 1 || str.charAt(i + 1) != '\'')
 					throw new CoreException(new ExpressionStatus(
-						ExpressionStatus.STRING_NOT_CORRECT_ESCAPED, 
-						Messages.format(ExpressionMessages.Expression_string_not_correctly_escaped, str))); 
+						ExpressionStatus.STRING_NOT_CORRECT_ESCAPED,
+						Messages.format(ExpressionMessages.Expression_string_not_correctly_escaped, str)));
 				result.append('\'');
 				i++;
 			} else {

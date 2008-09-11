@@ -13,6 +13,11 @@ package org.eclipse.core.expressions;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import org.eclipse.core.internal.expressions.CompositeExpression;
+import org.eclipse.core.internal.expressions.ExpressionMessages;
+import org.eclipse.core.internal.expressions.ExpressionPlugin;
+import org.eclipse.core.internal.expressions.Messages;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -20,41 +25,36 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.core.internal.expressions.CompositeExpression;
-import org.eclipse.core.internal.expressions.ExpressionMessages;
-import org.eclipse.core.internal.expressions.ExpressionPlugin;
-import org.eclipse.core.internal.expressions.Messages;
-
 /**
- * An expression converter converts an XML expression represented by an 
+ * An expression converter converts an XML expression represented by an
  * {@link IConfigurationElement} or {@link Element} (DOM) subtree into a
  * corresponding expression tree.
- * 
+ *
  * <p>
  * An expression converter manages a list of {@link ElementHandler}s. Element
  * handlers are responsible to do the actual conversion. The element handlers
  * build a chain of responsibility.
  * </p>
- * 
- * @since 3.0 
+ *
+ * @since 3.0
  */
 public final class ExpressionConverter {
-	
+
 	private ElementHandler[] fHandlers;
-	private static final ExpressionConverter INSTANCE= new ExpressionConverter( 
-		new ElementHandler[] { ElementHandler.getDefault() } ); 
-	
-	/** 
+	private static final ExpressionConverter INSTANCE= new ExpressionConverter(
+		new ElementHandler[] { ElementHandler.getDefault() } );
+
+	/**
 	 * Returns the default expression converter. The default expression converter
 	 * can cope with all expression elements defined by the common expression
 	 * language.
-	 * 
+	 *
 	 * @return the default expression converter
 	 */
 	public static ExpressionConverter getDefault() {
 		return INSTANCE;
 	}
-	
+
 	/**
 	 * Creates a new expression converter with the given list of element
 	 * handlers. The element handlers build a chain of responsibility
@@ -62,23 +62,23 @@ public final class ExpressionConverter {
 	 * convert the configuration element. If this handler isn't able
 	 * to convert the configuration element the next handler in the
 	 * array is used.
-	 * 
+	 *
 	 * @param handlers the array  of element handlers
  	 */
 	public ExpressionConverter(ElementHandler[] handlers) {
 		Assert.isNotNull(handlers);
 		fHandlers= handlers;
 	}
-	
+
 	/**
 	 * Converts the tree of configuration elements represented by the given
 	 * root element and returns a corresponding expression tree.
-	 * 
+	 *
 	 * @param root the configuration element to be converted
-	 * 
+	 *
 	 * @return the corresponding expression tree or <code>null</code>
 	 *  if the configuration element cannot be converted
-	 * 
+	 *
 	 * @throws CoreException if the configuration element can't be
 	 *  converted. Reasons include: (a) no handler is available to
 	 *  cope with a certain configuration element or (b) the XML
@@ -97,16 +97,16 @@ public final class ExpressionConverter {
 	/**
 	 * Converts the tree of DOM elements represented by the given
 	 * root element and returns a corresponding expression tree.
-	 * 
+	 *
 	 * @param root the element to be converted
-	 * 
+	 *
 	 * @return the corresponding expression tree or <code>null</code>
 	 *  if the element cannot be converted
-	 * 
+	 *
 	 * @throws CoreException if the element can't be converted.
 	 *  Reasons include: (a) no handler is available to cope with
 	 *  a certain element or (b) the XML expression tree is malformed.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public Expression perform(Element root) throws CoreException {
@@ -126,14 +126,14 @@ public final class ExpressionConverter {
 				Expression child= perform(children[i]);
 				if (child == null)
 					throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
-						IStatus.ERROR, 
+						IStatus.ERROR,
 						Messages.format(
-							ExpressionMessages.Expression_unknown_element,  
+							ExpressionMessages.Expression_unknown_element,
 							getDebugPath(children[i])),
 						null));
 				result.add(child);
 			}
-		}		
+		}
 	}
 
 	private String getDebugPath(IConfigurationElement configurationElement) {
@@ -170,9 +170,9 @@ public final class ExpressionConverter {
 				Expression exp= perform((Element)child);
 				if (exp == null)
 					throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
-						IStatus.ERROR, 
+						IStatus.ERROR,
 						Messages.format(
-							ExpressionMessages.Expression_unknown_element,  
+							ExpressionMessages.Expression_unknown_element,
 							child.getNodeName()),
 						null));
 				result.add(exp);

@@ -26,8 +26,8 @@ public class ToStringSorter {
 	/**
 	 * Returns true if stringTwo is 'greater than' stringOne This is the
 	 * 'ordering' method of the sort operation.
-	 * @param stringOne 
-	 * @param stringTwo 
+	 * @param stringOne
+	 * @param stringTwo
 	 * @return a boolean
 	 */
 	public boolean compare(String stringOne, String stringTwo) {
@@ -36,8 +36,8 @@ public class ToStringSorter {
 
 	/**
 	 * Sort the objects in sorted collection and return that collection.
-	 * @param left 
-	 * @param right 
+	 * @param left
+	 * @param right
 	 */
 	private void quickSort(int left, int right) {
 		int originalLeft= left;
@@ -71,8 +71,8 @@ public class ToStringSorter {
 	/**
 	 * Return a new sorted collection from this unsorted collection. Sort using
 	 * quick sort.
-	 * @param unSortedObjects 
-	 * @param unsortedStrings 
+	 * @param unSortedObjects
+	 * @param unsortedStrings
 	 */
 	public void sort(Object[] unSortedObjects, String[] unsortedStrings) {
 		int size= unSortedObjects.length;

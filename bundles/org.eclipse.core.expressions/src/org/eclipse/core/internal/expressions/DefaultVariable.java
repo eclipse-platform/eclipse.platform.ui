@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.eclipse.core.expressions.IEvaluationContext;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.expressions.IEvaluationContext;
 
 /**
  * An evaluation context that can be used to add a new default variable
  * to a hierarchy of evaluation contexts.
- * 
+ *
  * @since 3.0
  */
 public final class DefaultVariable implements IEvaluationContext {
@@ -26,11 +26,11 @@ public final class DefaultVariable implements IEvaluationContext {
 	private Object fDefaultVariable;
 	private IEvaluationContext fParent;
 	private IEvaluationContext fManagedPool;
-	
+
 	/**
 	 * Constructs a new variable pool for a single default variable.
-	 * 
-	 * @param parent the parent context for the default variable. Must not 
+	 *
+	 * @param parent the parent context for the default variable. Must not
 	 *  be <code>null</code>.
 	 * @param defaultVariable the default variable
 	 */
@@ -65,14 +65,14 @@ public final class DefaultVariable implements IEvaluationContext {
 	public Object getDefaultVariable() {
 		return fDefaultVariable;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setAllowPluginActivation(boolean value) {
 		fParent.setAllowPluginActivation(value);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * An evaluation result represents the result of an expression
- * evaluation. There are exact three instances of evaluation 
+ * evaluation. There are exact three instances of evaluation
  * result. They are: <code>FALSE</code>, <code>TRUE</code> and
  * <code>NOT_LOADED</code>. <code>NOT_LOADED</code> represents
  * the fact that an expression couldn't be evaluated since a
@@ -123,22 +123,22 @@ import org.eclipse.core.runtime.Assert;
  *     </tr>
  *   </tbody>
  * </table>
- * 
+ *
  * <p>
  * The class is not intended to be subclassed by clients.
  * </p>
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class EvaluationResult {
-	
+
 	private int fValue;
-	
+
 	private static final int FALSE_VALUE= 0;
 	private static final int TRUE_VALUE= 1;
 	private static final int NOT_LOADED_VALUE= 2;
-	
+
 	/** The evaluation result representing the value FALSE */
 	public static final EvaluationResult FALSE= new EvaluationResult(FALSE_VALUE);
 	/** The evaluation result representing the value TRUE */
@@ -171,73 +171,73 @@ public class EvaluationResult {
 	private EvaluationResult(int value) {
 		fValue= value;
 	}
-	
+
 	/**
 	 * Returns an <code>EvaluationResult</code> whose value is <code>this &amp;&amp; other)</code>.
-	 * 
+	 *
 	 * @param other the right hand side of the and operation.
-	 * 
+	 *
 	 * @return <code>this &amp;&amp; other</code> as defined by the evaluation result
 	 */
 	public EvaluationResult and(EvaluationResult other) {
 		return AND[fValue][other.fValue];
 	}
-	
+
 	/**
 	 * Returns an <code>EvaluationResult</code> whose value is <code>this || other)</code>.
-	 * 
+	 *
 	 * @param other the right hand side of the or operation.
-	 * 
+	 *
 	 * @return <code>this || other</code> as defined by the evaluation result
 	 */
 	public EvaluationResult or(EvaluationResult other) {
 		return OR[fValue][other.fValue];
 	}
-	
+
 	/**
 	 * Returns the inverted value of this evaluation result
-	 * 
+	 *
 	 * @return the inverted value of this evaluation result
 	 */
 	public EvaluationResult not() {
 		return NOT[fValue];
 	}
-	
+
 	/**
 	 * Returns an evaluation result instance representing the
 	 * given boolean value. If the given boolean value is
 	 * <code>true</code> then <code>ExpressionResult.TRUE</code>
 	 * is returned. If the value is <code>false</code> then <code>
 	 * ExpressionResult.FALSE</code> is returned.
-	 * 
+	 *
 	 * @param b a boolean value
-	 * 
+	 *
 	 * @return the expression result representing the boolean
 	 *  value
 	 */
 	public static EvaluationResult valueOf(boolean b) {
 		return b ? TRUE : FALSE;
 	}
-	
+
 	/**
 	 * Returns a evaluation result instance representing the
 	 * given <code>Boolean</code> value. If the given <code>Boolean
 	 * </code> value is <code>true</code> then <code>ExpressionResult.TRUE</code>
 	 * is returned. If the value is <code>false</code> then <code>
 	 * ExpressionResult.FALSE</code> is returned.
-	 * 
+	 *
 	 * @param b a <code>Boolean</code> value
-	 * 
+	 *
 	 * @return the expression result representing the <code>Boolean</code>
 	 *  value
 	 */
 	public static EvaluationResult valueOf(Boolean b) {
 		return b.booleanValue() ? TRUE : FALSE;
 	}
-	
+
 	/**
 	 * For debugging purpose only
-	 * 
+	 *
 	 * @return a string representing this object. The result is not
 	 *  human readable
 	 */

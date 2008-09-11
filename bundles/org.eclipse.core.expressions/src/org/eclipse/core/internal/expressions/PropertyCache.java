@@ -13,22 +13,22 @@ package org.eclipse.core.internal.expressions;
 import org.eclipse.core.internal.expressions.util.LRUCache;
 
 /* package */ class PropertyCache {
-	
+
 	private LRUCache fCache;
-	
+
 	public PropertyCache(final int cacheSize) {
 		fCache= new LRUCache(100);
 		fCache.setSpaceLimit(cacheSize);
 	}
-	
+
 	public Property get(Property key) {
 		return (Property)fCache.get(key);
 	}
-	
+
 	public void put(Property method) {
 		fCache.put(method, method);
 	}
-	
+
 	public void remove(Property method) {
 		fCache.removeKey(method);
 	}

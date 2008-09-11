@@ -12,14 +12,14 @@ package org.eclipse.core.internal.expressions;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class InstanceofExpression extends Expression {
 	/**
@@ -28,7 +28,7 @@ public class InstanceofExpression extends Expression {
 	private static final int HASH_INITIAL= InstanceofExpression.class.getName().hashCode();
 
 	private String fTypeName;
-	
+
 	public InstanceofExpression(IConfigurationElement element) throws CoreException {
 		fTypeName= element.getAttribute(ATT_VALUE);
 		Expressions.checkAttribute(ATT_VALUE, fTypeName);
@@ -43,7 +43,7 @@ public class InstanceofExpression extends Expression {
 		Assert.isNotNull(typeName);
 		fTypeName= typeName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.Expression#evaluate(java.lang.Object)
 	 */
@@ -51,7 +51,7 @@ public class InstanceofExpression extends Expression {
 		Object element= context.getDefaultVariable();
 		return EvaluationResult.valueOf(Expressions.isInstanceOf(element, fTypeName));
 	}
-	
+
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
 	}
@@ -59,7 +59,7 @@ public class InstanceofExpression extends Expression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof InstanceofExpression))
 			return false;
-		
+
 		final InstanceofExpression that= (InstanceofExpression) object;
 		return this.fTypeName.equals(that.fTypeName);
 	}
@@ -67,9 +67,9 @@ public class InstanceofExpression extends Expression {
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fTypeName.hashCode();
 	}
-	
+
 	//---- Debugging ---------------------------------------------------
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

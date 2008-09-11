@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.CoreException;
  * <p>
  * Clients may instantiate this default context. The class is
  * not intended to be subclassed by clients.
- * </p> 
- * 
+ * </p>
+ *
  * @since 3.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class EvaluationContext implements IEvaluationContext {
@@ -34,11 +34,11 @@ public class EvaluationContext implements IEvaluationContext {
 	private Map/*<String, Object>*/ fVariables;
 	private IVariableResolver[] fVariableResolvers;
 	private Boolean fAllowPluginActivation;
-	
+
 	/**
 	 * Create a new evaluation context with the given parent and default
 	 * variable.
-	 * 
+	 *
 	 * @param parent the parent context. Can be <code>null</code>.
 	 * @param defaultVariable the default variable
 	 */
@@ -47,16 +47,16 @@ public class EvaluationContext implements IEvaluationContext {
 		fParent= parent;
 		fDefaultVariable= defaultVariable;
 	}
-	
+
 	/**
 	 * Create a new evaluation context with the given parent and default
 	 * variable.
-	 * 
+	 *
 	 * @param parent the parent context. Can be <code>null</code>.
 	 * @param defaultVariable the default variable
 	 * @param resolvers an array of <code>IVariableResolvers</code> to
 	 *  resolve additional variables.
-	 * 
+	 *
 	 * @see #resolveVariable(String, Object[])
 	 */
 	public EvaluationContext(IEvaluationContext parent, Object defaultVariable, IVariableResolver[] resolvers) {
@@ -66,14 +66,14 @@ public class EvaluationContext implements IEvaluationContext {
 		fDefaultVariable= defaultVariable;
 		fVariableResolvers= resolvers;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public IEvaluationContext getParent() {
 		return fParent;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -82,21 +82,21 @@ public class EvaluationContext implements IEvaluationContext {
 			return this;
 		return fParent.getRoot();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public Object getDefaultVariable() {
 		return fDefaultVariable;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setAllowPluginActivation(boolean value) {
 		fAllowPluginActivation= value ? Boolean.TRUE : Boolean.FALSE;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -108,7 +108,7 @@ public class EvaluationContext implements IEvaluationContext {
 		}
 		return fAllowPluginActivation.booleanValue();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -119,7 +119,7 @@ public class EvaluationContext implements IEvaluationContext {
 			fVariables= new HashMap();
 		fVariables.put(name, value);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -129,7 +129,7 @@ public class EvaluationContext implements IEvaluationContext {
 			return null;
 		return fVariables.remove(name);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -145,7 +145,7 @@ public class EvaluationContext implements IEvaluationContext {
 			return fParent.getVariable(name);
 		return null;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

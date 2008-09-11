@@ -15,23 +15,23 @@ import org.osgi.framework.BundleContext;
 import org.eclipse.core.runtime.Plugin;
 
 public class ExpressionPlugin extends Plugin {
-	
+
 	private static ExpressionPlugin fgDefault;
-	
+
 	private BundleContext fBundleContext;
-	
+
 	public ExpressionPlugin() {
 		fgDefault= this;
-	}	
+	}
 
 	public static ExpressionPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	public static String getPluginId() {
 		return "org.eclipse.core.expressions"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -39,14 +39,14 @@ public class ExpressionPlugin extends Plugin {
 		super.start(context);
 		fBundleContext= context;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 	}
-	
+
 	public BundleContext getBundleContext() {
 		return fBundleContext;
 	}

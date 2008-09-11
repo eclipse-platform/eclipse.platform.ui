@@ -24,24 +24,24 @@ public final class ExpressionMessages extends NLS {
 	public static String Expression_attribute_invalid_value;
 	public static String Expression_variable_not_a_collection;
 	public static String Expression_variable_not_a_list;
-	
+
 	public static String Expression_variable_not_iterable;
 	public static String Expression_variable_not_countable;
-	
+
 	public static String Expression_unknown_element;
 	public static String Missing_Expression;
 	public static String Expression_string_not_correctly_escaped;
 	public static String Expression_string_not_terminated;
-	
+
 	public static String TypeExtender_unknownMethod;
 	public static String TypeExtender_incorrectType;
-	
+
 	public static String TestExpression_no_name_space;
-	
+
 	public static String WithExpression_variable_not_defined;
-	
+
 	public static String ResolveExpression_variable_not_defined;
-	
+
 	public static String PropertyTesterDescriptor_no_namespace;
 	public static String PropertyTesterDescritpri_no_properties;
 

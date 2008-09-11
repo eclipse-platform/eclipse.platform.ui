@@ -16,23 +16,23 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.IIterable;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+
 public class IterateExpression extends CompositeExpression {
-	
+
 	private static class IteratePool implements IEvaluationContext {
-		
+
 		private Iterator fIterator;
 		private Object fDefaultVariable;
 		private IEvaluationContext fParent;
-		
+
 		public IteratePool(IEvaluationContext parent, Iterator iterator) {
 			Assert.isNotNull(parent);
 			Assert.isNotNull(iterator);
@@ -74,7 +74,7 @@ public class IterateExpression extends CompositeExpression {
 			return fIterator.hasNext();
 		}
 	}
-	
+
 	private static final String ATT_OPERATOR= "operator"; //$NON-NLS-1$
 	private static final String ATT_IF_EMPTY= "ifEmpty"; //$NON-NLS-1$
 	private static final int OR= 1;
@@ -84,10 +84,10 @@ public class IterateExpression extends CompositeExpression {
 	 * The seed for the hash code for all iterate expressions.
 	 */
 	private static final int HASH_INITIAL= IterateExpression.class.getName().hashCode();
-	
+
 	private int fOperator;
 	private Boolean fEmptyResult;
-	
+
 	public IterateExpression(IConfigurationElement configElement) throws CoreException {
 		String opValue= configElement.getAttribute(ATT_OPERATOR);
 		initializeOperatorValue(opValue);
@@ -104,12 +104,12 @@ public class IterateExpression extends CompositeExpression {
 	public IterateExpression(String opValue) throws CoreException {
 		initializeOperatorValue(opValue);
 	}
-	
+
 	public IterateExpression(String opValue, String ifEmpty) throws CoreException {
 		initializeOperatorValue(opValue);
 		initializeEmptyResultValue(ifEmpty);
 	}
-	
+
 	private void initializeOperatorValue(String opValue) throws CoreException {
 		if (opValue == null) {
 			fOperator= AND;
@@ -122,7 +122,7 @@ public class IterateExpression extends CompositeExpression {
 			}
 		}
 	}
-	
+
 	private void initializeEmptyResultValue(String value) {
 		if (value == null) {
 			fEmptyResult= null;
@@ -137,7 +137,7 @@ public class IterateExpression extends CompositeExpression {
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object var= context.getDefaultVariable();
 		if (var instanceof Collection) {
-			Collection col= (Collection)var; 
+			Collection col= (Collection)var;
 			switch (col.size()) {
 				case 0:
 					if (fEmptyResult == null) {
@@ -215,10 +215,10 @@ public class IterateExpression extends CompositeExpression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof IterateExpression))
 			return false;
-		
+
 		final IterateExpression that= (IterateExpression)object;
 		return (this.fOperator == that.fOperator) && equals(this.fExpressions, that.fExpressions);
-	} 
+	}
 
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)

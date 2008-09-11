@@ -10,22 +10,22 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
 
-public class OrExpression extends CompositeExpression { 
+import org.eclipse.core.runtime.CoreException;
+
+public class OrExpression extends CompositeExpression {
 
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		return evaluateOr(context);
 	}
-	
+
 	public boolean equals(final Object object) {
 		if (!(object instanceof OrExpression))
 			return false;
-		
+
 		final OrExpression that= (OrExpression)object;
 		return equals(this.fExpressions, that.fExpressions);
-	} 
+	}
 }

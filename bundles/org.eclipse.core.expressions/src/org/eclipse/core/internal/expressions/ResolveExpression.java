@@ -12,20 +12,20 @@ package org.eclipse.core.internal.expressions;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+
 public class ResolveExpression extends CompositeExpression {
 
 	private String fVariable;
 	private Object[] fArgs;
-	
+
 	private static final String ATT_VARIABLE= "variable";  //$NON-NLS-1$
 	private static final String ATT_ARGS= "args";  //$NON-NLS-1$
 
@@ -33,7 +33,7 @@ public class ResolveExpression extends CompositeExpression {
 	 * The seed for the hash code for all resolve expressions.
 	 */
 	private static final int HASH_INITIAL= ResolveExpression.class.getName().hashCode();
-	
+
 	public ResolveExpression(IConfigurationElement configElement) throws CoreException {
 		fVariable= configElement.getAttribute(ATT_VARIABLE);
 		Expressions.checkAttribute(ATT_VARIABLE, fVariable);
@@ -57,11 +57,11 @@ public class ResolveExpression extends CompositeExpression {
 		if (variable == null) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.VARIABLE_NOT_DEFINED,
-				Messages.format(ExpressionMessages.ResolveExpression_variable_not_defined, fVariable))); 
+				Messages.format(ExpressionMessages.ResolveExpression_variable_not_defined, fVariable)));
 		}
 		return evaluateAnd(new EvaluationContext(context, variable));
 	}
-	
+
 	public void collectExpressionInfo(ExpressionInfo info) {
 		ExpressionInfo other= new ExpressionInfo();
 		super.collectExpressionInfo(other);
@@ -74,10 +74,10 @@ public class ResolveExpression extends CompositeExpression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof ResolveExpression))
 			return false;
-		
+
 		final ResolveExpression that= (ResolveExpression)object;
-		return this.fVariable.equals(that.fVariable) 
-				&& equals(this.fArgs, that.fArgs) 
+		return this.fVariable.equals(that.fVariable)
+				&& equals(this.fArgs, that.fArgs)
 				&& equals(this.fExpressions, that.fExpressions);
 	}
 
@@ -85,5 +85,5 @@ public class ResolveExpression extends CompositeExpression {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
 			* HASH_FACTOR + hashCode(fArgs)
 			* HASH_FACTOR + fVariable.hashCode();
-	} 
+	}
 }

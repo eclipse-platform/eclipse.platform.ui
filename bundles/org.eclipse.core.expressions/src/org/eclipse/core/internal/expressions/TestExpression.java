@@ -12,14 +12,14 @@ package org.eclipse.core.internal.expressions;
 
 import org.w3c.dom.Element;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class TestExpression extends Expression {
 
@@ -28,7 +28,7 @@ public class TestExpression extends Expression {
 	private Object[] fArgs;
 	private Object fExpectedValue;
 	private boolean fForcePluginActivation;
-	
+
 	private static final char PROP_SEP = '.';
 	private static final String ATT_PROPERTY= "property"; //$NON-NLS-1$
 	private static final String ATT_ARGS= "args"; //$NON-NLS-1$
@@ -37,16 +37,16 @@ public class TestExpression extends Expression {
 	 * The seed for the hash code for all test expressions.
 	 */
 	private static final int HASH_INITIAL= TestExpression.class.getName().hashCode();
-	
+
 	private static final TypeExtensionManager fgTypeExtensionManager= new TypeExtensionManager("propertyTesters"); //$NON-NLS-1$
-	
+
 	public TestExpression(IConfigurationElement element) throws CoreException {
 		String property= element.getAttribute(ATT_PROPERTY);
 		int pos= property.lastIndexOf(PROP_SEP);
 		if (pos == -1) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.NO_NAMESPACE_PROVIDED,
-				ExpressionMessages.TestExpression_no_name_space)); 
+				ExpressionMessages.TestExpression_no_name_space));
 		}
 		fNamespace= property.substring(0, pos);
 		fProperty= property.substring(pos + 1);
@@ -61,7 +61,7 @@ public class TestExpression extends Expression {
 		if (pos == -1) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.NO_NAMESPACE_PROVIDED,
-				ExpressionMessages.TestExpression_no_name_space)); 
+				ExpressionMessages.TestExpression_no_name_space));
 		}
 		fNamespace= property.substring(0, pos);
 		fProperty= property.substring(pos + 1);
@@ -74,7 +74,7 @@ public class TestExpression extends Expression {
 	public TestExpression(String namespace, String property, Object[] args, Object expectedValue) {
 		this(namespace, property, args, expectedValue, false);
 	}
-	
+
 	public TestExpression(String namespace, String property, Object[] args, Object expectedValue, boolean forcePluginActivation) {
 		Assert.isNotNull(namespace);
 		Assert.isNotNull(property);
@@ -89,7 +89,7 @@ public class TestExpression extends Expression {
 		Object element= context.getDefaultVariable();
 		if (System.class.equals(element)) {
 			String str= System.getProperty(fProperty);
-			if (str == null) 
+			if (str == null)
 				return EvaluationResult.FALSE;
 			return EvaluationResult.valueOf(str.equals(fArgs[0]));
 		}
@@ -107,9 +107,9 @@ public class TestExpression extends Expression {
 	public boolean equals(final Object object) {
 		if (!(object instanceof TestExpression))
 			return false;
-		
+
 		final TestExpression that= (TestExpression)object;
-		return this.fNamespace.equals(that.fNamespace) && this.fProperty.equals(that.fProperty) 
+		return this.fNamespace.equals(that.fNamespace) && this.fProperty.equals(that.fProperty)
 			&& this.fForcePluginActivation == that.fForcePluginActivation
 			&& equals(this.fArgs, that.fArgs) && equals(this.fExpectedValue, that.fExpectedValue);
 	}
@@ -121,9 +121,9 @@ public class TestExpression extends Expression {
 			* HASH_FACTOR + fProperty.hashCode()
 			* HASH_FACTOR + (fForcePluginActivation ? 1 : 0);
 	}
-	
+
 	//---- Debugging ---------------------------------------------------
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -147,13 +147,13 @@ public class TestExpression extends Expression {
 		  " plug-in activation: " + (fForcePluginActivation ? "eager" : "lazy") +   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		  "/>"; //$NON-NLS-1$
 	}
-	
+
 	//---- testing ---------------------------------------------------
-	
+
 	public boolean testGetForcePluginActivation() {
 		return fForcePluginActivation;
 	}
-	
+
 	public static TypeExtensionManager testGetTypeExtensionManager() {
 		return fgTypeExtensionManager;
 	}

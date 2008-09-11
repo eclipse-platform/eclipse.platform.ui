@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.expressions.IPropertyTester;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,16 +26,14 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.core.expressions.IPropertyTester;
-
 public class TypeExtensionManager implements IRegistryChangeListener {
-	
-	private String fExtensionPoint; 
-	
+
+	private String fExtensionPoint;
+
 	private static final String TYPE= "type"; //$NON-NLS-1$
-	
+
 	private static final IPropertyTester[] EMPTY_PROPERTY_TESTER_ARRAY= new IPropertyTester[0];
-	
+
 	private static final IPropertyTester NULL_PROPERTY_TESTER= new IPropertyTester() {
 		public boolean handles(String namespace, String property) {
 			return false;
@@ -51,23 +51,23 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			return false;
 		}
 	};
-	
+
 	/*
-	 * Map containing all already created type extension object. 
+	 * Map containing all already created type extension object.
 	 */
 	private Map/*<Class, TypeExtension>*/ fTypeExtensionMap;
-	
+
 	/*
-	 * Table containing mapping of class name to configuration element 
+	 * Table containing mapping of class name to configuration element
 	 */
 	private Map/*<String, List<IConfigurationElement>>*/ fConfigurationElementMap;
-	
+
 	/*
 	 * A cache to give fast access to the last 1000 method invocations.
 	 */
 	private PropertyCache fPropertyCache;
-	
-	
+
+
 	public TypeExtensionManager(String extensionPoint) {
 		Assert.isNotNull(extensionPoint);
 		fExtensionPoint= extensionPoint;
@@ -78,12 +78,12 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 	public Property getProperty(Object receiver, String namespace, String method) throws CoreException  {
 		return getProperty(receiver, namespace, method, false);
 	}
-	
+
 	public synchronized Property getProperty(Object receiver, String namespace, String method, boolean forcePluginActivation) throws CoreException  {
 		long start= 0;
 		if (Expressions.TRACING)
 			start= System.currentTimeMillis();
-		
+
 		// if we call a static method than the receiver is the class object
 		Class clazz= receiver instanceof Class ? (Class)receiver : receiver.getClass();
 		Property result= new Property(clazz, namespace, method);
@@ -109,7 +109,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.TYPE_EXTENDER_UNKOWN_METHOD,
 				Messages.format(
-					ExpressionMessages.TypeExtender_unknownMethod,  
+					ExpressionMessages.TypeExtender_unknownMethod,
 					new String[] {namespace + '.' + method, clazz.toString()})));
 		}
 		result.setPropertyTester(extender);
@@ -122,7 +122,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 		}
 		return result;
 	}
-	
+
 	/*
 	 * This method doesn't need to be synchronized since it is called
 	 * from withing the getProperty method which is synchronized
@@ -135,7 +135,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 		}
 		return result;
 	}
-	
+
 	/*
 	 * This method doesn't need to be synchronized since it is called
 	 * from withing the getProperty method which is synchronized
@@ -145,8 +145,8 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			fConfigurationElementMap= new HashMap();
 			IExtensionRegistry registry= Platform.getExtensionRegistry();
 			IConfigurationElement[] ces= registry.getConfigurationElementsFor(
-				ExpressionPlugin.getPluginId(), 
-				fExtensionPoint); 
+				ExpressionPlugin.getPluginId(),
+				fExtensionPoint);
 			for (int i= 0; i < ces.length; i++) {
 				IConfigurationElement config= ces[i];
 				String typeAttr= config.getAttribute(TYPE);
@@ -177,14 +177,14 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			return result;
 		}
 	}
-	
+
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] deltas= event.getExtensionDeltas(ExpressionPlugin.getPluginId(), fExtensionPoint);
 		if (deltas.length > 0) {
 			initializeCaches();
 		}
 	}
-	
+
 	private synchronized void initializeCaches() {
 		fTypeExtensionMap= new HashMap();
 		fConfigurationElementMap= null;

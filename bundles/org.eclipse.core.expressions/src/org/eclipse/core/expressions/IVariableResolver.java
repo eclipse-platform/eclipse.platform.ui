@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * A variable resolver can be used to add additional variable resolving
  * strategies to an {@link EvaluationContext}.
- * 
+ *
  * @see org.eclipse.core.expressions.EvaluationContext#resolveVariable(String, Object[])
- * 
+ *
  * @since 3.0
  */
 public interface IVariableResolver {
@@ -26,7 +26,7 @@ public interface IVariableResolver {
 	 * Resolves a variable for the given name and arguments. The
 	 * handler is allowed to return <code>null</code> to indicate
 	 * that it is not able to resolve the requested variable.
-	 * 
+	 *
 	 * @param name the variable to resolve
 	 * @param args an object array of arguments used to resolve the
 	 *  variable

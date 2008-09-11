@@ -13,9 +13,9 @@ package org.eclipse.core.internal.expressions.tests;
 import org.eclipse.core.runtime.Plugin;
 
 public class ExpressionTestPlugin extends Plugin {
-	
+
 	private static ExpressionTestPlugin fgDefault;
-	
+
 	public ExpressionTestPlugin() {
 		fgDefault= this;
 	}
@@ -23,7 +23,7 @@ public class ExpressionTestPlugin extends Plugin {
 	public static ExpressionTestPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	public static String getPluginId() {
 		return "org.eclipse.core.expressions.tests"; //$NON-NLS-1$
 	}

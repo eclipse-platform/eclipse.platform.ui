@@ -13,6 +13,9 @@ package org.eclipse.core.internal.expressions;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -22,12 +25,9 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionConverter;
-
 /**
  * This manages the extension point that allows core expression reuse.
- * 
+ *
  * @since 3.3
  */
 public class DefinitionRegistry implements IRegistryChangeListener {
@@ -48,7 +48,7 @@ public class DefinitionRegistry implements IRegistryChangeListener {
 	 * Get the expression with the id defined by an extension. This class will
 	 * cache the expressions when appropriate, so it's OK to always ask the
 	 * registry.
-	 * 
+	 *
 	 * @param id The unique ID of the expression definition
 	 * @return the expression
 	 * @throws CoreException If the expression cannot be found.
