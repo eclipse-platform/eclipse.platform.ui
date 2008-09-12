@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-
-
 import org.eclipse.jface.viewers.ISelection;
 
 
@@ -45,14 +43,14 @@ public interface ITextSelection extends ISelection {
 	/**
 	 * Returns the offset of the selected text.
 	 *
-	 * @return the offset of the selected text
+	 * @return the offset of the selected text or -1 if there is no valid text information
 	 */
 	int getOffset();
 
 	/**
 	 * Returns the length of the selected text.
 	 *
-	 * @return the length of the selected text
+	 * @return the length of the selected text or -1 if there is no valid text information
 	 */
 	int getLength();
 
@@ -62,7 +60,7 @@ public interface ITextSelection extends ISelection {
 	 * selection object and the call of this method, the value returned might
 	 * differ from what it would have been at the point of creation.
 	 *
-	 * @return the start line of this selection or <code>-1</code> if there is no valid line information
+	 * @return the start line of this selection or -1 if there is no valid line information
 	 */
 	int getStartLine();
 
@@ -72,7 +70,7 @@ public interface ITextSelection extends ISelection {
 	 * selection object and the call of this method, the value returned might
 	 * differ from what it would have been at the point of creation.
 	 *
-	 * @return the end line of this selection or <code>-1</code> if there is no valid line information
+	 * @return the end line of this selection or -1 if there is no valid line information
 	 */
 	int getEndLine();
 

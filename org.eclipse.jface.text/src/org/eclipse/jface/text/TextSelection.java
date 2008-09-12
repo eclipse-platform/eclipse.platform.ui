@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
+
 
 /**
  * Standard implementation of {@link org.eclipse.jface.text.ITextSelection}.
@@ -20,13 +23,20 @@ package org.eclipse.jface.text;
  */
 public class TextSelection implements ITextSelection {
 
+	/**
+	 * Debug option for asserting valid offset and length.
+	 *
+	 * @since 3.5
+	 */
+	private static final boolean ASSERT_INVLID_SELECTION_NULL= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/assert/TextSelection/validConstructorArguments")); //$NON-NLS-1$ //$NON-NLS-2$
+
 	/** Internal empty text selection */
 	private final static ITextSelection NULL= new TextSelection();
 
 	/**
-	 * Returns a shared instance of an empty text selection.
+	 * Returns the shared instance of the empty text selection.
 	 *
-	 * @return a shared instance of an empty text selection
+	 * @return the shared instance of an empty text selection
 	 */
 	public static ITextSelection emptySelection() {
 		return NULL;
@@ -44,7 +54,8 @@ public class TextSelection implements ITextSelection {
 	 * Creates an empty text selection.
 	 */
 	private TextSelection() {
-		this(null, -1, -1);
+		fOffset= -1;
+		fLength= -1;
 	}
 
 	/**
@@ -53,8 +64,8 @@ public class TextSelection implements ITextSelection {
 	 * is intended to be an argument for the <code>setSelection</code>
 	 * method of selection providers.
 	 *
-	 * @param offset the offset of the range
-	 * @param length the length of the range
+	 * @param offset the offset of the range, must not be negative
+	 * @param length the length of the range, must not be negative
 	 */
 	public TextSelection(int offset, int length) {
 		this(null, offset, length);
@@ -66,26 +77,30 @@ public class TextSelection implements ITextSelection {
 	 * <code>getSelection</code>.
 	 *
 	 * @param document the document whose text range is selected in a viewer
-	 * @param offset the offset of the selected range
-	 * @param length the length of the selected range
+	 * @param offset the offset of the selected range, must not be negative
+	 * @param length the length of the selected range, must not be negative
 	 */
 	public TextSelection(IDocument document, int offset, int length) {
+		if (ASSERT_INVLID_SELECTION_NULL) {
+			Assert.isLegal(offset >= 0);
+			Assert.isLegal(length >= 0);
+		}
 		fDocument= document;
 		fOffset= offset;
 		fLength= length;
 	}
 
 	/**
-	 *
-	 * Returns true if the offset and length are smaller than 0.
-	 * A selection of length 0, is a valid text selection as it
-	 * describes, e.g., the cursor position in a viewer.
+	 * Tells whether this text selection is the empty selection.
+	 * <p>
+	 * A selection of length 0 is not an empty text selection as it
+	 * describes, e.g., the cursor position in a viewer.</p>
 	 *
 	 * @return <code>true</code> if this selection is empty
-	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
+	 * @see #emptySelection()
 	 */
 	public boolean isEmpty() {
-		return fOffset < 0 || fLength < 0;
+		return this == NULL || /* backwards compatibility: */ fOffset < 0 || fLength < 0;
 	}
 
 	/*
