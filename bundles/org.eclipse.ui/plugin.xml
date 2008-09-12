@@ -49,6 +49,7 @@
    <extension-point id="workingSets" name="%ExtPoint.workingSets" schema="schema/workingSets.exsd"/>
    <extension-point id="browserSupport" name="%ExtPoint.browserSupport" schema="schema/browserSupport.exsd"/>
    <extension-point id="internalTweaklets" name="%ExtPoint.tweaklets" schema="schema/internalTweaklets.exsd"/>
+   <extension-point id="installationPages" name="%ExtPoint.installationPages" schema="schema/installationPages.exsd"/>
    
    <extension
          point="org.eclipse.ui.contexts">
@@ -693,6 +694,13 @@
             helpContextId="org.eclipse.ui.about_action_context"
             id="org.eclipse.ui.help.aboutAction"
             name="%command.aboutAction.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.help"
+            defaultHandler="org.eclipse.ui.internal.about.InstallationHandler"
+            description="%command.installationDialog.description"
+            helpContextId="org.eclipse.ui.about_action_context"
+            id="org.eclipse.ui.help.installationDialog"
+            name="%command.installationDialog.name"/>            
       <command
             categoryId="org.eclipse.ui.category.file"
             defaultHandler="org.eclipse.ui.internal.handlers.WizardHandler$New"

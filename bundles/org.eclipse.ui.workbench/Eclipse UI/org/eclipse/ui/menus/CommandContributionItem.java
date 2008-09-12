@@ -31,6 +31,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -398,6 +400,35 @@ public final class CommandContributionItem extends ContributionItem {
 		update(null);
 		updateIcons();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Composite)
+	 */
+	public void fill(Composite parent) {
+		if (command == null) {
+			return;
+		}
+		if (widget != null || parent == null) {
+			return;
+		}
+
+		// Buttons don't support the pulldown style
+		int tmpStyle = style;
+		if (tmpStyle == STYLE_PULLDOWN)
+			tmpStyle = STYLE_PUSH;
+
+		Button item = new Button(parent, tmpStyle);
+		item.setData(this);
+		if (workbenchHelpSystem != null) {
+			workbenchHelpSystem.setHelp(item, helpContextId);
+		}
+		item.addListener(SWT.Dispose, getItemListener());
+		item.addListener(SWT.Selection, getItemListener());
+		widget = item;
+
+		update(null);
+		updateIcons();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -504,6 +535,42 @@ public final class CommandContributionItem extends ContributionItem {
 
 				if ((icon == null || (mode & MODE_FORCE_TEXT) == MODE_FORCE_TEXT)
 						&& text != null) {
+					item.setText(text);
+				}
+
+				if (tooltip != null)
+					item.setToolTipText(tooltip);
+				else {
+					if (text != null) {
+						item.setToolTipText(text);
+					}
+				}
+
+				if (item.getSelection() != checkedState) {
+					item.setSelection(checkedState);
+				}
+
+				boolean shouldBeEnabled = isEnabled();
+				if (item.getEnabled() != shouldBeEnabled) {
+					item.setEnabled(shouldBeEnabled);
+				}
+			}
+			else if (widget instanceof Button) {
+				Button item = (Button) widget;
+
+				String text = label;
+				if (text == null) {
+					if (command != null) {
+						try {
+							text = command.getCommand().getName();
+						} catch (NotDefinedException e) {
+							WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
+									+ getId(), e);
+						}
+					}
+				}
+
+				if (text != null) {
 					item.setText(text);
 				}
 
