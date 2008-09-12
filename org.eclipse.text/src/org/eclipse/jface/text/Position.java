@@ -201,6 +201,7 @@ public class Position {
 	 * @since 3.5
 	 */
 	public String toString() {
-		return "offset: " + offset + ", length: " + length; //$NON-NLS-1$//$NON-NLS-2$
+		String position= "offset: " + offset + ", length: " + length; //$NON-NLS-1$//$NON-NLS-2$
+		return isDeleted ? position + " (deleted)" : position; //$NON-NLS-1$
 	}
 }
