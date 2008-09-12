@@ -502,7 +502,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			Iterator e= getAnnotationMap().valuesIterator();
 			while (e.hasNext())
 				try {
-					addPosition(fDocument, (Position) e.next());
+					addPosition(document, (Position) e.next());
 				} catch (BadLocationException x) {
 					// ignore invalid position
 				}
@@ -510,7 +510,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 		++ fOpenConnections;
 		if (fOpenConnections == 1) {
-			fDocument.addDocumentListener(fDocumentListener);
+			document.addDocumentListener(fDocumentListener);
 			connected();
 		}
 
@@ -550,16 +550,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		if (fOpenConnections == 0) {
 
 			disconnected();
-			fDocument.removeDocumentListener(fDocumentListener);
+			document.removeDocumentListener(fDocumentListener);
 
-			if (fDocument != null) {
-				Iterator e= getAnnotationMap().valuesIterator();
-				while (e.hasNext()) {
-					Position p= (Position) e.next();
-					removePosition(fDocument, p);
-				}
-				fDocument= null;
+			Iterator e= getAnnotationMap().valuesIterator();
+			while (e.hasNext()) {
+				Position p= (Position) e.next();
+				removePosition(document, p);
 			}
+			fDocument= null;
 		}
 	}
 

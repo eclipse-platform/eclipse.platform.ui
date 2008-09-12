@@ -61,7 +61,7 @@ public interface ITextFileBuffer extends IFileBuffer {
 	/**
 	 * Returns the annotation model of this text file buffer.
 	 *
-	 * @return the annotation model of this text file buffer
+	 * @return the annotation model of this text file buffer, might be <code>null</code> if called when disconnected
 	 */
 	IAnnotationModel getAnnotationModel();
 }
