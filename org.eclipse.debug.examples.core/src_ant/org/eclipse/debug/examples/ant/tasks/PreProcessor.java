@@ -231,6 +231,7 @@ public class PreProcessor extends Task {
 						} else if (ifdef) {
 							throw new BuildException("illegal nested #ifdef");
 						}
+						break;
 					case STATE_FALSE_CONDITION:
 						if (elseif) {
 							String condition = line.substring(ELSE_IF_MATCHER.start(), ELSE_IF_MATCHER.end());
@@ -250,6 +251,7 @@ public class PreProcessor extends Task {
 						} else if (ifdef) {
 							throw new BuildException("illegal nested #ifdef");
 						}
+						break;
 					case STATE_POST_TRUE_CONDITION:
 						if (endif) {
 							state = STATE_OUTSIDE_CONDITION;
@@ -257,6 +259,7 @@ public class PreProcessor extends Task {
 						} else if (ifdef) {
 							throw new BuildException("illegal nested #ifdef");
 						}
+						break;
 				}
 				if (!commandLine) {
 					if (state == STATE_OUTSIDE_CONDITION || state == STATE_TRUE_CONDITION) {
