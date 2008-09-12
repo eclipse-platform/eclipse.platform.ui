@@ -249,6 +249,10 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @param listener
 	 *            the property change listener to add
 	 * @since 2.0
+	 * @deprecated client should register listeners on the instance of
+	 *             {@link org.eclipse.ui.IWorkingSetManager} returned by
+	 *             {@link org.eclipse.ui.IWorkbench#getWorkingSetManager()}
+	 *             instead.
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
 
