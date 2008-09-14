@@ -13,9 +13,6 @@ package org.eclipse.search.tests.filesearch;
 
 import java.util.regex.Pattern;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.LocationKind;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -23,42 +20,25 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IFile;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.FileTextSearchScope;
-import org.eclipse.search.ui.text.Match;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.text.FileMatch;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.FileTextSearchScope;
 
 /**
  */
 public class LineBasedFileSearch extends FileSearchQuery  {
 	
-	public static class LineBasedMatch extends Match {
-		private long fCreationTimeStamp;
-		
-		public LineBasedMatch(IFile element, int offset, int length) {
-			super(element, Match.UNIT_LINE, offset, length);
-			fCreationTimeStamp= element.getModificationStamp();
-		}
-		
-		public IFile getFile() {
-			return (IFile) getElement();
-		}
-
-		public long getCreationTimeStamp() {
-			return fCreationTimeStamp;
-		}
-		
-		
-	}
 	
 	private static class LineBasedTextSearchResultCollector extends TextSearchRequestor {
 		
@@ -86,7 +66,7 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 
 				int startLine= doc.getLineOfOffset(matchRequestor.getMatchOffset());
 				int endLine= doc.getLineOfOffset(matchRequestor.getMatchOffset() + matchRequestor.getMatchLength());
-				fResult.addMatch(new LineBasedMatch(file, startLine, endLine - startLine + 1));
+				fResult.addMatch(new FileMatch(file, startLine, endLine - startLine + 1, null));
 			} catch (BadLocationException e) {
 				throw new CoreException(new Status(IStatus.ERROR, SearchPlugin.getID(), IStatus.ERROR, "bad location", e));
 			}
