@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.text" version="2">
+    <resource path="src/org/eclipse/jface/text/DefaultTextDoubleClickStrategy.java" type="org.eclipse.jface.text.DefaultTextDoubleClickStrategy">
+        <filter id="337793096">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.text.DefaultTextDoubleClickStrategy"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/text/revisions/RevisionInformation.java" type="org.eclipse.jface.text.revisions.RevisionInformation">
         <filter id="643846161">
             <message_arguments>
@@ -14,6 +21,14 @@
             <message_arguments>
                 <message_argument value="ChildDocumentManager"/>
                 <message_argument value="TextViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="3.5.0.qualifier"/>
+                <message_argument value="3.4.0.v20080603-2000"/>
             </message_arguments>
         </filter>
     </resource>

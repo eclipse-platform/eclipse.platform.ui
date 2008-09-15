@@ -21,12 +21,8 @@ import com.ibm.icu.text.BreakIterator;
  * <p>
  * Selects words using <code>java.text.BreakIterator</code> for the default
  * locale.</p>
- * <p>
- * This class is not intended to be subclassed.
- * </p>
  *
  * @see java.text.BreakIterator
- * @noextend This class is not intended to be subclassed by clients.
  */
 public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy {
 
@@ -183,42 +179,79 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 */
 	public void doubleClicked(ITextViewer text) {
 
-		int position= text.getSelectedRange().x;
+		int offset= text.getSelectedRange().x;
 
-		if (position < 0)
+		if (offset < 0)
 			return;
 
+		final IDocument document= text.getDocument();
+		IRegion region= findExtendedDoubleClickSelection(document, offset);
+		if (region == null)
+			region= findWord(document, offset);
+		if (region != null)
+			text.setSelectedRange(region.getOffset(), region.getLength());
+
+	}
+
+	/**
+	 * Tries to find a suitable double click selection for the given offset.
+	 * <p>
+	 * <strong>Note:</> This method must return <code>null</code> if it simply selects the word at
+	 * the given offset.
+	 * </p>
+	 * 
+	 * @param document the document
+	 * @param offset the offset
+	 * @return the selection or <code>null</code> if none to indicate simple word selection
+	 * @since 3.5
+	 */
+	protected IRegion findExtendedDoubleClickSelection(IDocument document, int offset) {
+		return null;
+	}
+
+	/**
+	 * Tries to find the word at the given offset.
+	 * 
+	 * @param document the document
+	 * @param offset the offset
+	 * @return the word or <code>null</code> if none
+	 * @since 3.5
+	 */
+	protected IRegion findWord(IDocument document, int offset) {
+		IRegion line;
 		try {
-
-			IDocument document= text.getDocument();
-			IRegion line= document.getLineInformationOfOffset(position);
-			if (position == line.getOffset() + line.getLength())
-				return;
-
-			fDocIter.setDocument(document, line);
-
-			BreakIterator breakIter= BreakIterator.getWordInstance();
-			breakIter.setText(fDocIter);
-
-			int start= breakIter.preceding(position);
-			if (start == BreakIterator.DONE)
-				start= line.getOffset();
-
-			int end= breakIter.following(position);
-			if (end == BreakIterator.DONE)
-				end= line.getOffset() + line.getLength();
-
-			if (breakIter.isBoundary(position)) {
-				if (end - position > position- start)
-					start= position;
-				else
-					end= position;
-			}
-
-			if (start != end)
-				text.setSelectedRange(start, end - start);
-
-		} catch (BadLocationException x) {
+			line= document.getLineInformationOfOffset(offset);
+		} catch (BadLocationException e) {
+			return null;
 		}
+
+		if (offset == line.getOffset() + line.getLength())
+			return null;
+
+		fDocIter.setDocument(document, line);
+
+		BreakIterator breakIter= BreakIterator.getWordInstance();
+		breakIter.setText(fDocIter);
+
+		int start= breakIter.preceding(offset);
+		if (start == BreakIterator.DONE)
+			start= line.getOffset();
+
+		int end= breakIter.following(offset);
+		if (end == BreakIterator.DONE)
+			end= line.getOffset() + line.getLength();
+
+		if (breakIter.isBoundary(offset)) {
+			if (end - offset > offset - start)
+				start= offset;
+			else
+				end= offset;
+		}
+
+		if (end == start)
+			return null;
+
+		return new Region(start, end - start);
+		
 	}
 }
