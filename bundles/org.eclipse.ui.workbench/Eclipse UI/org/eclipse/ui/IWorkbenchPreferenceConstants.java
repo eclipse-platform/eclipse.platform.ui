@@ -161,7 +161,19 @@ public interface IWorkbenchPreferenceConstants {
 	 * 
 	 * @since 3.0
 	 */
-	public static String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$	
+	public static String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$
+	
+	/**
+	 * A preference indication the initial size of the perspective bar. The default value is 160.
+	 * This preference only works when <code>configurer.setShowPerspectiveBar(true)</code> is set in
+	 * WorkbenchWindowAdvisor#preWindowOpen()
+	 * 
+	 * This preference only uses integer values
+	 * bug 84603: [RCP] [PerspectiveBar] New API or pref to set default perspective bar size
+	 * 
+	 *  @since 3.4
+	 */
+	public static String PERSPECTIVE_BAR_SIZE = "PERSPECTIVE_BAR_SIZE"; //$NON-NLS-1$ 
 
 	/**
 	 * A named preference indicating where the fast view bar should be docked in

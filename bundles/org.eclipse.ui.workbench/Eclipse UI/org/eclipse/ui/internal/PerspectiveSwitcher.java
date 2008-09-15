@@ -379,7 +379,19 @@ public class PerspectiveSwitcher implements IWindowTrim {
         StringTokenizer tok = new StringTokenizer(extras, ", "); //$NON-NLS-1$
         int numExtras = tok.countTokens();
         int numPersps = Math.max(numExtras, 1); // assume initial perspective is also listed in extras
-		return Math.max(MIN_DEFAULT_WIDTH, MIN_WIDTH + (numPersps*ITEM_WIDTH));
+        
+        // Fixed bug 84603: [RCP] [PerspectiveBar] New API or pref to set default perspective bar size
+        String sizeString = PrefUtil.getAPIPreferenceStore().getString(
+				IWorkbenchPreferenceConstants.PERSPECTIVE_BAR_SIZE);
+        int size = MIN_DEFAULT_WIDTH;
+        try {
+        	 size = Integer.parseInt(sizeString);
+        }
+        catch (NumberFormatException e) {
+        	// leave size value at MIN_DEFAULT_WIDTH
+        }
+        int defaultWidth = Math.max(MIN_DEFAULT_WIDTH, size);
+		return Math.max(defaultWidth, MIN_WIDTH + (numPersps*ITEM_WIDTH));
 	}
 
 	/**
