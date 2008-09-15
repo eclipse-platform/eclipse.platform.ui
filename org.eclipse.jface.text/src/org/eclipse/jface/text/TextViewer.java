@@ -2550,6 +2550,10 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void fireSelectionChanged(int offset, int length) {
 		if (redraws()) {
+			if (length < 0) {
+				length= -length;
+				offset= offset + length;
+			}
 			IRegion r= widgetRange2ModelRange(new Region(offset, length));
 			if ((r != null && !r.equals(fLastSentSelectionChange)) || r == null)  {
 				fLastSentSelectionChange= r;
