@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 167204
- *     Matthew Hall - bugs 208858, 213145
+ *     Matthew Hall - bugs 208858, 213145, 247367
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.list;
@@ -21,11 +21,15 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
+import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -114,6 +118,60 @@ public class AbstractObservableListTest extends TestCase {
 
 		assertEquals(element1, list.get(0));
 		assertEquals(element0, list.get(1));
+	}
+
+	public void testAddListChangeListener_AfterDispose() {
+		list.dispose();
+		list.addListChangeListener(new IListChangeListener() {
+			public void handleListChange(ListChangeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testRemoveListChangeListener_AfterDispose() {
+		list.dispose();
+		list.removeListChangeListener(new IListChangeListener() {
+			public void handleListChange(ListChangeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testAddChangeListener_AfterDispose() {
+		list.dispose();
+		list.addChangeListener(new IChangeListener() {
+			public void handleChange(ChangeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testRemoveChangeListener_AfterDispose() {
+		list.dispose();
+		list.removeChangeListener(new IChangeListener() {
+			public void handleChange(ChangeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testAddStaleListener_AfterDispose() {
+		list.dispose();
+		list.addStaleListener(new IStaleListener() {
+			public void handleStale(StaleEvent staleEvent) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testRemoveStaleListener_AfterDispose() {
+		list.dispose();
+		list.removeStaleListener(new IStaleListener() {
+			public void handleStale(StaleEvent staleEvent) {
+				// do nothing
+			}
+		});
 	}
 
 	public static Test suite() {

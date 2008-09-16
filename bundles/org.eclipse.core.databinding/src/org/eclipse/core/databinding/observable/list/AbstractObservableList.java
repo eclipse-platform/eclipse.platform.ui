@@ -7,11 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164653
- *     Brad Reynolds - bug 167204
- *     Matthew Hall - bug 118516
- *     Matthew Hall - bug 208858
- *     Matthew Hall - bug 208332
+ *     Brad Reynolds - bugs 164653, 167204
+ *     Matthew Hall - bugs 118516, 208858, 208332, 247367
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -76,11 +73,15 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	public synchronized void addListChangeListener(IListChangeListener listener) {
-		changeSupport.addListener(ListChangeEvent.TYPE, listener);
+		if (changeSupport != null) {
+			changeSupport.addListener(ListChangeEvent.TYPE, listener);
+		}
 	}
 
 	public synchronized void removeListChangeListener(IListChangeListener listener) {
-		changeSupport.removeListener(ListChangeEvent.TYPE, listener);
+		if (changeSupport != null) {
+			changeSupport.removeListener(ListChangeEvent.TYPE, listener);
+		}
 	}
 
 	protected void fireListChange(ListDiff diff) {
@@ -90,19 +91,27 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	public synchronized void addChangeListener(IChangeListener listener) {
-		changeSupport.addChangeListener(listener);
+		if (changeSupport != null) {
+			changeSupport.addChangeListener(listener);
+		}
 	}
 
 	public synchronized void removeChangeListener(IChangeListener listener) {
-		changeSupport.removeChangeListener(listener);
+		if (changeSupport != null) {
+			changeSupport.removeChangeListener(listener);
+		}
 	}
 
 	public synchronized void addStaleListener(IStaleListener listener) {
-		changeSupport.addStaleListener(listener);
+		if (changeSupport != null) {
+			changeSupport.addStaleListener(listener);
+		}
 	}
 
 	public synchronized void removeStaleListener(IStaleListener listener) {
-		changeSupport.removeStaleListener(listener);
+		if (changeSupport != null) {
+			changeSupport.removeStaleListener(listener);
+		}
 	}
 
 	/**
