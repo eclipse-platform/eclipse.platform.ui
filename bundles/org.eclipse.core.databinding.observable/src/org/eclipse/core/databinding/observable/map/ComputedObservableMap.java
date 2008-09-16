@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 241585
+ *     Matthew Hall - bugs 241585, 247394
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -31,7 +31,7 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
  */
 public abstract class ComputedObservableMap extends AbstractObservableMap {
 
-	private final IObservableSet keySet;
+	private IObservableSet keySet;
 
 	private ISetChangeListener setChangeListener = new ISetChangeListener() {
 		public void handleSetChange(SetChangeEvent event) {
@@ -106,13 +106,39 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	public ComputedObservableMap(IObservableSet keySet) {
 		super(keySet.getRealm());
 		this.keySet = keySet;
-		this.keySet.addSetChangeListener(setChangeListener);
 	}
 
+	/**
+	 * @deprecated Subclasses are no longer required to call this method.
+	 */
 	protected void init() {
-		for (Iterator it = this.keySet.iterator(); it.hasNext();) {
-			Object key = it.next();
-			hookListener(key);
+	}
+
+	protected void firstListenerAdded() {
+		hookListeners();
+	}
+
+	protected void lastListenerRemoved() {
+		unhookListeners();
+	}
+
+	private void hookListeners() {
+		if (keySet != null) {
+			keySet.addSetChangeListener(setChangeListener);
+			for (Iterator it = this.keySet.iterator(); it.hasNext();) {
+				Object key = it.next();
+				hookListener(key);
+			}
+		}
+	}
+
+	private void unhookListeners() {
+		if (keySet != null) {
+			keySet.removeSetChangeListener(setChangeListener);
+			Object[] keys = keySet.toArray();
+			for (int i = 0; i < keys.length; i++) {
+				unhookListener(keys[i]);
+			}
 		}
 	}
 
@@ -163,4 +189,12 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	 * @return the old value for the given key
 	 */
 	protected abstract Object doPut(Object key, Object value);
+
+	public void dispose() {
+		unhookListeners();
+		entrySet = null;
+		keySet = null;
+		setChangeListener = null;
+		super.dispose();
+	}
 }
