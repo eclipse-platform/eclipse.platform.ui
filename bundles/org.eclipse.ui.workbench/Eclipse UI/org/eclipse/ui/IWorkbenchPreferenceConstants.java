@@ -171,7 +171,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * This preference only uses integer values
 	 * bug 84603: [RCP] [PerspectiveBar] New API or pref to set default perspective bar size
 	 * 
-	 *  @since 3.4
+	 *  @since 3.5
 	 */
 	public static String PERSPECTIVE_BAR_SIZE = "PERSPECTIVE_BAR_SIZE"; //$NON-NLS-1$ 
 
