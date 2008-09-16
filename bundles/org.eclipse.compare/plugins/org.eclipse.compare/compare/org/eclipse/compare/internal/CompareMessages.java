@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 35390 Three-way compare cannot select (mis-selects) )ancestor resource
- *     Aleksandra Wozniak (aleksandra.k.wozniak@gmail.com) - Bug 239959
+ *     Aleksandra Wozniak (aleksandra.k.wozniak@gmail.com) - Bug 239959, Bug 73923
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -118,8 +118,18 @@ public final class CompareMessages extends NLS {
 	public static String CompareWithOther_error_not_comparable;
 	public static String CompareWithOther_error_empty;
 	public static String CompareWithOther_clear;
-	public static String CompareWithOther_warning_two_way;
 	public static String CompareWithOther_info;
+	public static String CompareWithOther_externalFileButton;
+	public static String CompareWithOther_externalFile_errorTitle;
+	public static String CompareWithOther_externalFile_errorMessage;
+	public static String CompareWithOther_pathLabel;
+	public static String CompareWithOther_externalFolderBUtton;
+	public static String CompareWithOtherResourceDialog_externalFileMainButton;
+	public static String CompareWithOtherResourceDialog_externalFileRadioButton;
+	public static String CompareWithOtherResourceDialog_externalFolderMainButton;
+	public static String CompareWithOtherResourceDialog_externalFolderRadioButton;
+	public static String CompareWithOtherResourceDialog_workspaceMainButton;
+	public static String CompareWithOtherResourceDialog_workspaceRadioButton;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CompareMessages.class);

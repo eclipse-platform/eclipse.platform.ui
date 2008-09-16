@@ -6,16 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Aleksandra Wozniak (aleksandra.k.wozniak@gmail.com) - initial API and implementation
+ *    Aleksandra Wozniak (aleksandra.k.wozniak@gmail.com) - initial implementation
+ *    IBM Corporation - Bug 73923 (major refactoring and adjustments)
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * The "Compare with other resource" action
- * 
- * @since 3.4
  */
 public class CompareWithOtherResourceAction extends CompareAction {
 
@@ -27,9 +27,12 @@ public class CompareWithOtherResourceAction extends CompareAction {
 	}
 
 	protected boolean isEnabled(ISelection selection) {
-		// ignore returned value
-		super.isEnabled(selection);
-		return true;
+		int selectionSize = 0;
+		if (selection instanceof IStructuredSelection) {
+			selectionSize = ((IStructuredSelection) selection).toArray().length;
+		}
+		// enable for a single selection
+		return super.isEnabled(selection) || selectionSize == 1;
 	}
 
 }
