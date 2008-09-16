@@ -855,7 +855,15 @@ public class FilteredTree extends Composite {
 
 		// Do nothing if it's empty string
 		String initialText = tree.getInitialText();
-		if (!filterText.equals("") && !filterText.equals(initialText)) {//$NON-NLS-1$
+		if (!("".equals(filterText) || initialText.equals(filterText))) {//$NON-NLS-1$
+			boolean initial = initialText != null
+					&& initialText.equals(filterText);
+			if (initial) {
+				filter.setPattern(null);
+			} else if (filterText != null) {
+				filter.setPattern(filterText);
+			}
+
 			if (filter.isElementVisible(tree.getViewer(), element)
 					&& filter.isLeafMatch(tree.getViewer(), element)) {
 				return JFaceResources.getFontRegistry().getBold(
