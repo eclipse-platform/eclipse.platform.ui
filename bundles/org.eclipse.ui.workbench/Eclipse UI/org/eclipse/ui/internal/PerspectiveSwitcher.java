@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Chris Grindstaff <chris@gstaff.org> - Fix for bug 158016     
  *     Tonny Madsen, RCP Company - bug 201055
+ *     Mark Hoffmann <mark.hoffmann@web.de> - Fix for bug 84603
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
