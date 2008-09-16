@@ -87,6 +87,9 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.team.co
                <documentation>
                   
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.runtime.contentTypes/content-type/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="storageMergerId" type="string" use="required">

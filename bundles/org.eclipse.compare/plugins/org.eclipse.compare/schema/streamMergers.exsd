@@ -95,6 +95,9 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
                <documentation>
                   The id of a content type defined using the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.runtime.contentTypes/content-type/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="streamMergerId" type="string" use="required">
