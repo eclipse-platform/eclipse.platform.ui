@@ -12,7 +12,7 @@
 package org.eclipse.ui.about;
 
 /**
- * <em>This API is experiemental and will change before 3.5 ships</em>
+ * <em>This API is experimental and will change before 3.5 ships</em>
  * 
  * @since 3.5
  */
@@ -32,7 +32,7 @@ public interface IInstallationPageContainer {
 	/**
 	 * URI to be provided to the IMenuService for additions to the toolbar.
 	 * 
-	 * @return
+	 * @return the toolbar uri
 	 */
 	public String getToolbarURI();
 
@@ -42,7 +42,7 @@ public interface IInstallationPageContainer {
 	 * This may not be desirable. We've never had a "button manager" before now,
 	 * and this may be a can of worms we dont want to open.
 	 * 
-	 * @return
+	 * @return the button bar uri
 	 */
 	public String getButtonBarURI();
 }
