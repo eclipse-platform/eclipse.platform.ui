@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.*;
 import org.osgi.service.startlevel.*;
-import org.osgi.util.tracker.*;
 
 public class ConfigurationActivator implements BundleActivator, IBundleGroupProvider, IConfigurationConstants {
 
@@ -41,7 +40,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	public static boolean DEBUG = false;
 	
 	private static BundleContext context;
-	private ServiceTracker platformTracker;
 	private ServiceRegistration configurationFactorySR;
 	private ServiceRegistration bundleGroupProviderSR;
 	private PlatformConfiguration configuration;
@@ -381,12 +379,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		try {
 			PlatformConfiguration.startup(installURL, configLocation);
 		} catch (Exception e) {
-			if (platformTracker != null) {
-				String message = e.getMessage();
-				if (message == null)
-					message = ""; //$NON-NLS-1$
-				Utils.log(Utils.newStatus(message, e));
-			}
+			String message = e.getMessage();
+			if (message == null)
+				message = ""; //$NON-NLS-1$
+			Utils.log(Utils.newStatus(message, e));
 		}
 		return PlatformConfiguration.getCurrent();
 
