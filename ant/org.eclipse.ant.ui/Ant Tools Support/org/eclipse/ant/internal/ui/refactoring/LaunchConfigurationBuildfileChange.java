@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.refactoring;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -62,7 +60,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
     public static Change createChangesForProjectRename(IProject project, String newProjectName) throws CoreException {
         String projectName= project.getDescription().getName();
         ILaunchConfiguration[] configs = getAntLaunchConfigurations();
-        List changes= createChangesForProjectRename(project, configs, projectName, newProjectName);
+        List changes= createChangesForProjectRename(configs, projectName, newProjectName);
         return createChangeFromList(changes, RefactoringMessages.LaunchConfigurationBuildfileChange_7); 
     }
     
@@ -115,14 +113,14 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	 * Create a change for each launch configuration from the given list which needs 
 	 * to be updated for this IProject rename.
 	 */
-	private static List createChangesForProjectRename(IProject project, ILaunchConfiguration[] configs, String projectName, String newProjectName) throws CoreException {
+	private static List createChangesForProjectRename(ILaunchConfiguration[] configs, String projectName, String newProjectName) throws CoreException {
 		List changes= new ArrayList();
 		for (int i= 0; i < configs.length; i++) {
 			ILaunchConfiguration launchConfiguration = configs[i];
 			String launchConfigurationProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 			if (projectName.equals(launchConfigurationProjectName)) {
 				LaunchConfigurationBuildfileChange change = new LaunchConfigurationBuildfileChange(launchConfiguration, null, null, newProjectName, false);
-                String newContainerName = computeNewContainerName(project, launchConfiguration);
+                String newContainerName = computeNewContainerName(launchConfiguration);
                 if (newContainerName != null) {
                     change.setNewContainerName(newContainerName);
                 }
@@ -154,13 +152,10 @@ public class LaunchConfigurationBuildfileChange extends Change {
         fNewConfigContainerName = newContainerName;
     }
 
-    private static String computeNewContainerName(IProject project, ILaunchConfiguration launchConfiguration) {
-        IPath currentLocation = launchConfiguration.getLocation();
-        IPath projectLocation = project.getLocation();
-        if (projectLocation.isPrefixOf(currentLocation)) {
-            String projectFile = new File(projectLocation.toOSString()).getAbsolutePath();
-            String configDir = new File(currentLocation.toOSString()).getParent();
-            return new String(configDir.substring(projectFile.length()));
+    private static String computeNewContainerName(ILaunchConfiguration launchConfiguration) {
+        IFile file = launchConfiguration.getFile();
+        if (file != null) {
+            return file.getParent().getProjectRelativePath().toString();
         }
         return null;
     }
