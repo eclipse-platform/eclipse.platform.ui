@@ -96,7 +96,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Preserving details selection and state
 	 */
-	public void _testModalitySwitch2() {
+	public void testModalitySwitch2() {
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
 		final Composite[] details = new Composite[] { null };
 		setupDetails(passed, details);
@@ -115,7 +115,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Preserving support selection and state
 	 */
-	public void _testModalitySwitch3() {
+	public void testModalitySwitch3() {
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
 		final Composite[] support = new Composite[] { null };
 		setupSupportArea(passed, support);

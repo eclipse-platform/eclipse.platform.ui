@@ -403,7 +403,10 @@ public class WorkbenchStatusDialogManager {
 		 */
 		public void closeTray() throws IllegalStateException {
 			super.closeTray();
-			trayOpened = false;
+			//preserve state during modality switch
+			if(!modalitySwitch){
+				trayOpened = false;
+			}
 			if (launchTrayButton != null && !launchTrayButton.isDisposed()) {
 				launchTrayButton.setEnabled(supportTray.providesSupport() && !trayOpened);
 			}
@@ -1872,7 +1875,6 @@ public class WorkbenchStatusDialogManager {
 			dialog.getShell().removeDisposeListener(disposeListener);
 			modalitySwitch = true;
 			close();
-			setSelectedStatusAdapter(statusAdapter);
 			dialog = new InternalDialog(getParentShell(), this, modal);
 			dialog.open();
 			dialog.getShell().addDisposeListener(disposeListener);
