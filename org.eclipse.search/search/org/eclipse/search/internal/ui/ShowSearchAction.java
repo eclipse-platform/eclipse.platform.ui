@@ -19,8 +19,9 @@ class ShowSearchAction extends Action {
 	private Search fSearch;
 
 	/**
-	 *	Create a new instance of this class
-	 * @param search
+	 * Create a new instance of this class.
+	 * 
+	 * @param search the search
 	 */
 	public ShowSearchAction(Search search) {
 		fSearch= search;
