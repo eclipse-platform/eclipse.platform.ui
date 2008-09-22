@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,7 +179,7 @@ public class UserInfoPrompter implements UserInfo, UIKeyboardInteractive{
         attemptCount++;
         return new String[] {password};
       }
-      String[] result=iromptForKeyboradInteractiveInUI(destination, name,
+      String[] result=promptForKeyboradInteractiveInUI(destination, name,
           instruction, prompt, echo);
       if(result==null)
         return null; // canceled
@@ -195,7 +195,7 @@ public class UserInfoPrompter implements UserInfo, UIKeyboardInteractive{
     }
   }
 
-  private String[] iromptForKeyboradInteractiveInUI(final String destination,
+  private String[] promptForKeyboradInteractiveInUI(final String destination,
       final String name, final String instruction, final String[] prompt,
       final boolean[] echo){
     final String[][] result=new String[1][];
