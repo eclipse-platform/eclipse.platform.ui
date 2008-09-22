@@ -118,7 +118,23 @@ public final class CompareUI {
 	 * @param input the input on which to open the compare editor
 	 */
 	public static void openCompareEditor(CompareEditorInput input) {
-		openCompareEditorOnPage(input, null);
+		openCompareEditor(input, true);
+	}
+	
+	/**
+	 * Performs the comparison described by the given input and opens a compare
+	 * editor on the result in the currently active workbench page.
+	 * 
+	 * @param input
+	 *            the input on which to open the compare editor
+	 * @param activate
+	 *            if <code>true</code> the editor will be activated
+	 * @see IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput, String,
+	 *      boolean)
+	 * @since 3.5
+	 */
+	public static void openCompareEditor(CompareEditorInput input, boolean activate) {
+		openCompareEditorOnPage(input, null, activate);
 	}
 			
 	/**
@@ -130,9 +146,26 @@ public final class CompareUI {
 	 * @since 2.1
 	 */
 	public static void openCompareEditorOnPage(CompareEditorInput input, IWorkbenchPage page) {
+		openCompareEditorOnPage(input, page, true);
+	}
+	
+	/**
+	 * Performs the comparison described by the given input and opens a compare
+	 * editor on the result in the given workbench page.
+	 * 
+	 * @param input
+	 *            the input on which to open the compare editor
+	 * @param page
+	 *            the workbench page in which to open the compare editor
+	 * @param activate
+	 *            if <code>true</code> the editor will be activated
+	 * @see IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput, String,
+	 *      boolean)
+	 */
+	private static void openCompareEditorOnPage(CompareEditorInput input, IWorkbenchPage page, boolean activate) {
 		CompareUIPlugin plugin= CompareUIPlugin.getDefault();
 		if (plugin != null)
-			plugin.openCompareEditor(input, page, null);
+			plugin.openCompareEditor(input, page, null, activate);
 	}
 	
 	/**
@@ -144,9 +177,26 @@ public final class CompareUI {
 	 * @since 3.0
 	 */
 	public static void reuseCompareEditor(CompareEditorInput input, IReusableEditor editor) {
+		reuseCompareEditor(input, editor, true);
+	}
+	
+	/**
+	 * Performs the comparison described by the given input and shows the result
+	 * in the given editor.
+	 * 
+	 * @param input
+	 *            the input on which to open the compare editor
+	 * @param editor
+	 *            the compare editor to reuse or null to create a new one
+	 * @param activate
+	 *            if <code>true</code> the editor will be activated
+	 * @see IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput, String,
+	 *      boolean)
+	 */
+	private static void reuseCompareEditor(CompareEditorInput input, IReusableEditor editor, boolean activate) {
 		CompareUIPlugin plugin= CompareUIPlugin.getDefault();
 		if (plugin != null)
-			plugin.openCompareEditor(input, null, editor);
+			plugin.openCompareEditor(input, null, editor, activate);
 	}
 			
 	/**

@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.osgi.util.NLS;
@@ -1019,12 +1020,10 @@ public class Utils {
 		IStorage file = revision.getStorage(monitor);
 		if (file instanceof IFile) {
 			//if this is the current workspace file, open it
-			return IDE.openEditor(page, (IFile) file);
+			return IDE.openEditor(page, (IFile)file, OpenStrategy.activateOnOpen());
 		} else {
 			FileRevisionEditorInput fileRevEditorInput = FileRevisionEditorInput.createEditorInputFor(revision, monitor);
-			IEditorPart part = findEditor(page, fileRevEditorInput);
-			if (part == null)
-				part = openEditor(page, fileRevEditorInput);
+			IEditorPart	part = openEditor(page, fileRevEditorInput);
 			return part;
 		}
 	}
@@ -1032,7 +1031,7 @@ public class Utils {
 	public static IEditorPart openEditor(IWorkbenchPage page, FileRevisionEditorInput editorInput) throws PartInitException {
 		String id = getEditorId(editorInput);
 		try {
-			IEditorPart part = page.openEditor(editorInput, id);
+			IEditorPart part= page.openEditor(editorInput, id, OpenStrategy.activateOnOpen());
 			// See bug 90582 for the reasons behind this discouraged access
 			if (part instanceof ErrorEditorPart) {
 				page.closeEditor(part, false);
@@ -1102,23 +1101,4 @@ public class Utils {
 		return id;
 	}
 	
-	private static IEditorPart findEditor(IWorkbenchPage page, FileRevisionEditorInput input) {
-		IEditorReference[] editorRefs = page.getEditorReferences();
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorPart part = editorRefs[i].getEditor(false);
-			if(part != null
-			   && part.getEditorInput() instanceof FileRevisionEditorInput) {
-				IFileRevision inputRevision = (IFileRevision) input.getAdapter(IFileRevision.class);
-				IFileRevision editorRevision = (IFileRevision) part.getEditorInput().getAdapter(IFileRevision.class);
-				
-				if (inputRevision.equals(editorRevision)){
-					//make the editor that already contains the revision current
-					page.activate(part);
-					return part;
-				}
-			}
-		}
-		return null;
-	}
-
 }

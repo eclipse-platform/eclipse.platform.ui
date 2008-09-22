@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,42 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringTokenizer;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.IStreamMerger;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.IStructureCreator;
+import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,8 +56,19 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -403,17 +441,26 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		if (image != null)
 			fgDisposeOnShutdownImages.add(image);
 	}
-	
+
 	/**
-	 * Performs the comparison described by the given input and opens a
-	 * compare editor on the result.
-	 *
-	 * @param input the input on which to open the compare editor
-	 * @param page the workbench page on which to create a new compare editor
-	 * @param editor if not null the input is opened in this editor
+	 * Performs the comparison described by the given input and opens a compare
+	 * editor on the result.
+	 * 
+	 * @param input
+	 *            the input on which to open the compare editor
+	 * @param page
+	 *            the workbench page on which to create a new compare editor
+	 * @param editor
+	 *            if not null the input is opened in this editor
+	 * @param activate
+	 *            if <code>true</code> the editor will be activated
+	 * @see IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput, String,
+	 *      boolean)
 	 * @see CompareEditorInput
 	 */
-	public void openCompareEditor(final CompareEditorInput input, final IWorkbenchPage page, final IReusableEditor editor) {
+	public void openCompareEditor(final CompareEditorInput input,
+			final IWorkbenchPage page, final IReusableEditor editor,
+			final boolean activate) {
 		CompareConfiguration configuration = input.getCompareConfiguration();
 		if (configuration != null) {
 			IPreferenceStore ps= configuration.getPreferenceStore();
@@ -423,21 +470,23 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						Boolean.valueOf(ps.getBoolean(ComparePreferencePage.USE_OUTLINE_VIEW)));
 		}
 		if (input.canRunAsJob()) {
-			openEditorInBackground(input, page, editor);
+			openEditorInBackground(input, page, editor, activate);
 		} else {
 			if (compareResultOK(input, null)) {
-				internalOpenEditor(input, page, editor);
+				internalOpenEditor(input, page, editor, activate);
 			}
 		}
 	}
 
 	private void openEditorInBackground(final CompareEditorInput input,
-			final IWorkbenchPage page, final IReusableEditor editor) {
-		internalOpenEditor(input, page, editor);
+			final IWorkbenchPage page, final IReusableEditor editor,
+			final boolean activate) {
+		internalOpenEditor(input, page, editor, activate);
 	}
 
 	private void internalOpenEditor(final CompareEditorInput input,
-			final IWorkbenchPage wp, final IReusableEditor editor) {
+			final IWorkbenchPage wp, final IReusableEditor editor,
+			final boolean activate) {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				if (editor != null && !editor.getSite().getShell().isDisposed()) {	// reuse the given editor
@@ -451,7 +500,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				if (page != null) {
 					// open new CompareEditor on page
 					try {
-						page.openEditor(input, COMPARE_EDITOR);
+						page.openEditor(input, COMPARE_EDITOR, activate);
 					} catch (PartInitException e) {
 						MessageDialog.openError(getShell(), Utilities.getString("CompareUIPlugin.openEditorError"), e.getMessage()); //$NON-NLS-1$
 					}		

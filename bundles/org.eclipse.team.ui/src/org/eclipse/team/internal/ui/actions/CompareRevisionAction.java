@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
@@ -61,7 +62,7 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 				Object tempRevision = objArray[0];
 				if (tempRevision instanceof IFileRevision)
 					file2 = (IFileRevision) tempRevision;
-				else 
+				else
 					return;
 			break;
 			
@@ -73,7 +74,7 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 					tempRevision3 instanceof IFileRevision){
 					file1 = (IFileRevision) objArray[0];
 					file2 = (IFileRevision) objArray[1];
-				} else 
+				} else
 					return;
 			break;
 		}
@@ -127,15 +128,21 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 			IEditorInput otherInput = editor.getEditorInput();
 			if (otherInput.equals(input)) {
 				// simply provide focus to editor
-				workBenchPage.activate(editor);
+				if (OpenStrategy.activateOnOpen())
+					workBenchPage.activate(editor);
+				else
+					workBenchPage.bringToTop(editor);
 			} else {
 				// if editor is currently not open on that input either re-use
 				// existing
 				CompareUI.reuseCompareEditor(input, (IReusableEditor) editor);
-				workBenchPage.activate(editor);
+				if (OpenStrategy.activateOnOpen())
+					workBenchPage.activate(editor);
+				else
+					workBenchPage.bringToTop(editor);
 			}
 		} else {
-			CompareUI.openCompareEditor(input);
+			CompareUI.openCompareEditor(input, OpenStrategy.activateOnOpen());
 		}
 	}
 
@@ -164,18 +171,18 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 	/**
 	 * Returns an editor that can be re-used. An open compare editor that
 	 * has un-saved changes cannot be re-used.
-	 * @param page 
+	 * @param page
 	 * @return an EditorPart or <code>null</code> if none can be found
 	 */
 	public static IEditorPart findReusableCompareEditor(IWorkbenchPage page) {
-		IEditorReference[] editorRefs = page.getEditorReferences();	
+		IEditorReference[] editorRefs = page.getEditorReferences();
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(false);
-			if(part != null 
-					&& (part.getEditorInput() instanceof CompareFileRevisionEditorInput) 
+			if(part != null
+					&& (part.getEditorInput() instanceof CompareFileRevisionEditorInput)
 					&& part instanceof IReusableEditor) {
-				if(! part.isDirty()) {	
-					return part;	
+				if(! part.isDirty()) {
+					return part;
 				}
 			}
 		}
@@ -191,13 +198,13 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 			else if (el instanceof FileRevision){
 				FileRevision tempFileRevision = (FileRevision) el;
 				this.setText(NLS.bind(TeamUIMessages.CompareRevisionAction_Revision, new String[]{tempFileRevision.getContentIdentifier()}));
-			} 
+			}
 			else
 				this.setText(TeamUIMessages.CompareRevisionAction_CompareWithCurrent);
 			return shouldShow();
 		}
 		else if (selection.size() == 2){
-			this.setText(TeamUIMessages.CompareRevisionAction_CompareWithOther);	
+			this.setText(TeamUIMessages.CompareRevisionAction_CompareWithOther);
 			return shouldShow();
 		}
 
