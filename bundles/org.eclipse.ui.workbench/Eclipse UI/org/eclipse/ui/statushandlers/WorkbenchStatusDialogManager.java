@@ -1656,7 +1656,8 @@ public class WorkbenchStatusDialogManager {
 	/**
 	 * Returns the shell of the dialog.
 	 */
-	private Shell getShell() {
+	Shell getShell() {
+		if (this.dialog == null) return null;
 		return this.dialog.getShell();
 	}
 

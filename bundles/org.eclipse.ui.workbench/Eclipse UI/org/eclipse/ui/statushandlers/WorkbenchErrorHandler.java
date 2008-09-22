@@ -59,21 +59,25 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 						.getException()));
 			}
 
-			final boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
+			final boolean block = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
+			
 			if (Display.getCurrent() != null) {
-				getStatusDialogManager().addStatusAdapter(statusAdapter, modal);
+				showStatusAdapter(statusAdapter, block);
 			} else {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						if (!PlatformUI.isWorkbenchRunning()) {
-							// we are shutting down, so just log
-							WorkbenchPlugin.log(statusAdapter.getStatus());
-							return;
+				if (block) {
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							showStatusAdapter(statusAdapter, true);
 						}
-						getStatusDialogManager().addStatusAdapter(
-								statusAdapter, modal);
-					}
-				});
+					});
+
+				} else {
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							showStatusAdapter(statusAdapter, false);
+						}
+					});
+				}
 			}
 		}
 
@@ -82,6 +86,36 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 					statusAdapter.getStatus());
 			WorkbenchPlugin.getDefault().getLog()
 					.log(statusAdapter.getStatus());
+		}
+	}
+	
+	/**
+	 * Requests the status dialog manager to show the status adapter.
+	 * 
+	 * @param statusAdapter
+	 *            the status adapter to show
+	 * @param block
+	 *            <code>true</code> to request a modal dialog and suspend the
+	 *            calling thread till the dialog is closed, <code>false</code>
+	 *            otherwise.
+	 */
+	private void showStatusAdapter(StatusAdapter statusAdapter, boolean block) {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			// we are shutting down, so just log
+			WorkbenchPlugin.log(statusAdapter.getStatus());
+			return;
+		}
+
+		getStatusDialogManager().addStatusAdapter(statusAdapter, block);
+
+		if (block) {
+			Display display = getStatusDialogManager().getShell().getDisplay();
+			while (getStatusDialogManager().getShell() != null
+					&& !getStatusDialogManager().getShell().isDisposed()) {
+				if (!display.readAndDispatch()) {
+					Thread.yield();
+				}
+			}
 		}
 	}
 
