@@ -173,7 +173,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 				sortedKeys[index++] = lookup.getAlt();
 			}
 
-		} else if ("carbon".equals(platform)) { //$NON-NLS-1$
+		} else if ("carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform())) { //$NON-NLS-1$ //$NON-NLS-2$
 			if ((modifierKeys & lookup.getShift()) != 0) {
 				sortedKeys[index++] = lookup.getShift();
 			}
