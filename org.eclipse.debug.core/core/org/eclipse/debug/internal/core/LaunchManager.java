@@ -49,6 +49,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -69,6 +70,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
@@ -321,38 +323,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Visitor for handling resource deltas.
 	 */
 	class LaunchManagerVisitor implements IResourceDeltaVisitor {
-	    
-	    /**
-	     * Map of files to associated (shared) launch configurations in a project
-	     * that is going to be deleted.
-	     */
-	    private Map fFileToConfig = new HashMap();
-	    
-	    
-		/**
-         * Builds a cache of configurations that will be deleted in the given project
-         * 
-         * @param project project that is going to be deleted
-         */
-        public void preDelete(IProject project) {
-            List list = findLaunchConfigurations(project);
-            Iterator configs = list.iterator();
-            while (configs.hasNext()) {
-                ILaunchConfiguration configuration = (ILaunchConfiguration) configs.next();
-                IFile file = configuration.getFile();
-                if (file != null) {
-                    fFileToConfig.put(file, configuration);
-                }
-            }
-        }	
-		
-		/**
-		 * Resets this resource delta visitor for a new pass.
-		 */
-		public void reset() {
-		      fFileToConfig.clear();
-		}
-
+	    		
         /**
 		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 		 */
@@ -375,26 +346,17 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			if (resource instanceof IFile) {
 				IFile file = (IFile)resource;
 				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(file.getFileExtension())) {
-					IPath configPath = file.getLocation();
-					ILaunchConfiguration handle = null;
-					// If the file has already been deleted, reconstruct the handle from our cache
-					if (configPath == null) {
-					    handle = (ILaunchConfiguration) fFileToConfig.get(file);
-					} else {
-					    handle = new LaunchConfiguration(configPath);
-					}
-					if (handle != null) {
-						switch (delta.getKind()) {						
-							case IResourceDelta.ADDED :
-								LaunchManager.this.launchConfigurationAdded(handle);
-								break;
-							case IResourceDelta.REMOVED :
-								LaunchManager.this.launchConfigurationDeleted(handle);
-								break;
-							case IResourceDelta.CHANGED :
-								LaunchManager.this.launchConfigurationChanged(handle);
-								break;
-						}
+					ILaunchConfiguration handle = new LaunchConfiguration(file);
+					switch (delta.getKind()) {						
+						case IResourceDelta.ADDED :
+							LaunchManager.this.launchConfigurationAdded(handle);
+							break;
+						case IResourceDelta.REMOVED :
+							LaunchManager.this.launchConfigurationDeleted(handle);
+							break;
+						case IResourceDelta.CHANGED :
+							LaunchManager.this.launchConfigurationChanged(handle);
+							break;
 					}
 				}
 				return false;
@@ -977,10 +939,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 							name.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
 				}
 			};
-			String[] files = directory.list(filter);
+			File[] files = directory.listFiles(filter);
 			LaunchConfiguration config = null;
 			for (int i = 0; i < files.length; i++) {
-				config = new LaunchConfiguration(containerPath.append(files[i]));
+				config = new LaunchConfiguration(LaunchConfiguration.getSimpleName(files[i].getName()), null);
 				configs.add(config);
 			}
 		}
@@ -1319,23 +1281,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 *  the info object
 	 * @exception DebugException if the config does not exist
 	 */
-	protected LaunchConfigurationInfo getInfo(ILaunchConfiguration config) throws CoreException {
+	protected LaunchConfigurationInfo getInfo(LaunchConfiguration config) throws CoreException {
 		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
 		if (info == null) {
 			if (config.exists()) {
 				BufferedInputStream stream = null;
 				try {
-					if (config.isLocal()) {
-						IPath path = config.getLocation();
-						File file = path.toFile();				
-						stream = new BufferedInputStream(new FileInputStream(file));
-					} else {
-						IFile file = ((LaunchConfiguration) config).getFile();
-						if (file == null) {
-							throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_30, new String[] {config.getName()}), null); 
-						}
-						stream = new BufferedInputStream(file.getContents(true));
-					}
+					stream = new BufferedInputStream(config.getFileStore().openInputStream(EFS.NONE, null));
 					info = createInfoFromXML(stream);
 					synchronized (this) {
 						fLaunchConfigurations.put(config, info);
@@ -1360,7 +1312,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		
 			} else {
 				throw createDebugException(
-					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), config.getLocation().toOSString()}), null); 
+					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), config.getFileStore().toURI().toString()}), null); 
 			}
 		}
 		return info;
@@ -1371,12 +1323,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
 		hookResourceChangeListener();
-		IPath location = file.getLocation();
-		if (location != null) {
-			return new LaunchConfiguration(location);
-		}
-		// bug 199294: avoid NPE, but return a bogus launch configuration that does not exist
-		return new LaunchConfiguration(file.getFullPath());
+		return new LaunchConfiguration(file);
 	}
 	
 	/**
@@ -2217,15 +2164,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
-		if (delta == null) {
-		    // pre-delete
-		    LaunchManagerVisitor visitor = getDeltaVisitor();
-		    IResource resource = event.getResource();
-		    if (resource instanceof IProject) {
-                IProject project = (IProject) resource;
-                visitor.preDelete(project);
-            }
-		} else {
+		if (delta != null) {
 		    LaunchManagerVisitor visitor = getDeltaVisitor();
 		    MappedResourceVisitor v = null;
 		    if (isDeleteConfigurations()) {
@@ -2239,7 +2178,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		    } catch (CoreException e) {
 		    	DebugPlugin.log(e.getStatus());
 		    }
-			visitor.reset();
 		}
 	}
 	
@@ -2398,9 +2336,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Throws a debug exception with the given throwable that occurred
 	 * while processing the given configuration.
 	 */
-	private void throwException(ILaunchConfiguration config, Throwable e) throws DebugException {
-		IPath path = config.getLocation();
-		throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager__0__occurred_while_reading_launch_configuration_file__1___1, new String[]{e.toString(), path.toOSString()}), e); 
+	private void throwException(LaunchConfiguration config, Throwable e) throws DebugException {
+		String uri = null;
+		try {
+			uri = config.getFileStore().toString();
+		} catch (CoreException ce) {
+			uri = config.getName();
+		}
+		throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager__0__occurred_while_reading_launch_configuration_file__1___1, new String[]{e.toString(), uri}), e); 
 	}
 
 	/**
@@ -2486,11 +2429,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * (i.e. a shared configuration), the shared configuration is deleted (becomes local).
 	 * </p>
 	 * @param files files to import
-	 * @param monitor progress monitor
+	 * @param monitor progress monitor or <code>null</code>
 	 * @throws CoreException if an exception occurs while importing configurations
 	 * @since 3.4.0
 	 */
 	public void importConfigurations(File[] files, IProgressMonitor monitor) throws CoreException {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		Map sharedConfigs = new HashMap();
 		List stati = null;
 		Iterator iterator = getAllLaunchConfigurations().iterator();
@@ -2519,7 +2465,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			boolean added = !target.exists();
 			try {
 				copyFile(source, target);
-				ILaunchConfiguration configuration = new LaunchConfiguration(location);
+				ILaunchConfiguration configuration = new LaunchConfiguration(LaunchConfiguration.getSimpleName(source.getName()), null);
 				ILaunchConfiguration shared = (ILaunchConfiguration) sharedConfigs.get(target.getName());
 				if (shared != null) {
 					setMovedFromTo(shared, configuration);

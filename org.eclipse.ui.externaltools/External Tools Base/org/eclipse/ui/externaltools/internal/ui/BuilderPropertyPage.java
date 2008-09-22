@@ -220,7 +220,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
                     if (shell == null) {
                         return;
                     }
-					IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_Exists, new String[]{config.getLocation().toOSString()}), null);
+					IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_Exists, new String[]{config.getName()}), null);
 					ErrorDialog.openError(getShell(), ExternalToolsUIMessages.BuilderPropertyPage_errorTitle,
 									NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_External_Tool_Builder__0__Not_Added_2, new String[]{config.getName()}),
 									status);

@@ -10,14 +10,21 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -304,7 +311,9 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 				}
 				monitor.beginTask(WizardMessages.ExportLaunchConfigurationsWizardPage_10, configs.length);
 				try {
-					File file = null, newfile = null;
+					List errors = null;
+					IFileStore file = null;
+					File newfile = null;
 					boolean owall = false, nowall = false;
 					MessageDialog dialog = null;
 					for(int i = 0; i < configs.length; i++) {
@@ -312,8 +321,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 							return Status.CANCEL_STATUS;
 						}
 						if(configs[i] instanceof ILaunchConfiguration) {
-							file = new File(((LaunchConfiguration) configs[i]).getLocation().toOSString());
 							try {
+								file = ((LaunchConfiguration) configs[i]).getFileStore();
 								newfile = new File(destpath.append(file.getName()).toOSString());
 								if(newfile.exists() & !overwrite) {
 									if(nowall) {
@@ -353,16 +362,36 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 								else {
 									copyFile(file, newfile);
 								}
-							} 
-							catch (Exception e) {
-								DebugUIPlugin.logErrorMessage(e.getMessage());
+							}
+							catch (IOException e ) {
+								if (errors == null) {
+									errors = new ArrayList(configs.length);
+								}
+								errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
+										e.getMessage(), e));
+							}
+							catch (CoreException e) {
+								if (errors == null) {
+									errors = new ArrayList(configs.length);
+								}
+								errors.add(e.getStatus());
 							}
 						}
 						if(!monitor.isCanceled()) {
 							monitor.worked(1);
 						}
 					}
-					return Status.OK_STATUS;
+					if (errors == null || errors.isEmpty()) {
+						return Status.OK_STATUS;
+					} else {
+						if (errors.size() == 1) {
+							return (IStatus)errors.get(0);
+						} else {
+							return new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), 0,
+									(IStatus[])errors.toArray(new IStatus[errors.size()]),
+									WizardMessages.ExportLaunchConfigurationsWizardPage_18, null);
+						}
+					}
 				}
 				finally {
 					monitor.done();
@@ -379,15 +408,15 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	 * @param out the file to be copied out to
 	 * @throws Exception
 	 */
-	protected void copyFile(File in, File out) throws Exception {
-	    FileInputStream fis  = new FileInputStream(in);
-	    FileOutputStream fos = new FileOutputStream(out);
+	protected void copyFile(IFileStore in, File out) throws CoreException, IOException {
+	    BufferedInputStream is  = new BufferedInputStream(in.openInputStream(EFS.NONE, null));
+	    BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(out));
 	    byte[] buf = new byte[1024];
 	    int i = 0;
-	    while((i = fis.read(buf)) != -1) {
-	    	fos.write(buf, 0, i);
+	    while((i = is.read(buf)) != -1) {
+	    	os.write(buf, 0, i);
 	    }
-	    fis.close();
-	    fos.close();
+	    is.close();
+	    os.close();
 	}
 }

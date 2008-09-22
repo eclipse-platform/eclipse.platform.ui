@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -285,10 +286,20 @@ public interface ILaunchConfiguration extends IAdaptable {
 		
 	/**
 	 * Returns the location of this launch configuration as a
-	 * path. This is a handle-only method.
+	 * path in the local file system or <code>null</code> if it cannot
+	 * be mapped to a location in the local file system. This is a handle-only method.
+	 * <p>
+	 * Since 3.5, this method can return <code>null</code>. For example, when a
+	 * launch configuration is stored in the workspace as an {@link IFile} in
+	 * an external file system ({@link EFS}).
+	 * </p>
 	 * 
 	 * @return the location of this launch configuration as a
-	 *  path
+	 *  path file system or <code>null</code> if it cannot be mapped
+	 *  to a location in the local file system. Since 3.5, this method
+	 *  can return <code>null</code>.
+	 * @deprecated Since a launch configuration does not need to be stored in the local
+	 *  file system, this attribute should no longer be used to identify a launch configuration.
 	 */
 	public IPath getLocation();
 	

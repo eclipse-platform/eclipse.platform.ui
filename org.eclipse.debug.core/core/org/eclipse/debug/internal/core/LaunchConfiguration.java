@@ -26,6 +26,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -126,19 +128,49 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	protected static final IStatus duplicateDelegates = new Status(IStatus.INFO, "org.eclipse.debug.core", 227, "", null);  //$NON-NLS-1$//$NON-NLS-2$
 	
 	/**
-	 * Location this configuration is stored in. This 
-	 * is the key for a launch configuration handle.
+	 * This configuration's name
 	 */
-	private IPath fLocation;
+	private String fName;
+	
+	/**
+	 * The container this configuration is stored in or <code>null</code> if stored locally
+	 * with workspace metadata.
+	 */
+	private IContainer fContainer;
 
 	/**
-	 * Constructs a launch configuration in the given location.
+	 * Constructs a launch configuration with the given name. The configuration
+	 * is stored in the given container or locally with workspace metadata if
+	 * the specified container is <code>null</code>.
 	 * 
-	 * @param location path to where this launch configuration's
-	 *  underlying file is located
+	 * @param name launch configuration name
+	 * @param container parent container or <code>null</code>
 	 */
-	protected LaunchConfiguration(IPath location) {
-		setLocation(location);
+	protected LaunchConfiguration(String name, IContainer container) {
+		setName(name);
+		setContainer(container);
+	}
+
+	/**
+	 * Constructs a launch configuration on the given workspace file.
+	 * 
+	 * @param file workspace .launch file
+	 */
+	protected LaunchConfiguration(IFile file) {
+		this(getSimpleName(file.getName()), file.getParent());
+	}
+	
+	/**
+	 * Given a name that ends with .launch, return the simple name of the configuration.
+	 * 
+	 * @param fileName
+	 * @return simple name
+	 */
+	protected static String getSimpleName(String fileName) {
+		if (fileName.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
+			return fileName.substring(0, fileName.length() - ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.length() - 1);
+		}
+		return fileName;
 	}
 	
 	/**
@@ -174,18 +206,16 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				throw new CoreException(s);
 			}
 			
-			IPath location = null;
+			
 			boolean local = (Boolean.valueOf(localString)).booleanValue();
-			if (local) {
-				location = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append(path);
-			} else {
-				location = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path)).getLocation();
+			IPath iPath = new Path(path);
+			String name = getSimpleName(iPath.lastSegment());
+			IContainer container = null;
+			if (!local) {
+				container = ResourcesPlugin.getWorkspace().getRoot().getFile(iPath).getParent();
 			}
-			setLocation(location);
-			if (location == null) {
-				IStatus s = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_1, new String[]{path}), DebugPlugin.ERROR, null); 
-				throw new CoreException(s);
-			}
+			setName(name);
+			setContainer(container);
 			return;
 		} catch (ParserConfigurationException e) {
 			ex = e;			
@@ -207,7 +237,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				LaunchConfiguration otherConfig = (LaunchConfiguration) object;
 				return getName().equals(otherConfig.getName())
 				 	 && getType().equals(otherConfig.getType())
-				 	 && getLocation().equals(otherConfig.getLocation())
+				 	 && equalOrNull(getContainer(), otherConfig.getContainer())
 					 && getInfo().equals(otherConfig.getInfo());
 			}
 			return false;
@@ -229,8 +259,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public void delete() throws CoreException {
 		if (exists()) {
-			if (isLocal()) {
-				if (!(getLocation().toFile().delete())) {
+			IFile file = getFile();
+			if (file == null) {
+				getFileStore().delete(EFS.NONE, null);
+				if ((getFileStore().fetchInfo().exists())) {
 					throw new DebugException(
 						new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfiguration_Failed_to_delete_launch_configuration__1, null) 
@@ -240,21 +272,16 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				// will be no resource delta
 				getLaunchManager().launchConfigurationDeleted(this);
 			} else {
-				// delete the resource using IFile API such that
+				// Delete the resource using IFile API such that
 				// resource deltas are fired.
-				IFile file = getFile();
-				if (file != null) {
-					// validate edit
-					if (file.isReadOnly()) {
-						IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, null);
-						if (!status.isOK()) {
-							throw new CoreException(status);
-						}
+				// First do validate edit to ensure the resource is local
+				if (file.isReadOnly()) {
+					IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, null);
+					if (!status.isOK()) {
+						throw new CoreException(status);
 					}
-					file.delete(true, null);
-				} else {
-					// Error - the exists test passed, but could not locate file 
 				}
+				file.delete(true, null);
 			}
 		}
 	}
@@ -274,10 +301,27 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			if (isWorkingCopy()) {
 				return this == object;
 			} 
-			ILaunchConfiguration config = (ILaunchConfiguration) object;
+			LaunchConfiguration config = (LaunchConfiguration) object;
 			if (!config.isWorkingCopy()) {
-				return config.getLocation().equals(getLocation());
+				return getName().equals(config.getName()) &&
+					equalOrNull(getContainer(), config.getContainer());
 			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns whether the given objects are equal or both <code>null</code>.
+	 * 
+	 * @param o1
+	 * @param o2
+	 * @return whether the given objects are equal or both <code>null</code>
+	 */
+	protected boolean equalOrNull(Object o1, Object o2) {
+		if (o1 == null) {
+			return o2 == null;
+		} else if (o2 != null) {
+			return o1.equals(o2);
 		}
 		return false;
 	}
@@ -286,11 +330,15 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#exists()
 	 */
 	public boolean exists() {
-		if (isLocal()) {
-			return getLocation().toFile().exists();
-		}
 		IFile file = getFile();
-		return file != null && file.exists();
+		if (file != null) {
+			return file.exists();
+		}
+		try {
+			return getFileStore().fetchInfo().exists();
+		} catch (CoreException e) {
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -350,35 +398,28 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return getType().getCategory();
 	}
 
-	/**
-	 * Returns the container this launch configuration is 
-	 * stored in, or <code>null</code> if this launch configuration
-	 * is stored locally.
-	 * 
-	 * @return the container this launch configuration is 
-	 * stored in, or <code>null</code> if this launch configuration
-	 * is stored locally
-	 */
-	protected IContainer getContainer() {
-		IFile file = getFile();
-		if (file != null) {
-			return file.getParent();
-		}
-		return null;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getFile()
 	 */
 	public IFile getFile() {
-		if (isLocal()) {
-			return null;
-		}
-		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
-		if (files.length > 0) {
-			return files[0];
+		IContainer container = getContainer();
+		if (container != null) {
+			return container.getFile(new Path(getFileName()));
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the simple file name of this launch configuration.
+	 * 
+	 * @return the simple file name of this launch configuration - for example
+	 *  	"Abc.launch"
+	 */
+	protected String getFileName() {
+		StringBuffer buf = new StringBuffer(getName());
+		buf.append('.');
+		buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+		return buf.toString();
 	}
 
 	/**
@@ -391,18 +432,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	protected LaunchConfigurationInfo getInfo() throws CoreException {
 		return getLaunchManager().getInfo(this);
-	}
-
-	/**
-	 * Returns the last segment from the location
-	 * @return the last segment from the location
-	 */
-	private String getLastLocationSegment() {
-		String name = getLocation().lastSegment();
-		if (name.length() > LAUNCH_CONFIGURATION_FILE_EXTENSION.length()) {
-			name = name.substring(0, name.length() - (LAUNCH_CONFIGURATION_FILE_EXTENSION.length() + 1));
-		}
-		return name;
 	}
 	
 	/**
@@ -418,7 +447,38 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getLocation()
 	 */
 	public IPath getLocation() {
-		return fLocation;
+		try {
+			IFileStore store = getFileStore();
+			if (store != null) {
+				File localFile = store.toLocalFile(EFS.CACHE, null);
+				if (localFile != null) {
+					if (store.fetchInfo().exists()) {
+						return new Path(localFile.getAbsolutePath());
+					} else {
+						// when it does not exist, toLocalFile(...) returns a bogus file
+						return new Path(store.toString());
+					}
+				}
+			}
+		} catch (CoreException e) {
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the file store this configuration is persisted in or <code>null</code> if
+	 * a file store cannot be derived. The file may or may not exist. If this configuration
+	 * is in a project that is closed or does not exist, <code>null</code> is returned.
+	 * 
+	 * @return file store this configuration is persisted in or <code>null</code>
+	 * @throws CoreException
+	 */
+	public IFileStore getFileStore() throws CoreException {
+		if (isLocal()) {
+			return EFS.getLocalFileSystem().fromLocalFile(
+				LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append(getFileName()).toFile());
+		}
+		return EFS.getStore(getFile().getLocationURI());
 	}
 
 	/* (non-Javadoc)
@@ -477,18 +537,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public String getMemento() throws CoreException {
 		IPath relativePath = null;
-		if (isLocal()) {
-			IPath rootPath = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
-			IPath configPath = getLocation();
-			relativePath = configPath.removeFirstSegments(rootPath.segmentCount());
-			relativePath = relativePath.setDevice(null);
+		IFile file = getFile();
+		boolean local = true;
+		if (file == null) {
+			relativePath = new Path(getName());
 		} else {
-			IFile file = getFile();
-			if (file == null) {
-				// cannot generate memento - missing file
-				IStatus status = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_15, new String[]{getName()}), DebugException.INTERNAL_ERROR, null);
-				throw new CoreException(status); 
-			}
+			local = false;
 			relativePath = file.getFullPath();
 		}
 		Exception e= null;
@@ -496,7 +550,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			Document doc = LaunchManager.getDocument();
 			Element node = doc.createElement(IConfigurationElementConstants.LAUNCH_CONFIGURATION);
 			doc.appendChild(node);
-			node.setAttribute(IConfigurationElementConstants.LOCAL, (Boolean.valueOf(isLocal())).toString());
+			node.setAttribute(IConfigurationElementConstants.LOCAL, (Boolean.valueOf(local)).toString());
 			node.setAttribute(IConfigurationElementConstants.PATH, relativePath.toString());
 			return LaunchManager.serializeDocument(doc);
 		} catch (IOException ioe) {
@@ -514,8 +568,19 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getName()
 	 */
 	public String getName() {
-		return getLastLocationSegment();
+		return fName;
 	}
+	
+	/**
+	 * Returns the container this configuration is stored in, or <code>null</code>
+	 * if this configuration is local.
+	 * 
+	 * @return the container this configuration is stored in, or <code>null</code>
+	 * if this configuration is local
+	 */
+	protected IContainer getContainer() {
+		return fContainer;
+	}		
 
 	public Set getModes() throws CoreException {
 		Set options = getAttribute(ATTR_LAUNCH_MODES, (Set)null); 
@@ -540,7 +605,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getLocation().hashCode();
+		IContainer container = getContainer();
+		if (container == null) {
+			return getName().hashCode();
+		} else {
+			return getName().hashCode() + container.hashCode();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -582,8 +652,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#isLocal()
 	 */
 	public boolean isLocal() {
-		IPath localPath = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
-		return localPath.isPrefixOf(getLocation());
+		return getContainer() == null;
 	}
 	
 	/* (non-Javadoc)
@@ -800,16 +869,24 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	}
 
 	/**
-	 * Sets the location of this configuration's underlying
-	 * file.
+	 * Sets the new name for this configuration.
 	 * 
-	 * @param location the location of this configuration's underlying
-	 *  file
+	 * @param name the new name for this configuration
 	 */
-	private void setLocation(IPath location) {
-		fLocation = location;
+	protected void setName(String name) {
+		fName = name;
 	}
-
+	
+	/**
+	 * Sets this configurations container or <code>null</code> if stored in the
+	 * local metadata.
+	 * 
+	 * @param container or <code>null</code>
+	 */
+	protected void setContainer(IContainer container) {
+		fContainer = container;
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#supportsMode(java.lang.String)
 	 */
@@ -821,19 +898,14 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#isReadOnly()
 	 */
 	public boolean isReadOnly() {
-		if(!isLocal()) {
-			IFile file = getFile();
-			if(file != null) {
-				return file.isReadOnly();
+		try {
+			IFileStore fileStore = getFileStore();
+			if (fileStore != null) {
+				return fileStore.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 			}
+		} catch (CoreException e) {
 		}
-		else {
-			File file = getLocation().toFile();
-			if(file != null) {
-				return file.exists() && !file.canWrite();
-			}
-		}
-		return false;
+		return true;
 	}
 
 	/**

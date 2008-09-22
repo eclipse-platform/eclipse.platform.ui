@@ -11,9 +11,8 @@
 package org.eclipse.debug.internal.core;
 
  
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -25,13 +24,14 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -73,12 +73,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * it was created
 	 */
 	private boolean fDirty = false;
-	
-	/**
-	 * The name for this configuration.
-	 */
-	private String fName;
-	
+		
 	/**
 	 * Indicates whether this working copy has been explicitly renamed.
 	 */
@@ -88,13 +83,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * Suppress change notification until created
 	 */
 	private boolean fSuppressChange = true;
-	
-	/**
-	 * The container this working copy will be
-	 * stored in when saved.
-	 */
-	private IContainer fContainer;
-	
+		
 	/**
 	 * Constructs a working copy of the specified launch 
 	 * configuration.
@@ -105,8 +94,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 *  working copy's attributes based on the original configuration
 	 */
 	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original) throws CoreException {
-		super(original.getLocation());
-		setName(original.getName());
+		super(original.getName(), original.getContainer());
 		copyFrom(original);
 		setOriginal(original);
 		fSuppressChange = false;
@@ -121,8 +109,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 *  working copy's attributes based on the original configuration
 	 */
 	protected LaunchConfigurationWorkingCopy(LaunchConfigurationWorkingCopy parent) throws CoreException {
-		super(parent.getLocation());
-		setName(parent.getName());
+		super(parent.getName(), parent.getContainer());
 		copyFrom(parent);
 		setOriginal((LaunchConfiguration) parent.getOriginal());
 		fParent = parent;
@@ -141,9 +128,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 *  working copy's attributes based on the original configuration
 	 */
 	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original, String name) throws CoreException {
-		super(original.getLocation());
+		super(name, original.getContainer());
 		copyFrom(original);
-		setName(name);
 		fSuppressChange = false;
 	}
 	
@@ -157,11 +143,9 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @param type the type of this working copy
 	 */
 	protected LaunchConfigurationWorkingCopy(IContainer container, String name, ILaunchConfigurationType type) {
-		super((IPath)null);
-		setName(name);
+		super(name, container);
 		setInfo(new LaunchConfigurationInfo());
 		getInfo().setType(type);
-		setContainer(container);
 		fSuppressChange = false;
 	}
 
@@ -232,7 +216,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				lmonitor.done();
 			}
 		}
-		return new LaunchConfiguration(getLocation());
+		return new LaunchConfiguration(getName(), getContainer());
 	}
 	
 	/**
@@ -245,7 +229,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			// set up from/to information if this is a move
 			boolean moved = (!isNew() && isMoved());
 			if (moved) {
-				ILaunchConfiguration to = new LaunchConfiguration(getLocation());
+				ILaunchConfiguration to = new LaunchConfiguration(getName(), getContainer());
 				ILaunchConfiguration from = getOriginal();
 				getLaunchManager().setMovedFromTo(from, to);
 			}
@@ -298,17 +282,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				try {
 					boolean added = false;
 					lmonitor.subTask(DebugCoreMessages.LaunchConfigurationWorkingCopy_1);
-					File file = getLocation().toFile();
-					File dir = getLocation().removeLastSegments(1).toFile();
-					dir.mkdirs();
-					if (!file.exists()) {
+					IFileStore file = getFileStore();
+					IFileStore dir = file.getParent();
+					dir.mkdir(EFS.SHALLOW, null);
+					if (!file.fetchInfo().exists()) {
 						added = true;
-						file.createNewFile();
 						updateMonitor(lmonitor, 1);
 					}
-					FileOutputStream stream = null;
+					BufferedOutputStream stream = null;
 					try {
-						stream = new FileOutputStream(file);
+						stream = new BufferedOutputStream(file.openOutputStream(EFS.NONE, null));
 						stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 					}
 					finally {
@@ -317,9 +300,9 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 						}
 					}
 					if (added) {
-						getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
+						getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getName(), getContainer()));
 					} else {
-						getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
+						getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getName(), getContainer()));
 					}
 					//notify file saved
 					updateMonitor(lmonitor, 1);
@@ -484,7 +467,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	private void copyFrom(LaunchConfiguration original) throws CoreException {
 		LaunchConfigurationInfo info = original.getInfo();
 		setInfo(info.getCopy());
-		setContainer(original.getContainer());
 		fDirty = false;
 	}
 	
@@ -587,50 +569,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			fRenamed = isNew() || !(getOriginal().getName().equals(name));
 		}
 	}
-
+	
 	/**
 	 * Sets the new name for this configuration.
 	 * 
 	 * @param name the new name for this configuration
 	 */
-	private void setName(String name) {
-		fName = name;
+	protected void setName(String name) {
+		super.setName(name);
 		setDirty();
-	}
-	
-	/**
-	 * @see ILaunchConfiguration#getName()
-	 */
-	public String getName() {
-		return fName;
-	}
-	
-	/**
-	 * @see ILaunchConfiguration#isLocal()
-	 */
-	public boolean isLocal() {
-		return getContainer() == null;
 	}	
-	
-	/**
-	 * Returns the location this launch configuration will reside at
-	 * when saved.
-	 * 
-	 * @see ILaunchConfiguration#getLocation()
-	 */
-	public IPath getLocation() {
-		if (isMoved()) {
-			IPath path = null;
-			if (isLocal()) {
-				path = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
-			} else {
-				path = getContainer().getLocation();
-			}
-			path = path.append(getName() + "." + LAUNCH_CONFIGURATION_FILE_EXTENSION); //$NON-NLS-1$
-			return path;
-		} 
-		return getOriginal().getLocation();
-	}
 	
 	/**
 	 * Returns whether this working copy is new, or is a
@@ -686,34 +634,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see ILaunchConfigurationWorkingCopy#setContainer(IContainer)
 	 */
 	public void setContainer(IContainer container) {
-		if (container == fContainer) {
+		if (equalOrNull(getContainer(), container)) {
 			return;
 		}
-		if (container != null) {
-			if (container.equals(fContainer)) {
-				return;
-			}
-		} else {
-			if (fContainer.equals(container)) {
-				return;
-			}
-		}
-		fContainer = container;
+		super.setContainer(container);
 		setDirty();
 	}
-	
-	/**
-	 * Returns the container this working copy will be
-	 * stored in when saved, or <code>null</code> if
-	 * this working copy is local.
-	 * 
-	 * @return the container this working copy will be
-	 *  stored in when saved, or <code>null</code> if
-	 *  this working copy is local
-	 */
-	protected IContainer getContainer() {
-		return fContainer;
-	}	
 	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setAttributes(java.util.Map)

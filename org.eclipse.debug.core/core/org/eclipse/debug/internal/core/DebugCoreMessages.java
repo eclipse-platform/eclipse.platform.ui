@@ -43,12 +43,9 @@ public class DebugCoreMessages extends NLS {
 	public static String J9VMRunner_0;
 
 	public static String LaunchConfiguration_0;
-	public static String LaunchConfiguration_1;
 	public static String LaunchConfiguration_11;
 	public static String LaunchConfiguration_13;
 	public static String LaunchConfiguration_14;
-
-	public static String LaunchConfiguration_15;
 
 	public static String LaunchConfiguration_16;
 
@@ -119,7 +116,6 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchManager_Invalid_launch_configuration_index__18;
 	public static String LaunchManager_does_not_exist;
 	public static String LaunchManager_Source_locator_does_not_exist___0__13;
-	public static String LaunchManager_30;
 	public static String LogicalStructureType_0;
 	public static String OutputStreamMonitor_label;
 	public static String ProcessMonitorJob_0;
