@@ -78,7 +78,6 @@ import org.eclipse.jface.text.source.SourceViewer;
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 
 
-
 	private static final int BASE= INFORMATION; // see ISourceViewer.INFORMATION
 
 	/** Operation constant for the expand operation. */
@@ -1284,9 +1283,18 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	protected void handleVerifyEvent(VerifyEvent e) {
 		IRegion modelRange= event2ModelRange(e);
-		if (exposeModelRange(modelRange))
+		if (exposeModelRange(modelRange)) {
 			e.doit= false;
-		else
+			IRegion widgetRange= modelRange2WidgetRange(modelRange);
+			try {
+				int insertOffset= widgetRange.getOffset();
+				getDocument().replace(insertOffset, widgetRange.getLength(), e.text);
+				int caretOffset= insertOffset + e.text.length();
+				getTextWidget().setSelection(caretOffset, caretOffset);
+			} catch (BadLocationException e1) {
+				// ignore as nothing bad happens (no log at this level)
+			}
+		} else
 			super.handleVerifyEvent(e);
 	}
 
