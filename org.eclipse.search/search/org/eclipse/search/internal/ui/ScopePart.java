@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,6 +169,8 @@ public class ScopePart {
 		Assert.isNotNull(fUseWorkingSet);
 		Assert.isNotNull(fUseProject);
 
+		fSettingsStore.put(STORE_SCOPE, scope);
+
 		if (scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE) {
 			if (!fCanSearchEnclosingProjects) {
 				SearchPlugin.log(new Status(IStatus.WARNING, NewSearchUI.PLUGIN_ID, IStatus.WARNING, "Enclosing projects scope set on search page that does not support it", null)); //$NON-NLS-1$
@@ -178,7 +180,7 @@ public class ScopePart {
 			}
 		} else if (scope == ISearchPageContainer.SELECTION_SCOPE) {
 			if (!fUseSelection.isEnabled()) {
-				scope= ISearchPageContainer.WORKSPACE_SCOPE;
+				scope= ISearchPageContainer.SELECTED_PROJECTS_SCOPE;
 			}
 		}
 		fScope= scope;
@@ -189,7 +191,6 @@ public class ScopePart {
 		fUseWorkingSet.setSelection(scope == ISearchPageContainer.WORKING_SET_SCOPE);
 
 		updateSearchPageContainerActionPerformedEnablement();
-		fSettingsStore.put(STORE_SCOPE, scope);
 
 	}
 
@@ -273,7 +274,7 @@ public class ScopePart {
 
 		fUseSelection= new Button(fPart, SWT.RADIO);
 		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
-		fUseSelection.setText(SearchMessages.ScopePart_selectedResourcesScope_text);
+			fUseSelection.setText(SearchMessages.ScopePart_selectedResourcesScope_text);
 
 		boolean canSearchInSelection= canSearchInSelection();
 		fUseSelection.setEnabled(canSearchInSelection);
@@ -341,7 +342,6 @@ public class ScopePart {
 
 		return fPart;
 	}
-
 
 	private boolean canSearchInSelection() {
 		ISelection selection= fSearchDialog.getSelection();
