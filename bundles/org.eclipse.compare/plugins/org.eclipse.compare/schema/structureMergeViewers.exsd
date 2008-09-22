@@ -96,7 +96,7 @@ structure merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCre
                   The id of a content type defined using the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.runtime.contentTypes/content-type/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
                </appinfo>
             </annotation>
          </attribute>
