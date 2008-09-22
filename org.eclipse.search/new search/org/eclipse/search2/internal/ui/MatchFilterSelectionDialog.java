@@ -69,13 +69,14 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 
 	/**
 	 * Creates a {@link MatchFilterSelectionDialog}.
-	 *
+	 * 
 	 * @param shell the parent shell
-	 * @param enableMatchFilterConfiguration
+	 * @param enableMatchFilterConfiguration <code>true</code> if match filter configuration should
+	 *            be enabled
 	 * @param allFilters all filters available for selection
 	 * @param selectedFilters the initially selected filters
-	 * @param enableLimitConfiguration if set, the dialog will also contain controls to limit
-	 * the number of top level elements
+	 * @param enableLimitConfiguration if set, the dialog will also contain controls to limit the
+	 *            number of top level elements
 	 * @param limit the initial limit or -1 if no limit should be used.
 	 */
 	public MatchFilterSelectionDialog(Shell shell, boolean enableMatchFilterConfiguration, MatchFilter[] allFilters, MatchFilter[] selectedFilters, boolean enableLimitConfiguration, int limit) {

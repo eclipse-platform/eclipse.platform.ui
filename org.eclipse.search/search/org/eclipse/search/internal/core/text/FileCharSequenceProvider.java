@@ -162,10 +162,11 @@ public class FileCharSequenceProvider {
 
 		/**
 		 * Fills the buffer by reading from the given reader.
+		 * 
 		 * @param reader the reader to read from
 		 * @param pos the offset of the reader in the file
 		 * @return returns true if the end of the file has been reached
-		 * @throws IOException
+		 * @throws IOException if reading from the buffer fails
 		 */
 		public boolean fill(Reader reader, int pos) throws IOException {
 			int res= reader.read(fBuf);

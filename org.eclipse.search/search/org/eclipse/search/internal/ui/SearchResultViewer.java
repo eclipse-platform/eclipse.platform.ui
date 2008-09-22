@@ -644,8 +644,9 @@ public class SearchResultViewer extends TableViewer {
 
 	/**
 	 * Handle an update of an entry.
+	 * 
 	 * @param entry the entry
-	 * @param matchRemoved
+	 * @param matchRemoved <code>true</code> if a match got removed
 	 */
 	protected void handleUpdateMatch(ISearchResultViewEntry entry, boolean matchRemoved) {
 		Widget item= findItem(entry);
