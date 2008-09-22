@@ -199,19 +199,15 @@ public class SearchPlugin extends AbstractUIPlugin {
 		return isAutobuilding;
 	}
 
-	/**
-	 * This method is called upon plug-in activation
-	 * @param context
-	 * @throws Exception
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 	}
 
-	/**
-	 * This method is called when the plug-in is stopped
-	 * @param context
-	 * @throws Exception
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		InternalSearchUI.shutdown();
@@ -221,7 +217,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated old search
 	 */
 	private void disposeOldSearchManager() {
 		SearchManager.getDefault().dispose();

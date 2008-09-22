@@ -32,15 +32,17 @@ public class PatternConstructor {
 	}
 
 	/**
-	 * Creates a pattern element from the pattern string which is either a reg-ex expression or in our old
-	 * 'StringMatcher' format.
+	 * Creates a pattern element from the pattern string which is either a reg-ex expression or in
+	 * our old 'StringMatcher' format.
+	 * 
 	 * @param pattern The search pattern
 	 * @param isRegex <code>true</code> if the passed string already is a reg-ex pattern
 	 * @param isStringMatcher <code>true</code> if the passed string is in the StringMatcher format.
 	 * @param isCaseSensitive Set to <code>true</code> to create a case insensitive pattern
-	 * @param isWholeWord <code>true</code> to create a pattern that requires a word boundary at the beginning and the end.
+	 * @param isWholeWord <code>true</code> to create a pattern that requires a word boundary at the
+	 *            beginning and the end.
 	 * @return The created pattern
-	 * @throws PatternSyntaxException
+	 * @throws PatternSyntaxException if "\R" is at an illegal position
 	 */
 	public static Pattern createPattern(String pattern, boolean isRegex, boolean isStringMatcher, boolean isCaseSensitive, boolean isWholeWord) throws PatternSyntaxException {
 		if (isRegex) {
@@ -74,9 +76,10 @@ public class PatternConstructor {
 
 	/**
 	 * Copied from {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}' to support '\R'
+	 * 
 	 * @param findString the string to substitute
 	 * @return the new string
-	 * @throws PatternSyntaxException
+	 * @throws PatternSyntaxException if "\R" is at an illegal position
 	 */
 	private static String substituteLinebreak(String findString) throws PatternSyntaxException {
 		int length= findString.length();
@@ -155,13 +158,13 @@ public class PatternConstructor {
         return Character.isLetterOrDigit(c);
     }
 
-    /**
-	 * Creates a pattern element from an array of patterns in the old
-	 * 'StringMatcher' format.
+	/**
+	 * Creates a pattern element from an array of patterns in the old 'StringMatcher' format.
+	 * 
 	 * @param patterns The search patterns
 	 * @param isCaseSensitive Set to <code>true</code> to create a case insensitive pattern
 	 * @return The created pattern
-	 * @throws PatternSyntaxException
+	 * @throws PatternSyntaxException if "\R" is at an illegal position
 	 */
 	public static Pattern createPattern(String[] patterns, boolean isCaseSensitive) throws PatternSyntaxException {
 		StringBuffer pattern= new StringBuffer();
