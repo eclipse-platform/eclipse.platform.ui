@@ -491,7 +491,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * identical listener is already registered.
 	 * 
 	 * @param listener
-	 *            a double-click listener
+	 *            an open listener
 	 */
 	public void addOpenListener(IOpenListener listener) {
 		openListeners.add(listener);
@@ -1481,7 +1481,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * identical listener is not registered.
 	 * 
 	 * @param listener
-	 *            a double-click listener
+	 *            an open listener
 	 */
 	public void removeOpenListener(IOpenListener listener) {
 		openListeners.remove(listener);
