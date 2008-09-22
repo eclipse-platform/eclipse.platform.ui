@@ -11,6 +11,16 @@
 
 <h2>Summary of API changes in 3.5</h2>
 
+<h3>ILaunchConfiguration.getLocation() can return null</h3>
+<p><strong>What is affected:</strong> Clients that call ILaunchConfiguration.getLocation()</p>
+<p><strong>Description:</strong> In release 3.4 and earlier, ILaunchConfiguration.getLocation() was not specified 
+to return <code>null</code>. Since 3.5, launch configuration infrastructure has been enhanced to support storage
+on external file systems (EFS). The #getLocation() method returns a location in the local file system - however, since 
+an external file system may not map to a local location, <code>null</code> can now be returned. </p>
+<p><strong>Action required:</strong> Clients that call ILaunchConfiguration.getLocation() should update
+code to handle a <code>null</code> result. The #getLocation() method has been deprecated since the return
+value is no longer reliable.</p>
+
 <h2>Aug 26, 2008</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=244694">Bug 244694</a>: Conflicting mnemonics in breakpoints export wizard<br>
