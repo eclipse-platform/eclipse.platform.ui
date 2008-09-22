@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.team.core" version="2">
+    <resource path="src/org/eclipse/team/core/variants/CachedResourceVariant.java" type="org.eclipse.team.core.variants.CachedResourceVariant">
+        <filter id="421679236">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.core.variants.CachedResourceVariant"/>
+                <message_argument value="getCachedHandle()"/>
+            </message_arguments>
+        </filter>
+        <filter id="421679236">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.core.variants.CachedResourceVariant"/>
+                <message_argument value="isHandleCached()"/>
+            </message_arguments>
+        </filter>
+        <filter id="421679236">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.core.variants.CachedResourceVariant"/>
+                <message_argument value="cacheHandle()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
