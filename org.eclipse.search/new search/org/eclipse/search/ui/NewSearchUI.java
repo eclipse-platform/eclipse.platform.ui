@@ -252,6 +252,16 @@ public class NewSearchUI {
 	}
 
 	/**
+	 * Removes the given search query.
+	 * 
+	 * @param query the query to be removed
+	 * @since 3.5
+	 */
+	public static void removeQuery(ISearchQuery query) {
+		InternalSearchUI.getInstance().removeQuery(query);
+	}
+
+	/**
 	 * Search Plug-in Id (value <code>"org.eclipse.search"</code>).
 	 */
 	public static final String PLUGIN_ID= "org.eclipse.search"; //$NON-NLS-1$
