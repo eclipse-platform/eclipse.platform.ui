@@ -407,6 +407,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	 * @param in the file to copy
 	 * @param out the file to be copied out to
 	 * @throws Exception
+	 * @since 3.5
 	 */
 	protected void copyFile(IFileStore in, File out) throws CoreException, IOException {
 	    BufferedInputStream is  = new BufferedInputStream(in.openInputStream(EFS.NONE, null));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,12 +129,14 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	
 	/**
 	 * This configuration's name
+	 * @since 3.5
 	 */
 	private String fName;
 	
 	/**
 	 * The container this configuration is stored in or <code>null</code> if stored locally
 	 * with workspace metadata.
+	 * @since 3.5
 	 */
 	private IContainer fContainer;
 
@@ -145,6 +147,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * 
 	 * @param name launch configuration name
 	 * @param container parent container or <code>null</code>
+	 * @since 3.5
 	 */
 	protected LaunchConfiguration(String name, IContainer container) {
 		setName(name);
@@ -155,6 +158,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * Constructs a launch configuration on the given workspace file.
 	 * 
 	 * @param file workspace .launch file
+	 * @since 3.5
 	 */
 	protected LaunchConfiguration(IFile file) {
 		this(getSimpleName(file.getName()), file.getParent());
@@ -165,6 +169,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * 
 	 * @param fileName
 	 * @return simple name
+	 * @since 3.5
 	 */
 	protected static String getSimpleName(String fileName) {
 		if (fileName.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
@@ -316,6 +321,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @param o1
 	 * @param o2
 	 * @return whether the given objects are equal or both <code>null</code>
+	 * @since 3.5
 	 */
 	protected boolean equalOrNull(Object o1, Object o2) {
 		if (o1 == null) {
@@ -472,6 +478,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * 
 	 * @return file store this configuration is persisted in or <code>null</code>
 	 * @throws CoreException
+	 * @since 3.5
 	 */
 	public IFileStore getFileStore() throws CoreException {
 		if (isLocal()) {
@@ -577,6 +584,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * 
 	 * @return the container this configuration is stored in, or <code>null</code>
 	 * if this configuration is local
+	 * @since 3.5
 	 */
 	protected IContainer getContainer() {
 		return fContainer;
@@ -872,6 +880,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * Sets the new name for this configuration.
 	 * 
 	 * @param name the new name for this configuration
+	 * @since 3.5
 	 */
 	protected void setName(String name) {
 		fName = name;
@@ -882,6 +891,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * local metadata.
 	 * 
 	 * @param container or <code>null</code>
+	 * @since 3.5
 	 */
 	protected void setContainer(IContainer container) {
 		fContainer = container;

@@ -1280,6 +1280,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @exception CoreException if an exception occurs building
 	 *  the info object
 	 * @exception DebugException if the config does not exist
+	 * @since 3.5
 	 */
 	protected LaunchConfigurationInfo getInfo(LaunchConfiguration config) throws CoreException {
 		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
@@ -2335,6 +2336,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Throws a debug exception with the given throwable that occurred
 	 * while processing the given configuration.
+	 * @since 3.5
 	 */
 	private void throwException(LaunchConfiguration config, Throwable e) throws DebugException {
 		String uri = null;
