@@ -56,6 +56,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 
     /**
      * Create a change for each launch configuration which needs to be updated for this IJavaProject rename.
+     * @since 3.5
      */
     public static Change createChangesForProjectRename(IProject project, String newProjectName) throws CoreException {
         String projectName= project.getDescription().getName();
@@ -152,6 +153,12 @@ public class LaunchConfigurationBuildfileChange extends Change {
         fNewConfigContainerName = newContainerName;
     }
 
+    /**
+     * Creates a new container name for the given configuration
+     * @param launchConfiguration
+     * @return the new container name
+     * @since 3.5
+     */
     private static String computeNewContainerName(ILaunchConfiguration launchConfiguration) {
         IFile file = launchConfiguration.getFile();
         if (file != null) {
