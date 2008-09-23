@@ -13,7 +13,7 @@
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
- *                    237703, 237718, 222289, 247394
+ *                    237703, 237718, 222289, 247394, 233306
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -48,6 +48,7 @@ import org.eclipse.core.tests.databinding.observable.list.MultiListTest;
 import org.eclipse.core.tests.databinding.observable.list.ObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.WritableListTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
+import org.eclipse.core.tests.databinding.observable.map.BidiObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.CompositeMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ComputedObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
@@ -228,6 +229,7 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.core.tests.databinding.observable.map
 		addTestSuite(AbstractObservableMapTest.class);
+		addTestSuite(BidiObservableMapTest.class);
 		addTestSuite(ObservableMapTest.class);
 		addTestSuite(WritableMapTest.class);
 		addTestSuite(CompositeMapTest.class);

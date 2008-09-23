@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bug 184830
+ *     Matthew Hall - bugs 184830, 233306
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -57,14 +57,25 @@ public class WritableMap extends ObservableMap {
 	 */
 	public Object put(Object key, Object value) {
 		checkRealm();
+
+		boolean containedKeyBefore = wrappedMap.containsKey(key);
 		Object result = wrappedMap.put(key, value);
-		if (!Util.equals(result, value)) {
-			if (result==null) {
-				fireMapChange(Diffs.createMapDiffSingleAdd(key, value));
+		boolean containedKeyAfter = wrappedMap.containsKey(key);
+
+		if (containedKeyBefore != containedKeyAfter
+				|| !Util.equals(result, value)) {
+			MapDiff diff;
+			if (containedKeyBefore) {
+				if (containedKeyAfter) {
+					diff = Diffs
+							.createMapDiffSingleChange(key, result, value);
+				} else {
+					diff = Diffs.createMapDiffSingleRemove(key, result);
+				}
 			} else {
-				fireMapChange(Diffs.createMapDiffSingleChange(key, result,
-						value));
+				diff = Diffs.createMapDiffSingleAdd(key, value);
 			}
+			fireMapChange(diff);
 		}
 		return result;
 	}
@@ -74,11 +85,12 @@ public class WritableMap extends ObservableMap {
 	 */
 	public Object remove(Object key) {
 		checkRealm();
-		Object result = wrappedMap.remove(key);
-		if (result!=null) {
+		if (wrappedMap.containsKey(key)) {
+			Object result = wrappedMap.remove(key);
 			fireMapChange(Diffs.createMapDiffSingleRemove(key, result));
+			return result;
 		}
-		return result;
+		return null;
 	}
 
 	/**
@@ -102,15 +114,18 @@ public class WritableMap extends ObservableMap {
 		Map changes = new HashMap(map.size());
 		for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Entry) it.next();
-			Object previousValue = wrappedMap.put(entry.getKey(), entry.getValue());
-			if (previousValue==null) {
+			boolean add = !wrappedMap.containsKey(entry.getKey());
+			Object previousValue = wrappedMap.put(entry.getKey(), entry
+					.getValue());
+			if (add) {
 				addedKeys.add(entry.getKey());
 			} else {
 				changes.put(entry.getKey(), previousValue);
 			}
 		}
 		if (!addedKeys.isEmpty() || !changes.isEmpty()) {
-			fireMapChange(Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET, changes.keySet(), changes, wrappedMap));
+			fireMapChange(Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET,
+					changes.keySet(), changes, wrappedMap));
 		}
 	}
 

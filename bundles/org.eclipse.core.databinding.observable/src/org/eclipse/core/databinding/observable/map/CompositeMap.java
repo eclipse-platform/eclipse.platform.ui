@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 233306
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.map;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,21 +42,16 @@ import org.eclipse.core.runtime.Assert;
  * 
  */
 public class CompositeMap extends ObservableMap {
-
-	private Map valueToElements = new HashMap();
-
 	// adds that need to go through the second map and thus will be picked up by
 	// secondMapListener.
 	private Set pendingAdds = new HashSet();
 
 	// Removes that need to go through the second map and thus will be picked up
-	// by
-	// secondMapListener. Maps from value being removed to key being removed.
+	// by secondMapListener. Maps from value being removed to key being removed.
 	private Map pendingRemoves = new HashMap();
 
 	// Changes that need to go through the second map and thus will be picked up
-	// by
-	// secondMapListener. Maps from old value to new value and new value to old
+	// by secondMapListener. Maps from old value to new value and new value to old
 	// value.
 	private Map pendingChanges = new HashMap();
 
@@ -74,7 +69,6 @@ public class CompositeMap extends ObservableMap {
 			for (Iterator it = diff.getAddedKeys().iterator(); it.hasNext();) {
 				Object addedKey = it.next();
 				Object newValue = diff.getNewValue(addedKey);
-				addMapping(addedKey, newValue);
 				if (!rangeSet.contains(newValue)) {
 					pendingAdds.add(newValue);
 					rangeSetAdditions.add(newValue);
@@ -87,8 +81,7 @@ public class CompositeMap extends ObservableMap {
 				Object changedKey = it.next();
 				Object oldValue = diff.getOldValue(changedKey);
 				Object newValue = diff.getNewValue(changedKey);
-				boolean removed = removeMapping(changedKey, oldValue);
-				addMapping(changedKey, newValue);
+				boolean removed = firstMap.getKeys(oldValue).isEmpty();
 				boolean added = !rangeSet.contains(newValue);
 				if (removed) {
 					pendingRemoves.put(oldValue, changedKey);
@@ -110,7 +103,7 @@ public class CompositeMap extends ObservableMap {
 			for (Iterator it = diff.getRemovedKeys().iterator(); it.hasNext();) {
 				Object removedKey = it.next();
 				Object oldValue = diff.getOldValue(removedKey);
-				if (removeMapping(removedKey, oldValue)) {
+				if (firstMap.getKeys(oldValue).isEmpty()) {
 					pendingRemoves.put(oldValue, removedKey);
 					rangeSetRemovals.add(oldValue);
 				} else {
@@ -165,7 +158,7 @@ public class CompositeMap extends ObservableMap {
 
 			for (Iterator it = addedKeys.iterator(); it.hasNext();) {
 				Object addedKey = it.next();
-				Set elements = getElementsForValue(addedKey);
+				Set elements = firstMap.getKeys(addedKey);
 				Object newValue = diff.getNewValue(addedKey);
 				if (pendingChanges.containsKey(addedKey)) {
 					Object oldKey = pendingChanges.remove(addedKey);
@@ -198,7 +191,7 @@ public class CompositeMap extends ObservableMap {
 			}
 			for (Iterator it = diff.getChangedKeys().iterator(); it.hasNext();) {
 				Object changedKey = it.next();
-				Set elements = getElementsForValue(changedKey);
+				Set elements = firstMap.getKeys(changedKey);
 				for (Iterator it2 = elements.iterator(); it2.hasNext();) {
 					Object element = it2.next();
 					changes.add(element);
@@ -260,7 +253,7 @@ public class CompositeMap extends ObservableMap {
 		}
 	};
 
-	private IObservableMap firstMap;
+	private BidiObservableMap firstMap;
 	private IObservableMap secondMap;
 
 	private static class WritableSetPlus extends WritableSet {
@@ -289,13 +282,9 @@ public class CompositeMap extends ObservableMap {
 	public CompositeMap(IObservableMap firstMap,
 			IObservableFactory secondMapFactory) {
 		super(firstMap.getRealm(), new HashMap());
-		this.firstMap = firstMap;
+		this.firstMap = new BidiObservableMap(firstMap);
 		firstMap.addMapChangeListener(firstMapListener);
-		for (Iterator it = firstMap.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Entry) it.next();
-			addMapping(entry.getKey(), entry.getValue());
-			rangeSet.add(entry.getValue());
-		}
+		rangeSet.addAll(firstMap.values());
 		this.secondMap = (IObservableMap) secondMapFactory
 				.createObservable(rangeSet);
 		secondMap.addMapChangeListener(secondMapListener);
@@ -305,57 +294,16 @@ public class CompositeMap extends ObservableMap {
 		}
 	}
 
-	/**
-	 * @param key
-	 * @param value
-	 */
-	private void addMapping(Object key, Object value) {
-		Object elementOrSet = valueToElements.get(value);
-		if (elementOrSet == null) {
-			valueToElements.put(value, key);
-			return;
-		}
-		if (!(elementOrSet instanceof Set)) {
-			elementOrSet = new HashSet(Collections.singleton(elementOrSet));
-			valueToElements.put(value, elementOrSet);
-		}
-		Set set = (Set) elementOrSet;
-		set.add(key);
-	}
-
-	/**
-	 * @param key
-	 * @param value
-	 */
-	private boolean removeMapping(Object key, Object value) {
-		Object elementOrSet = valueToElements.get(value);
-		if (elementOrSet instanceof Set) {
-			Set set = (Set) elementOrSet;
-			set.remove(key);
-			if (set.size() == 0) {
-				valueToElements.remove(value);
-				return true;
-			}
-			return false;
-		}
-		valueToElements.remove(value);
-		return true;
-	}
-
-	private Set getElementsForValue(Object value) {
-		Object elementOrSet = valueToElements.get(value);
-		if (elementOrSet instanceof Set) {
-			return (Set) elementOrSet;
-		}
-		return elementOrSet == null ? Collections.EMPTY_SET : Collections
-				.singleton(elementOrSet);
-	}
-
 	public synchronized void dispose() {
 		super.dispose();
-		firstMap.removeMapChangeListener(firstMapListener);
-		firstMap = null;
-		secondMap = null;
+		if (firstMap != null) {
+			firstMap.removeMapChangeListener(firstMapListener);
+			firstMap = null;
+		}
+		if (secondMap != null) {
+			secondMap.dispose();
+			secondMap = null;
+		}
 	}
 
 }
