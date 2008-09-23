@@ -26,4 +26,55 @@
   with a line tracker understanding the three standard line delimiters (&quot;\r&quot;, 
   &quot;\n&quot;, &quot;\r\n&quot;) and a line tracker which can be freely configured 
   to consider any given set of strings as valid line delimiters. </p>
+
+
+<!-- ===================================================================================================== -->
+<!-- Below is the package documentation for org.eclipse.jface.text from the org.eclipse.jface.text plug-in -->
+<!-- ===================================================================================================== -->
+
+<p><tt>ITextViewer</tt> defines the concept of a document based, editiable viewer. 
+  <tt>ITextViewer</tt> offers the following functionality: </p>
+<ul>
+<li>
+present a document</li>
+
+<li>
+event consumption (<tt>IEventConsumer</tt>)</li>
+
+<li>
+viewport tracking and notification (<tt>IIViewportListener</tt>)</li>
+
+<li>
+change notification (<tt>ITextListener</tt>, <tt>ITextInputListener</tt>)</li>
+
+<li>
+listeners (combined view/model notification, input document)</li>
+
+<li>
+standard text editing functions plus text hover support</li>
+
+<li>
+visual region support</li>
+</ul>
+
+An <code>ITextViewer</code> supports the following plug-ins
+<ul>
+<li>
+<tt>IUndoManager</tt> for the undo/redo mechanism</li>
+
+<li>
+<tt>IDoubleClickStrategy</tt> for partition type specific behavior on mouse
+double click</li>
+
+<li>
+<tt>IAutoIndentStrategy</tt>&nbsp; for content type specific behavior on
+inserting a line break</li>
+
+<li>
+<tt>ITextHover</tt> for content type specific behavior when overing over
+text</li>
+</ul>
+The package provides default implementations for all these interfaces.
+</body>
+
 </body></html>
