@@ -247,11 +247,20 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			synchronized (this) {
 				fComputed = true;
 			}
+			String valueString = result;
+			if (valueString == null){
+				try{
+					valueString = value.getValueString();
+				} catch (DebugException e){
+					valueString = e.getMessage();
+				}
+			}
+			final String detail = (valueString != null) ? valueString : DetailMessages.DefaultDetailPane_3;
 			if (!fMonitor.isCanceled()) {
 				WorkbenchJob append = new WorkbenchJob("append details") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						if (!fMonitor.isCanceled()) {
-							String insert = result;
+							String insert = detail;
 							int length = 0;
 							if (!fFirst) {
 								length = getDetailDocument().getLength();

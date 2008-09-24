@@ -20,6 +20,7 @@ public class DetailMessages extends NLS {
 	public static String DefaultDetailPane_0;
 	public static String DefaultDetailPane_1;
 	public static String DefaultDetailPane_2;
+	public static String DefaultDetailPane_3;
 	public static String DefaultDetailPane_56;
 	public static String DefaultDetailPane_57;
 	public static String DefaultDetailPane_Co_ntent_Assist_3;
