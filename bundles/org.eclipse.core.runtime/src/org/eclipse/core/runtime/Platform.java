@@ -487,7 +487,6 @@ public final class Platform {
 	 * @param listener the listener to register
 	 * @see ILog#addLogListener(ILogListener)
 	 * @see #removeLogListener(ILogListener)
-	 * XXX Use the LogMgr service.
 	 */
 	public static void addLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().addLogListener(listener);
@@ -550,7 +549,6 @@ public final class Platform {
 
 	/**
 	 * Takes down the splash screen if one was put up.
-	 * XXX this is application life cycle. Need to have the appropriate method on IApplication.
 	 */
 	public static void endSplash() {
 		InternalPlatform.getDefault().endSplash();
@@ -600,8 +598,6 @@ public final class Platform {
 	 *
 	 * @return the adapter manager for this platform
 	 * @see IAdapterManager
-	 * XXX register as a service (same pattern than Jobs)
-	 * Do we want to make it available as a singleton?
 	 */
 	public static IAdapterManager getAdapterManager() {
 		return InternalPlatform.getDefault().getAdapterManager();
@@ -717,9 +713,6 @@ public final class Platform {
 	 * log file for extended periods should copy the log file contents elsewhere,
 	 * and immediately close the original file.</p>
 	 * @return the path of the log file on disk.
-	 * 
-	 * XXX  consider making an ILogger interface that listeners can implements and it allows 
-	 * us to implement Platform.getLogLocation()
 	 */
 	public static IPath getLogFileLocation() {
 		return InternalPlatform.getDefault().getMetaArea().getLogLocation();
@@ -835,7 +828,6 @@ public final class Platform {
 	 * @param listener the listener to de-register
 	 * @see ILog#removeLogListener(ILogListener)
 	 * @see #addLogListener(ILogListener)
-	 * XXX Use the LogMgr service.
 	 */
 	public static void removeLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().removeLogListener(listener);
@@ -993,7 +985,6 @@ public final class Platform {
 	 * @param bundle the bundle whose state location if returned
 	 * @return a local file system path
 	 * @since 3.0
-	 * XXX Investigate the usage of a service factory
 	 */
 	public static IPath getStateLocation(Bundle bundle) {
 		return InternalPlatform.getDefault().getStateLocation(bundle);
@@ -1020,10 +1011,6 @@ public final class Platform {
 	 * @param bundle the bundle whose log is returned
 	 * @return the log for the given bundle
 	 * @since 3.0
-	 * XXX change this into a LogMgr service that would keep track of the map. See if it can be a service factory.
-	 * It would contain all the methods that are here.
-	 * Relate to RuntimeLog if appropriate.
-	 * The system log listener needs to be optional: turned on or off. What about a system property? :-)
 	 */
 	public static ILog getLog(Bundle bundle) {
 		return InternalPlatform.getDefault().getLog(bundle);
@@ -1047,7 +1034,6 @@ public final class Platform {
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
 	 * @since 3.0
-	 * XXX this is deprecated. use NLS or BundleFinder.find()
 	 */
 	public static ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
 		return InternalPlatform.getDefault().getResourceBundle(bundle);
@@ -1075,7 +1061,6 @@ public final class Platform {
 	 * @return the resource string
 	 * @see #getResourceBundle(Bundle)
 	 * @since 3.0
-	 * XXX this is deprecated. use NLS or  BundleFinder.find()
 	 */
 	public static String getResourceString(Bundle bundle, String value) {
 		return InternalPlatform.getDefault().getResourceString(bundle, value);
@@ -1114,7 +1099,6 @@ public final class Platform {
 	 * @return the resource string
 	 * @see #getResourceBundle(Bundle)
 	 * @since 3.0
-	 * XXX this is deprecated. use NLS or  BundleFinder.find()
 	 */
 	public static String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
 		return InternalPlatform.getDefault().getResourceString(bundle, value, resourceBundle);
@@ -1190,7 +1174,6 @@ public final class Platform {
 	 * 
 	 * @return the array of command line arguments not consumed by the framework.
 	 * @since 3.0
-	 * XXX Use the Environment info service. Need to see how to set the value of the app args.
 	 */
 	public static String[] getApplicationArgs() {
 		return InternalPlatform.getDefault().getApplicationArgs();
@@ -1265,7 +1248,6 @@ public final class Platform {
 	 * or <code>null</code> if none
 	 * @return the current product or <code>null</code> if none
 	 * @since 3.0
-	 * XXX move this into the app model.
 	 */
 	public static IProduct getProduct() {
 		return InternalPlatform.getDefault().getProduct();
@@ -1447,7 +1429,6 @@ public final class Platform {
 	 * @return <code>true</code> if the platform is running, 
 	 *		and <code>false</code> otherwise
 	 *@since 3.0
-	 *XXX do what you want to do. track osgi, track runtime, or whatever.
 	 */
 	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();
@@ -1465,7 +1446,6 @@ public final class Platform {
 	 * @return the list of system architectures known to the system
 	 * @see #getOSArch()
 	 * @since 3.0
-	 * XXX This is useless
 	 */
 	public static String[] knownOSArchValues() {
 		return InternalPlatform.getDefault().knownOSArchValues();
@@ -1483,7 +1463,6 @@ public final class Platform {
 	 * @return the list of operating systems known to the system
 	 * @see #getOS()
 	 * @since 3.0
-	 * XXX This is useless
 	 */
 	public static String[] knownOSValues() {
 		return InternalPlatform.getDefault().knownOSValues();
@@ -1517,7 +1496,6 @@ public final class Platform {
 	 * @return the list of window systems known to the system
 	 * @see #getWS()
 	 * @since 3.0
-	 * XXX This is useless
 	 */
 	public static String[] knownWSValues() {
 		return InternalPlatform.getDefault().knownWSValues();
