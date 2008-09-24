@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
@@ -549,6 +550,7 @@ public final class Platform {
 
 	/**
 	 * Takes down the splash screen if one was put up.
+	 * @deprecated use {@link IApplicationContext#applicationRunning()} instead
 	 */
 	public static void endSplash() {
 		InternalPlatform.getDefault().endSplash();

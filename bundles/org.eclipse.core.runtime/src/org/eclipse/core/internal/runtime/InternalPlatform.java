@@ -159,6 +159,9 @@ public final class InternalPlatform {
 		return AdapterManager.getDefault();
 	}
 
+	/**
+	 * XXX Use the Environment info service. Need to see how to set the value of the app args.
+	 */
 	public String[] getApplicationArgs() {
 		return CommandLineArgs.getApplicationArgs();
 	}
@@ -396,6 +399,10 @@ public final class InternalPlatform {
 
 	/**
 	 * Returns a log for the given plugin. Creates a new one if needed.
+	 * XXX change this into a LogMgr service that would keep track of the map. See if it can be a service factory.
+	 * It would contain all the logging methods that are here.
+	 * Relate to RuntimeLog if appropriate.
+	 * The system log listener needs to be optional: turned on or off. What about a system property? :-)
 	 */
 	public ILog getLog(Bundle bundle) {
 		ILog result = (ILog) logs.get(bundle);
@@ -506,6 +513,9 @@ public final class InternalPlatform {
 		return (IPreferencesService) preferencesTracker.getService();
 	}
 
+	/*
+	 * XXX move this into the app model.
+	 */
 	public IProduct getProduct() {
 		if (product != null)
 			return product;
@@ -524,14 +534,23 @@ public final class InternalPlatform {
 		return RegistryFactory.getRegistry();
 	}
 
+	/**
+	 * XXX deprecate and use NLS or BundleFinder.find()
+	 */
 	public ResourceBundle getResourceBundle(Bundle bundle) {
 		return ResourceTranslator.getResourceBundle(bundle);
 	}
 
+	/**
+	 * XXX deprecate and use NLS or BundleFinder.find()
+	 */
 	public String getResourceString(Bundle bundle, String value) {
 		return ResourceTranslator.getResourceString(bundle, value);
 	}
 
+	/**
+	 * XXX deprecate and use NLS or BundleFinder.find()
+	 */
 	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
 		return ResourceTranslator.getResourceString(bundle, value, resourceBundle);
 	}
@@ -561,6 +580,9 @@ public final class InternalPlatform {
 		return null;
 	}
 
+	/**
+ 	 * XXX Investigate the usage of a service factory
+	 */
 	public IPath getStateLocation(Bundle bundle) {
 		return getStateLocation(bundle, true);
 	}
@@ -624,6 +646,9 @@ public final class InternalPlatform {
 		return (packageAdmin.getBundleType(bundle) & PackageAdmin.BUNDLE_TYPE_FRAGMENT) > 0;
 	}
 
+	/*
+	 *XXX do what you want to do. track osgi, track runtime, or whatever.
+	 */
 	public boolean isRunning() {
 		try {
 			return initialized && context != null && context.getBundle().getState() == Bundle.ACTIVE;
@@ -636,6 +661,7 @@ public final class InternalPlatform {
 	 * Returns a list of known system architectures.
 	 * 
 	 * @return the list of system architectures known to the system
+	 * XXX This is useless
 	 */
 	public String[] knownOSArchValues() {
 		return ARCH_LIST;
@@ -645,6 +671,7 @@ public final class InternalPlatform {
 	 * Returns a list of known operating system names.
 	 * 
 	 * @return the list of operating systems known to the system
+	 * XXX This is useless
 	 */
 	public String[] knownOSValues() {
 		return OS_LIST;
@@ -654,6 +681,7 @@ public final class InternalPlatform {
 	 * Returns a list of known windowing system names.
 	 * 
 	 * @return the list of window systems known to the system
+	 * XXX This is useless
 	 */
 	public String[] knownWSValues() {
 		return WS_LIST;
