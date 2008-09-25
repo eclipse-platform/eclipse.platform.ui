@@ -11,6 +11,29 @@
 
 <h2>Summary of API changes in 3.5</h2>
 
+<h3>Breakpoints</h3>
+The breakpoints framework has been enhanced to support different breakpoint 
+types to be created within the same part.  This effectively allows different 
+debuggers to share a common editor and views where breakpoints are created. 
+Debuggers can also use this mechanism to let users quickly change what 
+breakpoint type is created by default (e.g.: software, hardware, 
+thread-filtered, etc.). 
+<p>The API to support this feature includes: </p>
+<ul>
+  <li><b><code>org.eclipse.debug.ui.toggleBreakpointsTargetFactories</code> 
+      extension point</b> - Allows a debugger to register a factory of 
+      <code>IToggleBreakpointsTarget</code> adapters, which are used by toggle
+      breakpoint actions to create breakpoints.
+  </li>
+  <li><b><code>IToggleBreakpointsTargetFactory</code> interface</b> - Factory API 
+  	  for IToggleBreakpointTarget adapters to be implemented by debuggers.
+  </li>
+  <li><b><code>RulerBreakpointTypesActionDelegate</code> action</b> - Editor gutter 
+      action to select the active breakpoint types. 
+  </li>
+</ul>
+
+
 <h3>ILaunchConfiguration.getLocation() can return null</h3>
 <p><strong>What is affected:</strong> Clients that call ILaunchConfiguration.getLocation()</p>
 <p><strong>Description:</strong> In release 3.4 and earlier, ILaunchConfiguration.getLocation() was not specified 
