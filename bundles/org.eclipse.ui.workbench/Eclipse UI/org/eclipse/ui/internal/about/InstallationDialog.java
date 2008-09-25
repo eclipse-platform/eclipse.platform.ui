@@ -30,7 +30,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -85,6 +84,14 @@ public class InstallationDialog extends Dialog {
 		newShell.setSize(600, 768);
 
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -113,7 +120,7 @@ public class InstallationDialog extends Dialog {
 					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
 			item.setData(element);
 			Composite control = new Composite(folder, SWT.BORDER);
-			control.setLayout(new FillLayout());
+			control.setLayout(new GridLayout());
 			item.setControl(control);
 
 		}
@@ -172,8 +179,13 @@ public class InstallationDialog extends Dialog {
 				buttonManager.update(true);
 				createButton(buttonManager.getParent(), IDialogConstants.OK_ID,
 						IDialogConstants.OK_LABEL, true);
+				// Layout the button manager again now that the OK button is there.
+				// Must do this before we layout the button bar or else the button
+				// manager will not know about the OK button
 				buttonManager.getParent().layout();
-
+				// Now we layout the button bar itself so it will accommodate the
+				// button manager's buttons
+				getButtonBar().getParent().layout();
 			}
 		};
 	}
@@ -255,6 +267,10 @@ public class InstallationDialog extends Dialog {
 							// TBD
 
 						}
+						
+						public void close() {
+							InstallationDialog.this.close();
+						}
 					};
 				else if (api == IMenuService.class) {
 					return menuService;
@@ -295,6 +311,8 @@ class ButtonManager extends ContributionManager {
 	 * @see org.eclipse.jface.action.IContributionManager#update(boolean)
 	 */
 	public void update(boolean force) {
+		if (composite == null || composite.isDisposed())
+			return;
 		IContributionItem[] items = getItems();
 		Control[] children = composite.getChildren();
 

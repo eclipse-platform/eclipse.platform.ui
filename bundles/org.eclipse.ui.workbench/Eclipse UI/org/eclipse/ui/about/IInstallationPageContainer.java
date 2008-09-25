@@ -45,4 +45,10 @@ public interface IInstallationPageContainer {
 	 * @return the button bar uri
 	 */
 	public String getButtonBarURI();
+	
+	/**
+	 * Closes the window that is hosting this container.
+	 */
+	public void close();
+	
 }
