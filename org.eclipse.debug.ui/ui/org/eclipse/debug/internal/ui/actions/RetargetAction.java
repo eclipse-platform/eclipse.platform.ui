@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
@@ -60,7 +61,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 * 
 	 * @return the selection in the active part, possibly empty
 	 */
-	private ISelection getTargetSelection() {
+	protected ISelection getTargetSelection() {
 		if (fActivePart != null) {
 			ISelectionProvider selectionProvider = fActivePart.getSite().getSelectionProvider();
 			if (selectionProvider != null) {
@@ -68,6 +69,10 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 			}
 		}
 		return EMPTY_SELECTION;
+	}
+	
+	protected IWorkbenchPart getActivePart() {
+	    return fActivePart;
 	}
 	
 	/* (non-Javadoc)

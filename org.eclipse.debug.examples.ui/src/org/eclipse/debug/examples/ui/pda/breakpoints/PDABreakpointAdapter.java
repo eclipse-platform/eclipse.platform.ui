@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.breakpoints;
 
@@ -110,23 +111,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	        IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
 	        String var = variableAndFunctionName[0];
 	        String fcn = variableAndFunctionName[1];
-	        // look for existing watchpoint to delete
-			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(DebugCorePlugin.ID_PDA_DEBUG_MODEL);
-			for (int i = 0; i < breakpoints.length; i++) {
-				IBreakpoint breakpoint = breakpoints[i];
-				if (breakpoint instanceof PDAWatchpoint && resource.equals(breakpoint.getMarker().getResource())) {
-				    PDAWatchpoint watchpoint = (PDAWatchpoint)breakpoint;
-				    String otherVar = watchpoint.getVariableName();
-				    String otherFcn = watchpoint.getFunctionName();
-					if (otherVar.equals(var) && otherFcn.equals(fcn)) {
-						breakpoint.delete();
-						return;
-					}
-				}
-			}
-			// create watchpoint
-			PDAWatchpoint watchpoint = new PDAWatchpoint(resource, lineNumber + 1, fcn, var, true, true);
-			DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(watchpoint);	        
+	        toggleWatchpoint(resource, lineNumber, fcn, var, true, true);
 	    }
 	}
 	/* (non-Javadoc)
@@ -136,6 +121,28 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 		return getVariableAndFunctionName(part, selection) != null;
 	}
 	
+	protected void toggleWatchpoint(IResource resource, int lineNumber, String fcn, String var, boolean access, 
+	    boolean modification) throws CoreException
+	{
+        // look for existing watchpoint to delete
+        IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(DebugCorePlugin.ID_PDA_DEBUG_MODEL);
+        for (int i = 0; i < breakpoints.length; i++) {
+            IBreakpoint breakpoint = breakpoints[i];
+            if (breakpoint instanceof PDAWatchpoint && resource.equals(breakpoint.getMarker().getResource())) {
+                PDAWatchpoint watchpoint = (PDAWatchpoint)breakpoint;
+                String otherVar = watchpoint.getVariableName();
+                String otherFcn = watchpoint.getFunctionName();
+                if (otherVar.equals(var) && otherFcn.equals(fcn)) {
+                    breakpoint.delete();
+                    return;
+                }
+            }
+        }
+        // create watchpoint
+        PDAWatchpoint watchpoint = new PDAWatchpoint(resource, lineNumber + 1, fcn, var, access, modification);
+        DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(watchpoint);
+	}
+
 	/**
 	 * Returns the variable and function names at the current line, or <code>null</code> if none.
 	 * 
@@ -144,7 +151,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	 * @return the variable and function names at the current line, or <code>null</code> if none.
 	 *  The array has two elements, the first is the variable name, the second is the function name.
 	 */
-	private String[] getVariableAndFunctionName(IWorkbenchPart part, ISelection selection) {
+	protected String[] getVariableAndFunctionName(IWorkbenchPart part, ISelection selection) {
 	    ITextEditor editor = getEditor(part);
 	    if (editor != null && selection instanceof ITextSelection) {
 	        ITextSelection textSelection = (ITextSelection) selection;

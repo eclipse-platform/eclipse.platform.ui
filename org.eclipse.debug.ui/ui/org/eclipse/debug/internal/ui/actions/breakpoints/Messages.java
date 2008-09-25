@@ -21,6 +21,8 @@ public class Messages extends NLS {
 	public static String RetargetToggleBreakpointAction_0;
 	public static String RetargetToggleLineBreakpointAction_0;
 	public static String RetargetWatchpointAction_0;
+	public static String BreakpointTypesContribution_0;
+	public static String BreakpointTypesContribution_noBreakpointsActive_menuItem;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

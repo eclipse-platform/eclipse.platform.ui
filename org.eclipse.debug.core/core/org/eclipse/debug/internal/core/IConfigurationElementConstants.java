@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -317,4 +317,22 @@ public interface IConfigurationElementConstants {
 	 * <p>Equal to the word: <code>memento</code></p>
 	 */
 	public static final String MEMENTO = "memento"; //$NON-NLS-1$
+
+    /**
+     * The selection node name for a configuration element.
+     * <p>Equal to the word: <code>selection</code></p>
+     */
+    public static final String SELECTION = "selection"; //$NON-NLS-1$
+
+    /**
+     * The debugContext node name for a configuration element.
+     * <p>Equal to the word: <code>debugContext</code></p>
+     */
+    public static final String DEBUG_CONTEXT = "debugContext"; //$NON-NLS-1$
+
+    /**
+     * The editorInput node name for a configuration element.
+     * <p>Equal to the word: <code>editorInput</code></p>
+     */
+    public static final String EDITOR_INPUT = "editorInput"; //$NON-NLS-1$
 }

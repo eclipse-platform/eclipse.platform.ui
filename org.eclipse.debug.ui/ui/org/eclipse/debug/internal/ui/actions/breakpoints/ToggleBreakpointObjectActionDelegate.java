@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -47,12 +46,8 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IAdaptable adaptable = (IAdaptable) fSelection.getFirstElement();
-		IToggleBreakpointsTarget target = (IToggleBreakpointsTarget) adaptable.getAdapter(IToggleBreakpointsTarget.class);
-		if (target == null) {
-			IAdapterManager adapterManager = Platform.getAdapterManager();
-			target = (IToggleBreakpointsTarget) adapterManager.loadAdapter(adaptable, IToggleBreakpointsTarget.class.getName());
-		}
+		IToggleBreakpointsTarget target = 
+		    ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, fSelection);
 		if (target != null) {
 			try {
 				performAction(target, fPart, fSelection);
@@ -61,7 +56,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 			}
 		}
 	}
-	
+
 	/**
 	 * Performs the operation specific to this action.
 	 *  
@@ -80,19 +75,9 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			this.fSelection = ss;
-			if (!ss.isEmpty()) {
-				Object object = ss.getFirstElement();
-				if (object instanceof IAdaptable) {
-					IAdaptable adaptable = (IAdaptable) object;
-					IToggleBreakpointsTarget target = (IToggleBreakpointsTarget) adaptable.getAdapter(IToggleBreakpointsTarget.class);
-					if (target == null) {
-						IAdapterManager adapterManager = Platform.getAdapterManager();
-						enabled = adapterManager.hasAdapter(adaptable, IToggleBreakpointsTarget.class.getName());
-					} else {
-						enabled = true;
-					}
-				}
-			}
+	        IToggleBreakpointsTarget target = 
+	            ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, fSelection);
+			enabled = target != null;
 		}
 		action.setEnabled(enabled);
 	}

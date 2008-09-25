@@ -215,4 +215,7 @@ public class ActionMessages extends NLS {
 	public static String VirtualFindAction_0;
 
 	public static String VirtualFindAction_1;
+	
+	public static String ToggleBreakpointsTargetManager_defaultToggleTarget_name;
+    public static String ToggleBreakpointsTargetManager_defaultToggleTarget_description;	
 }

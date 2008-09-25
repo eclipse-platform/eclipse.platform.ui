@@ -1062,7 +1062,15 @@ public interface IDebugUIConstants {
 	 * @since 3.3
 	 */
 	public static final String EXTENSION_POINT_DETAIL_FACTORIES = "detailPaneFactories"; //$NON-NLS-1$
-	
+
+   /**
+     * Simple identifier constant (value <code>"toggleBreakpointsTargetFactories"</code>) for the
+     * toggle breakpoint targets extension point.
+     * 
+     * @since 3.5
+     */
+    public static final String EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES = "toggleBreakpointsTargetFactories"; //$NON-NLS-1$
+
     /**
      * Update policies extension point identifier (value
      * <code>"updatePolicies"</code>
@@ -1197,4 +1205,13 @@ public interface IDebugUIConstants {
 	 * @since 3.2
 	 */
 	public static final String IMG_OBJS_INSTRUCTION_POINTER = "IMG_OBJS_INSTRUCTION_POINTER"; //$NON-NLS-1$
+
+	/**
+	 * A key for a system property that indicates whether there are toggle 
+	 * breakpoint factories registered in this installation. This can be used
+	 * to trigger the UI to include menus related to breakpoint types.
+	 * 
+	 * @since 3.5
+	 */
+	public static final String SYS_PROP_BREAKPOINT_TOGGLE_FACTORIES_USED = "org.eclipse.debug.ui.breakpoints.toggleFactoriesUsed"; //$NON-NLS-1$
 }

@@ -284,4 +284,35 @@
          </enablement>
       </detailFactories>
    </extension>   
+   <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
+      <toggleTargetFactory
+            id="org.eclipse.debug.examples.ui.pda.ToggleWatchpointsTargetFactory"
+            class="org.eclipse.debug.examples.ui.pda.breakpoints.PDAToggleWatchpointsTargetFactory">
+            <enablement>
+            <!-- Test the active debug context.  Enable only if the context is a PDA 
+            	  element , or if there is no debug context (with a debug model) selected. -->
+            <with variable="debugContext">
+               <iterate>
+	               <or>
+                      <test property="org.eclipse.debug.ui.getModelIdentifier" value="pda.debugModel"/>
+                      <test property="org.eclipse.debug.ui.getModelIdentifier" value=""/>
+                   </or>
+	           </iterate>
+            </with>
+            <!-- If the debug context matches or if there is no active debug 
+                 context.  Enable the breakpoint toggle for PDA's editor -->
+            <or>
+               <instanceof value="org.eclipse.debug.examples.ui.pda.editor.PDAEditor"/>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate>
+                     <or>
+                        <instanceof value="org.eclipse.debug.examples.core.pda.model.PDAVariable"/>
+                     </or>
+                  </iterate>
+               </with>            
+            </or>
+         </enablement>
+      </toggleTargetFactory>
+   </extension>
 </plugin>

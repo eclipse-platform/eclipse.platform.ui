@@ -20,6 +20,7 @@
    <extension-point id="variableValueEditors" name="%VariableValueEditorsName" schema="schema/variableValueEditors.exsd"/>
    <extension-point id="launchConfigurationTabs" name="%LaunchConfigurationTabsExtension.name" schema="schema/launchConfigurationTabs.exsd"/>
    <extension-point id="detailPaneFactories" name="%DetailPaneFactoriesExtension.name" schema="schema/detailPaneFactories.exsd"/>
+   <extension-point id="toggleBreakpointsTargetFactories" name="%ToggleBreakpointsTargetFactoriesExtension.name" schema="schema/toggleBreakpointsTargetFactories.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -540,6 +541,72 @@
          </action>
       </actionSet>
    </extension>         
+   
+   <!-- Command framework contribution for the main menu  -->
+   <extension 
+         point="org.eclipse.ui.menus">
+       <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <!-- Need to re-create the menu structure in the command framework
+              so that contributed commands will be placed correctly in menus -->
+         <menu 
+              id="org.eclipse.ui.run" 
+         	  label="%RunMenu.label">
+            <separator name="stepGroup" visible="true"/>
+            <separator name="stepIntoGroup"/>
+            <separator name="stepOverGroup"/>
+            <separator name="stepReturnGroup"/>
+            <separator name="emptyStepGroup"/>
+            <separator name="relaunchGroup" visible="true"/>
+            <separator name="profileGroup" visible="true"/>
+            <separator name="runGroup" visible="true"/>
+            <separator name="debugGroup" visible="true"/>
+            <separator name="emptyLaunchGroup" visible="true"/>
+            <separator name="breakpointGroup" visible="true"/>
+            <separator name="lineBreakpointGroup"/>
+            <separator name="emptyBreakpointGroup"/>
+         </menu>         
+       </menuContribution>
+       <menuContribution
+             locationURI="menu:org.eclipse.ui.run?after=breakpointGroup">
+            <menu 
+                 id="breakpointTypes" 
+            	 label="%BreakpointTypesMenu.label">
+               <visibleWhen checkEnabled="false">
+                  <and>
+                     <with variable="org.eclipse.core.runtime.Platform">
+                        <test property="org.eclipse.core.runtime.bundleState"
+                             args="org.eclipse.debug.ui"
+                             value="ACTIVE"/>
+                     </with>
+					 <with variable="activeContexts">
+                     	<iterate operator="or">
+               			   <equals value="org.eclipse.debug.ui.breakpointActionSet"/>
+			            </iterate>
+         			 </with>
+                     <systemTest
+                          	property="org.eclipse.debug.ui.breakpoints.toggleFactoriesUsed"
+							value="true">
+                  	 </systemTest>
+                  </and>
+               </visibleWhen>            
+               <dynamic
+	               id="org.eclipse.debug.ui.actions.BreakpointTypesContribution"
+	               class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointTypesContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+   </extension>  
+   
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointTypesPropertyTester"
+            id="org.eclipse.debug.ui.breakpointTypesProperties"
+            namespace="org.eclipse.debug.ui"
+            properties="getAvailableBreakpointType,areBreakpointTypesAvailable"
+            type="org.eclipse.core.runtime.IAdaptable"/>
+   </extension>  
+         
    <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution

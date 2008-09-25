@@ -1,0 +1,717 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Wind River Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - adapted to use with IToggleBreakpiontsTargetFactory extension
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.actions;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Map.Entry;
+
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.ExpressionTagNames;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetFactory;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
+
+/**
+ * Organizes the toggle breakpoints target factories contributed through the 
+ * extension point and keeps track of the toggle breakpoints target that 
+ * the factories produce.  The manager is accessed as a singleton through
+ * the <code>getDefault()</code> method.
+ * <p>
+ * The adapter mechanism for obtaining a toggle breakpoints target is
+ * still supported through a specialized toggle target factory.  Targets
+ * contributed through this mechanism are labeled as "Default" in the UI. 
+ * </p>  
+ * 
+ * @see IToggleBreakpointsTargetFactory
+ * @see IToggleBreakpointsTarget
+ * @see IToggleBreakpointsTargetExtension
+ * @since 3.5
+ */
+public class ToggleBreakpointsTargetManager {
+
+    /**
+     * Toggle breakpoints target ID which refers to a target contributed
+     * through the legacy adapter mechanism.
+     */
+    public static String DEFAULT_TOGGLE_TARGET_ID = "default"; //$NON-NLS-1$
+    
+    private static Set DEFAULT_TOGGLE_TARGET_ID_SET = new HashSet();
+    static {
+        DEFAULT_TOGGLE_TARGET_ID_SET.add(DEFAULT_TOGGLE_TARGET_ID);
+    }
+    
+    /**
+     * Acts as a proxy between the toggle breakpoints target manager and the factories 
+     * contributed to the extension point.  Only loads information from the plug-in xml 
+     * and only instantiates the specified factory if required (lazy loading).
+     */
+    private static class ToggleTargetFactory implements IToggleBreakpointsTargetFactory {
+        
+        private IConfigurationElement fConfigElement;
+        private IToggleBreakpointsTargetFactory fFactory;
+        private Expression fEnablementExpression;
+        
+        public ToggleTargetFactory(IConfigurationElement configElement){
+            fConfigElement = configElement;         
+        }
+
+        /**
+         * Returns the instantiated factory specified by the class property. 
+         */
+        private IToggleBreakpointsTargetFactory getFactory() {
+            if (fFactory != null) return fFactory;
+            try{
+                Object obj = fConfigElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
+                if(obj instanceof IToggleBreakpointsTargetFactory) {
+                    fFactory = (IToggleBreakpointsTargetFactory)obj;
+                } else {
+                    throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "org.eclipse.debug.ui.toggleBreakpointsTargetFactories extension failed to load breakpoint toggle target because the specified class does not implement org.eclipse.debug.ui.actions.IToggleBreakpointsTargetFactory.  Class specified was: " + obj, null)); //$NON-NLS-1$
+                }   
+            } catch (CoreException e){
+                DebugUIPlugin.log(e.getStatus());
+                fFactory = null;
+            }
+            return fFactory;
+        }
+        
+        /**
+         * Checks if the enablement expression for the factory evaluates to true for the
+         * given part and selection.
+         */
+        public boolean isEnabled(IWorkbenchPart part, ISelection selection) {
+            boolean enabled = false;
+            Expression expression = getEnablementExpression();
+            if (expression != null) {
+                enabled = evalEnablementExpression(part, selection, expression);
+            } else {
+                enabled = true;
+            }
+            return enabled;
+        }
+        
+        /**
+         * Returns the active debug context given the active part.  It is used
+         * in creating the evaluation context for the factories' enablement expression. 
+         * @param part active part
+         * @return current active debug context
+         */
+        private IStructuredSelection getDebugContext(IWorkbenchPart part) {
+            ISelection selection = DebugUITools.getDebugContextManager().
+                getContextService(part.getSite().getWorkbenchWindow()).getActiveContext();
+            if (selection instanceof IStructuredSelection) {
+                return (IStructuredSelection)selection;
+            } 
+            return StructuredSelection.EMPTY;
+        }
+
+        /**
+         * Evaluate the given expression within the given context and return
+         * the result. Returns <code>true</code> iff result is either TRUE.
+         * 
+         * @param exp the enablement expression to evaluate or <code>null</code>
+         * @param context the context of the evaluation. Usually, the
+         *  user's selection.
+         * @return the result of evaluating the expression
+         */
+        private boolean evalEnablementExpression(IWorkbenchPart part, ISelection selection, Expression exp) {
+            if (exp != null){
+                IEvaluationContext context = new EvaluationContext(null, part);
+                
+                List debugContextList = getDebugContext(part).toList();
+                context.addVariable(IConfigurationElementConstants.DEBUG_CONTEXT, debugContextList); 
+
+                if (selection instanceof IStructuredSelection) {
+                    List selectionList = ((IStructuredSelection)selection).toList();
+                    context.addVariable(IConfigurationElementConstants.SELECTION, selectionList); 
+                }
+
+                if (part instanceof IEditorPart) {
+                    context.addVariable(IConfigurationElementConstants.EDITOR_INPUT, ((IEditorPart)part).getEditorInput());
+                }
+                
+                try{
+                    EvaluationResult result = exp.evaluate(context);
+                    if (result == EvaluationResult.TRUE){
+                        return true;
+                    }
+                } catch (CoreException e){
+                    // Evaluation failed
+                }
+            }
+            return false;
+        }
+        
+        /**
+         * Returns an expression that represents the enablement logic for the
+         * breakpiont toggle target.
+         */
+        private Expression getEnablementExpression(){
+            if (fEnablementExpression == null) {
+                try{
+                    IConfigurationElement[] elements = fConfigElement.getChildren(ExpressionTagNames.ENABLEMENT);
+                    IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+                    if (enablement != null) {
+                        fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
+                    }
+                } catch (CoreException e){
+                    DebugUIPlugin.log(e.getStatus());
+                    fEnablementExpression = null;
+                }
+            }
+            return fEnablementExpression;
+        }
+
+        /** 
+         * Instantiates the factory and asks it to produce the IToggleBreakpointsTarget
+         * for the given ID
+         */
+        public IToggleBreakpointsTarget createToggleTarget(String targetID) {
+            IToggleBreakpointsTargetFactory factory = getFactory();
+            if (factory != null) {
+                return factory.createToggleTarget(targetID);
+            } 
+            return null;
+        }
+        
+        /** 
+         * Instantiates the factory and asks it for the set of toggle target
+         * IDs that the factory can produce for the given part and selection.
+         */
+        public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
+            IToggleBreakpointsTargetFactory factory = getFactory();
+            if (factory != null) {
+                return factory.getToggleTargets(part, selection);
+            } 
+            return Collections.EMPTY_SET;
+        }
+
+        /** 
+         * Instantiates the factory and asks it to produce the name of the toggle target
+         * for the given ID.
+         */
+        public String getToggleTargetName(String targetID) {
+            IToggleBreakpointsTargetFactory factory = getFactory();
+            if (factory != null) {
+                return factory.getToggleTargetName(targetID);
+            } 
+            return null;
+        }
+
+        /** 
+         * Instantiates the factory and asks it to produce the description of the toggle 
+         * target for the given ID.
+         */
+        public String getToggleTargetDescription(String targetID) {
+            IToggleBreakpointsTargetFactory factory = getFactory();
+            if (factory != null) {
+                return factory.getToggleTargetDescription(targetID);
+            } 
+            return null;
+        }
+        
+        /** 
+         * Instantiates the factory and asks it for the toggle tareget ID that
+         * the factory considers the default for the given part and selection.
+         */
+        public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) { 
+            IToggleBreakpointsTargetFactory factory = getFactory();
+            if (factory != null) {
+                return factory.getDefaultToggleTarget(part, selection);
+            } 
+            return null;
+        }
+    }
+
+    
+    /**
+     * Factory for toggle breakpoints targets contributed through the
+     * adapter mechanism.  
+     */
+    private static class ToggleBreakpointsTargetAdapterFactory implements IToggleBreakpointsTargetFactory {
+
+        private IAdaptable getAdaptable(IWorkbenchPart part, ISelection selection) {
+            IAdaptable adaptable = null;
+            if (selection instanceof IStructuredSelection) {
+                IStructuredSelection ss = (IStructuredSelection)selection; 
+                if (ss.getFirstElement() instanceof IAdaptable) {
+                    adaptable = (IAdaptable) ss.getFirstElement();
+                }
+            } else {
+                adaptable = part;
+            }
+            return adaptable;
+        }
+        
+        private boolean canGetToggleBreakpointsTarget(IAdaptable adaptable) {
+            if (adaptable != null) {
+                IToggleBreakpointsTarget adapter = (IToggleBreakpointsTarget) 
+                    adaptable.getAdapter(IToggleBreakpointsTarget.class);
+                if (adapter == null) {
+                    IAdapterManager adapterManager = Platform.getAdapterManager();
+                    if (adapterManager.hasAdapter(adaptable, IToggleBreakpointsTarget.class.getName())) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        /**
+         * Finds the toggle breakpoints target for the active part and selection.  
+         * It first looks for the target using the factories registered using an 
+         * extension point.  If not found it uses the <code>IAdaptable</code>
+         * mechanism.
+         * @param part active part
+         * @param selection active selection in part
+         * @return The toggle breakpoints target, or <code>null</code> if not found.
+         */
+        private IToggleBreakpointsTarget getToggleBreakpointsTarget(IAdaptable adaptable) {
+            if (adaptable != null) {
+                IToggleBreakpointsTarget adapter = (IToggleBreakpointsTarget) 
+                    adaptable.getAdapter(IToggleBreakpointsTarget.class);
+                if (adapter == null) {
+                    // attempt to force load adapter
+                    IAdapterManager adapterManager = Platform.getAdapterManager();
+                    if (adapterManager.hasAdapter(adaptable, IToggleBreakpointsTarget.class.getName())) {
+                        adapter = (IToggleBreakpointsTarget) 
+                            adapterManager.loadAdapter(adaptable, IToggleBreakpointsTarget.class.getName());
+                    }
+                }
+                return adapter;
+            }
+            return null;
+        }
+
+        /**
+         * Checks if there is an adaptable object for the given part and 
+         * selection, and if there is, it checks whether an 
+         * <code>IToggleBreakpointsTarget</code> can be obtained as an adapter.
+         */
+        public boolean isEnabled(IWorkbenchPart part, ISelection selection) {
+            IAdaptable adaptable = getAdaptable(part, selection);
+            return adaptable != null && canGetToggleBreakpointsTarget(adaptable);
+        }
+        
+        /**
+         * Not implemented use {@link #createDefaultToggleTarget(IWorkbenchPart, ISelection)}
+         * instead.
+         */
+        public IToggleBreakpointsTarget createToggleTarget(String targetID) {
+            return null;
+        }
+        
+        /**
+         * Returns a toggle target for the given part and selection, obtained 
+         * through the adapter mechanism. 
+         */
+        public IToggleBreakpointsTarget createDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
+            IAdaptable adaptable = getAdaptable(part, selection);
+            return getToggleBreakpointsTarget(adaptable);
+        }
+        
+        public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
+            IAdaptable adaptable = getAdaptable(part, selection);
+            if (canGetToggleBreakpointsTarget(adaptable)) {
+                return DEFAULT_TOGGLE_TARGET_ID_SET;
+            } 
+            return Collections.EMPTY_SET;
+        }
+
+        public String getToggleTargetName(String targetID) {
+            return ActionMessages.ToggleBreakpointsTargetManager_defaultToggleTarget_name;
+        }
+
+        public String getToggleTargetDescription(String targetID) {
+            return ActionMessages.ToggleBreakpointsTargetManager_defaultToggleTarget_description;
+        }
+        
+        public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
+            return DEFAULT_TOGGLE_TARGET_ID;
+        }
+    }
+
+    
+    /**
+     * Preference key for storing the preferred targets map.
+     * @see {@link #storePreferredTargets()}
+     * @see {@link #loadPreferredTargets()}
+     */
+    public static final String PREF_TARGETS = "preferredTargets"; //$NON-NLS-1$
+
+    
+    /**
+     * There should only ever be once instance of this manager for the workbench.
+     */
+    private static ToggleBreakpointsTargetManager fgSingleton;
+
+    public static ToggleBreakpointsTargetManager getDefault(){
+        if (fgSingleton == null) fgSingleton = new ToggleBreakpointsTargetManager();
+        return fgSingleton;
+    }
+    
+    /**
+     * Maps the IDs of toggle breakpoint targets to their instances.  The target
+     * IDs must be unique.
+     */
+    private Map fKnownFactories;
+
+    /**
+     * Maps a Set of target id's to the one target id that is preferred.
+     */
+    private Map fPreferredTargets;
+    
+    /**
+     * Maps the IDs of toggle targets to the factory that can create them.
+     * There can currently only be one factory for a given toggle target.
+     */
+    private Map fFactoriesByTargetID = new HashMap();
+    
+    /**
+     * List of listeners to changes in the preferred toggle targets list.
+     */
+    private ListenerList fChangedListners = new ListenerList();
+
+    /**
+     * Initializes the collection of known factories from extension point contributions.
+     */
+    private void initializeFactories() {
+        fKnownFactories = new LinkedHashMap();
+        fKnownFactories.put(DEFAULT_TOGGLE_TARGET_ID, new ToggleBreakpointsTargetAdapterFactory());
+        IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES);
+        IConfigurationElement[] elements = ep.getConfigurationElements();
+        for (int i= 0; i < elements.length; i++) {
+            String id = elements[i].getAttribute(IConfigurationElementConstants.ID); 
+            if (id != null && id.length() != 0) {
+                if (fKnownFactories.containsKey(id)) {
+                    DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "org.eclipse.debug.ui.toggleBreakpointsTargetFactory extension failed to load breakpoint toggle target because the specified id is already registered.  Specified ID is: " + id, null)); //$NON-NLS-1$
+                } else {
+                    fKnownFactories.put(id, new ToggleTargetFactory(elements[i]));
+                }
+            } else {
+                DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "org.eclipse.debug.ui.toggleBreakpointsTargetFactory extension failed to load breakpoint toggle target because the specified id is empty.", null)); //$NON-NLS-1$
+            }
+        }   
+        
+        // If there are any factories contributed through the extension point, 
+        // set a system property for use in enabling actions.
+        System.setProperty(IDebugUIConstants.SYS_PROP_BREAKPOINT_TOGGLE_FACTORIES_USED, 
+        		fKnownFactories.size() > 1 ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    /**
+     * Returns the set of IToggleBreakpointsTargetFactory objects (they will be
+     * ToggleTargetFactory) that were contributed to the extension point and 
+     * are enabled for the given part and selection (enabled if the factory 
+     * does not have an enablement expression or if the enablement expression 
+     * evaluates to true).
+     * 
+     * @param part active part
+     * @param selection active selection in part
+     * @return The factories enabled for the part and selection or an empty 
+     * collection.
+     */
+    private Set getEnabledFactories(IWorkbenchPart part, ISelection selection) {
+        if (fKnownFactories == null) initializeFactories();
+
+        Set set = new LinkedHashSet();
+        for (Iterator itr = fKnownFactories.keySet().iterator(); itr.hasNext(); ) {
+            String id = (String)itr.next();
+            IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fKnownFactories.get(id);
+            if (factory instanceof ToggleTargetFactory && 
+                ((ToggleTargetFactory)factory).isEnabled(part, selection)) {
+                set.add(factory);
+            } else if (factory instanceof ToggleBreakpointsTargetAdapterFactory && 
+                ((ToggleBreakpointsTargetAdapterFactory)factory).isEnabled(part, selection)) {
+                set.add(factory);
+            } 
+        }
+        return set;
+    }
+
+    /**
+     * Produces the set of IDs for all possible toggle targets that can be used for
+     * the given part and selection.
+     *  
+     * @param factoriesToQuery The collection of factories to check
+     * @param part active part
+     * @param selection active selection in part
+     * @return Set of toggle target IDs or an empty set
+     */
+    private Set getEnabledTargetIDs(Collection factoriesToQuery, IWorkbenchPart part, ISelection selection){
+        Set idsForSelection = new LinkedHashSet();
+        Iterator factoriesItr = factoriesToQuery.iterator();
+        while (factoriesItr.hasNext()) {
+            IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory) factoriesItr.next();
+            Iterator targetIDsItr = factory.getToggleTargets(part, selection).iterator();
+            while (targetIDsItr.hasNext()) {
+                String targetID = (String) targetIDsItr.next();
+                fFactoriesByTargetID.put(targetID, factory);
+                idsForSelection.add(targetID);             
+            }           
+        }
+        return idsForSelection;
+    }
+
+    /**
+     * Returns the set of <code>String</code> IDs of toggle breakpoint targets, 
+     * which are enabled for the given active part and selection.  The IDs can be used
+     * to create the {@link IToggleBreakpointsTarget} instance.  
+     * @param part active part
+     * @param selection active selection in part
+     * @return Set of toggle target IDs or an empty set
+     */
+    public Set getEnabledToggleBreakpointsTargetIDs(IWorkbenchPart part, ISelection selection) {
+        return getEnabledTargetIDs(getEnabledFactories(part, selection), part, selection);
+    }
+
+    /**
+     * Returns the ID of the calculated preferred toggle breakpoints target for the
+     * given active part and selection.  The returned ID is chosen based on factory 
+     * enablement, whether the target is a default one, and on user choice. 
+     * @param part active part
+     * @param selection active selection in part
+     * @return The toggle target IDs or null if none.
+     */
+    public String getPreferredToggleBreakpointsTargetID(IWorkbenchPart part, ISelection selection) {
+        Set factories = getEnabledFactories(part, selection);
+        Set possibleIDs = getEnabledTargetIDs(factories, part, selection);
+        return chooseToggleTargetIDInSet(possibleIDs, factories, part, selection);
+    }
+
+    /**
+     * Given the ID of toggle breakpoint target, this method will try to find the factory
+     * that creates it and return an instance of it.
+     * 
+     * @param ID The ID of the requested toggle breakpoint target.
+     * @return The instantiated target or null
+     */
+    public IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, ISelection selection) {
+        String id = getPreferredToggleBreakpointsTargetID(part, selection);
+        IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
+        if (factory != null) {
+            if (DEFAULT_TOGGLE_TARGET_ID.equals(id)) {
+                return ((ToggleBreakpointsTargetAdapterFactory)factory).createDefaultToggleTarget(part, selection);
+            } else {
+                return factory.createToggleTarget(id);
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Given the ID of a toggle breakpoints target, this method will try 
+     * to find the factory that creates it and ask it for the name of it.
+     * 
+     * @param ID The ID of the requested toggle breakpoint target.
+     * @return The name of the target.
+     */
+    public String getToggleBreakpointsTargetName(String id) {
+        IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
+        if (factory != null) {
+            return factory.getToggleTargetName(id);
+        }
+        return null;
+    }
+    
+    /**
+     * Given the ID of a toggle breakpoints target, this method will try 
+     * to find the factory that creates it and ask it for the description of it.
+     * 
+     * @param ID The ID of the requested toggle breakpoint target.
+     * @return The description of the target or null.
+     */
+    public String getToggleBreakpointsTargetDescription(String id) {
+        IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
+        if (factory != null) {
+            return factory.getToggleTargetDescription(id);
+        }
+        return null;
+    }
+
+    /**
+     * Adds the given listener to the list of listeners notified when the preferred
+     * toggle breakpoints targets change.
+     * @param listener The listener to add.
+     */
+    public void addChangedListener(IToggleBreakpointsTargetManagerListener listener) {
+        fChangedListners.add(listener);
+    }
+
+    /**
+     * Removes the given listener from the list of listeners notified when the preferred
+     * toggle breakpoints targets change.
+     * @param listener The listener to add.
+     */
+    public void removeChangedListener(IToggleBreakpointsTargetManagerListener listener) {
+        fChangedListners.remove(listener);
+    }
+
+    /**
+     * Stores the map of preferred target IDs to the preference store in the format:
+     * 
+     * Key1A,Key1B:Value1|Key2A,Key2B,Key2C:Value2| 
+     * 
+     * Where the sub keys (Key1A, Key1B, etc.) are the elements of the set used at the 
+     * key in the mapping and the values are the associated String value in the mapping.
+     */
+    private void storePreferredTargets() {
+        StringBuffer buffer= new StringBuffer();
+        Iterator iter = fPreferredTargets.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry entry = (Entry) iter.next();
+            Iterator setIter = ((Set)entry.getKey()).iterator();
+            while (setIter.hasNext()) {
+                String currentID = (String) setIter.next();
+                buffer.append(currentID);
+                buffer.append(',');
+            }
+            buffer.deleteCharAt(buffer.length()-1);
+            buffer.append(':');
+            buffer.append(entry.getValue());
+            buffer.append('|');
+        }
+        DebugUIPlugin.getDefault().getPluginPreferences().setValue(PREF_TARGETS, buffer.toString());
+    }
+
+    /**
+     * Loads the map of preferred target IDs from the preference store.
+     * 
+     * @see #storePreferredTargets()
+     */
+    private void loadPreferredTargets() {
+        fPreferredTargets = new HashMap();
+        String preferenceValue = DebugUIPlugin.getDefault().getPluginPreferences().getString(PREF_TARGETS);
+        StringTokenizer entryTokenizer = new StringTokenizer(preferenceValue,"|"); //$NON-NLS-1$
+        while (entryTokenizer.hasMoreTokens()){
+            String token = entryTokenizer.nextToken();
+            int valueStart = token.indexOf(':');
+            StringTokenizer keyTokenizer = new StringTokenizer(token.substring(0,valueStart),","); //$NON-NLS-1$
+            Set keys = new LinkedHashSet();
+            while (keyTokenizer.hasMoreTokens()){
+                keys.add(keyTokenizer.nextToken());
+            }
+            fPreferredTargets.put(keys, token.substring(valueStart+1));
+        }
+    }
+
+    /**
+     * Adds or updates the mapping to set which target ID is preferred for a certain
+     * set of possible IDs.
+     * 
+     * @param possibleIDs The set of possible IDs
+     * @param preferredID The preferred ID in the set.
+     */
+    public void setPreferredTarget(Set possibleIDs, String preferredID) {
+        if (possibleIDs == null) return;
+
+        if (fKnownFactories == null) initializeFactories();
+
+        if (fPreferredTargets == null){
+            loadPreferredTargets();
+        }
+        String currentKey = (String)fPreferredTargets.get(possibleIDs);
+        if (currentKey == null || !currentKey.equals(preferredID)){
+            fPreferredTargets.put(possibleIDs, preferredID);
+            storePreferredTargets();
+            firePreferredTargetsChanged();
+        }        
+    }
+    
+    /**
+     * Returns the preferred pane ID from the given set if the mapping has been set.
+     * 
+     * @param possibleDetailsAreaIDs Set of possible pane IDs
+     * @return The preferred ID or null
+     */
+    private String getUserPreferredTarget(Set possibleTargetIDs){
+        if (fPreferredTargets == null){
+            loadPreferredTargets();
+        }
+        return (String)fPreferredTargets.get(possibleTargetIDs);
+    }
+
+    /**
+     * Given a set of possible detail pane IDs, this method will determine which pane is
+     * preferred and should be used to display the selection.  This method chooses a pane
+     * by storing previous choices and can be set using a context menu.
+     * 
+     * @param possiblePaneIDs The set of possible detail pane IDs
+     * @return The preferred detail pane ID or null
+     */
+    private String chooseToggleTargetIDInSet(Set possibleTargetIDs, Collection enabledFactories, IWorkbenchPart part, ISelection selection){
+        if (possibleTargetIDs == null || possibleTargetIDs.isEmpty()){
+            return null;
+        }
+        
+        String preferredID = getUserPreferredTarget(possibleTargetIDs);
+        
+        if (preferredID == null){
+            // If there is no preferred pane already set, check the factories to see there is a default target
+            Iterator factoryIterator = enabledFactories.iterator();
+            while (preferredID == null && factoryIterator.hasNext()) {
+                IToggleBreakpointsTargetFactory currentFactory = (IToggleBreakpointsTargetFactory) factoryIterator.next();
+                preferredID = currentFactory.getDefaultToggleTarget(part, selection);
+            }
+            // If the factories don't have a default, just pick the first one.
+            if (preferredID == null) {
+                preferredID= (String)possibleTargetIDs.iterator().next();
+            }
+            setPreferredTarget(possibleTargetIDs, preferredID);
+        }
+
+        return preferredID;
+    }
+
+    /**
+     * Notifies the change listeners that the preferred targets changed.
+     */
+    private void firePreferredTargetsChanged() {
+        Object[] listeners = fChangedListners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            ((IToggleBreakpointsTargetManagerListener)listeners[i]).preferredTargetsChanged();
+        }
+    }
+    
+}
