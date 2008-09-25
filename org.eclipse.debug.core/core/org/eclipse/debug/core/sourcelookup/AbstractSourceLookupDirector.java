@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.debug.core.sourcelookup;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,6 +38,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Directs source lookup among a collection of source lookup participants,
@@ -85,6 +86,8 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * Keys are the duplicates, values are the source element to use.
 	 */
 	protected Map fResolvedElements = null;
+	// current participant performing lookup or <code>null</code>
+	private ISourceLookupParticipant fCurrentParticipant;
 	
 	protected static final IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
 	protected static final IStatus fResolveDuplicatesStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 205, "", null);  //$NON-NLS-1$//$NON-NLS-2$
@@ -130,31 +133,36 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			MultiStatus multiStatus = null;
 			CoreException single = null;
 			ISourceLookupParticipant[] participants = getParticipants();
-			for(int i=0; i < participants.length; i++) {
-				Object[] sourceArray;
-				try {
-					sourceArray = participants[i].findSourceElements(fElement);
-					if (sourceArray !=null && sourceArray.length > 0) {
-						if (isFindDuplicates()) {
-							for(int j=0; j<sourceArray.length; j++)
-								if(!checkDuplicate(sourceArray[j], fSourceElements))
-									fSourceElements.add(sourceArray[j]);
+			try {
+				for(int i=0; i < participants.length; i++) {
+					setCurrentParticipant(participants[i]);
+					Object[] sourceArray;
+					try {
+						sourceArray = participants[i].findSourceElements(fElement);
+						if (sourceArray !=null && sourceArray.length > 0) {
+							if (isFindDuplicates()) {
+								for(int j=0; j<sourceArray.length; j++)
+									if(!checkDuplicate(sourceArray[j], fSourceElements))
+										fSourceElements.add(sourceArray[j]);
+							} else {
+								fSourceElements.add(sourceArray[0]);
+								return;
+							}
+						}
+					} catch (CoreException e) {
+						if (single == null) {
+							single = e;
+						} else if (multiStatus == null) {
+							multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
+							multiStatus.add(e.getStatus());
 						} else {
-							fSourceElements.add(sourceArray[0]);
-							return;
+							multiStatus.add(e.getStatus());
 						}
 					}
-				} catch (CoreException e) {
-					if (single == null) {
-						single = e;
-					} else if (multiStatus == null) {
-						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
-						multiStatus.add(e.getStatus());
-					} else {
-						multiStatus.add(e.getStatus());
-					}
 				}
-			}	
+			} finally {
+				setCurrentParticipant(null);
+			}
 			if (fSourceElements.isEmpty()) {
 				// set exception if there was one
 				if (multiStatus != null) {
@@ -742,5 +750,26 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		} else { 
 			return null;
 		}
+	}
+	
+	/**
+	 * Sets the current participant or <code>null</code> if none.
+	 * 
+	 * @param participant active participant or <code>null</code>
+	 */
+	private void setCurrentParticipant(ISourceLookupParticipant participant) {
+		fCurrentParticipant = participant;
+	}
+	
+	/**
+	 * Returns the participant currently looking up source or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the participant currently looking up source or <code>null</code>
+	 * if none
+	 * @since 3.5
+	 */
+	public ISourceLookupParticipant getCurrentParticipant() {
+		return fCurrentParticipant;
 	}
 }

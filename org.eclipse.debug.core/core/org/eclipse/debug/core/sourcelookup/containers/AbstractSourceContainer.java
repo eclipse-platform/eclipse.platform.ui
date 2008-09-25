@@ -15,9 +15,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
  * Common function for source containers.
@@ -100,15 +103,25 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	}
 	
 	/**
-	 * Returns whether this container's source lookup director is configured
-	 * to search for duplicate source elements.
+	 * Returns whether this container's source should search for duplicate source
+	 * elements. Since 3.5, the current participant is consulted to determine if
+	 * duplicates should be found. Fall back to querying the source lookup director
+	 * if the participant is not an {@link AbstractSourceLookupParticipant}.
 	 * 
-	 * @return whether this container's source lookup director is configured
-	 * to search for duplicate source elements
+	 * @return whether to search for duplicate source elements
 	 */
 	protected boolean isFindDuplicates() {
-		if (getDirector() != null) {
-			return getDirector().isFindDuplicates();
+		ISourceLookupDirector director = getDirector();
+		if (director != null) {
+			if (director instanceof AbstractSourceLookupDirector) {
+				AbstractSourceLookupDirector asld = (AbstractSourceLookupDirector) director;
+				ISourceLookupParticipant participant = asld.getCurrentParticipant();
+				if (participant instanceof AbstractSourceLookupParticipant	) {
+					AbstractSourceLookupParticipant aslp = (AbstractSourceLookupParticipant) participant;
+					return aslp.isFindDuplicates();
+				}
+			}
+			return director.isFindDuplicates();
 		}
 		return false;
 	}

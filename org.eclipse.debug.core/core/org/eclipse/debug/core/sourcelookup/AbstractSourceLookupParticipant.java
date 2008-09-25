@@ -132,15 +132,16 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	 * 
 	 * @return whether this participant's source lookup director is configured
 	 * to search for duplicate source elements
+	 * @since 3.5
 	 */
-	protected boolean isFindDuplicates() {
+	public boolean isFindDuplicates() {
 		ISourceLookupDirector director = getDirector();
 		if (director != null) {
 			return director.isFindDuplicates();
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * Returns the source containers currently registered with this participant's
 	 * source lookup director.
