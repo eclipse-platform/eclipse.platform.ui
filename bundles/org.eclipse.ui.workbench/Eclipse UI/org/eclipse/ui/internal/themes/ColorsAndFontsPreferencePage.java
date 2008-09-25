@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
@@ -549,13 +550,13 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private Font appliedDialogFont;
 
     /**
-     * The composite containing all color-specific controls. 
+     * The composite containing all color-specific controls.
      */
     private Composite colorControls;
 
     /**
      * Map of definition id->RGB objects that map to changes expressed in this
-     * UI session.  These changes should be made in preferences and the 
+     * UI session.  These changes should be made in preferences and the
      * registry.
      */
     private Map colorPreferencesToSet = new HashMap(7);
@@ -583,7 +584,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private StackLayout controlAreaLayout;
 
     /**
-     * The composite to use when no preview is available. 
+     * The composite to use when no preview is available.
      */
     private Composite defaultPreviewControl;
 
@@ -594,7 +595,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private Button fontChangeButton;
 
     /**
-     * The composite containing all font-specific controls. 
+     * The composite containing all font-specific controls.
      */
     private Composite fontControls;
 
@@ -607,8 +608,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private Button fontSystemButton;
 
     /**
-     * Map of definition id->FontData[] objects that map to changes expressed in 
-     * this UI session.  These changes should be made in preferences and the 
+     * Map of definition id->FontData[] objects that map to changes expressed in
+     * this UI session.  These changes should be made in preferences and the
      * registry.
      */
     private Map fontValuesToSet = new HashMap(7);
@@ -628,7 +629,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private Map previewMap = new HashMap(7);
 
     /**
-     * Set containing all IPresentationPreviews created. 
+     * Set containing all IPresentationPreviews created.
      */
     private Set previewSet = new HashSet(7);
 
@@ -652,7 +653,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private FilteredTree tree;
 
     /**
-     * Create a new instance of the receiver. 
+     * Create a new instance of the receiver.
      */
     public ColorsAndFontsPreferencePage() {
         themeRegistry = WorkbenchPlugin.getDefault().getThemeRegistry();
@@ -688,7 +689,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     /**
-     * Create the color selection control. 
+     * Create the color selection control.
      */
     private void createColorControl() {
         Composite composite = new Composite(colorControls, SWT.NONE);
@@ -776,7 +777,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     /**
-     * Create the text box that will contain the current color/font description 
+     * Create the text box that will contain the current color/font description
      * text (if any).
      * 
      * @param parent the parent <code>Composite</code>.
@@ -819,7 +820,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     /**
-     * Create the <code>ListViewer</code> that will contain all color 
+     * Create the <code>ListViewer</code> that will contain all color
      * definitions as defined in the extension point.
      * 
      * @param parent the parent <code>Composite</code>.
@@ -898,16 +899,18 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         // disable conventional tooltips
         tree.getViewer().getTree().setToolTipText(""); //$NON-NLS-1$
         new DefaultToolTip(tree.getViewer().getControl(), ToolTip.NO_RECREATE, false) {
-        	
+        
+			private Object currentHoverElement;
+			
         	/* (non-Javadoc)
         	 * @see org.eclipse.jface.window.DefaultToolTip#getText(org.eclipse.swt.widgets.Event)
         	 */
         	protected String getText(Event event) {
-				Object o = getHoveredElement(event);
+				currentHoverElement = getHoveredElement(event);
 
-				if (o instanceof FontDefinition) {
+				if (currentHoverElement instanceof FontDefinition) {
 					FontData[] fontData = fontRegistry
-							.getFontData(((FontDefinition) o).getId());
+							.getFontData(((FontDefinition) currentHoverElement).getId());
 					StringBuffer fontTextBuffer = new StringBuffer();
 					for (int i = 0; i < fontData.length; i++) {
 						formatFontData(fontTextBuffer, fontData[i]);
@@ -915,8 +918,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 							fontTextBuffer.append('\n');
 					}
 					return fontTextBuffer.toString();
-				} else if (o instanceof ColorDefinition) {
-					RGB rgb = colorRegistry.getRGB(((ColorDefinition) o)
+				} else if (currentHoverElement instanceof ColorDefinition) {
+					RGB rgb = colorRegistry.getRGB(((ColorDefinition) currentHoverElement)
 							.getId());
 
 					return MessageFormat
@@ -924,14 +927,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 									"{0}, {1}, {2}", new Object[] { new Integer(rgb.red), new Integer(rgb.green), new Integer(rgb.blue) }); //$NON-NLS-1$
 
 				}
-				return labelProvider.getText(o);
+				return labelProvider.getText(currentHoverElement);
 			}
         	
         	/* (non-Javadoc)
         	 * @see org.eclipse.jface.window.ToolTip#shouldCreateToolTip(org.eclipse.swt.widgets.Event)
         	 */
         	protected boolean shouldCreateToolTip(Event event) {
-        		return (getHoveredElement(event) != null && super.shouldCreateToolTip(event));
+				Object hoverElement= getHoveredElement(event);
+				return (hoverElement != null && (hoverElement != currentHoverElement || super.shouldCreateToolTip(event)));
         	}
 
 			private Object getHoveredElement(Event event) {
@@ -945,7 +949,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			private void formatFontData(StringBuffer buffer, FontData fontData) {
 				buffer.append(fontData.getName());
 				buffer.append(' ');
-				buffer.append(fontData.getHeight());				
+				buffer.append(fontData.getHeight());
 			}};
 			
         restoreTreeExpansion();
@@ -1015,7 +1019,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * Get the ancestor of the given color, if any.
      * 
      * @param definition the descendant <code>ColorDefinition</code>.
-     * @return the ancestor <code>ColorDefinition</code>, or <code>null</code> 
+     * @return the ancestor <code>ColorDefinition</code>, or <code>null</code>
      * 		if none.
      */
     private ColorDefinition getColorAncestor(ColorDefinition definition) {
@@ -1043,7 +1047,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     /**
-     * Get the RGB value for the specified definition.  Cascades through 
+     * Get the RGB value for the specified definition.  Cascades through
      * preferenceToSet, valuesToSet and finally the registry.
      * 
      * @param definition the <code>ColorDefinition</code>.
@@ -1079,7 +1083,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * Get colors that descend from the provided color.
      * 
      * @param definition the ancestor <code>ColorDefinition</code>.
-     * @return the ColorDefinitions that have the provided definition as their 
+     * @return the ColorDefinitions that have the provided definition as their
      * 		defaultsTo attribute.
      */
     private ColorDefinition[] getDescendantColors(ColorDefinition definition) {
@@ -1313,7 +1317,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         colorValuesToSet.clear();
 
         if (labelProvider != null) {
-			labelProvider.hookListeners(); // rehook the listeners	    
+			labelProvider.hookListeners(); // rehook the listeners
 		}
     }
 
@@ -1321,8 +1325,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * Answers whether the definition is currently set to the default value.
      * 
      * @param definition the <code>ColorDefinition</code> to check.
-     * @return Return whether the definition is currently mapped to the default 
-     * 		value, either in the preference store or in the local change record 
+     * @return Return whether the definition is currently mapped to the default
+     * 		value, either in the preference store or in the local change record
      * 		of this preference page.
      */
     private boolean isDefault(ColorDefinition definition) {
@@ -1396,7 +1400,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     /**
-     * Apply the dialog font to the control and store 
+     * Apply the dialog font to the control and store
      * it for later so that it can be used for a later
      * update.
      * @param control
@@ -1590,10 +1594,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     /**
-     * Set the value (in preferences) for the given color.  
+     * Set the value (in preferences) for the given color.
      * 
      * @param definition the <code>ColorDefinition</code> to set.
-     * @param newRGB the new <code>RGB</code> value for the definitions 
+     * @param newRGB the new <code>RGB</code> value for the definitions
      * 		identifier.
      */
     protected void setColorPreferenceValue(ColorDefinition definition,
@@ -1603,11 +1607,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     /**
-     * Set the value (in registry) for the given colors children.  
+     * Set the value (in registry) for the given colors children.
      * 
-     * @param definition the <code>ColorDefinition</code> whose children should 
+     * @param definition the <code>ColorDefinition</code> whose children should
      * 		be set.
-     * @param newRGB the new <code>RGB</code> value for the definitions 
+     * @param newRGB the new <code>RGB</code> value for the definitions
      * 		identifier.
      */
     private void setDescendantRegistryValues(ColorDefinition definition,
@@ -1770,7 +1774,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         colorResetButton.setEnabled(!isDefault(definition));
         colorSelector.setEnabled(true);
         String description = definition.getDescription();
-        descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$		
+        descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
     }
 
     protected void updateFontControls(FontDefinition definition) {
@@ -1786,7 +1790,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         fontResetButton.setEnabled(!isDefault(definition));
         fontChangeButton.setEnabled(true);
         String description = definition.getDescription();
-        descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$		
+        descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
     }
 
     /**
