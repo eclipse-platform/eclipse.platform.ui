@@ -293,6 +293,40 @@ public class StyledString {
 	}
 
 	/**
+	 * Inserts the character at the given offset. The inserted character will
+	 * get the styler that is already at the given offset.
+	 * 
+	 * @param ch
+	 *            the character to insert
+	 * @param offset
+	 *            the insertion index
+	 * @return returns a reference to this object
+	 * @since 3.5
+	 */
+	public StyledString insert(char ch, int offset) {
+		if (offset < 0 || offset > fBuffer.length()) {
+			throw new StringIndexOutOfBoundsException(
+					"Invalid offset (" + offset + ")"); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		if (hasRuns()) {
+			int runIndex = findRun(offset);
+			if (runIndex < 0) {
+				runIndex = -runIndex - 1;
+			} else {
+				runIndex = runIndex + 1;
+			}
+			StyleRunList styleRuns = getStyleRuns();
+			final int size = styleRuns.size();
+			for (int i = runIndex; i < size; i++) {
+				StyleRun run = styleRuns.getRun(i);
+				run.offset++;
+			}
+		}
+		fBuffer.insert(offset, ch);
+		return this;
+	}
+
+	/**
 	 * Sets a styler to use for the given source range. The range must be
 	 * subrange of actual string of this {@link StyledString}. Stylers
 	 * previously set for that range will be overwritten.
@@ -449,7 +483,7 @@ public class StyledString {
 		return fStyleRuns.getRun(fStyleRuns.size() - 1);
 	}
 
-	private List getStyleRuns() {
+	private StyleRunList getStyleRuns() {
 		if (fStyleRuns == null)
 			fStyleRuns = new StyleRunList();
 		return fStyleRuns;
