@@ -9,16 +9,22 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
- *     Matthew Hall - bug 180746, bug 207844
- *     Michael Krauter, bug 180223
+ *     Matthew Hall - bug 180746, bug 207844, bug 245647
+ *     Michael Krauter - bug 180223
+ *     Boris Bokowski - bug 245647
  *******************************************************************************/
 package org.eclipse.jface.databinding.swt;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IVetoableValue;
+import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
+import org.eclipse.jface.internal.databinding.internal.swt.LinkObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ButtonObservableValue;
 import org.eclipse.jface.internal.databinding.swt.CComboObservableList;
 import org.eclipse.jface.internal.databinding.swt.CComboObservableValue;
@@ -26,10 +32,9 @@ import org.eclipse.jface.internal.databinding.swt.CComboSingleSelectionObservabl
 import org.eclipse.jface.internal.databinding.swt.CLabelObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ComboObservableList;
 import org.eclipse.jface.internal.databinding.swt.ComboObservableValue;
-import org.eclipse.jface.internal.databinding.internal.swt.LinkObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ComboSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ControlObservableValue;
-import org.eclipse.jface.internal.databinding.swt.DelayedObservableValue;
+import org.eclipse.jface.internal.databinding.swt.SWTDelayedObservableValueDecorator;
 import org.eclipse.jface.internal.databinding.swt.LabelObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ListObservableList;
 import org.eclipse.jface.internal.databinding.swt.ListObservableValue;
@@ -88,24 +93,39 @@ public class SWTObservables {
 
 	/**
 	 * Returns an observable which delays notification of value change events
-	 * from <code>observable</code> until <code>delay</code> milliseconds
-	 * have passed since the last change event, or until a FocusOut event is
-	 * received from the underlying widget (whichever happens earlier). This
-	 * class helps to delay validation until the user stops typing. To notify
-	 * about pending changes, the returned observable value will fire a stale
-	 * event when the wrapped observable value fires a change event, but this
-	 * change is being delayed.
+	 * from <code>observable</code> until <code>delay</code> milliseconds have
+	 * elapsed since the last change event, or until a FocusOut event is
+	 * received from the underlying widget (whichever happens first). This
+	 * observable helps to boost performance in situations where an observable
+	 * has computationally expensive listeners (e.g. changing filters in a
+	 * viewer) or many dependencies (master fields with multiple detail fields).
+	 * A common use of this observable is to delay validation of user input
+	 * until the user stops typing in a UI field.
+	 * <p>
+	 * To notify about pending changes, the returned observable fires a stale
+	 * event when the wrapped observable value fires a change event, and remains
+	 * stale until the delay has elapsed and the value change is fired. A call
+	 * to {@link IObservableValue#getValue() getValue()} while a value change is
+	 * pending will fire the value change immediately, short-circuiting the
+	 * delay.
+	 * <p>
+	 * Note that this observable will not forward {@link ValueChangingEvent}
+	 * events from a wrapped {@link IVetoableValue}.
 	 * 
 	 * @param delay
+	 *            the delay in milliseconds
 	 * @param observable
+	 *            the observable being delayed
 	 * @return an observable which delays notification of value change events
 	 *         from <code>observable</code> until <code>delay</code>
-	 *         milliseconds have passed since the last change event.
+	 *         milliseconds have elapsed since the last change event.
 	 * 
 	 * @since 1.2
 	 */
-	public static ISWTObservableValue observeDelayedValue(int delay, ISWTObservableValue observable) {
-	  return new DelayedObservableValue(delay, observable);
+	public static ISWTObservableValue observeDelayedValue(int delay,
+			ISWTObservableValue observable) {
+		return new SWTDelayedObservableValueDecorator(Observables
+				.observeDelayedValue(delay, observable), observable.getWidget());
 	}
 
 	/**
@@ -412,6 +432,17 @@ public class SWTObservables {
 			};
 			if (!display.isDisposed()) {
 				display.asyncExec(safeRunnable);
+			}
+		}
+
+		public void timerExec(int milliseconds, final Runnable runnable) {
+			if (!display.isDisposed()) {
+				Runnable safeRunnable = new Runnable() {
+					public void run() {
+						safeRun(runnable);
+					}
+				};
+				display.timerExec(milliseconds, safeRunnable);
 			}
 		}
 

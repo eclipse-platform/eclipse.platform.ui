@@ -7,15 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 206839, 124684, 239302
+ *     Matthew Hall - bug 206839, 124684, 239302, 245647
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
 
+import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.internal.databinding.swt.SWTDelayedObservableValueDecorator;
 import org.eclipse.jface.internal.databinding.viewers.CheckableCheckedElementsObservableSet;
 import org.eclipse.jface.internal.databinding.viewers.CheckboxViewerCheckedElementsObservableSet;
 import org.eclipse.jface.internal.databinding.viewers.SelectionProviderMultipleSelectionObservableList;
@@ -23,6 +25,7 @@ import org.eclipse.jface.internal.databinding.viewers.SelectionProviderSingleSel
 import org.eclipse.jface.internal.databinding.viewers.ViewerFiltersObservableSet;
 import org.eclipse.jface.internal.databinding.viewers.ViewerInputObservableValue;
 import org.eclipse.jface.internal.databinding.viewers.ViewerMultipleSelectionObservableList;
+import org.eclipse.jface.internal.databinding.viewers.ViewerObservableValueDecorator;
 import org.eclipse.jface.internal.databinding.viewers.ViewerSingleSelectionObservableValue;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -39,6 +42,35 @@ import org.eclipse.swt.widgets.Display;
  * @since 1.1
  */
 public class ViewersObservables {
+	/**
+	 * Returns an observable which delays notification of value change events
+	 * from <code>observable</code> until <code>delay</code> milliseconds have
+	 * passed since the last change event, or until a FocusOut event is received
+	 * from the underlying viewer control (whichever happens earlier). This
+	 * class helps to delay validation until the user stops changing the value
+	 * (e.g. until a user stops changing a viewer selection). To notify about
+	 * pending changes, the returned observable value will fire a stale event
+	 * when the wrapped observable value fires a change event, but this change
+	 * is being delayed.
+	 * 
+	 * @param delay
+	 *            the delay in milliseconds
+	 * @param observable
+	 *            the observable being delayed
+	 * @return an observable which delays notification of value change events
+	 *         from <code>observable</code> until <code>delay</code>
+	 *         milliseconds have passed since the last change event.
+	 * 
+	 * @since 1.3
+	 */
+	public static IViewerObservableValue observeDelayedValue(int delay,
+			IViewerObservableValue observable) {
+		Viewer viewer = observable.getViewer();
+		return new ViewerObservableValueDecorator(
+				new SWTDelayedObservableValueDecorator(Observables
+						.observeDelayedValue(delay, observable), viewer
+						.getControl()), viewer);
+	}
 
 	/**
 	 * Returns an observable value that tracks the current selection of the

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006-2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 168153
+ *     Boris Bokowski - bug 245647
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.util.Policy;
@@ -112,6 +116,8 @@ public abstract class Realm {
 	abstract public boolean isCurrent();
 
 	private Thread workerThread;
+	
+	private volatile Timer timer;
 
 	Queue workQueue = new Queue();
 	
@@ -190,6 +196,45 @@ public abstract class Realm {
 			workQueue.enqueue(runnable);
 			workQueue.notifyAll();
 		}
+	}
+
+	/**
+	 * Causes the <code>run()</code> method of the runnable to be invoked from
+	 * within this realm after the specified number of milliseconds have
+	 * elapsed. If milliseconds is less than zero, the runnable is not executed.
+	 * The caller of this method continues to run in parallel, and is not
+	 * notified when the runnable has completed.
+	 * <p>
+	 * If the given runnable is an instance of {@link ISafeRunnable}, its
+	 * exception handler method will be called if any exceptions occur while
+	 * running it. Otherwise, the exception will be logged.
+	 * </p>
+	 * <p>
+	 * Subclasses should use {@link #safeRun(Runnable)} to run the runnable.
+	 * </p>
+	 * 
+	 * @param milliseconds
+	 * @param runnable
+	 * @since 1.2
+	 */
+	public void timerExec(int milliseconds, final Runnable runnable) {
+		if (milliseconds < 0) {
+			return;
+		} else if (milliseconds == 0) {
+			asyncExec(runnable);
+		} else {
+			synchronized (workQueue) {
+				if (timer == null) {
+					timer = new Timer(true);
+				}
+				timer.schedule(new TimerTask() {
+					public void run() {
+						asyncExec(runnable);
+					}
+				}, milliseconds);
+			}
+		}
+
 	}
 
 	/**

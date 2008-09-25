@@ -7,30 +7,25 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 212223)
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 245647
  ******************************************************************************/
 
-package org.eclipse.jface.tests.internal.databinding.swt;
+package org.eclipse.core.tests.internal.databinding.observable;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
-import org.eclipse.jface.internal.databinding.swt.DelayedObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * Tests for DelayedObservableValue
@@ -38,31 +33,23 @@ import org.eclipse.swt.widgets.Widget;
  * @since 1.2
  */
 public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
-	private Display display;
-	private Shell shell;
 	private Object oldValue;
 	private Object newValue;
-	private SWTObservableValueStub target;
-	private DelayedObservableValue delayed;
+	private ObservableValueStub target;
+	private IObservableValue delayed;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		display = Display.getCurrent();
-		shell = new Shell(display);
-		target = new SWTObservableValueStub(SWTObservables.getRealm(display),
-				shell);
+		target = new ObservableValueStub(Realm.getDefault());
 		oldValue = new Object();
 		newValue = new Object();
 		target.setValue(oldValue);
-		delayed = new DelayedObservableValue(1, target);
+		delayed = Observables.observeDelayedValue(1, target);
 	}
 
 	protected void tearDown() throws Exception {
 		target.dispose();
 		target = null;
-		shell.dispose();
-		shell = null;
-		display = null;
 		super.tearDown();
 	}
 
@@ -95,15 +82,6 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 			public void run() {
 				final Object value = delayed.getValue();
 				assertEquals(newValue, value);
-			}
-		});
-	}
-
-	public void testFocusOut_FiresPendingValueChange() {
-		assertFiresPendingValueChange(new Runnable() {
-			public void run() {
-				// simulate focus-out event
-				shell.notifyListeners(SWT.FocusOut, new Event());
 			}
 		});
 	}
@@ -162,11 +140,12 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 				try {
 					Thread.sleep(delay);
 				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
+					Thread.currentThread().interrupt();
 				}
 			}
 
 			private void processDisplayEvents() {
+				Display display = Display.getCurrent();
 				while (display.readAndDispatch()) {
 				}
 			}
@@ -193,14 +172,14 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(newValue, tracker.event.diff.getNewValue());
 	}
 
-	static class SWTObservableValueStub extends AbstractSWTObservableValue {
+	static class ObservableValueStub extends AbstractObservableValue {
 		private Object value;
 		private boolean stale;
 
 		Object overrideValue;
 
-		public SWTObservableValueStub(Realm realm, Widget widget) {
-			super(realm, widget);
+		public ObservableValueStub(Realm realm) {
+			super(realm);
 		}
 
 		protected Object doGetValue() {
@@ -231,29 +210,18 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(DelayedObservableValueTest.class.getName());
+		TestSuite suite = new TestSuite(DelayedObservableValueTest.class
+				.getName());
 		suite.addTestSuite(DelayedObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(MutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {
-		Shell shell;
-
-		public void setUp() {
-			super.setUp();
-			shell = new Shell();
-		}
-
-		public void tearDown() {
-			shell.dispose();
-			shell = null;
-			super.tearDown();
-		}
-
 		public IObservableValue createObservableValue(Realm realm) {
-			return new DelayedObservableValue(0, new SWTObservableValueStub(
-					realm, shell));
+			return Observables.observeDelayedValue(0, new ObservableValueStub(
+					realm));
 		}
 
 		public Object getValueType(IObservableValue observable) {

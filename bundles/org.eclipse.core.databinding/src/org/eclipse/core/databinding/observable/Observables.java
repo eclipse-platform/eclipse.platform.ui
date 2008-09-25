@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matt Carter - bug 212518 (constantObservableValue)
- *     Matthew Hall - bugs 208332, 212518, 219909, 184830, 237718
+ *     Matthew Hall - bugs 208332, 212518, 219909, 184830, 237718, 245647
  *     Marko Topolnik - bug 184830
  ******************************************************************************/
 
@@ -31,7 +31,10 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.value.DecoratingObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IVetoableValue;
+import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
 import org.eclipse.core.internal.databinding.observable.ConstantObservableValue;
+import org.eclipse.core.internal.databinding.observable.DelayedObservableValue;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableList;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableSet;
 import org.eclipse.core.internal.databinding.observable.MapEntryObservableValue;
@@ -49,6 +52,50 @@ import org.eclipse.core.runtime.Assert;
  * @since 1.0
  */
 public class Observables {
+	/**
+	 * Returns an observable which delays notification of value change events
+	 * from <code>observable</code> until <code>delay</code> milliseconds have
+	 * elapsed since the last change event. This observable helps to boost
+	 * performance in situations where an observable has computationally
+	 * expensive listeners or many dependencies. A common use of this observable
+	 * is to delay validation of user input until the user stops typing in a UI
+	 * field.
+	 * <p>
+	 * To notify about pending changes, the returned observable fires a stale
+	 * event when the wrapped observable value fires a change event, and remains
+	 * stale until the delay has elapsed and the value change is fired. A call
+	 * to {@link IObservableValue#getValue() getValue()} while a value change is
+	 * pending will fire the value change immediately, short-circuiting the
+	 * delay.
+	 * <p>
+	 * <b>Note:</b>
+	 * <ul>
+	 * <li>Use SWTObservables.observeDelayedValue() instead when the target
+	 * observable is observing a SWT Control, or
+	 * ViewersObservables.observeDelayedValue() when the target observable is
+	 * observing a JFace Viewer. These observables ensure that pending value
+	 * changes are fired when the underlying control loses focus. (Otherwise, it
+	 * is possible for pending changes to be lost if a window is closed before
+	 * the delay has elapsed.)
+	 * <li>This observable does not forward {@link ValueChangingEvent} events
+	 * from a wrapped {@link IVetoableValue}.
+	 * </ul>
+	 * 
+	 * @param delay
+	 *            the delay in milliseconds
+	 * @param observable
+	 *            the observable being delayed
+	 * @return an observable which delays notification of value change events
+	 *         from <code>observable</code> until <code>delay</code>
+	 *         milliseconds have elapsed since the last change event.
+	 * 
+	 * @since 1.2
+	 */
+	public static IObservableValue observeDelayedValue(int delay,
+			IObservableValue observable) {
+		return new DelayedObservableValue(delay, observable);
+	}
+
 	/**
 	 * Returns an unmodifiable observable value backed by the given observable
 	 * value.

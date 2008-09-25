@@ -13,7 +13,7 @@
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
- *                    237703, 237718, 222289, 247394, 233306
+ *                    237703, 237718, 222289, 247394, 233306, 247647
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -105,6 +105,7 @@ import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberPars
 import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToShortConverterTest;
 import org.eclipse.core.tests.internal.databinding.observable.ConstantObservableValueTest;
+import org.eclipse.core.tests.internal.databinding.observable.DelayedObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.MapEntryObservableValueTest;
@@ -154,7 +155,7 @@ import org.eclipse.jface.tests.internal.databinding.swt.ComboObservableValueTest
 import org.eclipse.jface.tests.internal.databinding.swt.ComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ControlObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.swt.DelayedObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.swt.SWTDelayedObservableValueDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ListSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SWTObservableListTest;
@@ -301,6 +302,7 @@ public class BindingTestSuite extends TestSuite {
 		
 		//org.eclipse.core.tests.internal.databinding.observable
 		addTest(ConstantObservableValueTest.suite());
+		addTest(DelayedObservableValueTest.suite());
 		addTest(EmptyObservableListTest.suite());
 		addTest(EmptyObservableSetTest.suite());
 		addTest(MapEntryObservableValueTest.suite());
@@ -368,7 +370,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ComboObservableValueSelectionTest.suite());
 		addTest(ComboObservableValueTextTest.suite());
 		addTestSuite(ComboSingleSelectionObservableValueTest.class);
-		addTest(DelayedObservableValueTest.suite());
+		addTest(SWTDelayedObservableValueDecoratorTest.suite());
 		
 		addTest(SWTObservableListTest.suite());
 		
