@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
- *     Matthew Hall - bug 180746, bug 207844, bug 245647, bug 248621
+ *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *******************************************************************************/
@@ -253,7 +253,6 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.widgets.Text</li>
 	 * </ul>
 	 * 
-	 * <li>org.eclipse.swt.widgets.Label</li>
 	 * @param control
 	 * @param event event type to register for change events
 	 * @return observable value
