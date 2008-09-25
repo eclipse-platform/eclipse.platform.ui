@@ -26,7 +26,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, depends, intro, editor, view, oc, newWizard, perspective, startup, decorator, help, propertyPage, preferencePage, workingSet, browser, commands, handlers, statusHandler, markerSupport, self, finish" description="--> Builds the components required by the dynamic test suite">
+    <target name="default" depends="clean, depends, intro, editor, view, menus, oc, newWizard, perspective, startup, decorator, help, propertyPage, preferencePage, workingSet, browser, commands, handlers, statusHandler, markerSupport, self, finish" description="--> Builds the components required by the dynamic test suite">
     </target>
 
     <!-- - - - - - - - - - - - - - - - - - 
@@ -54,6 +54,10 @@
 	
 	<target name="oc">
 		<jar destfile="${output.dir}\oc.jar" basedir="oc.bin"/>
+	</target>
+	
+	<target name="menus">
+		<jar destfile="${output.dir}\menus.jar" basedir="menus.bin"/>
 	</target>
 	
 	<target name="newWizard">

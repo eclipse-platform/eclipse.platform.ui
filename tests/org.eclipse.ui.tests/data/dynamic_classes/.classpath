@@ -17,6 +17,7 @@
 	<classpathentry kind="src" output="commands.bin" path="commands"/>
 	<classpathentry kind="src" output="handlers.bin" path="handlers"/>
 	<classpathentry kind="src" output="markerSupport.bin" path="markerSupport"/>
+	<classpathentry kind="src" output="menus.bin" path="menus"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
