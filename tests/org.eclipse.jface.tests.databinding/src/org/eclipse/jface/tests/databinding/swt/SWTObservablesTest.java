@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 248621
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.swt;
@@ -147,7 +148,7 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		}
 	}
 
-	public void testObserveTextOfText() throws Exception {
+	public void testObserveTextWithEventOfText() throws Exception {
 		Text text = new Text(shell, SWT.NONE);
 		assertFalse(text.isListening(SWT.FocusOut));
 
@@ -199,6 +200,15 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 
 		CComboObservableValue ccomboObservable = (CComboObservableValue) value;
 		assertEquals(SWTProperties.TEXT, ccomboObservable.getAttribute());
+	}
+
+	public void testObserveTextOfText() throws Exception {
+		Text text = new Text(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeText(text);
+		assertNotNull(value);
+		assertTrue(value instanceof TextObservableValue);
+		assertFalse(text.isListening(SWT.Modify));
+		assertFalse(text.isListening(SWT.FocusOut));
 	}
 
 	public void testObserveTextOfUnsupportedControl() throws Exception {

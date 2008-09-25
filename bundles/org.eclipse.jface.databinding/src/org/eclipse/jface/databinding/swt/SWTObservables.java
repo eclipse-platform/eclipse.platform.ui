@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
- *     Matthew Hall - bug 180746, bug 207844, bug 245647
+ *     Matthew Hall - bug 180746, bug 207844, bug 245647, bug 248621
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *******************************************************************************/
@@ -46,6 +46,7 @@ import org.eclipse.jface.internal.databinding.swt.SpinnerObservableValue;
 import org.eclipse.jface.internal.databinding.swt.TableSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.swt.TextEditableObservableValue;
 import org.eclipse.jface.internal.databinding.swt.TextObservableValue;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Button;
@@ -278,6 +279,7 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.widgets.Combo</li>
 	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.widgets.Shell</li>
+	 * <li>org.eclipse.swt.widgets.Text (as of 1.3)</li>
 	 * </ul>
 	 * 
 	 * @param control
@@ -299,6 +301,8 @@ public class SWTObservables {
 					SWTProperties.TEXT);
 		} else if (control instanceof Shell) {
 			return new ShellObservableValue((Shell) control);
+		} else if (control instanceof Text) {
+			return new TextObservableValue((Text) control, SWT.None);
 		}
 
 		throw new IllegalArgumentException(
