@@ -72,17 +72,17 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * Whether this working copy has been modified since
 	 * it was created
 	 */
-	private boolean fDirty = false;
+	private boolean fDirty;
 		
 	/**
 	 * Indicates whether this working copy has been explicitly renamed.
 	 */
-	private boolean fRenamed = false;
+	private boolean fRenamed;
 	
 	/**
 	 * Suppress change notification until created
 	 */
-	private boolean fSuppressChange = true;
+	private boolean fSuppressChange ;
 		
 	/**
 	 * Constructs a working copy of the specified launch 
@@ -98,6 +98,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		copyFrom(original);
 		setOriginal(original);
 		fSuppressChange = false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.LaunchConfiguration#initialize()
+	 */
+	protected void initialize() {
+		fDirty = false;
+		fRenamed = false;
+		fSuppressChange = true;
+		super.initialize();
 	}
 	
 	/**

@@ -150,10 +150,18 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @since 3.5
 	 */
 	protected LaunchConfiguration(String name, IContainer container) {
+		initialize();
 		setName(name);
 		setContainer(container);
 	}
 
+	/**
+	 * Initialize any state variables - called first in the constructor.
+	 * Subclasses must override as appropriate.
+	 */
+	protected void initialize() {	
+	}
+	
 	/**
 	 * Constructs a launch configuration on the given workspace file.
 	 * 
