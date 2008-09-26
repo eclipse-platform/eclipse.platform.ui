@@ -14,6 +14,7 @@ package org.eclipse.ui.statushandlers;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -109,10 +110,10 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 		getStatusDialogManager().addStatusAdapter(statusAdapter, block);
 
 		if (block) {
-			Display display = getStatusDialogManager().getShell().getDisplay();
-			while (getStatusDialogManager().getShell() != null
+			Shell shell;
+			while ((shell = getStatusDialogManager().getShell()) != null
 					&& !getStatusDialogManager().getShell().isDisposed()) {
-				if (!display.readAndDispatch()) {
+				if (!shell.getDisplay().readAndDispatch()) {
 					Thread.yield();
 				}
 			}
