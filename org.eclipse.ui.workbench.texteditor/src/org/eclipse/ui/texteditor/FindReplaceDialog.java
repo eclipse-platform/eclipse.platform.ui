@@ -885,6 +885,18 @@ class FindReplaceDialog extends Dialog {
 		return fDialogPositionInit;
 	}
 
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 * @since 3.5
+	 */
+	protected Point getInitialSize() {
+		Point initialSize= super.getInitialSize();
+		Point minSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		if (initialSize.x < minSize.x)
+			return minSize;
+		return initialSize;
+	}
+
 	/**
 	 * Returns the dialog's history.
 	 * @return the dialog's history
