@@ -59,7 +59,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @see IToggleBreakpointsTarget
  * @see IToggleBreakpointsTargetExtension
- * @see ToggleBreakpointsTargetManager
+ * @see org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager
  * @since 3.5
  */
 public interface IToggleBreakpointsTargetFactory {
