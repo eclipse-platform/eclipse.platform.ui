@@ -40,14 +40,13 @@ import com.ibm.icu.util.Calendar;
 public class ConfigureSynchronizeScheduleComposite extends Composite {
 
 	private SubscriberRefreshSchedule schedule;
-	private Button userRefreshOnly;
 	private Button enableBackgroundRefresh;
 	private Text timeInterval;
 	private Combo hoursOrMinutes;
 	private IPageValidator validator;
 	private DateTime startTime;
-	private Button immediately;
-	private Button runOnce;
+	private Button repeatEvery;
+	private Label synchronizeAt;
 	
 	public ConfigureSynchronizeScheduleComposite(Composite parent, SubscriberRefreshSchedule schedule, IPageValidator validator) {
 		super(parent, SWT.NONE);
@@ -60,7 +59,6 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		boolean enableBackground = schedule.isEnabled();
 		boolean hours = false;
 		
-		userRefreshOnly.setSelection(! enableBackground);
 		enableBackgroundRefresh.setSelection(enableBackground);
 		
 		long seconds = schedule.getRefreshInterval();
@@ -76,17 +74,17 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		}		
 		hoursOrMinutes.select(hours ? 0 : 1);
 		timeInterval.setText(Long.toString(minutes));
-		runOnce.setSelection(schedule.getRunOnce());
+		repeatEvery.setSelection(!schedule.getRunOnce());
 		
 		Date start = schedule.getRefreshStartTime();
 		Calendar cal = Calendar.getInstance();
 		if (start != null) {
 			cal.setTime(start);
+			startTime.setTime(cal.get(Calendar.HOUR_OF_DAY), cal
+					.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
 		} else {
-			// ran immediately, no startTime available
-			cal.clear();
+			startTime.setTime(0, 0, 0); // default to 00:00:00
 		}
-		startTime.setTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +96,7 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		FontMetrics	fontMetrics = gc.getFontMetrics();
 		gc.dispose();
 		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
+		gridLayout.numColumns = 3;
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.horizontalSpacing = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.HORIZONTAL_SPACING);
@@ -107,117 +105,70 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		Composite area = this;
 
-		createWrappingLabel(area, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, schedule.getParticipant().getName()) }), 0, 2); 
-		{
-			final Label label = new Label(area, SWT.WRAP);
-			final GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-			gridData.horizontalSpan = 2;
-			label.setLayoutData(gridData);
-			label.setText(NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1a, new String[] { SubscriberRefreshSchedule.refreshEventAsString(schedule.getLastRefreshEvent()) }));			 
-		}
-		{
-			userRefreshOnly = new Button(area, SWT.RADIO);
-			final GridData gridData = new GridData();
-			gridData.horizontalSpan = 2;
-			userRefreshOnly.setLayoutData(gridData);
-			userRefreshOnly.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_2); 
-			userRefreshOnly.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
-					updateEnablements();
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-			});
-		}
-		{
-			enableBackgroundRefresh = new Button(area, SWT.RADIO);
-			final GridData gridData = new GridData();
-			gridData.horizontalSpan = 2;
-			enableBackgroundRefresh.setLayoutData(gridData);
-			enableBackgroundRefresh.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_3); 
-			enableBackgroundRefresh.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
-					updateEnablements();
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-			});
-		}
-		{
-			final Composite composite = new Composite(area, SWT.NONE);
-			final GridData gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING);
-			gridData.horizontalSpan = 2;
-			composite.setLayoutData(gridData);
-			final GridLayout gridLayout_1 = new GridLayout();
-			gridLayout_1.numColumns = 4;
-			gridLayout_1.marginWidth = 0;
-			gridLayout_1.marginHeight = 0;
-			gridLayout_1.horizontalSpacing = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.HORIZONTAL_SPACING);
-			gridLayout_1.verticalSpacing = Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.VERTICAL_SPACING);
-			composite.setLayout(gridLayout_1);
-			{
-				final Label label = new Label(composite, SWT.NONE);
-				label.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_3a);
+		createWrappingLabel(area, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, schedule.getParticipant().getName()) }), 0, 3); 
+
+		enableBackgroundRefresh = new Button(area, SWT.CHECK);
+		GridData gridData = new GridData();
+		gridData.horizontalSpan = 3;
+		enableBackgroundRefresh.setLayoutData(gridData);
+		enableBackgroundRefresh.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_3); 
+		enableBackgroundRefresh.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				updateEnablements();
 			}
-			{
-				startTime = new DateTime(composite, SWT.TIME | SWT.BORDER);
-				final GridData gridData_1 = new GridData();
-				gridData_1.horizontalSpan = 2;
-				startTime.setLayoutData(gridData_1);
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		synchronizeAt = createIndentedLabel(area, TeamUIMessages.ConfigureRefreshScheduleDialog_3a, 20);
+
+		startTime = new DateTime(area, SWT.TIME | SWT.BORDER);
+		gridData = new GridData();
+		gridData.horizontalSpan = 2;
+		startTime.setLayoutData(gridData);
 				
+		repeatEvery = createIndentedButton(area, TeamUIMessages.ConfigureRefreshScheduleDialog_4, 20);
+		repeatEvery.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				updateEnablements();
 			}
-			{
-				immediately = new Button(composite, SWT.CHECK);
-				immediately.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_3b);
-				immediately.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						updateEnablements();
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		timeInterval = new Text(area, SWT.BORDER | SWT.RIGHT);
+		gridData = new GridData();
+		gridData.widthHint = 35;
+		timeInterval.setLayoutData(gridData);
+		timeInterval.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateEnablements();
+			}
+		});
+		timeInterval.addVerifyListener(new VerifyListener() {
+			public void verifyText(VerifyEvent e) {
+				String string = e.text;
+				char[] chars = new char[string.length()];
+				string.getChars(0, chars.length, chars, 0);
+				for (int i = 0; i < chars.length; i++) {
+					if (!('0' <= chars[i] && chars[i] <= '9')) {
+						e.doit = false;
+						return;
 					}
-				});
+				}
 			}
-			{
-				final Label label = new Label(composite, SWT.NONE);
-				label.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_4); 
-			}
-			{
-				timeInterval = new Text(composite, SWT.BORDER | SWT.RIGHT);
-				final GridData gridData_1 = new GridData();
-				gridData_1.widthHint = 35;
-				timeInterval.setLayoutData(gridData_1);
-				timeInterval.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
-						updateEnablements();
-					}
-				});
-				timeInterval.addVerifyListener(new VerifyListener() {
-					public void verifyText(VerifyEvent e) {
-						String string = e.text;
-						char [] chars = new char [string.length ()];
-						string.getChars (0, chars.length, chars, 0);
-						for (int i=0; i<chars.length; i++) {
-							if (!('0' <= chars [i] && chars [i] <= '9')) {
-								e.doit = false;
-								return;
-							}
-						}
-					}
-				});
-			}
-			{
-				hoursOrMinutes = new Combo(composite, SWT.READ_ONLY);
-				hoursOrMinutes.setItems(new String[] { TeamUIMessages.ConfigureRefreshScheduleDialog_5, TeamUIMessages.ConfigureRefreshScheduleDialog_6 }); // 
-				hoursOrMinutes.setLayoutData(new GridData());
-			}
-			{
-				runOnce = new Button(composite, SWT.CHECK);
-				runOnce.setText(TeamUIMessages.ConfigureRefreshScheduleDialog_8);
-				runOnce.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						updateEnablements();
-					}
-				});				
-			}
-		}
+		});
+
+		hoursOrMinutes = new Combo(area, SWT.READ_ONLY);
+		hoursOrMinutes.setItems(new String[] { TeamUIMessages.ConfigureRefreshScheduleDialog_5, TeamUIMessages.ConfigureRefreshScheduleDialog_6 }); // 
+		hoursOrMinutes.setLayoutData(new GridData());
+		
+		final Label label = new Label(area, SWT.WRAP);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+		label.setLayoutData(gridData);
+		label.setText(NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_2, new String[] { SubscriberRefreshSchedule.refreshEventAsString(schedule.getLastRefreshEvent()) }));			 
+
 		initializeValues();
 		updateEnablements();
 	}
@@ -226,32 +177,33 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	public void saveValues() {
-		if (!runOnce.getSelection()) {		
-			int hours = hoursOrMinutes.getSelectionIndex();
-			try {
-				long seconds = Long.parseLong(timeInterval.getText());
-				if(hours == 0) {
-					seconds = seconds * 3600;
-				} else {
-					seconds = seconds * 60;
-				}
-				schedule.setRefreshInterval(seconds);
-			} catch (NumberFormatException e) {
-				// keep old value
-			}
-		} else {
-			schedule.setRunOnce(runOnce.getSelection() /* true */);
-		}
-		
-		if (!immediately.getSelection()) {
+		if (enableBackgroundRefresh.getSelection()) {
+			
+			// start time
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.HOUR_OF_DAY, startTime.getHours());
 			cal.set(Calendar.MINUTE, startTime.getMinutes());
 			cal.set(Calendar.SECOND, startTime.getSeconds());
 			schedule.setRefreshStartTime(cal.getTime());
-		} else {
-			schedule.setRefreshStartTime(null);
-		}
+			
+			// repeat interval
+			if (repeatEvery.getSelection()) {
+				int hours = hoursOrMinutes.getSelectionIndex();
+				try {
+					long seconds = Long.parseLong(timeInterval.getText());
+					if (hours == 0) {
+						seconds = seconds * 3600;
+					} else {
+						seconds = seconds * 60;
+					}
+					schedule.setRefreshInterval(seconds);
+				} catch (NumberFormatException e) {
+					// keep old value
+				}
+			} else {
+				schedule.setRunOnce(true);
+			}
+		}		
 		
 		if(schedule.isEnabled() != enableBackgroundRefresh.getSelection()) {
 			schedule.setEnabled(enableBackgroundRefresh.getSelection(), true /* allow to start */);
@@ -271,33 +223,27 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#updateEnablements()
 	 */
 	public void updateEnablements() {
-		if (userRefreshOnly.getSelection()) {
+		if (!enableBackgroundRefresh.getSelection()) {
 			validator.setComplete(null);
 		} else {
-			try {
-				long number = Long.parseLong(timeInterval.getText());
-				if(number <= 0) {
+			if (repeatEvery.getSelection()) {
+				try {
+					long number = Long.parseLong(timeInterval.getText());
+					if(number <= 0) {
+						validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_7); 
+					} else {
+						validator.setComplete(null);
+					}
+				} catch (NumberFormatException e) {
 					validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_7); 
-				} else {
-					validator.setComplete(null);
-				}
-			} catch (NumberFormatException e) {
-				validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_7); 
-			}	
+				}	
+			} 
 		}
-		timeInterval.setEnabled(enableBackgroundRefresh.getSelection());
-		hoursOrMinutes.setEnabled(enableBackgroundRefresh.getSelection());
-		runOnce.setEnabled(enableBackgroundRefresh.getSelection());
-		if (runOnce.isEnabled()) {
-			timeInterval.setEnabled(!runOnce.getSelection());
-			hoursOrMinutes.setEnabled(!runOnce.getSelection());
-		}
-		
+		synchronizeAt.setEnabled(enableBackgroundRefresh.getSelection());
 		startTime.setEnabled(enableBackgroundRefresh.getSelection());
-		immediately.setEnabled(enableBackgroundRefresh.getSelection());
-		if (immediately.isEnabled()) {
-			startTime.setEnabled(!immediately.getSelection());
-		}
+		repeatEvery.setEnabled(enableBackgroundRefresh.getSelection());
+		timeInterval.setEnabled(enableBackgroundRefresh.getSelection() && repeatEvery.getSelection());
+		hoursOrMinutes.setEnabled(enableBackgroundRefresh.getSelection() && repeatEvery.getSelection());
 	}
 	
 	private Label createWrappingLabel(Composite parent, String text, int indent, int horizontalSpan) {
@@ -309,6 +255,28 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		data.horizontalIndent = indent;
 		data.grabExcessHorizontalSpace = true;
 		data.widthHint = 400;
+		label.setLayoutData(data);
+		return label;
+	}
+	
+	private static Label createIndentedLabel(Composite parent, String text, int indent) {
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = 1;
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalIndent = indent;
+		label.setLayoutData(data);
+		return label;
+	}
+	
+	private static Button createIndentedButton(Composite parent, String text, int indent) {
+		Button label = new Button(parent, SWT.CHECK);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = 1;
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalIndent = indent;
 		label.setLayoutData(data);
 		return label;
 	}

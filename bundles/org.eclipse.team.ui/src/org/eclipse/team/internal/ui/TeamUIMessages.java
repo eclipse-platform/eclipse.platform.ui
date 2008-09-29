@@ -411,16 +411,13 @@ public class TeamUIMessages extends NLS {
 	public static String RefreshCompleteDialog_6;
 	public static String ConfigureRefreshScheduleDialog_0;
 	public static String ConfigureRefreshScheduleDialog_1;
-	public static String ConfigureRefreshScheduleDialog_1a;
 	public static String ConfigureRefreshScheduleDialog_2;
 	public static String ConfigureRefreshScheduleDialog_3;
 	public static String ConfigureRefreshScheduleDialog_3a;
-	public static String ConfigureRefreshScheduleDialog_3b;
 	public static String ConfigureRefreshScheduleDialog_4;
 	public static String ConfigureRefreshScheduleDialog_5;
 	public static String ConfigureRefreshScheduleDialog_6;
 	public static String ConfigureRefreshScheduleDialog_7;
-	public static String ConfigureRefreshScheduleDialog_8;
 	public static String RefreshSchedule_changesSingular;
 	public static String RefreshSchedule_changesPlural;
 	public static String RefreshSchedule_7;
