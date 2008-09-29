@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	compeople AG (Stefan Liebig) - initial API and implementation
+ * 	IBM Corporation - bug 246072, adding IProxyData.source support 
  *******************************************************************************/
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
@@ -149,6 +150,7 @@ public final class ProxyProviderUtil {
 		IProxyData proxy = new ProxyData(type);
 		proxy.setHost(host);
 		proxy.setPort(port);
+		proxy.setSource("WINDOWS_IE"); //$NON-NLS-1$
 		return proxy;
 	}
 
@@ -219,6 +221,7 @@ public final class ProxyProviderUtil {
 			IProxyData proxy = new ProxyData(proxyType);
 			proxy.setHost(hostname);
 			proxy.setPort(port);
+			proxy.setSource("WINDOWS_IE"); //$NON-NLS-1$
 			return proxy;
 		}
 		return null;

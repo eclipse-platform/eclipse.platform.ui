@@ -574,6 +574,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 			}
 			proxy.setUserid(enableAuth ? userid.getText() : null);
 			proxy.setPassword(enableAuth ? password.getText() : null);
+			proxy.setSource(null);
 		}
 		
 		public void addProtocolEntry(Composite parent) {

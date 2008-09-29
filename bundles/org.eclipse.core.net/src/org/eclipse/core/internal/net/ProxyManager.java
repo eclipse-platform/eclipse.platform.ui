@@ -445,7 +445,8 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			int port = getPortToMigrate(updatePrefs, isInitialize /* checkSystemProperties */);
 			boolean httpProxyEnable = getEnablementToMigrate(updatePrefs, isInitialize /* checkSystemProperties */);
 			if (httpProxyHost != null) {
-				ProxyData proxyData = new ProxyData(IProxyData.HTTP_PROXY_TYPE, httpProxyHost, port, false);
+				ProxyData proxyData = new ProxyData(IProxyData.HTTP_PROXY_TYPE,
+						httpProxyHost, port, false, null);
 				ProxyType type = getType(proxyData);
 				type.updatePreferencesIfMissing(netPrefs, proxyData);
 				if (httpProxyEnable) {

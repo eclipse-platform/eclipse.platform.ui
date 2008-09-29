@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,10 @@
 package org.eclipse.core.net.proxy;
 
 /**
- * An {@link IProxyData} contains the information that is required to connect
- * to a particular proxy server.
- * <p>
- * This interface is not intended to be implemented by clients.
+ * An {@link IProxyData} contains the information that is required to connect to
+ * a particular proxy server.
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 1.0
  */
 public interface IProxyData {
@@ -139,6 +138,30 @@ public interface IProxyData {
 	 * @return whether the proxy requires authentication
 	 */
 	boolean isRequiresAuthentication();
+
+	/**
+	 * Returns the proxy source name. This value is useful for diagnosing
+	 * purposes since many OS specific proxy sources could be available in a
+	 * single environment. Null value means that the setting come from Eclipse
+	 * preferences and is not OS specific.
+	 * 
+	 * @since 1.2
+	 * @return name of the proxy setting source, might be <code>null</code>
+	 */
+	String getSource();
+
+	/**
+	 * Sets the proxy source name. This value is useful for diagnosing purposes
+	 * since many OS specific proxy sources could be available in a single
+	 * environment. Null value means that the setting comes from Eclipse
+	 * preferences and is not OS specific.
+	 * 
+	 * @param source
+	 *            proxy setting source name to be set, might be
+	 *            <code>null</code>
+	 * @since 1.2
+	 */
+	void setSource(String source);
 
 	/**
 	 * Set the values of this data to represent a disabling of its type.

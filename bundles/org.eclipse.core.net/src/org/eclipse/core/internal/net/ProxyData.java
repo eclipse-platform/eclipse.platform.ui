@@ -20,12 +20,15 @@ public class ProxyData implements IProxyData {
 	private String user;
 	private String password;
 	private boolean requiresAuthentication;
+	private String source;
 
-	public ProxyData(String type, String host, int port, boolean requiresAuthentication) {
+	public ProxyData(String type, String host, int port,
+			boolean requiresAuthentication, String source) {
 		this.type = type;
 		this.host = host;
 		this.port = port;
 		this.requiresAuthentication = requiresAuthentication;
+		this.source = source;
 	}
 
 	public ProxyData(String type) {
@@ -83,6 +86,14 @@ public class ProxyData implements IProxyData {
 		requiresAuthentication = false;
 	}
 
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("type: "); //$NON-NLS-1$
@@ -97,7 +108,9 @@ public class ProxyData implements IProxyData {
 		stringBuffer.append(password);
 		stringBuffer.append(" reqAuth: "); //$NON-NLS-1$
 		stringBuffer.append(requiresAuthentication);
-		return stringBuffer.toString(); 
+		stringBuffer.append(" source: "); //$NON-NLS-1$
+		stringBuffer.append(source);
+		return stringBuffer.toString();
 	}
 
 }

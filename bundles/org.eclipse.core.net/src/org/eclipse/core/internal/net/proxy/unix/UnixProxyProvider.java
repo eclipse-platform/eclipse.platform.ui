@@ -127,7 +127,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 					pd.setUserid(user);
 					pd.setPassword(password);
 				}
-
+				pd.setSource("LINUX_ENV"); //$NON-NLS-1$
 				if (Policy.DEBUG_SYSTEM_PROVIDERS)
 					Policy.debug("Got Env proxy: " + pd); //$NON-NLS-1$
 				return pd;
@@ -143,6 +143,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 				pd = getGConfProxyInfo(protocol);
 				if (Policy.DEBUG_SYSTEM_PROVIDERS)
 					Policy.debug("Got Gnome proxy: " + pd); //$NON-NLS-1$
+				pd.setSource("LINUX_GNOME"); //$NON-NLS-1$
 				return pd;
 			} catch (UnsatisfiedLinkError e) {
 				// The library should be loaded, so this is a real exception

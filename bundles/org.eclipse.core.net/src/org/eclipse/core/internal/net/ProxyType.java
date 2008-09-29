@@ -135,7 +135,8 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 			host = null;
 		int port = node.getInt(PREF_PROXY_PORT, -1);
 		boolean requiresAuth = node.getBoolean(PREF_PROXY_HAS_AUTH, false);
-		ProxyData proxyData = new ProxyData(type, host, port, requiresAuth);
+		ProxyData proxyData = new ProxyData(type, host, port, requiresAuth,
+				null);
 		loadProxyAuth(proxyData);
 		if (verifyFlag == VERIFY_EMPTY) {
 			// We are initializing so verify that the system properties are empty
