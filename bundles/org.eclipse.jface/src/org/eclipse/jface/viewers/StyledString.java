@@ -13,11 +13,12 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.TextStyle;
+
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.TextStyle;
 
 /**
  * A mutable string with styled ranges. All ranges mark substrings of the string
@@ -301,9 +302,12 @@ public class StyledString {
 	 * @param offset
 	 *            the insertion index
 	 * @return returns a reference to this object
+	 * @throws StringIndexOutOfBoundsException
+	 *             if <code>offset</code> is less than zero, or if <code>offset</code>
+	 *             is greater than the length of this object
 	 * @since 3.5
 	 */
-	public StyledString insert(char ch, int offset) {
+	public StyledString insert(char ch, int offset) throws StringIndexOutOfBoundsException {
 		if (offset < 0 || offset > fBuffer.length()) {
 			throw new StringIndexOutOfBoundsException(
 					"Invalid offset (" + offset + ")"); //$NON-NLS-1$//$NON-NLS-2$
@@ -342,7 +346,7 @@ public class StyledString {
 	 *             if <code>start</code> is less than zero, or if offset plus
 	 *             length is greater than the length of this object.
 	 */
-	public void setStyle(int offset, int length, Styler styler) {
+	public void setStyle(int offset, int length, Styler styler) throws StringIndexOutOfBoundsException {
 		if (offset < 0 || offset + length > fBuffer.length()) {
 			throw new StringIndexOutOfBoundsException(
 					"Invalid offset (" + offset + ") or length (" + length + ")"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
