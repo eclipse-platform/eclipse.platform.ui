@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.core.expressions">
+<schema targetNamespace="org.eclipse.core.expressions" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.core.expressions" id="definitions" name="Expression Definitions"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 This extension point allows you to create reusable extensions.  They can then be used in other core expression constructs.
@@ -12,13 +12,17 @@ This extension point allows you to create reusable extensions.  They can then be
 &lt;p&gt;
 The reference element in a core expression will evaluated the expression definition with the evaluation context that is active for the reference element.
 &lt;/p&gt;
-
       </documentation>
    </annotation>
 
    <include schemaLocation="expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="definition" minOccurs="0" maxOccurs="unbounded"/>
@@ -42,9 +46,9 @@ The reference element in a core expression will evaluated the expression definit
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -82,26 +86,35 @@ The reference element in a core expression will evaluated the expression definit
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         3.3
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          You can define and the use core expressions:
 
 &lt;p&gt;
 &lt;pre&gt;
-&amp;lt;extension point=&quot;org.eclipse.core.expressions.definitions&quot;&amp;gt;
-   &amp;lt;definition id=&quot;com.example.parts.activeProblemsView&quot;&amp;gt;
-       &amp;lt;with variable=&quot;activePartId&quot;&amp;gt;
-          &amp;lt;equals value=&quot;org.eclipse.ui.views.ProblemsView&quot;/&amp;gt;
-       &amp;lt;/with&amp;gt;
-   &amp;lt;/definition&amp;gt;
-   &amp;lt;definition id=&quot;com.example.markers.markerSelection&quot;&amp;gt;
-       &amp;lt;iterate&amp;gt;
-          &amp;lt;instanceof value=&quot;org.eclipse.core.resources.IMarker&quot;/&amp;gt;
-       &amp;lt;/with&amp;gt;
-   &amp;lt;/definition&amp;gt;
-&amp;lt;/extension&amp;gt;
+&lt;extension point=&quot;org.eclipse.core.expressions.definitions&quot;&gt;
+   &lt;definition id=&quot;com.example.parts.activeProblemsView&quot;&gt;
+       &lt;with variable=&quot;activePartId&quot;&gt;
+          &lt;equals value=&quot;org.eclipse.ui.views.ProblemsView&quot;/&gt;
+       &lt;/with&gt;
+   &lt;/definition&gt;
+   &lt;definition id=&quot;com.example.markers.markerSelection&quot;&gt;
+       &lt;iterate&gt;
+          &lt;instanceof value=&quot;org.eclipse.core.resources.IMarker&quot;/&gt;
+       &lt;/with&gt;
+   &lt;/definition&gt;
+&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 &lt;p&gt;
@@ -109,56 +122,30 @@ Then this expression definition can be used when composing other expressions.
 &lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
-&amp;lt;enabledWhen&amp;gt;
-   &amp;lt;reference definitionId=&quot;com.example.parts.activeProblemsView&quot;&amp;gt;
-&amp;lt;/enabledWhen&amp;gt;
+&lt;enabledWhen&gt;
+   &lt;reference definitionId=&quot;com.example.parts.activeProblemsView&quot;&gt;
+&lt;/enabledWhen&gt;
 &lt;/pre&gt;
 &lt;pre&gt;
-&amp;lt;visibleWhen&amp;gt;
-   &amp;lt;and&amp;gt;
-      &amp;lt;reference definitionId=&quot;com.example.parts.activeProblemsView&quot;/&amp;gt;
-      &amp;lt;reference definitionId=&quot;com.example.markers.markerSelection&quot;/&amp;gt;
-   &amp;lt;/and&amp;gt;
-&amp;lt;/visibleWhen&amp;gt;
+&lt;visibleWhen&gt;
+   &lt;and&gt;
+      &lt;reference definitionId=&quot;com.example.parts.activeProblemsView&quot;/&gt;
+      &lt;reference definitionId=&quot;com.example.markers.markerSelection&quot;/&gt;
+   &lt;/and&gt;
+&lt;/visibleWhen&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.3
-      </documentation>
-   </annotation>
+
 
    <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Copyright (c) 2007 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2007, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
