@@ -64,6 +64,7 @@ import org.eclipse.core.tests.databinding.observable.value.AbstractVetoableValue
 import org.eclipse.core.tests.databinding.observable.value.ComputedValueTest;
 import org.eclipse.core.tests.databinding.observable.value.DecoratingObservableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.WritableValueTest;
+import org.eclipse.core.tests.databinding.util.PolicyTest;
 import org.eclipse.core.tests.databinding.validation.MultiValidatorTest;
 import org.eclipse.core.tests.databinding.validation.ValidationStatusTest;
 import org.eclipse.core.tests.internal.databinding.BindingMessagesTest;
@@ -155,9 +156,9 @@ import org.eclipse.jface.tests.internal.databinding.swt.ComboObservableValueTest
 import org.eclipse.jface.tests.internal.databinding.swt.ComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ControlObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.swt.SWTDelayedObservableValueDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ListSingleSelectionObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.swt.SWTDelayedObservableValueDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SWTObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueMinTest;
@@ -193,6 +194,7 @@ public class BindingTestSuite extends TestSuite {
 	}
 
 	public BindingTestSuite() {
+		
 		// org.eclipse.core.tests.databinding
 		addTestSuite(AggregateValidationStatusTest.class);
 		addTestSuite(DatabindingContextTest.class);
@@ -201,6 +203,9 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(UpdateValueStrategyTest.class);
 		addTestSuite(ValueBindingTest.class);
 		addTestSuite(ObservablesManagerTest.class);
+
+		// org.eclipse.core.tests.databinding.util
+		addTestSuite(PolicyTest.class);
 
 		// org.eclipse.core.tests.databinding.beans
 		addTestSuite(BeansObservablesTest.class);
