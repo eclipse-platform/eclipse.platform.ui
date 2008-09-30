@@ -26,13 +26,13 @@ import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.revisions.Revision;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -73,7 +73,7 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -132,7 +132,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	private Image branchImage;
 	private Image versionImage;
-	
+
+	private IDialogSettings settings;
+
 	protected IFileRevision currentSelection;
 
 	/* private */RefreshCVSFileHistory  refreshCVSFileHistoryJob;
@@ -151,7 +153,15 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public final static int REMOTE_LOCAL_MODE = 0;
 	public final static int REMOTE_MODE = 1;
 	public final static int LOCAL_MODE = 2;
-	
+
+	// page settings keys 
+	private final static String SASH_WEIGHTS = "SASH_WEIGHTS"; //$NON-NLS-1$
+	private final static String INNER_SASH_WEIGHTS = "INNER_SASH_WEIGHTS"; //$NON-NLS-1$
+	private final static String SASH_WEIGHTS_SEPARATOR = ";"; //$NON-NLS-1$
+
+	// page settings section name
+	private static final String CVS_HISTORY_PAGE_SECTION = CVSHistoryPage.class.getName();
+
 	//current filter mode
 	private int currentFilerMode = 0;
 	
@@ -160,7 +170,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	//current tag list sort order.
 	private boolean sortTagsAscending = true;
-	
+
+	// listener registered on the book this page is contained
+	private DisposeListener disposeListener;
+
 	//grouping on
 	private boolean groupingOn;
 	private CVSHistoryFilter historyFilter;
@@ -173,9 +186,15 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
+
+		IDialogSettings viewsSettings = CVSUIPlugin.getPlugin()
+				.getDialogSettings();
+		settings = viewsSettings.getSection(CVS_HISTORY_PAGE_SECTION);
+		if (settings == null) {
+			settings = viewsSettings.addNewSection(CVS_HISTORY_PAGE_SECTION);
+		}
 	}
-	
-	
+
 	/**
 	 * Action to sort the tag list ascending or descending.
 	 */
@@ -229,14 +248,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				Display.getDefault().timerExec(1000, searchHistoryTable);
 			}
 		});
-		
-		sashForm.setWeights(new int[] {65, 20, 15});
-		innerSashForm.setWeights(new int[] {50, 50});
-		
-		contributeActions();
 
+		contributeActions();
 		setViewerVisibility();
-		
+
+		int[] weights = loadSashWeights(SASH_WEIGHTS);
+		sashForm.setWeights(weights.length == 3 ? weights : new int[] { 65, 20,
+				15 });
+		int[] innerWeights = loadSashWeights(INNER_SASH_WEIGHTS);
+		innerSashForm.setWeights(innerWeights.length == 2 ? innerWeights
+				: new int[] { 50, 50 });
+
 		IHistoryPageSite parentSite = getHistoryPageSite();
 		if (parentSite != null && parentSite instanceof DialogHistoryPageSite && treeViewer != null)
 			parentSite.setSelectionProvider(treeViewer);
@@ -245,6 +267,44 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(sashForm, IHelpContextIds.RESOURCE_HISTORY_VIEW);
+
+		disposeListener = new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				saveState();
+			}
+		};
+		parent.addDisposeListener(disposeListener);
+	}
+
+	private void saveState() {
+		saveSashWeights(SASH_WEIGHTS, sashForm.getWeights());
+		saveSashWeights(INNER_SASH_WEIGHTS, innerSashForm.getWeights());
+		historyTableProvider.saveColumnWeights();
+	}
+
+	private int[] loadSashWeights(String key) {
+		String value = settings.get(key);
+		if (value == null) {
+			return new int[0];
+		}
+		String weigths[] = value.split(SASH_WEIGHTS_SEPARATOR);
+		int result[] = new int[weigths.length];
+		for (int i = 0; i < weigths.length; i++) {
+			try {
+				result[i] = Integer.parseInt(weigths[i]);
+			} catch (NumberFormatException e) {
+				return new int[0];
+			}
+		}
+		return result;
+	}
+
+	private void saveSashWeights(String key, int[] weights) {
+		StringBuffer value = new StringBuffer();
+		for (int i = 0; i < weights.length; i++) {
+			value = value.append(weights[i] + SASH_WEIGHTS_SEPARATOR);
+		}
+		settings.put(key, value.toString());
 	}
 
 	private TextViewer createText(SashForm parent) {
@@ -832,7 +892,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	protected TreeViewer createTree(Composite parent) {
 
 		historyTableProvider = new CVSHistoryTableProvider();
-		TreeViewer viewer = historyTableProvider.createTree(parent, cvsFileHistory == null ? true : cvsFileHistory.isIncludeLocal());
+		TreeViewer viewer = historyTableProvider
+				.createTree(parent, cvsFileHistory == null ? true
+						: cvsFileHistory.isIncludeLocal());
 
 		viewer.setContentProvider(new ITreeContentProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -1236,6 +1298,15 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	public void dispose() {
 		shutdown = true;
+		
+		
+		if (!sashForm.isDisposed() && !innerSashForm.isDisposed()) {
+			saveState(); // called when switching pages 
+			if (disposeListener != null){
+				sashForm.getParent().removeDisposeListener(disposeListener);
+				disposeListener = null;
+			}
+		}
 
 		if (resourceListener != null){
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
@@ -2101,4 +2172,5 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			workbenchPageSite.getActionBars().getStatusLineManager().setMessage(message);
 		}
 	}
+
 }

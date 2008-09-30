@@ -17,6 +17,7 @@ import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -55,12 +56,36 @@ public class CVSHistoryTableProvider {
 
 	private boolean baseModified;
 
+	private IDialogSettings settings;
+
 	//column constants
 	private static final int COL_REVISIONID = 0;
 	private static final int COL_TAGS = 1;
 	private static final int COL_DATE = 2;
 	private static final int COL_AUTHOR = 3;
 	private static final int COL_COMMENT = 4;
+	
+	// cvs history table provider settings section name
+	private static final String CVS_HISTORY_TABLE_PROVIDER_SECTION = CVSHistoryTableProvider.class.getName();
+
+	// cvs history table provider settings keys
+	private static final String COL_REVISIONID_NAME = "COL_REVISIONID"; //$NON-NLS-1$
+	private static final String COL_TAGS_NAME = "COL_TAGS"; //$NON-NLS-1$
+	private static final String COL_DATE_NAME = "COL_DATE"; //$NON-NLS-1$
+	private static final String COL_AUTHOR_NAME = "COL_AUTHOR"; //$NON-NLS-1$
+	private static final String COL_COMMENT_NAME = "COL_COMMENT"; //$NON-NLS-1$
+
+	private static final String COL_NAME = "COLUMN_NAME"; //$NON-NLS-1$
+
+	public CVSHistoryTableProvider() {
+		IDialogSettings viewsSettings = CVSUIPlugin.getPlugin()
+				.getDialogSettings();
+		settings = viewsSettings.getSection(CVS_HISTORY_TABLE_PROVIDER_SECTION);
+		if (settings == null) {
+			settings = viewsSettings
+					.addNewSection(CVS_HISTORY_TABLE_PROVIDER_SECTION);
+		}
+	}
 
 	/**
 	 * The history label provider.
@@ -488,45 +513,67 @@ public class CVSHistoryTableProvider {
 		TreeViewerColumn viewerCol = new TreeViewerColumn(tree, SWT.NONE);
 		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_REVISIONID, this));
 		TreeColumn col = viewerCol.getColumn();
+		col.setData(COL_NAME, COL_REVISIONID_NAME);
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Revision);
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
+		layout.addColumnData(loadColumnWeightData(COL_REVISIONID_NAME));
 
 		// tags
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
 		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_TAGS, this));
 		col = viewerCol.getColumn();
+		col.setData(COL_NAME, COL_TAGS_NAME);
 		col.setResizable(true);
 		col.setText(CVSUIMessages.HistoryView_tags); 
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
+		layout.addColumnData(loadColumnWeightData(COL_TAGS_NAME));
+
 		// creation date
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
 		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_DATE, this));
 		col = viewerCol.getColumn();
+		col.setData(COL_NAME, COL_DATE_NAME);
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_RevisionTime);
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
+		layout.addColumnData(loadColumnWeightData(COL_DATE_NAME));
 
 		// author
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
 		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_AUTHOR, this));
 		col = viewerCol.getColumn();
+		col.setData(COL_NAME, COL_AUTHOR_NAME);
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Author);
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
+		layout.addColumnData(loadColumnWeightData(COL_AUTHOR_NAME));
 
 		//comment
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
 		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_COMMENT, this));
 		col = viewerCol.getColumn();
+		col.setData(COL_NAME, COL_COMMENT_NAME);
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Comment);
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(50, true));
+		layout.addColumnData(loadColumnWeightData(COL_COMMENT_NAME));
+	}
+
+	private ColumnLayoutData loadColumnWeightData(String key) {
+		try {
+			return new ColumnPixelData(settings.getInt(key), true);
+		} catch (NumberFormatException e) {
+			return new ColumnWeightData(20, true);
+		}
+	}
+
+	public void saveColumnWeights() {
+		TreeColumn columns[] = viewer.getTree().getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			settings.put((String) columns[i].getData(COL_NAME), columns[i]
+					.getWidth());
+		}
 	}
 
 	/**
