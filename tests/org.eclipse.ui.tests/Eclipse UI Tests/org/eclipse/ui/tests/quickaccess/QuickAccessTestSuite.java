@@ -31,5 +31,6 @@ public class QuickAccessTestSuite extends TestSuite {
      */
     public QuickAccessTestSuite() {
         addTest(new TestSuite(CamelUtilTest.class));
+        addTest(new TestSuite(QuickAccessDialogTest.class));
     }
 }

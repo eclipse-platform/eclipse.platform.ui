@@ -223,6 +223,38 @@ public abstract class UITestCase extends TestCase {
                 ;
     }
 
+    protected static interface Condition {
+    	public boolean compute();
+    }
+    
+	/**
+	 * 
+	 * @param condition
+	 *            , or null if this should only wait
+	 * @param timeout
+	 *            , -1 if forever
+	 * @return true if successful, false if time out or interrupted
+	 */
+	protected boolean processEventsUntil(Condition condition, long timeout) {
+		long startTime = System.currentTimeMillis();
+		Display display = getWorkbench().getDisplay();
+		while (condition == null || !condition.compute()) {
+			if (timeout != -1
+					&& System.currentTimeMillis() - startTime > timeout) {
+				return false;
+			}
+			while (display.readAndDispatch())
+				;
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return false;
+			}
+		}
+		return true;
+	}
+    
     /** 
      * Open a test window with the empty perspective.
      */

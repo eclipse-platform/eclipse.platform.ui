@@ -79,12 +79,12 @@ public class QuickAccessDialog extends PopupDialog {
 	private static final int INITIAL_COUNT_PER_PROVIDER = 5;
 	private static final int MAX_COUNT_TOTAL = 20;
 
-	private Text filterText;
+	protected Text filterText;
 
 	private QuickAccessProvider[] providers;
 	private IWorkbenchWindow window;
 
-	private Table table;
+	protected Table table;
 
 	private LocalResourceManager resourceManager = new LocalResourceManager(
 			JFaceResources.getResources());
@@ -115,7 +115,7 @@ public class QuickAccessDialog extends PopupDialog {
 	protected boolean resized = false;
 
 
-	QuickAccessDialog(IWorkbenchWindow window, final Command invokingCommand) {
+	public QuickAccessDialog(IWorkbenchWindow window, final Command invokingCommand) {
 		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true, // persist size
 				false, // but not location
 				true, true, null,
@@ -425,7 +425,7 @@ public class QuickAccessDialog extends PopupDialog {
 		return keyAdapter;
 	}
 
-	private void toggleShowAllMatches() {
+	protected void toggleShowAllMatches() {
 		showAllMatches = !showAllMatches;
 		refresh(filterText.getText().toLowerCase());
 	}
