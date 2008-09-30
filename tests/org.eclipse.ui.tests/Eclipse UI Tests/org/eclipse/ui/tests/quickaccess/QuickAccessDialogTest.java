@@ -41,6 +41,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		Text getFilterText() {
 			return filterText;
 		}
+
 		protected void toggleShowAllMatches() {
 			super.toggleShowAllMatches();
 		}
@@ -58,23 +59,25 @@ public class QuickAccessDialogTest extends UITestCase {
 				getWorkbench().getActiveWorkbenchWindow(), null);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
-		assertTrue("expecting items", processEventsUntil(new Condition() {
-			public boolean compute() {
-				return dialog.getTable().getItemCount() > 0;
-			};
-		}, 200));
-		String oldFirstItemText = dialog.getTable().getItem(0).getText(1);
-		dialog.getFilterText().setText("e");
-		int count1 = dialog.getTable().getItemCount();
-		assertTrue("expecting matching items",
-				count1 > 0);
-		assertNotSame("expecting different item", oldFirstItemText, dialog
-				.getTable().getItem(0).getText(1));
-		dialog.toggleShowAllMatches();
-		int count2 = dialog.getTable().getItemCount();
-		assertTrue("still expecting matching items",
-				count2 > 0);
-		assertTrue("expecting more matching items", count2> count1);
+		try {
+			assertTrue("expecting items", processEventsUntil(new Condition() {
+				public boolean compute() {
+					return dialog.getTable().getItemCount() > 0;
+				};
+			}, 200));
+			String oldFirstItemText = dialog.getTable().getItem(0).getText(1);
+			dialog.getFilterText().setText("e");
+			int count1 = dialog.getTable().getItemCount();
+			assertTrue("expecting matching items", count1 > 0);
+			assertNotSame("expecting different item", oldFirstItemText, dialog
+					.getTable().getItem(0).getText(1));
+			dialog.toggleShowAllMatches();
+			int count2 = dialog.getTable().getItemCount();
+			assertTrue("still expecting matching items", count2 > 0);
+			assertTrue("expecting more matching items", count2 > count1);
+		} finally {
+			dialog.close();
+		}
 	}
 
 }
