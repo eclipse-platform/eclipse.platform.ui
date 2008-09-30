@@ -1282,15 +1282,18 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.TextViewer#handleVerifyEvent(org.eclipse.swt.events.VerifyEvent)
 	 */
 	protected void handleVerifyEvent(VerifyEvent e) {
+		Point selection= getSelectedRange();
 		IRegion modelRange= event2ModelRange(e);
 		if (exposeModelRange(modelRange)) {
 			e.doit= false;
-			IRegion widgetRange= modelRange2WidgetRange(modelRange);
 			try {
-				int insertOffset= widgetRange.getOffset();
-				getDocument().replace(insertOffset, widgetRange.getLength(), e.text);
-				int caretOffset= insertOffset + e.text.length();
-				getTextWidget().setSelection(caretOffset, caretOffset);
+				if (selection.y == 0 && e.text.length() <= 1 && modelRange.getLength() == 1) {
+					selection.y= 1;
+					if (selection.x - 1 == modelRange.getOffset())
+						selection.x--;
+				}
+				getDocument().replace(selection.x, selection.y, e.text);
+				setSelectedRange(selection.x + e.text.length(), 0);
 			} catch (BadLocationException e1) {
 				// ignore as nothing bad happens (no log at this level)
 			}
