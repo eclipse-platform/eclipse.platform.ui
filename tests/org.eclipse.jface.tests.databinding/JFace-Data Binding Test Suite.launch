@@ -9,6 +9,12 @@
 <booleanAttribute key="clearConfig" value="true"/>
 <booleanAttribute key="clearws" value="true"/>
 <booleanAttribute key="clearwslog" value="false"/>
+<booleanAttribute key="com.mountainminds.eclemma.core.INPLACE_INSTRUMENTATION" value="true"/>
+<listAttribute key="com.mountainminds.eclemma.core.INSTRUMENTATION_PATHS">
+<listEntry value="/org.eclipse.jface.databinding/bin"/>
+<listEntry value="/org.eclipse.core.databinding.beans/bin"/>
+<listEntry value="/org.eclipse.core.databinding/bin"/>
+</listAttribute>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"/>
 <booleanAttribute key="default" value="true"/>
 <booleanAttribute key="includeOptional" value="true"/>
@@ -32,6 +38,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
+<booleanAttribute key="show_selected_only" value="false"/>
 <stringAttribute key="templateConfig" value=""/>
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
