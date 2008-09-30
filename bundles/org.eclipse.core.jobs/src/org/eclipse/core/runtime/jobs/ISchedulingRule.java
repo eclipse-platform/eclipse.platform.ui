@@ -56,6 +56,10 @@ public interface ISchedulingRule {
 	 * Implementations of this method must be reflexive, symmetric, and consistent,
 	 * and must return <code>false</code> when compared  to a rule they know 
 	 * nothing about.
+	 * <p>
+	 * This method must return true if calling {@link #contains(ISchedulingRule)} on
+	 * the same rule also returns true. This is required because it would otherwise
+	 * allow two threads to be running concurrently with the same rule.
 	 *
 	 * @param rule the rule to check for conflicts
 	 * @return <code>true</code> if the rule is conflicting, and <code>false</code>
