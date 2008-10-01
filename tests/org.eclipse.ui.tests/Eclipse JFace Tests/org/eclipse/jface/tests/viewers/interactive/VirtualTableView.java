@@ -73,11 +73,15 @@ public class VirtualTableView extends ViewPart {
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-
-				viewer.remove(((IStructuredSelection) viewer.getSelection()).toArray());
+				Object[] selection = ((IStructuredSelection) viewer.getSelection()).toArray();
+				doRemove(selection, viewer.getTable().getSelectionIndices());
 			}
 		});
 
+	}
+
+	protected void doRemove(Object[] selection, int[] selectionIndices) {
+		viewer.remove(selection);
 	}
 
 	/**
