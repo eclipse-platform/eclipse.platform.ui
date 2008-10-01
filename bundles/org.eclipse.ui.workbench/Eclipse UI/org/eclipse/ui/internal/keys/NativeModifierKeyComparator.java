@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.keys.ModifierKey;
 
 /**
@@ -57,22 +57,21 @@ class NativeModifierKeyComparator implements Comparator {
      *         where a lower number suggests a higher rank.
      */
     private int rank(ModifierKey modifierKey) {
-        String platform = SWT.getPlatform();
 
-        if ("win32".equals(platform)) { //$NON-NLS-1$
+        if (Util.isWindows()) {
             return rankWindows(modifierKey);
         }
 
-        if ("gtk".equals(platform)) { //$NON-NLS-1$
+        if (Util.isGtk()) {
             // TODO Do a look-up on window manager.
             return rankGNOME(modifierKey);
         }
 
-        if ("carbon".equals(platform)) { //$NON-NLS-1$
+        if (Util.isMac()) {
             return rankMacOSX(modifierKey);
         }
 
-        if ("motif".equals(platform)) { //$NON-NLS-1$
+        if (Util.isMotif()) {
             // TODO Do a look-up on window manager.
             return rankGNOME(modifierKey);
         }

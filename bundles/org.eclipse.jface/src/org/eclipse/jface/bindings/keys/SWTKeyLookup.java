@@ -68,10 +68,10 @@ public final class SWTKeyLookup implements IKeyLookup {
 		modifierKeyTable.put(SHIFT_NAME, shift);
 		nameTable.put(shift, SHIFT_NAME);
 		modifierKeyTable.put(M1_NAME,
-				"carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform()) ? command : ctrl); //$NON-NLS-1$ //$NON-NLS-2$
+				Util.isMac() ? command : ctrl);
 		modifierKeyTable.put(M2_NAME, shift);
 		modifierKeyTable.put(M3_NAME, alt);
-		modifierKeyTable.put(M4_NAME, "carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform()) ? ctrl //$NON-NLS-1$ //$NON-NLS-2$
+		modifierKeyTable.put(M4_NAME, Util.isMac() ? ctrl 
 				: command);
 
 		final Integer arrowDown = new Integer(SWT.ARROW_DOWN);

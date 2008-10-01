@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -37,7 +37,7 @@ public final class ComponentSupport {
     		return false;
     	}
         // only Win32 is supported
-        return SWT.getPlatform().equals("win32"); //$NON-NLS-1$
+        return Util.isWindows();
     }
 
     /**

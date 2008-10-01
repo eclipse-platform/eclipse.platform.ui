@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -1101,7 +1102,7 @@ public class ContentProposalAdapter {
 	 * The corresponding SWT bug is
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=90321
 	 */
-	private static final boolean USE_VIRTUAL = !"motif".equals(SWT.getPlatform()); //$NON-NLS-1$
+	private static final boolean USE_VIRTUAL = !Util.isMotif();
 
 	/*
 	 * The delay before showing a secondary popup.

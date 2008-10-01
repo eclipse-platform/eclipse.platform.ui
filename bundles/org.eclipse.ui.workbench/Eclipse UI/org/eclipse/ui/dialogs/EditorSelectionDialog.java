@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -83,7 +84,7 @@ public final class EditorSelectionDialog extends Dialog {
 
 	private static final int TABLE_WIDTH = 200;
 	static {
-		if (SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
+		if (Util.isWindows()) {
 			Executable_Filters = new String[] { "*.exe", "*.bat", "*.*" };//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
 			Executable_Filters = new String[] { "*" }; //$NON-NLS-1$

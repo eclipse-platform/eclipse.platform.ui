@@ -14,6 +14,7 @@ package org.eclipse.jface.window;
 
 import java.util.HashMap;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
@@ -78,7 +79,7 @@ public abstract class ToolTip {
 
 	private Object currentArea;
 
-	private static final boolean IS_OSX = SWT.getPlatform().equals("carbon"); //$NON-NLS-1$
+	private static final boolean IS_OSX = Util.isCarbon();
 
 	/**
 	 * Create new instance which add TooltipSupport to the widget

@@ -15,7 +15,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.Key;
@@ -98,7 +97,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
         String name = key.toString();
 
         // TODO consider platform-specific resource bundles
-        if ("carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform())) { //$NON-NLS-1$ //$NON-NLS-2$    	
+        if (org.eclipse.jface.util.Util.isMac()) {    	
             String formattedName = (String) CARBON_KEY_LOOK_UP.get(name);
             if (formattedName != null) {
                 return formattedName;
@@ -115,7 +114,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
      */
     protected String getKeyDelimiter() {
         // We must do the look up every time, as our locale might change.
-        if ("carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform())) { //$NON-NLS-1$ //$NON-NLS-2$
+        if (org.eclipse.jface.util.Util.isMac()) {
             return Util.translateString(RESOURCE_BUNDLE,
                     CARBON_KEY_DELIMITER_KEY, Util.ZERO_LENGTH_STRING, false,
                     false);
@@ -132,7 +131,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
      */
     protected String getKeyStrokeDelimiter() {
         // We must do the look up every time, as our locale might change.
-        if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+        if (org.eclipse.jface.util.Util.isWindows()) {
             return Util.translateString(RESOURCE_BUNDLE,
                     WIN32_KEY_STROKE_DELIMITER_KEY,
                     KeySequence.KEY_STROKE_DELIMITER, false, false);

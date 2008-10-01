@@ -655,7 +655,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
 		gridData.horizontalSpan = 2;
-		boolean isMac = "carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform()); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean isMac = org.eclipse.jface.util.Util.isMac();
 		gridData.widthHint =  isMac ? 620 : 520;
 		tableBindingsForCommand.setLayoutData(gridData);
 		TableColumn tableColumnDelta = new TableColumn(tableBindingsForCommand,

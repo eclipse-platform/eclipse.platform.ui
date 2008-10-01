@@ -782,7 +782,7 @@ public final class WorkbenchKeyboard {
 		 * This makes shell activation events unreliable. Please see Bug 56231
 		 * and Bug 95222 for more information.
 		 */
-		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		if (org.eclipse.jface.util.Util.isGtk()) {
 			final Widget widget = event.widget;
 
 			// Update the contexts.

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
@@ -698,8 +699,7 @@ public abstract class Dialog extends Window {
 	 * @see Window.initializeBounds()
 	 */
 	protected void initializeBounds() {
-		String platform = SWT.getPlatform();
-		if ("carbon".equals(platform)) { //$NON-NLS-1$
+		if (Util.isMac()) {
 			// On Mac OS X the default button must be the right-most button
 			Shell shell = getShell();
 			if (shell != null) {

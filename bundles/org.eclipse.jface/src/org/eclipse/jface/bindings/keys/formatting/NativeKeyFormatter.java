@@ -19,7 +19,6 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.util.Util;
-import org.eclipse.swt.SWT;
 
 /**
  * <p>
@@ -97,7 +96,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 		final String name = lookup.formalNameLookup(key);
 
 		// TODO consider platform-specific resource bundles
-		if ("carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform())) { //$NON-NLS-1$ //$NON-NLS-2$    	
+		if (Util.isMac()) {    	
 			String formattedName = (String) CARBON_KEY_LOOK_UP.get(name);
 			if (formattedName != null) {
 				return formattedName;
@@ -114,7 +113,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 	 */
 	protected String getKeyDelimiter() {
 		// We must do the look up every time, as our locale might change.
-		if ("carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform())) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (Util.isMac()) {
 			return Util.translateString(RESOURCE_BUNDLE,
 					CARBON_KEY_DELIMITER_KEY, Util.ZERO_LENGTH_STRING);
 		}
@@ -130,7 +129,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 	 */
 	protected String getKeyStrokeDelimiter() {
 		// We must do the look up every time, as our locale might change.
-		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		if (Util.isWindows()) {
 			return Util.translateString(RESOURCE_BUNDLE,
 					WIN32_KEY_STROKE_DELIMITER_KEY,
 					KeySequence.KEY_STROKE_DELIMITER);
@@ -147,11 +146,10 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 	 */
 	protected int[] sortModifierKeys(final int modifierKeys) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
-		final String platform = SWT.getPlatform();
 		final int[] sortedKeys = new int[4];
 		int index = 0;
 
-		if ("win32".equals(platform) || "wpf".equals(platform)) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (Util.isWindows()) {
 			if ((modifierKeys & lookup.getCtrl()) != 0) {
 				sortedKeys[index++] = lookup.getCtrl();
 			}
@@ -162,7 +160,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 				sortedKeys[index++] = lookup.getShift();
 			}
 
-		} else if ("gtk".equals(platform) || "motif".equals(platform)) { //$NON-NLS-1$ //$NON-NLS-2$
+		} else if (Util.isGtk() || Util.isMotif()) {
 			if ((modifierKeys & lookup.getShift()) != 0) {
 				sortedKeys[index++] = lookup.getShift();
 			}
@@ -173,7 +171,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 				sortedKeys[index++] = lookup.getAlt();
 			}
 
-		} else if ("carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform())) { //$NON-NLS-1$ //$NON-NLS-2$
+		} else if (Util.isMac()) {
 			if ((modifierKeys & lookup.getShift()) != 0) {
 				sortedKeys[index++] = lookup.getShift();
 			}

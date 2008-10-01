@@ -22,7 +22,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -264,11 +264,11 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Binding allPlatforms = new TestBinding("allPlatforms", na, na,
 				null, null, Binding.SYSTEM, null);
 		bindingManager.addBinding(allPlatforms);
-		final Binding deletion = new TestBinding(null, na, na, null, SWT
-				.getPlatform(), Binding.SYSTEM, null);
+		final Binding deletion = new TestBinding(null, na, na, null, Util.getWS(),
+				Binding.SYSTEM, null);
 		bindingManager.addBinding(deletion);
 		final Binding platformSpecific = new TestBinding("platformSpecific",
-				na, na, null, SWT.getPlatform(), Binding.SYSTEM, null);
+				na, na, null, Util.getWS(), Binding.SYSTEM, null);
 		bindingManager.addBinding(platformSpecific);
 		assertEquals(
 				"We should be able to change a binding on a particular platform",
@@ -535,11 +535,11 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Binding binding1 = new TestBinding("base", "na", "na", null,
 				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding1);
-		final Binding binding2 = new TestBinding(null, "na", "na", null, SWT
-				.getPlatform(), Binding.SYSTEM, null);
+		final Binding binding2 = new TestBinding(null, "na", "na", null, Util.getWS(),
+				Binding.SYSTEM, null);
 		bindingManager.addBinding(binding2);
 		final Binding binding3 = new TestBinding("platform-specific", "na",
-				"na", null, SWT.getPlatform(), Binding.SYSTEM, null);
+				"na", null, Util.getWS(), Binding.SYSTEM, null);
 		bindingManager.addBinding(binding3);
 		assertEquals(
 				"A plug-in developer should be able to change a binding for a platform",

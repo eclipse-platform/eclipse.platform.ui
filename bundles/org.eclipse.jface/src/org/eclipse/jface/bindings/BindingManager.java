@@ -45,7 +45,6 @@ import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.Util;
-import org.eclipse.swt.SWT;
 
 /**
  * <p>
@@ -257,7 +256,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * The platform for this manager. This defaults to the current platform. The
 	 * value will never be <code>null</code>.
 	 */
-	private String platform = SWT.getPlatform();
+	private String platform = Util.getWS();
 
 	/**
 	 * The array of platforms, starting with the active platform and moving up
@@ -2295,6 +2294,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @param platform
 	 *            The new platform; must not be <code>null</code>.
 	 * @see org.eclipse.swt.SWT#getPlatform()
+	 * @see Util#getWS()
 	 */
 	public final void setPlatform(final String platform) {
 		if (platform == null) {

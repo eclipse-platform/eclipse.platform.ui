@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -307,7 +308,7 @@ public class FontRegistry extends ResourceRegistry {
 
     private void readResourceBundle(String location) {
         String osname = System.getProperty("os.name").trim(); //$NON-NLS-1$
-        String wsname = SWT.getPlatform();
+        String wsname = Util.getWS();
         osname = StringConverter.removeWhiteSpaces(osname).toLowerCase();
         wsname = StringConverter.removeWhiteSpaces(wsname).toLowerCase();
         String OSLocation = location;

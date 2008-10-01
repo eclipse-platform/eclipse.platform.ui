@@ -11,10 +11,10 @@
 
 package org.eclipse.jface.tests.performance;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -99,7 +99,7 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 	 * @return int
 	 */
 	public int slowGTKIterations(){
-		if(SWT.getPlatform().equals("gtk"))
+		if(Util.isGtk())
 			return ITERATIONS / 5;
 		return ITERATIONS;
 	}
@@ -110,7 +110,7 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 	 * @return int
 	 */
 	public int slowWindowsIterations(){
-		if(SWT.getPlatform().equals("win32"))
+		if(Util.isWindows())
 			return ITERATIONS / 5;
 		return ITERATIONS;
 	}

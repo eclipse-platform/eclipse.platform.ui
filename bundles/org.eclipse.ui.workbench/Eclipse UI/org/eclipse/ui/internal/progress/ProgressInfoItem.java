@@ -27,6 +27,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -159,7 +160,7 @@ class ProgressInfoItem extends Composite {
 								.getWorkbenchImageDescriptor("dlcl16/progress_rem.gif")); //$NON-NLS-1$
 
 		// Mac has different Gamma value
-		int shift = "carbon".equals(SWT.getPlatform()) ? -25 : -10;//$NON-NLS-1$ 
+		int shift = Util.isMac() ? -25 : -10;
 
 		Color lightColor = PlatformUI.getWorkbench().getDisplay()
 				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);

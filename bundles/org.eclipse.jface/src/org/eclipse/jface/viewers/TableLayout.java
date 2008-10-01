@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -44,9 +45,9 @@ public class TableLayout extends Layout {
 	private static int COLUMN_TRIM;
 
 	static {
-		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		if (Util.isWindows()) {
 			COLUMN_TRIM = 4;
-		} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		} else if (Util.isMac()) {
 			COLUMN_TRIM = 24;
 		} else {
 			COLUMN_TRIM = 3;

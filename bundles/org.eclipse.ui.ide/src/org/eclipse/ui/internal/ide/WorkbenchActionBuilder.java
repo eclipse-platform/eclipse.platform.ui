@@ -35,7 +35,7 @@ import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.ISharedImages;
@@ -491,7 +491,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		// looking for it when Cmd-Q is invoked (or Quit is chosen from the
 		// application menu.
 		ActionContributionItem quitItem = new ActionContributionItem(quitAction);
-		quitItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+		quitItem.setVisible(!Util.isMacNow());
 		menu.add(quitItem);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
 		return menu;
@@ -620,12 +620,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new Separator());
         addKeyboardShortcuts(menu);
         Separator sep = new Separator(IWorkbenchActionConstants.MB_ADDITIONS);
-		sep.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+		sep.setVisible(!Util.isMacNow());
 		menu.add(sep);
         
         // See the comment for quit in createFileMenu
         ActionContributionItem openPreferencesItem = new ActionContributionItem(openPreferencesAction);
-        openPreferencesItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+        openPreferencesItem.setVisible(!Util.isMacNow());
         menu.add(openPreferencesItem);
 
         menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
@@ -731,7 +731,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		menu.add(new Separator("group.about")); //$NON-NLS-1$
 		
 		ActionContributionItem aboutItem = new ActionContributionItem(aboutAction);
-		aboutItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+		aboutItem.setVisible(!Util.isMacNow());
         menu.add(aboutItem);
 		menu.add(new GroupMarker("group.about.ext")); //$NON-NLS-1$
         return menu;

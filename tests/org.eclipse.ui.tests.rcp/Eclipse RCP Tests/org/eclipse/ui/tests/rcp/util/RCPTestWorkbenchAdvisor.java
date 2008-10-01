@@ -106,7 +106,7 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		// bug 73184: On the mac the parent eventLoopIdle will put the display
 		// to sleep
 		// until there are events (e.g., mouse jiggled).
-// if (!"carbon".equals(SWT.getPlatform()))
+// if (!Util.isCarbon)
 // super.eventLoopIdle(display);
 
 		if (idleBeforeExit == -1)

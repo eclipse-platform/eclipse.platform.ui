@@ -36,6 +36,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -449,7 +450,7 @@ public class TaskList extends ViewPart {
             }
         }
 
-        boolean text = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+        boolean text = Util.isMac();
         TableLayout layout = new TableLayout();
         table.setLayout(layout);
         table.setHeaderVisible(true);

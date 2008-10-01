@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -245,7 +246,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 			}
 		});
 
-		boolean isCarbon = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+		boolean isCarbon = Util.isMac();
 
 		GridLayout gl = new GridLayout();
 		if (isHorizontal())

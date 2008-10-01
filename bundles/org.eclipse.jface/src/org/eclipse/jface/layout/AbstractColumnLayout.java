@@ -15,6 +15,7 @@ package org.eclipse.jface.layout;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -44,16 +45,16 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class AbstractColumnLayout extends Layout {
 	private static int COLUMN_TRIM;
 	static {
-		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		if (Util.isWindows()) {
 			COLUMN_TRIM = 4;
-		} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		} else if (Util.isMac()) {
 			COLUMN_TRIM = 24;
 		} else {
 			COLUMN_TRIM = 3;
 		}
 	}
 
-	static final boolean IS_GTK = "gtk".equals(SWT.getPlatform());//$NON-NLS-1$
+	static final boolean IS_GTK = Util.isGtk();
 
 	static final String LAYOUT_DATA = Policy.JFACE + ".LAYOUT_DATA"; //$NON-NLS-1$
 

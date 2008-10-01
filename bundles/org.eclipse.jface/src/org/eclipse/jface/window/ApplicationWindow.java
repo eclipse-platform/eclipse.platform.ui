@@ -27,6 +27,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
@@ -383,7 +384,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * @since 3.0
      */
     protected boolean showTopSeperator() {
-        return !"carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+        return !Util.isMac();
     }
 
     /**

@@ -16,7 +16,7 @@ import java.util.TreeMap;
 
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.util.Util;
 
 /**
  * <p>
@@ -102,13 +102,13 @@ public final class ModifierKey extends Key {
 		modifierKeysByName
 				.put(
 						M1_NAME,
-						"carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform()) ? ModifierKey.COMMAND : ModifierKey.CTRL); //$NON-NLS-1$ //$NON-NLS-2$
+						Util.isMac() ? ModifierKey.COMMAND : ModifierKey.CTRL);
 		modifierKeysByName.put(M2_NAME, ModifierKey.SHIFT);
 		modifierKeysByName.put(M3_NAME, ModifierKey.ALT);
 		modifierKeysByName
 				.put(
 						M4_NAME,
-						"carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform()) ? ModifierKey.CTRL : ModifierKey.COMMAND); //$NON-NLS-1$ //$NON-NLS-2$
+						Util.isMac() ? ModifierKey.CTRL : ModifierKey.COMMAND);
 	}
 
 	/**

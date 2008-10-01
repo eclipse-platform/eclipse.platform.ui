@@ -18,6 +18,8 @@ import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.swt.SWT;
+
 /**
  * <p>
  * A static class providing utility methods to all of JFace.
@@ -492,6 +494,161 @@ public final class Util {
 			buf.append(src.substring(beginIndex, (idx==-1?len:idx)));
 		}
 		return buf.toString();
+	}
+	
+	//
+	// Methods for working with the windowing system
+	//
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @since 3.5
+	 */
+	public static final String WS_WIN32 = "win32";//$NON-NLS-1$
+
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @since 3.5
+	 */
+	public static final String WS_MOTIF = "motif";//$NON-NLS-1$
+
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @since 3.5
+	 */
+	public static final String WS_GTK = "gtk";//$NON-NLS-1$
+
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @since 3.5
+	 */
+	public static final String WS_PHOTON = "photon";//$NON-NLS-1$
+
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @since 3.5
+	 */
+	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
+
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @since 3.5
+	 */
+	public static final String WS_COCOA = "cocoa";//$NON-NLS-1$
+
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @since 3.5
+	 */
+	public static final String WS_WPF = "wpf";//$NON-NLS-1$
+
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @since 3.5
+	 */
+	public static final String WS_UNKNOWN = "unknown";//$NON-NLS-1$
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return <code>true</code> for windows platforms
+	 * @since 3.5
+	 */
+	public static final boolean isWindows() {
+		final String ws = SWT.getPlatform();
+		return WS_WIN32.equals(ws) || WS_WPF.equals(ws);
+	}
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return <code>true</code> for mac platforms
+	 * @since 3.5
+	 */
+	public static final boolean isMac() {
+		final String ws = SWT.getPlatform();
+		return WS_CARBON.equals(ws) || WS_COCOA.equals(ws);
+	}
+	
+	/**
+	 * <b>This is a temporary method</b>
+	 * <p>
+	 * This can be removed when the cocoa fragment is implemented.
+	 * </p>
+	 * @return <code>true</code> for carbon platforms
+	 * @since 3.5
+	 */
+	public static final boolean isMacNow() {
+		final String ws = SWT.getPlatform();
+		return WS_CARBON.equals(ws);
+	}
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return <code>true</code> for gtk platforms
+	 * @since 3.5
+	 */
+	public static final boolean isGtk() {
+		final String ws = SWT.getPlatform();
+		return WS_GTK.equals(ws);
+	}
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return <code>true</code> for motif platforms
+	 * @since 3.5
+	 */
+	public static final boolean isMotif() {
+		final String ws = SWT.getPlatform();
+		return WS_MOTIF.equals(ws);
+	}
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return <code>true</code> for photon platforms
+	 * @since 3.5
+	 */
+	public static final boolean isPhoton() {
+		final String ws = SWT.getPlatform();
+		return WS_PHOTON.equals(ws);
+	}
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return <code>true</code> for carbon platforms
+	 * @since 3.5
+	 */
+	public static final boolean isCarbon() {
+		final String ws = SWT.getPlatform();
+		return WS_CARBON.equals(ws);
+	}
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return <code>true</code> for WPF
+	 * @since 3.5
+	 */
+	public static final boolean isWpf() {
+		final String ws = SWT.getPlatform();
+		return WS_WPF.equals(ws);
+	}
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return <code>true</code> for win32
+	 * @since 3.5
+	 */
+	public static final boolean isWin32() {
+		final String ws = SWT.getPlatform();
+		return WS_WIN32.equals(ws);
+	}
+	
+	/**
+	 * <b>Note:</b> this may be made internal in 3.5
+	 * @return the SWT windowing platform string.
+	 * @see SWT#getPlatform()
+	 * @since 3.5
+	 */
+	public static final String getWS() {
+		return SWT.getPlatform();
 	}
 
 	/**

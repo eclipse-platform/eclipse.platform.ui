@@ -31,7 +31,7 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.util.Util;
 
 /**
  * <p>
@@ -193,7 +193,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 		final int platformLocaleCount = 1400;
 		final int deletionMarkers = 500;
 		final String currentLocale = Locale.getDefault().toString();
-		final String currentPlatform = SWT.getPlatform();
+		final String currentPlatform = Util.getWS();
 
 		// Set-up a table of modifier keys.
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();

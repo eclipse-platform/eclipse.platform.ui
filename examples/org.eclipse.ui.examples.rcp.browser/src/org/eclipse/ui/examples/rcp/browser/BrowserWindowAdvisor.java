@@ -68,7 +68,7 @@ public class BrowserWindowAdvisor extends WorkbenchWindowAdvisor {
           shellLayout.verticalSpacing = 0;
           shell.setLayout(shellLayout);
     
-          if (!"carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+          if (!Util.isMac()) {
               Label sep1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
               sep1.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
           }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.util.Util;
 
 /**
  * The Platform Util class is used to test for which platform we are in
@@ -23,7 +23,6 @@ public class PlatformUtil {
      * @return true if we are runnig on the Mac platform.
      */
     public static boolean onMac() {
-        String platform = SWT.getPlatform();
-        return platform.equals("carbon");
+        return Util.isMac();
     }
 }

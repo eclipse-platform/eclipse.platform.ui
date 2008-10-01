@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
@@ -63,11 +63,10 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 		final String localHref = href;
 
 		final Display d = Display.getCurrent();
-		String platform = SWT.getPlatform();
 
-		if ("win32".equals(platform)) { //$NON-NLS-1$
+		if (Util.isWindows()) {
 			Program.launch(localHref);
-		} else if ("carbon".equals(platform)) { //$NON-NLS-1$
+		} else if (Util.isMac()) {
 			try {
 				Runtime.getRuntime().exec("/usr/bin/open " + localHref); //$NON-NLS-1$
 			} catch (IOException e) {

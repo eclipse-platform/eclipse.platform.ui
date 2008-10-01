@@ -31,6 +31,7 @@ import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -211,7 +212,7 @@ public class QuickAccessDialog extends PopupDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		boolean isWin32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
+		boolean isWin32 = Util.isWindows();
 		GridLayoutFactory.fillDefaults().extendedMargins(isWin32 ? 0 : 3, 3, 2, 2).applyTo(composite);
 		Composite tableComposite = new Composite(composite, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableComposite);
@@ -461,7 +462,7 @@ public class QuickAccessDialog extends PopupDialog {
 					item.setData(entry);
 					item.setText(0, entry.provider.getName());
 					item.setText(1, entry.element.getLabel());
-					if (SWT.getPlatform().equals("wpf")) { //$NON-NLS-1$
+					if (Util.isWpf()) {
 						item.setImage(1, entry.getImage(entry.element,
 							resourceManager));
 					}

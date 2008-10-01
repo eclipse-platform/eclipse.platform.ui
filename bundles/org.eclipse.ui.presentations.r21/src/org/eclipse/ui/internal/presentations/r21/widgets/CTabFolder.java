@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.r21.widgets;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
@@ -2061,11 +2062,10 @@ public class CTabFolder extends Composite {
     private void updateCloseBar() {
         //Temporary code - need a better way to determine toolBar trim
         int toolbarTrim = 4;
-        String platform = SWT.getPlatform();
-        if ("photon".equals(platform)) { //$NON-NLS-1$
+        if (Util.isPhoton()) {
 			toolbarTrim = 6;
 		}
-        if ("gtk".equals(platform)) { //$NON-NLS-1$
+        if (Util.isGtk()) {
 			toolbarTrim = 8;
 		}
 
@@ -2136,8 +2136,7 @@ public class CTabFolder extends Composite {
     private void updateArrowBar() {
         //Temporary code - need a better way to determine toolBar trim
         int toolbarTrim = 6; // Windows needs 6, photon needs 6, gtk needs 8
-        String platform = SWT.getPlatform();
-        if ("gtk".equals(platform)) { //$NON-NLS-1$
+        if (Util.isGtk()) {
 			toolbarTrim = 8;
 		}
 

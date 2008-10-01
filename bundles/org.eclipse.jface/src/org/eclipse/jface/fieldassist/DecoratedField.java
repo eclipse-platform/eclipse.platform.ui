@@ -11,6 +11,7 @@
 package org.eclipse.jface.fieldassist;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -66,7 +67,7 @@ public class DecoratedField {
 	/**
 	 * Cached platform flags for dealing with platform-specific issues.
 	 */
-	private static boolean CARBON = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+	private static boolean CARBON = Util.isCarbon();
 
 	/**
 	 * Constants describing the array indices used to hold the decorations in

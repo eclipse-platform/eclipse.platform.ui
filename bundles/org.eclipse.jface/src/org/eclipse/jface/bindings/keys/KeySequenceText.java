@@ -20,6 +20,7 @@ import java.util.TreeSet;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -540,7 +541,7 @@ public final class KeySequenceText {
 		text = wrappedText;
 
 		// Set the font if the platform is carbon.
-		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		if (Util.isMac()) {
 			// Don't worry about this font name here; it is the official menu
 			// font and point size on the Mac.
 			final Font font = new Font(text.getDisplay(),

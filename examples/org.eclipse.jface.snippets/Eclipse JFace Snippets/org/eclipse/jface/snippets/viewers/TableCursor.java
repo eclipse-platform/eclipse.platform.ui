@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.AbstractTableViewer;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Table;
 
 
 public class TableCursor extends AbstractCellCursor {
@@ -49,8 +52,7 @@ public class TableCursor extends AbstractCellCursor {
 			Rectangle bounds = cell.getBounds();
 			Point extent = gc.stringExtent(text);
 			// Temporary code - need a better way to determine table trim
-			String platform = SWT.getPlatform();
-			if ("win32".equals(platform)) { //$NON-NLS-1$
+			if (Util.isWin32()) {
 				if (((Table)getParent()).getColumnCount() == 0 || cell.getColumnIndex() == 0) {
 					x += 2; 
 				} else {

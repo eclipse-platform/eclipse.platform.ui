@@ -25,6 +25,7 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -857,7 +858,7 @@ public class ActionContributionItem extends ContributionItem {
 					 */
 					final String commandId = updatedAction
 							.getActionDefinitionId();
-					if (("gtk".equals(SWT.getPlatform())) && (callback instanceof IBindingManagerCallback) //$NON-NLS-1$
+					if ((Util.isGtk()) && (callback instanceof IBindingManagerCallback)
 							&& (commandId != null)) {
 						final IBindingManagerCallback bindingManagerCallback = (IBindingManagerCallback) callback;
 						final IKeyLookup lookup = KeyLookupFactory.getDefault();

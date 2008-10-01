@@ -23,6 +23,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -611,7 +612,7 @@ public class PopupDialog extends Window {
 					// we are activated, except on the Mac, where the deactivate
 					// is received after activate.
 					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=100668
-					listenToParentDeactivate = !"carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+					listenToParentDeactivate = !Util.isMac();
 				}
 			}
 		});
@@ -973,7 +974,7 @@ public class PopupDialog extends Window {
 		}
 		// Setting this flag works around a problem that remains on X only,
 		// whereby activating the menu deactivates our shell.
-		listenToDeactivate = !"gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
+		listenToDeactivate = !Util.isGtk();
 
 		Menu menu = menuManager.createContextMenu(getShell());
 		Rectangle bounds = toolBar.getBounds();

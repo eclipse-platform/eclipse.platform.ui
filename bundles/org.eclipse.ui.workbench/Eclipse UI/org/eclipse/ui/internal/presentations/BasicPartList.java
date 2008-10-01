@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.presentations;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -228,7 +229,7 @@ public class BasicPartList extends AbstractTableInformationControl {
              * @see org.eclipse.jface.viewers.TableViewer#internalRefresh(java.lang.Object)
              */
             protected void internalRefresh(Object element) {
-                boolean usingMotif = "motif".equals(SWT.getPlatform()); //$NON-NLS-1$
+                boolean usingMotif = Util.isMotif();
                 try {
                     // This avoids a "graphic is disposed" error on Motif by not letting
                     // it redraw while we remove entries.  Some items in this table are

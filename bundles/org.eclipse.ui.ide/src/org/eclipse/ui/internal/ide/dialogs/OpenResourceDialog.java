@@ -12,6 +12,15 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.Collections;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.util.Util;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -23,18 +32,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.core.resources.IContainer;
-
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -202,8 +199,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		cancelLayoutData.widthHint = buttonWidth;
 		okLayoutData.widthHint = buttonWidth;
 		
-		String platform = SWT.getPlatform();
-		if ("carbon".equals(platform)) { //$NON-NLS-1$
+		if (Util.isMac()) {
 			// On Mac OS X the default button must be the right-most button
 			// See also special code in org.eclipse.jface.dialogs.Dialog#initializeBounds()
 			openComposite.moveBelow(null);
