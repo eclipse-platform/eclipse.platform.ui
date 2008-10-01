@@ -37,6 +37,7 @@ public class InternalTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public InternalTestSuite() {
+        addTest(new TestSuite(AnimationEngineTest.class));
         addTest(new TestSuite(EditorActionBarsTest.class));
         addTest(new TestSuite(ActionSetExpressionTest.class));
         addTest(new TestSuite(PopupMenuExpressionTest.class));
