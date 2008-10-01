@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,12 +35,12 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 			this.timesToRun = timesToRun;
 		}
 
-		public void addError(Test test, Throwable t) {
+		public synchronized void addError(Test test, Throwable t) {
 			failed = true;
 			target.addError(test, t);
 		}
 
-		public void addFailure(Test test, AssertionFailedError t) {
+		public synchronized void addFailure(Test test, AssertionFailedError t) {
 			failed = true;
 			target.addFailure(test, t);
 		}
@@ -52,7 +52,7 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 			target.endTest(test);
 		}
 
-		public boolean shouldStop() {
+		public synchronized boolean shouldStop() {
 			if (failed)
 				return true;
 			return target.shouldStop();
