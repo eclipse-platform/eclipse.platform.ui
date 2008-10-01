@@ -22,6 +22,9 @@ import org.eclipse.jface.internal.databinding.swt.CComboObservableValue;
 import org.eclipse.jface.internal.databinding.swt.CLabelObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ComboObservableList;
 import org.eclipse.jface.internal.databinding.swt.ComboObservableValue;
+import org.eclipse.jface.internal.databinding.swt.ControlObservableValue;
+import org.eclipse.jface.internal.databinding.swt.ItemObservableValue;
+import org.eclipse.jface.internal.databinding.swt.ItemTooltipObservableValue;
 import org.eclipse.jface.internal.databinding.swt.LabelObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ListObservableList;
 import org.eclipse.jface.internal.databinding.swt.ListObservableValue;
@@ -35,10 +38,13 @@ import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Scale;
@@ -46,6 +52,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.Tree;
 
 /**
@@ -211,6 +218,14 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		assertFalse(text.isListening(SWT.FocusOut));
 	}
 
+	public void testObserveTextOfItem() throws Exception {
+		CTabFolder ctf = new CTabFolder(shell, SWT.NONE);
+		Item item = new CTabItem(ctf, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeText(item);
+		assertNotNull(value);
+		assertTrue(value instanceof ItemObservableValue);
+	}
+
 	public void testObserveTextOfUnsupportedControl() throws Exception {
 		Table table = new Table(shell, SWT.NONE);
 		try {
@@ -218,6 +233,30 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 			fail("Exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}
+	}
+
+	public void testObserveTooltipOfItem() throws Exception {
+		CTabFolder ctf = new CTabFolder(shell, SWT.NONE);
+		Item item = new CTabItem(ctf, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeTooltipText(item);
+		assertNotNull(value);
+		assertTrue(value instanceof ItemTooltipObservableValue);
+	}
+
+	public void testObserveTooltipOfUnsupportedControl() throws Exception {
+		ToolTip ttip = new ToolTip(shell, SWT.NONE);
+		try {
+			SWTObservables.observeTooltipText(ttip);
+			fail("Exception should have been thrown");
+		} catch (IllegalArgumentException e) {
+		}
+	}
+
+	public void testObserveTooltipOfControl() throws Exception {
+		Label label = new Label(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeTooltipText(label);
+		assertNotNull(value);
+		assertTrue(value instanceof ControlObservableValue);
 	}
 
 	public void testObserveItemsOfCombo() throws Exception {
