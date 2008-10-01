@@ -388,13 +388,13 @@ public class Observables {
 	public static IObservableSet staticObservableSet(Realm realm, Set set,
 			Object elementType) {
 		return new ObservableSet(realm, set, elementType) {
-			public void addChangeListener(IChangeListener listener) {
+			public synchronized void addChangeListener(IChangeListener listener) {
 			}
 
-			public void addStaleListener(IStaleListener listener) {
+			public synchronized void addStaleListener(IStaleListener listener) {
 			}
 
-			public void addSetChangeListener(ISetChangeListener listener) {
+			public synchronized void addSetChangeListener(ISetChangeListener listener) {
 			}
 		};
 	}
@@ -511,13 +511,13 @@ public class Observables {
 	public static IObservableList staticObservableList(Realm realm, List list,
 			Object elementType) {
 		return new ObservableList(realm, list, elementType) {
-			public void addChangeListener(IChangeListener listener) {
+			public synchronized void addChangeListener(IChangeListener listener) {
 			}
 
-			public void addStaleListener(IStaleListener listener) {
+			public synchronized void addStaleListener(IStaleListener listener) {
 			}
 
-			public void addListChangeListener(IListChangeListener listener) {
+			public synchronized void addListChangeListener(IListChangeListener listener) {
 			}
 		};
 	}

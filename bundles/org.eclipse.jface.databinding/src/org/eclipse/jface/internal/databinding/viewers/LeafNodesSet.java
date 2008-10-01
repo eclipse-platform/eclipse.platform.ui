@@ -243,7 +243,7 @@ public class LeafNodesSet extends AbstractObservableSet {
 		return Object.class;
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		for (Iterator iter = mapElementsOntoNodeInfo.values().iterator(); iter
 				.hasNext();) {
 			NodeInfo next = (NodeInfo) iter.next();

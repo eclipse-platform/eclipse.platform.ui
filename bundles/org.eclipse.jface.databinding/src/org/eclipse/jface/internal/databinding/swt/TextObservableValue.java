@@ -186,7 +186,7 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 		return String.class;
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		if (!text.isDisposed()) {
 			if (updateEventType != SWT.None) {
 				text.removeListener(updateEventType, updateListener);

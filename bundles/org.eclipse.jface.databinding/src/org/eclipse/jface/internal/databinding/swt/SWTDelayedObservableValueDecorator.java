@@ -70,7 +70,7 @@ public class SWTDelayedObservableValueDecorator extends
 		super.handleEvent(event);
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		if (control != null) {
 			if (!control.isDisposed())
 				control.removeListener(SWT.FocusOut, this);

@@ -150,7 +150,7 @@ public class DetailObservableList extends ObservableList implements IObserving {
 		wrappedList.clear();
 	}
 	
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 
 		if (outerObservableValue != null) {

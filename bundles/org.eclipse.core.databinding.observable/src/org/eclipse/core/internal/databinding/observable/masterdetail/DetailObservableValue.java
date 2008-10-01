@@ -110,7 +110,7 @@ public class DetailObservableValue extends AbstractObservableValue implements IO
 		return detailType;
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 
 		if (outerObservableValue != null) {

@@ -39,7 +39,7 @@ public class BeanObservableMapDecorator extends DecoratingObservableMap
 		this.propertyDescriptor = propertyDescriptor;
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		this.propertyDescriptor = null;
 		super.dispose();
 	}

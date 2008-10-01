@@ -190,7 +190,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	 */
 	protected abstract Object doPut(Object key, Object value);
 
-	public void dispose() {
+	public synchronized void dispose() {
 		unhookListeners();
 		entrySet = null;
 		keySet = null;

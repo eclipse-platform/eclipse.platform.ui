@@ -162,7 +162,7 @@ public class DelayedObservableValue extends AbstractObservableValue implements
 		return observable.getValueType();
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		cancelScheduledUpdate();
 		if (observable != null) {
 			observable.dispose();

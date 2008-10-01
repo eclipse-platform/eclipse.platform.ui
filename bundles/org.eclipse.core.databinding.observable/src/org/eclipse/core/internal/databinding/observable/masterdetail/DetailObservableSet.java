@@ -132,7 +132,7 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 		wrappedSet.clear();
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 
 		if (outerObservableValue != null) {

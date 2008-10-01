@@ -92,7 +92,7 @@ public class AggregateObservableValue extends AbstractObservableValue {
 		return String.class;
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		for (int i = 0; i < observableValues.length; i++) {
 			observableValues[i].removeValueChangeListener(listener);
 		}

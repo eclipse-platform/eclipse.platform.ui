@@ -756,7 +756,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * 
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getWorkbenchErrorHandler()
 	 */
-	public AbstractStatusHandler getWorkbenchErrorHandler() {
+	public synchronized AbstractStatusHandler getWorkbenchErrorHandler() {
 		if (ideWorkbenchErrorHandler == null) {
 			ideWorkbenchErrorHandler = new IDEWorkbenchErrorHandler(
 					getWorkbenchConfigurer());

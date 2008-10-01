@@ -109,7 +109,7 @@ public class JavaBeanObservableList extends ObservableList implements
 		}
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 		lastListenerRemoved();
 	}

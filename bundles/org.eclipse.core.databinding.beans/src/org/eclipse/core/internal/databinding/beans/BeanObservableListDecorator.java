@@ -39,7 +39,7 @@ public class BeanObservableListDecorator extends DecoratingObservableList
 		this.propertyDescriptor = propertyDescriptor;
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		this.propertyDescriptor = null;
 		super.dispose();
 	}
