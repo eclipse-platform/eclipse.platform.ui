@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,28 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests;
+
+package org.eclipse.jface.tests.wizards;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllTests extends TestSuite {
+public class WizardTestSuite extends TestSuite {
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
     }
-    
+
     public static Test suite() {
-        return new AllTests();
+        return new WizardTestSuite();
     }
 
-    public AllTests() {
-        addTest(new org.eclipse.jface.tests.action.AllTests());
-        addTest(new org.eclipse.jface.tests.dialogs.AllTests());
-        addTest(new org.eclipse.jface.tests.images.AllTests());
-        addTest(new org.eclipse.jface.tests.viewers.AllTests());
-        addTest(new org.eclipse.jface.tests.layout.AllTests());
-        addTest(new org.eclipse.jface.tests.wizards.WizardTestSuite());
-        addTest(new org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTests());
+    public WizardTestSuite() {
+    	addTestSuite(WizardTest.class);
     }
 }
