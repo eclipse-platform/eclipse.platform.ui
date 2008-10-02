@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class LazyInputStream extends InputStream implements ILazySource {
 		return readCount;
 	}
 
-	public void mark(int readlimit) {
+	public synchronized void mark(int readlimit) {
 		mark = offset;
 	}
 
@@ -134,7 +134,7 @@ public class LazyInputStream extends InputStream implements ILazySource {
 		return copied == 0 ? -1 : copied;
 	}
 
-	public void reset() {
+	public synchronized void reset() {
 		offset = mark;
 	}
 
