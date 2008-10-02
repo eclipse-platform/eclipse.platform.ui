@@ -30,14 +30,10 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.DocumentRewriteSessionEvent;
-import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentInformationMappingExtension;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IDocumentRewriteSessionListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISlaveDocumentManager;
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -305,28 +301,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	private int fDeletedLines;
 
-	/**
-	 * The listener for document rewrite sessions.
-	 *
-	 * @since 3.5
-	 */
-	private final IDocumentRewriteSessionListener fSessionListener= new ProjectionDocumentRewriteSessionListener();
-	private class ProjectionDocumentRewriteSessionListener implements IDocumentRewriteSessionListener {
-
-		private boolean fWasProjectionEnabledBeforeRewrite= false;
-
-		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
-			if (event.getSession().getSessionType() == DocumentRewriteSessionType.UNRESTRICTED_SMALL)
-				return;
-			if (DocumentRewriteSessionEvent.SESSION_START.equals(event.getChangeType())) {
-				fWasProjectionEnabledBeforeRewrite= isProjectionMode();
-				disableProjection();
-			} else if (DocumentRewriteSessionEvent.SESSION_STOP.equals(event.getChangeType()))
-				if (fWasProjectionEnabledBeforeRewrite)
-					enableProjection();
-		}
-	}
-
 
 	/**
 	 * Creates a new projection source viewer.
@@ -393,18 +367,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			fProjectionAnnotationModel= null;
 		}
 
-		IDocument oldDocument= getDocument();
-		if (oldDocument instanceof IDocumentExtension4) {
-			IDocumentExtension4 ext= (IDocumentExtension4)oldDocument;
-			ext.removeDocumentRewriteSessionListener(fSessionListener);
-		}
-
 		super.setDocument(document, annotationModel, modelRangeOffset, modelRangeLength);
-
-		if (document instanceof IDocumentExtension4) {
-			IDocumentExtension4 ext= (IDocumentExtension4)document;
-			ext.addDocumentRewriteSessionListener(fSessionListener);
-		}
 
 		if (wasProjectionEnabled && document != null)
 			enableProjection();
