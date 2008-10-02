@@ -112,6 +112,16 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="definitionId" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the command that this action will handle. By specifying and action, the key binding service can assign a key sequence to this action. See the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt; for more information.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
          <attribute name="menubarPath" type="string">
             <annotation>
                <documentation>
