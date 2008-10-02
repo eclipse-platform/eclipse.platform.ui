@@ -179,7 +179,6 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 
 		try {
 			System.loadLibrary(LIBRARY_NAME);
-			gconfInit();
 			isGnomeLibLoaded = true;
 			if (Policy.DEBUG_SYSTEM_PROVIDERS)
 				Policy.debug("Loaded " + //$NON-NLS-1$
