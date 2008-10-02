@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
  * IHandlerService handlerService = (IHandlerService) getSite().getService(
  * 		IHandlerService.class);
  * collapseHandler = new CollapseAllHandler(myViewer);
- * handlerService.activateHandle(CollapseAllHandler.COMMAND_ID, collapseHandler);
+ * handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
  * </pre>
  * 
  * The part should dispose the handler in its own dispose() method. The part
