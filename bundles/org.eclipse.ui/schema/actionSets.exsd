@@ -140,7 +140,7 @@ There is an implementation limitation which currently affects action sets.  It i
          <attribute name="accelerator" type="string">
             <annotation>
                <documentation>
-                  &lt;b&gt;&lt;font color=&quot;#FF0000&quot;&gt;Deprecated:&lt;/font&gt;&lt;/b&gt; Use the &lt;samp&gt;definitionId&lt;/samp&gt; attribute instead.
+                  Use the &lt;samp&gt;definitionId&lt;/samp&gt; attribute instead.
                </documentation>
                <appinfo>
                   <meta.attribute deprecated="true"/>
@@ -272,7 +272,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
          <attribute name="pulldown" type="boolean">
             <annotation>
                <documentation>
-                  &lt;b&gt;&lt;font color=&quot;#FF0000&quot;&gt;Deprecated:&lt;/font&gt;&lt;/b&gt; Use the &lt;samp&gt;style&lt;/samp&gt; attribute with the value &lt;samp&gt;pulldown&lt;/samp&gt;.
+                  Use the &lt;samp&gt;style&lt;/samp&gt; attribute with the value &lt;samp&gt;pulldown&lt;/samp&gt;.
                </documentation>
                <appinfo>
                   <meta.attribute deprecated="true"/>
@@ -551,7 +551,6 @@ can be expressed using:
 &lt;/pre&gt;
       </documentation>
    </annotation>
-
 
 
    <annotation>
