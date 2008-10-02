@@ -48,7 +48,6 @@
          <command
                commandId="org.eclipse.ui.file.restartWorkbench"
                id="org.eclipse.ui.file.restartWorkbench"
-               mnemonic="%restart.mnemonic"
                style="push">
          </command>
       </menuContribution>
