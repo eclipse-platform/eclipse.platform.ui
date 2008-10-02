@@ -55,7 +55,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -932,11 +931,6 @@ public class WorkbenchStatusDialogManager {
 	private String title;
 
 	/**
-	 * The current clipboard. To be disposed when closing the dialog.
-	 */
-	private Clipboard clipboard;
-
-	/**
 	 * Filter mask for determining which status items to display. Default allows
 	 * for displaying all statuses.
 	 */
@@ -1152,9 +1146,6 @@ public class WorkbenchStatusDialogManager {
 			closeTray();
 		}
 		shellBounds = getShell().getBounds();
-		if (clipboard != null) {
-			clipboard.dispose();
-		}
 		statusListViewer = null;
 		boolean result = this.dialog.close();
 		if (!modalitySwitch) {
