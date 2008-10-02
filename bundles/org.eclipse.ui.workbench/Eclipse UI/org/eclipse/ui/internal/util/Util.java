@@ -51,6 +51,8 @@ public final class Util {
             .unmodifiableSortedSet(new TreeSet());
 
     public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
+    
+    public final static String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Ensures that a string is not null. Converts null strings into empty
@@ -727,33 +729,53 @@ public final class Util {
 				.getWorkbenchWindows()[0] : null) : activeWindow;
 		return windowToParentOn == null ? null : activeWindow.getShell();
 	}
-	
+
 	/**
-	 * Splits a string at the first occurance of the delimiting char.
-	 * If the source string is null then so is the result. If the source
-	 * string is badly formatted then it is returned in the first array
-	 * entry and the second entry is an empty string.
+	 * A String#split(*) replacement that splits on the provided char. No Regex
+	 * involved.
 	 * 
-	 * @param src The string to be split
-	 * @param delim The character to split on
-	 * @return A two entry string array containing the left/right pair.
+	 * @param src
+	 *            The string to be split
+	 * @param delim
+	 *            The character to split on
+	 * @return An array containing the split. Might be empty, but will not be
+	 *         <code>null</code>.
 	 */
 	public static String[] split(String src, char delim) {
-		if (src == null)
-			return null;
-		
-		String[] splitStr = new String[2];
-		int delimIndex = src.indexOf(delim);
-		if (delimIndex == -1 || delimIndex == 0 || delimIndex == src.length()-1) {
-			splitStr[0] = src;
-			splitStr[1] = ZERO_LENGTH_STRING;
-			return splitStr;
+		if (src == null) {
+			return EMPTY_STRING_ARRAY;
 		}
 		
-		splitStr[0] = src.substring(0, delimIndex);
-		splitStr[1] = src.substring(delimIndex+1);
-		
-		return splitStr;
+		if (src.length()==0) {
+			return new String[] { ZERO_LENGTH_STRING };
+		}
+
+		ArrayList result = new ArrayList();
+		int idx = src.indexOf(delim);
+		int lastIdx = 0;
+		while (idx != -1) {
+			result.add(src.substring(lastIdx, idx));
+			lastIdx = idx + 1;
+			if (lastIdx == src.length()) {
+				idx = -1;
+			} else {
+				idx = src.indexOf(delim, lastIdx);
+			}
+		}
+		if (lastIdx < src.length()) {
+			result.add(src.substring(lastIdx));
+		}
+		String[] resultArray = (String[]) result.toArray(new String[result.size()]);
+		boolean allEmpty = true;
+		for (int i = 0; i < resultArray.length && allEmpty; i++) {
+			if (resultArray[i].length()>0) {
+				allEmpty = false;
+			}
+		}
+		if (allEmpty) {
+			return EMPTY_STRING_ARRAY;
+		}
+		return resultArray;
 	}
 	
 	/**

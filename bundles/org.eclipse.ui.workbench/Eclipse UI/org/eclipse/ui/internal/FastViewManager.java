@@ -590,8 +590,9 @@ public class FastViewManager {
 		// view; split out the secondary id (if any)
 		String selectedTabId = vstb.getSelectedTabId();
 		String[] idParts = Util.split(selectedTabId, ':');
-		if (idParts[0].length() == selectedTabId.length())
-			idParts[1] = null;
+		String secondaryId = null;
+		if (idParts[0].length() != selectedTabId.length())
+			secondaryId = idParts[1];
 		
 		List fvs = getFastViews(id);
 		for (Iterator fvIter = fvs.iterator(); fvIter.hasNext();) {
@@ -602,7 +603,7 @@ public class FastViewManager {
 		// Restore the correct tab to the 'top'
 		LayoutPart stack = perspective.getPresentation().findPart(id, null);
 		if (stack instanceof PartStack) {
-			LayoutPart selTab = perspective.getPresentation().findPart(idParts[0], idParts[1]);
+			LayoutPart selTab = perspective.getPresentation().findPart(idParts[0], secondaryId);
 			if (selTab instanceof PartPane && selTab instanceof ViewPane) {
 				((PartStack)stack).setSelection(selTab);
 				

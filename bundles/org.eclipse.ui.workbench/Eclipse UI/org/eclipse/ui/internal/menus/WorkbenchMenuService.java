@@ -760,7 +760,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		} else {
 			// Should be in the form "[before|after]=id"
 			String[] queryParts = Util.split(query, '=');
-			if (queryParts[1].length() > 0) {
+			if (queryParts.length>1 && queryParts[1].length() > 0) {
 				additionsIndex = mgr.indexOf(queryParts[1]);
 				if (additionsIndex != -1 && queryParts[0].equals("after")) //$NON-NLS-1$
 					additionsIndex++;

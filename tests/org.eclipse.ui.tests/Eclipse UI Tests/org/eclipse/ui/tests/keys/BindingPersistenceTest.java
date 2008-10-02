@@ -15,6 +15,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
@@ -29,90 +30,167 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public final class BindingPersistenceTest extends UITestCase {
 
-    /**
-     * Constructor for <code>BindingPersistenceTest</code>.
-     * 
-     * @param name
-     *            The name of the test
-     */
-    public BindingPersistenceTest(final String name) {
-        super(name);
-    }
+	/**
+	 * Constructor for <code>BindingPersistenceTest</code>.
+	 * 
+	 * @param name
+	 *            The name of the test
+	 */
+	public BindingPersistenceTest(final String name) {
+		super(name);
+	}
 
-    /**
-     * <p>
-     * Tests whether the preference store will be read automatically when a
-     * change to the preference store is made.
-     * </p>
-     * 
-     * @throws ParseException
-     *             If "ALT+SHIFT+Q A" cannot be parsed by KeySequence.
-     */
-    public final void testAutoLoad() throws ParseException {
-        // Get the services.
-        ICommandService commandService = (ICommandService) fWorkbench
-                .getAdapter(ICommandService.class);
-        IBindingService bindingService = (IBindingService) fWorkbench
-                .getAdapter(IBindingService.class);
-        bindingService.readRegistryAndPreferences(commandService);
+	/**
+	 * <p>
+	 * Tests whether the preference store will be read automatically when a
+	 * change to the preference store is made.
+	 * </p>
+	 * 
+	 * @throws ParseException
+	 *             If "ALT+SHIFT+Q A" cannot be parsed by KeySequence.
+	 */
+	public final void testAutoLoad() throws ParseException {
+		// Get the services.
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+		bindingService.readRegistryAndPreferences(commandService);
 
-        // Check the pre-conditions.
-        final String emacsSchemeId = "org.eclipse.ui.emacsAcceleratorConfiguration";
-        assertFalse("The active scheme should be Emacs yet", emacsSchemeId
-                .equals(bindingService.getActiveScheme().getId()));
-        final KeySequence formalKeySequence = KeySequence
-                .getInstance("ALT+SHIFT+Q A");
-        final String commandId = "org.eclipse.ui.views.showView";
-        Binding[] bindings = bindingService.getBindings();
-        int i;
-        for (i = 0; i < bindings.length; i++) {
-            final Binding binding = bindings[i];
-            if ((binding.getType() == Binding.USER)
-                    && (formalKeySequence.equals(binding.getTriggerSequence()))) {
-                final ParameterizedCommand command = binding
-                        .getParameterizedCommand();
-                final String actualCommandId = (command == null) ? null
-                        : command.getCommand().getId();
-                assertFalse("The command should not yet be bound", commandId
-                        .equals(actualCommandId));
-                break;
-            }
-        }
-        assertEquals("There shouldn't be a matching command yet",
-                bindings.length, i);
+		// Check the pre-conditions.
+		final String emacsSchemeId = "org.eclipse.ui.emacsAcceleratorConfiguration";
+		assertFalse("The active scheme should be Emacs yet", emacsSchemeId
+				.equals(bindingService.getActiveScheme().getId()));
+		final KeySequence formalKeySequence = KeySequence
+				.getInstance("ALT+SHIFT+Q A");
+		final String commandId = "org.eclipse.ui.views.showView";
+		Binding[] bindings = bindingService.getBindings();
+		int i;
+		for (i = 0; i < bindings.length; i++) {
+			final Binding binding = bindings[i];
+			if ((binding.getType() == Binding.USER)
+					&& (formalKeySequence.equals(binding.getTriggerSequence()))) {
+				final ParameterizedCommand command = binding
+						.getParameterizedCommand();
+				final String actualCommandId = (command == null) ? null
+						: command.getCommand().getId();
+				assertFalse("The command should not yet be bound", commandId
+						.equals(actualCommandId));
+				break;
+			}
+		}
+		assertEquals("There shouldn't be a matching command yet",
+				bindings.length, i);
 
-        // Modify the preference store.
-        final IPreferenceStore store = WorkbenchPlugin.getDefault()
-                .getPreferenceStore();
-        store
-                .setValue(
-                        "org.eclipse.ui.commands",
-                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\""
-                                + emacsSchemeId
-                                + "\"/><keyBinding commandId=\""
-                                + commandId
-                                + "\" contextId=\"org.eclipse.ui.contexts.window\" keyConfigurationId=\"org.eclipse.ui.defaultAcceleratorConfiguration\" keySequence=\""
-                                + formalKeySequence
-                                + "\"/></org.eclipse.ui.commands>");
-        
-        // Check that the values have changed.
-        assertEquals("The active scheme should now be Emacs", emacsSchemeId,
-                bindingService.getActiveScheme().getId());
-        bindings = bindingService.getBindings();
-        for (i = 0; i < bindings.length; i++) {
-            final Binding binding = bindings[i];
-            if ((binding.getType() == Binding.USER)
-                    && (formalKeySequence.equals(binding.getTriggerSequence()))) {
-                final ParameterizedCommand command = binding
-                        .getParameterizedCommand();
-                final String actualCommandId = (command == null) ? null
-                        : command.getCommand().getId();
-                assertEquals("The command should be bound to 'ALT+SHIFT+Q A'",
-                        commandId, actualCommandId);
-                break;
-            }
-        }
-        assertFalse("There should be a matching command now",
-                (bindings.length == i));
-    }
+		// Modify the preference store.
+		final IPreferenceStore store = WorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		store
+				.setValue(
+						"org.eclipse.ui.commands",
+						"<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\""
+								+ emacsSchemeId
+								+ "\"/><keyBinding commandId=\""
+								+ commandId
+								+ "\" contextId=\"org.eclipse.ui.contexts.window\" keyConfigurationId=\"org.eclipse.ui.defaultAcceleratorConfiguration\" keySequence=\""
+								+ formalKeySequence
+								+ "\"/></org.eclipse.ui.commands>");
+
+		// Check that the values have changed.
+		assertEquals("The active scheme should now be Emacs", emacsSchemeId,
+				bindingService.getActiveScheme().getId());
+		bindings = bindingService.getBindings();
+		for (i = 0; i < bindings.length; i++) {
+			final Binding binding = bindings[i];
+			if ((binding.getType() == Binding.USER)
+					&& (formalKeySequence.equals(binding.getTriggerSequence()))) {
+				final ParameterizedCommand command = binding
+						.getParameterizedCommand();
+				final String actualCommandId = (command == null) ? null
+						: command.getCommand().getId();
+				assertEquals("The command should be bound to 'ALT+SHIFT+Q A'",
+						commandId, actualCommandId);
+				break;
+			}
+		}
+		assertFalse("There should be a matching command now",
+				(bindings.length == i));
+	}
+
+	public final void testSinglePlatform() throws Exception {
+		// Get the services.
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		ParameterizedCommand about = new ParameterizedCommand(commandService
+				.getCommand("org.eclipse.ui.help.aboutAction"), null);
+		KeySequence m5A = KeySequence.getInstance("M1+8 A");
+		KeySequence m5B = KeySequence.getInstance("M1+8 B");
+		int numAboutBindings = 0;
+
+		Binding[] bindings = bindingService.getBindings();
+		for (int i = 0; i < bindings.length; i++) {
+			final Binding binding = bindings[i];
+			if (binding.getType() == Binding.SYSTEM) {
+				String platform = binding.getPlatform();
+				int idx = (platform == null ? -1 : platform.indexOf(','));
+				assertEquals(binding.toString(), -1, idx);
+				if (about.equals(binding.getParameterizedCommand())) {
+					if (m5A.equals(binding.getTriggerSequence())) {
+						numAboutBindings++;
+						assertNull("M+8 A", binding.getPlatform());
+					} else if (m5B.equals(binding.getTriggerSequence())) {
+						numAboutBindings++;
+						assertEquals(Util.WS_CARBON, binding.getPlatform());
+					}
+				}
+			}
+		}
+		assertEquals(2, numAboutBindings);
+	}
+
+	public final void testCommaPlatform() throws Exception {
+		// Get the services.
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		ParameterizedCommand about = new ParameterizedCommand(commandService
+				.getCommand("org.eclipse.ui.help.aboutAction"), null);
+		KeySequence m5C = KeySequence.getInstance("M1+8 C");
+		KeySequence m5D = KeySequence.getInstance("M1+8 D");
+		int numAboutBindings = 0;
+		int numKeyDeletes = 0;
+
+		Binding[] bindings = bindingService.getBindings();
+		for (int i = 0; i < bindings.length; i++) {
+			final Binding binding = bindings[i];
+			if (binding.getType() == Binding.SYSTEM) {
+				String platform = binding.getPlatform();
+				int idx = (platform == null ? -1 : platform.indexOf(','));
+				assertEquals(binding.toString(), -1, idx);
+				if (about.equals(binding.getParameterizedCommand())) {
+					if (m5C.equals(binding.getTriggerSequence())) {
+						numAboutBindings++;
+						assertNull("M+8 A", binding.getPlatform());
+					} else if (m5D.equals(binding.getTriggerSequence())) {
+						numAboutBindings++;
+						assertTrue(Util.WS_CARBON.equals(binding.getPlatform())
+								|| Util.WS_COCOA.equals(binding.getPlatform()));
+					}
+				} else if (binding.getParameterizedCommand()==null) {
+					if (m5C.equals(binding.getTriggerSequence())) {
+						assertTrue(Util.WS_CARBON.equals(binding.getPlatform())
+								|| Util.WS_COCOA.equals(binding.getPlatform()));
+						numKeyDeletes++;
+					}
+				}
+			}
+		}
+		assertEquals(3, numAboutBindings);
+		assertEquals(2, numKeyDeletes);
+	}
 }

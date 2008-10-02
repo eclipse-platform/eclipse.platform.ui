@@ -52,5 +52,6 @@ public class InternalTestSuite extends TestSuite {
         addTest(Bug99858Test.suite());
         addTest(new TestSuite(WorkbenchWindowSubordinateSourcesTests.class));
         addTest(new TestSuite(ReopenMenuTest.class));
+        addTest(new TestSuite(UtilTest.class));
     }
 }

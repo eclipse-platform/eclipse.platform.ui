@@ -45,7 +45,7 @@ public class MenuLocationURI {
 	public String getQuery() {
 		// Trim off the scheme
 		String[] vals = Util.split(rawString, '?');
-		return vals[1];
+		return vals.length>1?vals[1]:Util.ZERO_LENGTH_STRING;
 	}
 
 	/**
@@ -64,12 +64,12 @@ public class MenuLocationURI {
 	public String getPath() {
 		// Trim off the scheme
 		String[] vals = Util.split(rawString, ':');
-		if (vals[1] == null)
+		if (vals.length<2)
 			return null;
 		
 		// Now, trim off any query
 		vals = Util.split(vals[1], '?');
-		return vals[0];
+		return vals.length==0?Util.ZERO_LENGTH_STRING:vals[0];
 	}
 
 	/* (non-Javadoc)
