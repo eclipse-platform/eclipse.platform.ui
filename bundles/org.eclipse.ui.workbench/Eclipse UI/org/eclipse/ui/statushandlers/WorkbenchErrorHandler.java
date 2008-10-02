@@ -27,17 +27,17 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class WorkbenchErrorHandler extends AbstractStatusHandler {
 
-	private WorkbenchStatusDialogManager statusDialog;
+	private WorkbenchStatusDialogManager statusDialogManager;
 
 	/**
 	 * For testing purposes only. This method must not be used by any other
 	 * clients.
 	 * 
-	 * @param dialog
+	 * @param manager
 	 *            a new WorkbenchStatusDialog to be set.
 	 */
-	void setStatusDialog(WorkbenchStatusDialogManager dialog) {
-		statusDialog = dialog;
+	void setStatusDialog(WorkbenchStatusDialogManager manager) {
+		statusDialogManager = manager;
 	}
 
 	/*
@@ -126,10 +126,15 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 * @return current {@link WorkbenchStatusDialogManager}
 	 */
 	private WorkbenchStatusDialogManager getStatusDialogManager() {
-		if (statusDialog == null) {
-			initStatusDialogManager();
+		if (statusDialogManager == null) {
+			synchronized (this) {
+				if (statusDialogManager == null) {
+					statusDialogManager = new WorkbenchStatusDialogManager(null);
+					configureStatusDialog(statusDialogManager);
+				}
+			}
 		}
-		return statusDialog;
+		return statusDialogManager;
 	}
 
 	/**
@@ -150,14 +155,5 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	protected void configureStatusDialog(
 			final WorkbenchStatusDialogManager statusDialog) {
 		// default configuration does nothing
-	}
-
-	/**
-	 * This method initializes {@link WorkbenchStatusDialogManager} and is called only
-	 * once.
-	 */
-	private void initStatusDialogManager() {
-		statusDialog = new WorkbenchStatusDialogManager(null);
-		configureStatusDialog(statusDialog);
 	}
 }
