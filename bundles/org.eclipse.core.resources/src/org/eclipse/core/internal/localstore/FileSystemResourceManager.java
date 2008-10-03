@@ -246,26 +246,24 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			int bufsize = newContents.length > 4096 ? 8192 : newContents.length * 2;
 			oldStream = new BufferedInputStream(descriptionFile.getContents(true), bufsize);
 			InputStream newStream = new ByteArrayInputStream(newContents);
-			//Compare Streams char by char, ignoring line endings.
+			//compare streams char by char, ignoring line endings
 			int newChar = newStream.read();
 			int oldChar = oldStream.read();
 			while (newChar >= 0 && oldChar >= 0) {
-				boolean newGotLine = (newChar == '\r' || newChar == '\n');
-				boolean oldGotLine = (oldChar == '\r' || oldChar == '\n');
-				if (newGotLine || oldGotLine) {
-					//Ignore newlines if in both streams
-					if (newGotLine != oldGotLine)
-						return true;
+				if (newChar == oldChar) {
+					//streams are the same
+					newChar = newStream.read();
+					oldChar = oldStream.read();
+				} else if ((newChar == '\r' || newChar == '\n') && (oldChar == '\r' || oldChar == '\n')) {
+					//got a difference, but both sides are newlines: read over newlines
 					while (newChar == '\r' || newChar == '\n')
 						newChar = newStream.read();
 					while (oldChar == '\r' || oldChar == '\n')
 						oldChar = oldStream.read();
-				}
-				//Now we are pointing to a char that's not a newline.
-				if (newChar != oldChar)
+				} else {
+					//streams are different
 					return true;
-				newChar = newStream.read();
-				oldChar = oldStream.read();
+				}
 			}
 			//test for excess data in one stream
 			if (newChar >= 0 || oldChar >= 0)
