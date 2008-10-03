@@ -114,7 +114,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 			while ((shell = getStatusDialogManager().getShell()) != null
 					&& !getStatusDialogManager().getShell().isDisposed()) {
 				if (!shell.getDisplay().readAndDispatch()) {
-					Thread.yield();
+					Display.getDefault().sleep();
 				}
 			}
 		}
