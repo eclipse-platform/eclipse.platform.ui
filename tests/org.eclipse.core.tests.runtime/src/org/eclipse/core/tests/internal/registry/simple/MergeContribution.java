@@ -60,7 +60,7 @@ public class MergeContribution extends BaseExtensionRegistryRun {
 		assertNotNull(extensionPoint);
 		IExtension[] extensions = simpleRegistry.getExtensions(namespace);
 		assertNotNull(extensions);
-		assertTrue(extensions.length == expectedExtensions);
+		assertEquals(expectedExtensions, extensions.length);
 	}
 
 	public static Test suite() {

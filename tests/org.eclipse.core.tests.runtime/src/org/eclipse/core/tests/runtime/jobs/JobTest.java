@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Stephan Wahlbrink  - Test fix for bug 200997.
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
@@ -15,7 +16,8 @@ import junit.framework.Assert;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.TestBarrier;
+import org.eclipse.core.tests.harness.TestJob;
 
 /**
  * Tests the implemented get/set methods of the abstract class Job
@@ -23,6 +25,7 @@ import org.eclipse.core.tests.harness.*;
 public class JobTest extends AbstractJobTest {
 	protected Job longJob;
 	protected Job shortJob;
+	private FussyProgressProvider progressProvider;
 
 	public static Test suite() {
 		return new TestSuite(JobTest.class);
@@ -76,6 +79,8 @@ public class JobTest extends AbstractJobTest {
 		super.setUp();
 		shortJob = new TestJob("Short Test Job", 100, 10);
 		longJob = new TestJob("Long Test Job", 1000000, 10);
+		progressProvider = new FussyProgressProvider();
+		Job.getJobManager().setProgressProvider(progressProvider);
 	}
 
 	/*
@@ -83,6 +88,7 @@ public class JobTest extends AbstractJobTest {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		Job.getJobManager().setProgressProvider(null);
 		waitForState(shortJob, Job.NONE);
 		waitForState(longJob, Job.NONE);
 	}
@@ -393,10 +399,45 @@ public class JobTest extends AbstractJobTest {
 		barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
 		assertTrue("1.0", !canceling[0]);
 		job.cancel();
-		assertTrue("1.0", canceling[0]);
+		assertTrue("1.1", canceling[0]);
 		//let the job finish
 		barrier.setStatus(TestBarrier.STATUS_RUNNING);
 		waitForState(job, Job.NONE);
+	}
+
+	/**
+	 * Tests the hook method {@link Job#canceling}.
+	 */
+	public void testCancelingByMonitor() {
+		final TestBarrier barrier = new TestBarrier();
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
+		final boolean[] canceling = new boolean[] {false};
+		final IProgressMonitor[] jobmonitor = new IProgressMonitor[1];
+		Job job = new Job("Testing#testCancelingByMonitor") {
+			protected void canceling() {
+				canceling[0] = true;
+			}
+
+			protected IStatus run(IProgressMonitor monitor) {
+				jobmonitor[0] = monitor;
+				barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+				barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+				return Status.OK_STATUS;
+			}
+		};
+		//run test twice to ensure job is left in a clean state after first cancelation
+		for (int i = 0; i < 2; i++) {
+			canceling[0] = false;
+			//schedule the job and wait on the barrier until it is running
+			job.schedule();
+			barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+			assertTrue(Integer.toString(i) + ".1.0", !canceling[0]);
+			jobmonitor[0].setCanceled(true);
+			assertTrue(Integer.toString(i) + ".1.1", canceling[0]);
+			//let the job finish
+			barrier.setStatus(TestBarrier.STATUS_RUNNING);
+			waitForState(job, Job.NONE);
+		}
 	}
 
 	public void testGetName() {
@@ -650,7 +691,7 @@ public class JobTest extends AbstractJobTest {
 		//wait until the join succeeds
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 	}
-	
+
 	/**
 	 * Tests that a job joining itself is an error.
 	 */
