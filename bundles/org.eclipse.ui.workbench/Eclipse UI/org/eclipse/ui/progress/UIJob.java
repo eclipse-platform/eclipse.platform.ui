@@ -83,6 +83,7 @@ public abstract class UIJob extends Job {
         asyncDisplay.asyncExec(new Runnable() {
             public void run() {
                 IStatus result = null;
+                Throwable throwable = null;
                 try {
                     //As we are in the UI Thread we can
                     //always know what to tell the job.
@@ -94,13 +95,15 @@ public abstract class UIJob extends Job {
                         result = runInUIThread(monitor);
                     }
 
+                } catch(Throwable t){
+                	throwable = t;
                 } finally {
                		UIStats.end(UIStats.UI_JOB, UIJob.this, getName());
                     if (result == null) {
 						result = new Status(IStatus.ERROR,
                                 PlatformUI.PLUGIN_ID, IStatus.ERROR,
-                                ProgressMessages.Error,
-                                null);
+                                ProgressMessages.InternalError,
+                                throwable);
 					}
                     done(result);
                 }

@@ -32,7 +32,7 @@ public class ProgressMessages extends NLS {
 	public static String JobInfo_Finished;
 	public static String JobInfo_FinishedAt;
 	public static String JobErrorDialog_CloseDialogMessage;
-	public static String Error;
+	public static String InternalError;
 	public static String DeferredTreeContentManager_NotDeferred;
 	public static String DeferredTreeContentManager_AddingChildren;
 	public static String DeferredTreeContentManager_FetchingName;
