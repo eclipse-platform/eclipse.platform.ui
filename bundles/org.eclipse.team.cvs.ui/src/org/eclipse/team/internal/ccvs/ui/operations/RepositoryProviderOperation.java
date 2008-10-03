@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -41,7 +42,7 @@ import org.eclipse.team.internal.ui.mapping.BuildScopeOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Performs a cvs operation on multiple repository providers
+ * Performs a CVS operation on multiple repository providers
  */
 public abstract class RepositoryProviderOperation extends CVSOperation {
 
@@ -56,7 +57,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	private final ResourceMapping[] selectedMappings;
 	
     /**
-     * Interface that is available to sublcasses which identifies
+     * Interface that is available to subclasses which identifies
      * the depth for various resources. The files will be included
      * in whichever group (deep or shallow) has resources.
      */
@@ -275,7 +276,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	        	return;
 	        final ISchedulingRule rule = getSchedulingRule(provider);
 	        try {
-	        	Platform.getJobManager().beginRule(rule, monitor);
+	        	Job.getJobManager().beginRule(rule, monitor);
 	            if (deepResources.length > 0)
 	                execute(provider, deepResources, true /* recurse */, Policy.subMonitorFor(monitor, 100));
 	            if (shallowResources.length > 0)
@@ -284,7 +285,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	                handleNontraversedFolders(provider, nontraversedFolders, Policy.subMonitorFor(monitor, 10));
 	            }
 	        } finally {
-	        	Platform.getJobManager().endRule(rule);
+	        	Job.getJobManager().endRule(rule);
 	        }
         } finally {
             monitor.done();
@@ -348,10 +349,10 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	}
 
     /**
-     * Return the resource mapping context that is to be usd by this operation.
-     * By defautl, <code>null</code> is returned but subclasses may override
+     * Return the resource mapping context that is to be used by this operation.
+     * By default, <code>null</code> is returned but subclasses may override
      * to provide a specific context.
-     * @return the resource mapping context for this operaton
+     * @return the resource mapping context for this operation
      */
 	protected ResourceMappingContext getResourceMappingContext() {
         return ResourceMappingContext.LOCAL_CONTEXT;
@@ -419,9 +420,9 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	 * Update the workspace subscriber for an update operation performed on the 
 	 * given resources. After an update, the remote tree is flushed in order
 	 * to ensure that stale incoming additions are removed. This need only
-	 * be done for folders. At the time of writting, all update operations
+	 * be done for folders. At the time of writing, all update operations
 	 * are deep so the flush is deep as well.
-	 * @param provider the provider (projedct) for all the given resources
+	 * @param provider the provider (project) for all the given resources
 	 * @param resources the resources that were updated
 	 * @param recurse 
 	 * @param monitor a progress monitor
@@ -461,7 +462,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
     
     /**
      * Return the root resources for all the traversals of this operation.
-     * Tis method may only be invoked after {@link #buildScope(IProgressMonitor) }.
+     * This method may only be invoked after {@link #buildScope(IProgressMonitor) }.
      * @return the root resources for all the traversals of this operation
      * @throws CoreException 
      */
