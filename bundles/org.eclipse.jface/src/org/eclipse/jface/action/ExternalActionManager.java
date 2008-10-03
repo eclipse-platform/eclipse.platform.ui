@@ -245,6 +245,7 @@ public final class ExternalActionManager {
 				ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 				listeners.add(existing);
 				listeners.add(listener);
+				registeredListeners.put(commandId, listeners);
 			} else {
 				registeredListeners.put(commandId, listener);
 			}
