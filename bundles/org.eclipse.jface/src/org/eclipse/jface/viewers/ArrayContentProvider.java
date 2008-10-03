@@ -25,6 +25,25 @@ import java.util.Collection;
  */
 public class ArrayContentProvider implements IStructuredContentProvider {
 
+	private static ArrayContentProvider instance;
+
+	/**
+	 * Returns an instance of ArrayContentProvider. Since instances of this
+	 * class do not maintain any state, they can be shared between multiple
+	 * clients.
+	 * 
+	 * @return an instance of ArrayContentProvider
+	 * 
+	 * @since 3.5
+	 */
+	public static ArrayContentProvider getInstance() {
+		synchronized(ArrayContentProvider.class) {
+			if (instance == null) {
+				instance = new ArrayContentProvider();
+			}
+			return instance;
+		}
+	}
     /**
      * Returns the elements in the input, which must be either an array or a
      * <code>Collection</code>. 
