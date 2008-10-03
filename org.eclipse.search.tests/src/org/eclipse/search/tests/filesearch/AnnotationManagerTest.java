@@ -69,6 +69,7 @@ public class AnnotationManagerTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		SearchTestPlugin.ensureWelcomePageClosed();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		String[] fileNamePattern= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePattern, false);
@@ -91,30 +92,23 @@ public class AnnotationManagerTest extends TestCase {
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] files= result.getElements();
 		try {
-			System.out.println("AnnotationManagerTest.testAddAnnotation> file count: = " + files.length);
 			for (int i= 0; i < files.length; i++) {
 				IFile file= (IFile)files[i];
-				System.out.println("AnnotationManagerTest.testAddAnnotation> file: = " + file.getFullPath());
 				ITextEditor editor= (ITextEditor)IDE.openEditor(SearchPlugin.getActivePage(), file, true);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				annotationModel.getAnnotationIterator();
 				HashSet positions= new HashSet();
 				for (Iterator iter= annotationModel.getAnnotationIterator(); iter.hasNext();) {
 					Annotation annotation= (Annotation) iter.next();
-					System.out.println("	annotation: = " + annotation.getType());
 					if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
-						Position position= annotationModel.getPosition(annotation);
-						positions.add(position);
-						System.out.println("		found: " + position);
+						positions.add(annotationModel.getPosition(annotation));
 					}
 				}
 	
 				Match[] matches= result.getMatches(file);
-				System.out.println("	match count:" + matches.length);
 				for (int j= 0; j < matches.length; j++) {
 					Position position= new Position(matches[j].getOffset(), matches[j].getLength());
-					System.out.println("		position[" + j + "] = " + position);
-					assertTrue("position not found at: " + j, positions.remove(position)); //$NON-NLS-1$
+					assertTrue("position not found at: "+j, positions.remove(position)); //$NON-NLS-1$
 				}
 				assertEquals(0, positions.size());
 			

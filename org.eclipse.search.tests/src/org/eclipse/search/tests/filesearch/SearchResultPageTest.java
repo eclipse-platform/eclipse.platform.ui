@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.search.internal.ui.text.FileSearchPage;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
@@ -58,6 +59,7 @@ public class SearchResultPageTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		SearchTestPlugin.ensureWelcomePageClosed();
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
 	
