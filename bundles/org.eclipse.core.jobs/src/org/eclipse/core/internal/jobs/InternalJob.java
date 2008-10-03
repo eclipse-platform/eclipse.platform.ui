@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Stephan Wahlbrink  - Fix for bug 200997.
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -47,6 +48,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * flag on a job indicating that it was about to run, but has been canceled
 	 */
 	private static final int M_ABOUT_TO_RUN_CANCELED = 0x0400;
+	
+	/*
+	 * Flag on a job indicating that it was canceled when running. This flag
+	 * is used to ensure that #canceling is only ever called once on a job in
+	 * case of recursive cancelation attempts.
+	 */
+	private static final int M_RUN_CANCELED = 0x0800;
 
 	protected static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
@@ -288,6 +296,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		return (flags & M_ABOUT_TO_RUN_CANCELED) != 0;
 	}
 
+	/**
+	 * Returns whether this job was canceled when it was running.
+	 */
+	final boolean isRunCanceled() {
+		return (flags & M_RUN_CANCELED) != 0;
+	}
+
 	/* (non-Javadoc)
 	 * @see Job#isBlocking()
 	 */
@@ -382,6 +397,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setAboutToRunCanceled(boolean value) {
 		flags = value ? flags | M_ABOUT_TO_RUN_CANCELED : flags & ~M_ABOUT_TO_RUN_CANCELED;
 
+	}
+
+	/**
+	 * Sets whether this job was canceled when it was running
+	 */
+	final void setRunCanceled(boolean value) {
+		flags = value ? flags | M_RUN_CANCELED : flags & ~M_RUN_CANCELED;
 	}
 
 	/* (non-Javadoc)

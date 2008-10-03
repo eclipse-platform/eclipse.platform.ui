@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Wahlbrink  - Fix for bug 200997.
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -235,6 +236,7 @@ public class JobManager implements IJobManager {
 	 */
 	protected boolean cancel(InternalJob job) {
 		IProgressMonitor monitor = null;
+		boolean runCanceling = false;
 		synchronized (lock) {
 			switch (job.getState()) {
 				case Job.NONE :
@@ -243,6 +245,9 @@ public class JobManager implements IJobManager {
 					//cannot cancel a job that has already started (as opposed to ABOUT_TO_RUN)
 					if (job.internalGetState() == Job.RUNNING) {
 						monitor = job.getProgressMonitor();
+						runCanceling = !job.isRunCanceled();
+						if (runCanceling)
+							job.setRunCanceled(true);
 						break;
 					}
 					//signal that the job should be canceled before it gets a chance to run
@@ -252,11 +257,13 @@ public class JobManager implements IJobManager {
 					changeState(job, Job.NONE);
 			}
 		}
-		//call monitor outside sync block
+		//call monitor and canceling outside sync block
 		if (monitor != null) {
-			if (!monitor.isCanceled()) {
-				monitor.setCanceled(true);
+			if (runCanceling) {
+				if (!monitor.isCanceled())
+					monitor.setCanceled(true);
 				job.canceling();
+				job.setRunCanceled(false);
 			}
 			return false;
 		}
