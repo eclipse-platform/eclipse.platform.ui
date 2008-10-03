@@ -92,6 +92,55 @@ public class StatusDialogManagerTest extends TestCase {
 		assertNotNull(shell);
 		assertTrue((shell.getStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL);
 	}
+	
+	public void testCheckingForMessageDuplication1() {
+		IStatus status = new IStatus() {
+
+			public IStatus[] getChildren() {
+				// TODO Auto-generated method stub
+				return new IStatus[0];
+			}
+
+			public int getCode() {
+				return IStatus.ERROR;
+			}
+
+			public Throwable getException() {
+				return new ArrayIndexOutOfBoundsException();
+			}
+
+			public String getMessage() {
+				return null;
+			}
+
+			public String getPlugin() {
+				return "plugin";
+			}
+
+			public int getSeverity() {
+				return IStatus.ERROR;
+			}
+
+			public boolean isMultiStatus() {
+				return false;
+			}
+
+			public boolean isOK() {
+				return false;
+			}
+
+			public boolean matches(int severityMask) {
+				return true;
+			}
+
+		};
+		wsdm.addStatusAdapter(new StatusAdapter(status), false);
+
+		assertEquals(status.getException().getClass().getName(),
+				StatusDialogUtil.getTitleLabel().getText());
+		assertEquals(WorkbenchMessages.WorkbenchStatusDialog_SeeDetails,
+				StatusDialogUtil.getSingleStatusLabel().getText());
+	}
 
 	/**
 	 * Preserving details selection and state

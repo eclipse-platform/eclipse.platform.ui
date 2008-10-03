@@ -1642,7 +1642,10 @@ public class WorkbenchStatusDialogManager {
 					&& !primary.equals(t.getMessage())) {
 				return t.getMessage();
 			}
-			return t.getClass().getName();
+			String throwableName = t.getClass().getName();
+			if (!primary.equals(throwableName)) {
+				return throwableName;
+			}
 		}
 		return WorkbenchMessages.WorkbenchStatusDialog_SeeDetails;
 	}
