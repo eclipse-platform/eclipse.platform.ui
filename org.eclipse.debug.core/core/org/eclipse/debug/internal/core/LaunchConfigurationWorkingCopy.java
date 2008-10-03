@@ -293,6 +293,14 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					boolean added = false;
 					lmonitor.subTask(DebugCoreMessages.LaunchConfigurationWorkingCopy_1);
 					IFileStore file = getFileStore();
+					if (file == null) {
+						throw new DebugException(
+								new Status(
+								 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+								 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_4, null 
+								)
+							);
+					}
 					IFileStore dir = file.getParent();
 					dir.mkdir(EFS.SHALLOW, null);
 					if (!file.fetchInfo().exists()) {

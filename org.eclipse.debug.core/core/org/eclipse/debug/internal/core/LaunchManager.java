@@ -50,6 +50,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -1285,10 +1286,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	protected LaunchConfigurationInfo getInfo(LaunchConfiguration config) throws CoreException {
 		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
 		if (info == null) {
+			IFileStore store = config.getFileStore();
 			if (config.exists()) {
 				BufferedInputStream stream = null;
 				try {
-					stream = new BufferedInputStream(config.getFileStore().openInputStream(EFS.NONE, null));
+					stream = new BufferedInputStream(store.openInputStream(EFS.NONE, null));
 					info = createInfoFromXML(stream);
 					synchronized (this) {
 						fLaunchConfigurations.put(config, info);
@@ -1313,7 +1315,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		
 			} else {
 				throw createDebugException(
-					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), config.getFileStore().toURI().toString()}), null); 
+					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), store.toURI().toString()}), null); 
 			}
 		}
 		return info;
@@ -2339,11 +2341,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.5
 	 */
 	private void throwException(LaunchConfiguration config, Throwable e) throws DebugException {
-		String uri = null;
+		String uri = config.getName();
 		try {
-			uri = config.getFileStore().toString();
+			IFileStore store = config.getFileStore();
+			if (store != null) {
+				uri = store.toString();
+			}
 		} catch (CoreException ce) {
-			uri = config.getName();
 		}
 		throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager__0__occurred_while_reading_launch_configuration_file__1___1, new String[]{e.toString(), uri}), e); 
 	}

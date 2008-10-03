@@ -322,45 +322,54 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 						}
 						if(configs[i] instanceof ILaunchConfiguration) {
 							try {
-								file = ((LaunchConfiguration) configs[i]).getFileStore();
-								newfile = new File(destpath.append(file.getName()).toOSString());
-								if(newfile.exists() & !overwrite) {
-									if(nowall) {
-										continue;
+								LaunchConfiguration launchConfig = (LaunchConfiguration) configs[i];
+								file = launchConfig.getFileStore();
+								if (file == null) {
+									if (errors == null) {
+										errors = new ArrayList(configs.length);
 									}
-									dialog = new MessageDialog(DebugUIPlugin.getShell(), 
-											WizardMessages.ExportLaunchConfigurationsWizardPage_11, 
-											null, 
-											MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new String[] {file.getName()}), 
-											MessageDialog.QUESTION, new String[] {WizardMessages.ExportLaunchConfigurationsWizardPage_13, WizardMessages.ExportLaunchConfigurationsWizardPage_14, WizardMessages.ExportLaunchConfigurationsWizardPage_15, WizardMessages.ExportLaunchConfigurationsWizardPage_16, WizardMessages.ExportLaunchConfigurationsWizardPage_17}, 0);
-									if(!owall) {
-										int ret = dialog.open();
-										switch(ret) {
-											case 0: {
-												copyFile(file, newfile);
-												break;
-											}
-											case 1: {
-												owall = true;
-												copyFile(file, newfile);
-												break;
-											}
-											case 3: {
-												nowall = true;
-												break;
-											}
-											case 4: {
-												monitor.setCanceled(true);
-												break;
+									errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
+											MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_19, new String[]{launchConfig.getName()}), null));
+								} else {
+									newfile = new File(destpath.append(file.getName()).toOSString());
+									if(newfile.exists() & !overwrite) {
+										if(nowall) {
+											continue;
+										}
+										dialog = new MessageDialog(DebugUIPlugin.getShell(), 
+												WizardMessages.ExportLaunchConfigurationsWizardPage_11, 
+												null, 
+												MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new String[] {file.getName()}), 
+												MessageDialog.QUESTION, new String[] {WizardMessages.ExportLaunchConfigurationsWizardPage_13, WizardMessages.ExportLaunchConfigurationsWizardPage_14, WizardMessages.ExportLaunchConfigurationsWizardPage_15, WizardMessages.ExportLaunchConfigurationsWizardPage_16, WizardMessages.ExportLaunchConfigurationsWizardPage_17}, 0);
+										if(!owall) {
+											int ret = dialog.open();
+											switch(ret) {
+												case 0: {
+													copyFile(file, newfile);
+													break;
+												}
+												case 1: {
+													owall = true;
+													copyFile(file, newfile);
+													break;
+												}
+												case 3: {
+													nowall = true;
+													break;
+												}
+												case 4: {
+													monitor.setCanceled(true);
+													break;
+												}
 											}
 										}
+										else if(!nowall) {
+											copyFile(file, newfile);
+										}
 									}
-									else if(!nowall) {
+									else {
 										copyFile(file, newfile);
 									}
-								}
-								else {
-									copyFile(file, newfile);
 								}
 							}
 							catch (IOException e ) {

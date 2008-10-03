@@ -15,6 +15,7 @@ package org.eclipse.debug.internal.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -274,16 +275,19 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (exists()) {
 			IFile file = getFile();
 			if (file == null) {
-				getFileStore().delete(EFS.NONE, null);
-				if ((getFileStore().fetchInfo().exists())) {
-					throw new DebugException(
-						new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfiguration_Failed_to_delete_launch_configuration__1, null) 
-					);
+				IFileStore store = getFileStore();
+				if (store != null) {
+					store.delete(EFS.NONE, null);
+					if ((store.fetchInfo().exists())) {
+						throw new DebugException(
+							new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+							 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfiguration_Failed_to_delete_launch_configuration__1, null) 
+						);
+					}
+					// manually update the launch manager cache since there
+					// will be no resource delta
+					getLaunchManager().launchConfigurationDeleted(this);
 				}
-				// manually update the launch manager cache since there
-				// will be no resource delta
-				getLaunchManager().launchConfigurationDeleted(this);
 			} else {
 				// Delete the resource using IFile API such that
 				// resource deltas are fired.
@@ -349,7 +353,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			return file.exists();
 		}
 		try {
-			return getFileStore().fetchInfo().exists();
+			IFileStore store = getFileStore();
+			if (store != null) {
+				return store.fetchInfo().exists();
+			}
 		} catch (CoreException e) {
 		}
 		return false;
@@ -493,7 +500,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			return EFS.getLocalFileSystem().fromLocalFile(
 				LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append(getFileName()).toFile());
 		}
-		return EFS.getStore(getFile().getLocationURI());
+		URI uri = getFile().getLocationURI();
+		if (uri != null) {
+			return EFS.getStore(uri);
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)

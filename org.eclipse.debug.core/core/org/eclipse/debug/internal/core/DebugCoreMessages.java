@@ -110,6 +110,8 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchConfigurationInfo_missing_type;
 	public static String LaunchConfigurationInfo_36;
 	public static String LaunchConfigurationWorkingCopy__0__occurred_generating_launch_configuration_XML__1;
+
+	public static String LaunchConfigurationWorkingCopy_4;
 	public static String LaunchConfigurationWorkingCopy_Specified_container_for_launch_configuration_does_not_exist_2;
 	public static String LaunchConfigurationWorkingCopy_5;
 	public static String LaunchManager__0__occurred_while_reading_launch_configuration_file__1___1;
