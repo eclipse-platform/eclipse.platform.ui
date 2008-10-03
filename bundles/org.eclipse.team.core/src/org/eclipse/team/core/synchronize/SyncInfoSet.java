@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -350,7 +350,7 @@ public class SyncInfoSet {
 	 * 
 	 * @param resource the local resource to remove
 	 */
-	public synchronized void remove(IResource resource) {
+	public void remove(IResource resource) {
 		try {
 			beginInput();
 			SyncInfo info = internalRemove(resource);
@@ -554,12 +554,11 @@ public class SyncInfoSet {
 	}
 
 	private void fireChanges(final IProgressMonitor monitor) {
-		// Use a synchronized block to ensure that the event we send is static
-		final SyncSetChangedEvent event;
-		synchronized(this) {
-			event = getChangeEvent();
-			resetChanges();
-		}
+		// Only one thread at the time can enter the method, so the event we
+		// send is static
+		final SyncSetChangedEvent event = getChangeEvent();
+		resetChanges();
+			
 		// Ensure that the list of listeners is not changed while events are fired.
 		// Copy the listeners so that addition/removal is not blocked by event listeners
 		if(event.isEmpty() && ! event.isReset()) return;
