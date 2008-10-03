@@ -286,14 +286,15 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 
 	public IProxyData[] getProxyDataForHost(String host) {
 		checkMigrated();
-		if (hasSystemProxies() && isSystemProxiesEnabled())
-			try {
-				return nativeProxyProvider.select(new URI(host));
-			} catch (URISyntaxException e) {
-				return new IProxyData[0];
-			}
-		
-		if (isHostFiltered(host))
+		URI uri = tryGetURI(host);
+		if (uri == null) {
+			return new IProxyData[0];
+		}
+		if (hasSystemProxies() && isSystemProxiesEnabled()) {
+			return nativeProxyProvider.select(uri);
+		}
+
+		if (isHostFiltered(uri))
 			return new IProxyData[0];
 		IProxyData[] data = getProxyData();
 		List result = new ArrayList();
@@ -305,11 +306,23 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		return (IProxyData[]) result.toArray(new IProxyData[result.size()]);
 	}
 
-	private boolean isHostFiltered(String host) {
+	public static URI tryGetURI(String host) {
+		try {
+			int i = host.indexOf(":"); //$NON-NLS-1$
+			if (i == -1) {
+				return new URI("//" + host); //$NON-NLS-1$
+			}
+			return new URI(host.substring(i + 1));
+		} catch (URISyntaxException e) {
+			return null;
+		}
+	}
+
+	private boolean isHostFiltered(URI uri) {
 		String[] filters = getNonProxiedHosts();
 		for (int i = 0; i < filters.length; i++) {
 			String filter = filters[i];
-			if (matchesFilter(host, filter))
+			if (matchesFilter(uri.getHost(), filter))
 				return true;
 		}
 		return false;
@@ -337,7 +350,8 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		IProxyData[] data = getProxyDataForHost(host);
 		for (int i = 0; i < data.length; i++) {
 			IProxyData proxyData = data[i];
-			if (proxyData.getType().equals(type) && proxyData.getHost() != null)
+			if (proxyData.getType().equalsIgnoreCase(type)
+					&& proxyData.getHost() != null)
 				return proxyData;
 		}
 		return null;

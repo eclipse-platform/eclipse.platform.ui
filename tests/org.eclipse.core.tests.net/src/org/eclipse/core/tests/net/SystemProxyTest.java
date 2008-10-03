@@ -1,0 +1,160 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.tests.net;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.eclipse.core.internal.net.ProxyData;
+import org.eclipse.core.net.proxy.IProxyData;
+import org.eclipse.core.net.proxy.IProxyService;
+
+public class SystemProxyTest extends TestCase {
+
+	private boolean isProxiesDefault;
+	private boolean isSystemProxiesDefault;
+
+	private Map proxyDataMap = new HashMap();
+
+	public SystemProxyTest() {
+		super();
+	}
+
+	public SystemProxyTest(String name) {
+		super(name);
+	}
+
+	public static Test suite() {
+		return new TestSuite(SystemProxyTest.class);
+	}
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		isSystemProxiesDefault = isSystemProxiesEnabled();
+		setSystemProxiesEnabled(true);
+		isProxiesDefault = isProxiesEnabled();
+		setProxiesEnabled(true);
+	}
+
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		setProxiesEnabled(isProxiesDefault);
+		setSystemProxiesEnabled(isSystemProxiesDefault);
+		IProxyData[] data = getProxyManager().getProxyData();
+		for (int i = 0; i < data.length; i++) {
+			IProxyData proxyData = data[i];
+			proxyData.disable();
+		}
+		getProxyManager().setProxyData(data);
+	}
+
+	private IProxyService getProxyManager() {
+		return Activator.getDefault().getProxyService();
+	}
+
+	private boolean isProxiesEnabled() {
+		return this.getProxyManager().isProxiesEnabled();
+	}
+
+	private boolean isSystemProxiesEnabled() {
+		return this.getProxyManager().isProxiesEnabled();
+	}
+
+	private void setProxiesEnabled(boolean enabled) {
+		this.getProxyManager().setProxiesEnabled(enabled);
+		if (enabled && this.getProxyManager().isSystemProxiesEnabled()
+				&& !this.getProxyManager().hasSystemProxies()) {
+			assertEquals(false, this.getProxyManager().isProxiesEnabled());
+		} else {
+			assertEquals(enabled, this.getProxyManager().isProxiesEnabled());
+		}
+	}
+
+	private void setSystemProxiesEnabled(boolean enabled) {
+		this.getProxyManager().setSystemProxiesEnabled(enabled);
+		assertEquals(enabled, this.getProxyManager().isSystemProxiesEnabled());
+	}
+
+	private void assertProxyDataEqual(IProxyData data, IProxyData expectedData) {
+		assertEquals(expectedData.getType(), data.getType());
+		assertEquals(expectedData.getHost(), data.getHost());
+		assertEquals(expectedData.getPort(), data.getPort());
+		assertEquals(expectedData.getUserId(), data.getUserId());
+		assertEquals(expectedData.getPassword(), data.getPassword());
+		assertEquals(expectedData.isRequiresAuthentication(), data
+				.isRequiresAuthentication());
+		assertEquals(expectedData.getSource(), data.getSource());
+	}
+
+	private void checkGetProxyDataForHost() {
+		checkGetProxyDataForHost("http://www.something.org");
+		checkGetProxyDataForHost("https://www.something.org");
+		checkGetProxyDataForHost("socks://www.something.org");
+		checkGetProxyDataForHost("www.something.org");
+	}
+
+	private void checkGetProxyDataForHost(String host) {
+		IProxyData[] proxiesData = getProxyManager().getProxyDataForHost(host);
+		assertNotNull(proxiesData);
+
+		Map typeMap = new HashMap();
+		for (int i = 0; i < proxiesData.length; i++) {
+			assertProxyDataEqual(proxiesData[i], (IProxyData) proxyDataMap
+					.get(proxiesData[i].getType()));
+			typeMap.put(proxiesData[i].getType(), proxiesData[i].getType());
+		}
+
+		assertEquals(3, typeMap.size());
+	}
+
+	/**
+	 * This test needs system env set. See {@link #initializeTestProxyData()}
+	 * for values.
+	 */
+	public void testGetProxyDataForHost_LinuxEnvSettings() {
+		initializeTestProxyData("LINUX_ENV");
+		checkGetProxyDataForHost();
+	}
+
+	/**
+	 * This test needs Gnome settings set. See
+	 * {@link #initializeTestProxyData()} for values.
+	 */
+	public void testGetProxyDataForHost_LinuxGnomeSettings() {
+		initializeTestProxyData("LINUX_GNOME");
+		checkGetProxyDataForHost();
+	}
+
+	/**
+	 * This test needs Windows IE settings manually set. See
+	 * {@link #initializeTestProxyData()} for values.
+	 */
+	public void testGetProxyDataForHost_WindowsIEManualSettings() {
+		initializeTestProxyData("WINDOWS_IE");
+		checkGetProxyDataForHost();
+	}
+
+	private void initializeTestProxyData(String proxyDataSource) {
+		proxyDataMap.put(IProxyData.HTTP_PROXY_TYPE, new ProxyData(
+				IProxyData.HTTP_PROXY_TYPE, "127.0.0.1", 8081, false,
+				proxyDataSource));
+		proxyDataMap.put(IProxyData.HTTPS_PROXY_TYPE, new ProxyData(
+				IProxyData.HTTPS_PROXY_TYPE, "127.0.0.2", 8082, false,
+				proxyDataSource));
+		proxyDataMap.put(IProxyData.SOCKS_PROXY_TYPE, new ProxyData(
+				IProxyData.SOCKS_PROXY_TYPE, "127.0.0.3", 8083, false,
+				proxyDataSource));
+	}
+}

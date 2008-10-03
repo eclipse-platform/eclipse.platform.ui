@@ -7,12 +7,14 @@
  *
  * Contributors:
  * 	compeople AG (Stefan Liebig) - initial API and implementation
+ *  IBM Corporation - handling URI without a scheme by select(URI, List) (bug 246065)
  *******************************************************************************/
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,11 +51,21 @@ public class StaticProxyConfig {
 			return;
 
 		if (!protocolSpecificProxies.isEmpty()) {
-			List protocolProxies = (List) protocolSpecificProxies.get(uri
-					.getScheme().toUpperCase());
-			if (protocolProxies == null)
-				return;
-			proxies.addAll(protocolProxies);
+			if (uri.getScheme() != null) {
+				List protocolProxies = (List) protocolSpecificProxies.get(uri
+						.getScheme().toUpperCase());
+				if (protocolProxies == null)
+					return;
+				proxies.addAll(protocolProxies);
+			} else {
+				Iterator it = protocolSpecificProxies.values().iterator();
+				while (it.hasNext()) {
+					List protocolProxies = (List) it.next();
+					if (protocolProxies == null)
+						return;
+					proxies.addAll(protocolProxies);
+				}
+			}
 		} else
 			proxies.addAll(universalProxies);
 	}

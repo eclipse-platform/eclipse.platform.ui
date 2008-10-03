@@ -13,6 +13,7 @@ package org.eclipse.core.internal.net.proxy.unix;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -47,8 +48,25 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 	 * @see org.eclipse.core.internal.net.AbstractProxyProvider#getProxyData(java.net.URI)
 	 */
 	public IProxyData[] getProxyData(URI uri) {
-		ProxyData pd = getSystemProxyInfo(uri.getScheme());
-		return pd != null ? new IProxyData[] { pd } : new IProxyData[0];
+		if (uri.getScheme() != null) {
+			ProxyData pd = getSystemProxyInfo(uri.getScheme());
+			return pd != null ? new IProxyData[] { pd } : new IProxyData[0];
+		}
+		String[] commonTypes = new String[] { IProxyData.HTTP_PROXY_TYPE,
+				IProxyData.SOCKS_PROXY_TYPE, IProxyData.HTTPS_PROXY_TYPE };
+		return getProxyForTypes(commonTypes);
+	}
+
+	private IProxyData[] getProxyForTypes(String[] types) {
+		ArrayList allData = new ArrayList();
+		for (int i = 0; i < types.length; i++) {
+			String type = types[i];
+			ProxyData pd = getSystemProxyInfo(type);
+			if (pd != null && pd.getHost() != null) {
+				allData.add(pd);
+			}
+		}
+		return (IProxyData[]) allData.toArray(new IProxyData[0]);
 	}
 
 	public String[] getNonProxiedHosts() {
