@@ -53,7 +53,7 @@ public class MenuBaseTests extends MenuTestCase {
 			org.eclipse.jface.action.Separator.class,
 			org.eclipse.ui.menus.CommandContributionItem.class,
 			org.eclipse.ui.menus.CommandContributionItem.class,
-			org.eclipse.ui.actions.CompoundContributionItem.class,
+			org.eclipse.ui.internal.menus.DynamicMenuContributionItem.class,
 			org.eclipse.jface.action.MenuManager.class,
 			org.eclipse.ui.menus.CommandContributionItem.class,
 			org.eclipse.ui.menus.CommandContributionItem.class,
@@ -80,7 +80,7 @@ public class MenuBaseTests extends MenuTestCase {
 	public MenuBaseTests(String testName) {
 		super(testName);
 	}
-
+	
 	public void testBasicPopulation() throws Exception {
 		MenuManager manager = new MenuManager(null, TEST_CONTRIBUTIONS_CACHE_ID);
 		menuService.populateContributionManager(manager, "menu:"

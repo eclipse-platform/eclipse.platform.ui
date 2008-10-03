@@ -24,7 +24,6 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -286,32 +285,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	private IContributionItem createDynamicAdditionContribution(
 			final IServiceLocator locator,
 			final IConfigurationElement dynamicAddition) {
-		// If we've already tried (and failed) to load the
-		// executable extension then skip this addition.
-		if (failedLoads.contains(dynamicAddition))
-			return null;
-
-		// Attempt to load the addition's EE (creates a new instance)
-		final ContributionItem loadedDynamicContribution = (ContributionItem) Util
-				.safeLoadExecutableExtension(dynamicAddition,
-						IWorkbenchRegistryConstants.ATT_CLASS,
-						ContributionItem.class);
-
-		// Cache failures
-		if (loadedDynamicContribution == null) {
-			failedLoads.add(loadedDynamicContribution);
-			return null;
-		}
-
-		loadedDynamicContribution.setId(getId(dynamicAddition));
-		if (loadedDynamicContribution instanceof IWorkbenchContribution) {
-			((IWorkbenchContribution)loadedDynamicContribution).initialize(locator);
-		}
 		
-		// TODO provide a proxy IContributionItem that defers instantiation
-		// adding contribution items in a menu instantiates this object ...
-		// we need to defer loading until fill(*) is called.
-		return loadedDynamicContribution;
+		return new DynamicMenuContributionItem(getId(dynamicAddition), locator,
+				dynamicAddition);
+		
 	}
 
 	private IContributionItem createControlAdditionContribution(

@@ -56,5 +56,6 @@ public class DynamicPluginsTestSuite extends TestSuite {
 		addTest(new TestSuite(ObjectContributionTests.class));
 		addTest(new TestSuite(WorkingSetTests.class));
 		addTest(new TestSuite(DynamicSupportTests.class));
+		addTest(new TestSuite(DynamicContributionTest.class));
 	}
 }
