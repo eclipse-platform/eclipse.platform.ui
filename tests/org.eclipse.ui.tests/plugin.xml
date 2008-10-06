@@ -3972,24 +3972,5 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+8 B">
       </key>
-      <key
-            commandId="org.eclipse.ui.help.aboutAction"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+8 C">
-      </key>
-      <key
-            contextId="org.eclipse.ui.contexts.window"
-            platform="carbon,cocoa"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+8 C">
-      </key>
-      <key
-            commandId="org.eclipse.ui.help.aboutAction"
-            contextId="org.eclipse.ui.contexts.window"
-            platform="carbon,cocoa"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+8 D">
-      </key>
    </extension>   
 </plugin>            

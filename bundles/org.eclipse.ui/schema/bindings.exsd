@@ -25,11 +25,6 @@ A scheme is a group of these bindings into a set that the end user can select.  
    </annotation>
 
    <element name="extension">
-      <annotation>
-         <appinfo>
-            <meta.element />
-         </appinfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="scheme" minOccurs="0" maxOccurs="unbounded"/>
@@ -190,7 +185,7 @@ If no command identifier is specified, this is a deletion marker.  This means th
          <attribute name="platform" type="string">
             <annotation>
                <documentation>
-                  The platform on which this binding applies.  The platform should be specified in the same way as the string from &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.  For example, the following strings are considered valid: &lt;code&gt;win32&lt;/code&gt;, &lt;code&gt;wpf&lt;/code&gt;, &lt;code&gt;gtk&lt;/code&gt;, &lt;code&gt;motif&lt;/code&gt;, &lt;code&gt;carbon&lt;/code&gt;, &lt;code&gt;cocoa&lt;/code&gt; and &lt;code&gt;photon&lt;/code&gt;.  If the binding applies to more than one platform, multiple platforms can be specified with no spaces: e.g. &quot;carbon,cocoa&quot;.
+                  The platform on which this binding applies.  The platform should be specified in the same way as the string from &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.  For example, the following strings are considered valid: &lt;code&gt;win32&lt;/code&gt;, &lt;code&gt;gtk&lt;/code&gt;, &lt;code&gt;motif&lt;/code&gt;, &lt;code&gt;carbon&lt;/code&gt; and &lt;code&gt;photon&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -285,12 +280,13 @@ For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_co
    </annotation>
 
 
+
    <annotation>
       <appinfo>
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2005,2008 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005,2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

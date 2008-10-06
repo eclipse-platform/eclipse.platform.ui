@@ -58,7 +58,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.PreferencePersistence;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -97,6 +96,7 @@ public final class BindingPersistence extends PreferencePersistence {
 	 * The index of the scheme definition configuration elements in the indexed
 	 * array.
 	 * 
+	 * @see BindingPersistence#read(BindingManager, ICommandService)
 	 */
 	private static final int INDEX_SCHEME_DEFINITIONS = 2;
 
@@ -761,24 +761,10 @@ public final class BindingPersistence extends PreferencePersistence {
 						warningsToLog, command);
 			}
 
-			if (platform != null) {
-				String[] platforms = Util.split(platform, ',');
-				for (int j = 0; j < platforms.length; j++) {
-					String tmp = platforms[j] == null ? Util.ZERO_LENGTH_STRING
-							: platforms[j].trim();
-					if (tmp.length() > 0) {
-						final Binding binding = new KeyBinding(keySequence,
-								parameterizedCommand, schemeId, contextId,
-								locale, tmp, null, Binding.SYSTEM);
-						bindings.add(binding);
-					}
-				}
-			} else {
-				final Binding binding = new KeyBinding(keySequence,
-						parameterizedCommand, schemeId, contextId, locale,
-						null, null, Binding.SYSTEM);
-				bindings.add(binding);
-			}
+			final Binding binding = new KeyBinding(keySequence,
+					parameterizedCommand, schemeId, contextId, locale,
+					platform, null, Binding.SYSTEM);
+			bindings.add(binding);
 		}
 
 		final Binding[] bindingArray = (Binding[]) bindings

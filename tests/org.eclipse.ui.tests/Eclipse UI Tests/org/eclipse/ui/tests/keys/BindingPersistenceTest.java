@@ -151,46 +151,5 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertEquals(2, numAboutBindings);
 	}
 
-	public final void testCommaPlatform() throws Exception {
-		// Get the services.
-		ICommandService commandService = (ICommandService) fWorkbench
-				.getAdapter(ICommandService.class);
-		IBindingService bindingService = (IBindingService) fWorkbench
-				.getAdapter(IBindingService.class);
 
-		ParameterizedCommand about = new ParameterizedCommand(commandService
-				.getCommand("org.eclipse.ui.help.aboutAction"), null);
-		KeySequence m5C = KeySequence.getInstance("M1+8 C");
-		KeySequence m5D = KeySequence.getInstance("M1+8 D");
-		int numAboutBindings = 0;
-		int numKeyDeletes = 0;
-
-		Binding[] bindings = bindingService.getBindings();
-		for (int i = 0; i < bindings.length; i++) {
-			final Binding binding = bindings[i];
-			if (binding.getType() == Binding.SYSTEM) {
-				String platform = binding.getPlatform();
-				int idx = (platform == null ? -1 : platform.indexOf(','));
-				assertEquals(binding.toString(), -1, idx);
-				if (about.equals(binding.getParameterizedCommand())) {
-					if (m5C.equals(binding.getTriggerSequence())) {
-						numAboutBindings++;
-						assertNull("M+8 A", binding.getPlatform());
-					} else if (m5D.equals(binding.getTriggerSequence())) {
-						numAboutBindings++;
-						assertTrue(Util.WS_CARBON.equals(binding.getPlatform())
-								|| Util.WS_COCOA.equals(binding.getPlatform()));
-					}
-				} else if (binding.getParameterizedCommand()==null) {
-					if (m5C.equals(binding.getTriggerSequence())) {
-						assertTrue(Util.WS_CARBON.equals(binding.getPlatform())
-								|| Util.WS_COCOA.equals(binding.getPlatform()));
-						numKeyDeletes++;
-					}
-				}
-			}
-		}
-		assertEquals(3, numAboutBindings);
-		assertEquals(2, numKeyDeletes);
-	}
 }
