@@ -24,12 +24,14 @@ import org.eclipse.swt.graphics.Image;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchPartReference {
-    /**
-     * Returns the IWorkbenchPart referenced by this object.
-     * Returns <code>null</code> if the editors was not instantiated or
-     * it failed to be restored. Tries to restore the editor
-     * if <code>restore</code> is true.
-     */
+	/**
+	 * Returns the IWorkbenchPart referenced by this object.
+	 * 
+	 * @param restore
+	 *            tries to restore the part if <code>true</code>.
+	 * @return the part, or <code>null</code> if the part was not instantiated
+	 *         or it failed to be restored.
+	 */
     public IWorkbenchPart getPart(boolean restore);
 
     /**
