@@ -143,13 +143,19 @@ public final class BindingPersistenceTest extends UITestCase {
 						assertNull("M+8 A", binding.getPlatform());
 					} else if (m5B.equals(binding.getTriggerSequence())) {
 						numAboutBindings++;
-						assertEquals(Util.WS_CARBON, binding.getPlatform());
+						// assertEquals(Util.WS_CARBON, binding.getPlatform());
+						// temp work around for honouring carbon bindings
+						assertTrue("failure for platform: "
+								+ binding.getPlatform(), Util.WS_CARBON
+								.equals(binding.getPlatform())
+								|| Util.WS_COCOA.equals(binding.getPlatform()));
 					}
 				}
 			}
 		}
-		assertEquals(2, numAboutBindings);
+		// assertEquals(2, numAboutBindings);
+		// temp work around for honouring carbon bindings
+		assertEquals(3, numAboutBindings);
 	}
-
 
 }

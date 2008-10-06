@@ -18,6 +18,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -603,6 +605,7 @@ public final class BindingPersistence extends PreferencePersistence {
 		final Collection bindings = new ArrayList(configurationElementCount);
 		final List warningsToLog = new ArrayList(1);
 
+		HashSet cocoaTempList = new HashSet();
 		IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
@@ -764,7 +767,21 @@ public final class BindingPersistence extends PreferencePersistence {
 			final Binding binding = new KeyBinding(keySequence,
 					parameterizedCommand, schemeId, contextId, locale,
 					platform, null, Binding.SYSTEM);
-			bindings.add(binding);
+			if (Util.WS_COCOA.equals(platform)) {
+				cocoaTempList.add(binding);
+			} else if (Util.WS_CARBON.equals(platform)) {
+				bindings.add(binding);
+				// temp work around ... simply honour the carbon
+				// bindings for cocoa.
+				cocoaTempList.add(new KeyBinding(keySequence,
+						parameterizedCommand, schemeId, contextId, locale,
+						Util.WS_COCOA, null, Binding.SYSTEM));
+			} else {
+				bindings.add(binding);
+			}
+		}
+		if (cocoaTempList.size() > 0) {
+			bindings.addAll(cocoaTempList);
 		}
 
 		final Binding[] bindingArray = (Binding[]) bindings
