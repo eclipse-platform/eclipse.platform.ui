@@ -81,6 +81,12 @@ public class InstallationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
+		// TODO
+		// This should use the title of the about dialog, this
+		// is a temporary hack so that p2 can launch the dialog
+		// with a proper title until this is actually hooked into
+		// the about dialog.
+		newShell.setText("Installation Information"); //$NON-NLS-1$
 		newShell.setSize(600, 768);
 
 	}
