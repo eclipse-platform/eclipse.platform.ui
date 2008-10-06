@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="commonAction" name="Common Action"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="menu">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="label"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This element is used to defined a new menu.
          </documentation>
@@ -36,9 +36,9 @@
                <documentation>
                   a translatable name used by the Workbench for this new menu. The name should include mnemonic information.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="path" type="string">
@@ -48,14 +48,25 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon used to visually represent the menu in its context.
+The path is relative to the location of the plugin.xml file of the contributing plug-in.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="separator">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This element is used to create a menu separator in the new menu.
          </documentation>
@@ -73,9 +84,9 @@
 
    <element name="groupMarker">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This element is used to create a named group in the new menu. It has no visual representation in the new menu, unlike the &lt;samp&gt;separator&lt;/samp&gt; element.
          </documentation>
@@ -93,9 +104,9 @@
 
    <element name="selection">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="class"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This element is used to help determine the action enablement based on the current selection. Ignored if the &lt;samp&gt;enablement&lt;/samp&gt; element is specified.
          </documentation>
@@ -106,9 +117,9 @@
                <documentation>
                   a fully qualified name of the class or interface that each object in the selection must implement in order to enable the action.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="java.lang.Object"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
@@ -121,46 +132,14 @@
       </complexType>
    </element>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
+
+
+
 
    <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2000, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
