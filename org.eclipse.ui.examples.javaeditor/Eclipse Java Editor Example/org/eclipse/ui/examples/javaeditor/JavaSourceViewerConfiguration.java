@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,13 +104,6 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 		assistant.setContextInformationPopupBackground(JavaEditorExamplePlugin.getDefault().getJavaColorProvider().getColor(new RGB(150, 150, 0)));
 
 		return assistant;
-	}
-
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
-	public String getDefaultPrefix(ISourceViewer sourceViewer, String contentType) {
-		return (IDocument.DEFAULT_CONTENT_TYPE.equals(contentType) ? "//" : null); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

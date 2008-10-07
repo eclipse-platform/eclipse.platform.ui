@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 
@@ -24,8 +25,11 @@ import org.eclipse.jface.text.Region;
  */
 public class JavaTextHover implements ITextHover {
 
-	/* (non-Javadoc)
-	 * Method declared on ITextHover
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.4, replaced by
+	 *             {@link ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)}
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (hoverRegion != null) {

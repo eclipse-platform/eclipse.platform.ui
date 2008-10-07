@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.templateeditor.preferences;
 
-import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.examples.templateeditor.editors.TemplateEditorUI;
 
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
+
 /**
  * @see org.eclipse.jface.preference.PreferencePage
  */
-public class TemplatesPreferencePage extends TemplatePreferencePage implements IWorkbenchPreferencePage {
+public class TemplatesPreferencePage extends TemplatePreferencePage {
 
 	public TemplatesPreferencePage() {
 		setPreferenceStore(TemplateEditorUI.getDefault().getPreferenceStore());
