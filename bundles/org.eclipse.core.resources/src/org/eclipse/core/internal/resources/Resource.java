@@ -11,6 +11,7 @@
  *     Red Hat Incorporated - get/setResourceAttribute code
  *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
  *     Holger Oehm <holger.oehm@sap.com> - [226264] race condition in Workspace.isTreeLocked()/setTreeLocked()
+ *     Martin Oberhuber (Wind River) -  [245937] ProjectDescription#setLinkLocation() detects non-change
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -607,8 +608,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the location in the project description
 				Project project = (Project) getProject();
-				project.internalGetDescription().setLinkLocation(getProjectRelativePath(), new LinkDescription(this, localLocation));
-				project.writeDescription(IResource.NONE);
+				boolean changed = project.internalGetDescription().setLinkLocation(getProjectRelativePath(), new LinkDescription(this, localLocation));
+				if (changed)
+					project.writeDescription(IResource.NONE);
 				monitor.worked(Policy.opWork * 5 / 100);
 
 				//refresh to discover any new resources below this linked location
@@ -784,10 +786,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (getType() != IResource.PROJECT && links != null) {
 			Project project = (Project) getProject();
 			ProjectDescription description = project.internalGetDescription();
+			boolean wasChanged = false;
 			for (Iterator it = links.iterator(); it.hasNext();)
-				description.setLinkLocation(((IResource) it.next()).getProjectRelativePath(), null);
-			project.internalSetDescription(description, true);
-			project.writeDescription(IResource.FORCE);
+				wasChanged |= description.setLinkLocation(((IResource) it.next()).getProjectRelativePath(), null);
+			if (wasChanged) {
+				project.internalSetDescription(description, true);
+				project.writeDescription(IResource.FORCE);
+			}
 		}
 
 		// Delete properties after the resource is deleted from the tree. See bug 84584.
@@ -926,8 +931,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		//if a linked resource is moved, we need to remove the location info from the .project 
 		if (isLinked()) {
 			Project project = (Project) getProject();
-			project.internalGetDescription().setLinkLocation(getProjectRelativePath(), null);
-			project.writeDescription(IResource.NONE);
+			if (project.internalGetDescription().setLinkLocation(getProjectRelativePath(), null))
+				project.writeDescription(IResource.NONE);
 		}
 
 		// check if we deleted a preferences file 

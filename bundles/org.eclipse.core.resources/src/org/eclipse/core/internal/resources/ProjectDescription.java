@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [245937] setLinkLocation() detects non-change
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -317,8 +318,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/**
 	 * Sets the description of a link. Setting to a description of null will
 	 * remove the link from the project description.
+	 * @return <code>true</code> if the description was actually changed,
+	 *     <code>false</code> otherwise.
+	 * @since 3.5 returns boolean (was void before)
 	 */
-	public void setLinkLocation(IPath path, LinkDescription description) {
+	public boolean setLinkLocation(IPath path, LinkDescription description) {
 		HashMap tempMap = linkDescriptions;
 		if (description != null) {
 			//addition or modification
@@ -327,17 +331,26 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			else 
 				//copy on write to protect against concurrent read
 				tempMap = (HashMap) tempMap.clone();
-			tempMap.put(path, description);
+			Object oldValue = tempMap.put(path, description);
+			if (oldValue!=null && description.equals(oldValue)) {
+				//not actually changed anything
+				return false;
+			}
 			linkDescriptions = tempMap;
 		} else {
 			//removal
-			if (tempMap != null) {
-				//copy on write to protect against concurrent access
-				HashMap newMap = (HashMap) tempMap.clone();
-				newMap.remove(path);
-				linkDescriptions = newMap.size() == 0 ? null : newMap;
+			if (tempMap == null)
+				return false;
+			//copy on write to protect against concurrent access
+			HashMap newMap = (HashMap) tempMap.clone();
+			Object oldValue = newMap.remove(path);
+			if (oldValue == null) {
+				//not actually changed anything
+				return false;
 			}
+			linkDescriptions = newMap.size() == 0 ? null : newMap;
 		}
+		return true;
 	}
 
 	/* (non-Javadoc)
