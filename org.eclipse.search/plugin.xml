@@ -141,10 +141,29 @@
 			</parameter>
   		</key>
 		<key 
-			sequence="M1+M3+G" 
-			commandId="org.eclipse.search.ui.performTextSearchWorkspace" 
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"  
+			sequence="M1+M3+G"
+			commandId="org.eclipse.search.ui.performTextSearchWorkspace"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	    />
+		<key
+            locale="sl"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+G"/>
+		<key
+            locale="sl"
+            commandId="org.eclipse.search.ui.performTextSearchWorkspace"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+T"/>
+		<key
+            locale="hu"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+G"/>
+		<key
+            locale="hu"
+            commandId="org.eclipse.search.ui.performTextSearchWorkspace"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+T"/>
+	    
 	</extension>
 	
 	<!-- action sets -->
