@@ -93,6 +93,6 @@ public class FontSelection {
 	    	}
 		}
 		// Use default for font style if not specified
-	    return FontSelection.FONT_ABSOLUTE;
+	    return FontSelection.FONT_RELATIVE;
 	}
 }
