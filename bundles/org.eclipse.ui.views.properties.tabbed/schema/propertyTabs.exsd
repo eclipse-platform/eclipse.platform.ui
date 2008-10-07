@@ -62,7 +62,10 @@
    <element name="propertyTab">
       <complexType>
          <attribute name="label" type="string" use="required">
-            <annotation>
+         	<annotation>
+            	<appInfo>
+                  <meta.attribute translatable="true"/>
+               	</appInfo>
                <documentation>
                   The label to be displayed on the tab.
                </documentation>
