@@ -48,8 +48,11 @@ public class TabbedPropertyRegistryClassSectionFilter {
 	/**
 	 * Verifies if the property section extension represented by sectionElement
 	 * applies to the given input.
-	 * @param descriptor the section descriptor.
-	 * @param selection the selection.
+	 * 
+	 * @param descriptor
+	 *            the section descriptor.
+	 * @param selection
+	 *            the selection.
 	 * @return <code>true</code> if this section applies to the current
 	 *         selection.
 	 */
@@ -110,9 +113,14 @@ public class TabbedPropertyRegistryClassSectionFilter {
 					}
 				}
 			}
+		} else {
+			/* Bug 245690 selection is not a IStructuredSelection */
+			if (descriptor.getFilter() != null) {
+				return descriptor.getFilter().select(selection);
+			}
 		}
 
-		return false;
+		return true;
 	}
 
 	private boolean appliesToEffectiveType(ISectionDescriptor descriptor,
