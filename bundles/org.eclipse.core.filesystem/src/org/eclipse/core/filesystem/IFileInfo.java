@@ -78,7 +78,8 @@ public interface IFileInfo extends Comparable, Cloneable {
 
 	/**
 	 * Returns the length of this file, or {@link EFS#NONE}
-	 * if the file does not exist, is a directory, or the length could not be computed.
+	 * if the file does not exist, or the length could not be computed.
+	 * For directories, the return value is unspecified. 
 	 * 
 	 * @return the length of this file, or {@link EFS#NONE}
 	 */
