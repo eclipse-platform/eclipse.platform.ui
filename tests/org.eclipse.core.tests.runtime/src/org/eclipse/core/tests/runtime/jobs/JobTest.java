@@ -382,10 +382,10 @@ public class JobTest extends AbstractJobTest {
 	public void testCanceling() {
 		final TestBarrier barrier = new TestBarrier();
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
-		final boolean[] canceling = new boolean[] {false};
+		final int[] canceling = new int[] {0};
 		Job job = new Job("Testing#testCanceling") {
 			protected void canceling() {
-				canceling[0] = true;
+				canceling[0]++;
 			}
 
 			protected IStatus run(IProgressMonitor monitor) {
@@ -397,9 +397,11 @@ public class JobTest extends AbstractJobTest {
 		//schedule the job and wait on the barrier until it is running
 		job.schedule();
 		barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
-		assertTrue("1.0", !canceling[0]);
+		assertTrue("1.0", canceling[0] == 0);
 		job.cancel();
-		assertTrue("1.1", canceling[0]);
+		assertTrue("1.1", canceling[0] == 1);
+		job.cancel();
+		assertTrue("1.2", canceling[0] == 1);
 		//let the job finish
 		barrier.setStatus(TestBarrier.STATUS_RUNNING);
 		waitForState(job, Job.NONE);
@@ -411,11 +413,11 @@ public class JobTest extends AbstractJobTest {
 	public void testCancelingByMonitor() {
 		final TestBarrier barrier = new TestBarrier();
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
-		final boolean[] canceling = new boolean[] {false};
+		final int[] canceling = new int[] {0};
 		final IProgressMonitor[] jobmonitor = new IProgressMonitor[1];
 		Job job = new Job("Testing#testCancelingByMonitor") {
 			protected void canceling() {
-				canceling[0] = true;
+				canceling[0]++;
 			}
 
 			protected IStatus run(IProgressMonitor monitor) {
@@ -427,13 +429,15 @@ public class JobTest extends AbstractJobTest {
 		};
 		//run test twice to ensure job is left in a clean state after first cancelation
 		for (int i = 0; i < 2; i++) {
-			canceling[0] = false;
+			canceling[0] = 0;
 			//schedule the job and wait on the barrier until it is running
 			job.schedule();
 			barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
-			assertTrue(Integer.toString(i) + ".1.0", !canceling[0]);
+			assertEquals(Integer.toString(i) + ".1.0", 0, canceling[0]);
 			jobmonitor[0].setCanceled(true);
-			assertTrue(Integer.toString(i) + ".1.1", canceling[0]);
+			assertEquals(Integer.toString(i) + ".1.1", 1, canceling[0]);
+			jobmonitor[0].setCanceled(true);
+			assertEquals(Integer.toString(i) + ".1.2", 1, canceling[0]);
 			//let the job finish
 			barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			waitForState(job, Job.NONE);

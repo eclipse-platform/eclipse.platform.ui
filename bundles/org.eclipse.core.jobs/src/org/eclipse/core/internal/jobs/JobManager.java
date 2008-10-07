@@ -263,7 +263,6 @@ public class JobManager implements IJobManager {
 				if (!monitor.isCanceled())
 					monitor.setCanceled(true);
 				job.canceling();
-				job.setRunCanceled(false);
 			}
 			return false;
 		}
@@ -332,6 +331,7 @@ public class JobManager implements IJobManager {
 				case Job.NONE :
 					job.setStartTime(InternalJob.T_NONE);
 					job.setWaitQueueStamp(InternalJob.T_NONE);
+					job.setRunCanceled(false);
 				case InternalJob.BLOCKED :
 					break;
 				case Job.WAITING :
