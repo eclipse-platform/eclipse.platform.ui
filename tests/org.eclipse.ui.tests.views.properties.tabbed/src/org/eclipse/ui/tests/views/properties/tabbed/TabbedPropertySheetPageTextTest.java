@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
+import org.eclipse.ui.tests.views.properties.tabbed.text.TextTestsLabelSection;
 import org.eclipse.ui.tests.views.properties.tabbed.text.TextTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
+import org.eclipse.ui.views.properties.tabbed.ISection;
+import org.eclipse.ui.views.properties.tabbed.TabContents;
 
 /**
  * Tests for the text tests view.
@@ -121,6 +124,14 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
          * No fifth tab
          */
         assertNull(tabbedPropertyList.getElementAt(4));
+
+        /**
+         * each tab has one section.
+         */
+        TabContents tabContents = textTestsView.getTabbedPropertySheetPage().getCurrentTab();
+        ISection[] sections = tabContents.getSections();
+        assertEquals(sections.length, 1);
+        assertEquals(sections[0].getClass(), TextTestsLabelSection.class);
     }
 
 }

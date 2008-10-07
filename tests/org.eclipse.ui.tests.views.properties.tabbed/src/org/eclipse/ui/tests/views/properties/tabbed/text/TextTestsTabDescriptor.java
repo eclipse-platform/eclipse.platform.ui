@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ public class TextTestsTabDescriptor extends AbstractTabDescriptor {
 		super();
 		this.word = aWord;
 		getSectionDescriptors().add(new TextTestsSectionDescriptor(aWord));
+		/* TextTestsSectionDescriptor2 added to the tests and it is filtered */
+		getSectionDescriptors().add(new TextTestsSectionDescriptor2(aWord));
 	}
 
 	public String getCategory() {
