@@ -351,6 +351,7 @@
 
 	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="CTRL+M2+SPACE"/>	<!-- Command+SPACE+* is reserved on carbon, hardcode to CTRL -->
 
