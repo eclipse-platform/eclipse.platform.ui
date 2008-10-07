@@ -110,7 +110,9 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 				ExpressionStatus.TYPE_EXTENDER_UNKOWN_METHOD,
 				Messages.format(
 					ExpressionMessages.TypeExtender_unknownMethod,
-					new String[] {namespace + '.' + method, clazz.toString()})));
+					new String[] {namespace + '.' + method, clazz.toString()}),
+				//XXX: more logging for https://bugs.eclipse.org/bugs/show_bug.cgi?id=239715 :
+				new Throwable("forcePluginActivation: " + forcePluginActivation + ", receiver: " + receiver).fillInStackTrace())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		result.setPropertyTester(extender);
 		fPropertyCache.put(result);
