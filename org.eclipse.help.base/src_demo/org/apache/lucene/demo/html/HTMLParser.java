@@ -17,7 +17,7 @@ public class HTMLParser implements HTMLParserConstants {
   boolean inTitle = false;
   boolean inHeading = false;
   boolean inMetaTag = false;
-  boolean inIgnoredTag = false;
+  boolean inIgnoredTag = true;
   boolean afterTag = false;
   boolean afterSpace = false;
   String eol = System.getProperty("line.separator"); //$NON-NLS-1$
