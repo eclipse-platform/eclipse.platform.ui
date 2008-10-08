@@ -49,12 +49,14 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 			data.addText(text);
 			data.addToSummary(text);
 		} else if (path.segment(1).equalsIgnoreCase("head")) { //$NON-NLS-1$
-			if (title == null) { 
-				title = text;
-			} else {
-				title = title + text;
+			if (path.segment(path.segmentCount() -1).equalsIgnoreCase("title")) { //$NON-NLS-1$
+				if (title == null) { 
+					title = text;
+				} else {
+					title = title + text;
+				}
+				data.setTitle(title);
 			}
-			data.setTitle(title);
 		}
 	}
 	
