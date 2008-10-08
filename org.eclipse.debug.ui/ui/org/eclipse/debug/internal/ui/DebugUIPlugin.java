@@ -22,15 +22,23 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.util.tracker.ServiceTracker;
-
-import org.w3c.dom.Document;
-
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -56,31 +64,10 @@ import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
-
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -94,18 +81,23 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
+import org.w3c.dom.Document;
 
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchGroup;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The Debug UI Plug-in.
@@ -748,17 +740,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns the standard display to be used. The method first checks, if
-	 * the thread calling this method has an associated display. If so, this
-	 * display is returned. Otherwise the method returns the default display.
+	 * Returns the workbench's display.
 	 * 
 	 */
 	public static Display getStandardDisplay() {
-		Display display= Display.getCurrent();
-		if (display == null) {
-			display= Display.getDefault();
-		}
-		return display;
+		return PlatformUI.getWorkbench().getDisplay();
 	}
 	
 	/**
