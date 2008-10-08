@@ -17,6 +17,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
@@ -247,6 +248,28 @@ public final class BindingService implements IBindingService {
 	 */
 	public BindingPersistence getBindingPersistence() {
 		return bindingPersistence;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.keys.IBindingService#addBindingManagerListener(org.eclipse
+	 * .jface.bindings.IBindingManagerListener)
+	 */
+	public void addBindingManagerListener(IBindingManagerListener listener) {
+		bindingManager.addBindingManagerListener(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.keys.IBindingService#removeBindingManagerListener(org.
+	 * eclipse.jface.bindings.IBindingManagerListener)
+	 */
+	public void removeBindingManagerListener(IBindingManagerListener listener) {
+		bindingManager.removeBindingManagerListener(listener);
 	}
 	
 }

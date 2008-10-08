@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.commands.ICommandService;
@@ -51,6 +52,38 @@ public interface IBindingService extends IDisposable {
 	 * try to decide if someone overrode the default.
 	 */
 	public static final String DEFAULT_DEFAULT_ACTIVE_SCHEME_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Adds a listener to this binding service. The listener will be notified
+	 * when the set of defined schemes or bindings changes. This can be used to
+	 * track the global appearance and disappearance of bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized constant time (<code>O(1)</code>).
+	 * </p>
+	 * 
+	 * @param listener
+	 *            The listener to attach; must not be <code>null</code>.
+	 * 
+	 * @since 3.5
+	 */
+	public void addBindingManagerListener(IBindingManagerListener listener);
+
+	/**
+	 * <p>
+	 * Removes a listener from this binding service.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized <code>O(1)</code>.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            The listener to be removed; must not be <code>null</code>.
+	 * 
+	 * @since 3.5
+	 */
+	public void removeBindingManagerListener(IBindingManagerListener listener);
 
 	/**
 	 * Gets the active bindings for a given parameterized command.
