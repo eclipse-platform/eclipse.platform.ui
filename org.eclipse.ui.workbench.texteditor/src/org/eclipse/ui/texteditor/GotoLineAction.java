@@ -122,6 +122,7 @@ public class GotoLineAction extends TextEditorAction {
 	/** This action's prefix used for accessing the resource bundle */
 	private String fPrefix;
 
+
 	/**
 	 * Creates a new action for the given text editor. The action configures its
 	 * visual representation from the given resource bundle.
@@ -137,6 +138,20 @@ public class GotoLineAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 		fBundle= bundle;
 		fPrefix= prefix;
+	}
+
+	/**
+	 * Creates a new action for the given text editor. The action configures its visual
+	 * representation with default values.
+	 * 
+	 * @param editor the text editor
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
+	 * @since 3.5
+	 */
+	public GotoLineAction(ITextEditor editor) {
+		super(EditorMessages.getBundleForConstructedKeys(), "Editor.GotoLine.", editor); //$NON-NLS-1$
+		fBundle= EditorMessages.getBundleForConstructedKeys();
+		fPrefix= "Editor.GotoLine."; //$NON-NLS-1$
 	}
 
 	/**
