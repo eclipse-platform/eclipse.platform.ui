@@ -181,16 +181,14 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	 * @see org.eclipse.jface.action.ContributionItem#update()
 	 */
 	public void update() {
-		IContributionItem contributionItem = getContributionItem();
-		if (contributionItem != null) {
-			contributionItem.update();
+		if (loadedDynamicContribution != null) {
+			loadedDynamicContribution.update();
 		}
 	}
 
 	public void update(String id) {
-		IContributionItem contributionItem = getContributionItem();
-		if (contributionItem != null) {
-			contributionItem.update(id);
+		if (loadedDynamicContribution != null) {
+			loadedDynamicContribution.update(id);
 		}
 	}
 }
