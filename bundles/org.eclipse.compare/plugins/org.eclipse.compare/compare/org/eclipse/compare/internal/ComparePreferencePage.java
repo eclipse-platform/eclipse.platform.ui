@@ -51,7 +51,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 
 public class ComparePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -121,10 +120,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PREF_SAVE_ALL_EDITORS),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ADDED_LINES_REGEX),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, REMOVED_LINES_REGEX),
-		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT),
-		
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SPLINES),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, HIGHLIGHT_TOKEN_CHANGES),
@@ -150,7 +145,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(HIGHLIGHT_TOKEN_CHANGES, true);
 		//store.setDefault(USE_RESOLVE_UI, false);
 		store.setDefault(PATH_FILTER, ""); //$NON-NLS-1$
-		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 	}
 
 	public ComparePreferencePage() {
