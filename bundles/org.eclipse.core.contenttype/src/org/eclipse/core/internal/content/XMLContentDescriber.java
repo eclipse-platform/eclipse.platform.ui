@@ -62,12 +62,20 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 			String fullXMLDecl = readFullXMLDecl(input, xmlDeclEncoding);
 			if (fullXMLDecl != null) {
 				String charset = getCharset(fullXMLDecl);
-				if (charset != null && !"UTF-8".equalsIgnoreCase(charset)) //$NON-NLS-1$
+				if (charset != null && !isCharsetValid(charset))
+					return INVALID;
+				if (charset != null && !charset.matches("[uU][tT][fF](-)?8")) //$NON-NLS-1$
 					// only set property if value is not default (avoid using a non-default content description)
 					description.setProperty(IContentDescription.CHARSET, getCharset(fullXMLDecl));
+				if (charset == null || !charset.matches("[uU][tT][fF](-)?(8|16)"))
+					description.setProperty(IContentDescription.BYTE_ORDER_MARK, null);
 			}
 		}
 		return VALID;
+	}
+	
+	private boolean isCharsetValid(String charset){
+		return charset.matches("[A-Za-z]([A-Za-z0-9._\\-])*");
 	}
 
 	private String readFullXMLDecl(InputStream input, String unicodeEncoding) throws IOException {
@@ -75,26 +83,17 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		int c = 0;
 		// looks for XMLDecl ending char (?)
 		int read = 0;
-		while (read < xmlDecl.length && (c = input.read()) != -1 && c != '?')
+		while (read < xmlDecl.length && (c = input.read()) != -1 && c !='\r' && c !='\n')
 			xmlDecl[read++] = (byte) c;
-		return c == '?' ? new String(xmlDecl, 0, read, unicodeEncoding) : null;
+		return new String(xmlDecl, 0, read, unicodeEncoding);
 	}
 
 	public int describe(Reader input, IContentDescription description) throws IOException {
 		BufferedReader reader = new BufferedReader(input);
 		String line = reader.readLine();
-		// end of stream
 		if (line == null)
 			return INDETERMINATE;
-		// XMLDecl should be the first string (no blanks allowed)
-		if (!line.startsWith(XML_PREFIX))
-			return INDETERMINATE;
-		if (description == null)
-			return VALID;
-		// describe charset if requested
-		if ((description.isRequested(IContentDescription.CHARSET)))
-			description.setProperty(IContentDescription.CHARSET, getCharset(line));
-		return VALID;
+		return describe(new ByteArrayInputStream(line.getBytes()), description);
 	}
 
 	private String getCharset(String firstLine) {
