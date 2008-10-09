@@ -100,22 +100,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 			useModuleAndProjectNameButton.setLayoutData(data);
 			useModuleAndProjectNameButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					String t = text.getText();
-					if (useModuleAndProjectNameButton.getSelection()) {
-						if (t == null || t.equals("")) {//$NON-NLS-1$
-							text.setText(project.getName());
-						} else if (!t.endsWith(project.getName())) {
-							text.setText(t + SEPARATOR + project.getName()); 
-						}
-					} else {
-						if (t.endsWith(project.getName())) {
-							t = t.substring(0, t.lastIndexOf(project.getName()));
-							if (t.endsWith(SEPARATOR)) { 
-								t = t.substring(0, t.length() - 1);
-							}
-							text.setText(t);
-						}
-					}
+					updateText();
 				}
 			});
 		}
@@ -135,6 +120,26 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		updateEnablements(false);
 		setControl(composite);
         Dialog.applyDialogFont(parent);
+	}
+	
+	private void updateText() {
+		updateEnablements(false);
+		ICVSRemoteFolder[] modules = internalGetSelectedModules();
+		if (modules.length == 1) {
+			// There is at 1 module selected
+			ICVSRemoteFolder selectedModule = modules[0];
+			String repositoryRelativePath = selectedModule.getRepositoryRelativePath();
+			if (!repositoryRelativePath.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
+				text.setText(repositoryRelativePath);
+			}
+		} else {
+			text.setText(useModuleAndProjectName() ? project.getName() : ""); //$NON-NLS-1$
+		}
+	}
+	
+	private boolean useModuleAndProjectName() {
+		return useModuleAndProjectNameButton != null
+				&& useModuleAndProjectNameButton.getSelection();
 	}
 	
 	public void setVisible(boolean visible) {
@@ -238,7 +243,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 				for (Iterator iter = ss.iterator(); iter.hasNext();) {
 					Object element = iter.next();
 					if (element instanceof ICVSRemoteFolder) {
-						if (useModuleAndProjectNameButton != null && useModuleAndProjectNameButton.getSelection()) {
+						if (useModuleAndProjectName()) {
 							String relativePath = ((ICVSRemoteFolder)element).getRepositoryRelativePath();
 							ICVSRemoteFolder remoteFolder = internalCreateModuleHandle(relativePath + SEPARATOR + project.getName())[0];
 							result.add(remoteFolder);
@@ -331,18 +336,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		});
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateEnablements(false);
-				ICVSRemoteFolder[] modules = internalGetSelectedModules();
-				if (modules.length == 1) {
-					// There is at 1 module selected
-					ICVSRemoteFolder selectedModule = modules[0];
-					String repositoryRelativePath = selectedModule.getRepositoryRelativePath();
-					if (!repositoryRelativePath.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
-						text.setText(repositoryRelativePath);
-					}
-				} else {
-					text.setText(""); //$NON-NLS-1$
-				}
+				updateText();
 			}
 		});
 		result.getTree().addMouseListener(new MouseAdapter() {

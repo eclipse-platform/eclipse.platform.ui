@@ -73,8 +73,6 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	// Keep track of the folder that existed the last time we checked
 	private ICVSRemoteFolder existingRemote;
 
-	private ICVSRemoteFolder remoteFolder;
-	
 	public SharingWizard() {
 		IDialogSettings cvsSettings = CVSUIPlugin.getPlugin().getDialogSettings();
 		IDialogSettings section = cvsSettings.getSection("SharingWizard");//$NON-NLS-1$
@@ -183,8 +181,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		try {
 			if (page == modulePage) {
 				if (aboutToShow) {
-					remoteFolder = null; // reset
-					getRemoteFolder(); // initialize remoteFolder
+					ICVSRemoteFolder remoteFolder = getRemoteFolder();
 					if (exists(remoteFolder)) {
 						prepareTagPage(remoteFolder);
 						return tagPage;
@@ -214,7 +211,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			// Show the error and fall through to return null as the next page
 			CVSUIPlugin.openError(getShell(), null, null, e);
 		} catch (InterruptedException e) {
-			// The user cancelled. Falll through and return null as the next page.
+			// The user cancelled. Fall through and return null as the next page.
 		}
 		return null;
 	}
@@ -259,6 +256,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 							CommitWizard.run(null, parentShell, new IResource[] { syncPage.getProject() });
 						} catch (CVSException e) {
 							//TODO:handle
+							CVSUIPlugin.log(e);
 						}
 					}
 				});
@@ -409,7 +407,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	}
 	
 	/*
-	 * Shoudl the project be auto-connected
+	 * Should the project be auto-connected
 	 */
 	/* private*/ boolean isAutoconnect() {
 		return autoconnectPage != null && doesCVSDirectoryExist();
@@ -428,7 +426,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 				return false;
 			}
 			
-			// Get the repository location (the get will add the locatin to the provider)
+			// Get the repository location (the get will add the location to the provider)
 			ICVSRepositoryLocation location = getLocation();
 	
 			// Validate the connection if the user wants to
@@ -489,11 +487,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	}
 	
 	private ICVSRemoteFolder getRemoteFolder() {
-		if (remoteFolder == null) {
-			ICVSRemoteFolder folder = modulePage.getSelectedModule();
-			remoteFolder = (ICVSRemoteFolder)folder.forTag(getTag());
-		}
-		return remoteFolder;
+		ICVSRemoteFolder folder = modulePage.getSelectedModule();
+		return (ICVSRemoteFolder) folder.forTag(getTag());
 	}
 	
 	private boolean exists(ICVSRemoteFolder folder, IProgressMonitor monitor) throws TeamException {
