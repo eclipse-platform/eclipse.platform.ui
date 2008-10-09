@@ -27,6 +27,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	static final String SHARED_ID = "org.eclipse.ui.browser"; //$NON-NLS-1$
 	static final String DEFAULT_ID_BASE = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
+	private static final String HELP_BROWSER_ID = "org.eclipse.help.ui"; //$NON-NLS-1$
 
 	protected HashMap browserIdMap = new HashMap();
 
@@ -100,8 +101,10 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 		// AS_EXTERNAL will force the external browser regardless of the user
 		// preference
+		// The help editor will open in an editor regardless of the user preferences
+		boolean isHelpEditor = ((style & AS_EDITOR) != 0) && HELP_BROWSER_ID.equals(browserId);
 		if ((style & AS_EXTERNAL) != 0 || 
-		    ((style & (AS_EDITOR + AS_VIEW)) == 0 && WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL)
+		    (WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL && !isHelpEditor)
 		    || !WebBrowserUtil.canUseInternalWebBrowser()) {
 			IBrowserDescriptor ewb = BrowserManager.getInstance()
 					.getCurrentWebBrowser();
