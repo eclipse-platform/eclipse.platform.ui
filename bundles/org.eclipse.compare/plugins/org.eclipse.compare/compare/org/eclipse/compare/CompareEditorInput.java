@@ -969,8 +969,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListenerList != null) {
 			fListenerList.remove(listener);
-			if (fListenerList.isEmpty())
-				fListenerList = null;
 		}
 	}
 
