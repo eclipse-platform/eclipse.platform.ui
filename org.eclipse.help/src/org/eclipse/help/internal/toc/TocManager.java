@@ -114,10 +114,10 @@ public class TocManager {
 		return (Toc)tocsByTopic.get(href);
 	}
 	
-	public synchronized Topic getTopic(String href, String locale) {
+	public synchronized ITopic getTopic(String href, String locale) {
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int i=0;i<tocs.length;++i) {
-			Topic topic = (Topic)tocs[i].getTopic(href);
+			ITopic topic = (Topic)tocs[i].getTopic(href);
 			if (topic != null) {
 				return topic;
 			}
@@ -130,11 +130,11 @@ public class TocManager {
 	}
 	
 	public synchronized int[] getTopicPath(String href, String locale) {
-		Topic topic = getTopic(href, locale);
+		ITopic topic = getTopic(href, locale);
 		try {
-			if (topic != null) {
+			if (topic != null && topic instanceof UAElement) {
 				List path = new ArrayList();
-				UAElement element = topic;
+				UAElement element = (UAElement) topic;
 				while (!(element instanceof Toc)) {
 					UAElement parent = element.getParentElement();
 					path.add(new Integer(indexOf(parent, (Topic)element)));
