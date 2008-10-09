@@ -14,8 +14,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.eclipse.compare.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.IPropertyChangeNotifier;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
@@ -32,11 +39,29 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISaveablesLifecycleListener;
+import org.eclipse.ui.ISaveablesSource;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartConstants;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.Saveable;
+import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -390,6 +415,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			CompareEditorInput ci = (CompareEditorInput) input;
 			if (ci.getCompareResult() == null) {
 				if (getState() == INITIALIZING) {
+					getSite().setSelectionProvider(new CompareEditorSelectionProvider());
 					setPageLater();
 				} else if (getState() == STILL_INITIALIZING) {
 					if (initializingPage == null) {
@@ -412,7 +438,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			} else if (fControl == null && getState() != CREATING_CONTROL) {
 				// Set the state in case this method gets called again
 				setState(CREATING_CONTROL);
-				fControl= (ci).createContents(fPageBook);
+				fControl= ci.createContents(fPageBook);
 				fPageBook.showPage(fControl);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
 				if (isActive()) {
