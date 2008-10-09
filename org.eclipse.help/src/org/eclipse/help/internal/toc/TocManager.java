@@ -117,7 +117,7 @@ public class TocManager {
 	public synchronized ITopic getTopic(String href, String locale) {
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int i=0;i<tocs.length;++i) {
-			ITopic topic = (Topic)tocs[i].getTopic(href);
+			ITopic topic = tocs[i].getTopic(href);
 			if (topic != null) {
 				return topic;
 			}
