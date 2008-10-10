@@ -56,7 +56,6 @@ public final class CompareMessages extends NLS {
 	public static String CompareViewerSwitchingPane_Titleformat;
 	public static String NavigationEndDialog_0;
 	public static String NavigationEndDialog_1;
-	public static String RangeComparatorLCS_0;
 	public static String ShowWhitespaceAction_0;
 	public static String StructureDiffViewer_0;
 	public static String StructureDiffViewer_1;

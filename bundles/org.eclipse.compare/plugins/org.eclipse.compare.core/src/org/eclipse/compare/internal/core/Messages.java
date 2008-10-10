@@ -24,6 +24,7 @@ public class Messages extends NLS {
 	public static String Patcher_2;
 	public static String WorkspacePatcher_0;
 	public static String WorkspacePatcher_1;
+	public static String RangeComparatorLCS_0;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

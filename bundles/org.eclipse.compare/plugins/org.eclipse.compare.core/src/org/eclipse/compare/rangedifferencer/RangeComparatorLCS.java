@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,11 @@ package org.eclipse.compare.rangedifferencer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.compare.internal.CompareMessages;
-import org.eclipse.compare.internal.LCS;
-import org.eclipse.core.runtime.*;
+import org.eclipse.compare.internal.core.LCS;
+import org.eclipse.compare.internal.core.Messages;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
 
 /* package */ class RangeComparatorLCS extends LCS {
 	
@@ -24,7 +26,7 @@ import org.eclipse.core.runtime.*;
 	
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 		RangeComparatorLCS lcs = new RangeComparatorLCS(left, right);
-		SubMonitor monitor = SubMonitor.convert(pm, CompareMessages.RangeComparatorLCS_0, 100);
+		SubMonitor monitor = SubMonitor.convert(pm, Messages.RangeComparatorLCS_0, 100);
 		try {
 			lcs.longestCommonSubsequence(monitor.newChild(95));
 			return lcs.getDifferences(monitor.newChild(5));
