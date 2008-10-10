@@ -874,9 +874,14 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
-		for (int i = 0; i < pages.size(); i++) {
-			HelpPartPage page = (HelpPartPage) pages.get(i);
-			page.refilter();
+		// pages is null when the activity manager listener is added, and is set to null
+		// prior to the activity manager listener being removed, so very short timeframes in
+		// logic where pages could equals null entering this method
+		if (pages != null){ 
+			for (int i = 0; i < pages.size(); i++) {
+				HelpPartPage page = (HelpPartPage) pages.get(i);
+				page.refilter();
+			}
 		}
 	}
 

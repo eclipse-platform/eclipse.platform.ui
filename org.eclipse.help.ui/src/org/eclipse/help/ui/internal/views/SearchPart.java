@@ -686,7 +686,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 	public void stop() {
 		SearchResultsPart results = (SearchResultsPart) parent.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
-		results.canceling();
+		if (results != null) {
+			results.canceling();
+		}
 		Job.getJobManager().cancel(FederatedSearchJob.FAMILY);
 	}
 
