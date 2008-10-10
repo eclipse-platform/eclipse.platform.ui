@@ -12,8 +12,11 @@ package org.eclipse.compare.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.rangedifferencer.*;
+import org.eclipse.compare.internal.DocLineComparator;
+import org.eclipse.compare.internal.TextLineLCS;
+import org.eclipse.compare.rangedifferencer.IRangeComparator;
+import org.eclipse.compare.rangedifferencer.RangeDifference;
+import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -39,7 +42,6 @@ public class DiffTest extends TestCase {
 	}
 	
 	protected void tearDown() throws Exception {
-		CompareUIPlugin.getDefault().setUseOldDifferencer(false);
 		super.tearDown();
 	}
 	
@@ -169,10 +171,7 @@ public class DiffTest extends TestCase {
 	private RangeDifference[] getDifferences(String s1, String s2) {
 		IRangeComparator comp1= toRangeComparator(s1);
 		IRangeComparator comp2= toRangeComparator(s2);
-		
-		CompareUIPlugin.getDefault().setUseOldDifferencer(false);
 		RangeDifference[] differences = RangeDifferencer.findDifferences(comp1, comp2);
-		CompareUIPlugin.getDefault().setUseOldDifferencer(true);
 		RangeDifference[] oldDifferences = RangeDifferencer.findDifferences(comp1, comp2);
 		assertTrue(differences.length == oldDifferences.length);
 		for (int i = 0; i < oldDifferences.length; i++) {

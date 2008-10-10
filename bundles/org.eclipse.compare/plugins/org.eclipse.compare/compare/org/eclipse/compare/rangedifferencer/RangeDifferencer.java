@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.internal.CompareMessages;
-import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * A <code>RangeDifferencer</code> finds the differences between two or three <code>IRangeComparator</code>s.
@@ -74,14 +75,7 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
-		if (isUseOldDifferencer()) {
-			return OldDifferencer.findDifferences(pm, left, right);
-		}
 		return RangeComparatorLCS.findDifferences(pm, left, right);
-	}
-
-	private static boolean isUseOldDifferencer() {
-		return CompareUIPlugin.getDefault().isUseOldDifferencer();
 	}
 
 	/**
