@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
+import org.eclipse.help.internal.webapp.data.IconFinder;
 import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
@@ -188,7 +191,7 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href)) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
-			buf.append('\n' + "      image=\"toc_closed\""); //$NON-NLS-1$
+			buf.append(createTocImageTag(toc));
 				
 			boolean serializeChildren = true;
 			if (requestKind == REQUEST_SHOW_TOCS) {
@@ -252,7 +255,56 @@ public class TocFragmentServlet extends HttpServlet {
 				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
 				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$	
 			}
-			String icon; 
+			String imageTags = createTopicImageTags(topic, isLeaf);
+			buf.append(imageTags); 
+			
+			buf.append(">\n"); //$NON-NLS-1$
+			serializeChildTopics(subtopics, topicPath, parentPath, isSelected);
+			buf.append("</node>\n"); //$NON-NLS-1$	
+		}
+		
+		private String createTocImageTag(IToc toc) {
+			if (toc instanceof Toc) {
+				String icon = ((Toc) toc).getIcon();
+				
+				if (icon != null && icon.length() > 0) {
+			
+				    String imageTags = '\n' + "      openImage=\"/"+ IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN) + "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
+					imageTags += '\n' + "      closedImage=\"/" + IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					String tooltip = IconFinder.getIconTooltipFromId(icon);
+					if(tooltip != null) {
+						imageTags += '\n' + "      imageAlt=\""+ tooltip + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					return imageTags;
+				}
+			}
+			return '\n' + "      image=\"toc_closed\""; //$NON-NLS-1$
+		}
+
+		private String createTopicImageTags(ITopic topic, boolean isLeaf) {
+			if (topic instanceof Topic) {
+				String icon = ((Topic) topic).getIcon();
+			    String tooltip = IconFinder.getIconTooltipFromId(icon);
+				
+				if (icon != null && icon.length() > 0) {					
+					String imageTags;
+					if (isLeaf) {		
+						imageTags = '\n' + "      openImage=\"/" +IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_LEAF) + "\"";   //$NON-NLS-1$//$NON-NLS-2$
+						if(tooltip != null)
+							imageTags += '\n' + "      tooltip=\""+ tooltip + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+					    imageTags = '\n' + "      openImage=\"/" + IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN)+ "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
+					    imageTags += '\n' + "      closedImage=\"/" +  IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					    if(tooltip != null)
+							imageTags += '\n' + "      tooltip=\""+ tooltip + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					if(tooltip != null) {
+						imageTags += '\n' + "      imageAlt=\""+ tooltip + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					}	
+					return imageTags;
+				}
+			}
+			String icon;
 			if (isLeaf) {
 				icon = "topic"; //$NON-NLS-1$
 			} else if (topic.getHref() == null) {
@@ -260,11 +312,8 @@ public class TocFragmentServlet extends HttpServlet {
 			} else {
 				icon = "container_topic"; //$NON-NLS-1$
 			}
-			buf.append('\n' + "      image=\"" + icon + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			buf.append(">\n"); //$NON-NLS-1$
-			serializeChildTopics(subtopics, topicPath, parentPath, isSelected);
-			buf.append("</node>\n"); //$NON-NLS-1$	
+			String imageTags = '\n' + "      image=\"" + icon + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+			return imageTags;
 		}
 	
 		private void serializeChildTopics(ITopic[] childTopics, ITopic[] topicPath, String parentPath, boolean parentIsSelected) {

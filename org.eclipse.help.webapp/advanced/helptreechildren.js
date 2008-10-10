@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,9 +77,22 @@ function mergeChildren(treeItem, nodes) {
                 var title = node.getAttribute("title");
                 var isLeaf = node.getAttribute("is_leaf");
                 var href = node.getAttribute("href");
-                var image = node.getAttribute("image");
                 var id = node.getAttribute("id");
-                var childItem = mergeChild(childContainer, id, title, href, image, isLeaf);
+                var openImage = null;                
+                var closedImage = null; 
+                var imageAltText = "";
+                if (node.getAttribute("openImage")) {
+                    openImage = "../topic" + node.getAttribute("openImage");
+                    imageAltText = node.getAttribute("imageAlt");
+                } else {
+                    openImage = node.getAttribute("image");
+                    imageAltText = getAltText(openImage);
+                    openImage = imagesDirectory + "/" + openImage + ".gif";
+                }              
+                if (node.getAttribute("closedImage")) {
+                    closedImage = "../topic" + node.getAttribute("closedImage");
+                }
+                var childItem = mergeChild(childContainer, id, title, href, openImage, closedImage, imageAltText, isLeaf);
                 var isSelected = node.getAttribute("is_selected");
                 if (!isLeaf) {
                     mergeChildren(childItem, node.childNodes);
@@ -106,7 +119,7 @@ function mergeChildren(treeItem, nodes) {
 }
 
 // Create a child if one with this if does not exist  
-function mergeChild(treeItem, id, name, href, image, isLeaf) {  
+function mergeChild(treeItem, id, name, href, image, closedImage, imageAltText, isLeaf) {  
     var children = treeItem.childNodes;
     if (children !== null) {
         for (var i = 0; i < children.length; i++) {
@@ -134,8 +147,16 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
     var topicImage;
     if (image) {
         topicImage = document.createElement("IMG");
-        setImage(topicImage, image);
-    }  
+        //setImage(topicImage, image); 
+        if (closedImage) {          
+            topicImage.src = closedImage;
+            topicImage.openImage = image;
+            topicImage.closedImage = closedImage;
+        } else {
+            topicImage.src = image;
+        }
+        topicImage.alt = imageAltText;
+    } 
     
     var topicName=document.createTextNode(name);
     

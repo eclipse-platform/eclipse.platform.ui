@@ -269,6 +269,16 @@ or not primary and intended to be integrated into another table of contents.
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  String to display as tooltip when hovering over the toc icon
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

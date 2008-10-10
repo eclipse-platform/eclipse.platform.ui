@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,36 +104,44 @@ function setShowAll(isShowAll, href) {
 function setImage(imageNode, image) {
     var imageFile = imagesDirectory + "/" + image + ".gif";
     imageNode.src = imageFile;
+    imageNode.alt = getAltText(image);
+}
+
+function getAltText(image) {
     if (image == "plus") {
-        imageNode.alt = altPlus;       
+        return altPlus;       
     } else if (image == "minus") {
-        imageNode.alt = altMinus;     
+        return altMinus;     
     } else if (image == "toc_open") {
-        imageNode.alt = altBookOpen;    
+        return altBookOpen;    
     } else if (image == "toc_closed") {
-        imageNode.alt = altBookClosed;  
+        return altBookClosed;  
     } else if (image == "container_obj") {
-        imageNode.alt = altContainer;  
+        return altContainer;  
     } else if (image == "container_topic") {
-        imageNode.alt = altContainerTopic;  
+        return altContainerTopic;  
     } else if (image == "topic") {
-        imageNode.alt = altTopic;
+        return altTopic;
     } else {
-        imageNode.alt = "";
+        return "";
     }
 }
 
 function updateImage(imageNode, isExpanded) {
     var src = imageNode.src;
-    if (isExpanded) {   
-        if (src.match( /toc_closed.gif$/)) {
+    if (isExpanded) {  
+        if (imageNode.openImage) { 
+            imageNode.src = imageNode.openImage;
+        } else if (src.match( /toc_closed.gif$/)) {
             setImage(imageNode, "toc_open");
         }
-    } else {
-        if (src.match( /toc_open.gif$/)) {           
+    } else {       
+        if (imageNode.closedImage) {    
+            imageNode.src = imageNode.closedImage;
+        } else if (src.match( /toc_open.gif$/)) {           
             setImage(imageNode, "toc_closed");
         }
-    }
+    } 
 }
 
 function loadChildren(treeItem) { 
