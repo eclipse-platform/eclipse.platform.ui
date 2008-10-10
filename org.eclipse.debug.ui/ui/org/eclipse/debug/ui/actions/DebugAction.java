@@ -23,7 +23,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * This class may be instantiated.
  * </p>
  * @since 2.0
- * @noextend This class is not intended to be subclassed by clients.
  */
 public final class DebugAction extends ExecutionAction {
 	
