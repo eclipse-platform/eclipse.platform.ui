@@ -182,12 +182,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	private Comparator fTupleComparator= new TupleComparator();
 	/**
-	 * The hit detection cursor.
+	 * The hit detection cursor. Do not dispose.
 	 * @since 3.0
 	 */
 	private Cursor fHitDetectionCursor;
 	/**
-	 * The last cursor.
+	 * The last cursor. Do not dispose.
 	 * @since 3.0
 	 */
 	private Cursor fLastCursor;
@@ -270,7 +270,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		fCachedTextViewer= parentRuler.getTextViewer();
 		fCachedTextWidget= fCachedTextViewer.getTextWidget();
 
-		fHitDetectionCursor= new Cursor(parentControl.getDisplay(), SWT.CURSOR_HAND);
+		fHitDetectionCursor= parentControl.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
 
 		fCanvas= createCanvas(parentControl);
 
@@ -474,11 +474,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		if (fBuffer != null) {
 			fBuffer.dispose();
 			fBuffer= null;
-		}
-
-		if (fHitDetectionCursor != null) {
-			fHitDetectionCursor.dispose();
-			fHitDetectionCursor= null;
 		}
 
 		fConfiguredAnnotationTypes.clear();

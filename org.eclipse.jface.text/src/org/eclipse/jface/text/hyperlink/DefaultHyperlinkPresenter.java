@@ -14,7 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
@@ -68,8 +67,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/** The text viewer. */
 	private ITextViewer fTextViewer;
-	/** The hand cursor. */
-	private Cursor fCursor;
 	/** The link color. */
 	private Color fColor;
 	/** The link color specification. May be <code>null</code>. */
@@ -185,11 +182,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 			fColor= null;
 		}
 
-		if (fCursor != null) {
-			fCursor.dispose();
-			fCursor= null;
-		}
-
 		if (fTextViewer instanceof ITextViewerExtension4)
 			((ITextViewerExtension4)fTextViewer).removeTextPresentationListener(this);
 		fTextViewer= null;
@@ -241,20 +233,13 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		if (text == null || text.isDisposed())
 			return;
 		Display display= text.getDisplay();
-		if (fCursor == null)
-			fCursor= new Cursor(display, SWT.CURSOR_HAND);
-		text.setCursor(fCursor);
+		text.setCursor(display.getSystemCursor(SWT.CURSOR_HAND));
 	}
 
 	private void resetCursor() {
 		StyledText text= fTextViewer.getTextWidget();
 		if (text != null && !text.isDisposed())
 			text.setCursor(null);
-
-		if (fCursor != null) {
-			fCursor.dispose();
-			fCursor= null;
-		}
 	}
 
 	private void repairRepresentation() {

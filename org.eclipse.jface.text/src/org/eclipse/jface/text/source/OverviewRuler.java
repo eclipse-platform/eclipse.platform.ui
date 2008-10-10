@@ -305,9 +305,9 @@ public class OverviewRuler implements IOverviewRuler {
 	private InternalListener fInternalListener= new InternalListener();
 	/** The width of this vertical ruler */
 	private int fWidth;
-	/** The hit detection cursor */
+	/** The hit detection cursor. Do not dispose. */
 	private Cursor fHitDetectionCursor;
-	/** The last cursor */
+	/** The last cursor. Do not dispose. */
 	private Cursor fLastCursor;
 	/** The line of the last mouse button activity */
 	private int fLastMouseButtonActivityLine= -1;
@@ -467,7 +467,7 @@ public class OverviewRuler implements IOverviewRuler {
 
 		fTextViewer= textViewer;
 
-		fHitDetectionCursor= new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+		fHitDetectionCursor= parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
 
 		fHeader= new Canvas(parent, SWT.NONE);
 
@@ -533,11 +533,6 @@ public class OverviewRuler implements IOverviewRuler {
 		if (fBuffer != null) {
 			fBuffer.dispose();
 			fBuffer= null;
-		}
-
-		if (fHitDetectionCursor != null) {
-			fHitDetectionCursor.dispose();
-			fHitDetectionCursor= null;
 		}
 
 		fConfiguredAnnotationTypes.clear();
