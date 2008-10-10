@@ -81,6 +81,11 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	private Label fSeparator;
 	/** Label in the status line or <code>null</code> if none. */
 	private Label fStatusLabel;
+	/**
+	 * Font for the label in the status line or <code>null</code> if none.
+	 * @since 3.4.2
+	 */
+	private Font fStatusLabelFont;
 	/** The toolbar manager used by the toolbar or <code>null</code> if none. */
 	private final ToolBarManager fToolBarManager;
 	/** Status line toolbar or <code>null</code> if none. */
@@ -218,7 +223,8 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		for (int i= 0; i < fontDatas.length; i++) {
 			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
 		}
-		fStatusLabel.setFont(new Font(fStatusLabel.getDisplay(), fontDatas));
+		fStatusLabelFont= new Font(fStatusLabel.getDisplay(), fontDatas);
+		fStatusLabel.setFont(fStatusLabelFont);
 
 		fStatusLabel.setForeground(fStatusLabel.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 		fStatusLabel.setBackground(background);
@@ -486,6 +492,10 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
+		if (fStatusLabelFont != null) {
+			fStatusLabelFont.dispose();
+			fStatusLabelFont= null;
+		}
 		if (fShell != null && !fShell.isDisposed())
 			fShell.dispose();
 	}
