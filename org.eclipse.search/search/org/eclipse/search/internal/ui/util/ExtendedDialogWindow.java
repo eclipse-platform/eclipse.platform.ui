@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,8 +55,6 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	private ProgressMonitorPart fProgressMonitorPart;
 	private MessageDialog fWindowClosingDialog;
 	private static final String FOCUS_CONTROL= "focusControl"; //$NON-NLS-1$
-	private Cursor fWaitCursor;
-	private Cursor fArrowCursor;
 
 
 	public ExtendedDialogWindow(Shell shell) {
@@ -225,12 +223,10 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 				focusControl= null;
 
 			// Set the busy cursor to all shells.
-			fWaitCursor= new Cursor(d, SWT.CURSOR_WAIT);
-			setDisplayCursor(d, fWaitCursor);
+			setDisplayCursor(d, d.getSystemCursor(SWT.CURSOR_WAIT));
 
 			// Set the arrow cursor to the cancel component.
-			fArrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
-			fCancelButton.setCursor(fArrowCursor);
+			fCancelButton.setCursor(d.getSystemCursor(SWT.CURSOR_ARROW));
 
 			// Deactivate shell
 			savedState= saveUIState(enableCancelButton);
@@ -267,10 +263,6 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 			setDisplayCursor(shell.getDisplay(), null);
 			fCancelButton.setCursor(null);
-			fWaitCursor.dispose();
-			fWaitCursor= null;
-			fArrowCursor.dispose();
-			fArrowCursor= null;
 			Control focusControl= (Control)state.get(FOCUS_CONTROL);
 			if (focusControl != null && ! focusControl.isDisposed())
 				focusControl.setFocus();
