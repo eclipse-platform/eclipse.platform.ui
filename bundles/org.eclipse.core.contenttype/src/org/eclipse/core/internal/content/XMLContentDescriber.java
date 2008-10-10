@@ -66,7 +66,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 					return INVALID;
 				if (charset != null && !charset.matches("[uU][tT][fF](-)?8")) //$NON-NLS-1$
 					// only set property if value is not default (avoid using a non-default content description)
-					description.setProperty(IContentDescription.CHARSET, getCharset(fullXMLDecl));
+					description.setProperty(IContentDescription.CHARSET, charset);
 				if (charset == null || !charset.matches("[uU][tT][fF](-)?(8|16)"))
 					description.setProperty(IContentDescription.BYTE_ORDER_MARK, null);
 			}
@@ -91,9 +91,24 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	public int describe(Reader input, IContentDescription description) throws IOException {
 		BufferedReader reader = new BufferedReader(input);
 		String line = reader.readLine();
+		// end of stream
 		if (line == null)
 			return INDETERMINATE;
-		return describe(new ByteArrayInputStream(line.getBytes()), description);
+		// XMLDecl should be the first string (no blanks allowed)
+		if (!line.startsWith(XML_PREFIX))
+			return INDETERMINATE;
+		if (description == null)
+			return VALID;
+		// describe charset if requested
+		if ((description.isRequested(IContentDescription.CHARSET))) {
+			String charset = getCharset(line);
+			if (charset != null && !isCharsetValid(charset))
+				return INVALID;
+			if (charset != null && !charset.matches("[uU][tT][fF](-)?8")) //$NON-NLS-1$
+				// only set property if value is not default (avoid using a non-default content description)
+				description.setProperty(IContentDescription.CHARSET, charset);
+		}
+		return VALID;
 	}
 
 	private String getCharset(String firstLine) {
