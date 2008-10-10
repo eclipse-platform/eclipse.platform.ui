@@ -61,8 +61,6 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	private MessageBox fMessageBox;
 	private ProgressMonitorPart fProgressMonitorPart;
 	private int fActiveRunningOperations;
-	private Cursor fWaitCursor;
-	private Cursor fArrowCursor;
 
 	private static final int PREVIEW_ID= IDialogConstants.CLIENT_ID + 1;
 
@@ -339,12 +337,10 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
-			fWaitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-			setDisplayCursor(d, fWaitCursor);
+			setDisplayCursor(d, d.getSystemCursor(SWT.CURSOR_WAIT));
 
 			// Set the arrow cursor to the cancel component.
-			fArrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
-			cancelButton.setCursor(fArrowCursor);
+			cancelButton.setCursor(d.getSystemCursor(SWT.CURSOR_ARROW));
 
 			boolean hasProgressMonitor= fProgressMonitorPart != null;
 
@@ -401,10 +397,6 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 
 			setDisplayCursor(shell.getDisplay(), null);
 			cancelButton.setCursor(null);
-			fWaitCursor.dispose();
-			fWaitCursor = null;
-			fArrowCursor.dispose();
-			fArrowCursor = null;
 			Control focusControl = (Control)state.get("focus"); //$NON-NLS-1$
 			if (focusControl != null)
 				focusControl.setFocus();
