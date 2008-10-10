@@ -428,7 +428,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		}
 		if (!sawCRorLF) {
 			printStream.println();
-			printStream.print("\\ No newline at end of file"); //$NON-NLS-1$
+			printStream.println("\\ No newline at end of file"); //$NON-NLS-1$
 		}
 	}
 
