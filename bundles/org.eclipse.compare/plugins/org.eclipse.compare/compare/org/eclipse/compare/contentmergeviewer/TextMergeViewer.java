@@ -1810,11 +1810,15 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		});
 		fRight.addTextPresentationListener(new ChangeHighlighter(fRight));
 		
-		ISelectionProvider selectionProvider = getCompareConfiguration().getContainer().getWorkbenchPart().getSite().getSelectionProvider();
-		if (selectionProvider instanceof CompareEditorSelectionProvider) {
-			CompareEditorSelectionProvider cesp = (CompareEditorSelectionProvider) selectionProvider;
-			cesp.setViewers(new TextViewer[] { fLeft, fRight, fAncestor }, fFocusPart /* null */);
-		}
+		 IWorkbenchPart part = getCompareConfiguration().getContainer().getWorkbenchPart();
+		 // part is not available for contexts different than editor
+		 if (part != null) {
+			 ISelectionProvider selectionProvider = part.getSite().getSelectionProvider();
+			 if (selectionProvider instanceof CompareEditorSelectionProvider) {
+				 CompareEditorSelectionProvider cesp = (CompareEditorSelectionProvider) selectionProvider;
+				 cesp.setViewers(new TextViewer[] { fLeft, fRight, fAncestor }, fFocusPart /* null */);
+			 }
+		 }
 		
 		hsynchViewport(fAncestor, fLeft, fRight);
 		hsynchViewport(fLeft, fAncestor, fRight);
