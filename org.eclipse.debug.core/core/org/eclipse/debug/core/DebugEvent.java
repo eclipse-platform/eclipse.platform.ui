@@ -135,7 +135,6 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * <li><code>IValue</code> - no events are specified for values.
  * </li>
  * </ul>
- * @noextend This class is not intended to be subclassed by clients.
  * 
  */
 public final class DebugEvent extends EventObject {
