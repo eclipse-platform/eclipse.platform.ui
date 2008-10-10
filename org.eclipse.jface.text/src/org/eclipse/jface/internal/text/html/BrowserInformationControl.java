@@ -27,7 +27,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -393,13 +392,11 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		fTextLayout= new TextLayout(fBrowser.getDisplay());
 
 		// Initialize fonts
-		Font font= fSymbolicFontName == null ? JFaceResources.getDialogFont() : JFaceResources.getFont(fSymbolicFontName);
+		String symbolicFontName= fSymbolicFontName == null ? JFaceResources.DIALOG_FONT : fSymbolicFontName;
+		Font font= JFaceResources.getFont(symbolicFontName);
 		fTextLayout.setFont(font);
 		fTextLayout.setWidth(-1);
-		FontData[] fontData= font.getFontData();
-		for (int i= 0; i < fontData.length; i++)
-			fontData[i].setStyle(SWT.BOLD);
-		font= new Font(getShell().getDisplay(), fontData);
+		font= JFaceResources.getFontRegistry().getBold(symbolicFontName);
 		fBoldStyle= new TextStyle(font, null, null);
 
 		// Compute and set tab width
@@ -417,10 +414,6 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		if (fTextLayout != null) {
 			fTextLayout.dispose();
 			fTextLayout= null;
-		}
-		if (fBoldStyle != null) {
-			fBoldStyle.font.dispose();
-			fBoldStyle= null;
 		}
 		fBrowser= null;
 
