@@ -430,6 +430,7 @@
              openIcon="icons/sample.gif">
        </tocIcon>
        <tocIcon
+             altText="altSample"
              closedIcon="icons/sample2.gif"
              id="org.eclipse.ua.tests.iconSet"
              leafIcon="icons/sample3.gif"
