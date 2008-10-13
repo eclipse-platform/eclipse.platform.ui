@@ -40,18 +40,18 @@ public class IconFinder {
 
 	private static Map IconPathMap = null; // hash table
 
-	public static void addIconPath(String IconKey, String IconPath) {
+	private static void addIconPath(String IconKey, String IconPath) {
 		if (IconPathMap == null) {
 			IconPathMap = new HashMap();
 			IconPathMap = new TreeMap(); // sorted map
 		}
 		IconPathMap.put(IconKey, IconPath);
 	}
-	public static String getIconPath(String IconKey) {
+	private static String getIconPath(String IconKey) {
 		return getEntry(IconKey);
 	}
 	
-	public static String getIconAltText(String IconKey) {
+	private static String getIconAltText(String IconKey) {
 		return getEntry(IconKey);
 	}
 
@@ -62,18 +62,14 @@ public class IconFinder {
 		return (String) key;
 	}
 
-	public static Map getInfoCenterMap() {
-		return IconPathMap;
-	}
-
-	public static void setIconImagePath(String bundleId, String path, String key) {
+	private static void setIconImagePath(String bundleId, String path, String key) {
 		String iconPath = IconFinder.getIconPath(key);		
 		if(iconPath == null){			
 			iconPath = bundleId + PATH_SEPARATOR + path; 
 			IconFinder.addIconPath(key, iconPath);
 		}
 	}
-	public static void setIconAltText(String value, String key) {		
+	private static void setIconAltText(String value, String key) {		
 			IconFinder.addIconPath(key, value);
 	}
 	public static String getImagePathFromId(String iconId, int type) {
