@@ -231,6 +231,11 @@ or not primary and intended to be integrated into another table of contents.
    </element>
 
    <element name="tocIcon">
+      <annotation>
+         <documentation>
+            (&lt;b&gt;since 3.5&lt;/b&gt;) an optional element that allows the icon to be specified for elements in a toc. Once a tocIcon has been declared it can be specified in a topic or toc using the &quot;icon&quot; attribute, for example &amp;lt;toc label=&quot;Sample Table of Contents&quot; topic=&quot;html/toc.html&quot; icon=&quot;myicon&quot;&amp;gt;
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -269,10 +274,10 @@ or not primary and intended to be integrated into another table of contents.
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="tooltip" type="string">
+         <attribute name="altText" type="string">
             <annotation>
                <documentation>
-                  String to display as tooltip when hovering over the toc icon
+                  Text that will be used in the &quot;alt&quot; attribute for the img tag in the web presentation.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>

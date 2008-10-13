@@ -23,14 +23,14 @@ public class IconFinder {
 	private static final String LEAF = "_leaf"; //$NON-NLS-1$
 	private static final String CLOSED = "_closed"; //$NON-NLS-1$
 	private static final String OPEN = "_open"; //$NON-NLS-1$
-	private static final String TOOLTIP = "_tooltip"; //$NON-NLS-1$
+	private static final String ALT = "_alt"; //$NON-NLS-1$
 	private static final String EXT_PT = "org.eclipse.help.toc"; //$NON-NLS-1$ 
 	private static final String TOC_ICON_ELEMENT = "tocIcon"; //$NON-NLS-1$
 	private static final String TOC_ICON_ID = "id"; //$NON-NLS-1$
 	private static final String OPEN_ICON_PATH = "openIcon"; //$NON-NLS-1$
 	private static final String CLOSED_ICON_PATH = "closedIcon"; //$NON-NLS-1$
 	private static final String LEAF_ICON_PATH = "leafIcon"; //$NON-NLS-1$
-	private static final String ICON_TOOLTIP = "tooltip"; //$NON-NLS-1$
+	private static final String ICON_ALT_TEXT = "altText"; //$NON-NLS-1$
 	private static final String PATH_SEPARATOR = "/"; //$NON-NLS-1$
 	private static boolean iconsInitialized = false;
 	public static int TYPEICON_OPEN   = 0;
@@ -51,7 +51,7 @@ public class IconFinder {
 		return getEntry(IconKey);
 	}
 	
-	public static String getIconTooltip(String IconKey) {
+	public static String getIconAltText(String IconKey) {
 		return getEntry(IconKey);
 	}
 
@@ -73,7 +73,7 @@ public class IconFinder {
 			IconFinder.addIconPath(key, iconPath);
 		}
 	}
-	public static void setIconTooltip(String value, String key) {		
+	public static void setIconAltText(String value, String key) {		
 			IconFinder.addIconPath(key, value);
 	}
 	public static String getImagePathFromId(String iconId, int type) {
@@ -96,12 +96,12 @@ public class IconFinder {
 		return lookupImagePath(iconId + OPEN);
 	}
 	
-	public static String getIconTooltipFromId(String iconId) {
+	public static String getIconAltFromId(String iconId) {
 		if (iconId == null) {
 			return null;
 		}
 		initializeTocIcons();	
-		return getIconTooltip(iconId + TOOLTIP);		
+		return getIconAltText(iconId + ALT);		
 	}
 	
 	private static String lookupImagePath(String name) {
@@ -133,8 +133,8 @@ public class IconFinder {
 							IconFinder.setIconImagePath(contributorID,iconElem.getAttribute(CLOSED_ICON_PATH),iconElem.getAttribute(TOC_ICON_ID)+ CLOSED);
 						if (attrs[k].equals(LEAF_ICON_PATH))
 							IconFinder.setIconImagePath(contributorID, iconElem.getAttribute(LEAF_ICON_PATH),iconElem.getAttribute(TOC_ICON_ID) + LEAF);
-						if (attrs[k].equals(ICON_TOOLTIP))
-							IconFinder.setIconTooltip(iconElem.getAttribute(ICON_TOOLTIP),iconElem.getAttribute(TOC_ICON_ID) + TOOLTIP);
+						if (attrs[k].equals(ICON_ALT_TEXT))
+							IconFinder.setIconAltText(iconElem.getAttribute(ICON_ALT_TEXT),iconElem.getAttribute(TOC_ICON_ID) + ALT);
 					}
 				}
 			}

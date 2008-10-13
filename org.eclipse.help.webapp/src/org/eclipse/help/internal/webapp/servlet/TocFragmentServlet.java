@@ -267,13 +267,16 @@ public class TocFragmentServlet extends HttpServlet {
 			if (toc instanceof Toc) {
 				String icon = ((Toc) toc).getIcon();
 				
-				if (icon != null && icon.length() > 0) {
-			
-				    String imageTags = '\n' + "      openImage=\"/"+ IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN) + "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
-					imageTags += '\n' + "      closedImage=\"/" + IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-					String tooltip = IconFinder.getIconTooltipFromId(icon);
-					if(tooltip != null) {
-						imageTags += '\n' + "      imageAlt=\""+ tooltip + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+				if (icon != null && icon.length() > 0) {			
+				    String openIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN);
+					String closedIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED);
+					String imageTags = '\n' + "      openImage=\"/"+ openIcon + "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
+					if (!openIcon.equals(closedIcon)) {
+					    imageTags += '\n' + "      closedImage=\"/" + closedIcon + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					String altText = IconFinder.getIconAltFromId(icon);
+					if(altText != null) {
+						imageTags += '\n' + "      imageAlt=\""+ altText + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					return imageTags;
 				}
@@ -284,22 +287,22 @@ public class TocFragmentServlet extends HttpServlet {
 		private String createTopicImageTags(ITopic topic, boolean isLeaf) {
 			if (topic instanceof Topic) {
 				String icon = ((Topic) topic).getIcon();
-			    String tooltip = IconFinder.getIconTooltipFromId(icon);
+			    String altText = IconFinder.getIconAltFromId(icon);
 				
 				if (icon != null && icon.length() > 0) {					
 					String imageTags;
 					if (isLeaf) {		
 						imageTags = '\n' + "      openImage=\"/" +IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_LEAF) + "\"";   //$NON-NLS-1$//$NON-NLS-2$
-						if(tooltip != null)
-							imageTags += '\n' + "      tooltip=\""+ tooltip + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-					    imageTags = '\n' + "      openImage=\"/" + IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN)+ "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
-					    imageTags += '\n' + "      closedImage=\"/" +  IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-					    if(tooltip != null)
-							imageTags += '\n' + "      tooltip=\""+ tooltip + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					if(tooltip != null) {
-						imageTags += '\n' + "      imageAlt=\""+ tooltip + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					    String openIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN);
+						String closedIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED);
+						imageTags = '\n' + "      openImage=\"/" + openIcon+ "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
+						if (!openIcon.equals(closedIcon)) {
+						    imageTags += '\n' + "      closedImage=\"/" +  closedIcon + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+						}
+				    }
+					if(altText != null) {
+						imageTags += '\n' + "      imageAlt=\""+ altText + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					}	
 					return imageTags;
 				}
