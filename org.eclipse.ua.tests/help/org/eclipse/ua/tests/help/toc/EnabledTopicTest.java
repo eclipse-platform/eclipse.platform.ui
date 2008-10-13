@@ -106,7 +106,7 @@ public class EnabledTopicTest extends TestCase {
 			return (ITopic[])topics.toArray(new ITopic[topics.size()]);
 		}
 
-		public IUAElement[] getChildren() {
+		public synchronized IUAElement[] getChildren() {
 			List all = new ArrayList();
 			all.addAll(subEntries);
 			all.addAll(topics);
