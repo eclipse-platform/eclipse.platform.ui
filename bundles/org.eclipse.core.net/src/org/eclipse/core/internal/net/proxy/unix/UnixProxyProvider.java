@@ -159,10 +159,12 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 			try {
 				// Then ask Gnome
 				pd = getGConfProxyInfo(protocol);
-				if (Policy.DEBUG_SYSTEM_PROVIDERS)
-					Policy.debug("Got Gnome proxy: " + pd); //$NON-NLS-1$
-				pd.setSource("LINUX_GNOME"); //$NON-NLS-1$
-				return pd;
+				if (pd != null) {
+					if (Policy.DEBUG_SYSTEM_PROVIDERS)
+						Policy.debug("Got Gnome proxy: " + pd); //$NON-NLS-1$
+					pd.setSource("LINUX_GNOME"); //$NON-NLS-1$
+					return pd;
+				}
 			} catch (UnsatisfiedLinkError e) {
 				// The library should be loaded, so this is a real exception
 				Activator.logError(
