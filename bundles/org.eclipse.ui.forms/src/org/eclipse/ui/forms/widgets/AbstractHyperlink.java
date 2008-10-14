@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Izzet Safer (isafer@ca.ibm.com) - patch (see Bugzilla #250505)
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -231,9 +232,10 @@ public abstract class AbstractHyperlink extends Canvas {
 			IHyperlinkListener listener = (IHyperlinkListener) listenerList[i];
 			listener.linkActivated(he);
 		}
-		if (!isDisposed())
+		if (!isDisposed()) {
 			setCursor(FormsResources.getHandCursor());
-		triggerAccessible();
+			triggerAccessible();
+		}
 	}
 
 	void triggerAccessible() {
