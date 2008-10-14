@@ -50,13 +50,13 @@ import org.eclipse.ltk.internal.core.refactoring.Changes;
  * <p>
  * A text change offers the ability to access the original content of
  * the document as well as creating a preview of the change. The edit
- * tree gets copied when creating any king of preview. Therefore no region
+ * tree gets copied when creating any kind of preview. Therefore no region
  * updating on the original edit tree takes place when requesting a preview
  * (for more information on region updating see class {@link TextEdit TextEdit}.
- * If region tracking is required for a preview it can be enabled via a call
+ * If region tracking is required for a preview, it can be enabled via a call
  * to the method {@link #setKeepPreviewEdits(boolean) setKeepPreviewEdits}.
- * If enabled the text change keeps the copied edit tree executed for the
- * preview allowing clients to map an original edit to an executed edit. The
+ * If enabled, the text change keeps the copied edit tree executed for the
+ * preview, allowing clients to map an original edit to an executed edit. The
  * executed edit can then be used to determine its position in the preview.
  * </p>
  * <p>
@@ -115,7 +115,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	}
 
 	/**
-	 * Adds a {@link TextEditGroup text edit group}. This method is a convenient
+	 * Adds a {@link TextEditGroup text edit group}. This method is a convenience
 	 * method for calling <code>change.addTextEditChangeGroup(new
 	 * TextEditChangeGroup(change, group));</code>.
 	 *
@@ -126,7 +126,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	}
 
 	/**
-	 * Adds a {@link TextEditChangeGroup text edit change group}. Calling the methods
+	 * Adds a {@link TextEditChangeGroup text edit change group}. Calling this method
 	 * requires that a root edit has been set via the method {@link #setEdit(TextEdit)
 	 * setEdit}. The edits managed by the given text edit change group must be part of
 	 * the change's root edit.
@@ -174,7 +174,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	 * change. A document acquired by this call <em>MUST</em> be released
 	 * via a call to {@link #releaseDocument(IDocument, IProgressMonitor)}.
 	 * <p>
-	 * The method <code>releaseDocument</code> must be call as many times as
+	 * The method <code>releaseDocument</code> must be called as many times as
 	 * <code>aquireDocument</code> has been called.
 	 * </p>
 	 *
@@ -220,7 +220,7 @@ public abstract class TextChange extends TextEditBasedChange {
 	 * @return the undo change or <code>null</code> if no undo change can
 	 *  be created. Returning <code>null</code> results in the fact that
 	 *  the whole change tree can't be undone. So returning <code>null</code>
-	 *  is only recommended if an exception occurred during creating the
+	 *  is only recommended if an exception occurred during the creation of the
 	 *  undo change.
 	 */
 	protected abstract Change createUndoChange(UndoEdit edit);
