@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * An abstract base implementation for object representing a generic change
  * to the workbench. A <code>Change</code> object is typically created by
- * calling <code>Refactoring.createChange()</code>. This class should be
+ * calling {@link Refactoring#createChange(IProgressMonitor)}. This class should be
  * subclassed by clients wishing to provide new changes.
  * <p>
  * Changes are best executed by using a {@link PerformChangeOperation}. If clients
@@ -240,7 +240,7 @@ public abstract class Change implements IAdaptable {
 	public abstract RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 
 	/**
-	 * Performs this change. If this method is call on an invalid or disabled change
+	 * Performs this change. If this method is called on an invalid or disabled change
 	 * object the result is unspecified. Changes should in general not respond to
 	 * {@link IProgressMonitor#isCanceled()} since canceling a change tree in the
 	 * middle of its execution leaves the workspace in a half changed state.
