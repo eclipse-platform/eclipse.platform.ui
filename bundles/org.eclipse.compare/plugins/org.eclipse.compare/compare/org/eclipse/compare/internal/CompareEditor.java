@@ -403,8 +403,10 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		fPageBook = new PageBook(parent, SWT.NONE);
 		createCompareControl();
 		IContextService service = (IContextService)getSite().getService(IContextService.class);
-		if (service != null)
+		if (service != null) {
 			service.activateContext("org.eclipse.compare.compareEditorScope"); //$NON-NLS-1$
+			service.activateContext("org.eclipse.ui.textEditorScope"); //$NON-NLS-1$
+		}
 	}
 
 	private void createCompareControl() {

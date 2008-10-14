@@ -12,29 +12,77 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.eclipse.compare.ICompareContainer;
-import org.eclipse.core.commands.operations.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.IUndoManagerExtension;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.LineNumberRulerColumn;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IElementStateListener;
+import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Extends the JFace SourceViewer with some convenience methods.
  */
@@ -50,6 +98,7 @@ public class MergeSourceViewer extends SourceViewer
 	public static final String SELECT_ALL_ID= "selectAll"; //$NON-NLS-1$
 	public static final String SAVE_ID= "save"; //$NON-NLS-1$
 	public static final String FIND_ID= "find"; //$NON-NLS-1$
+	public static final String GOTO_LINE_ID= "gotoLine"; //$NON-NLS-1$
 
 	class TextOperationAction extends MergeViewerAction {
 		
@@ -81,8 +130,288 @@ public class MergeSourceViewer extends SourceViewer
 			this.setEnabled(isEnabled());
 		}
 	}
+	
+	class TextEditorAdapter implements ITextEditor {
+		
+		public void close(boolean save) {
+			// defining interface method
+		}
+
+		public void doRevertToSaved() {
+			// defining interface method
+		}
+
+		public IAction getAction(String actionId) {
+			// defining interface method
+			return null;
+		}
+
+		public IDocumentProvider getDocumentProvider() {
+			return new IDocumentProvider(){
+
+				public void aboutToChange(Object element) {
+					// defining interface method
+				}
+
+				public void addElementStateListener(
+						IElementStateListener listener) {
+					// defining interface method
+				}
+
+				public boolean canSaveDocument(Object element) {
+					// defining interface method
+					return false;
+				}
+
+				public void changed(Object element) {
+					// defining interface method
+				}
+
+				public void connect(Object element) throws CoreException {
+					// defining interface method
+				}
+
+				public void disconnect(Object element) {
+					// defining interface method
+				}
+
+				public IAnnotationModel getAnnotationModel(Object element) {
+					// defining interface method
+					return null;
+				}
+
+				public IDocument getDocument(Object element) {
+					return MergeSourceViewer.this.getDocument();
+				}
+
+				public long getModificationStamp(Object element) {
+					// defining interface method
+					return 0;
+				}
+
+				public long getSynchronizationStamp(Object element) {
+					// defining interface method
+					return 0;
+				}
+
+				public boolean isDeleted(Object element) {
+					// defining interface method
+					return false;
+				}
+
+				public boolean mustSaveDocument(Object element) {
+					// defining interface method
+					return false;
+				}
+
+				public void removeElementStateListener(
+						IElementStateListener listener) {
+					// defining interface method
+				}
+
+				public void resetDocument(Object element) throws CoreException {
+					// defining interface method
+				}
+
+				public void saveDocument(IProgressMonitor monitor,
+						Object element, IDocument document, boolean overwrite)
+						throws CoreException {
+					// defining interface method
+				}};
+		}
+
+		public IRegion getHighlightRange() {
+			// defining interface method
+			return null;
+		}
+
+		public ISelectionProvider getSelectionProvider() {
+			return MergeSourceViewer.this.getSelectionProvider();
+		}
+
+		public boolean isEditable() {
+			// defining interface method
+			return false;
+		}
+
+		public void removeActionActivationCode(String actionId) {
+			// defining interface method
+		}
+
+		public void resetHighlightRange() {
+			// defining interface method
+		}
+
+		public void selectAndReveal(int start, int length) {
+			selectAndReveal(start, length, start, length);
+		}
+			
+		/*
+		 * @see org.eclipse.ui.texteditor.AbstractTextEditor#selectAndReveal(int, int, int, int)
+		 */
+		private void selectAndReveal(int selectionStart, int selectionLength, int revealStart, int revealLength) {
+
+			ISelection selection = getSelectionProvider().getSelection();
+			if (selection instanceof ITextSelection) {
+				ITextSelection textSelection = (ITextSelection) selection;
+				if (textSelection.getOffset() != 0	|| textSelection.getLength() != 0)
+					markInNavigationHistory();
+			}
+
+			StyledText widget= MergeSourceViewer.this.getTextWidget();
+			widget.setRedraw(false);
+			{
+				adjustHighlightRange(revealStart, revealLength);
+				MergeSourceViewer.this.revealRange(revealStart, revealLength);
+
+				MergeSourceViewer.this.setSelectedRange(selectionStart, selectionLength);
+
+				 markInNavigationHistory();
+			}
+			widget.setRedraw(true);
+		}
+
+		/*
+		 * @see org.eclipse.ui.texteditor.AbstractTextEditor#markInNavigationHistory()
+		 */		
+		private void markInNavigationHistory() {
+			getSite().getPage().getNavigationHistory().markLocation(this);
+		}
+ 
+		/*
+		 * @see org.eclipse.ui.texteditor.AbstractTextEditor#adjustHighlightRange(int, int)
+		 */
+		private void adjustHighlightRange(int offset, int length) {
+
+			if (MergeSourceViewer.this instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) MergeSourceViewer.this;
+				extension.exposeModelRange(new Region(offset, length));
+			} else if (!isVisible(MergeSourceViewer.this, offset, length)) {
+				MergeSourceViewer.this.resetVisibleRegion();
+			}
+		}
+
+		/*
+		 * @see org.eclipse.ui.texteditor.AbstractTextEditor#isVisible(ISourceViewer, int, int)
+		 */
+		private /*static*/ final boolean isVisible(ITextViewer viewer, int offset, int length) {
+			if (viewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+				IRegion overlap= extension.modelRange2WidgetRange(new Region(offset, length));
+				return overlap != null;
+			}
+			return viewer.overlapsWithVisibleRegion(offset, length);
+		}
+
+		public void setAction(String actionID, IAction action) {
+			// defining interface method
+		}
+
+		public void setActionActivationCode(String actionId,
+				char activationCharacter, int activationKeyCode,
+				int activationStateMask) {
+			// defining interface method
+		}
+
+		public void setHighlightRange(int offset, int length, boolean moveCursor) {
+			// defining interface method
+		}
+
+		public void showHighlightRangeOnly(boolean showHighlightRangeOnly) {
+			// defining interface method
+		}
+
+		public boolean showsHighlightRangeOnly() {
+			// defining interface method
+			return false;
+		}
+
+		public IEditorInput getEditorInput() {
+			if (MergeSourceViewer.this.fContainer.getWorkbenchPart() instanceof IEditorPart)
+				return ((IEditorPart) MergeSourceViewer.this.fContainer.getWorkbenchPart()).getEditorInput();
+			return null;
+		}
+
+		public IEditorSite getEditorSite() {
+			// defining interface method
+			return null;
+		}
+
+		public void init(IEditorSite site, IEditorInput input)
+				throws PartInitException {
+			// defining interface method
+		}
+
+		public void addPropertyListener(IPropertyListener listener) {
+			// defining interface method
+		}
+
+		public void createPartControl(Composite parent) {
+			// defining interface method
+		}
+
+		public void dispose() {
+			// defining interface method
+		}
+
+		public IWorkbenchPartSite getSite() {
+			return MergeSourceViewer.this.fContainer.getWorkbenchPart().getSite();
+		}
+
+		public String getTitle() {
+			// defining interface method
+			return null;
+		}
+
+		public Image getTitleImage() {
+			// defining interface method
+			return null;
+		}
+
+		public String getTitleToolTip() {
+			// defining interface method
+			return null;
+		}
+
+		public void removePropertyListener(IPropertyListener listener) {
+			// defining interface method
+		}
+
+		public void setFocus() {
+			// nothing here			
+		}
+
+		public Object getAdapter(Class adapter) {
+			// defining interface method
+			return null;
+		}
+
+		public void doSave(IProgressMonitor monitor) {
+			// defining interface method
+		}
+
+		public void doSaveAs() {
+			// defining interface method
+		}
+
+		public boolean isDirty() {
+			// defining interface method
+			return false;
+		}
+
+		public boolean isSaveAsAllowed() {
+			// defining interface method
+			return false;
+		}
+
+		public boolean isSaveOnCloseNeeded() {
+			// defining interface method
+			return false;
+		}
+	}
 
 	private ResourceBundle fResourceBundle;
+	private ICompareContainer fContainer;
 	private Position fRegion;
 	private boolean fEnabled= true;
 	private HashMap fActions= new HashMap();
@@ -97,17 +426,20 @@ public class MergeSourceViewer extends SourceViewer
 	private LineNumberRulerColumn fLineNumberColumn;
 	private List textActions = new ArrayList();
 
+	private TextEditorAdapter fTexEditorAdapter;
+	
 	public MergeSourceViewer(Composite parent, int style, ResourceBundle bundle, ICompareContainer container) {
 		super(parent, new CompositeRuler(), style | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		fResourceBundle= bundle;
+		fContainer = container;
 		
 		MenuManager menu= new MenuManager();
 		menu.setRemoveAllWhenShown(true);
 		menu.addMenuListener(this);
 		StyledText te= getTextWidget();
 		te.setMenu(menu.createContextMenu(te));
-		container.registerContextMenu(menu, this);
+		fContainer.registerContextMenu(menu, this);
 		
 		// for listening to editor show/hide line number preference value
 		fPreferenceChangeListener= new IPropertyChangeListener() {
@@ -653,5 +985,12 @@ public class MergeSourceViewer extends SourceViewer
 		if (undoManager instanceof IUndoManagerExtension)
 			return ((IUndoManagerExtension)undoManager).getUndoContext();
 		return null;
+	}
+	
+	public ITextEditor getTextEditorAdapter() {
+		if (fTexEditorAdapter == null)
+			fTexEditorAdapter = new TextEditorAdapter();
+		return fTexEditorAdapter;
+
 	}
 }

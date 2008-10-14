@@ -156,6 +156,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.ui.texteditor.GotoLineAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension;
 import org.eclipse.ui.texteditor.IElementStateListener;
@@ -233,7 +234,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		ActionFactory.DELETE.getId(),
 		ActionFactory.SELECT_ALL.getId(),
 		ActionFactory.SAVE.getId(),
-		ActionFactory.FIND.getId()
+		ActionFactory.FIND.getId(),
+		ITextEditorActionDefinitionIds.LINE_GOTO
 	};
 	private static final String[] TEXT_ACTIONS= {
 		MergeSourceViewer.UNDO_ID,
@@ -244,7 +246,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		MergeSourceViewer.DELETE_ID,
 		MergeSourceViewer.SELECT_ALL_ID,
 		MergeSourceViewer.SAVE_ID,
-		MergeSourceViewer.FIND_ID
+		MergeSourceViewer.FIND_ID, 
+		MergeSourceViewer.GOTO_LINE_ID
 	};
 					
 	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources"; //$NON-NLS-1$
@@ -2276,6 +2279,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		// Add the find action to the popup menu of the viewer
 		contributeFindAction(part);
 		
+		contributeGotoLineAction(part);
+
 		configureTextViewer(part);
 		
 		return part;
@@ -2292,6 +2297,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		viewer.addAction(MergeSourceViewer.FIND_ID, action);
 	}
 	
+	private void contributeGotoLineAction(MergeSourceViewer viewer) {
+		IAction action = new GotoLineAction(viewer.getTextEditorAdapter());
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
+		viewer.addAction(MergeSourceViewer.GOTO_LINE_ID, action);
+	}
+
 	private void connectGlobalActions(final MergeSourceViewer part) {
 		if (fHandlerService != null) {
 			if (part != null)
