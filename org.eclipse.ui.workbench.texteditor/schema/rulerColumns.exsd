@@ -181,7 +181,7 @@
    <element name="placement">
       <annotation>
          <documentation>
-            Describes the placement of this ruler column relative to other contributed columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their &lt;tt&gt;id&lt;/tt&gt;). Columns that would end up at the same position are ordered by &lt;em&gt;gravity&lt;/em&gt; (see below). If the ordering is contradicting or no ordering can be found that fulfills all placement requests, some placement requirements are dropped until the placement can be achieved. If a columns does not fully specify its placement it will be placed at an arbitrary but consistent location.
+            Describes the placement of this ruler column relative to other contributed columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their &lt;tt&gt;id&lt;/tt&gt;). Columns that would end up at the same position are ordered by &lt;em&gt;gravity&lt;/em&gt; (see below). If the ordering is contradicting or no ordering can be found that fulfills all placement requests, some placement requirements are dropped until the placement can be achieved. If a column does not fully specify its placement it will be placed at an arbitrary but consistent location.
          </documentation>
       </annotation>
       <complexType>
