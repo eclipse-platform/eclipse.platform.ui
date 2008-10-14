@@ -99,6 +99,11 @@
             httpcontextId="help">
       </servlet>
       <servlet
+            alias="/about.html"
+            class="org.eclipse.help.internal.webapp.servlet.AboutServlet"
+            httpcontextId="help">
+      </servlet>
+      <servlet
             alias="/*.jsp"
             class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/"
             httpcontextId="help">
