@@ -3972,5 +3972,33 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+8 B">
       </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.tests.tooltipTest">
+         <command
+               commandId="org.eclipse.ui.tests.testToolTipCommand"
+               label="Testing Tooltip"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.tests.testToolTipCommand"
+            name="My Test Tooltip Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.tests.testToolTipCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+1">
+      </key>
    </extension>   
 </plugin>            

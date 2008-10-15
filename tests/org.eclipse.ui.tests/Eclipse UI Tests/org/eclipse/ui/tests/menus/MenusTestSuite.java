@@ -14,6 +14,7 @@ package org.eclipse.ui.tests.menus;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+
 /**
  * Tests for all code related to menus. This includes the
  * <code>popupMenus</code> extension point, and others.
@@ -35,5 +36,6 @@ public class MenusTestSuite extends TestSuite {
         addTest(new TestSuite(MenuVisibilityTest.class));
         addTest(new TestSuite(MenuBaseTests.class));
         addTest(new TestSuite(MenuPopulationTest.class));
+        addTest(new TestSuite(Bug231304Test.class));
     }
 }
