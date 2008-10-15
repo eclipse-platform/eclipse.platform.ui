@@ -27,12 +27,12 @@
          <propertyTab
                category="sample"
                id="ButtonTab"
-               label="Button"/>
+               label="%propertyTabs.Button.label"/>
          <propertyTab
                afterTab="ButtonTab"
                category="sample"
                id="AdvancedTab"
-               label="Advanced"/>
+               label="%propertyTabs.Advanced.label"/>
       </propertyTabs>
    </extension>
    <extension
