@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,8 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 
 /**
  * A region in an IOConsole's document.
+ * 
  * @since 3.1
- *
  */
 public class IOConsolePartition implements ITypedRegion {
 	public static final String OUTPUT_PARTITION_TYPE = ConsolePlugin.getUniqueIdentifier() + ".io_console_output_partition_type"; //$NON-NLS-1$
@@ -67,21 +67,27 @@ public class IOConsolePartition implements ITypedRegion {
     }
     
     /**
-     * Inserts a string into this partition
+     * Inserts a string into this partition if the partition is not read-only.
      * @param s The string to insert
      * @param offset the offset in the partition
      */
     public void insert(String s, int insertOffset) {
+    	if(readOnly) {
+    		return;
+    	}
         buffer.insert(insertOffset, s);
         length += s.length();
     }
       
     /**
-     * Deletes data from this partition.
+     * Deletes data from this partition if the partition is not read-only
      * @param delOffset
      * @param delLength
      */
     public void delete(int delOffset, int delLength) {
+    	if(readOnly) {
+    		return;
+    	}
         buffer.delete(delOffset, delOffset+delLength);
         length -= delLength;
     }
@@ -111,19 +117,25 @@ public class IOConsolePartition implements ITypedRegion {
     }
     
     /**
-     * Sets this partitions offset in the document.
+     * Sets this partitions offset in the document if the partition is not read-only
      * @param offset This partitions offset in the document.
      */
     public void setOffset(int offset) {
+    	if(readOnly) {
+    		return;
+    	}
         this.offset = offset;
     }
     
     /**
-     * Sets this partitions length
+     * Sets this partitions' length if the the partition is not read-only.
      * 
      * @param length
      */
     public void setLength(int length) {
+    	if(readOnly) {
+    		return;
+    	}
     	this.length = length;
     }
     
@@ -132,7 +144,7 @@ public class IOConsolePartition implements ITypedRegion {
      * @return The data contained in this partition.
      */
     public String getString() {
-        return buffer != null ? buffer.toString() : ""; //$NON-NLS-1$
+        return buffer.toString();
     }
     
     /**
@@ -143,6 +155,13 @@ public class IOConsolePartition implements ITypedRegion {
         return new StyleRange(rangeOffset, rangeLength, getColor(), null, getFontStyle());
     }
 
+    /**
+     *  Returns the font of the input stream if the type of the partition 
+     * is <code>INPUT_PARTITION_TYPE</code>, otherwise it returns the output 
+     * stream font
+     * 
+     * @return the font of one of the backing streams
+     */
     private int getFontStyle() {
         if (type.equals(INPUT_PARTITION_TYPE)) {
             return inputStream.getFontStyle();
@@ -150,6 +169,13 @@ public class IOConsolePartition implements ITypedRegion {
         return outputStream.getFontStyle();
     }
 
+    /**
+     * Returns the colour of the input stream if the type of the partition 
+     * is <code>INPUT_PARTITION_TYPE</code>, otherwise it returns the output 
+     * stream colour
+     * 
+     * @return the colour of one of the backing streams
+     */
     public Color getColor() {
         if (type.equals(INPUT_PARTITION_TYPE)) {
             return inputStream.getColor();
@@ -157,18 +183,32 @@ public class IOConsolePartition implements ITypedRegion {
         return outputStream.getColor();
     }
 
+    /**
+     * Returns if this partition is read-only
+     * @return if this partition is read-only
+     */
     public boolean isReadOnly() {
         return readOnly;
     }
     
+    /**
+     * Sets the read-only state of this partition to <code>true</code>.
+     */
     public void setReadOnly() {
         readOnly = true;
     }
 
+    /**
+     * Clears the contents of the buffer
+     */
     public void clearBuffer() {
-        buffer = null;
+        buffer.setLength(0);
     }
     
+    /**
+     * Returns the underlying output stream
+     * @return the underlying output stream
+     */
     IOConsoleOutputStream getStream() {
         return outputStream;
     }

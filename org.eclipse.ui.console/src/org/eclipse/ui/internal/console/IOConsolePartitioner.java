@@ -558,13 +558,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
             return shouldRun;
         }
 	}
-
- 
-    
 	
-	
-
-    
     /**
      * Job to trim the console document, runs in the  UI thread.
      */
@@ -654,12 +648,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         }
     }
 
-
-
-
-
-
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
      */
@@ -683,6 +671,4 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
         }
         return styles;
     }
-    
-	
 }
