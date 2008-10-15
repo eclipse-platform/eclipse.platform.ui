@@ -58,9 +58,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.internal.text.StickyHoverManager;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
@@ -4157,12 +4159,7 @@ public class TextViewer extends Viewer implements
 	 * @return the viewer's printable mode
 	 */
 	protected boolean isPrintable() {
-		/*
-		 * 1GK7Q10: ITPUI:WIN98 - internal error after invoking print at editor view
-		 * Changed from returning true to testing the length of the printer queue
-		 */
-		PrinterData[] printerList= Printer.getPrinterList();
-		return (printerList != null && printerList.length > 0);
+		return true; // see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=250528
 	}
 
 	/**
@@ -4171,7 +4168,16 @@ public class TextViewer extends Viewer implements
 	 * @since 3.4
 	 */
 	public void print(StyledTextPrintOptions options) {
-		final PrintDialog dialog= new PrintDialog(fTextWidget.getShell(), SWT.PRIMARY_MODAL);
+		final Shell shell= fTextWidget.getShell();
+
+		if (Printer.getPrinterList().length == 0) {
+			String title= JFaceTextMessages.getString("TextViewer.warning.noPrinter.title"); //$NON-NLS-1$
+			String msg= JFaceTextMessages.getString("TextViewer.warning.noPrinter.message"); //$NON-NLS-1$
+			MessageDialog.openWarning(shell, title, msg);
+			return;
+		}
+
+		final PrintDialog dialog= new PrintDialog(shell, SWT.PRIMARY_MODAL);
 		final PrinterData data= dialog.open();
 
 		if (data != null) {
