@@ -117,6 +117,8 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchManager__0__occurred_while_reading_launch_configuration_file__1___1;
 	public static String LaunchManager_Invalid_launch_configuration_index__18;
 	public static String LaunchManager_does_not_exist;
+
+	public static String LaunchManager_does_not_exist_no_store_found;
 	public static String LaunchManager_Source_locator_does_not_exist___0__13;
 	public static String LogicalStructureType_0;
 	public static String OutputStreamMonitor_label;

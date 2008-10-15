@@ -1287,9 +1287,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
 		if (info == null) {
 			IFileStore store = config.getFileStore();
-			if (store == null){
-				throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_StoreNotFound, new String[]{config.getName()}), null);  
-			}
 			if (config.exists()) {
 				BufferedInputStream stream = null;
 				try {
@@ -1317,8 +1314,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				}
 		
 			} else {
-				throw createDebugException(
-					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), store.toURI().toString()}), null); 
+				if (store != null){
+					throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), store.toURI().toString()}), null);
+				} else {
+					throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist_no_store_found, new String[]{config.getName()}), null);					
+				}
 			}
 		}
 		return info;
