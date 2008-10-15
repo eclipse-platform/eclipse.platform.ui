@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="editors" name="Internal and External Editors"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to add new editors to the 
 workbench.  A editor is a visual component within a 
@@ -41,6 +41,11 @@ with it by any means except through the file system.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="editor" minOccurs="0" maxOccurs="unbounded"/>
@@ -64,9 +69,9 @@ with it by any means except through the file system.
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -74,9 +79,9 @@ with it by any means except through the file system.
 
    <element name="editor">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name" icon="icon"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <sequence>
@@ -94,9 +99,9 @@ with it by any means except through the file system.
                <documentation>
                   a translatable name that will be used in the UI for this editor
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -105,9 +110,9 @@ with it by any means except through the file system.
                   A relative name of the icon that will be used for all resources that match the specified extensions. Editors should provide an icon to make it easy for users to distinguish between different editor types. If you specify a command rather than a class, an icon is not needed. In that case, the workbench 
 will use the icon provided by the operating system.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="extensions" type="string">
@@ -122,9 +127,9 @@ will use the icon provided by the operating system.
                <documentation>
                   the name of a class that implements &lt;samp&gt;org.eclipse.ui.IEditorPart&lt;/samp&gt;. The attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt;, and &lt;samp&gt;launcher&lt;/samp&gt; are mutually exclusive. If this attribute is defined then &lt;samp&gt;contributorClass&lt;/samp&gt; should also be defined.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorPart"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="command" type="string">
@@ -140,9 +145,9 @@ will use the icon provided by the operating system.
                   the name of a class which that implements &lt;samp&gt;org.eclipse.ui.IEditorLauncher&lt;/samp&gt;. 
 A launcher will open an external editor. The attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt;, and &lt;samp&gt;launcher&lt;/samp&gt; are mutually exclusive.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IEditorLauncher"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="contributorClass" type="string">
@@ -150,9 +155,9 @@ A launcher will open an external editor. The attributes &lt;samp&gt;class&lt;/sa
                <documentation>
                   the name of a class that implements &lt;samp&gt;org.eclipse.ui.IEditorActionBarContributor&lt;/samp&gt;. This attribute should only be defined if the &lt;samp&gt;class&lt;/samp&gt; attribute is defined. This class is used to add new actions to the workbench menu and tool bar which reflect the features of the editor type.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorActionBarContributor"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="default" type="boolean" use="default" value="false">
@@ -191,9 +196,9 @@ documents may register for &quot;ejb.htm, ejb.html&quot;.
                <documentation>
                   the name of a class that implements &lt;samp&gt;org.eclipse.ui.IEditorMatchingStrategy&lt;/samp&gt;. This attribute should only be defined if the &lt;samp&gt;class&lt;/samp&gt; attribute is defined. This allows the editor extension to provide its own algorithm for matching the input of one of its editors to a given editor input.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IEditorMatchingStrategy"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -201,9 +206,9 @@ documents may register for &quot;ejb.htm, ejb.html&quot;.
 
    <element name="contentTypeBinding">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="contentTypeId"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             Advertises that the containing editor understands the given content type and is suitable for editing files of that type.
          </documentation>
@@ -212,18 +217,20 @@ documents may register for &quot;ejb.htm, ejb.html&quot;.
          <attribute name="contentTypeId" type="string" use="required">
             <annotation>
                <documentation>
-                  The content type identifier. This is an ID defined by the &apos;org.eclipse.core.runtime.contentTypes&apos; extension point.
+                  The content type identifier. This is an ID defined by the &apos;org.eclipse.core.contenttype.contentTypes&apos; extension point.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example 
 of an internal editor extension definition: 
@@ -247,9 +254,9 @@ of an internal editor extension definition:
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          If the command attribute is used, it will be treated 
 as an external program command line that will be executed
@@ -311,19 +318,20 @@ editor is closed, menus and actions will be removed.
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The workbench provides a &quot;Default Text Editor&quot;. The end user product may contain other editors as part of the shipping bundle. In that case, editors will be registered as extensions using the syntax described above.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
