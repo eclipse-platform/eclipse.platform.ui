@@ -1287,6 +1287,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
 		if (info == null) {
 			IFileStore store = config.getFileStore();
+			if (store == null){
+				throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_StoreNotFound, new String[]{config.getName()}), null);  
+			}
 			if (config.exists()) {
 				BufferedInputStream stream = null;
 				try {
