@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 237718
+ *     Matthew Hall - bugs 237718, 146397
  *******************************************************************************/
 package org.eclipse.core.databinding.observable;
 
@@ -99,6 +99,35 @@ public interface IObservable {
 	 *                {@link ObservableTracker#getterCalled(IObservable)}.
 	 */
 	public boolean isStale();
+
+	/**
+	 * Adds the given dispose listener to the list of dispose listeners. Dispose
+	 * listeners are notified when an observable has been disposed.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 * @since 1.2
+	 */
+	public void addDisposeListener(IDisposeListener listener);
+
+	/**
+	 * Removes the given dispose listener from the list of dispose listeners.
+	 * Has no effect if the given listener is not registered as a dispose
+	 * listener.
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 * @since 1.2
+	 */
+	public void removeDisposeListener(IDisposeListener listener);
+
+	/**
+	 * Returns whether the observable has been disposed
+	 * 
+	 * @return whether the observable has been disposed
+	 * @since 1.2
+	 */
+	public boolean isDisposed();
 
 	/**
 	 * Disposes of this observable object, removing all listeners registered

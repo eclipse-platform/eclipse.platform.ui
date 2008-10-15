@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - Fix NPE, more detailed assert messages (bug 210115)
+ *     Matthew Hall - bugs 210115, 146397
  *******************************************************************************/
 package org.eclipse.core.databinding.observable;
 
@@ -167,10 +167,10 @@ public class ObservableTracker {
 	 * @param observable
 	 */
 	public static void getterCalled(IObservable observable) {
-		Realm realm = observable.getRealm();
-		if (realm == null) // observable.isDisposed() would be more appropriate if it existed
+		if (observable.isDisposed())
 			Assert.isTrue(false, "Getter called on disposed observable " //$NON-NLS-1$
 					+ toString(observable));
+		Realm realm = observable.getRealm();
 		if (!realm.isCurrent())
 			Assert.isTrue(false, "Getter called outside realm of observable " //$NON-NLS-1$
 					+ toString(observable));

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 208332)
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bugs 213145, 146397
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -133,6 +133,14 @@ public class EmptyObservableListTest {
 		}
 
 		public void testIsStale_GetterCalled() throws Exception {
+			// disabled
+		}
+
+		public void testIsDisposed() throws Exception {
+			// disabled
+		}
+
+		public void testAddDisposeListener_HandleDisposeInvoked() {
 			// disabled
 		}
 	}

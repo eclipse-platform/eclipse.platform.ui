@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bug 118516
+ *     Matthew Hall - bugs 118516, 146397
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -20,7 +20,8 @@ import org.eclipse.core.runtime.AssertionFailedException;
  * @since 1.0
  */
 public abstract class AbstractObservable extends ChangeManager implements IObservable {
-	
+	private boolean disposed = false;
+
 	/**
 	 * @param realm
 	 */
@@ -44,6 +45,20 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 		removeListener(StaleEvent.TYPE, listener);
 	}
 
+	/**
+	 * @since 1.2
+	 */
+	public synchronized void addDisposeListener(IDisposeListener listener) {
+		addListener(DisposeEvent.TYPE, listener);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public synchronized void removeDisposeListener(IDisposeListener listener) {
+		removeListener(DisposeEvent.TYPE, listener);
+	}
+
 	protected void fireChange() {
 		checkRealm();
 		fireEvent(new ChangeEvent(this));
@@ -55,10 +70,21 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	}
 
 	/**
+	 * @since 1.2
+	 */
+	public boolean isDisposed() {
+		return disposed;
+	}
+
+	/**
 	 * 
 	 */
 	public synchronized void dispose() {
-		super.dispose();
+		if (!disposed) {
+			disposed = true;
+			fireEvent(new DisposeEvent(this));
+			super.dispose();
+		}
 	}
 
 	/**

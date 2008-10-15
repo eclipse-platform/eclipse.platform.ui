@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bug 118516
+ *     Matthew Hall - bugs 118516, 146397
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -17,7 +17,9 @@ import java.util.AbstractMap;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.ChangeSupport;
+import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
@@ -37,6 +39,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 		IObservableMap {
 
 	private ChangeSupport changeSupport;
+	private boolean disposed = false;
 
 	private boolean stale;
 
@@ -74,24 +77,55 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
-		changeSupport.addListener(MapChangeEvent.TYPE, listener);
+		if (!disposed)
+			changeSupport.addListener(MapChangeEvent.TYPE, listener);
 	}
 
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
-		changeSupport.removeListener(MapChangeEvent.TYPE, listener);
+		if (!disposed)
+			changeSupport.removeListener(MapChangeEvent.TYPE, listener);
 	}
 
 	public synchronized void addChangeListener(IChangeListener listener) {
-		changeSupport.addChangeListener(listener);
+		if (!disposed)
+			changeSupport.addChangeListener(listener);
 	}
 
 	public synchronized void addStaleListener(IStaleListener listener) {
-		changeSupport.addStaleListener(listener);
+		if (!disposed)
+			changeSupport.addStaleListener(listener);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public void addDisposeListener(IDisposeListener listener) {
+		if (!disposed)
+			changeSupport.addDisposeListener(listener);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public void removeDisposeListener(IDisposeListener listener) {
+		if (!disposed)
+			changeSupport.removeDisposeListener(listener);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public boolean isDisposed() {
+		return disposed;
 	}
 
 	public synchronized void dispose() {
-		changeSupport.dispose();
-		changeSupport = null;
+		if (!disposed) {
+			disposed = true;
+			changeSupport.fireEvent(new DisposeEvent(this));
+			changeSupport.dispose();
+			changeSupport = null;
+		}
 	}
 
 	public Realm getRealm() {

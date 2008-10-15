@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 212518)
+ *     Matthew Hall - bug 146397
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -113,6 +114,14 @@ public class ConstantObservableValueTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public void testIsStale_GetterCalled() throws Exception {
+			// disabled
+		}
+
+		public void testIsDisposed() throws Exception {
+			// disabled
+		}
+
+		public void testAddDisposeListener_HandleDisposeInvoked() {
 			// disabled
 		}
 

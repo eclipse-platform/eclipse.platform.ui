@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 146397
  *******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.viewers;
@@ -15,6 +16,7 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -250,6 +252,10 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 			this.delegate = delegate;
 		}
 
+		public boolean isDisposed() {
+			return disposed > 0;
+		}
+
 		public synchronized void dispose() {
 			disposed++;
 			delegate.dispose();
@@ -257,6 +263,10 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 
 		public void addChangeListener(IChangeListener listener) {
 			delegate.addChangeListener(listener);
+		}
+
+		public void addDisposeListener(IDisposeListener listener) {
+			delegate.addDisposeListener(listener);
 		}
 
 		public void addStaleListener(IStaleListener listener) {
@@ -285,6 +295,10 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 
 		public void removeChangeListener(IChangeListener listener) {
 			delegate.removeChangeListener(listener);
+		}
+
+		public void removeDisposeListener(IDisposeListener listener) {
+			delegate.removeDisposeListener(listener);
 		}
 
 		public void removeStaleListener(IStaleListener listener) {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Bob Smith - initial API and implementation (bug 198880)
+ *     Matthew Hall - bug 146397
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding;
@@ -14,6 +15,7 @@ package org.eclipse.core.tests.databinding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ObservablesManager;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -160,6 +162,11 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 		}
 
+		public void addDisposeListener(IDisposeListener listener) {
+			// dummy
+	
+		}
+
 		/*
 		 * (non-Javadoc)
 		 *
@@ -168,6 +175,10 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 		public void addStaleListener(IStaleListener listener) {
 			// dummy
 
+		}
+
+		public boolean isDisposed() {
+			return disposeCalled;
 		}
 
 		/*
@@ -206,6 +217,11 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 		public void removeChangeListener(IChangeListener listener) {
 			// dummy
 
+		}
+
+		public void removeDisposeListener(IDisposeListener listener) {
+			// dummy
+			
 		}
 
 		/*

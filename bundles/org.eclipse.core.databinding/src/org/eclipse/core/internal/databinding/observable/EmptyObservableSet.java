@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bugs 208332, 146397
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -145,8 +146,18 @@ public class EmptyObservableSet implements IObservableSet {
 	public void removeStaleListener(IStaleListener listener) {
 	}
 
+	public void addDisposeListener(IDisposeListener listener) {
+	}
+
+	public void removeDisposeListener(IDisposeListener listener) {
+	}
+
 	public boolean isStale() {
 		checkRealm();
+		return false;
+	}
+
+	public boolean isDisposed() {
 		return false;
 	}
 

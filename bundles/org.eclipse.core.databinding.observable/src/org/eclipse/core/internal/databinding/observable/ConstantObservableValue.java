@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Matt Carter - initial API and implementation (bug 212518)
- *     Matthew Hall - bug 212518
+ *     Matthew Hall - bug 212518, 146397
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable;
 
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
@@ -84,8 +85,16 @@ public class ConstantObservableValue implements IObservableValue {
 		// ignore
 	}
 
+	public void addDisposeListener(IDisposeListener listener) {
+		// ignore
+	}
+
 	public void addStaleListener(IStaleListener listener) {
 		// ignore
+	}
+
+	public boolean isDisposed() {
+		return false;
 	}
 
 	public void dispose() {
@@ -101,6 +110,10 @@ public class ConstantObservableValue implements IObservableValue {
 	}
 
 	public void removeChangeListener(IChangeListener listener) {
+		// ignore
+	}
+
+	public void removeDisposeListener(IDisposeListener listener) {
 		// ignore
 	}
 

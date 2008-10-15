@@ -7,9 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 208322
- *     Matthew Hall - bug 221351
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bugs 208322, 221351, 208858, 146397
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -17,11 +15,14 @@ package org.eclipse.jface.databinding.conformance;
 import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
@@ -144,6 +145,31 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				observable.isStale();
 			}
 		}, "isStale", observable);
+	}
+
+	public void testIsDisposed() throws Exception {
+		assertFalse(observable.isDisposed());
+		observable.dispose();
+		assertTrue(observable.isDisposed());
+	}
+
+	public void testAddDisposeListener_HandleDisposeInvoked() {
+		DisposeEventTracker tracker = DisposeEventTracker.observe(observable);
+		assertEquals(0, tracker.count);
+		observable.dispose();
+		assertEquals(1, tracker.count);
+		assertSame(observable, tracker.event.getSource());
+	}
+
+	public void testHandleDispose_IsDisposedTrue() {
+		// Ensures observable.isDisposed() == true before
+		// the dispose listeners are called
+		observable.addDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent staleEvent) {
+				assertTrue(observable.isDisposed());
+			}
+		});
+		observable.dispose();
 	}
 
 	public void testDispose_RemovesListeners() throws Exception {

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 182822
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 218269
+ *     Matthew Hall - bugs 218269, 146397
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
@@ -132,6 +133,20 @@ public final class AggregateValidationStatus implements IObservableValue {
 	}
 
 	/**
+	 * @since 1.2
+	 */
+	public void addDisposeListener(IDisposeListener listener) {
+		implementation.addDisposeListener(listener);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public void removeDisposeListener(IDisposeListener listener) {
+		implementation.removeDisposeListener(listener);
+	}
+
+	/**
 	 * @param listener
 	 * @see org.eclipse.core.databinding.observable.IObservable#addStaleListener(org.eclipse.core.databinding.observable.IStaleListener)
 	 */
@@ -145,6 +160,13 @@ public final class AggregateValidationStatus implements IObservableValue {
 	 */
 	public void addValueChangeListener(IValueChangeListener listener) {
 		implementation.addValueChangeListener(listener);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public boolean isDisposed() {
+		return implementation.isDisposed();
 	}
 
 	public void dispose() {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 146397
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -75,5 +76,20 @@ public abstract class ChangeSupport extends ChangeManager {
 	public void removeStaleListener(IStaleListener listener) {
 		removeListener(StaleEvent.TYPE, listener);
 	}
-	
+
+	/**
+	 * @param listener 
+	 * @since 1.2
+	 */
+	public void addDisposeListener(IDisposeListener listener) {
+		addListener(DisposeEvent.TYPE, listener);
+	}
+
+	/**
+	 * @param listener
+	 * @since 1.2
+	 */
+	public void removeDisposeListener(IDisposeListener listener) {
+		removeListener(DisposeEvent.TYPE, listener);
+	}
 }
