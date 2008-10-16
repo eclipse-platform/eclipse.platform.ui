@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -40,6 +41,12 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
     private String fUpperListLabel;
 
     private String fLowerListLabel;
+    
+    /**
+     * The comparator used to sort the list in the lower pane.
+     * @since 3.5
+     */
+    private Comparator fLowerListComparator = null;
 
     private ILabelProvider fQualifierRenderer;
 
@@ -86,6 +93,22 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
      */
     public void setLowerListLabel(String label) {
         fLowerListLabel = label;
+    }
+
+    /**
+     * Sets the comparator used to sort the list in the lower pane.
+     * <p>
+     * Note: the comparator might want to honor
+     * {@link AbstractElementListSelectionDialog#isCaseIgnored()}.
+     * </p>
+     * 
+     * @param comparator
+     *            a Comparator or <code>null</code> if <code>String</code>'s
+     *            comparison methods should be used
+     * @since 3.5
+     */
+    public void setLowerListComparator(Comparator comparator) {
+    	fLowerListComparator = comparator;
     }
 
     /**
@@ -261,7 +284,14 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 			}
             qualifiers[i] = text;
         }
-        TwoArrayQuickSorter sorter = new TwoArrayQuickSorter(isCaseIgnored());
+        
+        TwoArrayQuickSorter sorter;
+        if (fLowerListComparator == null) {
+        	sorter = new TwoArrayQuickSorter(isCaseIgnored());
+        } else {
+        	sorter = new TwoArrayQuickSorter(fLowerListComparator);
+        }
+        
         sorter.sort(qualifiers, elements);
         for (int i = 0; i != length; i++) {
             TableItem item = new TableItem(fLowerList, SWT.NONE);
