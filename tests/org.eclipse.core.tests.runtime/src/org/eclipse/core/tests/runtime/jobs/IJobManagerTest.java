@@ -1045,9 +1045,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	 * Tests the API method IJobManager.wakeUp(family)
 	 */
 	public void testJobFamilyWakeUp() {
-		//disabled due to bug 109898
-		if (true)
-			return;
 		final int JOBS_PER_FAMILY = 10;
 		//create two different families of jobs
 		Job[] family1 = new Job[JOBS_PER_FAMILY];
