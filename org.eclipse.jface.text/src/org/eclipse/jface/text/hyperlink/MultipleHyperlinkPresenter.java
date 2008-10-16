@@ -186,6 +186,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			int width;
 			if (preferedSize.y - scrollBarHeight <= constraints.y) {
 				width= preferedSize.x - scrollBarWidth;
+				fTable.getVerticalBar().setVisible(false);
 			} else {
 				width= Math.min(preferedSize.x, constraints.x);
 			}
@@ -193,6 +194,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			int height;
 			if (preferedSize.x - scrollBarWidth <= constraints.x) {
 				height= preferedSize.y - scrollBarHeight;
+				fTable.getHorizontalBar().setVisible(false);
 			} else {
 				height= Math.min(preferedSize.y, constraints.y);
 			}
