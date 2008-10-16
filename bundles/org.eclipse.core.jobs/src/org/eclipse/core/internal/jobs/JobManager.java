@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stephan Wahlbrink  - Fix for bug 200997.
+ *     Danail Nachev - Fix for bug 109898
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -252,7 +253,7 @@ public class JobManager implements IJobManager {
 					}
 					//signal that the job should be canceled before it gets a chance to run
 					job.setAboutToRunCanceled(true);
-					return true;
+					return false;
 				default :
 					changeState(job, Job.NONE);
 			}
