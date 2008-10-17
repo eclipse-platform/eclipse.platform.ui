@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bug 221351, 247875
  *     Ovidio Mallo - bug 241318
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObserving;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
@@ -64,20 +65,28 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 				detailType);
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
-		updateInnerObservableSet(outerObservableValue);
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				updateInnerObservableSet();
+			}
+		});
 
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			Set oldSet = new HashSet(wrappedSet);
-			updateInnerObservableSet(outerObservableValue);
-			fireSetChange(Diffs.computeSetDiff(oldSet, wrappedSet));
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					Set oldSet = new HashSet(wrappedSet);
+					updateInnerObservableSet();
+					fireSetChange(Diffs.computeSetDiff(oldSet, wrappedSet));
+				}
+			});
 		}
 	};
 
-	private void updateInnerObservableSet(IObservableValue outerObservableValue) {
+	private void updateInnerObservableSet() {
 		currentOuterValue = outerObservableValue.getValue();
 		if (innerObservableSet != null) {
 			innerObservableSet.removeSetChangeListener(innerChangeListener);
@@ -102,34 +111,68 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 		}
 	}
 
-	public boolean add(Object o) {
+	public boolean add(final Object o) {
 		getterCalled();
-		return wrappedSet.add(o);
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedSet.add(o);
+			}
+		});
+		return result[0];
 	}
 
-	public boolean remove(Object o) {
+	public boolean remove(final Object o) {
 		getterCalled();
-		return wrappedSet.remove(o);
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedSet.remove(o);
+			}
+		});
+		return result[0];
 	}
 
-	public boolean addAll(Collection c) {
+	public boolean addAll(final Collection c) {
 		getterCalled();
-		return wrappedSet.addAll(c);
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedSet.addAll(c);
+			}
+		});
+		return result[0];
 	}
 
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(final Collection c) {
 		getterCalled();
-		return wrappedSet.removeAll(c);
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedSet.removeAll(c);
+			}
+		});
+		return result[0];
 	}
 
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(final Collection c) {
 		getterCalled();
-		return wrappedSet.retainAll(c);
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedSet.retainAll(c);
+			}
+		});
+		return result[0];
 	}
 
 	public void clear() {
 		getterCalled();
-		wrappedSet.clear();
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				wrappedSet.clear();
+			}
+		});
 	}
 
 	public synchronized void dispose() {

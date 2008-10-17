@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bug 221351, 247875
  *     Ovidio Mallo - bug 241318
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObserving;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -68,20 +69,27 @@ public class DetailObservableList extends ObservableList implements IObserving {
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
 		this.detailType = detailType;
-		updateInnerObservableList(outerObservableValue);
-
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				updateInnerObservableList();
+			}
+		});
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			List oldList = new ArrayList(wrappedList);
-			updateInnerObservableList(outerObservableValue);
-			fireListChange(Diffs.computeListDiff(oldList, wrappedList));
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					List oldList = new ArrayList(wrappedList);
+					updateInnerObservableList();
+					fireListChange(Diffs.computeListDiff(oldList, wrappedList));
+				}
+			});
 		}
 	};
 
-	private void updateInnerObservableList(IObservableValue outerObservableValue) {
+	private void updateInnerObservableList() {
 		if (innerObservableList != null) {
 			innerObservableList.removeListChangeListener(innerChangeListener);
 			innerObservableList.dispose();
@@ -104,50 +112,113 @@ public class DetailObservableList extends ObservableList implements IObserving {
 		}
 	}
 
-	public boolean add(Object o) {
-		return wrappedList.add(o);
+	public boolean add(final Object o) {
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedList.add(o);
+			}
+		});
+		return result[0];
 	}
 
-	public void add(int index, Object element) {
-		wrappedList.add(index, element);
+	public void add(final int index, final Object element) {
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				wrappedList.add(index, element);
+			}
+		});
 	}
 
-	public boolean remove(Object o) {
-		return wrappedList.remove(o);
+	public boolean remove(final Object o) {
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedList.remove(o);
+			}
+		});
+		return result[0];
 	}
 
-	public Object set(int index, Object element) {
-		return wrappedList.set(index, element);
+	public Object set(final int index, final Object element) {
+		final Object[] result = new Object[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedList.set(index, element);
+			}
+		});
+		return result[0];
 	}
 
-	public Object move(int oldIndex, int newIndex) {
-		if (innerObservableList != null)
-			return innerObservableList.move(oldIndex, newIndex);
+	public Object move(final int oldIndex, final int newIndex) {
+		if (innerObservableList != null) {
+			final Object[] result = new Object[1];
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					result[0] = innerObservableList.move(oldIndex, newIndex);
+				}
+			});
+			return result[0];
+		}
 		return super.move(oldIndex, newIndex);
 	}
 
-	public Object remove(int index) {
-		return wrappedList.remove(index);
+	public Object remove(final int index) {
+		final Object[] result = new Object[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedList.remove(index);
+			}
+		});
+		return result[0];
 	}
 
-	public boolean addAll(Collection c) {
-		return wrappedList.addAll(c);
+	public boolean addAll(final Collection c) {
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedList.addAll(c);
+			}
+		});
+		return result[0];
 	}
 
-	public boolean addAll(int index, Collection c) {
-		return wrappedList.addAll(index, c);
+	public boolean addAll(final int index, final Collection c) {
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedList.addAll(index, c);
+			}
+		});
+		return result[0];
 	}
 
-	public boolean removeAll(Collection c) {
-		return wrappedList.removeAll(c);
+	public boolean removeAll(final Collection c) {
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedList.removeAll(c);
+			}
+		});
+		return result[0];
 	}
 
-	public boolean retainAll(Collection c) {
-		return wrappedList.retainAll(c);
+	public boolean retainAll(final Collection c) {
+		final boolean[] result = new boolean[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = wrappedList.retainAll(c);
+			}
+		});
+		return result[0];
 	}
 
 	public void clear() {
-		wrappedList.clear();
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				wrappedList.clear();
+			}
+		});
 	}
 	
 	public synchronized void dispose() {

@@ -10,11 +10,13 @@
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 147515
  *     Ovidio Mallo - bug 241318
+ *     Matthew Hall - bug 247875
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObserving;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -59,21 +61,28 @@ public class DetailObservableValue extends AbstractObservableValue implements IO
 		this.factory = factory;
 		this.detailType = detailType;
 		this.outerObservableValue = outerObservableValue;
-		updateInnerObservableValue(outerObservableValue);
-
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				updateInnerObservableValue();
+			}
+		});
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			Object oldValue = doGetValue();
-			updateInnerObservableValue(outerObservableValue);
-			fireValueChange(Diffs.createValueDiff(oldValue, doGetValue()));
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					Object oldValue = doGetValue();
+					updateInnerObservableValue();
+					fireValueChange(Diffs.createValueDiff(oldValue,
+							doGetValue()));
+				}
+			});
 		}
 	};
 
-	private void updateInnerObservableValue(
-			IObservableValue outerObservableValue) {
+	private void updateInnerObservableValue() {
 		currentOuterValue = outerObservableValue.getValue();
 		if (innerObservableValue != null) {
 			innerObservableValue.removeValueChangeListener(innerChangeListener);
@@ -84,9 +93,9 @@ public class DetailObservableValue extends AbstractObservableValue implements IO
 		} else {
 			this.innerObservableValue = (IObservableValue) factory
 					.createObservable(currentOuterValue);
-			Object innerValueType = innerObservableValue.getValueType();
 
 			if (detailType != null) {
+				Object innerValueType = innerObservableValue.getValueType();
 				Assert
 						.isTrue(
 								detailType.equals(innerValueType),
@@ -96,14 +105,26 @@ public class DetailObservableValue extends AbstractObservableValue implements IO
 		}
 	}
 
-	public void doSetValue(Object value) {
-		if (innerObservableValue != null)
-			innerObservableValue.setValue(value);
+	public void doSetValue(final Object value) {
+		if (innerObservableValue != null) {
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					innerObservableValue.setValue(value);
+				}
+			});
+		}
 	}
 
 	public Object doGetValue() {
-		return innerObservableValue == null ? null : innerObservableValue
-				.getValue();
+		if (innerObservableValue == null)
+			return null;
+		final Object[] result = new Object[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = innerObservableValue.getValue();
+			}
+		});
+		return result;
 	}
 
 	public Object getValueType() {

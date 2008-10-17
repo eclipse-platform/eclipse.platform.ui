@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223114, 226289
+ *     Matthew Hall - bug 223114, 226289, 247875
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObserving;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
@@ -45,9 +46,13 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 
 	private IValueChangeListener masterChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			Map oldMap = new HashMap(wrappedMap);
-			updateDetailMap();
-			fireMapChange(Diffs.computeMapDiff(oldMap, wrappedMap));
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					Map oldMap = new HashMap(wrappedMap);
+					updateDetailMap();
+					fireMapChange(Diffs.computeMapDiff(oldMap, wrappedMap));
+				}
+			});
 		}
 	};
 
@@ -76,7 +81,11 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		this.master = master;
 		this.detailFactory = detailFactory;
 
-		updateDetailMap();
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				updateDetailMap();
+			}
+		});
 		master.addValueChangeListener(masterChangeListener);
 	}
 
@@ -121,20 +130,40 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		return detailValueType;
 	}
 
-	public Object put(Object key, Object value) {
-		return detailMap.put(key, value);
+	public Object put(final Object key, final Object value) {
+		final Object[] result = new Object[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = detailMap.put(key, value);
+			}
+		});
+		return result[0];
 	}
 
-	public void putAll(Map map) {
-		detailMap.putAll(map);
+	public void putAll(final Map map) {
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				detailMap.putAll(map);
+			}
+		});
 	}
 
-	public Object remove(Object key) {
-		return detailMap.remove(key);
+	public Object remove(final Object key) {
+		final Object[] result = new Object[1];
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				result[0] = detailMap.remove(key);
+			}
+		});
+		return result[0];
 	}
 
 	public void clear() {
-		detailMap.clear();
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				detailMap.clear();
+			}
+		});
 	}
 
 	public synchronized void dispose() {
