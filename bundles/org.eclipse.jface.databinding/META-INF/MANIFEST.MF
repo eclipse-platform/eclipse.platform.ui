@@ -6,7 +6,9 @@ Bundle-Version: 1.3.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.jface.databinding.swt,
+Export-Package: org.eclipse.jface.databinding.dialog,
+ org.eclipse.jface.databinding.preference,
+ org.eclipse.jface.databinding.swt,
  org.eclipse.jface.databinding.viewers,
  org.eclipse.jface.databinding.wizard,
  org.eclipse.jface.internal.databinding.provisional.swt;x-internal:=true,

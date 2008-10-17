@@ -8,33 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 218269, 240444
+ *     Matthew Hall - bug 218269, 240444, 239900
  *     Ashley Cambrell - bug 199179 
  *     Ovidio Mallo - bug 235195
  *******************************************************************************/
 package org.eclipse.jface.databinding.wizard;
 
-import java.util.Iterator;
-
-import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.ValidationStatusProvider;
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiff;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.databinding.dialog.DialogPageSupport;
 import org.eclipse.jface.wizard.WizardPage;
 
 /**
@@ -46,12 +28,10 @@ import org.eclipse.jface.wizard.WizardPage;
  *
  * @since 1.1
  */
-public class WizardPageSupport {
-
-	private WizardPage wizardPage;
-	private DataBindingContext dbc;
-	private AggregateValidationStatus aggregateStatus;
-	private boolean uiChanged = false;
+public class WizardPageSupport extends DialogPageSupport {
+	private WizardPageSupport(WizardPage wizardPage, DataBindingContext dbc) {
+		super(wizardPage, dbc);
+	}
 
 	/**
 	 * Connect the validation result from the given data binding context to the
@@ -72,225 +52,15 @@ public class WizardPageSupport {
 		return new WizardPageSupport(wizardPage, dbc);
 	}
 
-	private WizardPageSupport(WizardPage wizardPage, DataBindingContext dbc) {
-		this.wizardPage = wizardPage;
-		this.dbc = dbc;
-		init();
-	}
-
-	private IChangeListener uiChangeListener = new IChangeListener() {
-		public void handleChange(ChangeEvent event) {
-			handleUIChanged();
-		}
-	};
-	private IListChangeListener validationStatusProvidersListener = new IListChangeListener() {
-		public void handleListChange(ListChangeEvent event) {
-			ListDiff diff = event.diff;
-			ListDiffEntry[] differences = diff.getDifferences();
-			for (int i = 0; i < differences.length; i++) {
-				ListDiffEntry listDiffEntry = differences[i];
-				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) listDiffEntry
-						.getElement();
-				IObservableList targets = validationStatusProvider.getTargets();
-				if (listDiffEntry.isAddition()) {
-					targets
-							.addListChangeListener(validationStatusProviderTargetsListener);
-					for (Iterator it = targets.iterator(); it.hasNext();) {
-						((IObservable) it.next())
-								.addChangeListener(uiChangeListener);
-					}
-				} else {
-					targets
-							.removeListChangeListener(validationStatusProviderTargetsListener);
-					for (Iterator it = targets.iterator(); it.hasNext();) {
-						((IObservable) it.next())
-								.removeChangeListener(uiChangeListener);
-					}
-				}
-			}
-		}
-	};
-	private IListChangeListener validationStatusProviderTargetsListener = new IListChangeListener() {
-		public void handleListChange(ListChangeEvent event) {
-			ListDiff diff = event.diff;
-			ListDiffEntry[] differences = diff.getDifferences();
-			for (int i = 0; i < differences.length; i++) {
-				ListDiffEntry listDiffEntry = differences[i];
-				IObservable target = (IObservable) listDiffEntry.getElement();
-				if (listDiffEntry.isAddition()) {
-					target.addChangeListener(uiChangeListener);
-				} else {
-					target.removeChangeListener(uiChangeListener);
-				}
-			}
-		}
-	};
-	private IStatus currentStatus;
-
-	protected void init() {
-		aggregateStatus = new AggregateValidationStatus(dbc
-				.getValidationStatusProviders(),
-				AggregateValidationStatus.MAX_SEVERITY);
-		aggregateStatus.addValueChangeListener(new IValueChangeListener() {
-			public void handleValueChange(ValueChangeEvent event) {
-
-				currentStatus = (IStatus) event.diff.getNewValue();
-				handleStatusChanged();
-			}
-		});
-		currentStatus = (IStatus) aggregateStatus.getValue();
-		handleStatusChanged();
-		dbc.getValidationStatusProviders().addListChangeListener(
-				validationStatusProvidersListener);
-		for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
-				.hasNext();) {
-			ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
-					.next();
-			IObservableList targets = validationStatusProvider.getTargets();
-			targets
-					.addListChangeListener(validationStatusProviderTargetsListener);
-			for (Iterator iter = targets.iterator(); iter.hasNext();) {
-				((IObservable) iter.next()).addChangeListener(uiChangeListener);
-			}
-		}
-	}
-
-	protected void handleUIChanged() {
-		uiChanged = true;
-		if (currentStatus != null) {
-			handleStatusChanged();
-		}
-		dbc.getValidationStatusProviders().removeListChangeListener(
-				validationStatusProvidersListener);
-		for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
-				.hasNext();) {
-			ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
-					.next();
-			IObservableList targets = validationStatusProvider.getTargets();
-			targets
-					.removeListChangeListener(validationStatusProviderTargetsListener);
-			for (Iterator iter = targets.iterator(); iter.hasNext();) {
-				((IObservable) iter.next())
-						.removeChangeListener(uiChangeListener);
-			}
-		}
-	}
-
 	protected void handleStatusChanged() {
-		if (currentStatus != null
-				&& currentStatus.getSeverity() == IStatus.ERROR) {
-			wizardPage.setPageComplete(false);
-			wizardPage.setMessage(null);
-			wizardPage.setErrorMessage(uiChanged ? currentStatus.getMessage()
-					: null);
-			if (currentStatusHasException()) {
-				handleStatusException();
-			}
-		} else if (currentStatus != null
-				&& currentStatus.getSeverity() != IStatus.OK) {
-			int severity = currentStatus.getSeverity();
-			wizardPage.setPageComplete((severity & IStatus.CANCEL) == 0);
-			int type = IMessageProvider.NONE;
-			switch (severity) {
-			case IStatus.OK:
-			case IStatus.CANCEL:
-				break;
-			case IStatus.INFO:
-				type = IMessageProvider.INFORMATION;
-				break;
-			case IStatus.WARNING:
-				type = IMessageProvider.WARNING;
-				break;
-			case IStatus.ERROR:
-				type = IMessageProvider.ERROR;
-				break;
-			default:
-				Assert.isTrue(false, "incomplete switch statement"); //$NON-NLS-1$
-			}
-			wizardPage.setErrorMessage(null);
-			wizardPage.setMessage(currentStatus.getMessage(), type);
-		} else {
-			wizardPage.setPageComplete(true);
-			wizardPage.setMessage(null);
-			wizardPage.setErrorMessage(null);
+		super.handleStatusChanged();
+		boolean pageComplete = true;
+		if (currentStatusStale) {
+			pageComplete = false;
+		} else if (currentStatus != null) {
+			pageComplete = !currentStatus.matches(IStatus.ERROR
+					| IStatus.CANCEL);
 		}
-	}
-
-	private boolean currentStatusHasException() {
-		boolean hasException = false;
-		if (currentStatus.getException() != null) {
-			hasException = true;
-		}
-		if (currentStatus instanceof MultiStatus) {
-			MultiStatus multiStatus = (MultiStatus) currentStatus;
-
-			for (int i = 0; i < multiStatus.getChildren().length; i++) {
-				IStatus status = multiStatus.getChildren()[i];
-				if (status.getException() != null) {
-					hasException = true;
-					break;
-				}
-			}
-		}
-		return hasException;
-	}
-
-	/**
-	 * This is called when a Override to provide custom exception handling and
-	 * reporting.
-	 */
-	protected void handleStatusException() {
-		if (currentStatus.getException() != null) {
-			logThrowable(currentStatus.getException());
-		} else if (currentStatus instanceof MultiStatus) {
-			MultiStatus multiStatus = (MultiStatus) currentStatus;
-			for (int i = 0; i < multiStatus.getChildren().length; i++) {
-				IStatus status = multiStatus.getChildren()[i];
-				if (status.getException() != null) {
-					logThrowable(status.getException());
-				}
-			}
-		}
-	}
-
-	private void logThrowable(Throwable throwable) {
-		Policy
-				.getLog()
-				.log(
-						new Status(
-								IStatus.ERROR,
-								Policy.JFACE_DATABINDING,
-								IStatus.OK,
-								"Unhandled exception: " + throwable.getMessage(), throwable)); //$NON-NLS-1$
-	}
-
-	/**
-	 * Disposes of this wizard page support object, removing any listeners it
-	 * may have attached.
-	 */
-	public void dispose() {
-		aggregateStatus.dispose();
-		if (!uiChanged) {
-			for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
-					.hasNext();) {
-				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
-						.next();
-				IObservableList targets = validationStatusProvider.getTargets();
-				targets
-						.removeListChangeListener(validationStatusProviderTargetsListener);
-				for (Iterator iter = targets.iterator(); iter.hasNext();) {
-					((IObservable) iter.next())
-							.removeChangeListener(uiChangeListener);
-				}
-			}
-			dbc.getValidationStatusProviders().removeListChangeListener(
-					validationStatusProvidersListener);
-		}
-		aggregateStatus = null;
-		dbc = null;
-		uiChangeListener = null;
-		validationStatusProvidersListener = null;
-		validationStatusProviderTargetsListener = null;
-		wizardPage = null;
+		((WizardPage) getDialogPage()).setPageComplete(pageComplete);
 	}
 }
