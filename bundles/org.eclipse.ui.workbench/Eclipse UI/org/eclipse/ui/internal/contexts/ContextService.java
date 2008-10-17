@@ -49,6 +49,10 @@ public final class ContextService implements IContextService {
 	 */
 	private final ContextPersistence contextPersistence;
 
+	private ContextActivation SEND_ACTIVATION;
+
+	private ContextActivation DEFER_ACTIVATION;
+
 	/**
 	 * Constructs a new instance of <code>ContextService</code> using a
 	 * context manager.
@@ -64,6 +68,8 @@ public final class ContextService implements IContextService {
 		this.contextManager = contextManager;
 		this.contextAuthority = new ContextAuthority(contextManager, this);
 		this.contextPersistence = new ContextPersistence(contextManager);
+		SEND_ACTIVATION = new ContextActivation(ContextAuthority.SEND_EVENTS, null, this);
+		DEFER_ACTIVATION = new ContextActivation(ContextAuthority.DEFER_EVENTS, null, this);
 	}
 
 	/*
@@ -83,8 +89,14 @@ public final class ContextService implements IContextService {
 	 */
 	public final IContextActivation activateContext(final String contextId,
 			final Expression expression) {
-		final IContextActivation activation = new ContextActivation(contextId,
-				expression, this);
+		final IContextActivation activation;
+		if (ContextAuthority.SEND_EVENTS.equals(contextId)) {
+			activation = SEND_ACTIVATION;
+		} else if (ContextAuthority.DEFER_EVENTS.equals(contextId)) {
+			activation = DEFER_ACTIVATION;
+		} else {
+			activation = new ContextActivation(contextId, expression, this);
+		}
 		contextAuthority.activateContext(activation);
 		return activation;
 	}

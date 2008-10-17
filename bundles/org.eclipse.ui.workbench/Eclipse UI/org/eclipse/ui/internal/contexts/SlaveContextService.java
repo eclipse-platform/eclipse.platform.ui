@@ -86,6 +86,10 @@ public class SlaveContextService implements IContextService {
 	 */
 	private Collection fRegisteredShells;
 
+	private ContextActivation SEND_ACTIVATION;
+
+	private ContextActivation DEFER_ACTIVATION;
+
 	/**
 	 * Construct the new slave.
 	 * 
@@ -109,6 +113,8 @@ public class SlaveContextService implements IContextService {
 		fContextManagerListeners = new ArrayList();
 		fSourceProviders = new ArrayList();
 		fRegisteredShells = new ArrayList();
+		SEND_ACTIVATION = new ContextActivation(ContextAuthority.SEND_EVENTS, null, this);
+		DEFER_ACTIVATION = new ContextActivation(ContextAuthority.DEFER_EVENTS, null, this);
 	}
 
 	/*
@@ -117,8 +123,15 @@ public class SlaveContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String)
 	 */
 	public IContextActivation activateContext(String contextId) {
-		ContextActivation activation = new ContextActivation(contextId,
-				fDefaultExpression, this);
+		final ContextActivation activation;
+		if (ContextAuthority.SEND_EVENTS.equals(contextId)) {
+			activation = SEND_ACTIVATION;
+		} else if (ContextAuthority.DEFER_EVENTS.equals(contextId)) {
+			activation = DEFER_ACTIVATION;
+		} else {
+			activation = new ContextActivation(contextId, fDefaultExpression,
+					this);
+		}
 		return doActivateContext(activation);
 	}
 
@@ -156,11 +169,17 @@ public class SlaveContextService implements IContextService {
 				andExpression.add(expression);
 			}
 		}
-		if (fDefaultExpression!=null) {
+		if (fDefaultExpression != null) {
 			andExpression.add(fDefaultExpression);
 		}
-		ContextActivation activation = new ContextActivation(contextId,
-				andExpression, this);
+		final ContextActivation activation;
+		if (ContextAuthority.SEND_EVENTS.equals(contextId)) {
+			activation = SEND_ACTIVATION;
+		} else if (ContextAuthority.DEFER_EVENTS.equals(contextId)) {
+			activation = DEFER_ACTIVATION;
+		} else {
+			activation = new ContextActivation(contextId, andExpression, this);
+		}
 		return doActivateContext(activation);
 	}
 

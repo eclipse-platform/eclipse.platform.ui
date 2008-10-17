@@ -39,5 +39,6 @@ public final class ContextsTestSuite extends TestSuite {
         addTestSuite(Bug84763Test.class);
         addTestSuite(ExtensionTestCase.class);
         addTestSuite(PartContextTest.class);
+        addTestSuite(Bug249995Test.class);
     }
 }
