@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.menus;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
@@ -156,6 +157,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 		}
 
 		loadedDynamicContribution.setId(getId());
+		loadedDynamicContribution.setParent(getParent());
 		if (loadedDynamicContribution instanceof IWorkbenchContribution) {
 			((IWorkbenchContribution) loadedDynamicContribution)
 					.initialize(locator);
@@ -191,4 +193,19 @@ public class DynamicMenuContributionItem extends ContributionItem {
 			loadedDynamicContribution.update(id);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.action.ContributionItem#setParent(org.eclipse.jface
+	 * .action.IContributionManager)
+	 */
+	public void setParent(IContributionManager parent) {
+		super.setParent(parent);
+		if (loadedDynamicContribution != null) {
+			loadedDynamicContribution.setParent(parent);
+		}
+	}
+
 }

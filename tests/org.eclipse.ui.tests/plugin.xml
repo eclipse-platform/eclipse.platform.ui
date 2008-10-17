@@ -4001,4 +4001,15 @@
             sequence="M2+M3+1">
       </key>
    </extension>   
+      <extension
+         id="menu.dynamic.contribution"
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.tests.dynamicMenuContribution">
+         <dynamic
+               class="org.eclipse.ui.tests.menus.DynamicContributionItemPopup"
+               id="popup:org.eclipse.ui.tests.dynamicMenuContribution">
+         </dynamic>
+      </menuContribution>
+   </extension>   
 </plugin>            

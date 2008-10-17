@@ -36,6 +36,7 @@ public class MenusTestSuite extends TestSuite {
         addTest(new TestSuite(MenuVisibilityTest.class));
         addTest(new TestSuite(MenuBaseTests.class));
         addTest(new TestSuite(MenuPopulationTest.class));
+        addTest(new TestSuite(DynamicMenuTest.class));
         addTest(new TestSuite(Bug231304Test.class));
     }
 }
