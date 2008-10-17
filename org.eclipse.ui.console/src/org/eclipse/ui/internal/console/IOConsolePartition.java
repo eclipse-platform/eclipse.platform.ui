@@ -67,27 +67,21 @@ public class IOConsolePartition implements ITypedRegion {
     }
     
     /**
-     * Inserts a string into this partition if the partition is not read-only.
+     * Inserts a string into this partition.
      * @param s The string to insert
      * @param offset the offset in the partition
      */
     public void insert(String s, int insertOffset) {
-    	if(readOnly) {
-    		return;
-    	}
         buffer.insert(insertOffset, s);
         length += s.length();
     }
       
     /**
-     * Deletes data from this partition if the partition is not read-only
+     * Deletes data from this partition.
      * @param delOffset
      * @param delLength
      */
     public void delete(int delOffset, int delLength) {
-    	if(readOnly) {
-    		return;
-    	}
         buffer.delete(delOffset, delOffset+delLength);
         length -= delLength;
     }
@@ -117,25 +111,20 @@ public class IOConsolePartition implements ITypedRegion {
     }
     
     /**
-     * Sets this partitions offset in the document if the partition is not read-only
+     * Sets this partitions offset in the document.
+     * 
      * @param offset This partitions offset in the document.
      */
     public void setOffset(int offset) {
-    	if(readOnly) {
-    		return;
-    	}
         this.offset = offset;
     }
     
     /**
-     * Sets this partitions' length if the the partition is not read-only.
+     * Sets this partition's length.
      * 
      * @param length
      */
     public void setLength(int length) {
-    	if(readOnly) {
-    		return;
-    	}
     	this.length = length;
     }
     
@@ -184,7 +173,9 @@ public class IOConsolePartition implements ITypedRegion {
     }
 
     /**
-     * Returns if this partition is read-only
+     * Returns if this partition is read-only.
+     * 
+     * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
      * @return if this partition is read-only
      */
     public boolean isReadOnly() {
@@ -193,6 +184,8 @@ public class IOConsolePartition implements ITypedRegion {
     
     /**
      * Sets the read-only state of this partition to <code>true</code>.
+     * 
+     * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
      */
     public void setReadOnly() {
         readOnly = true;
@@ -207,6 +200,7 @@ public class IOConsolePartition implements ITypedRegion {
     
     /**
      * Returns the underlying output stream
+     * 
      * @return the underlying output stream
      */
     IOConsoleOutputStream getStream() {
