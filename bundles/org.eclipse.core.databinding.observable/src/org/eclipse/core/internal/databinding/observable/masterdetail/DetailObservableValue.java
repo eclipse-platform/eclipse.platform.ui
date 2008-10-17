@@ -124,7 +124,7 @@ public class DetailObservableValue extends AbstractObservableValue implements IO
 				result[0] = innerObservableValue.getValue();
 			}
 		});
-		return result;
+		return result[0];
 	}
 
 	public Object getValueType() {
