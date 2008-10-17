@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 221704, 234686, 246625
+ *     Matthew Hall - bugs 221704, 234686, 246625, 226289
  *******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -136,9 +136,35 @@ final public class PojoObservables {
 	 */
 	public static IObservableMap observeMap(Realm realm, Object pojo,
 			String propertyName) {
+		return observeMap(realm, pojo, propertyName, null, null);
+	}
+
+	/**
+	 * Returns an observable map in the given realm tracking the map-typed named
+	 * property of the given pojo object.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * @param pojo
+	 *            the pojo object
+	 * @param propertyName
+	 *            the name of the property
+	 * @param keyType
+	 *            the element type of the observable map's key set, or
+	 *            <code>null</code> if untyped
+	 * @param valueType
+	 *            the element type of the observable map's values collection, or
+	 *            <code>null</code> if untyped
+	 * @return an observable map tracking the map-typed named property of the
+	 *         given pojo object
+	 * @since 1.2
+	 */
+	public static IObservableMap observeMap(Realm realm, Object pojo,
+			String propertyName, Class keyType, Class valueType) {
 		PropertyDescriptor descriptor = BeansObservables.getPropertyDescriptor(
 				pojo.getClass(), propertyName);
-		return new JavaBeanPropertyObservableMap(realm, pojo, descriptor, false);
+		return new JavaBeanPropertyObservableMap(realm, pojo, descriptor,
+				keyType, valueType, false);
 	}
 
 	/**
@@ -154,7 +180,31 @@ final public class PojoObservables {
 	 * @since 1.2
 	 */
 	public static IObservableMap observeMap(Object pojo, String propertyName) {
-		return observeMap(Realm.getDefault(), pojo, propertyName);
+		return observeMap(Realm.getDefault(), pojo, propertyName, null, null);
+	}
+
+	/**
+	 * Returns an observable map in the default realm tracking the map-typed
+	 * named property of the given pojo object.
+	 * 
+	 * @param pojo
+	 *            the pojo object
+	 * @param propertyName
+	 *            the name of the property
+	 * @param keyType
+	 *            the element type of the observable map's key set, or
+	 *            <code>null</code> if untyped
+	 * @param valueType
+	 *            the element type of the observable map's values collection, or
+	 *            <code>null</code> if untyped
+	 * @return an observable map tracking the map-typed named property of the
+	 *         given pojo object
+	 * @since 1.2
+	 */
+	public static IObservableMap observeMap(Object pojo, String propertyName,
+			Class keyType, Class valueType) {
+		return observeMap(Realm.getDefault(), pojo, propertyName, keyType,
+				valueType);
 	}
 
 	/**

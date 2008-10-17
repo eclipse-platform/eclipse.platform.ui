@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223114
+ *     Matthew Hall - bug 223114, 226289
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
@@ -25,18 +26,22 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * @since 1.1
  * 
  */
-public class DetailObservableMap extends ObservableMap {
+public class DetailObservableMap extends ObservableMap implements IObserving {
 	private boolean updating = false;
 
 	private IObservableValue master;
 	private IObservableFactory detailFactory;
 
 	private IObservableMap detailMap;
+
+	private Object detailKeyType;
+	private Object detailValueType;
 
 	private IValueChangeListener masterChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
@@ -61,10 +66,12 @@ public class DetailObservableMap extends ObservableMap {
 	 *            observable factory that creates IObservableMap instances given
 	 *            the current value of master observable value
 	 * @param master
+	 * @param keyType
+	 * @param valueType
 	 * 
 	 */
 	public DetailObservableMap(IObservableFactory detailFactory,
-			IObservableValue master) {
+			IObservableValue master, Object keyType, Object valueType) {
 		super(master.getRealm(), Collections.EMPTY_MAP);
 		this.master = master;
 		this.detailFactory = detailFactory;
@@ -87,8 +94,31 @@ public class DetailObservableMap extends ObservableMap {
 			detailMap = (IObservableMap) detailFactory
 					.createObservable(masterValue);
 			wrappedMap = detailMap;
+
+			if (detailKeyType != null) {
+				Object innerKeyType = detailMap.getKeyType();
+
+				Assert.isTrue(detailKeyType.equals(innerKeyType),
+						"Cannot change key type in a nested observable map"); //$NON-NLS-1$
+			}
+
+			if (detailValueType != null) {
+				Object innerValueType = detailMap.getValueType();
+
+				Assert.isTrue(detailValueType.equals(innerValueType),
+						"Cannot change value type in a nested observable map"); //$NON-NLS-1$
+			}
+
 			detailMap.addMapChangeListener(detailChangeListener);
 		}
+	}
+
+	public Object getKeyType() {
+		return detailKeyType;
+	}
+
+	public Object getValueType() {
+		return detailValueType;
 	}
 
 	public Object put(Object key, Object value) {
@@ -123,4 +153,10 @@ public class DetailObservableMap extends ObservableMap {
 		super.dispose();
 	}
 
+	public Object getObserved() {
+		if (detailMap instanceof IObserving) {
+			return ((IObserving) detailMap).getObserved();
+		}
+		return null;
+	}
 }

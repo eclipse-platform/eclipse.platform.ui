@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237718)
- *     Matthew Hall - but 246626
+ *     Matthew Hall - but 246626, 226289
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -50,6 +50,14 @@ public class DecoratingObservableMap extends DecoratingObservable implements
 
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
 		removeListener(MapChangeEvent.TYPE, listener);
+	}
+
+	public Object getKeyType() {
+		return decorated.getKeyType();
+	}
+
+	public Object getValueType() {
+		return decorated.getValueType();
 	}
 
 	protected void fireMapChange(MapDiff diff) {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 226289
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding;
@@ -56,6 +57,14 @@ public class ValidationStatusMap extends ObservableMap {
 		super(realm, new HashMap());
 		this.bindings = bindings;
 		bindings.addChangeListener(markDirtyChangeListener);
+	}
+
+	public Object getKeyType() {
+		return Binding.class;
+	}
+
+	public Object getValueType() {
+		return IStatus.class;
 	}
 
 	protected void getterCalled() {

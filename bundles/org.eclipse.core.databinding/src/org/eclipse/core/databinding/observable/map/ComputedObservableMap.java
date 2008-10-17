@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 241585, 247394
+ *     Matthew Hall - bugs 241585, 247394, 226289
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -32,6 +32,8 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 public abstract class ComputedObservableMap extends AbstractObservableMap {
 
 	private IObservableSet keySet;
+	
+	private Object valueType;
 
 	private ISetChangeListener setChangeListener = new ISetChangeListener() {
 		public void handleSetChange(SetChangeEvent event) {
@@ -104,8 +106,18 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	 * @param keySet
 	 */
 	public ComputedObservableMap(IObservableSet keySet) {
+		this(keySet, null);
+	}
+
+	/**
+	 * @param keySet 
+	 * @param valueType 
+	 * @since 1.2
+	 */
+	public ComputedObservableMap(IObservableSet keySet, Object valueType) {
 		super(keySet.getRealm());
 		this.keySet = keySet;
+		this.valueType = valueType;
 	}
 
 	/**
@@ -145,6 +157,14 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	protected final void fireSingleChange(Object key, Object oldValue,
 			Object newValue) {
 		fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue, newValue));
+	}
+
+	public Object getKeyType() {
+		return keySet.getElementType();
+	}
+
+	public Object getValueType() {
+		return valueType;
 	}
 
 	public Set entrySet() {

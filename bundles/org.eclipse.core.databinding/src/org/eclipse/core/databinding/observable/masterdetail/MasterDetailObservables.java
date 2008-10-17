@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 221704
+ *     Matthew Hall - bug 221704, 226289
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.masterdetail;
@@ -114,6 +114,35 @@ public class MasterDetailObservables {
 	 */
 	public static IObservableMap detailMap(IObservableValue master,
 			IObservableFactory detailFactory) {
-		return new DetailObservableMap(detailFactory, master);
+		return detailMap(master, detailFactory, null, null);
+	}
+
+	/**
+	 * Creates a detail observable map from a master observable value and a
+	 * factory. This can be used to create observable maps that represent a map
+	 * property of a selected object in a table.
+	 * 
+	 * @param master
+	 *            the observable value to track
+	 * @param detailFactory
+	 *            a factory for createing {@link IObservableMap} instances given
+	 *            a current value of the master
+	 * @param detailKeyType
+	 *            the element type of the detail observable map's key set,
+	 *            typically of type java.lang.Class and can be <code>null</code>
+	 * @param detailValueType
+	 *            the element type of the detail observable map's values
+	 *            collection, typically of type java.lang.Class and can be
+	 *            <code>null</code>
+	 * @return an observable map that, for any current value of the given master
+	 *         value, behaves like the observable map created by the factory for
+	 *         that current value.
+	 * @since 1.2
+	 */
+	public static IObservableMap detailMap(IObservableValue master,
+			IObservableFactory detailFactory, Object detailKeyType,
+			Object detailValueType) {
+		return new DetailObservableMap(detailFactory, master, detailKeyType,
+				detailValueType);
 	}
 }

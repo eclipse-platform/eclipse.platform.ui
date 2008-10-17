@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bugs 184830, 233306
+ *     Matthew Hall - bugs 184830, 233306, 226289
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -34,12 +34,14 @@ import org.eclipse.core.internal.databinding.Util;
  * @since 1.0
  */
 public class WritableMap extends ObservableMap {
+	private final Object keyType;
+	private final Object valueType;
 
 	/**
 	 * Constructs a new WritableMap on the default realm.
 	 */
 	public WritableMap() {
-		this(Realm.getDefault());
+		this(Realm.getDefault(), null, null);
 	}
 	
 	/**
@@ -49,7 +51,42 @@ public class WritableMap extends ObservableMap {
 	 *            the realm
 	 */
 	public WritableMap(Realm realm) {
+		this(realm, null, null);
+	}
+
+	/**
+	 * Constructs a new WritableMap on the default realm with the specified key
+	 * and value types.
+	 * 
+	 * @param keyType
+	 * @param valueType
+	 * @since 1.2
+	 */
+	public WritableMap(Object keyType, Object valueType) {
+		this(Realm.getDefault(), keyType, valueType);
+	}
+
+	/**
+	 * Constructs a new WritableMap on the given realm with the specified key
+	 * and value types.
+	 * 
+	 * @param realm
+	 * @param keyType
+	 * @param valueType
+	 * @since 1.2
+	 */
+	public WritableMap(Realm realm, Object keyType, Object valueType) {
 		super(realm, new HashMap());
+		this.keyType = keyType;
+		this.valueType = valueType;
+	}
+
+	public Object getKeyType() {
+		return keyType;
+	}
+
+	public Object getValueType() {
+		return valueType;
 	}
 
 	/**

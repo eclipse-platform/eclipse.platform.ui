@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223164
+ *     Matthew Hall - bug 223164, 226289
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -41,6 +41,9 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 
 	private final Object object;
 
+	private Object keyType;
+	private Object valueType;
+
 	private PropertyChangeListener mapListener = new PropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent event) {
 			if (!updating) {
@@ -69,23 +72,30 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 	 * @param realm
 	 * @param object
 	 * @param descriptor
+	 * @param keyType
+	 * @param valueType
 	 */
 	public JavaBeanPropertyObservableMap(Realm realm, Object object,
-			PropertyDescriptor descriptor) {
-		this(realm, object, descriptor, true);
+			PropertyDescriptor descriptor, Object keyType, Object valueType) {
+		this(realm, object, descriptor, keyType, valueType, true);
 	}
 
 	/**
 	 * @param realm
 	 * @param object
 	 * @param descriptor
+	 * @param keyType
+	 * @param valueType
 	 * @param attachListeners
 	 */
 	public JavaBeanPropertyObservableMap(Realm realm, Object object,
-			PropertyDescriptor descriptor, boolean attachListeners) {
+			PropertyDescriptor descriptor, Object keyType, Object valueType,
+			boolean attachListeners) {
 		super(realm, new HashMap());
 		this.object = object;
 		this.descriptor = descriptor;
+		this.keyType = keyType;
+		this.valueType = valueType;
 		this.attachListeners = attachListeners;
 		if (attachListeners) {
 			this.collectionListenSupport = new ListenerSupport(mapListener,
@@ -93,6 +103,14 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 		}
 
 		wrappedMap.putAll(getMap());
+	}
+
+	public Object getKeyType() {
+		return keyType;
+	}
+
+	public Object getValueType() {
+		return valueType;
 	}
 
 	protected void firstListenerAdded() {

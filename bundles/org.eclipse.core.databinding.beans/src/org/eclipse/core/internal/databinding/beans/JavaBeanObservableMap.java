@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
- *     Matthew hall - bugs 223164, 241585
+ *     Matthew hall - bugs 223164, 241585, 226289
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -70,7 +70,7 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements
 	 */
 	public JavaBeanObservableMap(IObservableSet domain,
 			PropertyDescriptor propertyDescriptor, boolean attachListeners) {
-		super(domain);
+		super(domain, propertyDescriptor.getPropertyType());
 
 		this.propertyDescriptor = propertyDescriptor;
 		this.attachListeners = attachListeners;
@@ -78,7 +78,6 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements
 			this.listenerSupport = new ListenerSupport(elementListener,
 					propertyDescriptor.getName());
 		}
-		init();
 	}
 
 	protected void hookListener(Object domainElement) {

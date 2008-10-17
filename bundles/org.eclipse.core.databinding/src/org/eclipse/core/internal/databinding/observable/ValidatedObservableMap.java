@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
+ *     Matthew Hall - bug 226289
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -216,6 +217,14 @@ public class ValidatedObservableMap extends ObservableMap {
 		updateTargetMap(diff);
 		fireMapChange(diff);
 		return oldValue;
+	}
+
+	public Object getKeyType() {
+		return target.getKeyType();
+	}
+
+	public Object getValueType() {
+		return target.getValueType();
 	}
 
 	public synchronized void dispose() {

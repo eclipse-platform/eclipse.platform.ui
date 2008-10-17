@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bugs 118516, 146397
+ *     Matthew Hall - bugs 118516, 146397, 226289
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -135,6 +135,20 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	public boolean isStale() {
 		checkRealm();
 		return stale;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public Object getKeyType() {
+		return null;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public Object getValueType() {
+		return null;
 	}
 
 	public synchronized void removeChangeListener(IChangeListener listener) {

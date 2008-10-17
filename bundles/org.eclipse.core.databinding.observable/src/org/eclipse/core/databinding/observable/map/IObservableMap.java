@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bug 237718
+ *     Matthew Hall - bug 237718, 226289
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -35,6 +35,27 @@ import org.eclipse.core.databinding.observable.IObservable;
  */
 public interface IObservableMap extends Map, IObservable {
 	
+	/**
+	 * Returns the element type for the {@link #keySet() keyset} of this
+	 * observable map, or <code>null</code> if the keyset is untyped.
+	 * 
+	 * @return the element type for the {@link #keySet() keyset} of this
+	 *         observable map, or <code>null</code> if the keyset is untyped.
+	 * @since 1.2
+	 */
+	public Object getKeyType();
+
+	/**
+	 * Returns the element type for the {@link #values() values} of this
+	 * observable map, or <code>null</code> if the values collection is untyped.
+	 * 
+	 * @return the element type for the {@link #values() values} of this
+	 *         observable map, or <code>null</code> if the values collection is
+	 *         untyped.
+	 * @since 1.2
+	 */
+	public Object getValueType();
+
 	/**
 	 * @param listener
 	 */

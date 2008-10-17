@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Matthew Hall - bug 226289
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -57,6 +58,20 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
 		removeListener(MapChangeEvent.TYPE, listener);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public Object getKeyType() {
+		return null;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public Object getValueType() {
+		return null;
 	}
 
 	protected void getterCalled() {

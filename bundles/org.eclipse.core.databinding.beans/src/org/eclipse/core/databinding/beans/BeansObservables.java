@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164268, 171616, 147515
- *     Matthew Hall - bug 221704, 234686, 246625
+ *     Matthew Hall - bug 221704, 234686, 246625, 226289
  *     Thomas Kratz - bug 213787
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
@@ -124,9 +124,35 @@ final public class BeansObservables {
 	 */
 	public static IObservableMap observeMap(Realm realm, Object bean,
 			String propertyName) {
+		return observeMap(realm, bean, propertyName, null, null);
+	}
+
+	/**
+	 * Returns an observable map in the given realm tracking the map-typed named
+	 * property of the given bean object.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * @param bean
+	 *            the bean object
+	 * @param propertyName
+	 *            the name of the property
+	 * @param keyType
+	 *            the element type of the observable map's key set, or
+	 *            <code>null</code> if untyped
+	 * @param valueType
+	 *            the element type of the observable map's values collection, or
+	 *            <code>null</code> if untyped
+	 * @return an observable map tracking the map-typed named property of the
+	 *         given bean object
+	 * @since 1.2
+	 */
+	public static IObservableMap observeMap(Realm realm, Object bean,
+			String propertyName, Class keyType, Class valueType) {
 		PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(),
 				propertyName);
-		return new JavaBeanPropertyObservableMap(realm, bean, descriptor);
+		return new JavaBeanPropertyObservableMap(realm, bean, descriptor,
+				keyType, valueType);
 	}
 
 	/**
@@ -142,7 +168,29 @@ final public class BeansObservables {
 	 * @since 1.2
 	 */
 	public static IObservableMap observeMap(Object bean, String propertyName) {
-		return observeMap(Realm.getDefault(), bean, propertyName);
+		return observeMap(Realm.getDefault(), bean, propertyName, null, null);
+	}
+
+	/**
+	 * Returns an observable map in the default realm tracking the map-typed
+	 * named property of the given bean object.
+	 * 
+	 * @param bean
+	 *            the bean object
+	 * @param propertyName
+	 *            the name of the property
+	 * @param keyType
+	 *            the element type of the observable map's key set, or
+	 *            <code>null</code> if untyped
+	 * @param valueType
+	 *            the element type of the observable map's values collection, or
+	 *            <code>null</code> if untyped
+	 * @return an observable map tracking the map-typed named property of the
+	 *         given bean object
+	 * @since 1.2
+	 */
+	public static IObservableMap observeMap(Object bean, String propertyName, Class keyType, Class valueType) {
+		return observeMap(Realm.getDefault(), bean, propertyName, keyType, valueType);
 	}
 
 	/*package*/ static PropertyDescriptor getPropertyDescriptor(Class beanClass,

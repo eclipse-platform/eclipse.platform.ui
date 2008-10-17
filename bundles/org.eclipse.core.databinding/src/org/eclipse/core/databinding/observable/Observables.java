@@ -8,7 +8,8 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matt Carter - bug 212518 (constantObservableValue)
- *     Matthew Hall - bugs 208332, 212518, 219909, 184830, 237718, 245647
+ *     Matthew Hall - bugs 208332, 212518, 219909, 184830, 237718, 245647,
+ *         226289
  *     Marko Topolnik - bug 184830
  ******************************************************************************/
 
@@ -550,6 +551,27 @@ public class Observables {
 	 *            the observable map whose entry will be tracked.
 	 * @param key
 	 *            the key identifying the map entry to track.
+	 * @return an observable value that tracks the value associated with the
+	 *         specified key in the given map
+	 * @since 1.2
+	 */
+	public static IObservableValue observeMapEntry(IObservableMap map, Object key) {
+		return observeMapEntry(map, key, map.getValueType());
+	}
+
+	/**
+	 * Returns an observable value that tracks changes to the value of an
+	 * observable map's entry specified by its key.
+	 * <p>
+	 * The state where the key does not exist in the map is equivalent to the
+	 * state where the key exists and its value is <code>null</code>. The
+	 * transition between these two states is not considered a value change and
+	 * no event is fired.
+	 * 
+	 * @param map
+	 *            the observable map whose entry will be tracked.
+	 * @param key
+	 *            the key identifying the map entry to track.
 	 * @param valueType
 	 *            the type of the value. May be <code>null</code>, meaning
 	 *            the value is untyped.
@@ -559,6 +581,8 @@ public class Observables {
 	 */
 	public static IObservableValue observeMapEntry(IObservableMap map,
 			Object key, Object valueType) {
+		if (valueType == null)
+			valueType = map.getValueType();
 		return new MapEntryObservableValue(map, key, valueType);
 	}
 
