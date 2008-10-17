@@ -27,16 +27,18 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  *              Clients should instead subclass one of the classes that
  *              implement this interface. Note that direct implementers of this
  *              interface outside of the framework will be broken in future
- *              releases when methods are added to this interface.
- *              </p>
+ *              releases when methods are added to this interface. </p>
  * 
  * @since 1.0
  */
 public interface IObservableCollection extends IObservable, Collection {
 
 	/**
-	 * @return the element type of this observable value, or <code>null</code>
-	 *         if this observable collection is untyped.
+	 * Returns the element type of this observable collection, or
+	 * <code>null</code> if this observable collection is untyped.
+	 * 
+	 * @return the element type of this observable collection, or
+	 *         <code>null</code> if this observable collection is untyped.
 	 */
 	Object getElementType();
 
