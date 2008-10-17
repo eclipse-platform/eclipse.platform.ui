@@ -47,6 +47,7 @@ static jmethodID passwordMethod;
 JNIEXPORT void JNICALL Java_org_eclipse_core_internal_net_proxy_unix_UnixProxyProvider_gconfInit(
 		JNIEnv *env, jclass clazz) {
 
+	g_type_init();
 	client = gconf_client_get_default();
 	jclass cls= NULL;
 	CHECK_NULL(cls = (*env)->FindClass(env, "org/eclipse/core/internal/net/ProxyData"));
