@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,24 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
 /**
  * Instances of this class are a collection of CheatSheetCollectionElements,
  * thereby facilitating the definition of tree structures composed of 
  * these elements. Instances also store a list of cheatsheets.
  */
-public class CheatSheetCollectionElement extends AdaptableList implements IPluginContribution {
+public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPluginContribution {
 	private String pluginId;
 	private String id;
 	private String name;
 	private CheatSheetCollectionElement parent;
 	private AdaptableList cheatsheets = new AdaptableList();
+	private List childCollections = new ArrayList();
 
 	/**
 	 * Creates a new <code>CheatSheetCollectionElement</code>.  Parent can be null.
@@ -44,13 +48,12 @@ public class CheatSheetCollectionElement extends AdaptableList implements IPlugi
 	/**
 	 * Adds a cheatsheet collection to this collection.
 	 */
-	public AdaptableList add(IAdaptable a) {
+	public void add(IAdaptable a) {
 		if (a instanceof CheatSheetElement) {
 			cheatsheets.add(a);
 		} else {
-			super.add(a);
+			childCollections.add(a);
 		}
-		return this;
 	}
 
 	/**
@@ -62,7 +65,7 @@ public class CheatSheetCollectionElement extends AdaptableList implements IPlugi
 	 * @return CheatSheetCollectionElement
 	 */
 	public CheatSheetCollectionElement findChildCollection(IPath searchPath) {
-		Object[] children = getChildren(null);
+		Object[] children = getChildren();
 		String searchString = searchPath.segment(0);
 		for (int i = 0; i < children.length; ++i) {
 			CheatSheetCollectionElement currentCategory = (CheatSheetCollectionElement) children[i];
@@ -90,7 +93,7 @@ public class CheatSheetCollectionElement extends AdaptableList implements IPlugi
 		}
 		if (!recursive)
 			return null;
-		for (Iterator iterator = children.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = childCollections.iterator(); iterator.hasNext();) {
 			CheatSheetCollectionElement child = (CheatSheetCollectionElement) iterator.next();
 			CheatSheetElement result = child.findCheatSheet(searchId, true);
 			if (result != null)
@@ -153,7 +156,7 @@ public class CheatSheetCollectionElement extends AdaptableList implements IPlugi
 	 * Returns true if this element has no children and no cheatsheets.
 	 */
 	public boolean isEmpty() {
-		return size() == 0 && cheatsheets.size() == 0;
+		return childCollections.size() == 0 && cheatsheets.size() == 0;
 	}
 
 	/**
@@ -175,7 +178,7 @@ public class CheatSheetCollectionElement extends AdaptableList implements IPlugi
 	 */
 	public String toString() {
 		StringBuffer buf = new StringBuffer("CheatSheetCollection, "); //$NON-NLS-1$
-		buf.append(children.size());
+		buf.append(childCollections.size());
 		buf.append(" children, "); //$NON-NLS-1$
 		buf.append(cheatsheets.size());
 		buf.append(" cheatsheets"); //$NON-NLS-1$
@@ -188,5 +191,13 @@ public class CheatSheetCollectionElement extends AdaptableList implements IPlugi
 
 	public String getPluginId() {
 		return pluginId;
+	}
+
+	public Object[] getChildren() {
+		return childCollections.toArray();
+	}
+
+	public void add(CheatSheetCollectionElement newElement) {
+		childCollections.add(newElement);	
 	}
 }

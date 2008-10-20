@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.model.AdaptableList;
 
 /**
  *  Instances access the registry that is provided at creation time
@@ -164,7 +163,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	}
 
 	protected ArrayList cheatsheetItemExtensions;
-	protected AdaptableList cheatsheets;
+	protected CheatSheetCollectionElement cheatsheets;
 	private ArrayList deferCategories = null;
 	private ArrayList deferCheatSheets = null;
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
@@ -185,7 +184,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 * <code>readCheatSheets</code>.
 	 * </p>
 	 */
-	protected void addNewElementToResult(CheatSheetElement element, IConfigurationElement config, AdaptableList result) {
+	protected void addNewElementToResult(CheatSheetElement element, IConfigurationElement config, CheatSheetCollectionElement cheatsheets2) {
 		deferCheatSheet(element);
 	}
 
@@ -229,7 +228,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 * Creates empty element collection. Overrider to fill
 	 * initial elements, if needed.
 	 */
-	protected AdaptableList createEmptyCheatSheetCollection() {
+	protected CheatSheetCollectionElement createEmptyCheatSheetCollection() {
 		return new CheatSheetCollectionElement(null, "root", "root", null); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
@@ -385,7 +384,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 *	@param extension 
 	 *	@param currentResult CheatSheetCollectionElement
 	 */
-	private void finishCheatSheet(CheatSheetElement element, IConfigurationElement config, AdaptableList result) {
+	private void finishCheatSheet(CheatSheetElement element, IConfigurationElement config, CheatSheetCollectionElement result) {
 		CheatSheetCollectionElement currentResult = (CheatSheetCollectionElement) result;
 		StringTokenizer familyTokenizer = new StringTokenizer(getCategoryStringFor(config), CATEGORY_SEPARATOR);
 
@@ -443,7 +442,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 * The return value for this method is cached since computing its value
 	 * requires non-trivial work.  
 	 */
-	public AdaptableList getCheatSheets() {
+	public CheatSheetCollectionElement getCheatSheets() {
 		if (cheatsheets == null)
 			readCheatSheets();
 		return cheatsheets;
