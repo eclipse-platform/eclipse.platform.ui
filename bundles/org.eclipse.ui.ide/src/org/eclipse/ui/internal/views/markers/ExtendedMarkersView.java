@@ -17,40 +17,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+import com.ibm.icu.text.MessageFormat;
+
+import org.osgi.framework.Bundle;
+
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
-import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IOpenListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.SameShellProvider;
-import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -76,6 +50,39 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+
+import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.SameShellProvider;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -86,6 +93,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -105,9 +113,6 @@ import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
-import org.osgi.framework.Bundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The ExtendedMarkersView is the internal implementation of the view that shows
@@ -242,7 +247,7 @@ public class ExtendedMarkersView extends ViewPart {
 			IEditorInput input = editor.getEditorInput();
 			IFile file = ResourceUtil.getFile(input);
 			if (file != null) {
-				if (marker.getResource().equals(file)) {
+				if (marker.getResource().equals(file) && OpenStrategy.activateOnOpen()) {
 					page.activate(editor);
 				}
 			}
@@ -512,12 +517,47 @@ public class ExtendedMarkersView extends ViewPart {
 		pageSelectionListener.selectionChanged(getSite().getPage()
 				.getActivePart(), getSite().getPage().getSelection());
 
-		viewer.addOpenListener(new IOpenListener() {
-			public void open(OpenEvent event) {
-				openSelectedMarkers();
+
+		new OpenAndLinkWithEditorHelper(viewer) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#activate(org.eclipse.jface.viewers.ISelection
+			 * )
+			 */
+			protected void activate(ISelection selection) {
+				final int currentMode = OpenStrategy.getOpenMethod();
+				try {
+					OpenStrategy.setOpenMethod(OpenStrategy.DOUBLE_CLICK);
+					openSelectedMarkers();
+				} finally {
+					OpenStrategy.setOpenMethod(currentMode);
+				}
 			}
 
-		});
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#linkToEditor(org.eclipse.jface.viewers
+			 * .ISelection)
+			 */
+			protected void linkToEditor(ISelection selection) {
+				// Not supported by this part
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#open(org.eclipse.jface.viewers.ISelection,
+			 * boolean)
+			 */
+			protected void open(ISelection selection, boolean activate) {
+				openSelectedMarkers();
+			}
+		};
 
 		viewer.getTree().addTreeListener(new TreeAdapter() {
 			/*
