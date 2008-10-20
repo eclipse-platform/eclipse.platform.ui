@@ -475,88 +475,104 @@ public interface ISharedImages {
     /**
      * Cursor 'source' for the left arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_LEFT_SOURCE = "IMG_OBJS_DND_LEFT_SOURCE"; //$NON-NLS-1$
     /**
      * Cursor 'mask' for the left arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_LEFT_MASK = "IMG_OBJS_DND_LEFT_MASK"; //$NON-NLS-1$
 
     /**
      * Cursor 'source' for the right arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_RIGHT_SOURCE = "IMG_OBJS_DND_RIGHT_SOURCE"; //$NON-NLS-1$
     /**
      * Cursor 'mask' for the right arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_RIGHT_MASK = "IMG_OBJS_DND_RIGHT_MASK"; //$NON-NLS-1$
 
     /**
      * Cursor 'source' for the up arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_TOP_SOURCE = "IMG_OBJS_DND_TOP_SOURCE"; //$NON-NLS-1$
     /**
      * Cursor 'mask' for the up arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_TOP_MASK = "IMG_OBJS_DND_TOP_MASK"; //$NON-NLS-1$
 
     /**
      * Cursor 'source' for the down arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_BOTTOM_SOURCE = "IMG_OBJS_DND_BOTTOM_SOURCE"; //$NON-NLS-1$
     /**
      * Cursor 'mask' for the down arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_BOTTOM_MASK = "IMG_OBJS_DND_BOTTOM_MASK"; //$NON-NLS-1$
 
     /**
      * Cursor 'source' for the 'no drop' arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_INVALID_SOURCE = "IMG_OBJS_DND_INVALID_SOURCE"; //$NON-NLS-1$
     /**
      * Cursor 'mask' for the 'no drop' arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_INVALID_MASK = "IMG_OBJS_DND_INVALID_MASK"; //$NON-NLS-1$
 
     /**
      * Cursor 'source' for the 'in stack' arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_STACK_SOURCE = "IMG_OBJS_DND_STACK_SOURCE"; //$NON-NLS-1$
     /**
      * Cursor 'mask' for the 'in stack' arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_STACK_MASK = "IMG_OBJS_DND_STACK_MASK"; //$NON-NLS-1$
 
     /**
      * Cursor 'source' for the 'off-screen' (detached window) arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_OFFSCREEN_SOURCE = "IMG_OBJS_DND_OFFSCREEN_SOURCE"; //$NON-NLS-1$
     /**
      * Cursor 'mask' for the 'off-screen' (detached window) arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public final static String IMG_OBJS_DND_OFFSCREEN_MASK = "IMG_OBJS_DND_OFFSCREEN_MASK"; //$NON-NLS-1$
 
     /**
      * Cursor 'source' for the 'fast-view' arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public static final String IMG_OBJS_DND_TOFASTVIEW_SOURCE = "IMG_OBJS_DND_TOFASTVIEW_SOURCE"; //$NON-NLS-1$
     /**
      * Cursor 'mask' for the 'fast-view' arrow cursor. For cursor construction see:
      * @see org.eclipse.swt.graphics.Cursor#Cursor(Display, ImageData, ImageData, int, int)
+     * @since 3.5
      */
     public static final String IMG_OBJS_DND_TOFASTVIEW_MASK = "IMG_OBJS_DND_TOFASTVIEW_MASK"; //$NON-NLS-1$    
     
