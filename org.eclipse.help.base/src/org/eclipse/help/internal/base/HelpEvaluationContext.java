@@ -28,14 +28,8 @@ public final class HelpEvaluationContext {
 	 */
 	public static EvaluationContext getContext() {
 		if (context == null) {
-			context = new EvaluationContext(null, Platform.class) {
-				public Object getVariable(String name) {
-					if (VARIABLE_PLATFORM.equals(name)) {
-						return Platform.class;
-					}
-					return null;
-				}
-			};
+			context = new EvaluationContext(null, Platform.class);
+			context.addVariable(VARIABLE_PLATFORM, Platform.class);
 		}
 		return context;
 	}
