@@ -23,6 +23,11 @@ a file association extends an existing content type by associating new file name
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="content-type" minOccurs="0" maxOccurs="unbounded"/>
@@ -64,7 +69,7 @@ a file association extends an existing content type by associating new file name
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier for this content type (either a simple id unique for content types within the extension namespace, or a fully qualified id). The token cannot contain whitespace
+                  the fully qualified identifier for this content type. Note that using a simple id unique for content types within the extension namespace works for backwards compatibility but is discouraged for new extensions. The token cannot contain whitespace.
                </documentation>
             </annotation>
          </attribute>
@@ -321,7 +326,6 @@ implementor of
 &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescription&lt;/samp&gt; objects returned by the &lt;samp&gt;org.eclipse.core.runtime.content&lt;/samp&gt; API
       </documentation>
    </annotation>
-
 
    <annotation>
       <appinfo>

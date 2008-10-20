@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.equinox.preferences;bundle-version="[3.2.0,4.0.0)",
 Export-Package: org.eclipse.core.internal.content;x-internal:=true,
  org.eclipse.core.runtime.content
 Bundle-Activator: org.eclipse.core.internal.content.Activator
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Import-Package: javax.xml.parsers,
  org.eclipse.osgi.service.debug,
  org.eclipse.osgi.util;version="1.0.0",
