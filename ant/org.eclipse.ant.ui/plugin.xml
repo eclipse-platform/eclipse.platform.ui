@@ -657,8 +657,10 @@ M4 = Platform-specific fourth key -->
             name="%antBreakpointGroupName">
       </breakpoint>
    </extension>
-   <extension point="org.eclipse.core.resources.markers"
-         id="antLineBreakpointMarker">
+   <extension
+         id="antLineBreakpointMarker"
+         name="%AntLineBreakpoint.name"
+         point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.debug.core.lineBreakpointMarker"/>
       <persistent value="true"/>
    </extension>
@@ -866,5 +868,14 @@ M4 = Platform-specific fourth key -->
                  class="org.eclipse.ant.internal.ui.WorkbenchAntRunner">
            </run>
         </application>
+     </extension>
+     <extension
+           point="org.eclipse.ui.ide.markerSupport">
+        <markerTypeCategory
+              name="%antBreakpointGroupName">
+           <markerTypeReference
+                 id="org.eclipse.ant.ui.antLineBreakpointMarker">
+           </markerTypeReference>
+        </markerTypeCategory>
      </extension>	
 </plugin>
