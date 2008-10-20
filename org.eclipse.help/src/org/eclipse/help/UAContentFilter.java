@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,16 +49,15 @@ public class UAContentFilter {
 	 */
 	public static boolean isFiltered(Object element) {
 		if (defaultContext == null) {
-			defaultContext = new EvaluationContext(null, Platform.class) {
-				public Object getVariable(String name) {
-					if (VARIABLE_PLATFORM.equals(name)) {
-						return Platform.class;
-					}
-					return null;
-				}
-			};
+			defaultContext = createDefaultContext();
 		}
 		return isFiltered(element, defaultContext);
+	}
+
+	private static IEvaluationContext createDefaultContext() {
+		EvaluationContext context = new EvaluationContext(null, Platform.class);
+		context.addVariable(VARIABLE_PLATFORM, Platform.class);
+		return context;
 	}
 
 	/**
