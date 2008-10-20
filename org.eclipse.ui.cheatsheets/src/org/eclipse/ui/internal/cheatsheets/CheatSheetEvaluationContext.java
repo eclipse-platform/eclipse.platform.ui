@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,17 +30,9 @@ public final class CheatSheetEvaluationContext {
 	 */
 	public static EvaluationContext getContext() {
 		if (context == null) {
-			context = new EvaluationContext(null, Platform.class) {
-				public Object getVariable(String name) {
-					if (VARIABLE_PLATFORM.equals(name)) {
-						return Platform.class;
-					}
-					else if (VARIABLE_WORKBENCH.equals(name)) {
-						return PlatformUI.getWorkbench();
-					}
-					return null;
-				}
-			};
+			context = new EvaluationContext(null, Platform.class);
+			context.addVariable(VARIABLE_PLATFORM, Platform.class);
+			context.addVariable(VARIABLE_WORKBENCH, PlatformUI.getWorkbench());
 		}
 		return context;
 	}
