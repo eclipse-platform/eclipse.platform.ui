@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems) - [misc] Allow custom token for WhitespaceRule - https://bugs.eclipse.org/bugs/show_bug.cgi?id=251224
  *******************************************************************************/
-
 package org.eclipse.jface.text.rules;
 
 
@@ -28,19 +28,41 @@ public class WhitespaceRule implements IRule {
 	protected IWhitespaceDetector fDetector;
 
 	/**
-	 * Creates a rule which, with the help of an
-	 * whitespace detector, will return a whitespace
-	 * token when a whitespace is detected.
-	 *
-	 * @param detector the rule's whitespace detector, may not be <code>null</code>
+	 * The token returned for whitespace.
+	 * @since 3.5
+	 */
+	protected final IToken fWhitespaceToken;
+
+	/**
+	 * Creates a rule which, with the help of an whitespace detector, will return
+	 * {@link Token#WHITESPACE} when a whitespace is detected.
+	 * 
+	 * @param detector the rule's whitespace detector
 	 */
 	public WhitespaceRule(IWhitespaceDetector detector) {
-		Assert.isNotNull(detector);
-		fDetector= detector;
+		this(detector, Token.WHITESPACE);
 	}
 
-	/*
-	 * @see IRule#evaluate(ICharacterScanner)
+	/**
+	 * Creates a rule which, with the help of an whitespace detector, will return the given
+	 * whitespace token when a whitespace is detected.
+	 * 
+	 * @param detector the rule's whitespace detector
+	 * @param token the token returned for whitespace
+	 * @since 3.5
+	 */
+	public WhitespaceRule(IWhitespaceDetector detector, IToken token) {
+		Assert.isNotNull(detector);
+		Assert.isNotNull(token);
+		fDetector= detector;
+		fWhitespaceToken= token;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return {@link #fWhitespaceToken} if whitespace got detected, {@link Token#UNDEFINED}
+	 *         otherwise
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();
@@ -49,7 +71,7 @@ public class WhitespaceRule implements IRule {
 				c= scanner.read();
 			} while (fDetector.isWhitespace((char) c));
 			scanner.unread();
-			return Token.WHITESPACE;
+			return fWhitespaceToken;
 		}
 
 		scanner.unread();
