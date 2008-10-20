@@ -19,7 +19,7 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
@@ -975,5 +975,46 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return false;
 		}
 		return project.isNatureEnabled(nature);
+	}
+	
+	/**
+	 * Returns the scheduling rule that is required for building the project.
+	 */
+	public ISchedulingRule getRule(IProject project, int trigger, String builderName, Map args) {
+
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
+		if (builderName == null) {
+			final ICommand[] commands;
+			if (project.isAccessible()) {
+				Set rules = new HashSet();
+				commands = ((Project) project).internalGetDescription().getBuildSpec(false);
+				for (int i = 0; i < commands.length; i++) {
+					BuildCommand command = (BuildCommand) commands[i];
+					try {
+						IncrementalProjectBuilder builder = getBuilder(project, command, i, status);
+						if (builder != null)
+							rules.add(builder.getRule());
+					} catch (CoreException e) {
+						status.add(e.getStatus());
+					}
+				}
+				return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
+			}
+		} else {
+			// Returns the derived resources for the specified builderName
+			ICommand command = getCommand(project, builderName, args);
+			try {
+				IncrementalProjectBuilder builder = getBuilder(project, command, -1, status);
+				if (builder != null)
+					return builder.getRule();
+
+			} catch (CoreException e) {
+				status.add(e.getStatus());
+			}
+		}
+		// Log any errors
+		if (!status.isOK())
+			Policy.log(status);
+		return workspace.getRoot();
 	}
 }

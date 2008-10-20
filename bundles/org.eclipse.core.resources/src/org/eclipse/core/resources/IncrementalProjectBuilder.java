@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.core.resources;
 import java.util.Map;
 import org.eclipse.core.internal.events.InternalBuilder;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * The abstract base class for all incremental project builders. This class
@@ -341,5 +342,18 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 */
 	protected void startupOnInitialize() {
 		// reserved for future use
+	}
+	
+	/**
+	 * Returns the scheduling rule that is required for building 
+	 * the project for which this builder is defined. The default 
+	 * is the workspace root rule.
+	 * 
+	 * @return scheduling rule
+	 * 
+	 * @since 3.5
+	 */
+	public ISchedulingRule getRule() {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 }

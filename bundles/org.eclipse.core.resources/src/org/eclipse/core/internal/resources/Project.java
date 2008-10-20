@@ -498,37 +498,50 @@ public class Project extends Container implements IProject {
 	/**
 	 * Implements all build methods on IProject.
 	 */
-	protected void internalBuild(int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
-		try {
-			monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
-			try {
-				workspace.prepareOperation(rule, monitor);
-				ResourceInfo info = getResourceInfo(false, false);
-				int flags = getFlags(info);
-				if (!exists(flags, true) || !isOpen(flags))
-					return;
-				workspace.beginOperation(true);
-				workspace.aboutToBuild(this, trigger);
-				IStatus result;
+	protected void internalBuild(final int trigger, final String builderName, final Map args, IProgressMonitor monitor) throws CoreException {
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor innerMonitor) throws CoreException {
+				innerMonitor = Policy.monitorFor(innerMonitor);
+				final ISchedulingRule rule = workspace.getRoot();
 				try {
-					result = workspace.getBuildManager().build(this, trigger, builderName, args, Policy.subMonitorFor(monitor, Policy.opWork));
+					innerMonitor.beginTask("", Policy.opWork); //$NON-NLS-1$
+					try {
+						workspace.prepareOperation(rule, innerMonitor);
+						ResourceInfo info = getResourceInfo(false, false);
+						int flags = getFlags(info);
+						if (!exists(flags, true) || !isOpen(flags))
+							return;
+						workspace.beginOperation(true);
+						workspace.aboutToBuild(this, trigger);
+					} finally {
+						workspace.endOperation(rule, false, innerMonitor);
+					}
+					final ISchedulingRule buildRule = workspace.getBuildManager().getRule(Project.this, trigger, builderName, args);
+					try {
+						IStatus result;
+						workspace.prepareOperation(buildRule, innerMonitor);
+						workspace.beginOperation(true);
+						result = workspace.getBuildManager().build(Project.this, trigger, builderName, args, Policy.subMonitorFor(innerMonitor, Policy.opWork));
+						if (!result.isOK())
+							throw new ResourceException(result);
+					} finally {
+						workspace.endOperation(buildRule, false, innerMonitor);
+						try {
+							workspace.prepareOperation(rule, innerMonitor);
+							workspace.beginOperation(true);
+							workspace.broadcastBuildEvent(Project.this, IResourceChangeEvent.POST_BUILD, trigger);
+							//building may close the tree, so open it
+							if (workspace.getElementTree().isImmutable())
+								workspace.newWorkingTree();
+						} finally {
+							workspace.endOperation(rule, false, Policy.subMonitorFor(innerMonitor, Policy.endOpWork));
+						}
+					}
 				} finally {
-					//must fire POST_BUILD if PRE_BUILD has occurred
-					workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+					innerMonitor.done();
 				}
-				if (!result.isOK())
-					throw new ResourceException(result);
-			} finally {
-				//building may close the tree, but we are still inside an operation so open it
-				if (workspace.getElementTree().isImmutable())
-					workspace.newWorkingTree();
-				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
-		} finally {
-			monitor.done();
-		}
+		}, monitor);
 	}
 
 	/**
