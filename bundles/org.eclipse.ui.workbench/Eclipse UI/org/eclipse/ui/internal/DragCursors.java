@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ISharedImages;
 
 /**
  * Provides the set of cursors used for drag-and-drop.
@@ -91,65 +92,65 @@ public class DragCursors {
             switch (code) {
             case LEFT:
                 source = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_LEFT_SOURCE);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_LEFT_SOURCE);
                 mask = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_LEFT_MASK);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_LEFT_MASK);
                 cursors[LEFT] = new Cursor(display, source.getImageData(), mask
                         .getImageData(), 16, 16);
                 break;
             case RIGHT:
                 source = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_RIGHT_SOURCE);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_RIGHT_SOURCE);
                 mask = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_RIGHT_MASK);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_RIGHT_MASK);
                 cursors[RIGHT] = new Cursor(display, source.getImageData(),
                         mask.getImageData(), 16, 16);
                 break;
             case TOP:
                 source = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOP_SOURCE);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_TOP_SOURCE);
                 mask = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOP_MASK);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_TOP_MASK);
                 cursors[TOP] = new Cursor(display, source.getImageData(), mask
                         .getImageData(), 16, 16);
                 break;
             case BOTTOM:
                 source = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_BOTTOM_SOURCE);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_BOTTOM_SOURCE);
                 mask = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_BOTTOM_MASK);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_BOTTOM_MASK);
                 cursors[BOTTOM] = new Cursor(display, source.getImageData(),
                         mask.getImageData(), 16, 16);
                 break;
             case CENTER:
                 source = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_STACK_SOURCE);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_STACK_SOURCE);
                 mask = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_STACK_MASK);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_STACK_MASK);
                 cursors[CENTER] = new Cursor(display, source.getImageData(),
                         mask.getImageData(), 16, 16);
                 break;
             case OFFSCREEN:
                 source = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_SOURCE);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_OFFSCREEN_SOURCE);
                 mask = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_MASK);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_OFFSCREEN_MASK);
                 cursors[OFFSCREEN] = new Cursor(display, source.getImageData(),
                         mask.getImageData(), 16, 16);
                 break;
             case FASTVIEW:
                 source = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_SOURCE);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_SOURCE);
                 mask = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_MASK);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_MASK);
                 cursors[FASTVIEW] = new Cursor(Display.getCurrent(), source
                         .getImageData(), mask.getImageData(), 16, 16);
             default:
             case INVALID:
                 source = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_INVALID_SOURCE);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_INVALID_SOURCE);
                 mask = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DND_INVALID_MASK);
+                        .getImageDescriptor(ISharedImages.IMG_OBJS_DND_INVALID_MASK);
                 cursors[INVALID] = new Cursor(display, source.getImageData(),
                         mask.getImageData(), 16, 16);
                 break;
