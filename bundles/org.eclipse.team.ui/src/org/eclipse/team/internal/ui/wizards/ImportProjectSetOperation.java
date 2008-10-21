@@ -26,6 +26,19 @@ public class ImportProjectSetOperation extends TeamOperation {
 	private String psfFile;
 	private IWorkingSet[] workingSets;
 
+	/**
+	 * Operation for importing a Team Project Set file
+	 * 
+	 * @param context
+	 *            a runnable context
+	 * @param psfFile
+	 *            a psf file name
+	 * @param workingSets
+	 *            an array of working sets where imported project should be
+	 *            added. If a working set doesn't exist it will be created. The
+	 *            array cannot be <code>null</code>, pass an empty array if you
+	 *            don't want to add projects to any working set.
+	 */
 	public ImportProjectSetOperation(IRunnableContext context, String psfFile,
 			IWorkingSet[] workingSets) {
 		super(context);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.wizards.ImportProjectSetOperation;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
 
 public class ImportProjectSetAction extends ActionDelegate implements IObjectActionDelegate {
@@ -44,7 +43,7 @@ public class ImportProjectSetAction extends ActionDelegate implements IObjectAct
 					while (iterator.hasNext()) {
 						IFile file = (IFile) iterator.next();
 						if (isRunInBackgroundPreferenceOn()) {
-							ImportProjectSetOperation op = new ImportProjectSetOperation(null, file.getLocation().toString(), null);
+							ImportProjectSetOperation op = new ImportProjectSetOperation(null, file.getLocation().toString(), new IWorkingSet[0]);
 							op.run();
 						} else { 
 							ProjectSetImporter.importProjectSet(file.getLocation().toString(), shell, monitor);
