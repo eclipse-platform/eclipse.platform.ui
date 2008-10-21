@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -38,6 +37,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.services.ActivePartSourceProvider;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.menus.MenuUtil;
@@ -56,6 +57,9 @@ import org.eclipse.ui.views.IViewRegistry;
  */
 public class ShowInMenu extends ContributionItem implements
 		IWorkbenchContribution {
+
+	private static final String SHOW_IN_COMMAND_ID = "org.eclipse.ui.navigate.showIn"; //$NON-NLS-1$
+	private static final String SHOW_IN_PARM_ID = "org.eclipse.ui.navigate.showIn.targetId"; //$NON-NLS-1$
 
 	private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoTargets;
 
@@ -159,14 +163,10 @@ public class ShowInMenu extends ContributionItem implements
 		}
 
 		IViewDescriptor[] viewDescs = getViewDescriptors(sourcePart);
-		if (viewDescs.length == 0) {
-			return;
-		}
-
 		for (int i = 0; i < viewDescs.length; ++i) {
-			IAction action = getAction(viewDescs[i]);
-			if (action != null) {
-				innerMgr.add(action);
+			IContributionItem cci = getContributionItem(viewDescs[i]);
+			if (cci != null) {
+				innerMgr.add(cci);
 			}
 		}
 		if (innerMgr instanceof MenuManager) {
@@ -185,19 +185,20 @@ public class ShowInMenu extends ContributionItem implements
 	}
 
 	/**
-	 * Returns the action for the given view id, or null if not found.
+	 * Return the appropriate command contribution item for the parameter.
+	 * @param viewDescriptor
+	 * @return the show in command contribution item
 	 */
-	private IAction getAction(IViewDescriptor desc) {
-		// Keep a cache, rather than creating a new action each time,
-		// so that image caching in ActionContributionItem works.
-		IAction action = (IAction) actions.get(desc.getId());
-		if (action == null) {
-			if (desc != null) {
-				action = new ShowInAction(window, desc);
-				actions.put(desc.getId(), action);
-			}
-		}
-		return action;
+	private IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
+		CommandContributionItemParameter parm = new CommandContributionItemParameter(
+				locator, viewDescriptor.getId(), SHOW_IN_COMMAND_ID,
+				CommandContributionItem.STYLE_PUSH);
+		HashMap targetId = new HashMap();
+		targetId.put(SHOW_IN_PARM_ID, viewDescriptor.getId());
+		parm.parameters = targetId;
+		parm.label = viewDescriptor.getLabel();
+		parm.icon = viewDescriptor.getImageDescriptor();
+		return new CommandContributionItem(parm);
 	}
 
 	/**

@@ -20,6 +20,8 @@ import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
@@ -28,6 +30,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -57,6 +60,7 @@ import org.eclipse.ui.internal.menus.CommandMessages;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * A contribution item which delegates to a command. It can be used in {@link
@@ -796,7 +800,16 @@ public final class CommandContributionItem extends ContributionItem {
 			MenuItem item = (MenuItem) widget;
 			LocalResourceManager m = new LocalResourceManager(JFaceResources
 					.getResources());
-			item.setImage(icon == null ? null : m.createImage(icon));
+			try {
+				item.setImage(icon == null ? null : m.createImage(icon));
+			} catch (DeviceResourceException e) {
+				icon = ImageDescriptor.getMissingImageDescriptor();
+				item.setImage(m.createImage(icon));
+				// as we replaced the failed icon, log the message once.
+				StatusManager.getManager().handle(
+						new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+								"Failed to load image", e)); //$NON-NLS-1$
+			}
 			disposeOldImages();
 			localResourceManager = m;
 		} else if (widget instanceof ToolItem) {

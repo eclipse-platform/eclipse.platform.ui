@@ -60,8 +60,8 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 		try {
 			IViewPart view = page.showView(targetId);
 			IShowInTarget target = getShowInTarget(view);
-			if (target != null) {
-				target.show(context);
+			if (!(target != null && target.show(context))) {
+				page.getWorkbenchWindow().getShell().getDisplay().beep();
 			}
 			((WorkbenchPage) page).performedShowIn(targetId); // TODO: move
 			// back up
