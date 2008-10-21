@@ -52,6 +52,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -133,9 +134,11 @@ import com.ibm.icu.text.DateFormat;
  * @see Policy#setErrorSupportProvider(ErrorSupportProvider)
  * @see ErrorSupportProvider
  * @see AbstractStatusAreaProvider
+ * 
  * @since 3.4
+ * @since 3.5 implements {@link IShellProvider}
  */
-public class WorkbenchStatusDialogManager {
+public class WorkbenchStatusDialogManager implements IShellProvider {
 
 	/**
 	 * The default status label provider.
@@ -1744,14 +1747,6 @@ public class WorkbenchStatusDialogManager {
 	}
 
 	/**
-	 * Returns the shell of the dialog.
-	 */
-	Shell getShell() {
-		if (this.dialog == null) return null;
-		return this.dialog.getShell();
-	}
-
-	/**
 	 * Get the single selection. Return null if the selection is not just one
 	 * element.
 	 * 
@@ -2281,5 +2276,17 @@ public class WorkbenchStatusDialogManager {
 			refreshSingleStatusArea();
 		}
 		titleArea.layout();
+	}
+
+	/**
+	 * Gets the shell of the managed dialog.
+	 * 
+	 * @since 3.5
+	 * @see org.eclipse.jface.window.IShellProvider#getShell()
+	 */
+	public Shell getShell() {
+		if (this.dialog == null)
+			return null;
+		return this.dialog.getShell();
 	}
 }
