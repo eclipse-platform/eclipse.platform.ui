@@ -138,6 +138,219 @@ import com.ibm.icu.text.DateFormat;
 public class WorkbenchStatusDialogManager {
 
 	/**
+	 * The default status label provider.
+	 */
+	private class DefaultLabelProvider implements ITableLabelProvider {
+		ResourceManager manager = new LocalResourceManager(JFaceResources
+				.getResources());
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse
+		 * .jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+			// Do nothing
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			manager.dispose();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
+		 * .lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+			Image result = null;
+			if (element != null) {
+				StatusAdapter statusAdapter = ((StatusAdapter) element);
+				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				if (job != null) {
+					result = getIcon(job);
+				}
+			}
+			// if somehow disposed image was received (should not happen)
+			if (result != null && result.isDisposed()) {
+				result = null;
+			}
+			return result;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
+		 * lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			StatusAdapter statusAdapter = (StatusAdapter) element;
+			String text = WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurred;
+			if (getStatusAdapters().size() == 1) {
+				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				if (job != null) {
+					text = getPrimaryMessage(statusAdapter);
+				} else {
+					text = getSecondaryMessage(statusAdapter);
+				}
+			} else {
+				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				if (job != null) {
+					text = job.getName();
+				} else {
+					text = getPrimaryMessage(statusAdapter);
+				}
+			}
+			Long timestamp = (Long) statusAdapter
+					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
+
+			if (timestamp != null && getStatusAdapters().size() > 1) {
+				String date = DateFormat.getDateTimeInstance(DateFormat.LONG,
+						DateFormat.LONG)
+						.format(new Date(timestamp.longValue()));
+				return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] {
+						text, date }));
+			}
+			return text;
+		}
+
+		/*
+		 * Get the icon for the job.
+		 */
+		private Image getIcon(Job job) {
+			if (job != null) {
+				Object property = job
+						.getProperty(IProgressConstants.ICON_PROPERTY);
+
+				// Create an image from the job's icon property or family
+				if (property instanceof ImageDescriptor) {
+					return manager.createImage((ImageDescriptor) property);
+				} else if (property instanceof URL) {
+					return manager.createImage(ImageDescriptor
+							.createFromURL((URL) property));
+				} else {
+					// Let the progress manager handle the resource management
+					return ProgressManager.getInstance().getIconFor(job);
+				}
+			}
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java
+		 * .lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
+		 * .jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+			// Do nothing
+		}
+	}
+
+	/**
+	 * A wrapper for the status label provider that prevents the label provider
+	 * from being disposed when modality is switched.
+	 */
+	private class LabelProviderWrapper implements ITableLabelProvider {
+
+		private ITableLabelProvider labelProvider = new DefaultLabelProvider();
+
+		public void setLabelProvider(ITableLabelProvider provider) {
+			this.labelProvider = provider;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
+		 * .lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+			return labelProvider.getColumnImage(element, columnIndex);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
+		 * lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			return labelProvider.getColumnText(element, columnIndex);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse
+		 * .jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+			labelProvider.addListener(listener);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			if (!modalitySwitch) {
+				labelProvider.dispose();
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java
+		 * .lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			return labelProvider.isLabelProperty(element, property);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
+		 * .jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+			labelProvider.removeListener(listener);
+		}
+
+	}
+
+	/**
 	 * This class is responsible for managing details area.
 	 * 
 	 * @since 3.4
@@ -796,127 +1009,7 @@ public class WorkbenchStatusDialogManager {
 	/**
 	 * A list label provider
 	 */
-	private ITableLabelProvider statusListLabelProvider = new ITableLabelProvider() {
-		ResourceManager manager = new LocalResourceManager(JFaceResources.getResources());
-	
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void addListener(ILabelProviderListener listener) {
-			// Do nothing
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
-		public void dispose() {
-			manager.dispose();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
-		 *      int)
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			Image result = null;
-			if (element != null) {
-				StatusAdapter statusAdapter = ((StatusAdapter) element);
-				Job job = (Job) (statusAdapter.getAdapter(Job.class));
-				if (job != null) {
-					result = getIcon(job);
-				}
-			}
-			// if somehow disposed image was received (should not happen)
-			if (result != null && result.isDisposed()) {
-				result = null;
-			}
-			return result;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
-		 *      int)
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			StatusAdapter statusAdapter = (StatusAdapter) element;
-			String text = WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurred;
-			if (getStatusAdapters().size() == 1) {
-				Job job = (Job) (statusAdapter.getAdapter(Job.class));
-				if (job != null) {
-					text = getPrimaryMessage(statusAdapter);
-				} else {
-					text = getSecondaryMessage(statusAdapter);
-				}
-			} else {
-				Job job = (Job) (statusAdapter.getAdapter(Job.class));
-				if (job != null) {
-					text = job.getName();
-				} else {
-					text = getPrimaryMessage(statusAdapter);
-				}
-			}
-			Long timestamp = (Long) statusAdapter
-					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
-
-			if (timestamp != null && getStatusAdapters().size() > 1) {
-				String date = DateFormat.getDateTimeInstance(DateFormat.LONG,
-						DateFormat.LONG)
-						.format(new Date(timestamp.longValue()));
-				return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] {
-						text, date }));
-			}
-			return text;
-		}
-
-		/*
-		 * Get the icon for the job.
-		 */
-		private Image getIcon(Job job) {
-			if (job != null) {
-				Object property = job
-						.getProperty(IProgressConstants.ICON_PROPERTY);
-
-				// Create an image from the job's icon property or family
-				if (property instanceof ImageDescriptor) {
-					return manager.createImage((ImageDescriptor) property);
-				} else if (property instanceof URL) {
-					return manager.createImage(ImageDescriptor
-							.createFromURL((URL) property));
-				} else {
-					// Let the progress manager handle the resource management
-					return ProgressManager.getInstance().getIconFor(job);
-				}
-			}
-			return null;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
-		 *      java.lang.String)
-		 */
-		public boolean isLabelProperty(Object element, String property) {
-			return false;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void removeListener(ILabelProviderListener listener) {
-			// Do nothing
-		}
-	};
+	private LabelProviderWrapper labelProviderWrapper = new LabelProviderWrapper();
 
 	/**
 	 * This variable holds current details area provider.
@@ -1266,7 +1359,7 @@ public class WorkbenchStatusDialogManager {
 		labelLayoutData.widthHint = dialog.convertWidthInCharsToPixels(50);
 		singleStatusLabel.setLayoutData(labelLayoutData);
 		// main message set up early, to address bug 222391
-		singleStatusLabel.setText(statusListLabelProvider.getColumnText(
+		singleStatusLabel.setText(labelProviderWrapper.getColumnText(
 				statusAdapter, 0));
 
 		singleStatusLabel.addMouseListener(new MouseListener() {	
@@ -1710,8 +1803,8 @@ public class WorkbenchStatusDialogManager {
 						.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY));
 				if (timestamp1 == null || timestamp2 == null
 						|| (timestamp1.equals(timestamp2))) {
-					String text1 = statusListLabelProvider.getColumnText(s1, 0);
-					String text2 = statusListLabelProvider.getColumnText(s2, 0);
+					String text1 = labelProviderWrapper.getColumnText(s1, 0);
+					String text2 = labelProviderWrapper.getColumnText(s2, 0);
 					return text1.compareTo(text2);
 				}
 
@@ -1827,7 +1920,7 @@ public class WorkbenchStatusDialogManager {
 	 * Sets initial label provider.
 	 */
 	private void initLabelProvider() {
-		statusListViewer.setLabelProvider(statusListLabelProvider);
+		statusListViewer.setLabelProvider(labelProviderWrapper);
 	}
 
 	/*
@@ -1921,7 +2014,7 @@ public class WorkbenchStatusDialogManager {
 	 * only one error.
 	 */
 	private void refreshSingleStatusArea() {
-		String description = statusListLabelProvider.getColumnText(
+		String description = labelProviderWrapper.getColumnText(
 				statusAdapter, 0);
 		if (description.equals(singleStatusLabel.getText()))
 			singleStatusLabel.setText(" "); //$NON-NLS-1$
@@ -1977,11 +2070,10 @@ public class WorkbenchStatusDialogManager {
 	 * 
 	 * @param labelProvider
 	 *            a label provider to be used when displaying status adapters.
-	 *            It must not be <code>null</code>.
 	 */
 	public void setStatusListLabelProvider(ITableLabelProvider labelProvider) {
 		Assert.isLegal(labelProvider != null, "Label Provider cannot be null"); //$NON-NLS-1$
-		statusListLabelProvider = labelProvider;
+		labelProviderWrapper.setLabelProvider(labelProvider);
 	}
 
 	/**

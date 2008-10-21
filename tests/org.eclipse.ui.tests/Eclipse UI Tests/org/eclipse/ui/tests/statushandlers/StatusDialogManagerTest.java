@@ -179,6 +179,51 @@ public class StatusDialogManagerTest extends TestCase {
 		assertFalse(support[0].isDisposed());
 		assertEquals(sa, passed[0]);
 	}
+	
+	/**
+	 * Be sure that label provider is not disposed during modality switch.
+	 */
+	public void testModalitySwitch4() {
+		final boolean[] disposed = new boolean[] { false };
+		ITableLabelProvider provider = new ITableLabelProvider() {
+
+			public Image getColumnImage(Object element, int columnIndex) {
+				return null;
+			}
+
+			public String getColumnText(Object element, int columnIndex) {
+				return "";
+			}
+
+			public void addListener(ILabelProviderListener listener) {
+			}
+
+			public void dispose() {
+				disposed[0] = true;
+			}
+
+			public boolean isLabelProperty(Object element, String property) {
+				return false;
+			}
+
+			public void removeListener(ILabelProviderListener listener) {
+			}
+
+		};
+		wsdm.setStatusListLabelProvider(provider);
+
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2), true);
+
+		assertFalse(
+				"Label provider should not be disposed during modality switch.",
+				disposed[0]);
+
+		selectWidget(StatusDialogUtil.getOkButton());
+		assertTrue("Label should be disposed when the dialog is closed.",
+				disposed[0]);
+	}
 
 	/**
 	 * Simple status without exception Check primary and secondary message.
