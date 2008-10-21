@@ -28,6 +28,15 @@ public class InternalPolicy {
 	public static boolean DEBUG_LOG_REENTRANT_VIEWER_CALLS = false;
 
 	/**
+	 * (NON-API) A flag to indicate whether label provider changed notifications
+	 * should always be logged when the underlying control has been disposed. If
+	 * false, only the first notification when disposed will cause a log entry.
+	 * 
+	 * @since 3.5
+	 */
+	public static boolean DEBUG_LOG_LABEL_PROVIDER_NOTIFICATIONS_WHEN_DISPOSED = false;
+	
+	/**
 	 * (NON-API) Instead of logging current conflicts they can be
 	 * held here.  If there is a problem, they can be reported then.
 	 */
