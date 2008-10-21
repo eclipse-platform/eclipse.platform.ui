@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.ISharedImages;
 
 /**
@@ -79,11 +81,13 @@ public class DragCursors {
         return SWT.DEFAULT;
     }
 
-    /**
-     * Return the cursor for a drop scenario, as identified by code.
-     * Code must be one of INVALID, LEFT, RIGHT, TOP, etc.
-     * If the code is not found default to INVALID.
-     */
+	/**
+     * Return the cursor for a drop scenario, as identified by code. Code must be one of INVALID,
+     * LEFT, RIGHT, TOP, etc. If the code is not found default to INVALID.
+     * 
+     * @param code the code
+     * @return the cursor
+	 */
     public static Cursor getCursor(int code) {
         Display display = Display.getCurrent();
         if (cursors[code] == null) {
@@ -145,6 +149,7 @@ public class DragCursors {
                         .getImageDescriptor(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_MASK);
                 cursors[FASTVIEW] = new Cursor(Display.getCurrent(), source
                         .getImageData(), mask.getImageData(), 16, 16);
+                break;
             default:
             case INVALID:
                 source = WorkbenchImages
