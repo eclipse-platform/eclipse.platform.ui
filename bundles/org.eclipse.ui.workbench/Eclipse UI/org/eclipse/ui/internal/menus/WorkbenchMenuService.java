@@ -1047,9 +1047,13 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 		
 		if (needsUpdate) {
-			for (Iterator mgrIter = populatedManagers.keySet().iterator(); mgrIter.hasNext();) {
-				ContributionManager mgr = (ContributionManager) mgrIter.next();
-				mgr.update(true);
+			ContributionManager[] managers = (ContributionManager[]) populatedManagers
+					.keySet().toArray(
+							new ContributionManager[populatedManagers.keySet()
+									.size()]);
+			for (int i = 0; i < managers.length; i++) {
+				ContributionManager mgr = managers[i];
+				mgr.update(false);
 			}
 		}
 	}
