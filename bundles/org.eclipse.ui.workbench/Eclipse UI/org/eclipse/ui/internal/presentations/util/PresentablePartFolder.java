@@ -315,8 +315,8 @@ public final class PresentablePartFolder implements IPresentablePartList {
             if (tab != null && getCurrent() == part) {
                 folder.flushToolbarSize();
             }
-            /* falls through */
-        case IPresentablePart.PROP_CONTENT_DESCRIPTION:
+            //$FALL-THROUGH$
+			case IPresentablePart.PROP_CONTENT_DESCRIPTION:
         case IPresentablePart.PROP_PANE_MENU:
         case IPresentablePart.PROP_TITLE:
             if (tab != null) {
