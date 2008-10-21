@@ -750,7 +750,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 		// This field has no decorator
 		label = new Label(main, SWT.LEFT);
 		label.setText(TaskAssistExampleMessages.ExampleDialog_Password);
-		text = new Text(main, SWT.BORDER);
+		text = new Text(main, SWT.BORDER | SWT.PASSWORD);
 		text.setText("******"); //$NON-NLS-1$
 		text.setLayoutData(getFieldGridData());
 		if (showRequiredFieldLabelIndicator) {
