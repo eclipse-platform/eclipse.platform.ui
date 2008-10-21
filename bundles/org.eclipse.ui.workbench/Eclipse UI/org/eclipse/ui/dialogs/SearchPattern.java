@@ -177,7 +177,8 @@ public class SearchPattern {
 			if (camelCaseMatch(stringPattern, text)) {
 				return true;
 			}
-		default:
+			//$FALL-THROUGH$
+			default:
 			return startsWithIgnoreCase(text, stringPattern);
 		}
 	}
@@ -459,7 +460,7 @@ public class SearchPattern {
 			}
 
 			if (iName == nameEnd) {
-				if (iPattern == patternLength) 
+				if (iPattern == patternLength)
 					return true;
 				// We have exhausted name (and not pattern), so it's not a match
 				return false;
@@ -556,32 +557,27 @@ public class SearchPattern {
 	 * Validate compatibility between given string pattern and match rule. <br>
 	 * Optimized (ie. returned match rule is modified) combinations are:
 	 * <ul>
-	 * <li>{@link #RULE_PATTERN_MATCH} without any '*' or '?' in string
-	 * pattern: pattern match bit is unset, </li>
-	 * <li>{@link #RULE_PATTERN_MATCH} and {@link #RULE_PREFIX_MATCH} bits
-	 * simultaneously set: prefix match bit is unset, </li>
-	 * <li>{@link #RULE_PATTERN_MATCH} and {@link #RULE_CAMELCASE_MATCH} bits
-	 * simultaneously set: camel case match bit is unset, </li>
-	 * <li>{@link #RULE_CAMELCASE_MATCH} with invalid combination of uppercase
-	 * and lowercase characters: camel case match bit is unset and replaced with
-	 * prefix match pattern, </li>
-	 * <li>{@link #RULE_CAMELCASE_MATCH} combined with
-	 * {@link #RULE_PREFIX_MATCH} and {@link #RULE_CASE_SENSITIVE} bits is
-	 * reduced to only {@link #RULE_CAMELCASE_MATCH} as Camel Case search is
-	 * already prefix and case sensitive, </li>
+	 * <li>{@link #RULE_PATTERN_MATCH} without any '*' or '?' in string pattern: pattern match bit
+	 * is unset,</li>
+	 * <li>{@link #RULE_PATTERN_MATCH} and {@link #RULE_PREFIX_MATCH} bits simultaneously set:
+	 * prefix match bit is unset,</li>
+	 * <li>{@link #RULE_PATTERN_MATCH} and {@link #RULE_CAMELCASE_MATCH} bits simultaneously set:
+	 * camel case match bit is unset,</li>
+	 * <li>{@link #RULE_CAMELCASE_MATCH} with invalid combination of uppercase and lowercase
+	 * characters: camel case match bit is unset and replaced with prefix match pattern,</li>
+	 * <li>{@link #RULE_CAMELCASE_MATCH} combined with {@link #RULE_PREFIX_MATCH} and
+	 * {@link #RULE_CASE_SENSITIVE} bits is reduced to only {@link #RULE_CAMELCASE_MATCH} as Camel
+	 * Case search is already prefix and case sensitive,</li>
 	 * </ul>
 	 * <br>
 	 * Rejected (ie. returned match rule -1) combinations are:
 	 * <ul>
-	 * <li>{@link #RULE_REGEXP_MATCH} with any other match mode bit set, </li>
+	 * <li>{@link #RULE_PATTERN_MATCH} with any other match mode bit set,</li>
 	 * </ul>
 	 * 
-	 * @param stringPattern
-	 *            The string pattern
-	 * @param matchRule
-	 *            The match rule
-	 * @return Optimized valid match rule or -1 if an incompatibility was
-	 *         detected.
+	 * @param stringPattern The string pattern
+	 * @param matchRule The match rule
+	 * @return Optimized valid match rule or -1 if an incompatibility was detected.
 	 */
 	private int validateMatchRule(String stringPattern, int matchRule) {
 
