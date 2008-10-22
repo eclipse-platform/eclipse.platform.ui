@@ -12,10 +12,13 @@
 package org.eclipse.ui.tests.internal;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.AnimationFeedbackBase;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -91,6 +94,10 @@ public class AnimationEngineTest extends UITestCase {
 	 * @throws InterruptedException
 	 */
 	public void testAnimationEngine() throws InterruptedException {
+		// Ensure that animations are turned on
+		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, true);
+		
 		feedback = new TestFeedback(shell);
 		engine = new AnimationEngine(feedback, 250, 0);
 		
