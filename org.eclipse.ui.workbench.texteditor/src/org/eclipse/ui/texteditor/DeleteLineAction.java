@@ -14,6 +14,8 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
@@ -57,13 +59,13 @@ public class DeleteLineAction extends TextEditorAction {
 	private IDeleteLineTarget fTarget;
 
 	/**
-	 * Creates a line delimiter conversion action.
-	 *
+	 * Creates a line deletion action.
+	 * 
 	 * @param bundle the resource bundle for UI strings
 	 * @param prefix the prefix for the property keys into <code>bundle</code>
 	 * @param editor the editor
-	 * @param type the line deletion type, must be one of
-	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 * @param type the line deletion type, must be one of <code>WHOLE_LINE</code>,
+	 *            <code>TO_BEGINNING</code> or <code>TO_END</code>
 	 */
 	public DeleteLineAction(ResourceBundle bundle, String prefix, ITextEditor editor, int type) {
 		this(bundle, prefix, editor, type, true);
@@ -85,6 +87,44 @@ public class DeleteLineAction extends TextEditorAction {
 		fType= type;
 		fCopyToClipboard= copyToClipboard;
 		update();
+	}
+
+	/**
+	 * Creates a line deletion action.
+	 * 
+	 * @param editor the editor
+	 * @param type the line deletion type, must be one of <code>WHOLE_LINE</code>,
+	 *            <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 * @param copyToClipboard if <code>true</code>, the contents of the deleted line are copied to
+	 *            the clipboard
+	 * @since 3.5
+	 */
+	public DeleteLineAction(ITextEditor editor, int type, boolean copyToClipboard) {
+		this(EditorMessages.getBundleForConstructedKeys(), getPrefix(type, copyToClipboard), editor, type, copyToClipboard);
+	}
+
+	/**
+	 * Returns the default resource bundle prefix for the given arguments.
+	 * 
+	 * @param type the line deletion type, must be one of <code>WHOLE_LINE</code>,
+	 *            <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 * @param copyToClipboard if <code>true</code>, the contents of the deleted line are copied to
+	 *            the clipboard
+	 * @return the prefix for the property keys into <code>bundle</code>
+	 * @since 3.5
+	 */
+	private static String getPrefix(int type, boolean copyToClipboard) {
+		switch (type) {
+			case WHOLE:
+				return copyToClipboard ? "Editor.CutLine." : "Editor.DeleteLine."; //$NON-NLS-1$ //$NON-NLS-2$
+			case TO_BEGINNING:
+				return copyToClipboard ? "Editor.CutLineToBeginning." : "Editor.DeleteLineToBeginning."; //$NON-NLS-1$ //$NON-NLS-2$
+			case TO_END:
+				return copyToClipboard ? "Editor.CutLineToEnd." : "Editor.DeleteLineToEnd."; //$NON-NLS-1$ //$NON-NLS-2$
+			default:
+				Assert.isLegal(false);
+				return ""; //$NON-NLS-1$
+		}
 	}
 
 	/**
