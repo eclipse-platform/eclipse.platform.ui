@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.RectangleAnimation;
+import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -387,9 +387,9 @@ public class ProgressManagerUtil {
 		Point windowLocation = internalWindow.getShell().getLocation();
 		endPosition.x += windowLocation.x;
 		endPosition.y += windowLocation.y;
-		RectangleAnimation animation = new RectangleAnimation(internalWindow
-				.getShell(), startPosition, endPosition);
-		animation.schedule();
+
+		// animate the progress dialog's removal
+		AnimationEngine.createTweakedAnimation(internalWindow.getShell(), 400, startPosition, endPosition);
 	}
 
 	/**
@@ -416,9 +416,8 @@ public class ProgressManagerUtil {
 		startPosition.x += windowLocation.x;
 		startPosition.y += windowLocation.y;
 
-		RectangleAnimation animation = new RectangleAnimation(internalWindow
-				.getShell(), startPosition, endPosition);
-		animation.schedule();
+		// animate the progress dialog's arrival
+		AnimationEngine.createTweakedAnimation(internalWindow.getShell(), 400, startPosition, endPosition);
 	}
 
 	/**

@@ -239,10 +239,9 @@ public class ViewPane extends PartPane {
 
         Shell shell = window.getShell();
 
-        RectangleAnimation animation = new RectangleAnimation(shell,
-                getParentBounds(), fastViewBar.getLocationOfNextIcon());
-
-        animation.schedule();
+        // Animate the operation
+        AnimationEngine.createTweakedAnimation(shell, 400, getParentBounds(),
+        										fastViewBar.getLocationOfNextIcon());
 
         FastViewManager fvm = getPage().getActivePerspective().getFastViewManager();
         fvm.addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, getViewReference(), true);
@@ -266,10 +265,8 @@ public class ViewPane extends PartPane {
 
         Rectangle finalBounds = getParentBounds();
 
-        RectangleAnimation animation = new RectangleAnimation(shell,
-                initialBounds, finalBounds);
-
-        animation.schedule();
+        // Animate the operation
+        AnimationEngine.createTweakedAnimation(shell, 400, initialBounds, finalBounds);
     }
 
     /**

@@ -15,8 +15,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.tweaklets.Animations;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -28,20 +34,22 @@ import org.eclipse.ui.internal.util.PrefUtil;
  */
 public class AnimationEngine extends Job {
 	public static final int TICK_TIMER = 1;
+	public static final int FRAME_COUNT = 2;
 	public static final int unlimitedDuration = -1;
+
 	private boolean enableAnimations;
-	private Display display;
-	private AnimationFeedbackBase feedbackRenderer;
 	private long startTime;
 	private long curTime;
 	private long prevTime;
 	private int timingStyle = TICK_TIMER;
 	private long frameCount;
-	private int duration;
 	private long stepCount;
-	public static final int FRAME_COUNT = 2;
-	private boolean stopAnimating = false;
+	private boolean animationCanceled = false;
 	private long sleepAmount;
+
+	private Display display;
+	private AnimationFeedbackBase feedbackRenderer;
+	private int duration;
 
 	public AnimationEngine(AnimationFeedbackBase animationFeedback,
 			int durationIn) {
@@ -70,10 +78,17 @@ public class AnimationEngine extends Job {
 			return;
 		}
 
-		stopAnimating = false;
+		animationCanceled = false;
 
 		// Capture parameters
 		display = feedbackRenderer.getAnimationShell().getDisplay();
+		
+		animationFeedback.getAnimationShell().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cancelAnimation();
+			}			
+		});
+		
 		// Don't show the job in monitors
 		setSystem(true);
 
@@ -92,10 +107,13 @@ public class AnimationEngine extends Job {
 	public AnimationFeedbackBase getFeedback() {
 		return feedbackRenderer;
 	}
-	
+
 	private Runnable animationStep = new Runnable() {
 
 		public void run() {
+			if (animationCanceled)
+				return;
+			
 			// Capture time
 			prevTime = curTime;
 			curTime = System.currentTimeMillis();
@@ -110,27 +128,23 @@ public class AnimationEngine extends Job {
 	};
 
 	protected void updateDisplay() {
+		if (animationCanceled)
+			return;
+		
 		feedbackRenderer.renderStep(this);
 	}
 
 	protected boolean isUpdateStep() {
-		if (duration == unlimitedDuration) {
+		if (duration == unlimitedDuration || timingStyle == FRAME_COUNT) {
 			return true;
 		}
-		
-		switch (timingStyle) {
-			case TICK_TIMER:
-				return prevTime != curTime;
-				//for testing purposes
-			case FRAME_COUNT:
-				return true;
-		}
 
-		return false;
+		// Default to 'TICK_TIMER', update when the system timer changes
+		return prevTime != curTime;
 	}
 
 	private boolean done() {
-		return amount() >= 1.0;
+		return animationCanceled || amount() >= 1.0;
 	}
 
 	public double amount() {
@@ -155,9 +169,7 @@ public class AnimationEngine extends Job {
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-
-		// We use preferece value to indicate that the animation should be skipped on this platform.
+		// We use preference value to indicate that the animation should be skipped on this platform.
 		if (!enableAnimations) {
 			return Status.OK_STATUS;
 		}
@@ -166,23 +178,29 @@ public class AnimationEngine extends Job {
 		display.syncExec(new Runnable() {
 			public void run() {
 				// 'jobInit' returns 'false' if it doesn't want to run...
-				stopAnimating = !feedbackRenderer.jobInit(AnimationEngine.this);
+				if (!animationCanceled)
+					animationCanceled = !feedbackRenderer.jobInit(AnimationEngine.this);
 			}
 		});
 
+		if (animationCanceled)
+			return Status.CANCEL_STATUS;
+		
 		// Only start the animation timer -after- we've initialized
 		curTime = startTime = System.currentTimeMillis();
 
-		while (!done() && !stopAnimating) {
+		while (!done() && !animationCanceled) {
 			display.syncExec(animationStep);
+
 			// Don't pin the CPU
 			try {
 				Thread.sleep(sleepAmount);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
 			}
 		}
+
+		if (animationCanceled)
+			return Status.CANCEL_STATUS;
 
 		// We're done, clean up
 		display.syncExec(new Runnable() {
@@ -195,10 +213,22 @@ public class AnimationEngine extends Job {
 	}
 
 	public void cancelAnimation() {
-		stopAnimating = true;
+		animationCanceled = true;
+		feedbackRenderer.dispose();
+		cancel();
 	}
 
 	public long getFrameCount() {
 		return frameCount;
+	}
+	
+	public static void createTweakedAnimation(Shell shell, int duration, Rectangle start, Rectangle end) {
+		RectangleAnimationFeedbackBase feedback = ((Animations) Tweaklets
+				.get(Animations.KEY)).createFeedback(shell);
+		feedback.addStartRect(start);
+		feedback.addEndRect(end);
+		
+		AnimationEngine animation = new AnimationEngine(feedback, 400);
+		animation.schedule();
 	}
 }

@@ -330,11 +330,9 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
          * area...put the trim back in the last location it was in
          */
         private void redock() {
-        	// Since the control might move 'far' we'll provide an animation
+    		// animate the 'redock'
         	Rectangle startRect = DragUtil.getDisplayBounds(draggedTrim.getControl());
-            RectangleAnimation animation = new RectangleAnimation(
-                    windowComposite.getShell(), startRect, initialLocation, 300);
-            animation.schedule();
+    		AnimationEngine.createTweakedAnimation(windowComposite.getShell(), 400, startRect, initialLocation);
 
             dock(initialAreaId, initialInsertBefore);
         }

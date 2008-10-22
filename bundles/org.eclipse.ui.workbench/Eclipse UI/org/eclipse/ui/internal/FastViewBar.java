@@ -898,11 +898,8 @@ public class FastViewBar implements IWindowTrim {
                 ViewPane pane = (ViewPane) ((WorkbenchPartReference) selectedView)
                         .getPane();
 
-                RectangleAnimation animation = new RectangleAnimation(
-                        window.getShell(), startBounds, pane
-                                .getParentBounds());
-
-                animation.schedule();
+        		// animate the view's relocation
+        		AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, pane.getParentBounds());
             }
         }
     }
