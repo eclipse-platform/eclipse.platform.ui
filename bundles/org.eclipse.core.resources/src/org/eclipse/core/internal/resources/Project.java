@@ -512,7 +512,7 @@ public class Project extends Container implements IProject {
 						if (!exists(flags, true) || !isOpen(flags))
 							return;
 						workspace.beginOperation(true);
-						workspace.aboutToBuild(this, trigger);
+						workspace.aboutToBuild(Project.this, trigger);
 					} finally {
 						workspace.endOperation(rule, false, innerMonitor);
 					}
