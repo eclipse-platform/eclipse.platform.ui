@@ -30,6 +30,9 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -197,7 +200,7 @@ public class InstallationDialog extends Dialog {
 	}
 
 	private void createToolbar(Composite composite) {
-		toolbarManager = new ToolBarManager(SWT.BORDER);
+		toolbarManager = new ToolBarManager(SWT.NONE);
 		toolbarManager.createControl(composite);
 		ToolBar toolbar = toolbarManager.getControl();
 		{
@@ -319,6 +322,9 @@ class ButtonManager extends ContributionManager {
 	public void update(boolean force) {
 		if (composite == null || composite.isDisposed())
 			return;
+		GC metricsGC = new GC(composite);
+		FontMetrics metrics = metricsGC.getFontMetrics();
+		metricsGC.dispose();
 		IContributionItem[] items = getItems();
 		Control[] children = composite.getChildren();
 
@@ -332,11 +338,22 @@ class ButtonManager extends ContributionManager {
 			IContributionItem item = items[i];
 			if (item.isVisible()) {
 				item.fill(composite);
+				children = composite.getChildren();
+				Control itemControl = children[children.length - 1];
+				setButtonLayoutData(metrics, itemControl);
 				visibleChildren++;
 			}
 		}
 		GridLayout compositeLayout = (GridLayout) composite.getLayout();
 		compositeLayout.numColumns = visibleChildren;
 		composite.layout(true);
+	}
+	
+	protected void setButtonLayoutData(FontMetrics metrics, Control button) {
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		int widthHint = Dialog.convertHorizontalDLUsToPixels(metrics, IDialogConstants.BUTTON_WIDTH);
+		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		data.widthHint = Math.max(widthHint, minSize.x);
+		button.setLayoutData(data);
 	}
 }
