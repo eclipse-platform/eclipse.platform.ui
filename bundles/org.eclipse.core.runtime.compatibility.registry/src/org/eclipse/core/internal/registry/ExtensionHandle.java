@@ -17,7 +17,7 @@ import org.osgi.framework.Bundle;
 /**
  * This class contains only compatibility-specific code.
  * 
- * @deprecated marked as deprecated to supress warnings
+ * @deprecated marked as deprecated to suppress warnings
  */
 public class ExtensionHandle extends BaseExtensionHandle {
 

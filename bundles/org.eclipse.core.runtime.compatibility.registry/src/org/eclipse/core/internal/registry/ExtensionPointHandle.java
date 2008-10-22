@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 /**
  * This class contains only compatibility-specific code.
  * 
- * @deprecated marked as deprecated to supress warnings
+ * @deprecated marked as deprecated to suppress warnings
  */
 public class ExtensionPointHandle extends BaseExtensionPointHandle {
 
