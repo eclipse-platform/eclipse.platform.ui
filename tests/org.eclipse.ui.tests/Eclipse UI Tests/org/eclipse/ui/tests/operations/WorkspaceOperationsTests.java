@@ -1105,6 +1105,19 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Marker should not exist at project level", testProject.findMarkers(IMarker.BOOKMARK, false, IResource.DEPTH_ZERO).length == 0);
 		assertTrue("Marker should have been restored in child file", testFileWithContent.findMarkers(IMarker.BOOKMARK, false, IResource.DEPTH_ZERO).length == 1);
 	}
+	
+	public void test201441() throws ExecutionException, CoreException {
+		String utf8 = "UTF-8";
+		// set the charset on the project explicitly
+		testProject.setDefaultCharset(utf8, getMonitor());
+		DeleteResourcesOperation op = new DeleteResourcesOperation(
+				new IResource[] { testProject }, "testProjectDelete", false);
+		execute(op);
+		assertFalse("Project delete failed", testProject.exists());
+		undo();
+		assertTrue("Project recreation failed", testProject.exists());
+		assertEquals("Character set not restored", testProject.getDefaultCharset(), utf8);
+	}
 
 	public void testProjectClosedDeleteUndoRedo() throws ExecutionException,
 			CoreException {
