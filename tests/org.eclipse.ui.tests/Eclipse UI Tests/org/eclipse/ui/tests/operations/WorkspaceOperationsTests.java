@@ -1068,26 +1068,42 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Project content was altered on redo rename", snap.isValid());
 	}
 
-	public void testProjectDeleteUndoRedo() throws ExecutionException {
+	public void testProjectDeleteUndoRedo() throws ExecutionException, CoreException {
+		ProjectSnapshot snap = new ProjectSnapshot(testProject);
+		
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
 				new IResource[] { testProject }, "testProjectDelete", false);
 		execute(op);
 		assertFalse("Project delete failed", testProject.exists());
 		undo();
 		assertTrue("Project recreation failed", testProject.exists());
-		// Ideally we could run this test everytime, but it fails intermittently
-		// because opening the recreated project occurs in the background, and
-		// the creation of the workspace representation for the disk contents
-		// may not have happened yet. This test always passes under debug where
-		// timing can be controlled.
-		// ***********
-		// assertTrue("Project content was altered on undo", snap.isValid());
-		// ************
+		// force a refresh so that the project is in sync with the file system.  Normally the
+		// project opens in the background, so without this refresh we may or may not have
+		// the contents yet.
+		testProject.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		assertTrue("Project content was altered on undo", snap.isValid());
 		redo();
 		assertFalse("Redo delete failed", testProject.exists());
 		// We undo again so that the project will exist during teardown and
 		// get cleaned up. Otherwise some content is left on disk.
 		undo();
+	}
+	
+	public void test223956() throws ExecutionException, CoreException {
+		// put a marker on a file contained in the test project
+		Map[] attrs = new Map[] { getInitialMarkerAttributes()};
+		CreateMarkersOperation markerCreate = new CreateMarkersOperation(new String[] { IMarker.BOOKMARK }, attrs,
+				new IFile[] { testFileWithContent},
+				"Test bug 223956");
+		execute(markerCreate);
+		DeleteResourcesOperation op = new DeleteResourcesOperation(
+				new IResource[] { testProject }, "testProjectDelete", false);
+		execute(op);
+		assertFalse("Project delete failed", testProject.exists());
+		undo();
+		assertTrue("Project recreation failed", testProject.exists());
+		assertTrue("Marker should not exist at project level", testProject.findMarkers(IMarker.BOOKMARK, false, IResource.DEPTH_ZERO).length == 0);
+		assertTrue("Marker should have been restored in child file", testFileWithContent.findMarkers(IMarker.BOOKMARK, false, IResource.DEPTH_ZERO).length == 1);
 	}
 
 	public void testProjectClosedDeleteUndoRedo() throws ExecutionException,

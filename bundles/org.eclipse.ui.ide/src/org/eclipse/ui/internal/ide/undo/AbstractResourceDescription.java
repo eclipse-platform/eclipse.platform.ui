@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.ide.undo.ResourceDescription;
 
 /**
@@ -77,9 +78,12 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 		}
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ide.undo.ResourceDescription#createResource(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ide.undo.ResourceDescription#createResource(org.eclipse
+	 * .core.runtime.IProgressMonitor)
 	 */
 	public IResource createResource(IProgressMonitor monitor)
 			throws CoreException {
@@ -89,7 +93,9 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 		return resource;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ide.undo.ResourceDescription#isValid()
 	 */
 	public boolean isValid() {
@@ -105,7 +111,8 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 	 *            the newly created resource
 	 * @throws CoreException
 	 */
-	protected void restoreResourceAttributes(IResource resource) throws CoreException {
+	protected void restoreResourceAttributes(IResource resource)
+			throws CoreException {
 		if (modificationStamp != IResource.NULL_STAMP) {
 			resource.revertModificationStamp(modificationStamp);
 		}
@@ -116,9 +123,20 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 			resource.setResourceAttributes(resourceAttributes);
 		}
 		if (markerDescriptions != null) {
+			boolean refreshedResource = false;
 			for (int i = 0; i < markerDescriptions.length; i++) {
-				markerDescriptions[i].resource = resource;
-				markerDescriptions[i].createMarker();
+				if (markerDescriptions[i].resource.exists())
+					markerDescriptions[i].createMarker();
+				else if (!refreshedResource) {
+					// the marker may have been attached to a child resource. At
+					// this point we must sync the resource with the local file
+					// system before giving up.
+					resource.refreshLocal(IResource.DEPTH_INFINITE,
+							new NullProgressMonitor());
+					refreshedResource = true;
+					if (markerDescriptions[i].resource.exists())
+						markerDescriptions[i].createMarker();
+				}
 			}
 		}
 	}
@@ -130,7 +148,9 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ide.undo.ResourceDescription#verifyExistence(boolean)
 	 */
 	public boolean verifyExistence(boolean checkMembers) {
