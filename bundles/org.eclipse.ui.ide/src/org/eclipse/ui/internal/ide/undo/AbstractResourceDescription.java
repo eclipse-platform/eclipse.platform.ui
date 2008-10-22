@@ -19,7 +19,6 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.ide.undo.ResourceDescription;
 
 /**
@@ -123,20 +122,9 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 			resource.setResourceAttributes(resourceAttributes);
 		}
 		if (markerDescriptions != null) {
-			boolean refreshedResource = false;
 			for (int i = 0; i < markerDescriptions.length; i++) {
 				if (markerDescriptions[i].resource.exists())
 					markerDescriptions[i].createMarker();
-				else if (!refreshedResource) {
-					// the marker may have been attached to a child resource. At
-					// this point we must sync the resource with the local file
-					// system before giving up.
-					resource.refreshLocal(IResource.DEPTH_INFINITE,
-							new NullProgressMonitor());
-					refreshedResource = true;
-					if (markerDescriptions[i].resource.exists())
-						markerDescriptions[i].createMarker();
-				}
 			}
 		}
 	}
