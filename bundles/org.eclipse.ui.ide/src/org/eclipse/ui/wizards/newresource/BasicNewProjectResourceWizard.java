@@ -232,12 +232,12 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 				CreateProjectOperation op = new CreateProjectOperation(
 						description, ResourceMessages.NewProject_windowTitle);
 				try {
-					PlatformUI.getWorkbench().getOperationSupport()
-							.getOperationHistory().execute(
-									op,
-									monitor,
-									WorkspaceUndoUtil
-											.getUIInfoAdapter(getShell()));
+					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
+					// directly execute the operation so that the undo state is
+					// not preserved.  Making this undoable resulted in too many 
+					// accidental file deletions.
+					op.execute(monitor, WorkspaceUndoUtil
+						.getUIInfoAdapter(getShell()));
 				} catch (ExecutionException e) {
 					throw new InvocationTargetException(e);
 				}

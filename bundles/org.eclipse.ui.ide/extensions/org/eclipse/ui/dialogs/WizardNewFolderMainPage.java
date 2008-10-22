@@ -319,12 +319,12 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 						newFolderHandle, linkTargetPath,
 						IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
 				try {
-					PlatformUI.getWorkbench().getOperationSupport()
-							.getOperationHistory().execute(
-									op,
-									monitor,
-									WorkspaceUndoUtil
-											.getUIInfoAdapter(getShell()));
+					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
+					// directly execute the operation so that the undo state is
+					// not preserved.  Making this undoable can result in accidental
+					// folder (and file) deletions.
+					op.execute(monitor, WorkspaceUndoUtil
+						.getUIInfoAdapter(getShell()));
 				} catch (final ExecutionException e) {
 					getContainer().getShell().getDisplay().syncExec(
 							new Runnable() {

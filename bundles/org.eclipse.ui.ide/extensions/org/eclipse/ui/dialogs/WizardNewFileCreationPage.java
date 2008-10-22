@@ -103,10 +103,11 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 
 	// initial value stores
 	private String initialFileName;
-	
+
 	/**
-	 * The file extension to use for this page's file name field when
-	 * it does not exist yet.
+	 * The file extension to use for this page's file name field when it does
+	 * not exist yet.
+	 * 
 	 * @see WizardNewFileCreationPage#setFileExtension(String)
 	 * @since 3.3
 	 */
@@ -115,7 +116,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	private IPath initialContainerFullPath;
 
 	private boolean initialAllowExistingResources = false;
-	
+
 	/**
 	 * Height of the "advanced" linked resource group. Set when the advanced
 	 * group is first made visible.
@@ -355,12 +356,12 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 						linkTargetPath, initialContents,
 						IDEWorkbenchMessages.WizardNewFileCreationPage_title);
 				try {
-					PlatformUI.getWorkbench().getOperationSupport()
-							.getOperationHistory().execute(
-									op,
-									monitor,
-									WorkspaceUndoUtil
-											.getUIInfoAdapter(getShell()));
+					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
+					// directly execute the operation so that the undo state is
+					// not preserved.  Making this undoable resulted in too many 
+					// accidental file deletions.
+					op.execute(monitor, WorkspaceUndoUtil
+							.getUIInfoAdapter(getShell()));
 				} catch (final ExecutionException e) {
 					getContainer().getShell().getDisplay().syncExec(
 							new Runnable() {
@@ -463,10 +464,11 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 
 	/**
 	 * Returns the current file name as entered by the user, or its anticipated
-	 * initial value.
-	 * <br><br>
-	 * The current file name will include the file extension if 
-	 * the preconditions are met.
+	 * initial value. <br>
+	 * <br>
+	 * The current file name will include the file extension if the
+	 * preconditions are met.
+	 * 
 	 * @see WizardNewFileCreationPage#setFileExtension(String)
 	 * 
 	 * @return the file name, its anticipated initial value, or
@@ -479,19 +481,19 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 
 		return resourceGroup.getResource();
 	}
-	
+
 	/**
 	 * Returns the file extension to use when creating the new file.
 	 * 
 	 * @return the file extension or <code>null</code>.
 	 * @see WizardNewFileCreationPage#setFileExtension(String)
-	 * @since 3.3 
+	 * @since 3.3
 	 */
 	public String getFileExtension() {
 		if (resourceGroup == null) {
 			return initialFileExtension;
 		}
-		return resourceGroup.getResourceExtension();		
+		return resourceGroup.getResourceExtension();
 	}
 
 	/**
@@ -589,14 +591,14 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	}
 
 	/**
-	* Sets the flag indicating whether existing resources are permitted to be
-	* specified on this page.
-	* 
-	* @param value
-	*            <code>true</code> if existing resources are permitted, and
-	*            <code>false</code> otherwise
-	* @since 3.4
-	*/
+	 * Sets the flag indicating whether existing resources are permitted to be
+	 * specified on this page.
+	 * 
+	 * @param value
+	 *            <code>true</code> if existing resources are permitted, and
+	 *            <code>false</code> otherwise
+	 * @since 3.4
+	 */
 	public void setAllowExistingResources(boolean value) {
 		if (resourceGroup == null) {
 			initialAllowExistingResources = value;
@@ -636,26 +638,23 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	}
 
 	/**
-	 * Set the only file extension allowed for this page's file name field.
-	 * If this page's controls do not exist yet, store it for future use.
-	 * <br><br>
-	 * If a file extension is specified, then it will always be 
-	 * appended with a '.' to the text from the file name field for 
-	 * validation when the following conditions are met:
-	 * <br><br>
-	 * (1) File extension length is greater than 0
+	 * Set the only file extension allowed for this page's file name field. If
+	 * this page's controls do not exist yet, store it for future use. <br>
 	 * <br>
-	 * (2) File name field text length is greater than 0
+	 * If a file extension is specified, then it will always be appended with a
+	 * '.' to the text from the file name field for validation when the
+	 * following conditions are met: <br>
 	 * <br>
-	 * (3) File name field text does not already end with a '.' and the file 
-	 *     extension specified (case sensitive)
-	 * <br><br>
-	 * The file extension will not be reflected in the actual file
-	 * name field until the file name field loses focus.
+	 * (1) File extension length is greater than 0 <br>
+	 * (2) File name field text length is greater than 0 <br>
+	 * (3) File name field text does not already end with a '.' and the file
+	 * extension specified (case sensitive) <br>
+	 * <br>
+	 * The file extension will not be reflected in the actual file name field
+	 * until the file name field loses focus.
 	 * 
 	 * @param value
-	 *             The file extension without the '.' prefix 
-	 *             (e.g. 'java', 'xml') 
+	 *            The file extension without the '.' prefix (e.g. 'java', 'xml')
 	 * @since 3.3
 	 */
 	public void setFileExtension(String value) {
@@ -665,7 +664,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			resourceGroup.setResourceExtension(value);
 		}
 	}
-	
+
 	/**
 	 * Checks whether the linked resource target is valid. Sets the error
 	 * message accordingly and returns the status.
@@ -733,11 +732,15 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				&& (linkedResourceStatus == null || linkedResourceStatus.isOK())) {
 			setMessage(null);
 			setErrorMessage(null);
-			
-			//perform "resource exists" check if it was skipped in ResourceAndContainerGroup
+
+			// perform "resource exists" check if it was skipped in
+			// ResourceAndContainerGroup
 			if (resourceGroup.getAllowExistingResources()) {
-				String problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_nameExists, getFileName());
-				IPath resourcePath = getContainerFullPath().append(getFileName());
+				String problemMessage = NLS.bind(
+						IDEWorkbenchMessages.ResourceGroup_nameExists,
+						getFileName());
+				IPath resourcePath = getContainerFullPath().append(
+						getFileName());
 				if (workspace.getRoot().getFolder(resourcePath).exists()) {
 					setErrorMessage(problemMessage);
 					valid = false;
@@ -750,8 +753,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		return valid;
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
