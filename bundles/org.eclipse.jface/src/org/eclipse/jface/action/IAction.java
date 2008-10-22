@@ -440,17 +440,25 @@ public interface IAction {
      */
     public void setId(String id);
 
-    /**
-     * Sets the image for this action, as an image descriptor.
-     * <p>
-     * Fires a property change event for the <code>IMAGE</code> property
-     * if the image actually changes as a consequence.
-     * </p>
-     *
-     * @param newImage the image, or <code>null</code> if this 
-     *   action should not have an image
-     * @see #IMAGE
-     */
+	/**
+	 * Sets the image for this action, as an image descriptor.
+	 * <p>
+	 * Fires a property change event for the <code>IMAGE</code> property if the
+	 * image actually changes as a consequence.
+	 * </p>
+	 * <p>
+	 * Note: This operation is a hint and is not supported in all contexts on
+	 * platforms that do not have this concept (for example, Windows NT).
+	 * Furthermore, some platforms (such as GTK), cannot display both a check
+	 * box and an image at the same time. Instead, they hide the image and
+	 * display the check box.
+	 * </p>
+	 * 
+	 * @param newImage
+	 *            the image, or <code>null</code> if this action should not have
+	 *            an image
+	 * @see #IMAGE
+	 */
     public void setImageDescriptor(ImageDescriptor newImage);
 
     /**
