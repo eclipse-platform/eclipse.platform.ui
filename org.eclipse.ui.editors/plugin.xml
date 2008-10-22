@@ -436,7 +436,7 @@
          <action
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                id="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"
+               class="org.eclipse.ui.texteditor.GotoLastEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
                disabledIcon="$nl$/icons/full/dtool16/last_edit_pos.gif"
                icon="$nl$/icons/full/etool16/last_edit_pos.gif"

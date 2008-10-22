@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor;
+package org.eclipse.ui.texteditor;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -25,16 +25,15 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.texteditor.EditPosition;
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
-import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * Goes to last edit position.
- *
+ * 
  * @see org.eclipse.ui.internal.texteditor.EditPosition
- * @since 2.1
+ * @since 3.5
  */
 public class GotoLastEditPositionAction extends Action implements IWorkbenchWindowActionDelegate {
 

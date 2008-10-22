@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 * @return	the last edit position or <code>null</code>	if there is no last edit position
 	 * @see EditPosition
 	 */
-	EditPosition getLastEditPosition() {
+	public EditPosition getLastEditPosition() {
 		return fLastEditPosition;
 	}
 
@@ -124,7 +124,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 *
 	 * @param action the goto last edit position action
 	 */
-	void addLastEditPositionDependentAction(IAction action) {
+	public void addLastEditPositionDependentAction(IAction action) {
 		if (fLastEditPosition != null)
 			return;
 		if (fLastEditPositionDependentActions == null)
@@ -137,7 +137,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 *
 	 * @param action the action that depends on the last edit position
 	 */
-	void removeLastEditPositionDependentAction(IAction action) {
+	public void removeLastEditPositionDependentAction(IAction action) {
 		if (fLastEditPosition != null)
 			return;
 		if (fLastEditPositionDependentActions != null)
