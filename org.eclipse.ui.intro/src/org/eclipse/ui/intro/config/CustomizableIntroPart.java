@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ import org.eclipse.ui.part.IntroPart;
  * clicked, signaling that the standby part is no longer needed.
  */
 public final class CustomizableIntroPart extends IntroPart implements
-        IIntroConstants, IRegistryChangeListener {
+         IRegistryChangeListener {
 
     private IntroPartPresentation presentation;
     private StandbyPart standbyPart;
@@ -157,7 +157,7 @@ public final class CustomizableIntroPart extends IntroPart implements
             presentation = model.getPresentation();
             if (presentation != null)
                 presentation.init(this, getMemento(memento,
-                    MEMENTO_PRESENTATION_TAG));
+                    IIntroConstants.MEMENTO_PRESENTATION_TAG));
 
             // standby part is not created here for performance.
 
@@ -217,16 +217,16 @@ public final class CustomizableIntroPart extends IntroPart implements
     private boolean needToRestoreStandby(IMemento memento) {
         // If we have a standby memento, it means we closed with standby open,
         // and so recreate it.
-        IMemento standbyMemento = getMemento(memento, MEMENTO_STANDBY_PART_TAG);
+        IMemento standbyMemento = getMemento(memento, IIntroConstants.MEMENTO_STANDBY_PART_TAG);
         if (standbyMemento == null)
             return false;
-        String restore = standbyMemento.getString(MEMENTO_RESTORE_ATT);
+        String restore = standbyMemento.getString(IIntroConstants.MEMENTO_RESTORE_ATT);
         if (restore == null)
             return false;
         String cachedStandbyPart = standbyMemento
-            .getString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
+            .getString(IIntroConstants.MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
         if (cachedStandbyPart != null
-                && cachedStandbyPart.equals(EMPTY_STANDBY_CONTENT_PART))
+                && cachedStandbyPart.equals(IIntroConstants.EMPTY_STANDBY_CONTENT_PART))
             return false;
 
         return cachedStandbyPart != null ? true : false;
@@ -279,7 +279,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * @return
      */
     private boolean isStandbyPartNeeded() {
-        return container.getData(SHOW_STANDBY_PART) == null ? false : true;
+        return container.getData(IIntroConstants.SHOW_STANDBY_PART) == null ? false : true;
     }
 
     /*
@@ -288,10 +288,10 @@ public final class CustomizableIntroPart extends IntroPart implements
      */
     private void createStandbyPart() {
         standbyPart = new StandbyPart(model);
-        standbyPart.init(this, getMemento(memento, MEMENTO_STANDBY_PART_TAG));
+        standbyPart.init(this, getMemento(memento, IIntroConstants.MEMENTO_STANDBY_PART_TAG));
         standbyPart.createPartControl((Composite) getControl());
         restoreStandby = false;
-        container.setData(SHOW_STANDBY_PART, "true"); //$NON-NLS-1$
+        container.setData(IIntroConstants.SHOW_STANDBY_PART, "true"); //$NON-NLS-1$
     }
 
     private void handleSetFocus(boolean standby) {
@@ -392,13 +392,13 @@ public final class CustomizableIntroPart extends IntroPart implements
             restorePresentation = true;
 
         IMemento presentationMemento = memento
-            .createChild(MEMENTO_PRESENTATION_TAG);
+            .createChild(IIntroConstants.MEMENTO_PRESENTATION_TAG);
         IMemento standbyPartMemento = memento
-            .createChild(MEMENTO_STANDBY_PART_TAG);
+            .createChild(IIntroConstants.MEMENTO_STANDBY_PART_TAG);
         if (restorePresentation)
-            presentationMemento.putString(MEMENTO_RESTORE_ATT, "true"); //$NON-NLS-1$
+            presentationMemento.putString(IIntroConstants.MEMENTO_RESTORE_ATT, "true"); //$NON-NLS-1$
         else
-            standbyPartMemento.putString(MEMENTO_RESTORE_ATT, "true"); //$NON-NLS-1$
+            standbyPartMemento.putString(IIntroConstants.MEMENTO_RESTORE_ATT, "true"); //$NON-NLS-1$
         if (presentation != null)
             presentation.saveState(presentationMemento);
         if (standbyPart != null)
