@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -164,18 +164,6 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * Returns all keys in this table as an array.
-	 */
-	public String[] keys() {
-		String[] result = new String[count];
-		int next = 0;
-		for (int i = 0; i < elements.length; i = i + 2)
-			if (elements[i] != null)
-				result[next++] = (String) elements[i];
-		return result;
-	}
-
-	/**
 	 * @see Map#keySet() 
 	 * 
 	 * Note: This implementation does not conform properly to the
@@ -267,21 +255,6 @@ public class ObjectMap implements Map {
 			}
 		}
 		return null;
-	}
-
-	/* (non-Javadoc
-	 * Method declared on IStringPoolParticipant
-	 */
-	public void shareStrings(StringPool set) {
-		//copy elements for thread safety
-		Object[] array = elements;
-		if (array == null)
-			return;
-		for (int i = 0; i < array.length; i++) {
-			Object o = array[i];
-			if (o instanceof String)
-				array[i] = set.add((String) o);
-		}
 	}
 
 	/**
