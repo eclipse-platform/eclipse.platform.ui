@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River - Pawel Piech - Drag/Drop to Expressions View (Bug 184057)
+ *     Wind River - Pawel Piech - Fix viewer input race condition (Bug 234908)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.expression;
 
@@ -15,6 +16,7 @@ package org.eclipse.debug.internal.ui.views.expression;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.variables.AvailableLogicalStructuresAction;
 import org.eclipse.debug.internal.ui.views.variables.SelectionDragAdapter;
@@ -92,6 +94,19 @@ public class ExpressionView extends VariablesView {
         }
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#viewerInputUpdateComplete(IViewerInputUpdate)
+     */
+	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
+        if (update.getElement() != null) {
+            setViewerInput(update.getInputElement());
+        } else {
+            setViewerInput(DebugPlugin.getDefault().getExpressionManager());
+        }
+        updateAction(VARIABLES_FIND_ELEMENT_ACTION);
+        updateAction(FIND_ACTION);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
 	 */

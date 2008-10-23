@@ -11,7 +11,8 @@
  *     Wind River - Pawel Piech - Drag/Drop to Expressions View (Bug 184057)
  * 	   Wind River - Pawel Piech - Busy status while updates in progress (Bug 206822)
  * 	   Wind River - Pawel Piech - NPE when closing the Variables view (Bug 213719)
- *******************************************************************************/
+ *     Wind River - Pawel Piech - Fix viewer input race condition (Bug 234908)
+******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
 import java.io.ByteArrayInputStream;
@@ -166,10 +167,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private IViewerInputRequestor fRequester = new IViewerInputRequestor() {
 		public void viewerInputComplete(IViewerInputUpdate update) {
 			if (!update.isCanceled()) {
-				setViewerInput(update.getInputElement());
-				showViewer();
-				updateAction(VARIABLES_FIND_ELEMENT_ACTION);
-				updateAction(FIND_ACTION);
+			    viewerInputUpdateComplete(update);
 			}
 		}
 	};
@@ -294,28 +292,40 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	}
 
 	/**
+	 * Called when the viewer input update is completed.  Unlike 
+	 * {@link #setViewerInput(Object)}, it allows overriding classes
+	 * to examine the context for which the update was calculated.
+	 * 
+	 * @param update Completed viewer input update.
+	 */
+	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
+	    setViewerInput(update.getInputElement());
+        updateAction(VARIABLES_FIND_ELEMENT_ACTION);
+        updateAction(FIND_ACTION);
+	}
+	
+	/**
 	 * Sets the input to the viewer
 	 * @param context the object context
 	 */
 	protected void setViewerInput(Object context) {
-		
-		if (context == null) {
-			// Clear the detail pane
-			fDetailPane.display(null);
-		}
-		
-		Object current = getViewer().getInput();
-		
-		if (current == null && context == null) {
-			return;
-		}
+        if (context == null) {
+            // Clear the detail pane
+            fDetailPane.display(null);
+        }
+        
+        Object current = getViewer().getInput();
+        
+        if (current == null && context == null) {
+            return;
+        }
 
-		if (current != null && current.equals(context)) {
-			return;
-		}
-		
-		showViewer();
-		getViewer().setInput(context);
+        if (current != null && current.equals(context)) {
+            return;
+        }
+        
+        showViewer();
+        getViewer().setInput(context);		
 	}
 	
 	/**
@@ -984,7 +994,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
 	 */
 	protected void becomesHidden() {
-		setViewerInput(null);
+        fInputService.resolveViewerInput(null);
 		super.becomesHidden();
 	}
 
