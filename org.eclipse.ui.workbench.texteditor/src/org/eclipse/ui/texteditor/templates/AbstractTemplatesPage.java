@@ -637,7 +637,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * @return a configured source viewer
 	 */
 	protected SourceViewer createPatternViewer(Composite parent) {
-		SourceViewer viewer= new SourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		SourceViewer viewer= new SourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL);
 		SourceViewerConfiguration configuration= new SourceViewerConfiguration();
 		viewer.configure(configuration);
 		IDocument document= new Document();
