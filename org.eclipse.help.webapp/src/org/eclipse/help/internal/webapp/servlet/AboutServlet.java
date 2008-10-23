@@ -33,9 +33,20 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 public class AboutServlet extends HttpServlet {
+
+	private static final int NUMBER_OF_COLUMNS = 4;
 	
 	private class PluginDetails {
-		public String[] columns = new String[4];
+		private String[] columns = new String[4];
+		
+		PluginDetails(String[] columns) {
+			this.columns = columns;
+			for (int i = 0 ; i < NUMBER_OF_COLUMNS; i++) {
+				if (columns[i] == null) {
+					columns[i] = ""; //$NON-NLS-1$
+				}
+			}
+		}
 	}
 	
 	private class PluginComparator implements Comparator {
@@ -99,11 +110,13 @@ public class AboutServlet extends HttpServlet {
 		}
         Comparator pluginComparator = new PluginComparator(sortColumn);
 		Collections.sort(plugins, pluginComparator );
-		PluginDetails header = new PluginDetails();
-		header.columns[0] = WebappResources.getString("provider", locale); //$NON-NLS-1$
-		header.columns[1] = WebappResources.getString("pluginName", locale); //$NON-NLS-1$
-		header.columns[2] = WebappResources.getString("version", locale); //$NON-NLS-1$
-		header.columns[3] = WebappResources.getString("pluginId", locale); //$NON-NLS-1$
+		String[] headerColumns = new String[]{
+		    WebappResources.getString("provider", locale), //$NON-NLS-1$
+		    WebappResources.getString("pluginName", locale), //$NON-NLS-1$
+		    WebappResources.getString("version", locale), //$NON-NLS-1$
+		    WebappResources.getString("pluginId", locale) //$NON-NLS-1$
+		};
+		PluginDetails header = new PluginDetails(headerColumns);
 		buf.append(headerRowFor(header));
         for (Iterator iter = plugins.iterator(); iter.hasNext();) {
         	PluginDetails details = (PluginDetails) iter.next();
@@ -140,15 +153,13 @@ public class AboutServlet extends HttpServlet {
 	}
 
 	private Object pluginDetails(Bundle bundle) {
-		PluginDetails details = new PluginDetails();
-		String vendor = getResourceString(bundle, Constants.BUNDLE_VENDOR);
-	    String name =   getResourceString(bundle, Constants.BUNDLE_NAME);
-	    String version = getResourceString(bundle, Constants.BUNDLE_VERSION);
-	    String plugin = bundle.getSymbolicName();
-	    details.columns[0] = vendor;
-	    details.columns[1] = name;
-	    details.columns[2] = version;
-	    details.columns[3] = plugin;
+		String[] values = new String[] {
+		    getResourceString(bundle, Constants.BUNDLE_VENDOR),
+	        getResourceString(bundle, Constants.BUNDLE_NAME),
+	        getResourceString(bundle, Constants.BUNDLE_VERSION),
+	        bundle.getSymbolicName()
+		};
+		PluginDetails details = new PluginDetails(values);
 	    
 		return details;
 	}
