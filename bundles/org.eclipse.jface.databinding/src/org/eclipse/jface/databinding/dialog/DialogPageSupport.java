@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *         (through WizardPageSupport.java)
  *     Matthew Hall - initial API and implementation (bug 239900)
+ *     Matthew Hall - bug 237856
+ *     Ovidio Mallo - bug 237856
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.dialog;
@@ -21,6 +23,8 @@ import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -148,7 +152,14 @@ public class DialogPageSupport {
 				handleStatusChanged();
 			}
 		});
+		aggregateStatus.addStaleListener(new IStaleListener() {
+			public void handleStale(StaleEvent staleEvent) {
+				currentStatusStale = true;
+				handleStatusChanged();
+			}
+		});
 		currentStatus = (IStatus) aggregateStatus.getValue();
+		currentStatusStale = aggregateStatus.isStale();
 		handleStatusChanged();
 		dbc.getValidationStatusProviders().addListChangeListener(
 				validationStatusProvidersListener);
