@@ -583,16 +583,13 @@ public class TitleAreaDialog extends TrayDialog {
 		titleAreaImage = newTitleImage;
 		if (titleImageLabel != null) {
 			titleImageLabel.setImage(newTitleImage);
-			titleImageLabel.setVisible(newTitleImage != null);
-			if (newTitleImage != null) {
-				determineTitleImageLargest();
-				Control top;
-				if (titleImageLargest)
-					top = titleImageLabel;
-				else
-					top = messageLabel;
-				resetWorkAreaAttachments(top);
-			}
+			determineTitleImageLargest();
+			Control top;
+			if (titleImageLargest)
+				top = titleImageLabel;
+			else
+				top = messageLabel;
+			resetWorkAreaAttachments(top);
 		}
 	}
 
