@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.RectangleAnimation;
+import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -498,8 +498,7 @@ public class IntroLaunchBar implements IWindowTrim {
 			Rectangle endBounds = Geometry.toDisplay(cpart.getControl().getParent(), cpart.getControl()
 					.getBounds());
 
-			RectangleAnimation animation = new RectangleAnimation(window.getShell(), startBounds, endBounds);
-			animation.schedule();
+			//AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds); // TODO uncomment, see Bug 251869 
 		}
 		dispose();
 		window.getShell().layout();

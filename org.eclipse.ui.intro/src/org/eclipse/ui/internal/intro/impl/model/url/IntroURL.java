@@ -31,7 +31,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.RectangleAnimation;
+import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -674,9 +674,7 @@ public class IntroURL implements IIntroURL {
         Rectangle endBounds = Geometry.toDisplay(launchBar.getControl()
             .getParent(), launchBar.getControl().getBounds());
 
-        RectangleAnimation animation = new RectangleAnimation(
-            window.getShell(), startBounds, endBounds);
-        animation.schedule();
+		//AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds); // TODO uncomment, see Bug 251869 
         return true;
     }
 }
