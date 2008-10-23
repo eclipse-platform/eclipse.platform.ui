@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River - Pawel Piech - Added coalescing of label updates (bug 247575).
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +75,27 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	 * Label listeners
 	 */
 	private ListenerList fLabelListeners = new ListenerList();
+	
+	/**
+	 * Updates waiting to be sent to the label provider.  The map contains
+	 * lists of updates, keyed using the provider. 
+     * <p>
+     * Note: this variable should only be accessed inside a synchronized section
+     * using the enclosing label provider instance.
+     * </p>
+	 */
+	private Map fPendingUpdates = new HashMap();
+	
+	/**
+	 * A job that will send the label update requests.
+	 * This variable allows the job to be canceled and re-scheduled if 
+	 * new updates are requested.  
+	 * <p>
+	 * Note: this variable should only be accessed inside a synchronized section
+	 * using the enclosing label provider instance.
+	 * </p>
+	 */
+	private UIJob fPendingUpdatesJob;
 	
 	/**
 	 * List of updates in progress
@@ -162,7 +185,13 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 				ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
 				currentUpdate.cancel();			
 			}
-		}		
+		}
+		synchronized (this) {
+			if (fPendingUpdatesJob != null) {
+				fPendingUpdatesJob.cancel();
+				fPendingUpdatesJob = null;
+			}
+		}
 		Iterator images = fImageCache.values().iterator();
 		while (images.hasNext()) {
 			Image image = (Image) images.next();
@@ -196,11 +225,51 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 		Object element = elementPath.getLastSegment();
 		IElementLabelProvider presentation = ViewerAdapterService.getLabelProvider(element);
 		if (presentation != null) {
-			presentation.update(new ILabelUpdate[]{new LabelUpdate(fViewer.getInput(), elementPath, (TreeItem) row.getItem(), this, visibleColumns, fViewer.getPresentationContext())});
+		    List updates = (List)fPendingUpdates.get(presentation);
+		    if (updates == null) {
+		        updates = new LinkedList();
+		        fPendingUpdates.put(presentation, updates);
+		    }
+		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, (TreeItem) row.getItem(), this, visibleColumns, fViewer.getPresentationContext()));
+		    if (fPendingUpdatesJob != null) {
+		    	fPendingUpdatesJob.cancel();
+		    }
+		    fPendingUpdatesJob = new UIJob(fViewer.getControl().getDisplay(), "Schedule Pending Label Updates") { //$NON-NLS-1$
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					 startRequests(this);
+					 return Status.OK_STATUS;
+				}
+			};
+			fPendingUpdatesJob.setSystem(true);
+			fPendingUpdatesJob.schedule();
 		} else if (element instanceof String) {
 			// for example, expression error messages
 			row.setText(0, (String)element);
 		}		
+	}
+	
+	private void startRequests(UIJob updateJob) {
+	    // Avoid calling providers inside a synchronized section.  Instead 
+	    // copy the updates map into a new variable. 
+	    Map updates = null;
+	    synchronized(this) {
+	        if (updateJob == fPendingUpdatesJob) {
+    	        updates = fPendingUpdates;
+    	        fPendingUpdates = new HashMap();
+    	        fPendingUpdatesJob = null;
+	        }
+	    }
+
+	    if (updates != null) {
+            for (Iterator itr = updates.keySet().iterator(); itr.hasNext();) {
+                IElementLabelProvider presentation = (IElementLabelProvider)itr.next();
+                List list = (List)updates.get(presentation);
+                for (Iterator listItr = list.iterator(); listItr.hasNext();) {
+                    updateStarted((ILabelUpdate)listItr.next());
+                }
+                presentation.update( (ILabelUpdate[])list.toArray(new ILabelUpdate[list.size()]) );
+            }
+	    }
 	}
 	
 	/**
