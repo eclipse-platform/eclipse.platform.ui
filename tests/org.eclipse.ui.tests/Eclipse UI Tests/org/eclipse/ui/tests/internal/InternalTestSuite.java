@@ -17,6 +17,7 @@ import org.eclipse.ui.tests.markers.Bug75909Test;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
 import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
 import org.eclipse.ui.tests.markers.MarkerSupportRegistryTests;
+import org.eclipse.ui.tests.markers.MarkerTesterTest;
 import org.eclipse.ui.tests.markers.MarkerViewTests;
 import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
 
@@ -53,5 +54,6 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(WorkbenchWindowSubordinateSourcesTests.class));
         addTest(new TestSuite(ReopenMenuTest.class));
         addTest(new TestSuite(UtilTest.class));
+		addTest(new TestSuite(MarkerTesterTest.class));
     }
 }

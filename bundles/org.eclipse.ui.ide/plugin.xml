@@ -2207,5 +2207,12 @@
             properties="hasGroups"
             type="org.eclipse.ui.internal.views.markers.ExtendedMarkersView">
       </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.views.markers.MarkerPropertyTester"
+            id="org.eclipse.ui.ide.markerTester"
+            namespace="org.eclipse.ui.ide.marker"
+            properties="severity,type,superType,priority,done,message,resourceType"
+            type="org.eclipse.core.resources.IMarker">
+      </propertyTester>
    </extension>
 </plugin>

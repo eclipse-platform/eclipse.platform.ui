@@ -12,12 +12,10 @@
 package org.eclipse.ui.internal.ide.model;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IMarkerActionFilter;
-import org.eclipse.ui.actions.SimpleWildcardTester;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.views.markers.MarkerPropertyTester;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
@@ -65,82 +63,6 @@ public class WorkbenchMarker extends WorkbenchAdapter implements
      * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
      */
     public boolean testAttribute(Object target, String name, String value) {
-        IMarker marker = (IMarker) target;
-        if (name.equals(TYPE)) {
-            try {
-                return value.equals(marker.getType());
-            } catch (CoreException e) {
-                return false;
-            }
-        } else if (name.equals(SUPER_TYPE)) {
-            try {
-                return marker.isSubtypeOf(value);
-            } catch (CoreException e) {
-                return false;
-            }
-        } else if (name.equals(PRIORITY)) {
-            return testIntegerAttribute(marker, IMarker.PRIORITY, value);
-        } else if (name.equals(SEVERITY)) {
-            return testIntegerAttribute(marker, IMarker.SEVERITY, value);
-        } else if (name.equals(MESSAGE)) {
-            try {
-                String msg = (String) marker.getAttribute(IMarker.MESSAGE);
-                if (msg == null) {
-					return false;
-				}
-                return SimpleWildcardTester.testWildcardIgnoreCase(value, msg);
-            } catch (CoreException e) {
-                return false;
-            }
-        } else if (name.equals(DONE)) {
-            try {
-                value = value.toLowerCase();
-                Boolean done = (Boolean) marker.getAttribute(IMarker.DONE);
-                if (done == null) {
-					return false;
-				}
-                return (done.booleanValue() == value.equals("true"));//$NON-NLS-1$
-            } catch (CoreException e) {
-                return false;
-            }
-        } else if (name.equals(RESOURCE_TYPE)) {
-            int desiredType = 0;
-
-            try {
-                desiredType = Integer.parseInt(value);
-            } catch (NumberFormatException eNumberFormat) {
-            }
-
-            if (!(desiredType == IResource.FILE
-                    || desiredType == IResource.FOLDER
-                    || desiredType == IResource.PROJECT || desiredType == IResource.ROOT)) {
-				return false;
-			}
-
-            return (marker.getResource().getType() & desiredType) > 0;
-        }
-        return false;
-    }
-
-    /**
-     * Returns whether the specific integer attribute matches a value.
-     */
-    private boolean testIntegerAttribute(IMarker marker, String attrName,
-            String value) {
-        Integer i1, i2;
-        try {
-            i1 = (Integer) marker.getAttribute(attrName);
-            if (i1 == null) {
-				return false;
-			}
-        } catch (CoreException e) {
-            return false;
-        }
-        try {
-            i2 = Integer.valueOf(value);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return i1.equals(i2);
+        return MarkerPropertyTester.test((IMarker) target, name, value);
     }
 }
