@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,13 +88,11 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 	}
 
 	/**
-	 * Restore any saved attributed of the specified resource. This method is
-	 * called after the existent resource represented by the receiver has been
-	 * created.
-	 *
-	 * @param resource
-	 *            the newly created resource
-	 * @throws CoreException
+	 * Restore any saved attributed of the specified resource. This method is called after the
+	 * existent resource represented by the receiver has been created.
+	 * 
+	 * @param resource the newly created resource
+	 * @throws CoreException if accessing the resource fails
 	 */
 	protected void restoreResourceAttributes(IResource resource) throws CoreException {
 		if (modificationStamp != IResource.NULL_STAMP) {
@@ -107,9 +105,9 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 			resource.setResourceAttributes(resourceAttributes);
 		}
 		if (markerDescriptions != null) {
-			for (int i= 0; i < markerDescriptions.length; i++) {
-				markerDescriptions[i].resource= resource;
-				markerDescriptions[i].createMarker();
+			for (int i = 0; i < markerDescriptions.length; i++) {
+				if (markerDescriptions[i].resource.exists())
+					markerDescriptions[i].createMarker();
 			}
 		}
 	}

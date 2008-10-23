@@ -98,11 +98,12 @@ public class ProjectUndoState extends ContainerUndoState {
 			throw new OperationCanceledException();
 		}
 		if (openOnCreate) {
-			projectHandle.open(IResource.BACKGROUND_REFRESH,
-					new SubProgressMonitor(monitor, 100));
+			projectHandle.open(IResource.NONE ,new SubProgressMonitor(monitor, 100));
 		}
 		monitor.done();
 	}
+	
+	
 
 	public String getName() {
 		if (projectDescription != null) {
