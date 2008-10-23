@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 251884
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -18,6 +21,37 @@ import java.util.Set;
  * 
  */
 public abstract class MapDiff {
+	/**
+	 * Returns true if the diff has no added, removed or changed entries.
+	 * 
+	 * @return true if the diff has no added, removed or changed entries.
+	 * @since 1.2
+	 */
+	public boolean isEmpty() {
+		return getAddedKeys().isEmpty() && getRemovedKeys().isEmpty()
+				&& getChangedKeys().isEmpty();
+	}
+
+	/**
+	 * Applies the changes in this diff to the given map
+	 * 
+	 * @param map
+	 *            the map to which the diff will be applied
+	 * @since 1.2
+	 */
+	public void applyTo(Map map) {
+		for (Iterator it = getAddedKeys().iterator(); it.hasNext();) {
+			Object key = it.next();
+			map.put(key, getNewValue(key));
+		}
+		for (Iterator it = getChangedKeys().iterator(); it.hasNext();) {
+			Object key = it.next();
+			map.put(key, getNewValue(key));
+		}
+		for (Iterator it = getRemovedKeys().iterator(); it.hasNext();) {
+			map.remove(it.next());
+		}
+	}
 
 	/**
 	 * @return the set of keys which were added

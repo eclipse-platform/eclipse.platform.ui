@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bug 208858, 251884
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
+
+import java.util.List;
 
 import org.eclipse.core.internal.databinding.Util;
 
@@ -81,6 +83,42 @@ public abstract class ListDiff {
 			else
 				visitor.handleRemove(position, element);
 		}
+	}
+
+	/**
+	 * Returns true if the diff contains no added, removed, moved or replaced
+	 * elements.
+	 * 
+	 * @return true if the diff contains no added, removed, moved or replaced
+	 *         elements.
+	 * @since 1.2
+	 */
+	public boolean isEmpty() {
+		return getDifferences().length == 0;
+	}
+
+	/**
+	 * Applies the changes in this diff to the given list
+	 * 
+	 * @param list
+	 *            the list to which the diff will be applied
+	 * @since 1.2
+	 */
+	public void applyTo(final List list) {
+		accept(new ListDiffVisitor() {
+			public void handleAdd(int index, Object element) {
+				list.add(index, element);
+			}
+
+			public void handleRemove(int index, Object element) {
+				list.remove(index);
+			}
+
+			public void handleReplace(int index, Object oldElement,
+					Object newElement) {
+				list.set(index, newElement);
+			}
+		});
 	}
 
 	/**

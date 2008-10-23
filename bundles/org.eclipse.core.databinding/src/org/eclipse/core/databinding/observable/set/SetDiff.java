@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 251884
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -29,6 +30,28 @@ public abstract class SetDiff {
 	 */
 	public abstract Set getRemovals();
 	
+	/**
+	 * Returns true if the diff has no added or removed elements.
+	 * 
+	 * @return true if the diff has no added or removed elements.
+	 * @since 1.2
+	 */
+	public boolean isEmpty() {
+		return getAdditions().isEmpty() && getRemovals().isEmpty();
+	}
+
+	/**
+	 * Applies the changes in this diff to the given set
+	 * 
+	 * @param set
+	 *            the set to which the diff will be applied
+	 * @since 1.2
+	 */
+	public void applyTo(Set set) {
+		set.addAll(getAdditions());
+		set.removeAll(getRemovals());
+	}
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
