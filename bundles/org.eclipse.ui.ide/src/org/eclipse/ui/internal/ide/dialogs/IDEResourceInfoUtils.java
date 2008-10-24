@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     David Black - bug 198091
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -220,17 +221,19 @@ public class IDEResourceInfoUtils {
 
 		URI resolvedLocation = resource.getLocationURI();
 		URI location = resolvedLocation;
-		if (resource.isLinked()) {
+		boolean isLinked = resource.isLinked();
+		if (isLinked) {
 			location = resource.getRawLocationURI();
 		}
 		if (location == null) {
 			return NOT_EXIST_TEXT;
 		}
 
-		IFileStore store = getFileStore(location);
+		IFileStore store = getFileStore(resolvedLocation);
 		// don't access the file system for closed projects (bug 151089)
+		boolean isPathVariable = isPathVariable(resource);
 		if (isProjectAccessible(resource) && resolvedLocation != null
-				&& !isPathVariable(resource)) {
+				&& !isPathVariable) {
 			// No path variable used. Display the file not exist message
 			// in the location. Fixes bug 33318.
 			if (store == null) {
@@ -239,6 +242,9 @@ public class IDEResourceInfoUtils {
 			if (!store.fetchInfo().exists()) {
 				return NLS.bind(FILE_NOT_EXIST_TEXT, store.toString());
 			}
+		}
+		if (isLinked && isPathVariable) {
+			return resource.getRawLocationURI().toString();
 		}
 		if (store != null) {
 			return store.toString();
