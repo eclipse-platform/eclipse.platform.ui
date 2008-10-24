@@ -12,6 +12,8 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -200,4 +202,22 @@ public class PartListenerList2 extends EventManager {
     public void removePartListener(IPartListener2 l) {
         removeListenerObject(l);
     }
+
+	public void firePageChanged(final PageChangedEvent event) {
+		Object[] array = getListeners();
+        for (int i = 0; i < array.length; i++) {
+            final IPageChangedListener l;
+            if (array[i] instanceof IPageChangedListener) {
+				l = (IPageChangedListener) array[i];
+			} else {
+				continue;
+			}
+
+            SafeRunnable.run(new SafeRunnable() {
+                public void run() {
+                    l.pageChanged(event);
+                }
+            });
+        }
+	}
 }

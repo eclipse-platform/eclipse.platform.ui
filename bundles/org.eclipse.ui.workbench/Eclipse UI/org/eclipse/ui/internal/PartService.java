@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
@@ -304,6 +305,10 @@ public class PartService implements IPartService {
 		if (ref != null) {
 			firePartActivated(ref);
 		}
+	}
+
+	public void firePageChanged(PageChangedEvent event) {
+		listeners2.firePageChanged(event);
 	}
 
 }

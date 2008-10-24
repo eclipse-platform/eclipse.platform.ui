@@ -46,6 +46,11 @@ public interface IPartService {
     /**
      * Adds the given listener for part lifecycle events.
      * Has no effect if an identical listener is already registered.
+     * <p>
+     * As of 3.5, the IPartListener2 can also implement IPageChangedListener
+     * to be notified about any parts that implement IPageChangeProvider and
+     * post PageChangedEvents.
+     * </p>
 	 * <p>
 	 * <b>Note:</b> listeners should be removed when no longer necessary. If
 	 * not, they will be removed when the IServiceLocator used to acquire this
@@ -53,7 +58,9 @@ public interface IPartService {
 	 * </p>
      *
      * @param listener a part listener
-     * see {@link #removePartListener(IPartListener2)}
+     * @see #removePartListener(IPartListener2)
+     * @see org.eclipse.jface.dialogs.IPageChangeProvider
+     * @see org.eclipse.jface.dialogs.IPageChangedListener
      */
     public void addPartListener(IPartListener2 listener);
 

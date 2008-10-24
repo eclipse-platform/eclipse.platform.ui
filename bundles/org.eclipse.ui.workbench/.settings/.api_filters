@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/part/MultiPageEditorPart.java" type="org.eclipse.ui.part.MultiPageEditorPart">
+        <filter id="420630660">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.part.MultiPageEditorPart"/>
+                <message_argument value="getActivePage()"/>
+            </message_arguments>
+        </filter>
+        <filter id="421679236">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.part.MultiPageEditorPart"/>
+                <message_argument value="getActiveEditor()"/>
+            </message_arguments>
+        </filter>
+        <filter id="421679236">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.part.MultiPageEditorPart"/>
+                <message_argument value="getActivePage()"/>
+            </message_arguments>
+        </filter>
+        <filter id="420630660">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.part.MultiPageEditorPart"/>
+                <message_argument value="getActiveEditor()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

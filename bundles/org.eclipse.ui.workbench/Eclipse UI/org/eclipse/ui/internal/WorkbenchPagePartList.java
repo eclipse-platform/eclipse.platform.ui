@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -73,5 +74,9 @@ public class WorkbenchPagePartList extends PartList {
 
     public void firePartBroughtToTop(IWorkbenchPartReference ref) {
         partService.firePartBroughtToTop(ref);
+    }
+    
+    protected void firePageChanged(PageChangedEvent event) {
+    	partService.firePageChanged(event);
     }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.core.commands.util.Tracing;
@@ -32,7 +33,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
@@ -62,8 +67,8 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * Subclasses must implement the following methods:
  * <ul>
- * <li><code>createPages</code> - to create the required pages by calling one
- * of the <code>addPage</code> methods</li>
+ * <li><code>createPages</code> - to create the required pages by calling one of
+ * the <code>addPage</code> methods</li>
  * <li><code>IEditorPart.doSave</code> - to save contents of editor</li>
  * <li><code>IEditorPart.doSaveAs</code> - to save contents of editor</li>
  * <li><code>IEditorPart.isSaveAsAllowed</code> - to enable Save As</li>
@@ -73,15 +78,26 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * Multi-page editors have a single action bar contributor, which manages
  * contributions for all the pages. The contributor must be a subclass of
- * <code>AbstractMultiPageEditorActionBarContributor</code>. Note that since
- * any nested editors are created directly in code by callers of
+ * <code>AbstractMultiPageEditorActionBarContributor</code>. Note that since any
+ * nested editors are created directly in code by callers of
  * <code>addPage(IEditorPart,IEditorInput)</code>, nested editors do not have
  * their own contributors.
  * </p>
+ * <p>
+ * As of 3.5 multi-page editors will post PageChangedEvents at the end of
+ * {@link #pageChange(int)}. Subclasses may override {@link #getSelectedPage()}
+ * to return a page appropriate to their multi-page editor.  IPartListener2
+ * listeners registered with the IPartService can implement IPageChangedListener
+ * to be notified about all page change events within the workbench page or
+ * workbench window.
+ * </p>
  * 
  * @see org.eclipse.ui.part.MultiPageEditorActionBarContributor
+ * @see org.eclipse.jface.dialogs.IPageChangeProvider
+ * @see org.eclipse.jface.dialogs.IPageChangedListener
+ * @see org.eclipse.ui.IPartService
  */
-public abstract class MultiPageEditorPart extends EditorPart {
+public abstract class MultiPageEditorPart extends EditorPart implements IPageChangeProvider {
 	
 	/**
 	 * Subclasses that override {@link #createPageContainer(Composite)} can use
@@ -123,6 +139,9 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	private List pageSites = new ArrayList(3);
 
 	private IServiceLocator pageContainerSite;
+	
+	private ListenerList pageChangeListeners = new ListenerList(
+			ListenerList.IDENTITY);
 
 	/**
 	 * Creates an empty multi-page editor with no pages.
@@ -403,6 +422,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 * Subclasses may extend.
 	 */
 	public void dispose() {
+		pageChangeListeners.clear();
 		for (int i = 0; i < nestedEditors.size(); ++i) {
 			IEditorPart editor = (IEditorPart) nestedEditors.get(i);
 			disposePart(editor);
@@ -428,6 +448,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 * Subclasses should not override this method
 	 * </p>
 	 * 
+	 * @nooverride
 	 * @return the active nested editor, or <code>null</code> if none
 	 */
 	protected IEditorPart getActiveEditor() {
@@ -445,9 +466,12 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 * Subclasses should not override this method
 	 * </p>
 	 * 
+	 * @nooverride
+	 * 
 	 * @return the index of the active page, or -1 if there is no active page
+	 * @since 3.5
 	 */
-	protected int getActivePage() {
+	public int getActivePage() {
 		CTabFolder tabFolder = getTabFolder();
 		if (tabFolder != null && !tabFolder.isDisposed()) {
 			return tabFolder.getSelectionIndex();
@@ -773,6 +797,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 		}
 
 		activateSite();
+		firePageChanged(new PageChangedEvent(this, getSelectedPage()));
 	}
 	
 	/**
@@ -1109,6 +1134,74 @@ public abstract class MultiPageEditorPart extends EditorPart {
 				setActivePage(i);
 				break;
 			}
+		}
+	}
+
+	/**
+	 * Returns the selected page for the current active page index, either the
+	 * IEditorPart for editors or the Control for other pages.
+	 * <p>
+	 * <b>Note:</b> clients may override this method to return a page
+	 * appropriate for their editors. Maybe be <code>null</code>.
+	 * </p>
+	 * 
+	 * @return The IEditorPart or Control representing the current active page,
+	 *         or <code>null</code> if there are no active pages.
+	 * @since 3.5
+	 * @see #getActivePage()
+	 */
+	public Object getSelectedPage() {
+		int index = getActivePage();
+		if (index == -1) {
+			return null;
+		}
+		IEditorPart editor = getEditor(index);
+		if (editor != null) {
+			return editor;
+		}
+		return getControl(index);
+	}
+	
+	/**
+	 * Add the page change listener to be notified when the page changes. The
+	 * newly selected page will be the Object returned from
+	 * {@link #getSelectedPage()}. In the default case, this will be the active
+	 * page Control, IEditorPart, or <code>null</code>.
+	 * <p>
+	 * This method has no effect if the listener has already been added.
+	 * </p>
+	 * 
+	 * @nooverride
+	 * 
+	 * @since 3.5
+	 */
+	public void addPageChangedListener(IPageChangedListener listener) {
+		pageChangeListeners.add(listener);
+	}
+
+	/**
+	 * Remove the page change listener.
+	 * <p>
+	 * This method has no effect if the listener is not in the list.
+	 * </p>
+	 * 
+	 * @nooverride
+	 * 
+	 * @since 3.5
+	 */
+	public void removePageChangedListener(IPageChangedListener listener) {
+		pageChangeListeners.remove(listener);
+	}
+
+	private void firePageChanged(final PageChangedEvent event) {
+		Object[] listeners = pageChangeListeners.getListeners();
+		for (int i = 0; i < listeners.length; ++i) {
+			final IPageChangedListener l = (IPageChangedListener) listeners[i];
+			SafeRunnable.run(new SafeRunnable() {
+				public void run() {
+					l.pageChanged(event);
+				}
+			});
 		}
 	}
 }

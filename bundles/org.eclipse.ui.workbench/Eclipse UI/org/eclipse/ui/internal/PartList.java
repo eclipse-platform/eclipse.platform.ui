@@ -11,6 +11,9 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
@@ -54,10 +57,17 @@ public abstract class PartList {
 			}
 		}
 	};
+	
+	private IPageChangedListener partPageListener = new IPageChangedListener() {
+		public void pageChanged(PageChangedEvent event) {
+			firePageChanged(event);
+		}
+	};
 
 	public IWorkbenchPartReference getActivePartReference() {
 		return activePartReference;
 	}
+
 
 	public IEditorReference getActiveEditorReference() {
 		return activeEditorReference;
@@ -222,6 +232,10 @@ public abstract class PartList {
 		SaveablesList modelManager = (SaveablesList) actualPart
 				.getSite().getService(ISaveablesLifecycleListener.class);
 		modelManager.postOpen(actualPart);
+		if (actualPart instanceof IPageChangeProvider) {
+			((IPageChangeProvider) actualPart)
+					.addPageChangedListener(partPageListener);
+		}
 
 		// Fire the "part opened" event
 		firePartOpened(ref);
@@ -251,6 +265,11 @@ public abstract class PartList {
 		// deactivated before it may
 		// be closed.
 		Assert.isTrue(activeEditorReference != ref);
+
+		if (actualPart instanceof IPageChangeProvider) {
+			((IPageChangeProvider) actualPart)
+					.removePageChangedListener(partPageListener);
+		}
 
 		firePartClosed(ref);
 	}
@@ -340,4 +359,12 @@ public abstract class PartList {
 	protected abstract void firePartInputChanged(IWorkbenchPartReference ref);
 
 	protected abstract void firePartBroughtToTop(IWorkbenchPartReference ref);
+	
+	/**
+	 * Fire a page changed event for any IPartListener2 that also
+	 * implement IPageChangedListener.
+	 * 
+	 * @param event the page change event, which conatins the source.
+	 */
+	protected abstract void firePageChanged(PageChangedEvent event);
 }

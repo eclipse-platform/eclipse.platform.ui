@@ -144,6 +144,10 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	public Control getLastPage() {
 		return lastPage;
 	}
+	
+	public IEditorPart getEditor(int pageIndex) {
+		return super.getEditor(pageIndex);
+	}
 
 	/**
 	 * Return the control for testing (like the editor control).
