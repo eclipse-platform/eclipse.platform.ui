@@ -286,8 +286,7 @@ public class WizardsRegistryReader extends RegistryReader {
             ArrayList primary = new ArrayList();
             for (Iterator i = deferPrimary.iterator(); i.hasNext();) {
                 String id = (String) i.next();
-                WorkbenchWizardElement element = getWizardElements()
-                        .findWizard(id, true);
+                WorkbenchWizardElement element = wizardElements == null ? null : wizardElements.findWizard(id, true);
                 if (element != null) {
                     primary.add(element);
                 }
