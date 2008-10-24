@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2005 IBM Corporation and others.
+ Copyright (c) 2000, 2008 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -31,6 +31,13 @@
 <jsp:include page="toolbar.jsp">
 	<jsp:param name="script" value="contentActions.js"/>
 	<jsp:param name="toolbar" value="content"/>
+		
+	<jsp:param name="name"     value="toggle_highlight"/>
+	<jsp:param name="tooltip"  value='highlight_tip'/>
+	<jsp:param name="image"    value="highlight.gif"/>
+	<jsp:param name="action"   value="toggleHighlight"/>
+	<jsp:param name="param"    value=""/>
+	<jsp:param name="state"    value='hidden'/>	
 	
 	<jsp:param name="name"     value="back"/>
 	<jsp:param name="tooltip"  value='back_tip'/>
@@ -73,13 +80,6 @@
 	<jsp:param name="action"   value="<%=bookmarkAction%>"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='<%=bookmarkButtonState%>'/>
-	
-	<jsp:param name="name"     value="toggle_highlight"/>
-	<jsp:param name="tooltip"  value='highlight_tip'/>
-	<jsp:param name="image"    value="highlight.gif"/>
-	<jsp:param name="action"   value="toggleHighlight"/>
-	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value='hidden'/>
 
 	<jsp:param name="name"     value="print"/>
 	<jsp:param name="tooltip"  value='Print'/>
