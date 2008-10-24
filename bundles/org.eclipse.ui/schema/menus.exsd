@@ -49,6 +49,11 @@ supported variables.
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
@@ -550,6 +555,16 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <element ref="dynamic" minOccurs="0" maxOccurs="1"/>
             </choice>
          </sequence>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The label to be displayed for this element when it is placed in either a menu or a toolbar. This value should be translatable.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
@@ -587,16 +602,6 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="label" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The label to be displayed for this element when it is placed in either a menu or a toolbar. This value should be translatable.
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
          <attribute name="commandId" type="string">
             <annotation>
                <documentation>
@@ -621,6 +626,16 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
             <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
             <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  The label to be displayed for this element when it is placed in either a menu. This value should be translatable.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
          <attribute name="commandId" type="string" use="required">
             <annotation>
                <documentation>
@@ -676,16 +691,6 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="label" type="string">
-            <annotation>
-               <documentation>
-                  The label to be displayed for this element when it is placed in either a menu. This value should be translatable.
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -939,7 +944,6 @@ See &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.comman
 &lt;p&gt;To register a context menu, use the &lt;code&gt;IWorkbenchPartSite.registerContextMenu&lt;/code&gt; methods.&lt;/p&gt;
       </documentation>
    </annotation>
-
 
 
    <annotation>
