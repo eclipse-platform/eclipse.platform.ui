@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River - Pawel Piech - Added use of adapters to support non-standard models (bug 213074)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
@@ -40,10 +42,8 @@ public class RetargetRunToLineAction extends RetargetAction {
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
-					Object object = ss.getFirstElement();
-					if (object instanceof ISuspendResume) {
-						fTargetElement = (ISuspendResume) object;
-					}
+                    fTargetElement = (ISuspendResume)
+                        DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
 				}
 			}
 			IAction action = getAction();

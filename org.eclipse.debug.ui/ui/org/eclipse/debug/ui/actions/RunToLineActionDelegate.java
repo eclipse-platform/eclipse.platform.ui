@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mikhail Khodjaiants (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=83464
+ *     Wind River - Pawel Piech - Added use of adapters to support non-standard models (bug 213074)
  *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -67,10 +69,8 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
-					Object object = ss.getFirstElement();
-					if (object instanceof ISuspendResume) {
-						fTargetElement = (ISuspendResume) object;
-					}
+                    fTargetElement = (ISuspendResume)
+                        DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
 				}
 			}
 			update();
