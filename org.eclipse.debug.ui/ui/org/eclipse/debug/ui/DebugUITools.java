@@ -854,7 +854,7 @@ public class DebugUITools {
 	}
 
     /**
-     * Return the debug context for the given executionEvent.
+     * Return the debug context for the given executionEvent or <code>null</code> if none.
      * 
      * @param event The execution event that contains the application context
      * @return the current debug context, or <code>null</code>.
