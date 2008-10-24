@@ -779,7 +779,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	private void createEditorTab(final EditorReference ref,
 			final String workbookId) throws PartInitException {
 
-		editorPresentation.addEditor(ref, workbookId);
+		editorPresentation.addEditor(ref, workbookId, true);
 
 	}
 

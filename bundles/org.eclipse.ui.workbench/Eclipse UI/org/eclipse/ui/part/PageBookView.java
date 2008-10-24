@@ -33,8 +33,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -478,7 +480,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		showPageRec(defaultPageRec);
 
 		// Listen to part activation events.
-		getSite().getPage().addPartListener(this);
+		getSite().getPage().addPartListener(partListener);
 		showBootstrapPart();
 	}
 
@@ -489,7 +491,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	public void dispose() {
 		// stop listening to part activation
-		getSite().getPage().removePartListener(this);
+		getSite().getPage().removePartListener(partListener);
 
 		// Deref all of the pages.
 		activeRec = null;
@@ -989,5 +991,63 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	protected SelectionProvider getSelectionProvider() {
 		return selectionProvider;
+	}
+	
+	private IPartListener2 partListener = new IPartListener2() {
+		public void partActivated(IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			PageBookView.this.partActivated(part);
+		}
+
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+			PageBookView.this.partBroughtToTop(partRef.getPart(false));
+		}
+
+		public void partClosed(IWorkbenchPartReference partRef) {
+			PageBookView.this.partClosed(partRef.getPart(false));
+		}
+
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+			PageBookView.this.partDeactivated(partRef.getPart(false));
+		}
+
+		public void partHidden(IWorkbenchPartReference partRef) {
+			PageBookView.this.partHidden(partRef.getPart(false));
+		}
+
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+		}
+
+		public void partOpened(IWorkbenchPartReference partRef) {
+			PageBookView.this.partOpened(partRef.getPart(false));
+		}
+
+		public void partVisible(IWorkbenchPartReference partRef) {
+			PageBookView.this.partVisible(partRef.getPart(false));
+		}
+	};
+
+	/**
+	 * Make sure that the part is not considered if it is hidden.
+	 * @param part
+	 * @since 3.5
+	 */
+	protected void partHidden(IWorkbenchPart part) {
+		if (part == null || part != getCurrentContributingPart()) {
+			return;
+		}
+		showPageRec(defaultPageRec);
+	}
+
+	/**
+	 * Make sure that the part is not considered if it is hidden.
+	 * @param part
+	 * @since 3.5
+	 */
+	protected void partVisible(IWorkbenchPart part) {
+		if (part == null || part != getCurrentContributingPart()) {
+			return;
+		}
+		partActivated(part);
 	}
 }

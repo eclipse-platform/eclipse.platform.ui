@@ -227,11 +227,11 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		// hook up the listeners to update the window title
 		configurer.getWindow().addPageListener(new IPageListener() {
 			public void pageActivated(IWorkbenchPage page) {
-				updateTitle();
+				updateTitle(false);
 			}
 
 			public void pageClosed(IWorkbenchPage page) {
-				updateTitle();
+				updateTitle(false);
 			}
 
 			public void pageOpened(IWorkbenchPage page) {
@@ -241,36 +241,36 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.getWindow().addPerspectiveListener(new PerspectiveAdapter() {
 			public void perspectiveActivated(IWorkbenchPage page,
 					IPerspectiveDescriptor perspective) {
-				updateTitle();
+				updateTitle(false);
 			}
 
 			public void perspectiveSavedAs(IWorkbenchPage page,
 					IPerspectiveDescriptor oldPerspective,
 					IPerspectiveDescriptor newPerspective) {
-				updateTitle();
+				updateTitle(false);
 			}
 
 			public void perspectiveDeactivated(IWorkbenchPage page,
 					IPerspectiveDescriptor perspective) {
-				updateTitle();
+				updateTitle(false);
 			}
 		});
 		configurer.getWindow().getPartService().addPartListener(
 				new IPartListener2() {
 					public void partActivated(IWorkbenchPartReference ref) {
 						if (ref instanceof IEditorReference) {
-							updateTitle();
+							updateTitle(false);
 						}
 					}
 
 					public void partBroughtToTop(IWorkbenchPartReference ref) {
 						if (ref instanceof IEditorReference) {
-							updateTitle();
+							updateTitle(false);
 						}
 					}
 
 					public void partClosed(IWorkbenchPartReference ref) {
-						updateTitle();
+						updateTitle(false);
 					}
 
 					public void partDeactivated(IWorkbenchPartReference ref) {
@@ -282,11 +282,17 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					}
 
 					public void partHidden(IWorkbenchPartReference ref) {
-						// do nothing
+						if (ref.getPart(false) == lastActiveEditor
+								&& lastActiveEditor != null) {
+							updateTitle(true);
+						}
 					}
 
 					public void partVisible(IWorkbenchPartReference ref) {
-						// do nothing
+						if (ref.getPart(false) == lastActiveEditor
+								&& lastActiveEditor != null) {
+							updateTitle(false);
+						}
 					}
 
 					public void partInputChanged(IWorkbenchPartReference ref) {
@@ -300,7 +306,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		IWorkbenchPage currentPage = configurer.getWindow().getActivePage();
 		IEditorPart activeEditor = null;
 		if (currentPage != null) {
-			activeEditor = currentPage.getActiveEditor();
+			activeEditor = lastActiveEditor;
 		}
 
 		String title = null;
@@ -356,8 +362,9 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	/**
 	 * Updates the window title. Format will be: [pageInput -]
 	 * [currentPerspective -] [editorInput -] [workspaceLocation -] productName
+	 * @param editorHidden TODO
 	 */
-	private void updateTitle() {
+	private void updateTitle(boolean editorHidden) {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		IWorkbenchWindow window = configurer.getWindow();
 		IEditorPart activeEditor = null;
@@ -369,6 +376,10 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			activeEditor = currentPage.getActiveEditor();
 			persp = currentPage.getPerspective();
 			input = currentPage.getInput();
+		}
+		
+		if (editorHidden) {
+			activeEditor = null;
 		}
 
 		// Nothing to do if the editor hasn't changed

@@ -1138,4 +1138,41 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 3.2
 	 */
 	public IWorkbenchPartReference getReference(IWorkbenchPart part);
+
+	/**
+	 * Add back an open but non-participating editor
+	 * <p>
+	 * <b>Note:</b> This is experimental API in 3.5M3 and may be removed. Please
+	 * comment on https://bugs.eclipse.org/bugs/show_bug.cgi?id=11001 if you are
+	 * using this API.
+	 * </p>
+	 * 
+	 * @param ref
+	 *            the editor to re-add. Must be an editor removed using
+	 *            #hideEditor(IEditorReference), must not have been closed,
+	 *            and must not be <code>null</code>.
+	 * @since 3.5
+	 * @see #hideEditor(IEditorReference)
+	 */
+	public void showEditor(IEditorReference ref);
+
+	/**
+	 * Remove an open editor, turn it into a non-participating editor.
+	 * <p>
+	 * <b>Note:</b> This is experimental API in 3.5M3 and may be removed. Please
+	 * comment on https://bugs.eclipse.org/bugs/show_bug.cgi?id=11001 if you are
+	 * using this API.
+	 * </p>
+	 * <p>
+	 * Closing a hidden editor is not currently supported well, although
+	 * we'll be looking into that in M4.
+	 * </p>
+	 * 
+	 * @param ref
+	 *            the editor reference to remove.  It must be a current open editor
+	 *            belonging to this page, and must not be <code>null</code>.
+	 * @since 3.5
+	 * @see #showEditor(IEditorReference)
+	 */
+	public void hideEditor(IEditorReference ref);
 }

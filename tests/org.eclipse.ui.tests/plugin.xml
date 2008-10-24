@@ -472,28 +472,28 @@
       <editor
             name="Mock Editor 1"
             extensions="mock1"
-            icon="icons\mockeditorpart1.gif"
+            icon="icons/mockeditorpart1.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockEditorPart1">
       </editor>
       <editor
             name="Mock Editor 2"
             extensions="mock2"
-            icon="icons\mockeditorpart2.gif"
+            icon="icons/mockeditorpart2.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockEditorPart2">
       </editor>
       <editor
             name="Mock Editor Save"
             extensions="mocksave"
-            icon="icons\mockeditorpart1.gif"
+            icon="icons/mockeditorpart1.gif"
             class="org.eclipse.ui.tests.api.MockEditorWithState"
             id="org.eclipse.ui.tests.api.MockEditorStatePart">
       </editor>
       <editor
             name="IEditorActionBarContributorTest"
             extensions="mock3"
-            icon="icons\mockeditorpart2.gif"
+            icon="icons/mockeditorpart2.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
             id="org.eclipse.ui.tests.api.IEditorActionBarContributorTest">
@@ -501,7 +501,7 @@
       <editor
             name="IEditorActionDelegateTest"
             extensions="mock3"
-            icon="icons\mockeditorpart2.gif"
+            icon="icons/mockeditorpart2.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
             id="org.eclipse.ui.tests.api.IEditorActionDelegateTest">

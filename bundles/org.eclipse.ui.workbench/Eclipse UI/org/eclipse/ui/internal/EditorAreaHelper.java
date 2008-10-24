@@ -176,6 +176,15 @@ public class EditorAreaHelper {
 
 
 
+    public boolean containsEditor(EditorReference ref) {
+    	IEditorReference refs[] = editorArea.getPage().getEditorReferences();
+        for (int i = 0; i < refs.length; i++) {
+            if (ref == refs[i]) {
+				return true;
+			}
+        }
+        return false;
+    }
     /**
      * Main entry point for adding an editor. Adds the editor to the layout in the given
      * stack, and notifies the workbench page when done.
@@ -184,12 +193,9 @@ public class EditorAreaHelper {
      * @param workbookId workbook that will contain the editor (or null if the editor
      * should be added to the default workbook)
      */
-    public void addEditor(EditorReference ref, String workbookId) {
-        IEditorReference refs[] = editorArea.getPage().getEditorReferences();
-        for (int i = 0; i < refs.length; i++) {
-            if (ref == refs[i]) {
-				return;
-			}
+    public void addEditor(EditorReference ref, String workbookId, boolean notifyPage) {
+        if (containsEditor(ref)) {
+        	return;
         }
         
         if (!(ref.getPane() instanceof MultiEditorInnerPane)) {
@@ -207,7 +213,9 @@ public class EditorAreaHelper {
             addToLayout((EditorPane)ref.getPane(), stack);
         }
         
-        editorArea.getPage().partAdded(ref);
+        if (notifyPage) {
+        	editorArea.getPage().partAdded(ref);
+        }
     }
     
     private void addToLayout(EditorPane pane, EditorStack stack) {

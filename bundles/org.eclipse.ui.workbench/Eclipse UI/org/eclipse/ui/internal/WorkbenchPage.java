@@ -102,10 +102,10 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
-import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.tweaklets.GrabFocus;
 import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
+import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -136,6 +136,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private EditorManager editorMgr;
 
     private EditorAreaHelper editorPresentation;
+    
+    private ArrayList removedEditors = new ArrayList();
 
     private ListenerList propertyChangeListeners = new ListenerList();
 
@@ -4794,28 +4796,29 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // recursive call to continue up the tree
         findSashParts(parent, sashes, info);
     }
-    
+
 	/**
 	 * Returns all parts that are owned by this page
 	 * 
-	 * @return
+	 * @return all open parts, including non-participating editors.
 	 */
 	IWorkbenchPartReference[] getAllParts() {
+		ArrayList allParts = new ArrayList();
 		IViewReference[] views = viewFactory.getViews();
 		IEditorReference[] editors = getEditorReferences();
-		
-		IWorkbenchPartReference[] result = new IWorkbenchPartReference[views.length + editors.length];
-		int resultIdx = 0;
-		
-		for (int i = 0; i < views.length; i++) {
-			result[resultIdx++] = views[i];
+
+		if (views.length > 0) {
+			allParts.addAll(Arrays.asList(views));
 		}
-		
-		for (int i = 0; i < editors.length; i++) {
-			result[resultIdx++] = editors[i];
+		if (editors.length > 0) {
+			allParts.addAll(Arrays.asList(editors));
 		}
-		
-		return result;
+		if (removedEditors.size() > 0) {
+			allParts.addAll(removedEditors);
+		}
+
+		return (IWorkbenchPartReference[]) allParts
+				.toArray(new IWorkbenchPartReference[allParts.size()]);
 	}
 	
 	/**
@@ -5022,5 +5025,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			aggregateWorkingSetId = "Aggregate for window " + System.currentTimeMillis(); //$NON-NLS-1$
 		}
 		return aggregateWorkingSetId;
+	}
+	
+	public void showEditor(IEditorReference ref) {
+		if (((WorkbenchPartReference)ref).isDisposed()) {
+			WorkbenchPlugin.log("adding a disposed part: " + ref); //$NON-NLS-1$
+			return;
+		}
+		if (editorPresentation.containsEditor((EditorReference) ref)) {
+			return;
+		}
+		removedEditors.remove(ref);
+	    editorPresentation.addEditor((EditorReference) ref, "", false); //$NON-NLS-1$
+	    activationList.add(ref);
+        updateActivePart();
+	}
+	
+	public void hideEditor(IEditorReference ref) {
+		if (!editorPresentation.containsEditor((EditorReference) ref)) {
+			return;
+		}
+	    editorPresentation.closeEditor(ref);
+	    activationList.remove(ref);
+	    // all editors need a place to go so they can have a coffee and a doughnut
+	    removedEditors.add(ref);
+	    updateActivePart();
+//	    partList.removePart((WorkbenchPartReference)ref);
 	}
 }

@@ -28,6 +28,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IEditorInput;
@@ -35,11 +39,13 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -54,13 +60,17 @@ import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.tests.PerspectiveState;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
 
 public class IWorkbenchPageTest extends UITestCase {
 
@@ -69,6 +79,59 @@ public class IWorkbenchPageTest extends UITestCase {
 	private IWorkbenchWindow fWin;
 
 	private IProject proj;
+	
+	private int logCount;
+	private IStatus logStatus;
+	String getMessage() {
+		return logStatus==null?"No message":logStatus.getMessage();
+	}
+	ILogListener openAndHideListener = new ILogListener() {
+		public void logging(IStatus status, String plugin) {
+			logStatus = status;
+			logCount++;
+		}
+	};
+	
+	
+	private int partHiddenCount = 0;
+	private IWorkbenchPartReference partHiddenRef = null;
+	private int partVisibleCount = 0;
+	private IWorkbenchPartReference partVisibleRef = null;
+	private int partActiveCount = 0;
+	private IWorkbenchPartReference partActiveRef = null;
+	IPartListener2 partListener2 = new IPartListener2() {
+		public void partActivated(IWorkbenchPartReference partRef) {
+			partActiveCount++;
+			partActiveRef = partRef;
+		}
+
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		}
+
+		public void partClosed(IWorkbenchPartReference partRef) {
+		}
+
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+		}
+
+		public void partHidden(IWorkbenchPartReference partRef) {
+			partHiddenCount++;
+			partHiddenRef = partRef;
+		}
+
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+		}
+
+		public void partOpened(IWorkbenchPartReference partRef) {
+		}
+
+		public void partVisible(IWorkbenchPartReference partRef) {
+			partVisibleCount++;
+			partVisibleRef = partRef;
+		}
+	};
+
+
 
 	public IWorkbenchPageTest(String testName) {
 		super(testName);
@@ -78,6 +141,9 @@ public class IWorkbenchPageTest extends UITestCase {
 		super.doSetUp();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
+		logStatus = null;
+		logCount = 0;
+		Platform.addLogListener(openAndHideListener);
 	}
 
 	protected void doTearDown() throws Exception {
@@ -86,6 +152,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			FileUtil.deleteProject(proj);
 			proj = null;
 		}
+		Platform.removeLogListener(openAndHideListener);
 	}
 
 	/**
@@ -2223,5 +2290,388 @@ public class IWorkbenchPageTest extends UITestCase {
 				| IWorkbenchPage.MATCH_ID);
 		assertEquals(1, refs.length);
 		assertEquals(part4, refs[0].getPart(true));
+	}
+	
+	
+	/**
+	 * Create and hide a single editor, and check it is reflected in the
+	 * editor references.  Check that close still works.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor1() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a.mock1", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor instanceof MockEditorPart);
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		fActivePage.hideEditor(editorRef);
+		assertEquals(0, fActivePage.getEditorReferences().length);
+		fActivePage.showEditor(editorRef);
+		assertEquals(1, fActivePage.getEditorReferences().length);
+		fActivePage.closeAllEditors(true);
+		assertEquals(0, fActivePage.getEditorReferences().length);
+		assertEquals(getMessage(), 0, logCount);
+	}
+	
+	/**
+	 * Create and remove 2 editors.  Check that the removed editor
+	 * is not returned in the list of references.  Check that
+	 * close still works.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor2() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a.mock1", proj);
+		IFile file2 = FileUtil.createFile("a.mock2", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor instanceof MockEditorPart);
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		IEditorPart editor2 = IDE.openEditor(fActivePage, file2);
+		assertTrue(editor2 instanceof MockEditorPart);
+		IEditorReference editorRef2 = (IEditorReference) fActivePage.getReference(editor2);
+		
+		fActivePage.hideEditor(editorRef);
+		IEditorReference[] refs = fActivePage.getEditorReferences();
+		assertEquals(1, refs.length);
+		assertEquals(editorRef2, refs[0]);
+		fActivePage.showEditor(editorRef);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(2, refs.length);
+		
+		fActivePage.hideEditor(editorRef2);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(1, refs.length);
+		fActivePage.hideEditor(editorRef);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(0, refs.length);
+		fActivePage.showEditor(editorRef);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(editorRef, refs[0]);
+		fActivePage.showEditor(editorRef2);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(2, refs.length);
+		
+		fActivePage.closeAllEditors(true);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(0, refs.length);
+		assertEquals(getMessage(), 0, logCount);
+	}
+
+	/**
+	 * Create 2 editors and hide one.  When added back and then closed, there
+	 * should only be one editor.  Adding back the closed editor should
+	 * generate a log message and not effect the list of editors.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor3() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a.mock1", proj);
+		IFile file2 = FileUtil.createFile("a.mock2", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor instanceof MockEditorPart);
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		IEditorPart editor2 = IDE.openEditor(fActivePage, file2);
+		assertTrue(editor2 instanceof MockEditorPart);
+		IEditorReference editorRef2 = (IEditorReference) fActivePage.getReference(editor2);
+		
+		fActivePage.hideEditor(editorRef2);
+		IEditorReference[] refs = fActivePage.getEditorReferences();
+		assertEquals(1, refs.length);
+		assertEquals(editorRef, refs[0]);
+		fActivePage.showEditor(editorRef2);
+		fActivePage.closeEditors(new IEditorReference[] { editorRef2 }, true);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(1, refs.length);
+		fActivePage.showEditor(editorRef2);
+		assertEquals(1, refs.length);
+		assertEquals(getMessage(), 1, logCount);
+		assertNotNull(getMessage());
+		assertTrue(getMessage().startsWith("adding a disposed part"));
+	}
+
+	/**
+	 * Create 2 editors, and remove and show one of them.  Trying to
+	 * add it a second time should not effect the list of editor references.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor4() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a.mock1", proj);
+		IFile file2 = FileUtil.createFile("a.mock2", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor instanceof MockEditorPart);
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		IEditorPart editor2 = IDE.openEditor(fActivePage, file2);
+		assertTrue(editor2 instanceof MockEditorPart);
+		IEditorReference editorRef2 = (IEditorReference) fActivePage.getReference(editor2);
+		
+		fActivePage.hideEditor(editorRef2);
+		IEditorReference[] refs = fActivePage.getEditorReferences();
+		assertEquals(1, refs.length);
+		assertEquals(editorRef, refs[0]);
+		fActivePage.showEditor(editorRef2);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(2, refs.length);
+		fActivePage.showEditor(editorRef2);
+		refs = fActivePage.getEditorReferences();
+		assertEquals(2, refs.length);
+		assertEquals(getMessage(), 0, logCount);
+	}
+	
+	/**
+	 * Create 2 editors that effect the Content Outline view.  Make
+	 * sure that hiding and showing the active editor effects the 
+	 * outline view.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor5() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a1.java", proj);
+		IFile file2 = FileUtil.createFile("a2.java", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor.getClass().getName().endsWith("CompilationUnitEditor"));
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		IEditorPart editor2 = IDE.openEditor(fActivePage, file2);
+		assertTrue(editor2.getClass().getName().endsWith("CompilationUnitEditor"));
+		
+		ContentOutline outline = (ContentOutline) fActivePage.showView(IPageLayout.ID_OUTLINE);
+		IPage page2 = outline.getCurrentPage();
+		fActivePage.activate(editor);
+		processEvents();
+		IPage page = outline.getCurrentPage();
+		assertFalse(page2==page);
+		
+		assertEquals(getMessage(), 0, logCount);
+		
+		fActivePage.hideEditor(editorRef);
+		assertEquals(page2, outline.getCurrentPage());
+		assertEquals(getMessage(), 0, logCount);
+		
+		fActivePage.showEditor(editorRef);
+		assertEquals(page2, outline.getCurrentPage());
+		assertEquals(getMessage(), 0, logCount);
+		
+		fActivePage.activate(editor);
+		assertEquals(page, outline.getCurrentPage());
+		assertEquals(getMessage(), 0, logCount);
+	}
+	
+	/**
+	 * Create one editor.  Make sure hiding and showing it effects
+	 * the outline view, and that when hidden the outline view
+	 * reflects the default page.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor6() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a1.java", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor.getClass().getName().endsWith("CompilationUnitEditor"));
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		
+		ContentOutline outline = (ContentOutline) fActivePage.showView(IPageLayout.ID_OUTLINE);
+		IPage defaultPage = outline.getDefaultPage();
+		assertNotNull(defaultPage);
+		
+		processEvents();
+		IPage page = outline.getCurrentPage();
+		assertFalse(defaultPage==page);
+		
+		assertEquals(getMessage(), 0, logCount);
+		assertEquals(0, partHiddenCount);
+		fActivePage.addPartListener(partListener2);
+		fActivePage.hideEditor(editorRef);
+		processEvents();
+		
+		assertEquals(1, partHiddenCount);
+		assertEquals(editorRef, partHiddenRef);
+		
+		assertEquals(defaultPage, outline.getCurrentPage());
+		//assertEquals(page, outline.getCurrentPage());
+		assertEquals(getMessage(), 0, logCount);
+				
+		assertEquals(0, partVisibleCount);
+		fActivePage.showEditor(editorRef);
+		processEvents();
+		assertEquals(page, outline.getCurrentPage());
+		assertEquals(getMessage(), 0, logCount);
+		assertEquals(1, partVisibleCount);
+		assertEquals(editorRef, partVisibleRef);
+		
+		fActivePage.activate(editor);
+		assertEquals(page, outline.getCurrentPage());
+		assertEquals(getMessage(), 0, logCount);
+	}
+
+	/**
+	 * Create one editor.  Make sure hiding the editor updates
+	 * the window title.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor7() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a1.java", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor.getClass().getName().endsWith("CompilationUnitEditor"));
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		
+		processEvents();
+		
+		String firstTitle = fWin.getShell().getText();
+		
+		assertEquals(getMessage(), 0, logCount);
+		assertEquals(0, partHiddenCount);
+		fActivePage.addPartListener(partListener2);
+		fActivePage.hideEditor(editorRef);
+		processEvents();
+		
+		assertEquals(1, partHiddenCount);
+		assertEquals(editorRef, partHiddenRef);
+				
+		String nextTitle = fWin.getShell().getText();
+		String tooltip = editor.getTitleToolTip();
+		assertNotNull(tooltip);
+		String[] split = Util.split(nextTitle, '-');
+		assertEquals(2, split.length);
+		String nextTitleRebuilt = split[0] + "- " + tooltip + " -" + split[1];
+		assertEquals(firstTitle, nextTitleRebuilt);
+		
+		assertEquals(0, partVisibleCount);
+		fActivePage.showEditor(editorRef);
+		processEvents();
+		assertEquals(getMessage(), 0, logCount);
+		assertEquals(1, partVisibleCount);
+		assertEquals(editorRef, partVisibleRef);
+		nextTitle = fWin.getShell().getText();
+		assertEquals(firstTitle, nextTitle);
+		
+		fActivePage.activate(editor);
+		assertEquals(getMessage(), 0, logCount);
+	}
+	
+	/**
+	 * Create one editor.  Make sure hiding the editor that is the active part
+	 * causes another part to become active.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor8() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a1.java", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor.getClass().getName().endsWith("CompilationUnitEditor"));
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		
+		ContentOutline outline = (ContentOutline) fActivePage.showView(IPageLayout.ID_OUTLINE);
+		IPage defaultPage = outline.getDefaultPage();
+		assertNotNull(defaultPage);
+		fActivePage.activate(editor);
+		
+		processEvents();
+		IPage page = outline.getCurrentPage();
+		assertFalse(defaultPage==page);
+		
+		partActiveCount = 0;
+		partActiveRef = null;
+		assertEquals(getMessage(), 0, logCount);
+		assertEquals(0, partHiddenCount);
+		fActivePage.addPartListener(partListener2);
+		fActivePage.hideEditor(editorRef);
+		processEvents();
+		
+		assertEquals(1, partHiddenCount);
+		assertEquals(editorRef, partHiddenRef);
+		assertEquals(1, partActiveCount);
+		assertFalse(partActiveRef == editorRef);
+		
+		fActivePage.showEditor(editorRef);
+		
+		assertEquals(getMessage(), 0, logCount);
+	}
+
+	/**
+	 * Create a java editor.  Make a change.  Validate the enabled state
+	 * of some commands.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor9() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a1.java", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor.getClass().getName()
+				.endsWith("CompilationUnitEditor"));
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+
+		fActivePage.activate(editor);
+
+		processEvents();
+		ICommandService cs = (ICommandService) fActivePage.getWorkbenchWindow()
+				.getService(ICommandService.class);
+		Command undo = cs.getCommand("org.eclipse.ui.edit.undo");
+		assertTrue(undo.isDefined());
+
+		assertFalse(undo.isEnabled());
+
+		ITextEditor textEditor = (ITextEditor) editor;
+		IDocument doc = textEditor.getDocumentProvider().getDocument(
+				textEditor.getEditorInput());
+		doc.replace(0, 1, "  ");
+		fActivePage.saveEditor(editor, false);
+		
+		processEvents();
+		assertTrue(undo.isEnabled());
+		
+		assertEquals(getMessage(), 0, logCount);
+		fActivePage.hideEditor(editorRef);
+		processEvents();
+
+		assertFalse(undo.isEnabled());
+		
+		fActivePage.showEditor(editorRef);
+		
+		assertTrue(undo.isEnabled());
+		
+		assertEquals(getMessage(), 0, logCount);
+	}
+
+	/**
+	 * Create and hide a single editor, and check it is reflected in the
+	 * editor references.  Check that closing the hidden editor still works.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor10() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a.mock1", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor instanceof MockEditorPart);
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		fActivePage.hideEditor(editorRef);
+		assertEquals(0, fActivePage.getEditorReferences().length);
+		fActivePage.showEditor(editorRef);
+		assertEquals(1, fActivePage.getEditorReferences().length);
+		fActivePage.hideEditor(editorRef);
+		processEvents();
+		fActivePage.closeAllEditors(false);
+		assertEquals(getMessage(), 0, logCount);
+		assertEquals(0, fActivePage.getEditorReferences().length);
 	}
 }
