@@ -12,11 +12,6 @@ package org.eclipse.ui.forms.editor;
 
 import java.util.Vector;
 
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -58,8 +53,7 @@ import org.eclipse.ui.part.MultiPageSelectionProvider;
  * 
  * @since 3.0
  */
-public abstract class FormEditor extends MultiPageEditorPart implements
-		IPageChangeProvider {
+public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * An array of pages currently in the editor. Page objects are not limited
@@ -73,8 +67,6 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	private FormToolkit toolkit;
 
 	private int currentPage = -1;
-
-	private ListenerList pageListeners = new ListenerList();
 
 	private static class FormEditorSelectionProvider extends
 			MultiPageSelectionProvider {
@@ -175,24 +167,6 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	 * 'addPage(IFormPage)' method.
 	 */
 	protected abstract void addPages();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#addPageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
-	 */
-	public void addPageChangedListener(IPageChangedListener listener) {
-		pageListeners.add(listener);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#removePageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
-	 */
-	public void removePageChangedListener(IPageChangedListener listener) {
-		pageListeners.remove(listener);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -511,9 +485,6 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		// Call super - this will cause pages to switch
 		super.pageChange(newPageIndex);
 		this.currentPage = newPageIndex;
-		IFormPage newPage = getActivePageInstance();
-		if (newPage != null)
-			firePageChanged(new PageChangedEvent(this, newPage));
 	}
 
 	/**
@@ -678,18 +649,6 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 			IFormPage fpage = (IFormPage) page;
 			if (fpage.isEditor() == false)
 				fpage.init(getEditorSite(), getEditorInput());
-		}
-	}
-
-	private void firePageChanged(final PageChangedEvent event) {
-		Object[] listeners = pageListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final IPageChangedListener l = (IPageChangedListener) listeners[i];
-			SafeRunnable.run(new SafeRunnable() {
-				public void run() {
-					l.pageChanged(event);
-				}
-			});
 		}
 	}
 }
