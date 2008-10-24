@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 221704, 234686, 246625, 226289
+ *     Matthew Hall - bugs 221704, 234686, 246625, 226289, 246782
  *******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -584,9 +584,13 @@ final public class PojoObservables {
 	 *         property for the current value of the master observable value
 	 * 
 	 * @see MasterDetailObservables
+	 * @deprecated Use
+	 *             {@link #observeDetailValue(IObservableValue, String, Class)}
+	 *             instead
 	 */
 	public static IObservableValue observeDetailValue(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
+		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 
 		IObservableValue value = MasterDetailObservables.detailValue(master,
 				valueFactory(realm, propertyName), propertyType);
@@ -599,7 +603,7 @@ final public class PojoObservables {
 
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailValue(master, valueFactory(Realm.getDefault, propertyName), propertyType)</code>
+	 * <code>MasterDetailObservables.detailValue(master, valueFactory(master.getRealm, propertyName), propertyType)</code>
 	 * 
 	 * @param master
 	 * @param propertyName
@@ -613,7 +617,7 @@ final public class PojoObservables {
 	 */
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailValue(Realm.getDefault(), master, propertyName,
+		return observeDetailValue(master.getRealm(), master, propertyName,
 				propertyType);
 	}
 
@@ -631,9 +635,13 @@ final public class PojoObservables {
 	 *         value of the master observable value
 	 * 
 	 * @see MasterDetailObservables
+	 * @deprecated Use
+	 *             {@link #observeDetailList(IObservableValue, String, Class)}
+	 *             instead
 	 */
 	public static IObservableList observeDetailList(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
+		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 		IObservableList observableList = MasterDetailObservables.detailList(
 				master, listFactory(realm, propertyName, propertyType),
 				propertyType);
@@ -646,7 +654,7 @@ final public class PojoObservables {
 
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailList(master, listFactory(Realm.getDefault(), propertyName, propertyType), propertyType)</code>
+	 * <code>MasterDetailObservables.detailList(master, listFactory(master.getRealm(), propertyName, propertyType), propertyType)</code>
 	 * 
 	 * @param master
 	 * @param propertyName
@@ -660,7 +668,7 @@ final public class PojoObservables {
 	 */
 	public static IObservableList observeDetailList(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailList(Realm.getDefault(), master, propertyName,
+		return observeDetailList(master.getRealm(), master, propertyName,
 				propertyType);
 	}
 
@@ -678,9 +686,13 @@ final public class PojoObservables {
 	 *         value of the master observable value
 	 * 
 	 * @see MasterDetailObservables
+	 * @deprecated Use
+	 *             {@link #observeDetailSet(IObservableValue, String, Class)}
+	 *             instead.
 	 */
 	public static IObservableSet observeDetailSet(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
+		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 
 		IObservableSet observableSet = MasterDetailObservables.detailSet(
 				master, setFactory(realm, propertyName, propertyType),
@@ -694,7 +706,7 @@ final public class PojoObservables {
 
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailSet(master, setFactory(Realm.getDefault(), propertyName), propertyType)</code>
+	 * <code>MasterDetailObservables.detailSet(master, setFactory(master.getRealm(), propertyName), propertyType)</code>
 	 * 
 	 * @param master
 	 * @param propertyName
@@ -708,7 +720,7 @@ final public class PojoObservables {
 	 */
 	public static IObservableSet observeDetailSet(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailSet(Realm.getDefault(), master, propertyName,
+		return observeDetailSet(master.getRealm(), master, propertyName,
 				propertyType);
 	}
 
@@ -721,9 +733,11 @@ final public class PojoObservables {
 	 * @param propertyName
 	 * @return an observable map that tracks the map-type named property for the
 	 *         current value of the master observable value.
+	 * @deprecated Use {@link #observeDetailMap(IObservableValue, String)} instead
 	 */
 	public static IObservableMap observeDetailMap(Realm realm,
 			IObservableValue master, String propertyName) {
+		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 		IObservableMap observableMap = MasterDetailObservables.detailMap(
 				master, mapPropertyFactory(realm, propertyName));
 		BeanObservableMapDecorator decorator = new BeanObservableMapDecorator(
@@ -734,7 +748,7 @@ final public class PojoObservables {
 
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailMap(master, mapFactory(Realm.getDefault(), propertyName))</code>
+	 * <code>MasterDetailObservables.detailMap(master, mapFactory(master.getRealm(), propertyName))</code>
 	 * 
 	 * @param master
 	 * @param propertyName
@@ -744,6 +758,6 @@ final public class PojoObservables {
 	 */
 	public static IObservableMap observeDetailMap(IObservableValue master,
 			String propertyName) {
-		return observeDetailMap(Realm.getDefault(), master, propertyName);
+		return observeDetailMap(master.getRealm(), master, propertyName);
 	}
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223114, 226289, 247875
+ *     Matthew Hall - bug 223114, 226289, 247875, 246782
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -102,6 +102,8 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 		} else {
 			detailMap = (IObservableMap) detailFactory
 					.createObservable(masterValue);
+			DetailObservableHelper.warnIfDifferentRealms(getRealm(),
+					detailMap.getRealm());
 			wrappedMap = detailMap;
 
 			if (detailKeyType != null) {

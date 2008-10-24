@@ -10,7 +10,7 @@
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 147515
  *     Ovidio Mallo - bug 241318
- *     Matthew Hall - bug 247875
+ *     Matthew Hall - bug 247875, 246782
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
@@ -93,6 +93,8 @@ public class DetailObservableValue extends AbstractObservableValue implements IO
 		} else {
 			this.innerObservableValue = (IObservableValue) factory
 					.createObservable(currentOuterValue);
+			DetailObservableHelper.warnIfDifferentRealms(getRealm(),
+					innerObservableValue.getRealm());
 
 			if (detailType != null) {
 				Object innerValueType = innerObservableValue.getValueType();

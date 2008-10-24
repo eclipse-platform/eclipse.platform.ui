@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 221351, 247875
+ *     Matthew Hall - bug 221351, 247875, 246782
  *     Ovidio Mallo - bug 241318
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -101,6 +101,8 @@ public class DetailObservableList extends ObservableList implements IObserving {
 		} else {
 			this.innerObservableList = (IObservableList) factory
 					.createObservable(currentOuterValue);
+			DetailObservableHelper.warnIfDifferentRealms(getRealm(),
+					innerObservableList.getRealm());
 			wrappedList = innerObservableList;
 
 			if (detailType != null) {

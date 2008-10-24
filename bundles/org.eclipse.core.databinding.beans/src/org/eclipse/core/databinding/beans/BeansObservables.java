@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164268, 171616, 147515
- *     Matthew Hall - bug 221704, 234686, 246625, 226289
+ *     Matthew Hall - bug 221704, 234686, 246625, 226289, 246782
  *     Thomas Kratz - bug 213787
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
@@ -27,6 +27,8 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.internal.databinding.Util;
 import org.eclipse.core.internal.databinding.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableMapDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
@@ -37,6 +39,8 @@ import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
 import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
 import org.eclipse.core.internal.databinding.beans.JavaBeanPropertyObservableMap;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * A factory for creating observable objects of Java objects that conform to the
@@ -481,9 +485,13 @@ final public class BeansObservables {
 	 *         property for the current value of the master observable value
 	 * 
 	 * @see MasterDetailObservables
+	 * @deprecated Use
+	 *             {@link #observeDetailValue(IObservableValue, String, Class)}
+	 *             instead
 	 */
 	public static IObservableValue observeDetailValue(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
+		warnIfDifferentRealms(realm, master.getRealm());
 
 		IObservableValue value = MasterDetailObservables.detailValue(master,
 				valueFactory(realm, propertyName), propertyType);
@@ -493,9 +501,23 @@ final public class BeansObservables {
 		return decorator;
 	}
 
+	/* package */static void warnIfDifferentRealms(Realm detailRealm,
+			Realm masterRealm) {
+		if (!Util.equals(detailRealm, masterRealm)) {
+			Throwable throwable = new Throwable();
+			throwable.fillInStackTrace();
+			String message = "Detail realm (" + detailRealm //$NON-NLS-1$
+					+ ") not equal to master realm (" //$NON-NLS-1$
+					+ masterRealm + ")"; //$NON-NLS-1$
+			Policy.getLog().log(
+					new Status(IStatus.WARNING, Policy.JFACE_DATABINDING,
+							message, throwable));
+		}
+	}
+
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailValue(master, valueFactory(Realm.getDefault(), propertyName), propertyType)</code>
+	 * <code>MasterDetailObservables.detailValue(master, valueFactory(master.getRealm(), propertyName), propertyType)</code>
 	 * 
 	 * @param master
 	 * @param propertyName
@@ -509,7 +531,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailValue(Realm.getDefault(), master, propertyName,
+		return observeDetailValue(master.getRealm(), master, propertyName,
 				propertyType);
 	}
 
@@ -537,9 +559,13 @@ final public class BeansObservables {
 	 * 
 	 * @see MasterDetailObservables
 	 * @since 1.1
+	 * @deprecated Use
+	 *             {@link #observeDetailValue(IObservableValue, Class, String, Class)}
+	 *             instead.
 	 */
 	public static IObservableValue observeDetailValue(Realm realm,
 			IObservableValue master, Class masterType, String propertyName, Class propertyType) {
+		warnIfDifferentRealms(realm, master.getRealm());
 		Assert.isNotNull(masterType, "masterType cannot be null"); //$NON-NLS-1$
 		IObservableValue value = MasterDetailObservables.detailValue(master,
 				valueFactory(realm, propertyName), propertyType);
@@ -551,7 +577,7 @@ final public class BeansObservables {
 
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailValue(master, valueFactory(Realm.getDefault(), propertyName), propertyType)</code>
+	 * <code>MasterDetailObservables.detailValue(master, valueFactory(master.getRealm(), propertyName), propertyType)</code>
 	 * . This method returns an {@link IBeanObservable} with a
 	 * {@link PropertyDescriptor} based on the given master type and property
 	 * name.
@@ -573,7 +599,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			Class masterType, String propertyName, Class propertyType) {
-		return observeDetailValue(Realm.getDefault(), master, masterType,
+		return observeDetailValue(master.getRealm(), master, masterType,
 				propertyName, propertyType);
 	}
 
@@ -591,9 +617,13 @@ final public class BeansObservables {
 	 *         value of the master observable value
 	 * 
 	 * @see MasterDetailObservables
+	 * @deprecated Use
+	 *             {@link #observeDetailList(IObservableValue, String, Class)}
+	 *             instead
 	 */
 	public static IObservableList observeDetailList(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
+		warnIfDifferentRealms(realm, master.getRealm());
 		IObservableList observableList = MasterDetailObservables.detailList(
 				master, listFactory(realm, propertyName, propertyType),
 				propertyType);
@@ -606,7 +636,7 @@ final public class BeansObservables {
 
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailList(master, listFactory(Realm.getDefault(), propertyName, propertyType), propertyType)</code>
+	 * <code>MasterDetailObservables.detailList(master, listFactory(master.getRealm(), propertyName, propertyType), propertyType)</code>
 	 * 
 	 * @param master
 	 * @param propertyName
@@ -620,7 +650,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableList observeDetailList(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailList(Realm.getDefault(), master, propertyName,
+		return observeDetailList(master.getRealm(), master, propertyName,
 				propertyType);
 	}
 
@@ -638,9 +668,13 @@ final public class BeansObservables {
 	 *         value of the master observable value
 	 * 
 	 * @see MasterDetailObservables
+	 * @deprecated Use
+	 *             {@link #observeDetailSet(IObservableValue, String, Class)}
+	 *             instead.
 	 */
 	public static IObservableSet observeDetailSet(Realm realm,
 			IObservableValue master, String propertyName, Class propertyType) {
+		warnIfDifferentRealms(realm, master.getRealm());
 
 		IObservableSet observableSet = MasterDetailObservables.detailSet(
 				master, setFactory(realm, propertyName, propertyType),
@@ -654,7 +688,7 @@ final public class BeansObservables {
 
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailSet(master, setFactory(Realm.getDefault(), propertyName), propertyType)</code>
+	 * <code>MasterDetailObservables.detailSet(master, setFactory(master.getRealm(), propertyName), propertyType)</code>
 	 * 
 	 * @param master
 	 * @param propertyName
@@ -668,7 +702,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableSet observeDetailSet(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailSet(Realm.getDefault(), master, propertyName,
+		return observeDetailSet(master.getRealm(), master, propertyName,
 				propertyType);
 	}
 
@@ -683,9 +717,12 @@ final public class BeansObservables {
 	 * @return an observable map that tracks the map-type named property for the
 	 *         current value of the master observable value.
 	 * @since 1.1
+	 * @deprecated Use {@link #observeDetailMap(IObservableValue, String)}
+	 *             instead
 	 */
 	public static IObservableMap observeDetailMap(Realm realm,
 			IObservableValue master, String propertyName) {
+		warnIfDifferentRealms(realm, master.getRealm());
 		IObservableMap observableMap = MasterDetailObservables.detailMap(
 				master, mapPropertyFactory(realm, propertyName));
 		BeanObservableMapDecorator decorator = new BeanObservableMapDecorator(
@@ -696,7 +733,7 @@ final public class BeansObservables {
 
 	/**
 	 * Helper method for
-	 * <code>MasterDetailObservables.detailMap(master, mapFactory(Realm.getDefault(), propertyName))</code>
+	 * <code>MasterDetailObservables.detailMap(master, mapFactory(master.getRealm(), propertyName))</code>
 	 * 
 	 * @param master
 	 * @param propertyName
@@ -706,7 +743,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableMap observeDetailMap(IObservableValue master,
 			String propertyName) {
-		return observeDetailMap(Realm.getDefault(), master, propertyName);
+		return observeDetailMap(master.getRealm(), master, propertyName);
 	}
 
 	/**
