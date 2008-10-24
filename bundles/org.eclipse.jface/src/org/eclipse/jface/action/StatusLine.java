@@ -616,7 +616,7 @@ import org.eclipse.swt.widgets.ToolItem;
 			newName = name;
 
 		String text;
-		if (fTaskName.length() == 0) {
+		if (fTaskName == null || fTaskName.length() == 0) {
 			text = newName;
 		} else {
 			text = JFaceResources.format(
