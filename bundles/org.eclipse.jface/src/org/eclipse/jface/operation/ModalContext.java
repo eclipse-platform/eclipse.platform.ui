@@ -165,6 +165,7 @@ public class ModalContext {
 		 */
 		public void block() {
 			if (display == Display.getCurrent()) {
+				int exceptionCount = 0;
 				while (continueEventDispatching) {
 					// Run the event loop. Handle any uncaught exceptions caused
 					// by UI events.
@@ -172,6 +173,7 @@ public class ModalContext {
 						if (!display.readAndDispatch()) {
 							display.sleep();
 						}
+						exceptionCount = 0;
 					}
 					// ThreadDeath is a normal error when the thread is dying.
 					// We must
@@ -180,7 +182,17 @@ public class ModalContext {
 						throw (e);
 					}
 					// For all other exceptions, log the problem.
-					catch (Throwable e) {
+					catch (Throwable t) {
+						exceptionCount++;
+						if (exceptionCount > 2 || display.isDisposed()) {
+			                if (t instanceof RuntimeException) {
+								throw (RuntimeException) t;
+							} else if (t instanceof Error) {
+								throw (Error) t;
+							} else {
+								throw new RuntimeException(t);
+							}
+						}
 						Policy
 								.getLog()
 								.log(
@@ -188,7 +200,7 @@ public class ModalContext {
 												IStatus.ERROR,
 												Policy.JFACE,
 												"Unhandled event loop exception during blocked modal context.",//$NON-NLS-1$
-												e));
+												t));
 					}
 				}
 			} else {
