@@ -498,7 +498,7 @@ public class IntroLaunchBar implements IWindowTrim {
 			Rectangle endBounds = Geometry.toDisplay(cpart.getControl().getParent(), cpart.getControl()
 					.getBounds());
 
-			//AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds); // TODO uncomment, see Bug 251869 
+			AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds);
 		}
 		dispose();
 		window.getShell().layout();

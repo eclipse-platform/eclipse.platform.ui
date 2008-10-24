@@ -674,7 +674,7 @@ public class IntroURL implements IIntroURL {
         Rectangle endBounds = Geometry.toDisplay(launchBar.getControl()
             .getParent(), launchBar.getControl().getBounds());
 
-		//AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds); // TODO uncomment, see Bug 251869 
+		AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds); 
         return true;
     }
 }
