@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Shawn Minto, patch for Bug 247731
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.browsers;
 
@@ -43,6 +44,10 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	public MozillaBrowser(String id, String executable) {
 		super(id);
 		this.executable = executable;
+	}
+	
+	String getExecutable() {
+		return executable;
 	}
 
 	/*
