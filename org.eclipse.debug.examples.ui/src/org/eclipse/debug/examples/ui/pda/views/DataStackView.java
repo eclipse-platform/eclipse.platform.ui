@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
- *******************************************************************************/
+ *     Wind River - Pawel Piech - replaced actions with handlers (bug 229219)
+******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.views;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -39,8 +40,6 @@ import org.eclipse.ui.IWorkbenchPart;
 public class DataStackView extends AbstractDebugView implements ISelectionListener {
     
     private PDADebugTarget fTarget;
-    private PopAction fPopAction;
-    private PushAction fPushAction;
 	
 	class StackViewContentProvider implements ITreeContentProvider {
 
@@ -114,8 +113,6 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-	    fPopAction = new PopAction(this);
-	    fPushAction = new PushAction(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
@@ -128,15 +125,11 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(fPopAction);
-		menu.add(fPushAction);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
-	    tbm.add(fPopAction);
-	    tbm.add(fPushAction);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
@@ -171,7 +164,6 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 		    input = fTarget;
 		}
 		getViewer().setInput(input);
-		fPushAction.setDebugTarget(fTarget);
 		getViewer().refresh();
     }
 }

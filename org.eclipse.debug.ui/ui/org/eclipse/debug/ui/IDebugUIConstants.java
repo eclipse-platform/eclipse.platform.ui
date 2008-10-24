@@ -1214,4 +1214,12 @@ public interface IDebugUIConstants {
 	 * @since 3.5
 	 */
 	public static final String SYS_PROP_BREAKPOINT_TOGGLE_FACTORIES_USED = "org.eclipse.debug.ui.breakpoints.toggleFactoriesUsed"; //$NON-NLS-1$
+	
+	/**
+	 * Name of the debug context variable which can be used in standard
+	 * expressions and command handlers to access the active debug context.
+	 * 
+	 * @since 3.5
+	 */
+	public static final String DEBUG_CONTEXT_SOURCE_NAME = "debugContext"; //$NON-NLS-1$
 }

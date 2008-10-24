@@ -315,4 +315,107 @@
          </enablement>
       </toggleTargetFactory>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.debug.examples.ui.pushCommand"
+            name="Push">
+      </command>
+      <command
+            id="org.eclipse.debug.examples.ui.popCommand"
+            name="Pop">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.debug.examples.ui.pda.views.PushHandler"
+            commandId="org.eclipse.debug.examples.ui.pushCommand">
+         <enabledWhen>
+            <and>
+               <with variable="activePart">
+                  <instanceof value="org.eclipse.debug.examples.ui.pda.views.DataStackView"/>
+               </with>
+               <with variable="debugContext">
+                  <count value="1"/>
+                  <iterate operator="and">
+                     <test property="org.eclipse.debug.ui.getModelIdentifier"
+                           value="pda.debugModel">
+                     </test>
+                     <test property="org.eclipse.debug.examples.ui.canPush"/>
+                  </iterate>
+               </with>
+            </and>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.debug.examples.ui.pda.views.PopHandler"
+            commandId="org.eclipse.debug.examples.ui.popCommand">
+         <enabledWhen>
+            <and>
+               <with variable="activePart">
+                  <instanceof value="org.eclipse.debug.examples.ui.pda.views.DataStackView"/>
+               </with>
+               <with variable="debugContext">
+                  <count value="1"/>
+                  <iterate>
+                     <test property="org.eclipse.debug.ui.getModelIdentifier"
+                           value="pda.debugModel">
+                     </test>
+                  </iterate>
+               </with>
+               <with variable="selection">
+                  <count value="1"/>               
+               </with>
+            </and>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.debug.examples.ui.pda.views.CanPushTester"
+            id="org.eclipse.debug.examples.ui.canPushTester"
+            namespace="org.eclipse.debug.examples.ui"
+            properties="canPush"
+            type="org.eclipse.core.runtime.IAdaptable">
+      </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:pda.dataStackView?after=additions">
+         <command
+               commandId="org.eclipse.debug.examples.ui.pushCommand"
+               disabledIcon="icons/full/dlcl16/push.gif"
+               icon="icons/full/elcl16/push.gif"
+               label="Push"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.debug.examples.ui.popCommand"
+               disabledIcon="icons/full/dlcl16/pop.gif"
+               icon="icons/full/elcl16/pop.gif"
+               label="Pop"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:pda.dataStackView?after=additions">
+         <command
+               commandId="org.eclipse.debug.examples.ui.pushCommand"
+               disabledIcon="icons/full/dlcl16/push.gif"
+               icon="icons/full/elcl16/push.gif"
+               label="Push"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.debug.examples.ui.popCommand"
+               disabledIcon="icons/full/dlcl16/pop.gif"
+               icon="icons/full/elcl16/pop.gif"
+               label="Pop"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
 </plugin>

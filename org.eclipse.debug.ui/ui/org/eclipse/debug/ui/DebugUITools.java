@@ -13,6 +13,8 @@ package org.eclipse.debug.ui;
 
 import java.util.Set;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,6 +33,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
@@ -62,6 +65,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * This class provides utilities for clients of the debug UI.
@@ -848,4 +852,44 @@ public class DebugUITools {
 	public static IDebugContextManager getDebugContextManager() {
 		return DebugContextManager.getDefault();
 	}
+
+    /**
+     * Return the debug context for the given executionEvent.
+     * 
+     * @param event The execution event that contains the application context
+     * @return the current debug context, or <code>null</code>.
+     * 
+     * @since 3.5
+     */
+    public static ISelection getDebugContextForEvent(ExecutionEvent event) {
+        Object o = HandlerUtil.getVariable(event, IConfigurationElementConstants.DEBUG_CONTEXT);
+        if (o instanceof ISelection) {
+            return (ISelection) o;
+        }
+        return null;
+    }
+
+    /**
+     * Return the debug context for the given executionEvent.
+     * 
+     * @param event The execution event that contains the application context
+     * @return the debug context. Will not return <code>null</code>.
+     * @throws ExecutionException If the current selection variable is not found.
+     * 
+     * @since 3.5
+     */
+    public static ISelection getDebugContextForEventChecked(ExecutionEvent event)
+            throws ExecutionException {
+        Object o = HandlerUtil.getVariableChecked(event, IConfigurationElementConstants.DEBUG_CONTEXT);
+        if (!(o instanceof ISelection)) {
+            throw new ExecutionException("Incorrect type for " //$NON-NLS-1$
+                + IConfigurationElementConstants.DEBUG_CONTEXT
+                + " found while executing " //$NON-NLS-1$
+                + event.getCommand().getId()
+                + ", expected " + ISelection.class.getName() //$NON-NLS-1$
+                + " found " + o.getClass().getName()); //$NON-NLS-1$
+        }
+        return (ISelection) o;
+    }
+
 }

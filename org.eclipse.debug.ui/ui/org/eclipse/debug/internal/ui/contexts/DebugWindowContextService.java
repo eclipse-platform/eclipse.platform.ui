@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River - Pawel Piech - added an evaluation context source provider (bug 229219)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
@@ -30,6 +31,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Context service for a specific window.
@@ -44,13 +46,19 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	
 	private IWorkbenchWindow fWindow;
 	private List fProviders = new ArrayList();
+	
+	private DebugContextSourceProvider fSourceProvider;
 
 	public DebugWindowContextService(IWorkbenchWindow window) {
 		fWindow = window;
 		fWindow.getPartService().addPartListener(this);
+		
+		IEvaluationService evaluationService = (IEvaluationService)window.getService(IEvaluationService.class);
+		fSourceProvider = new DebugContextSourceProvider(this, evaluationService);
 	}
 	
 	public void dispose() {
+		fSourceProvider.dispose();
 		fWindow.getPartService().removePartListener(this);
 		fWindow = null;
 	}
