@@ -7,20 +7,28 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
- *     Matthew Hall - bug 237884
- *     Ovidio Mallo - bugs 240590, 238909
+ *     Matthew Hall - bug 237884, 251003
+ *     Ovidio Mallo - bugs 240590, 238909, 251003
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.validation;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -306,6 +314,52 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, validationStaleCounter.count);
 	}
 
+	public void testBug251003_CompareDependenciesByIdentity() {
+		DependencyObservable dependency1 = new DependencyObservable();
+		DependencyObservable dependency2 = new DependencyObservable();
+		assertEquals(dependency1, dependency2);
+		assertNotSame(dependency1, dependency2);
+
+		final List dependencies = new ArrayList();
+		dependencies.add(dependency1);
+		validator = new MultiValidator() {
+			protected IStatus validate() {
+				for (Iterator it = dependencies.iterator(); it.hasNext();)
+					ObservableTracker.getterCalled((IObservable) it.next());
+				return null;
+			}
+		};
+
+		// force init validation
+		validationStatus = validator.getValidationStatus();
+
+		IObservableList targets = validator.getTargets();
+		assertEquals(1, targets.size());
+		assertSame(dependency1, targets.get(0));
+
+		dependencies.set(0, dependency2);
+		dependency1.fireChange(); // force revalidate
+
+		assertEquals(1, targets.size());
+		assertSame(dependency2, targets.get(0));
+	}
+
+	public void testBug251003_MissingDependencies() {
+		final WritableList emptyListDependency = new WritableList();
+		validator = new MultiValidator() {
+			protected IStatus validate() {
+				ObservableTracker.getterCalled(emptyListDependency);
+				return null;
+			}
+		};
+
+		// Make sure the validation above is really triggered.
+		validator.getValidationStatus().getValue();
+
+		// emptyListDependency should be included in the dependency set.
+		assertTrue(validator.getTargets().contains(emptyListDependency));
+	}
+
 	private static class DependencyObservableValue extends WritableValue {
 		private boolean stale = false;
 
@@ -332,6 +386,33 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 		protected void fireStale() {
 			super.fireStale();
+		}
+	}
+
+	private static class DependencyObservable extends AbstractObservable {
+		public DependencyObservable() {
+			super(Realm.getDefault());
+		}
+
+		public boolean isStale() {
+			return false;
+		}
+
+		public boolean equals(Object obj) {
+			if (obj == this)
+				return true;
+			if (obj == null)
+				return false;
+			return getClass() == obj.getClass();
+		}
+
+		public int hashCode() {
+			return getClass().hashCode();
+		}
+
+		protected void fireChange() {
+			// TODO Auto-generated method stub
+			super.fireChange();
 		}
 	}
 
