@@ -19,6 +19,11 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
    <include schemaLocation="commonExpression.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="viewContribution" minOccurs="1" maxOccurs="unbounded"/>
@@ -204,7 +209,11 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
         &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;toggle&lt;/b&gt;&lt;/td&gt;
         &lt;td valign=&quot;top&quot;&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
-    &lt;/table&gt;
+      &lt;tr&gt;
+ &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;pulldown&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- as a pulldown tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
+      &lt;/tr&gt;    &lt;/table&gt;
                </documentation>
             </annotation>
             <simpleType>
@@ -214,6 +223,8 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                   <enumeration value="radio">
                   </enumeration>
                   <enumeration value="toggle">
+                  </enumeration>
+                  <enumeration value="pulldown">
                   </enumeration>
                </restriction>
             </simpleType>
@@ -467,7 +478,6 @@ can be expressed using:
 &lt;/pre&gt;
       </documentation>
    </annotation>
-
 
 
    <annotation>
