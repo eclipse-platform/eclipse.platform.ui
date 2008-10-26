@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
- *     Matthew Hall - bugs 208858, 221351, 213145, 223164
+ *     Matthew Hall - bugs 208858, 221351, 213145, 223164, 244098
  *     Mike Evans - bug 217558
  *******************************************************************************/
 
@@ -41,25 +41,11 @@ public class JavaBeanObservableList extends ObservableList implements
 
 	private final Object object;
 
-	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
-		public void propertyChange(java.beans.PropertyChangeEvent event) {
-			if (!updating) {
-				getRealm().exec(new Runnable() {
-					public void run() {
-						updateWrappedList( new ArrayList( Arrays.asList(getValues() ) ) );
-					}
-				});
-			}
-		}
-	};
-
 	private boolean updating = false;
 
 	private PropertyDescriptor descriptor;
 
-	private ListenerSupport collectionListenSupport;
-
-	private boolean attachListeners;
+	private ListenerSupport listenerSupport;
 
 	/**
 	 * @param realm
@@ -86,32 +72,35 @@ public class JavaBeanObservableList extends ObservableList implements
 		super(realm, new ArrayList(), elementType);
 		this.object = object;
 		this.descriptor = descriptor;
-		this.attachListeners = attachListeners;
 
 		if (attachListeners) {
-			this.collectionListenSupport = new ListenerSupport(
-					collectionListener, descriptor.getName());
+			PropertyChangeListener listener = new PropertyChangeListener() {
+				public void propertyChange(java.beans.PropertyChangeEvent event) {
+					if (!updating) {
+						getRealm().exec(new Runnable() {
+							public void run() {
+								updateWrappedList(new ArrayList(Arrays
+										.asList(getValues())));
+							}
+						});
+					}
+				}
+			};
+			this.listenerSupport = new ListenerSupport(listener,
+					descriptor.getName());
+			listenerSupport.hookListener(this.object);
 		}
 
 		// initialize list without firing events
 		wrappedList.addAll(Arrays.asList(getValues()));
 	}
 
-	protected void firstListenerAdded() {
-		if (attachListeners) {
-			collectionListenSupport.hookListener(this.object);
+	public void dispose() {
+		if (listenerSupport != null) {
+			listenerSupport.dispose();
+			listenerSupport = null;
 		}
-	}
-
-	protected void lastListenerRemoved() {
-		if (collectionListenSupport != null) {
-			collectionListenSupport.dispose();
-		}
-	}
-
-	public synchronized void dispose() {
 		super.dispose();
-		lastListenerRemoved();
 	}
 
 	private Object primGetValues() {

@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221351)
  *     Brad Reynolds - through JavaBeanObservableArrayBasedListTest.java
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 244098
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -70,19 +70,12 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertEquals(propertyDescriptor, set.getPropertyDescriptor());
 	}
 
-	public void testRegistersListenerAfterFirstListenerIsAdded()
-			throws Exception {
-		assertFalse(bean.changeSupport.hasListeners(propertyName));
-		SetChangeEventTracker.observe(set);
+	public void testRegistersListenerOnCreation() throws Exception {
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
 
-	public void testRemovesListenerAfterLastListenerIsRemoved()
-			throws Exception {
-		SetChangeEventTracker listener = SetChangeEventTracker.observe(set);
-
-		assertTrue(bean.changeSupport.hasListeners(propertyName));
-		set.removeSetChangeListener(listener);
+	public void testRemovesListenerOnDisposal() throws Exception {
+		set.dispose();
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 	}
 
