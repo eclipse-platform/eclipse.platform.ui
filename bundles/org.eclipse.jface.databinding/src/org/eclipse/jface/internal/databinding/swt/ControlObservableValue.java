@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -275,7 +276,7 @@ public class ControlObservableValue extends AbstractSWTObservableValue {
 	}
 	
 	private void notifyIfChanged(Object oldValue, Object newValue) {
-		if (!oldValue.equals(newValue)) {
+		if (!Util.equals(oldValue, newValue)) {
 			fireValueChange(Diffs.createValueDiff(oldValue, newValue));			
 		}
 	}
