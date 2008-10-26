@@ -75,9 +75,9 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	private static final Byte MIN_BYTE = new Byte(Byte.MIN_VALUE);
 	private static final Byte MAX_BYTE = new Byte(Byte.MAX_VALUE);
 	
-	protected static Class icuBigDecimal = null;
-	protected static Method icuBigDecimalScale = null;
-	protected static Method icuBigDecimalUnscaledValue = null;
+	static Class icuBigDecimal = null;
+	static Method icuBigDecimalScale = null;
+	static Method icuBigDecimalUnscaledValue = null;
 	
 	{
 		/*
@@ -336,6 +336,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 
 	/**
 	 * @return to BigDecimal converter for the default locale
+	 * @since 1.2
 	 */
 	public static StringToNumberConverter toBigDecimal() {
 		return toBigDecimal(NumberFormat.getNumberInstance());
@@ -344,6 +345,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	/**
 	 * @param numberFormat
 	 * @return to BigDecimal converter with the provided numberFormat
+	 * @since 1.2
 	 */
 	public static StringToNumberConverter toBigDecimal(NumberFormat numberFormat) {
 		return new StringToNumberConverter(numberFormat, BigDecimal.class,
@@ -354,6 +356,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param primitive
 	 *            <code>true</code> if the convert to type is a short
 	 * @return to Short converter for the default locale
+	 * @since 1.2
 	 */
 	public static StringToNumberConverter toShort(boolean primitive) {
 		return toShort(NumberFormat.getIntegerInstance(), primitive);
@@ -363,6 +366,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param numberFormat
 	 * @param primitive
 	 * @return to Short converter with the provided numberFormat
+	 * @since 1.2
 	 */
 	public static StringToNumberConverter toShort(NumberFormat numberFormat,
 			boolean primitive) {
@@ -375,6 +379,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param primitive
 	 *            <code>true</code> if the convert to type is a byte
 	 * @return to Byte converter for the default locale
+	 * @since 1.2
 	 */
 	public static StringToNumberConverter toByte(boolean primitive) {
 		return toByte(NumberFormat.getIntegerInstance(), primitive);
@@ -384,6 +389,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param numberFormat
 	 * @param primitive
 	 * @return to Byte converter with the provided numberFormat
+	 * @since 1.2
 	 */
 	public static StringToNumberConverter toByte(NumberFormat numberFormat,
 			boolean primitive) {

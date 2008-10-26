@@ -34,8 +34,8 @@ public class NumberToStringConverter extends Converter {
 	private boolean fromTypeIsBigInteger;
 	private boolean fromTypeIsBigDecimal;
 
-	protected static Class icuBigDecimal = null;
-	protected static Constructor icuBigDecimalCtr = null; 
+	static Class icuBigDecimal = null;
+	static Constructor icuBigDecimalCtr = null; 
 	
 	{
 		/*
@@ -238,6 +238,7 @@ public class NumberToStringConverter extends Converter {
 	
 	/**
 	 * @return BigDecimal convert for the default locale
+	 * @since 1.2
 	 */
 	public static NumberToStringConverter fromBigDecimal() {
 		return fromBigDecimal(NumberFormat.getNumberInstance());
@@ -246,6 +247,7 @@ public class NumberToStringConverter extends Converter {
 	/**
 	 * @param numberFormat
 	 * @return BigDecimal converter with the provided numberFormat
+	 * @since 1.2
 	 */
 	public static NumberToStringConverter fromBigDecimal(
 			NumberFormat numberFormat) {
@@ -256,6 +258,7 @@ public class NumberToStringConverter extends Converter {
 	 * @param primitive
 	 *            <code>true</code> if the type is a short
 	 * @return Short converter for the default locale
+	 * @since 1.2
 	 */
 	public static NumberToStringConverter fromShort(boolean primitive) {
 		return fromShort(NumberFormat.getIntegerInstance(), primitive);
@@ -265,6 +268,7 @@ public class NumberToStringConverter extends Converter {
 	 * @param numberFormat
 	 * @param primitive
 	 * @return Short converter with the provided numberFormat
+	 * @since 1.2
 	 */
 	public static NumberToStringConverter fromShort(
 			NumberFormat numberFormat, boolean primitive) {
@@ -276,6 +280,7 @@ public class NumberToStringConverter extends Converter {
 	 * @param primitive
 	 *            <code>true</code> if the type is a byte
 	 * @return Byte converter for the default locale
+	 * @since 1.2
 	 */
 	public static NumberToStringConverter fromByte(boolean primitive) {
 		return fromByte(NumberFormat.getIntegerInstance(), primitive);
@@ -285,6 +290,7 @@ public class NumberToStringConverter extends Converter {
 	 * @param numberFormat
 	 * @param primitive
 	 * @return Byte converter with the provided numberFormat
+	 * @since 1.2
 	 */
 	public static NumberToStringConverter fromByte(
 			NumberFormat numberFormat, boolean primitive) {
