@@ -463,6 +463,42 @@ public class SWTObservables {
 	}
 	
 	/**
+	 * @param control
+	 * @return an observable value tracking the size of the given control
+	 * @since 1.3
+	 */
+	public static ISWTObservableValue observeSize(Control control) {
+		return new ControlObservableValue(control,SWTProperties.SIZE);
+	}
+	
+	/**
+	 * @param control
+	 * @return an observable value tracking the location of the given control
+	 * @since 1.3
+	 */
+	public static ISWTObservableValue observeLocation(Control control) {
+		return new ControlObservableValue(control,SWTProperties.LOCATION);
+	}
+	
+	/**
+	 * @param control
+	 * @return an observable value tracking the focus of the given control
+	 * @since 1.3
+	 */
+	public static ISWTObservableValue observeFocus(Control control) {
+		return new ControlObservableValue(control,SWTProperties.FOCUS);
+	}
+	
+	/**
+	 * @param control
+	 * @return an observable value tracking the bounds of the given control
+	 * @since 1.3
+	 */
+	public static ISWTObservableValue observeBounds(Control control) {
+		return new ControlObservableValue(control,SWTProperties.BOUNDS);
+	}
+	
+	/**
 	 * Returns an observable observing the editable attribute of
 	 * the provided <code>control</code>. The supported types are:
 	 * <ul>

@@ -73,5 +73,25 @@ public interface SWTProperties {
 	 * Applies to Control
 	 */
 	public static final String FONT = "font"; //$NON-NLS-1$
+	
+	/**
+	 * Applies to Control 
+	 */
+	public static final String SIZE = "size";  //$NON-NLS-1$
+	
+	/**
+	 * Applies to Control
+	 */
+	public static final String LOCATION = "location"; //$NON-NLS-1$
+	
+	/**
+	 * Applies to Control
+	 */
+	public static final String FOCUS = "focus"; //$NON-NLS-1$
+	
+	/**
+	 * Applies to Control
+	 */
+	public static final String BOUNDS = "bounds"; //$NON-NLS-1$
 
 }
