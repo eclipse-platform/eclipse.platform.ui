@@ -62,12 +62,16 @@ public abstract class EditingSupport {
 	protected abstract Object getValue(Object element);
 
 	/**
-	 * Restore the value from the CellEditor
-	 *
+	 * Sets the new value on the given element. Note that implementers need to
+	 * ensure that <code>getViewer().update(element, null)</code> or similar
+	 * methods are called, either directly or through some kind of listener
+	 * mechanism on the implementer's model, to cause the new value to appear in
+	 * the viewer.
+	 * 
 	 * <p>
-	 * <b>Subclasses should overwrite!</b>
+	 * <b>Subclasses should overwrite.</b>
 	 * </p>
-	 *
+	 * 
 	 * @param element
 	 *            the model element
 	 * @param value
