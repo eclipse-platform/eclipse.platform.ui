@@ -370,4 +370,42 @@ public class TableViewer extends AbstractTableViewer {
 	public void refresh(boolean updateLabels, boolean reveal) {
 		refresh(getRoot(), updateLabels, reveal);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTableViewer#remove(java.lang.Object[])
+	 */
+	public void remove(Object[] elements) {
+		assertElementsNotNull(elements);
+		if (checkBusy())
+			return;
+		if (elements.length == 0) {
+			return;
+		}
+		// deselect any items that are being removed, see bug 97786
+		Object elementToBeRemoved = null;
+		CustomHashtable elementsToBeRemoved = null;
+		if (elements.length == 1) {
+			elementToBeRemoved = elements[0];
+		} else {
+			elementsToBeRemoved = new CustomHashtable(getComparer());
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
+				elementsToBeRemoved.put(element, element);
+			}
+		}
+		int[] selectionIndices = doGetSelectionIndices();
+		for (int i = 0; i < selectionIndices.length; i++) {
+			int index = selectionIndices[i];
+			Item item = doGetItem(index);
+			Object data = item.getData();
+			if (data != null) {
+				if ((elementsToBeRemoved != null && elementsToBeRemoved
+						.containsKey(data))
+						|| equals(elementToBeRemoved, data)) {
+					table.deselect(index);
+				}
+			}
+		}
+		super.remove(elements);
+	}
 }
