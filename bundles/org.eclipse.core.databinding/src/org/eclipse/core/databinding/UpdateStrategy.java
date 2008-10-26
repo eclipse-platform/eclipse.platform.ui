@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matt Carter - Bug 180392
- *                 - Character support completed (bug 197679)
+ *     Matt Carter - bug 180392
+ *                 - bug 197679 (Character support completed)
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -222,6 +222,9 @@ import com.ibm.icu.text.NumberFormat;
 							new Pair("java.lang.String", "java.math.BigInteger"), StringToNumberConverter.toBigInteger(integerFormat)); //$NON-NLS-1$//$NON-NLS-2$
 			converterMap
 					.put(
+							new Pair("java.lang.String", "java.math.BigDecimal"), StringToNumberConverter.toBigDecimal(numberFormat)); //$NON-NLS-1$//$NON-NLS-2$
+			converterMap
+					.put(
 							new Pair("java.lang.Integer", "java.lang.String"), NumberToStringConverter.fromInteger(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
 			converterMap
 					.put(
@@ -235,6 +238,9 @@ import com.ibm.icu.text.NumberFormat;
 			converterMap
 					.put(
 							new Pair("java.math.BigInteger", "java.lang.String"), NumberToStringConverter.fromBigInteger(integerFormat)); //$NON-NLS-1$//$NON-NLS-2$
+			converterMap
+					.put(
+							new Pair("java.math.BigDecimal", "java.lang.String"), NumberToStringConverter.fromBigDecimal(numberFormat)); //$NON-NLS-1$//$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair("java.lang.Byte", "java.lang.String"), IntegerToStringConverter.fromByte(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$

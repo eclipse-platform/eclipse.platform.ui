@@ -8,10 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Michael Scharf - bug 240562
+ *     Matt Carter - bug 180392
  ******************************************************************************/
 
 package org.eclipse.core.databinding.conversion;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -66,6 +69,38 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	private static final Float MIN_FLOAT = new Float(-Float.MAX_VALUE);
 	private static final Float MAX_FLOAT = new Float(Float.MAX_VALUE);
 
+	private static final Short MIN_SHORT = new Short(Short.MIN_VALUE);
+	private static final Short MAX_SHORT = new Short(Short.MAX_VALUE);
+	
+	private static final Byte MIN_BYTE = new Byte(Byte.MIN_VALUE);
+	private static final Byte MAX_BYTE = new Byte(Byte.MAX_VALUE);
+	
+	protected static Class icuBigDecimal = null;
+	protected static Method icuBigDecimalScale = null;
+	protected static Method icuBigDecimalUnscaledValue = null;
+	
+	{
+		/*
+		 * If the full ICU4J library is available, we use the ICU BigDecimal
+		 * class to support proper formatting and parsing of java.math.BigDecimal.
+		 * 
+		 * The version of ICU NumberFormat (DecimalFormat) included in eclipse excludes 
+		 * support for java.math.BigDecimal, and if used falls back to converting as
+		 * an unknown Number type via doubleValue(), which is undesirable.
+		 * 
+		 * See Bug #180392.
+		 */
+		try {
+			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal"); //$NON-NLS-1$
+			icuBigDecimalScale = icuBigDecimal.getMethod("scale", null); //$NON-NLS-1$
+			icuBigDecimalUnscaledValue = icuBigDecimal.getMethod("unscaledValue", null); //$NON-NLS-1$
+/*			System.out.println("DEBUG: Full ICU4J support state: icuBigDecimal="+ //$NON-NLS-1$
+					(icuBigDecimal != null)+", icuBigDecimalScale="+(icuBigDecimalScale != null)+ //$NON-NLS-1$
+					", icuBigDecimalUnscaledValue="+(icuBigDecimalUnscaledValue != null)); //$NON-NLS-1$ */  
+		} 
+		catch(ClassNotFoundException e) {}
+		catch(NoSuchMethodException e) {}
+	}		
 	/**
 	 * @param numberFormat
 	 * @param toType
@@ -141,8 +176,49 @@ public class StringToNumberConverter extends NumberFormatConverter {
 				return new Float(result.getNumber().floatValue());
 			}
 		} else if (BigInteger.class.equals(boxedType)) {
-			return new BigDecimal(result.getNumber().doubleValue())
-					.toBigInteger();
+			Number n = result.getNumber();
+			if(n instanceof Long)
+				return BigInteger.valueOf(n.longValue());
+			else if(n instanceof BigInteger)
+				return n;
+			else if(n instanceof BigDecimal)
+				return ((BigDecimal) n).toBigInteger();
+			else
+				return new BigDecimal(n.doubleValue()).toBigInteger();
+		} else if (BigDecimal.class.equals(boxedType)) {
+			Number n = result.getNumber();
+			if(n instanceof Long)
+				return BigDecimal.valueOf(n.longValue());
+			else if(n instanceof BigInteger)
+				return new BigDecimal((BigInteger) n);
+			else if(n instanceof BigDecimal)
+				return n;
+			else if(icuBigDecimal != null && icuBigDecimal.isInstance(n)) {
+				try {
+					// Get ICU BigDecimal value and use to construct java.math.BigDecimal
+					int scale = ((Integer) icuBigDecimalScale.invoke(n, null)).intValue();
+					BigInteger unscaledValue = (BigInteger) icuBigDecimalUnscaledValue.invoke(n, null);
+					return new java.math.BigDecimal(unscaledValue, scale);
+				} catch(IllegalAccessException e) {
+					throw new IllegalArgumentException("Error converting BigDecimal using ICU", e); //$NON-NLS-1$
+				} catch(InvocationTargetException e) {
+					throw new IllegalArgumentException("Error converting BigDecimal using ICU", e); //$NON-NLS-1$
+				}
+			} else if(n instanceof Double) {
+				BigDecimal bd = new BigDecimal(n.doubleValue());
+				if(bd.scale() == 0) return bd;
+				throw new IllegalArgumentException("Non-integral Double value returned from NumberFormat " + //$NON-NLS-1$
+						"which cannot be accurately stored in a BigDecimal due to lost precision. " + //$NON-NLS-1$
+						"Consider using ICU4J or Java 5 which can properly format and parse these types."); //$NON-NLS-1$
+			}
+		} else if (Short.class.equals(boxedType)) {
+			if (StringToNumberParser.inShortRange(result.getNumber())) {
+				return new Short(result.getNumber().shortValue());
+			}
+		} else if (Byte.class.equals(boxedType)) {
+			if (StringToNumberParser.inByteRange(result.getNumber())) {
+				return new Byte(result.getNumber().byteValue());
+			}
 		}
 
 		if (min != null && max != null) {
@@ -257,4 +333,63 @@ public class StringToNumberConverter extends NumberFormatConverter {
 		return new StringToNumberConverter(numberFormat, BigInteger.class,
 				null, null, BigInteger.class);
 	}
+
+	/**
+	 * @return to BigDecimal converter for the default locale
+	 */
+	public static StringToNumberConverter toBigDecimal() {
+		return toBigDecimal(NumberFormat.getNumberInstance());
+	}
+	
+	/**
+	 * @param numberFormat
+	 * @return to BigDecimal converter with the provided numberFormat
+	 */
+	public static StringToNumberConverter toBigDecimal(NumberFormat numberFormat) {
+		return new StringToNumberConverter(numberFormat, BigDecimal.class,
+				null, null, BigDecimal.class);
+	}
+	
+	/**
+	 * @param primitive
+	 *            <code>true</code> if the convert to type is a short
+	 * @return to Short converter for the default locale
+	 */
+	public static StringToNumberConverter toShort(boolean primitive) {
+		return toShort(NumberFormat.getIntegerInstance(), primitive);
+	}
+
+	/**
+	 * @param numberFormat
+	 * @param primitive
+	 * @return to Short converter with the provided numberFormat
+	 */
+	public static StringToNumberConverter toShort(NumberFormat numberFormat,
+			boolean primitive) {
+		return new StringToNumberConverter(numberFormat,
+				(primitive) ? Short.TYPE : Short.class, MIN_SHORT,
+				MAX_SHORT, Short.class);
+	}
+	
+	/**
+	 * @param primitive
+	 *            <code>true</code> if the convert to type is a byte
+	 * @return to Byte converter for the default locale
+	 */
+	public static StringToNumberConverter toByte(boolean primitive) {
+		return toByte(NumberFormat.getIntegerInstance(), primitive);
+	}
+
+	/**
+	 * @param numberFormat
+	 * @param primitive
+	 * @return to Byte converter with the provided numberFormat
+	 */
+	public static StringToNumberConverter toByte(NumberFormat numberFormat,
+			boolean primitive) {
+		return new StringToNumberConverter(numberFormat,
+				(primitive) ? Byte.TYPE : Byte.class, MIN_BYTE,
+				MAX_BYTE, Byte.class);
+	}
+	
 }

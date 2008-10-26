@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt Carter - Bug 180392     
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.conversion;
 
+import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import junit.framework.TestCase;
@@ -22,7 +25,6 @@ import com.ibm.icu.text.NumberFormat;
 /**
  * @since 1.1
  */
-//TODO test for ICU4Js BigDecimal
 public class StringToNumberConverterTest extends TestCase {
 	private NumberFormat numberFormat;
 	private NumberFormat numberIntegerFormat;
@@ -34,7 +36,9 @@ public class StringToNumberConverterTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		numberFormat = NumberFormat.getInstance();
+		numberFormat = NumberFormat.getNumberInstance();
+		numberFormat.setMaximumFractionDigits(305); // Used for BigDecimal test
+		numberFormat.setGroupingUsed(false); // Not really needed
 		numberIntegerFormat = NumberFormat.getIntegerInstance();
 	}
 
@@ -48,6 +52,11 @@ public class StringToNumberConverterTest extends TestCase {
 		assertEquals("Float.class", Float.class, StringToNumberConverter.toFloat(false).getToType());
 		assertEquals("Float.TYPE", Float.TYPE, StringToNumberConverter.toFloat(true).getToType());
 		assertEquals("BigInteger.TYPE", BigInteger.class, StringToNumberConverter.toBigInteger().getToType());
+		assertEquals("BigDecimal.TYPE", BigDecimal.class, StringToNumberConverter.toBigDecimal().getToType());
+		assertEquals("Short.class", Short.class, StringToNumberConverter.toShort(false).getToType());
+		assertEquals("Short.TYPE", Short.TYPE, StringToNumberConverter.toShort(true).getToType());
+		assertEquals("Byte.class", Byte.class, StringToNumberConverter.toByte(false).getToType());
+		assertEquals("Byte.TYPE", Byte.TYPE, StringToNumberConverter.toByte(true).getToType());
 	}
 	
 	public void testFromTypeIsString() throws Exception {
@@ -62,6 +71,60 @@ public class StringToNumberConverterTest extends TestCase {
 		BigInteger result = (BigInteger) converter.convert(numberFormat.format(input));
 		
 		assertEquals(input, result);
+	}
+	
+	Class icuBigDecimal = null;
+	Constructor icuBigDecimalCtr = null;
+	{
+		try {
+			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal");
+			icuBigDecimalCtr = icuBigDecimal.getConstructor(new Class[] {BigInteger.class, int.class});
+		}
+		catch(ClassNotFoundException e) {}
+		catch(NoSuchMethodException e) {}
+	}
+	/**
+	 * Takes a java.math.BigDecimal and returns an ICU formatted string for it.
+	 * These tests depend on ICU to reliably format test strings for comparison. 
+	 * Java < 1.5 DecimalFormat did not format/parse BigDecimals properly, 
+	 * converting them via doubleValue(), so we have a dependency for this unit test on ICU4J.
+	 * See Bug #180392 for more info.  
+	 * @param bd
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 */
+	private String formatBigDecimal(BigDecimal javabd) throws Exception {
+		if(icuBigDecimal != null && icuBigDecimalCtr != null) {
+			// ICU Big Decimal constructor available
+			Number icubd = (Number) icuBigDecimalCtr.newInstance(
+					new Object[] { javabd.unscaledValue(), new Integer(javabd.scale()) });
+			return numberFormat.format(icubd);
+		}
+		throw new IllegalArgumentException("ICU not present. Cannot reliably format large BigDecimal values; needed for testing. Java platforms prior to 1.5 fail to format/parse these decimals correctly.");
+	}
+	
+	public void testConvertsToBigDecimal() throws Exception {
+		StringToNumberConverter converter = StringToNumberConverter.toBigDecimal();
+		// Test 1: Decimal
+		BigDecimal input = new BigDecimal("100.23");
+		BigDecimal result = (BigDecimal) converter.convert(formatBigDecimal(input));
+		assertEquals("Non-integer BigDecimal", input, result);
+
+		// Test 2: Long
+		input = new BigDecimal((long) (Integer.MAX_VALUE + 100));
+		result = (BigDecimal) converter.convert(formatBigDecimal(input));
+		assertEquals("Integral BigDecimal in long range", input, result);
+
+		// Test 3: BigInteger range
+		input = new BigDecimal("92233720368547990480");
+		result = (BigDecimal) converter.convert(formatBigDecimal(input));
+		assertEquals("Integral BigDecimal in long range", input, result);
+		
+		// Test 4: Very high precision Decimal. 
+		input = new BigDecimal("100404101.23345678345678893456789345678923198200134567823456789");
+		result = (BigDecimal) converter.convert(formatBigDecimal(input));
+		assertEquals("Non-integer BigDecimal", input, result);
 	}
 	
 	public void testConvertsToInteger() throws Exception {
