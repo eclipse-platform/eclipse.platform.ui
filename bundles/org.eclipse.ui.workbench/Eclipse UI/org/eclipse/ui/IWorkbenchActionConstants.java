@@ -719,7 +719,6 @@ public interface IWorkbenchActionConstants {
      * Navigate menu: name of standard Show In... action 
      * (value <code>"showIn"</code>).
      * 
-     * @see org.eclipse.ui.internal.ShowInAction
      * @since 2.1
      * 
      * @deprecated
