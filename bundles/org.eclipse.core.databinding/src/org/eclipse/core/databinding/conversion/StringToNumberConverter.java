@@ -200,9 +200,9 @@ public class StringToNumberConverter extends NumberFormatConverter {
 					BigInteger unscaledValue = (BigInteger) icuBigDecimalUnscaledValue.invoke(n, null);
 					return new java.math.BigDecimal(unscaledValue, scale);
 				} catch(IllegalAccessException e) {
-					throw new IllegalArgumentException("Error converting BigDecimal using ICU", e); //$NON-NLS-1$
+					throw new IllegalArgumentException("Error (IllegalAccessException) converting BigDecimal using ICU"); //$NON-NLS-1$
 				} catch(InvocationTargetException e) {
-					throw new IllegalArgumentException("Error converting BigDecimal using ICU", e); //$NON-NLS-1$
+					throw new IllegalArgumentException("Error (InvocationTargetException) converting BigDecimal using ICU"); //$NON-NLS-1$
 				}
 			} else if(n instanceof Double) {
 				BigDecimal bd = new BigDecimal(n.doubleValue());
