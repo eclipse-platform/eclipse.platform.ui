@@ -159,6 +159,9 @@
          os="Win32"
          executable="opera.exe">
          <location>Program Files\Opera7\opera.exe</location>
+         <location>
+            Program Files\Opera\opera.exe
+         </location>
       </browser>
       
       <!-- Mac -->
