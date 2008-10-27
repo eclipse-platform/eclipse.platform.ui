@@ -293,4 +293,28 @@ public class WebBrowserUtil {
 		}
 		return encodedId;
 	}
+	
+	public static String createParameterString(String parameters, String urlText) {
+		String params = parameters;
+		String url = urlText;
+		if (url == null) {
+			url = ""; //$NON-NLS-1$
+		}
+		if (params == null)
+			params = ""; //$NON-NLS-1$
+
+		int urlIndex = params.indexOf(IBrowserDescriptor.URL_PARAMETER);
+		if (urlIndex >= 0)
+			params = params.substring(0, urlIndex)
+					+ url
+					+ params.substring(urlIndex
+							+ IBrowserDescriptor.URL_PARAMETER.length());
+		else {
+			if (params.length() != 0 && !params.endsWith(" ")) //$NON-NLS-1$
+				params += " "; //$NON-NLS-1$ 
+			params += url;
+		}
+		return params;
+
+	}
 }

@@ -53,21 +53,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 						Trace.FINEST,
 						"Launching external Web browser: " + location + " - " + parameters + " - " + urlText); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		String params = parameters;
-		if (params == null)
-			params = ""; //$NON-NLS-1$
-
-		if (urlText != null) {
-			int urlIndex = params.indexOf(IBrowserDescriptor.URL_PARAMETER);
-			if (urlIndex >= 0)
-				params = params.substring(0, urlIndex)
-						+ " " + urlText + " " + params.substring(urlIndex + IBrowserDescriptor.URL_PARAMETER.length()); //$NON-NLS-1$ //$NON-NLS-2$
-			else {
-				if (!params.endsWith(" ")) //$NON-NLS-1$
-					params += " "; //$NON-NLS-1$ 
-				params += urlText;
-			}
-		}
+		String params = WebBrowserUtil.createParameterString(parameters, urlText);
 
 		try {
 			Trace.trace(Trace.FINEST, "Launching " + location + " " + params); //$NON-NLS-1$//$NON-NLS-2$

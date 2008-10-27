@@ -35,15 +35,22 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	
 	protected boolean firstLaunch = true;
 
+	private String parameters;
+
 	/**
 	 * Constructor
 	 * 
 	 * @executable executable filename to launch
 	 * @executableName name of the program to display when error occurs
 	 */
-	public MozillaBrowser(String id, String executable) {
+	public MozillaBrowser(String id, String executable, String parameters) {
 		super(id);
 		this.executable = executable;
+		if (parameters == null) {
+			this.parameters = ""; //$NON-NLS-1$
+		} else {
+		    this.parameters = parameters;
+		}
 	}
 	
 	String getExecutable() {
@@ -164,19 +171,19 @@ public class MozillaBrowser extends AbstractWebBrowser {
 			if (exitRequested)
 				return;
 			if (firstLaunch && Platform.OS_WIN32.equals(Platform.getOS())) {
-				if (openBrowser(executable + " " + url) == 0) //$NON-NLS-1$
+				if (openBrowser(executable + " " + WebBrowserUtil.createParameterString(parameters, url)) == 0) //$NON-NLS-1$
 					return;
 				browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
 				return;
 			}
-			if (openBrowser(executable + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
+			if (openBrowser(executable + ' ' + parameters + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
 					== 0)
 				return;
 			
 			if (exitRequested)
 				return;
 			browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
-			openBrowser(executable + " " + url); //$NON-NLS-1$
+			openBrowser(executable + " " + WebBrowserUtil.createParameterString(parameters, url)); //$NON-NLS-1$
 		}
 
 		private void waitForBrowser() {
