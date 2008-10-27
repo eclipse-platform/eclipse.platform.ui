@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Max Weninger <max.weninger@windriver.com> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=148898
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
 
 import java.util.ResourceBundle;
 
@@ -21,11 +19,15 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
+
 import org.eclipse.jface.text.IFindReplaceTarget;
 
-import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -60,7 +62,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 * If no IWorkbenchPart is available a Shell must be provided
 	 * In this case the IFindReplaceTarget will never change.</p>
 	 */
-	static class FindReplaceDialogStub implements IPartListener, DisposeListener {
+	static class FindReplaceDialogStub implements IPartListener2, IPageChangedListener, DisposeListener {
 
 		/** The workbench part */
 		private IWorkbenchPart fPart;
@@ -101,17 +103,14 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 
 		/**
 		 * Returns the find/replace dialog.
+		 * 
 		 * @return the find/replace dialog
 		 */
 		public FindReplaceDialog getDialog() {
 			return fDialog;
 		}
 
-		/*
-		 * @see IPartListener#partActivated(IWorkbenchPart)
-		 */
-		public void partActivated(IWorkbenchPart part) {
-
+		private void partActivated(IWorkbenchPart part) {
 			IFindReplaceTarget target= part == null ? null : (IFindReplaceTarget) part.getAdapter(IFindReplaceTarget.class);
 			fPreviousPart= fPart;
 			fPart= target == null ? null : part;
@@ -131,17 +130,33 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		}
 
 		/*
-		 * @see IPartListener#partClosed(IWorkbenchPart)
+		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
-		public void partClosed(IWorkbenchPart part) {
+		public void partActivated(IWorkbenchPartReference partRef) {
+			partActivated(partRef.getPart(true));
+		}
 
+		/*
+		 * @see org.eclipse.jface.dialogs.IPageChangedListener#pageChanged(org.eclipse.jface.dialogs.PageChangedEvent)
+		 * @since 3.5
+		 */
+		public void pageChanged(PageChangedEvent event) {
+			if (event.getSource() instanceof IWorkbenchPart)
+				partActivated((IWorkbenchPart)event.getSource());
+		}
+
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partClosed(IWorkbenchPartReference partRef) {
+			IWorkbenchPart part= partRef.getPart(true);
 			if (part == fPreviousPart) {
 				fPreviousPart= null;
 				fPreviousTarget= null;
 			}
 
 			if (part == fPart)
-				partActivated(null);
+				partActivated((IWorkbenchPart)null);
 		}
 
 		/*
@@ -166,25 +181,48 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		}
 
 		/*
-		 * @see IPartListener#partOpened(IWorkbenchPart)
+		 * @see org.eclipse.ui.IPartListener2#partOpened(IWorkbenchPartReference)
 		 */
-		public void partOpened(IWorkbenchPart part) {}
+		public void partOpened(IWorkbenchPartReference partRef) {
+		}
 
 		/*
-		 * @see IPartListener#partDeactivated(IWorkbenchPart)
+		 * @see org.eclipse.ui.IPartListener2#partDeactivated(IWorkbenchPartReference)
 		 */
-		public void partDeactivated(IWorkbenchPart part) {}
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+		}
 
 		/*
-		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(IWorkbenchPartReference)
 		 */
-		public void partBroughtToTop(IWorkbenchPart part) {}
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		}
+
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+		 * @since 3.5
+		 */
+		public void partHidden(IWorkbenchPartReference partRef) {
+		}
+
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+		 * @since 3.5
+		 */
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+		}
+
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+		 * @since 3.5
+		 */
+		public void partVisible(IWorkbenchPartReference partRef) {
+		}
 
 		/**
-		 * Checks if the dialogs shell is the same as the
-		 * given <code>shell</code> and if not clears the stub
-		 * and closes the dialog.
-		 *
+		 * Checks if the dialogs shell is the same as the given <code>shell</code> and if not clears
+		 * the stub and closes the dialog.
+		 * 
 		 * @param shell the shell check
 		 * @since 3.3
 		 */
@@ -193,12 +231,13 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				if (fgFindReplaceDialogStub == this)
 					fgFindReplaceDialogStub= null;
 
-				if(fgFindReplaceDialogStubShell == this)
+				if (fgFindReplaceDialogStubShell == this)
 					fgFindReplaceDialogStubShell= null;
 
 				fDialog.close();
 			}
 		}
+
 	}
 
 
