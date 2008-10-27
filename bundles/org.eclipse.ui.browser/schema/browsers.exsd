@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.browser">
+<schema targetNamespace="org.eclipse.ui.browser" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui.browser" id="browsers" name="Browsers"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          For providing web browsers capable of displaying html documents at a given URL.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="browser"/>
@@ -34,15 +39,20 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="browser">
+      <annotation>
+         <documentation>
+            An external web browser which will be displayed on the preference page General/Web Browsers providing the os attribute matches and a file is found in at least one of the specified locations.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="location"/>
@@ -59,9 +69,9 @@
                <documentation>
                   the implementation class for the browser factory. This class must implement the &lt;samp&gt;org.eclipse.ui.browser.BrowserFactory&lt;/samp&gt; interface.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.browser.IBrowserFactory"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -69,15 +79,15 @@
                <documentation>
                   the name of the browser (translatable).
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="os" type="string">
             <annotation>
                <documentation>
-                  comma separated list of operating systems. Only browsers with the correct OS will be used. If the os parameter is empty, the browser will be assumed to work on all OS
+                  comma separated list of operating systems on which to search for this browser at the specified locations. Only browsers with matching OS will be used.
                </documentation>
             </annotation>
          </attribute>
@@ -100,29 +110,33 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0 (originally added in release 2.0 as org.eclipse.help.ui.browser)
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         The following is a sample usage of the browser extension point:
+         The following is a sample usage of the browsers extension point:
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.help.base.browser&quot;&gt;
-  &lt;browser 
-   id=&quot;org.eclipse.myPlugin.myBrowserID&quot;
-   factoryClass=&quot;org.eclipse.myPlugin.myPackage.MyFactoryClass&quot;
-   name=&quot;My Browser&quot;&gt;
-  &lt;/browser&gt;
+ &lt;extension point=&quot;org.eclipse.ui.browser.browsers&quot;&gt;
+  &lt;browser
+     id=&quot;org.eclipse.ui.browser.firefox&quot;
+     name=Firefox
+     os=&quot;Win32&quot;
+     executable=&quot;firefox.exe&quot;
+     factoryclass=&quot;org.eclipse.ui.internal.browser.browsers.MozillaFactory&quot;&gt;
+     &lt;location&gt;Program Files\mozilla.org\Firefox\firefox.exe&lt;/location&gt;
+     &lt;location&gt;Program Files\Mozilla Firefox\firefox.exe&lt;/location&gt;
+   &lt;/browser&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -130,9 +144,9 @@
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The supplied factory class must implement the &lt;samp&gt;org.eclipse.help.browser.IBrowserFactory&lt;/samp&gt; interface.
 Methods in that interface determine whether the factory is available on the given system, i.e. is capable
@@ -141,9 +155,9 @@ of supplying browser instances, and create browser instances that implement IBro
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The &lt;samp&gt;org.eclipse.help.base&lt;/samp&gt; and &lt;samp&gt;org.eclipse.help.ui&lt;/samp&gt; plug-ins contain implementation of browsers on common platforms.
 Other plug-ins can provide different implementations.  In the preferences, the user can select the default
@@ -152,9 +166,9 @@ browser from among available browsers.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
