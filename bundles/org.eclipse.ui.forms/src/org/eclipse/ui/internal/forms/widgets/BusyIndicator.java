@@ -133,19 +133,21 @@ public final class BusyIndicator extends Canvas {
 				}
 			} catch (Exception e) {
 			} finally {
-				display.syncExec(new Runnable() {
-					public void run() {
-						if (offScreenImage != null
-								&& !offScreenImage.isDisposed())
-							offScreenImage.dispose();
-						if (offScreenImageGC != null
-								&& !offScreenImageGC.isDisposed())
-							offScreenImageGC.dispose();
-					}
-				});
+				if (!display.isDisposed()) {
+					display.syncExec(new Runnable() {
+						public void run() {
+							if (offScreenImage != null
+									&& !offScreenImage.isDisposed())
+								offScreenImage.dispose();
+							if (offScreenImageGC != null
+									&& !offScreenImageGC.isDisposed())
+								offScreenImageGC.dispose();
+						}
+					});
+				}
 				clearImages();
 			}
-			if (busyThread == null)
+			if (busyThread == null && !display.isDisposed())
 				display.syncExec(new Runnable() {
 					public void run() {
 						animationImage = null;
