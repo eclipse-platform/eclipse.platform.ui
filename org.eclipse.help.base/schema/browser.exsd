@@ -137,7 +137,7 @@
  &lt;extension point=&quot;org.eclipse.help.base.browser&quot;&gt;
   &lt;browser 
    id=&quot;org.eclipse.myPlugin.myBrowserID&quot;
-   factoryClass=&quot;org.eclipse.myPlugin.myPackage.MyFactoryClass&quot;
+   factoryclass=&quot;org.eclipse.myPlugin.myPackage.MyFactoryClass&quot;
    name=&quot;My Browser&quot;&gt;
   &lt;/browser&gt;
  &lt;/extension&gt;
