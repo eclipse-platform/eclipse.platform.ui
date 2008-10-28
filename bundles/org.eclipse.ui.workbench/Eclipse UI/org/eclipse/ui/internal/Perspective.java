@@ -583,6 +583,10 @@ public class Perspective {
             if (pane != null) {
 				pane.getControl().setEnabled(true);
 			}
+            
+            // Remove the view from the set of fast views
+            if (fastViewManager != null)
+            	fastViewManager.removeViewReference(ref, false, true);
         } else {
             presentation.removePart(pane);
         }
