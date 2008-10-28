@@ -172,12 +172,7 @@ public class StringToNumberParser {
 			bigInteger = BigInteger.valueOf(number.longValue());
 		} else if (number instanceof Float || number instanceof Double) {
 			double doubleValue = number.doubleValue();
-			/*
-			 * doubleValue == doubleValue is used to check for NaN because NaN !=
-			 * NaN. The only way to check for NaN is to compare that the value
-			 * is equal to itself.
-			 */
-			if (doubleValue == doubleValue
+			if (!Double.isNaN(doubleValue)
 					&& doubleValue != Double.NEGATIVE_INFINITY
 					&& doubleValue != Double.POSITIVE_INFINITY) {
 				bigInteger = new BigDecimal(doubleValue).toBigInteger();
@@ -239,12 +234,7 @@ public class StringToNumberParser {
 		} else if (number instanceof Float || number instanceof Double) {
 			double doubleValue = number.doubleValue();
 
-			/*
-			 * doubleValue == doubleValue is used to check for NaN because NaN !=
-			 * NaN. The only way to check for NaN is to compare that the value
-			 * is equal to itself.
-			 */
-			if (doubleValue == doubleValue
+			if (!Double.isNaN(doubleValue)
 					&& doubleValue != Double.NEGATIVE_INFINITY
 					&& doubleValue != Double.POSITIVE_INFINITY) {
 				bigDecimal = new BigDecimal(doubleValue);
