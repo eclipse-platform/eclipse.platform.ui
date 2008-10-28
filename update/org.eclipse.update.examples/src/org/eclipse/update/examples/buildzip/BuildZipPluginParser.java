@@ -25,8 +25,6 @@ public class BuildZipPluginParser extends DefaultHandler {
 	
 	private static final String PLUGIN = "plugin";
 	private static final String FRAGMENT = "fragment";
-	private static final String ID = "id";
-	private static final String VERSION = "version";	
 	
 	private class ParseCompleteException extends SAXException {
 		public ParseCompleteException(String arg0) {
