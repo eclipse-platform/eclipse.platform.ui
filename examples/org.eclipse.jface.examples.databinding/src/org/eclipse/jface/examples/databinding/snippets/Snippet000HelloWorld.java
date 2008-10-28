@@ -8,12 +8,13 @@
  * Contributors:
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Benjamin Cabe - bug 252219
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
@@ -108,7 +109,7 @@ public class Snippet000HelloWorld {
 			Person person = viewModel.getPerson();
 
 			bindingContext.bindValue(SWTObservables.observeText(name,
-					SWT.Modify), BeansObservables.observeValue(person, "name"),
+					SWT.Modify), PojoObservables.observeValue(person, "name"),
 					null, null);
 
 			// Open and return the Shell
