@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core;
 
+import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -36,7 +37,8 @@ public class AllTests extends EclipseTest {
 			suite.addTest(AllTestsTeamSubscriber.suite());
 			suite.addTest(AllUITests.suite());
 			suite.addTest(ResourceMapperTests.suite());
-		}
-		return new CVSUITestSetup(suite);
+			return new CVSUITestSetup(suite);
+		} 
+		return new TestSetup(suite);
 	}
 }

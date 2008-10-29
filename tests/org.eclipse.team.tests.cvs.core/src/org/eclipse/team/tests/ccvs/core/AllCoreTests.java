@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core;
 
+import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -33,7 +34,8 @@ public class AllCoreTests extends EclipseTest {
 		TestSuite suite = new TestSuite();
 		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
 			suite.addTest(AllTestsCVSResources.suite());
-		}
-		return new CVSTestSetup(suite);
+			return new CVSTestSetup(suite);
+		} 
+		return new TestSetup(suite);
 	}
 }
