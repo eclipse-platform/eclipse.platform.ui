@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.internal.corext.refactoring.RefactoringScopeFactory;
 import org.eclipse.jdt.internal.corext.refactoring.RefactoringSearchEngine;
-import org.eclipse.jdt.internal.corext.refactoring.changes.CompilationUnitChange;
 import org.eclipse.jdt.internal.corext.refactoring.util.RefactoringASTParser;
 import org.eclipse.jdt.internal.corext.refactoring.util.RefactoringFileBuffers;
 import org.eclipse.jface.text.IDocument;
@@ -101,7 +100,7 @@ public class RemoveUnusedMessages extends Refactoring {
 			processPropertiesFile(toDelete);
 			monitor.worked(5);
 
-			CompilationUnitChange cuChange = new CompilationUnitChange(unit.getElementName(), unit);
+			TextFileChange cuChange = new TextFileChange(unit.getElementName(), (IFile)unit.getResource());
 			try {
 				ITextFileBuffer buffer = RefactoringFileBuffers.acquire(unit);
 				IDocument document = buffer.getDocument();

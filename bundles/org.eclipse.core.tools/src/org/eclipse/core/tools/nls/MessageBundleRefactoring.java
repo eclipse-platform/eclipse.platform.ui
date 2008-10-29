@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.internal.corext.dom.Bindings;
 import org.eclipse.jdt.internal.corext.refactoring.RefactoringScopeFactory;
 import org.eclipse.jdt.internal.corext.refactoring.RefactoringSearchEngine;
-import org.eclipse.jdt.internal.corext.refactoring.changes.CompilationUnitChange;
 import org.eclipse.jdt.internal.corext.refactoring.util.RefactoringASTParser;
 import org.eclipse.jdt.internal.corext.refactoring.util.RefactoringFileBuffers;
 import org.eclipse.jface.text.IDocument;
@@ -96,7 +95,7 @@ public class MessageBundleRefactoring extends Refactoring {
 
 		processAST(result, root, rewriter, new SubProgressMonitor(monitor, 1));
 
-		CompilationUnitChange change = new CompilationUnitChange(unit.getElementName(), unit);
+		TextFileChange change = new TextFileChange(unit.getElementName(), (IFile)unit.getResource());
 		try {
 			ITextFileBuffer buffer = RefactoringFileBuffers.acquire(unit);
 			IDocument document = buffer.getDocument();
