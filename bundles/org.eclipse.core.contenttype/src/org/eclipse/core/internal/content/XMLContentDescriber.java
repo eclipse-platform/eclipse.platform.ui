@@ -30,6 +30,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	private static final QualifiedName[] SUPPORTED_OPTIONS = new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
 	private static final String ENCODING = "encoding="; //$NON-NLS-1$
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
+	private static final String XML_DECL_END = "?>"; //$NON-NLS-1$
 
 	public int describe(InputStream input, IContentDescription description) throws IOException {
 		byte[] bom = getByteOrderMark(input);
@@ -46,51 +47,16 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 			if (description != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
 				description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
 		}
-		byte[] xmlPrefixBytes = XML_PREFIX.getBytes(xmlDeclEncoding);
-		byte[] prefix = new byte[xmlPrefixBytes.length];
-		if (input.read(prefix) < prefix.length)
-			// there is not enough info to say anything
-			return INDETERMINATE;
-		for (int i = 0; i < prefix.length; i++)
-			if (prefix[i] != xmlPrefixBytes[i])
-				// we don't have a XMLDecl... there is not enough info to say anything
-				return INDETERMINATE;
-		if (description == null)
-			return VALID;
-		// describe charset if requested
-		if (description.isRequested(IContentDescription.CHARSET)) {
-			String fullXMLDecl = readFullXMLDecl(input, xmlDeclEncoding);
-			if (fullXMLDecl != null) {
-				String charset = getCharset(fullXMLDecl);
-				if (charset != null && !isCharsetValid(charset))
-					return INVALID;
-				if (charset != null && !charset.matches("[uU][tT][fF](-)?8")) //$NON-NLS-1$
-					// only set property if value is not default (avoid using a non-default content description)
-					description.setProperty(IContentDescription.CHARSET, charset);
-				if (charset == null || !charset.matches("[uU][tT][fF](-)?(8|16)"))
-					description.setProperty(IContentDescription.BYTE_ORDER_MARK, null);
-			}
-		}
-		return VALID;
+		return internalDescribe(new InputStreamReader(input, xmlDeclEncoding), description);
 	}
 	
-	private boolean isCharsetValid(String charset){
-		return charset.matches("[A-Za-z]([A-Za-z0-9._\\-])*");
+	public int describe(Reader input, IContentDescription description) throws IOException {	
+		return internalDescribe(input, description);
 	}
-
-	private String readFullXMLDecl(InputStream input, String unicodeEncoding) throws IOException {
-		byte[] xmlDecl = new byte[100];
-		int c = 0;
-		// looks for XMLDecl ending char (?)
-		int read = 0;
-		while (read < xmlDecl.length && (c = input.read()) != -1 && c !='\r' && c !='\n')
-			xmlDecl[read++] = (byte) c;
-		return new String(xmlDecl, 0, read, unicodeEncoding);
-	}
-
-	public int describe(Reader input, IContentDescription description) throws IOException {
-		BufferedReader reader = new BufferedReader(input);
-		String line = reader.readLine();
+	
+	private int internalDescribe(Reader input, IContentDescription description) throws IOException {	
+		String line = readXMLDecl(input);
+		
 		// end of stream
 		if (line == null)
 			return INDETERMINATE;
@@ -109,6 +75,24 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 				description.setProperty(IContentDescription.CHARSET, charset);
 		}
 		return VALID;
+	} 
+	
+	private boolean isFullXMLDecl(String xmlDecl) {
+		return xmlDecl.endsWith(XML_DECL_END);
+	}
+
+	private String readXMLDecl(Reader input) throws IOException {
+		BufferedReader reader = new BufferedReader(input);
+		StringBuffer buffer = new StringBuffer();
+		String line = null;
+
+		while (buffer.length() < 100 && ((line = reader.readLine()) != null)) {
+			buffer.append(line);
+			if (line.indexOf(XML_DECL_END) != -1) {
+				return buffer.substring(0, buffer.indexOf(XML_DECL_END) + XML_DECL_END.length());
+			}
+		}
+		return buffer.toString();
 	}
 
 	private String getCharset(String firstLine) {
@@ -125,8 +109,12 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 			return null;
 		int secondQuote = firstLine.indexOf(quoteChar, firstQuote + 1);
 		if (secondQuote == -1)
-			return null;
+			return isFullXMLDecl(firstLine) ? firstLine.substring(firstQuote + 1) : null;
 		return firstLine.substring(firstQuote + 1, secondQuote);
+	}
+
+	private boolean isCharsetValid(String charset) {
+		return charset.matches("[A-Za-z]([A-Za-z0-9._\\-])*");
 	}
 
 	public QualifiedName[] getSupportedOptions() {

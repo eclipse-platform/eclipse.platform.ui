@@ -45,22 +45,44 @@ public class XMLContentDescriberTest extends RuntimeTest {
 
 		checkEncodedContents(ENCODING_NOTSUPPORTED, ENCODING_NOTSUPPORTED, ENCODING_UTF8);
 		checkEncodedContents(ENCODING_NOTSUPPORTED, ENCODING_NOTSUPPORTED, ENCODING_UTF16);
+
+		checkEncodedContents(ENCODING_UTF16, ENCODING_UTF16, ENCODING_UTF16, true);
+		checkEncodedContents(ENCODING_UTF8, ENCODING_UTF8, ENCODING_UTF8, true);
+
+		checkEncodedContents(ENCODING_UTF16, ENCODING_UTF16, ENCODING_UTF8, true);
+		checkEncodedContents(ENCODING_UTF8, ENCODING_UTF8, ENCODING_UTF16, true);
+
+		checkEncodedContents(ENCODING_NOTSUPPORTED, ENCODING_NOTSUPPORTED, ENCODING_UTF8, true);
+		checkEncodedContents(ENCODING_NOTSUPPORTED, ENCODING_NOTSUPPORTED, ENCODING_UTF16, true);
 	}
 
 	public void testEncodedContents2() throws Exception {
 		checkEncodedContents2(ENCODING_UTF16, ENCODING_UTF16);
 		checkEncodedContents2(ENCODING_UTF8, ENCODING_UTF8);
 		checkEncodedContents2(ENCODING_NOTSUPPORTED, ENCODING_NOTSUPPORTED);
+
+		checkEncodedContents2(ENCODING_UTF16, ENCODING_UTF16, true);
+		checkEncodedContents2(ENCODING_UTF8, ENCODING_UTF8, true);
+		checkEncodedContents2(ENCODING_NOTSUPPORTED, ENCODING_NOTSUPPORTED, true);
 	}
 
 	public void testEncodedContents3() throws Exception {
-		IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF8), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF8, false), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNull("1.0", description);
 
-		description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF16), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF16, false), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNull("2.0", description);
 
-		description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_INCORRECT), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_INCORRECT, false), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		assertNull("3.0", description);
+
+		description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF8, true), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		assertNull("1.0", description);
+
+		description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_INCORRECT, ENCODING_UTF16, true), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		assertNull("2.0", description);
+
+		description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_INCORRECT, true), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNull("3.0", description);
 	}
 
@@ -68,27 +90,35 @@ public class XMLContentDescriberTest extends RuntimeTest {
 		return new TestSuite(XMLContentDescriberTest.class);
 	}
 
-	private void checkEncodedContents(String resultEncoding, String encodingInContent, String encoding) throws Exception {
-		IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(encodingInContent, encoding), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+	private void checkEncodedContents(String resultEncoding, String encodingInContent, String encoding, boolean encInNewLine) throws Exception {
+		IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(encodingInContent, encoding, encInNewLine), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNotNull("1.0", description);
 		assertEquals("1.1", Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
 		assertEquals("1.2", resultEncoding, description.getProperty(IContentDescription.CHARSET));
 	}
 
-	private void checkEncodedContents2(String resultEncoding, String encodingInContent) throws Exception {
-		IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(getReader(encodingInContent), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+	private void checkEncodedContents(String resultEncoding, String encodingInContent, String encoding) throws Exception {
+		checkEncodedContents(resultEncoding, encodingInContent, encoding, false);
+	}
+
+	private void checkEncodedContents2(String resultEncoding, String encodingInContent, boolean encInNewLine) throws Exception {
+		IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(getReader(encodingInContent, encInNewLine), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNotNull("2.0", description);
 		assertEquals("2.1", Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
 		assertEquals("2.2", resultEncoding, description.getProperty(IContentDescription.CHARSET));
 	}
 
-	private InputStream getInputStream(String encodingInContent, String encoding) throws UnsupportedEncodingException {
-		String content = "<?xml version=\"1.0\" encoding=\"" + encodingInContent + "\"?><root attribute=\"" + ENCODED_TEXT + "\">";
+	private void checkEncodedContents2(String resultEncoding, String encodingInContent) throws Exception {
+		checkEncodedContents2(resultEncoding, encodingInContent, false);
+	}
+
+	private InputStream getInputStream(String encodingInContent, String encoding, boolean encInNewLine) throws UnsupportedEncodingException {
+		String content = "<?xml version=\"1.0\"" + (encInNewLine ? "\n" : "") + "encoding=\"" + encodingInContent + "\"?><root attribute=\"" + ENCODED_TEXT + "\">";
 		return new ByteArrayInputStream(content.getBytes(encoding));
 	}
 
-	private Reader getReader(String encodingInContent) {
-		String content = "<?xml version=\"1.0\" encoding=\"" + encodingInContent + "\"?><root attribute=\"" + ENCODED_TEXT + "\">";
+	private Reader getReader(String encodingInContent, boolean encInNewLine) {
+		String content = "<?xml version=\"1.0\"" + (encInNewLine ? "\n" : "") + " encoding=\"" + encodingInContent + "\"?><root attribute=\"" + ENCODED_TEXT + "\">";
 		return new InputStreamReader(new ByteArrayInputStream(content.getBytes()));
 	}
 }
