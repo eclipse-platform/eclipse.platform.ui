@@ -270,7 +270,7 @@ public class TopicTest extends TestCase {
 	}
 	
 	/*
-	 * Disabled, see Bug 210024 – [Help] Topic element problems constructing from an ITopic
+	 * Disabled, see Bug 210024 [Help] Topic element problems constructing from an ITopic
 	public void testUserTopicWithFilteredChildren() {
 		UserTopic u1 = new UserTopic(ECLIPSE, ECLIPSE_HREF, true);
 		UserTopic u2 = new UserTopic(BUGZILLA, BUGZILLA_HREF, false);
