@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources;
 
 /**
@@ -29,8 +31,9 @@ public class AllCoreTests extends EclipseTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTest(AllTestsCVSResources.suite());
+		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+			suite.addTest(AllTestsCVSResources.suite());
+		}
 		return new CVSTestSetup(suite);
 	}
 }
-
