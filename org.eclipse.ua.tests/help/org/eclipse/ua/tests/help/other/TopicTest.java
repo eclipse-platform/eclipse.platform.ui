@@ -110,7 +110,7 @@ public class TopicTest extends TestCase {
 	}
 	
 	/*
-	 * Disabled, see Bug 210024 – [Help] Topic element problems constructing from an ITopic
+	 * Disabled, see Bug 210024 [Help] Topic element problems constructing from an ITopic
 	public void testCopyTopicWithChildRemoveChild() {
 		Topic topic1;
 		topic1 = createTopic(TOPIC_WITH_CHILD);
@@ -129,7 +129,7 @@ public class TopicTest extends TestCase {
 	 * the topic but all the children are recursively copied
 	 */
 	/*
-	 * Disabled, see Bug 210024 – [Help] Topic element problems constructing from an ITopic
+	 * Disabled, see Bug 210024 [Help] Topic element problems constructing from an ITopic
 	public void testCopyTopicWithChildCheckParents() {
 		Topic topic1;
 		topic1 = createTopic(TOPIC_WITH_CHILD);
