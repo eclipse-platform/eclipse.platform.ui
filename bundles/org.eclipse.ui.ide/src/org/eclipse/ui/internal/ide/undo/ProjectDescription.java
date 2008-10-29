@@ -106,7 +106,7 @@ public class ProjectDescription extends ContainerDescription {
 			throw new OperationCanceledException();
 		}
 		if (openOnCreate) {
-			projectHandle.open(IResource.BACKGROUND_REFRESH,
+			projectHandle.open(IResource.NONE,
 					new SubProgressMonitor(monitor, 100));
 		}
 		monitor.done();

@@ -117,8 +117,8 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 		}
 		if (markerDescriptions != null) {
 			for (int i = 0; i < markerDescriptions.length; i++) {
-				markerDescriptions[i].resource = resource;
-				markerDescriptions[i].createMarker();
+				if (markerDescriptions[i].resource.exists())
+					markerDescriptions[i].createMarker();
 			}
 		}
 	}
