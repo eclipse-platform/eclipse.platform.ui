@@ -206,13 +206,6 @@ public class UpdateUtils {
 			return false;
 		return licenseTxt.trim().length() > 0;
 	}
-	public static boolean hasOptionalFeatures(IFeatureReference fref) {
-		try {
-			return hasOptionalFeatures(fref.getFeature(null));
-		} catch (CoreException e) {
-			return false;
-		}
-	}
 	public static boolean hasOptionalFeatures(IFeature feature) {
 		try {
 			IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();

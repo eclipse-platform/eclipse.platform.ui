@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core.connection;
 
+import org.eclipse.update.internal.core.UpdateCore;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.internal.core.IStatusCodes;
 
 public class OtherResponse extends AbstractResponse {
 
@@ -77,7 +78,7 @@ public class OtherResponse extends AbstractResponse {
 	}
 
 	public int getStatusCode() {
-		return IStatusCodes.HTTP_OK;
+		return UpdateCore.HTTP_OK;
 	}
 
 	public String getStatusMessage() {

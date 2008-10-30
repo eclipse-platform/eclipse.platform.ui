@@ -641,7 +641,7 @@ public class MirrorSite extends Site {
 			writer.println(">"); //$NON-NLS-1$
 			if (text != null) {
 				writer.println(
-					indent + INDENT + UpdateManagerUtils.Writer.xmlSafe(text));
+					indent + INDENT + UpdateManagerUtils.xmlSafe(text));
 			}
 			writer.println(indent + "</description>"); //$NON-NLS-1$
 		}

@@ -59,32 +59,6 @@ public class SiteStatusAnalyzer {
 		this.siteLocal = siteLocal;
 	}
 
-	/**
-	 * manages the versionedIdentifier and location of parsed plugins
-	 */
-	public class PluginIdentifier {
-		private VersionedIdentifier id;
-		private String label;
-		private boolean isFragment = false;
-
-		public PluginIdentifier(VersionedIdentifier id, String label, boolean fragment) {
-			this.id = id;
-			this.label = label;
-			this.isFragment = fragment;
-		}
-
-		public VersionedIdentifier getVersionedIdentifier() {
-			return id;
-		}
-
-		public boolean isFragment() {
-			return isFragment;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-	}
 	/*
 	 *  check if the Plugins of the feature are on the plugin path
 	 *  If all the plugins are on the plugin path, and the version match and there is no other version -> HAPPY

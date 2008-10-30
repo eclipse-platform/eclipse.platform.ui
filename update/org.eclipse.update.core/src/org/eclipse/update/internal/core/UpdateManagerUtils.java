@@ -11,45 +11,14 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Stack;
-import java.util.StringTokenizer;
-
-import org.eclipse.core.runtime.Assert;
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.ContentReference;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IImport;
-import org.eclipse.update.core.IIncludedFeatureReference;
-import org.eclipse.update.core.IPlatformEnvironment;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.InstallMonitor;
-import org.eclipse.update.core.Site;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.connection.ConnectionFactory;
 import org.eclipse.update.internal.core.connection.IResponse;
@@ -83,7 +52,6 @@ public class UpdateManagerUtils {
 		table.put("greaterOrEqual", new Integer(IImport.RULE_GREATER_OR_EQUAL)); //$NON-NLS-1$
 	}
 
-	private static Writer writer;
 	// manage URL to File
 	private static Map urlFileMap;
 
@@ -372,47 +340,6 @@ public class UpdateManagerUtils {
 	}
 
 	/**
-	 * Returns the parent URL of the given URL, or <code>null</code> if the
-	 * given URL is the root.
-	 * <table>
-	 * <caption>Example</caption>
-	 * <tr>
-	 *   <th>Given URL</th>
-	 *   <th>Parent URL</th>
-	 * <tr>
-	 *   <td>"http://hostname/"</td>
-	 *   <td>null</td>
-	 * <tr>
-	 *   <td>"http://hostname/folder/file</td>
-	 *   <td>"http://hostname/folder/</td>
-	 * </table>
-	 *
-	 * @param url a URL
-	 * @return    the parent of the given URL
-	 */
-	public static URL getParent(URL url) {
-		String file = url.getFile();
-		int len = file.length();
-		if (len == 0 || len == 1 && file.charAt(0) == '/')
-			return null;
-		int lastSlashIndex = -1;
-		for (int i = len - 2; lastSlashIndex == -1 && i >= 0; --i) {
-			if (file.charAt(i) == '/')
-				lastSlashIndex = i;
-		}
-		if (lastSlashIndex == -1)
-			file = ""; //$NON-NLS-1$
-		else
-			file = file.substring(0, lastSlashIndex + 1);
-		try {
-			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
-		} catch (MalformedURLException e) {
-			Assert.isTrue(false, e.getMessage());
-		}
-		return url;
-	}
-
-	/**
 	 * 
 	 */
 	public static URL asDirectoryURL(URL url) throws MalformedURLException {
@@ -525,31 +452,6 @@ public class UpdateManagerUtils {
 	}
 
 	/*
-	 * returns the list of Features that are parent of 
-	 * the Feature or an empty array if no parent found
-	 * @param onlyOptional if set to <code>true</code> only return parents that consider the feature optional
-	 * @param child
-	 * @param possiblesParent
-	 */
-	public static IFeatureReference[] getParentFeatures(IFeatureReference child, IFeatureReference[] possiblesParent, boolean onlyOptional) throws CoreException {
-
-		if (child == null)
-			return new IFeatureReference[0];
-
-		IFeature childFeature = null;
-		try {
-			childFeature = child.getFeature(null);
-		} catch (CoreException e) {
-			UpdateCore.warn(null, e);
-		}
-
-		if (childFeature == null)
-			return new IFeatureReference[0];
-
-		return getParentFeatures(childFeature, possiblesParent, onlyOptional);
-	}
-
-	/*
 	 * If the return code of the HTTP connection is not 200 (OK)
 	 * thow an IO exception
 	 * 
@@ -558,7 +460,7 @@ public class UpdateManagerUtils {
 		// did the server return an error code ?
 		int result = response.getStatusCode();
 
-		if (result != IStatusCodes.HTTP_OK) { 
+		if (result != UpdateCore.HTTP_OK) { 
 			String serverMsg = response.getStatusMessage();
 			response.close();
 			throw new FatalIOException(NLS.bind(Messages.ContentReference_HttpNok, (new Object[] { new Integer(result), serverMsg, url })));						
@@ -739,53 +641,6 @@ public class UpdateManagerUtils {
 	}
 
 	
-/**
- * write XML file
- */
-public static class Writer {
-
-	private PrintWriter w;
-	private OutputStream out;
-	private OutputStreamWriter outWriter;
-	private BufferedWriter buffWriter;
-	private String encoding;
-
-	/*
-	 * 
-	 */
-	private Writer() {
-		super();
-	}
-	
-	public void init(File file, String encoding) throws FileNotFoundException, UnsupportedEncodingException{
-		this.encoding = encoding;
-		out = new FileOutputStream(file);
-		outWriter = new OutputStreamWriter(out, encoding); 
-		buffWriter = new BufferedWriter(outWriter);
-		w = new PrintWriter(buffWriter);
-	}
-
-	
-	/*
-	 * 
-	 */
-	public void write(IWritable element) {
-		w.println("<?xml version=\"1.0\" encoding=\""+encoding+"\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
-		w.println(""); //$NON-NLS-1$
-		w.println("<!-- File written by Update manager 2.0 -->"); //$NON-NLS-1$
-		w.println("<!-- comments in this file are not preserved -->"); //$NON-NLS-1$
-		w.println(""); //$NON-NLS-1$
-		element.write(0, w);
-		close();
-	}
-	
-	/*
-	 * 
-	 */
-	 public void close(){
-	 		w.close();
-	 }
-
 	/*
 	 * 
 	 */
@@ -835,12 +690,6 @@ public static class Writer {
 				return "amp"; //$NON-NLS-1$
 		}
 		return null;
-	}
-}
-	public static Writer getWriter(File file,String encoding) throws FileNotFoundException, UnsupportedEncodingException {
-		if (writer==null) writer = new Writer();
-		writer.init(file,encoding);
-		return writer;
 	}
 	
 	public static boolean isSameTimestamp(URL url, long timestamp) {	
@@ -952,33 +801,6 @@ public static class Writer {
 		}
 	}
 
-	public static class CopyException extends Exception {
-        
-        private static final long serialVersionUID = 1L;
-        Exception rootException;
-		int bytesCopied;
-
-		/**
-		 * 
-		 */
-		public CopyException(Exception rootException, int bytesCopied) {
-			super();
-			this.rootException= rootException;
-			this.bytesCopied=bytesCopied;
-		}
-		/**
-		 * Instance of IOException or InstallAbortedException
-		 * @return
-		 */
-		public Exception getRootException(){
-			return rootException;
-		}
-		public int getBytesCopied(){
-			return bytesCopied;
-		}
-
-	}
-	
 	private static synchronized byte[] getBuffer() {
 		if (bufferPool == null) {
 			return new byte[BUFFER_SIZE];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,26 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configurator.IPlatformConfiguration;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IIncludedFeatureReference;
-import org.eclipse.update.core.Utilities;
-import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.ModelObject;
 
 /**
@@ -37,117 +22,8 @@ import org.eclipse.update.core.model.ModelObject;
 
 public class SiteReconciler extends ModelObject {
 
-	/**
-	 * 
-	 */
-	public SiteReconciler(LocalSite siteLocal) {
-//		this.siteLocal = siteLocal;
-	}
-
-
-	/**
-	* 
-	*/
-	/*package */
-	URL resolveSiteEntry(IPlatformConfiguration.ISiteEntry newSiteEntry) throws CoreException {
-		URL resolvedURL = null;
-		try {
-			resolvedURL = FileLocator.resolve(newSiteEntry.getURL());
-		} catch (IOException e) {
-			throw Utilities.newCoreException(NLS.bind(Messages.SiteLocal_UnableToResolve, (new String[] { newSiteEntry.getURL().toExternalForm() })), e);
-		}
-		return resolvedURL;
-	}
-
-
-	/**
-	 * Validate we have only one configured feature of a specific id
-	 * per configured site
-	 */
-	public static void checkConfiguredFeaturesOld(IConfiguredSite configuredSite) throws CoreException {
-
-		// NOT USED
-
-		ConfiguredSite cSite = (ConfiguredSite) configuredSite;
-		IFeatureReference[] configuredFeatures = cSite.getConfiguredFeatures();
-		ConfigurationPolicy cPolicy = cSite.getConfigurationPolicy();
-
-		// TRACE
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			UpdateCore.debug("Compare features within :" + configuredSite.getSite().getURL()); //$NON-NLS-1$
-		}
-
-		for (int indexConfiguredFeatures = 0; indexConfiguredFeatures < configuredFeatures.length - 1; indexConfiguredFeatures++) {
-
-			IFeatureReference featureToCompare = configuredFeatures[indexConfiguredFeatures];
-
-			// within the configured site
-			// compare with the other configured features of this site
-			for (int restOfConfiguredFeatures = indexConfiguredFeatures + 1; restOfConfiguredFeatures < configuredFeatures.length; restOfConfiguredFeatures++) {
-				int result = compare(featureToCompare, configuredFeatures[restOfConfiguredFeatures]);
-				if (result != 0) {
-					if (result == 1) {
-						cPolicy.unconfigure(configuredFeatures[restOfConfiguredFeatures], true, false);
-					}
-					if (result == 2) {
-						cPolicy.unconfigure(featureToCompare, true, false);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * compare two feature references
-	 * returns 0 if the feature are different
-	 * returns 1 if the version of feature 1 is greater than the version of feature 2
-	 * returns 2 if opposite
-	 */
-	private static int compare(IFeatureReference featureRef1, IFeatureReference featureRef2) throws CoreException {
-
-		// TRACE
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			UpdateCore.debug("Compare: " + featureRef1 + " && " + featureRef2); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		if (featureRef1 == null)
-			return 0;
-
-		IFeature feature1 = null;
-		IFeature feature2 = null;
-		try {
-			feature1 = featureRef1.getFeature(null);
-			feature2 = featureRef2.getFeature(null);
-		} catch (CoreException e) {
-			UpdateCore.warn(null, e);
-			return 0;
-		}
-
-		if (feature1 == null || feature2 == null) {
-			return 0;
-		}
-
-		VersionedIdentifier id1 = feature1.getVersionedIdentifier();
-		VersionedIdentifier id2 = feature2.getVersionedIdentifier();
-
-		if (id1 == null || id2 == null) {
-			return 0;
-		}
-
-		if (id1.getIdentifier() != null && id1.getIdentifier().equals(id2.getIdentifier())) {
-			PluginVersionIdentifier version1 = id1.getVersion();
-			PluginVersionIdentifier version2 = id2.getVersion();
-			if (version1 != null) {
-				if (version1.isGreaterThan(version2)) {
-					return 1;
-				} else {
-					return 2;
-				}
-			} else {
-				return 2;
-			}
-		}
-		return 0;
+	private SiteReconciler(LocalSite siteLocal) {
+		//never instantiated
 	}
 
 	/**
@@ -399,7 +275,7 @@ public class SiteReconciler extends ModelObject {
 
 			if (!toEnable) {
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
-				UpdateCore.debug("The Patch " + efixFeature + " does not patch any enabled features: it will be disabled"); //$NON-NLS-1$ //$NON-NLS-2$
+					UpdateCore.debug("The Patch " + efixFeature + " does not patch any enabled features: it will be disabled"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
 					UpdateCore.debug("The patch " + efixFeature + " will be enabled."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -428,9 +304,6 @@ public class SiteReconciler extends ModelObject {
 		}
 		return result;
 	}
-
-
-
 
 	/*
 	 * only enable non-efix children recursively
@@ -464,11 +337,11 @@ public class SiteReconciler extends ModelObject {
 					UpdateCore.warn("", e); //$NON-NLS-1$
 				// 25202 do not return right now, the peer children may be ok
 			}
-			if (child != null){
+			if (child != null) {
 				if (!UpdateCore.isPatch(child))
 					expandEfixFeature(child, features, configuredSite);
 			}
 		}
-	}	
-	
+	}
+
 }

@@ -73,6 +73,10 @@ public class UpdateCore extends Plugin {
 	
 	// Session
 	private UpdateSession updateSession = null;
+	/**
+	 * HTTP response code indicating success.
+	 */
+	public static final int HTTP_OK = 200;
 	
 	/**
 	 * The constructor.

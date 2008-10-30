@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core.connection;
+import org.eclipse.update.internal.core.UpdateCore;
+
 import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.internal.core.IStatusCodes;
 
 public class FileResponse implements IResponse {
 
@@ -38,7 +39,7 @@ public class FileResponse implements IResponse {
 	}
 
 	public int getStatusCode() {
-		return IStatusCodes.HTTP_OK;
+		return UpdateCore.HTTP_OK;
 	}
 	
 	public void close() {

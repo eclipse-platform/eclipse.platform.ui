@@ -19,7 +19,6 @@ import java.net.URLConnection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.internal.core.IStatusCodes;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;
 
@@ -206,7 +205,7 @@ public class HttpResponse extends AbstractResponse {
 				UpdateCore.warn("", e); //$NON-NLS-1$
 			}
 		}
-		return IStatusCodes.HTTP_OK;
+		return UpdateCore.HTTP_OK;
 	}
 
 	public String getStatusMessage() {
