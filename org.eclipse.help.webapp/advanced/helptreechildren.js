@@ -86,8 +86,10 @@ function mergeChildren(treeItem, nodes) {
                     imageAltText = node.getAttribute("imageAlt");
                 } else {
                     openImage = node.getAttribute("image");
-                    imageAltText = getAltText(openImage);
-                    openImage = imagesDirectory + "/" + openImage + ".gif";
+                    if (openImage) {
+                        imageAltText = getAltText(openImage);
+                        openImage = imagesDirectory + "/" + openImage + ".gif";
+                    }
                 }              
                 if (node.getAttribute("closedImage")) {
                     closedImage = "../topic" + node.getAttribute("closedImage");
