@@ -219,7 +219,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 			public void keyPressed(KeyEvent e)  {
 				if (e.character == 0x1B) // ESC
-					getShell().dispose(); // XXX: Just hide? Would avoid constant recreations.
+					dispose(); // XXX: Just hide? Would avoid constant recreations.
 			}
 
 			public void keyReleased(KeyEvent e) {}
