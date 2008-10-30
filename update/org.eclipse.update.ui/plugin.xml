@@ -35,7 +35,7 @@
             id="org.eclipse.update.ui.configSite">
       </page>
       <page
-            objectClass="org.eclipse.update.internal.core.SiteLocal"
+            objectClass="org.eclipse.update.internal.core.LocalSite"
             name="%properties.general-info.label"
             class="org.eclipse.update.internal.ui.properties.InstallConfigurationPropertyPage"
             id="org.eclipse.update.ui.installConfig">
