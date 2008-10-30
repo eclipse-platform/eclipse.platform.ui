@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,8 +39,6 @@ public final class Messages extends NLS {
 	public static String PluginEntry_versionError;
 	public static String IniFileReader_MissingDesc;
 	public static String IniFileReader_OpenINIError;
-	public static String IniFileReader_OpenPropError;
-	public static String IniFileReader_OpenMapError;
 	public static String IniFileReader_ReadIniError;
 	public static String IniFileReader_ReadPropError;
 	public static String IniFileReader_ReadMapError;

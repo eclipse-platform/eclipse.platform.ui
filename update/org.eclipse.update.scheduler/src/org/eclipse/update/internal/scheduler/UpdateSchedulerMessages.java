@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,13 +60,7 @@ public final class UpdateSchedulerMessages extends NLS {
 	public static String AutomaticUpdatesPreferencePage_downloadOptions;
 	public static String AutomaticUpdatesPreferencePage_searchAndNotify;
 	public static String AutomaticUpdatesPreferencePage_downloadAndNotify;
-	public static String AutomaticUpdatesJob_EclipseUpdates1;
-	public static String AutomaticUpdatesJob_UpdatesAvailable;
-	public static String AutomaticUpdatesJob_EclipseUpdates2;
 	public static String AutomaticUpdatesPreferencePage_at;
-	public static String AutomaticUpdatesJob_UpdatesDownloaded;
-	public static String AutomaticUpdatesJob_Updates;
-
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, UpdateSchedulerMessages.class);
 	}

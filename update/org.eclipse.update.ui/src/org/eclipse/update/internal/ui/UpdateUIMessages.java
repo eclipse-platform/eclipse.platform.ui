@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,6 @@ public final class UpdateUIMessages extends NLS {
 	public static String ConfigurationManagerWindow_fileMenu;
 	public static String ConfigurationManagerWindow_properties;
 	public static String ConfigurationManagerWindow_close;
-	public static String EditBookmarksAction_edit;
-	public static String EditBookmarksAction_title;
 	public static String InstallWizardAction_title;
 	public static String InstallWizard_retryTitle;
 	public static String InstallWizard_retry;
@@ -38,12 +36,6 @@ public final class UpdateUIMessages extends NLS {
 	public static String TargetPage_Feature_Version;
 	public static String TargetPage_FeatureNameColumn;
 	public static String TargetPage_InstallationDirectoryColumn;
-	public static String WebBookmarksDialog_label;
-	public static String WebBookmarksDialog_add;
-	public static String WebBookmarksDialog_new;
-	public static String WebBookmarksDialog_edit;
-	public static String WebBookmarksDialog_editTitle;
-	public static String WebBookmarksDialog_remove;
 	public static String DiscoveryFolder_name;
 	public static String FeatureAdapter_failure;
 	public static String SiteBookmark_connecting;
@@ -58,22 +50,16 @@ public final class UpdateUIMessages extends NLS {
 	public static String MainPreferencePage_updatePolicy;
 	public static String MainPreferencePage_updatePolicyURL;
 	public static String MainPreferencePage_proxyGroup;
-	public static String MainPreferencePage_enableHttpProxy;
-	public static String MainPreferencePage_httpProxyHost;
-	public static String MainPreferencePage_httpProxyPort;
 	public static String MainPreferencePage_digitalSignature_title;
 	public static String MainPreferencePage_digitalSignature_message;
-	public static String MainPreferencePage_invalidPort;
 	public static String UpdateSettingsPreferencePage_description;
 	public static String UpdateSettingsPreferencePage_label;
 	public static String UpdateSettingsPreferencePage_invalid;
-	public static String ConfigurationActivitiesPropertyPage_label;
 	public static String ConfiguredSitePropertyPage_path;
 	public static String ConfiguredSitePropertyPage_type;
 	public static String ConfiguredSitePropertyPage_enabled;
 	public static String ConfiguredSitePropertyPage_yes;
 	public static String ConfiguredSitePropertyPage_no;
-	public static String ConfiguredSitePropertyPage_private;
 	public static String ConfiguredSitePropertyPage_extension;
 	public static String ConfiguredSitePropertyPage_product;
 	public static String ConfiguredSitePropertyPage_unknown;
@@ -121,7 +107,6 @@ public final class UpdateUIMessages extends NLS {
 	public static String JarVerificationDialog_UnableToVerifyProvider_Feature;
 	public static String JarVerificationDialog_ProviderKnown_Feature;
 	public static String JarVerificationDialog_KnownCertificate_Feature;
-	public static String JarVerificationDialog_Caution;
 	public static String JarVerificationDialog_FileName;
 	public static String JarVerificationDialog_FeatureName;
 	public static String JarVerificationDialog_FeatureIdentifier;
@@ -169,9 +154,6 @@ public final class UpdateUIMessages extends NLS {
 	public static String ConfigurationView_revertPreviousDesc;
 	public static String ConfigurationView_updateLabel;
 	public static String ConfigurationView_updateDesc;
-	public static String ConfigurationView_detectedChanges;
-	public static String ConfigurationView_detectedLabel;
-	public static String ConfigurationView_detectedDesc;
 	public static String ConfigurationView_installHistLabel;
 	public static String ConfigurationView_installHistDesc;
 	public static String ConfigurationView_activitiesLabel;
@@ -211,10 +193,8 @@ public final class UpdateUIMessages extends NLS {
 	public static String SiteStateAction_disableMessage;
 	public static String SiteStateAction_enableLabel;
 	public static String SiteStateAction_enableMessage;
-	public static String FindUpdatesAction_updates;
 	public static String InstallationHistoryAction_title;
 	public static String InstallationHistoryAction_desc;
-	public static String InstallationHistoryAction_activity;
 	public static String InstallationHistoryAction_dateTime;
 	public static String InstallationHistoryAction_target;
 	public static String InstallationHistoryAction_action;
@@ -235,40 +215,15 @@ public final class UpdateUIMessages extends NLS {
 	public static String ActivitiesTableViewer_date;
 	public static String ActivitiesTableViewer_target;
 	public static String ActivitiesTableViewer_action;
-	public static String DeltaFeatureAdapter_shortName;
-	public static String DeltaFeatureAdapter_longName;
 	public static String DuplicateConflictsDialog_title;
 	public static String DuplicateConflictsDialog_message;
 	public static String DuplicateConflictsDialog_treeLabel;
-	public static String InstallDeltaWizard_wtitle;
-	public static String InstallDeltaWizard_processing;
-	public static String InstallDeltaWizard_title;
-	public static String InstallDeltaWizard_desc;
-	public static String InstallDeltaWizard_label;
-	public static String InstallDeltaWizard_delete;
-	public static String InstallDeltaWizard_errors;
-	public static String InstallDeltaWizard_message;
 	public static String ModeSelectionPage_title;
 	public static String ModeSelectionPage_desc;
 	public static String ModeSelectionPage_updates;
 	public static String ModeSelectionPage_updatesText;
 	public static String ModeSelectionPage_newFeatures;
 	public static String ModeSelectionPage_newFeaturesText;
-	public static String MoreInfoGenerator_notInstalled;
-	public static String MoreInfoGenerator_all;
-	public static String MoreInfoGenerator_license;
-	public static String MoreInfoGenerator_HTMLlicense;
-	public static String MoreInfoGenerator_licenseAvailable;
-	public static String MoreInfoGenerator_copyright;
-	public static String MoreInfoGenerator_HTMLcopyright;
-	public static String MoreInfoGenerator_copyrightAvailable;
-	public static String MoreInfoGenerator_platforms;
-	public static String MoreInfoGenerator_footprint;
-	public static String MoreInfoGenerator_downloadSize;
-	public static String MoreInfoGenerator_installSize;
-	public static String MoreInfoGenerator_downloadTime;
-	public static String MoreInfoGenerator_lessthanone;
-	public static String MoreInfoGenerator_desc;
 	public static String MoreInfoGenerator_moreInfo;
 	public static String NewUpdateSiteDialog_name;
 	public static String NewUpdateSiteDialog_url;
@@ -292,11 +247,9 @@ public final class UpdateUIMessages extends NLS {
 	public static String InstallWizard_ReviewPage_counter;
 	public static String InstallWizard_ReviewPage_title;
 	public static String InstallWizard_ReviewPage_desc;
-	public static String InstallWizard_ReviewPage_searching;
 	public static String InstallWizard_ReviewPage_zeroUpdates;
 	public static String InstallWizard_ReviewPage_zeroFeatures;
 	public static String InstallWizard_ReviewPage_label;
-	public static String InstallWizard_ReviewPage_selectAll;
 	public static String InstallWizard_ReviewPage_deselectAll;
 	public static String InstallWizard_ReviewPage_moreInfo;
 	public static String InstallWizard_ReviewPage_properties;
@@ -305,10 +258,6 @@ public final class UpdateUIMessages extends NLS {
 	public static String InstallWizard_ReviewPage_filterFeatures;
 	public static String InstallWizard_ReviewPage_filterPatches;
 	public static String InstallWizard_ReviewPage_filterOlderFeatures;
-	public static String InstallWizard_ReviewPage_feature;
-	public static String InstallWizard_ReviewPage_version;
-	public static String InstallWizard_ReviewPage_provider;
-	public static String InstallWizard_ReviewPage_prop;
 	public static String InstallWizard_ReviewPage_invalid_long;
 	public static String InstallWizard_ReviewPage_invalid_short;
 	public static String InstallWizard_ReviewPage_cycle;
@@ -318,10 +267,7 @@ public final class UpdateUIMessages extends NLS {
 	public static String InstallWizard_LicensePage_decline2;
 	public static String InstallWizard_LicensePage_desc;
 	public static String InstallWizard_LicensePage_desc2;
-	public static String InstallWizard_LicensePage_down;
-	public static String InstallWizard_LicensePage_header;
 	public static String InstallWizard_LicensePage_title;
-	public static String InstallWizard_LicensePage_up;
 	public static String InstallWizard_TargetPage_title;
 	public static String InstallWizard_TargetPage_desc;
 	public static String InstallWizard_TargetPage_jobsLabel;
@@ -334,10 +280,7 @@ public final class UpdateUIMessages extends NLS {
 	public static String InstallWizard_TargetPage_location_change;
 	public static String InstallWizard_TargetPage_location_message;
 	public static String InstallWizard_TargetPage_location_empty;
-	public static String InstallWizard_TargetPage_location_exists;
 	public static String InstallWizard_TargetPage_location_error_title;
-	public static String InstallWizard_TargetPage_location_error_message;
-	public static String InstallWizard_TargetPage_location_error_reason;
 	public static String InstallWizard_TargetPage_size_KB;
 	public static String InstallWizard_TargetPage_size_MB;
 	public static String InstallWizard_TargetPage_size_GB;
@@ -371,10 +314,8 @@ public final class UpdateUIMessages extends NLS {
 	public static String SitePage_new;
 	public static String SitePage_dialogEditLocal;
 	public static String SitePage_dialogEditUpdateSite;
-	public static String SitePage_connecting;
 	public static String SitePage_remove_location_conf_title;
 	public static String SitePage_remove_location_conf;
-	public static String SearchRunner_connectionError;
 	public static String LocalSiteSelector_dialogMessage;
 	public static String LocalSiteSelector_dirInfoTitle;
 	public static String LocalSiteSelector_dirInfoMessage;
@@ -387,16 +328,10 @@ public final class UpdateUIMessages extends NLS {
 	public static String LocalSiteSelector_importInfoTitle;
 	public static String LocalSiteSelector_importInfoMessage;
 	public static String LocalSiteSelector_dialogMessageExport;
-	public static String InstallServlet_unknownServerURL;
-	public static String InstallServlet_noFeatures;
-	public static String InstallServlet_inProgress;
-	public static String InstallServlet_incorrectURLFormat;
-	public static String InstallServlet_contactWebmaster;
 	public static String MissingFeature_provider;
     public static String MissingFeature_id;
 	public static String MissingFeature_desc_unknown;
 	public static String MissingFeature_desc_optional;
-	public static String InstallDeltaWizard_reminder;
 	public static String SwapFeatureWizard_title;
 	public static String SwapFeatureWizardPage_title;
 	public static String SwapFeatureWizardPage_desc;

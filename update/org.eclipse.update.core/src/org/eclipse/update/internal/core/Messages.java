@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ public final class Messages extends NLS {
 	}
 
 	public static String BaseSiteFactory_CannotRetriveParentDirectory;
-	public static String BaseSiteFactory_CannotEncodeURL;
 	public static String ContentReference_UnableToCreateInputStream;
 	public static String ContentReference_UnableToReturnReferenceAsFile;
 	public static String ContentReference_UnableToReturnReferenceAsURL;
@@ -30,7 +29,6 @@ public final class Messages extends NLS {
 	public static String Feature_SiteAlreadySet;
 	public static String Feature_TaskInstallFeatureFiles;
 	public static String Feature_TaskInstallPluginFiles;
-	public static String Feature_TaskInstallNonPluginsFiles;
 	public static String Feature_NoContentProvider;
 	public static String Feature_NoFeatureContentConsumer;
 	public static String Feature_NoURL;
@@ -45,14 +43,11 @@ public final class Messages extends NLS {
 	public static String InstallHandler_notFound;
 	public static String InstallHandler_invalidHandler;
 	public static String InstallHandler_callException;
-	public static String InstallHandler_deactivated;
 	public static String InstallHandler_error;
 	public static String InstallMonitor_DownloadSize;
 	public static String InstallMonitor_DownloadSizeLong;
 	public static String ProductProvider;
-	public static String Reconciler_appNotFound;
 	public static String JarContentReference_Unpacking;
-	public static String Site_CannotSaveSiteInto;
 	public static String Site_CannotFindCategory;
 	public static String Site_NoCategories;
 	public static String Site_NoContentProvider;
@@ -95,7 +90,6 @@ public final class Messages extends NLS {
 	public static String DefaultSiteParser_Missing;
 	public static String DefaultSiteParser_ParsingStackBackToInitialState;
 	public static String DefaultSiteParser_ElementAlreadySet;
-	public static String DefaultSiteParser_CategoryAlreadySet;
 	public static String DefaultSiteParser_UnknownEndState;
 	public static String DefaultSiteParser_ErrorParsing;
 	public static String DefaultSiteParser_ErrorlineColumnMessage;
@@ -105,16 +99,11 @@ public final class Messages extends NLS {
 	public static String ModelObject_ModelReadOnly;
 	public static String SiteModelObject_ErrorParsingSiteStream;
 	public static String SiteModelObject_ErrorAccessingSiteStream;
-	public static String InstallConfiguration_ParsingErrorDuringCreation;
 	public static String InstallConfiguration_ErrorDuringFileAccess;
-	public static String Parser_UnableToCreateURL;
-	public static String Parser_InternalError;
-	public static String Parser_UnableToResolveURL;
 	public static String InstallConfigurationParser_FeatureReferenceNoURL;
 	public static String FeatureExecutableContentProvider_FileDoesNotExist;
 	public static String FeatureExecutableContentProvider_InvalidDirectory;
 	public static String FeatureExecutableContentProvider_UnableToCreateURLFor;
-	public static String FeatureExecutableContentProvider_UnableToRetrieveArchive;
 	public static String FeatureExecutableContentProvider_UnableToRetrieveNonPluginEntry;
 	public static String FeatureExecutableContentProvider_UnableToRetrieveFeatureEntry;
 	public static String FeatureExecutableContentProvider_UnableToRetrievePluginEntry;
@@ -140,39 +129,26 @@ public final class Messages extends NLS {
 	public static String FeatureExecutableFactory_NullURL;
 	public static String FeatureExecutableFactory_CannotCreateURL;
 	public static String FeaturePackagedContentProvider_NoManifestFile;
-	public static String FeaturePackagedContentProvider_NoFeature;
-	public static String FeaturePackagedContentProvider_FileDoesNotExist;
 	public static String FeaturePackagedContentProvider_InvalidDirectory;
 	public static String FeaturePackagedContentProvider_ErrorRetrieving;
-	public static String FeaturePackagedContentProvider_ContentReferenceString;
-	public static String FeaturePackagedContentProvider_URLString;
 	public static String FeatureReference_UnableToResolveURL;
 	public static String FeatureTypeFactory_UnableToFindFeatureFactory;
-	public static String InstallConfiguration_UnableToSaveConfiguration;
-	public static String InstallConfiguration_UnableToEncodeConfiguration;
 	public static String InstallConfiguration_UnableToCreateURL;
 	public static String InstallConfiguration_UnableToCast;
 	public static String InstallConfiguration_UnableToSavePlatformConfiguration;
 	public static String InstallConfiguration_AlreadyNativelyLinked;
 	public static String InstallConfiguration_AlreadyProductSite;
-	public static String InstallConfiguration_NotAnExtensionSite;
 	public static String InstallConfiguration_unableToFindSite;
 	public static String InternalSiteManager_UnableToCreateSiteWithType;
 	public static String InternalSiteManager_UnableToAccessURL;
 	public static String InternalSiteManager_UnableToCreateURL;
-	public static String InternalSiteManager_UnableToParseURL;
 	public static String InternalSiteManager_FailedRetryAccessingSite;
 	public static String InternalSiteManager_ConnectingToSite;
-	public static String SiteReconciler_UnableToFindInstallDeltaFactory;
-	public static String Policy_NoMessageAvailable;
-	public static String Policy_MissingMessage;
-	public static String Policy_Missing;
 	public static String GlobalConsumer_ErrorCreatingFile;
 	public static String SiteFileContentConsumer_UnableToCreateURL;
 	public static String SiteFileContentConsumer_UnableToCreateURLForFile;
 	public static String SiteFileContentConsumer_unableToDelete;
 	public static String ContentConsumer_UnableToRename;
-	public static String SiteFileFactory_UnableToRetriveSite;
 	public static String SiteFileFactory_UnableToObtainParentDirectory;
 	public static String SiteFileFactory_FileDoesNotExist;
 	public static String SiteFileFactory_UnableToCreateURLForFile;
@@ -181,14 +157,8 @@ public final class Messages extends NLS {
 	public static String SiteTypeFactory_UnableToFindSiteFactory;
 	public static String UpdateManagerUtils_UnableToRemoveFile;
 	public static String UpdateManagerUtils_FileAlreadyExists;
-	public static String SiteLocal_ErrorParsingSavedState;
 	public static String SiteLocal_UnableToCreateURLFor;
-	public static String SiteLocal_UnableToAccessFile;
-	public static String SiteLocal_UnableToSaveStateIn;
-	public static String SiteLocal_UnableToEncodeConfiguration;
 	public static String SiteLocal_UnableToResolve;
-	public static String SiteLocal_UnableToRetrieveRWArea;
-	public static String SiteLocal_SiteUrlIsNull;
 	public static String SiteLocal_UnableToDetermineFeatureStatusSiteNull;
 	public static String SiteLocal_TwoVersionSamePlugin1;
 	public static String SiteLocal_TwoVersionSamePlugin2;
@@ -202,10 +172,6 @@ public final class Messages extends NLS {
 	public static String SiteLocal_FeatureDisable;
 	public static String SiteLocal_FeatureStatusUnknown;
 	public static String SiteLocal_NestedFeatureDisable;
-	public static String SiteLocal_NullFeature;
-	public static String SiteLocal_WrongURL;
-	public static String SiteReconciler_UnableToSaveStateIn;
-	public static String SiteReconciler_UnableToEncodeConfiguration;
 	public static String SiteURLFactory_UnableToCreateURL;
 	public static String SiteURLFactory_UnableToAccessSiteStream;
 	public static String JarVerifier_Verify;
@@ -223,8 +189,6 @@ public final class Messages extends NLS {
 	public static String JarVerificationService_UnsucessfulVerification;
 	public static String JarVerificationService_CancelInstall;
 	public static String UpdateManagerUtils_UnableToLog;
-	public static String ConfigurationPolicy_UnableToDisable;
-	public static String ConfigurationPolicy_ParentIsEnable;
 	public static String ConnectionThreadManager_tooManyConnections;
 	public static String ConnectionThreadManager_unresponsiveURL;
 	public static String IncludedFeatureReference_featureUninstalled;
@@ -246,27 +210,17 @@ public final class Messages extends NLS {
 	public static String ActivityConstraints_ws;
 	public static String ActivityConstraints_arch;
 	public static String ActivityConstraints_cycle;
-	public static String ActivityConstraints_conflict;
 	public static String ActivityConstraints_childMessage;
 	public static String ActivityConstraints_optionalChild;
-	public static String ActivityConstraints_patchUnconfigure;
-	public static String ActivityConstraints_patchUnconfigureBackup;
-	public static String ActivityConstraints_timeline;
 	public static String ActivityConstraints_exclusive;
 	public static String ActivityConstraints_noLicense;
 	public static String ActivityConstraints_readOnly;
 	public static String ActivityConstraints_platformModified;
 	public static String DuplicateConflictsDialog_conflict;
-	public static String UpdateManager_savedConfig;
-	public static String OperationsManager_error_unable;
 	public static String OperationsManager_error_old;
 	public static String OperationsManager_installing;
 	public static String OperationsManager_error_uninstall;
 	public static String Search_networkProblems;
-	public static String MissingFeature_id;
-	public static String MissingFeature_desc_unknown;
-	public static String MissingFeature_desc_optional;
-	public static String MissingFeature_provider;
 	public static String InstallConfiguration_location_exists;
 	public static String InstallLogParser_errors;
 	public static String SiteLocal_cloneConfig;
@@ -301,7 +255,6 @@ public final class Messages extends NLS {
     public static String UninstallCommand_featureNotInstalledByUM;
 	public static String Standalone_siteConfigured;
 	public static String Standalone_noSite;
-	public static String Standalone_noSite2;
 	public static String Standalone_noSite3;
 	public static String Standalone_noConfiguredSite;
 	public static String Standalone_installing;
@@ -316,7 +269,6 @@ public final class Messages extends NLS {
 	public static String Standalone_noFeatures3;
 	public static String Standalone_noFeatures4;
 	public static String Standalone_noConfigSiteForFeature;
-	public static String Standalone_featureNotInstalledByUM;
 	public static String Standalone_invalidCmd;
 	public static String Standalone_connection;
 	public static String Standalone_searching;
