@@ -11,6 +11,8 @@
 package org.eclipse.update.internal.core;
 
 
+import org.eclipse.core.runtime.ListenerList;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -66,7 +68,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	private static final String EXTENSION_SITE_MARKER = ".eclipseextension"; //$NON-NLS-1$
 
 	// listeners	
-	private ListenersList listeners = new ListenersList();
+	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
 	// verification status
 	private IStatus verifyStatus;
@@ -98,18 +100,14 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 *  Adds a listener
 	 */
 	public void addConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
+		listeners.add(listener);
 	}
 
 	/*
 	 * Removes a listener
 	 */
 	public void removeConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
+		listeners.remove(listener);
 	}
 
 	/*

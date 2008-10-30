@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import org.eclipse.core.runtime.ListenerList;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -68,7 +70,7 @@ import org.osgi.framework.Bundle;
 
 public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration {
 	private static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$
-	private ListenersList listeners = new ListenersList();
+	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
 	/*
 	 * default constructor.
@@ -326,18 +328,14 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * @see IInstallConfiguration#addInstallConfigurationChangedListener(IInstallConfigurationChangedListener)
 	 */
 	public void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
+		listeners.add(listener);
 	}
 
 	/*
 	 * @see IInstallConfiguration#removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener)
 	 */
 	public void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
+		listeners.remove(listener);
 	}
 
 

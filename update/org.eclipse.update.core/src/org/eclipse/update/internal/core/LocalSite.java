@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import org.eclipse.core.runtime.ListenerList;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +40,7 @@ import org.eclipse.update.internal.model.SiteLocalParser;
 
 public class LocalSite extends SiteLocalModel implements ILocalSite{
 
-	private ListenersList listeners = new ListenersList();
+	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 	private SiteStatusAnalyzer siteStatusAnalyzer;
 	private boolean isTransient = false;
 
@@ -164,18 +166,14 @@ public class LocalSite extends SiteLocalModel implements ILocalSite{
 	 * @see ILocalSite#addLocalSiteChangedListener(ILocalSiteChangedListener)
 	 */
 	public void addLocalSiteChangedListener(ILocalSiteChangedListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
+		listeners.add(listener);
 	}
 
 	/*
 	 * @see ILocalSite#removeLocalSiteChangedListener(ILocalSiteChangedListener)
 	 */
 	public void removeLocalSiteChangedListener(ILocalSiteChangedListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
+		listeners.add(listener);
 	}
 
 	/**
