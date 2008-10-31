@@ -1655,6 +1655,32 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.4
 	 */
 	public boolean isHidden();
+	
+	/**
+	 * Returns whether this resource is hidden in the resource tree. Returns
+	 * <code>false</code> if this resource does not exist.
+	 * <p>
+	 * This operation is not related to the file system hidden attribute
+	 * accessible using {@link ResourceAttributes#isHidden()}.
+	 * </p>
+	 * <p>
+	 * The {@link #CHECK_ANCESTORS} option flag indicates whether this method
+	 * should consider ancestor resources in its calculation. If the
+	 * {@link #CHECK_ANCESTORS} flag is present, this method will return
+	 * <code>true</code> if this resource, or any parent resource, is a hidden
+	 * resource. If the {@link #CHECK_ANCESTORS} option flag is not specified,
+	 * this method returns false for children of hidden resources.
+	 * </p>
+	 * 
+	 * @param options
+	 *        bit-wise or of option flag constants (only
+	 *        {@link #CHECK_ANCESTORS} is applicable)
+	 * @return <code>true</code> if this resource is hidden , and
+	 *         <code>false</code> otherwise
+	 * @see #setHidden(boolean)
+	 * @since 3.5
+	 */
+	public boolean isHidden(int options);
 
 	/**
 	 * Returns whether this resource has been linked to 
@@ -1806,6 +1832,29 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 */
 	public boolean isTeamPrivateMember();
 
+	/**
+	 * Returns whether this resource is a team private member of its parent
+	 * container. Returns <code>false</code> if this resource does not exist.
+	 * <p>
+	 * The {@link #CHECK_ANCESTORS} option flag indicates whether this method
+	 * should consider ancestor resources in its calculation. If the
+	 * {@link #CHECK_ANCESTORS} flag is present, this method will return
+	 * <code>true</code> if this resource, or any parent resource, is a team
+	 * private member. If the {@link #CHECK_ANCESTORS} option flag is not
+	 * specified, this method returns false for children of team private
+	 * members.
+	 * </p>
+	 * 
+	 * @param options
+	 *        bit-wise or of option flag constants (only
+	 *        {@link #CHECK_ANCESTORS} is applicable)
+	 * @return <code>true</code> if this resource is a team private member, and
+	 *         <code>false</code> otherwise
+	 * @see #setTeamPrivateMember(boolean)
+	 * @since 3.5
+	 */
+	public boolean isTeamPrivateMember(int options);
+	
 	/**
 	 * Moves this resource so that it is located at the given path.  
 	 * <p>

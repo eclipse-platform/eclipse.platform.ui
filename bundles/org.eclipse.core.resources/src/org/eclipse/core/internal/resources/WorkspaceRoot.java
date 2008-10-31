@@ -73,9 +73,16 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see org.eclipse.core.resources.IWorkspaceRoot#findContainersForLocationURI(java.net.URI)
 	 */
 	public IContainer[] findContainersForLocationURI(URI location) {
+		return findContainersForLocationURI(location, NONE);
+	}
+	
+	/**
+	 * @see org.eclipse.core.resources.IWorkspaceRoot#findContainersForLocationURI(java.net.URI, int)
+	 */
+	public IContainer[] findContainersForLocationURI(URI location, int memberFlags) {
 		if (!location.isAbsolute())
 			throw new IllegalArgumentException();
-		return (IContainer[]) getLocalManager().allResourcesFor(location, false);
+		return (IContainer[]) getLocalManager().allResourcesFor(location, false, memberFlags);
 	}
 
 	/**
@@ -89,9 +96,16 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocationURI(java.net.URI)
 	 */
 	public IFile[] findFilesForLocationURI(URI location) {
+		return findFilesForLocationURI(location, NONE);
+	}
+	
+	/**
+	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocationURI(java.net.URI, int)
+	 */
+	public IFile[] findFilesForLocationURI(URI location, int memberFlags) {
 		if (!location.isAbsolute())
 			throw new IllegalArgumentException();
-		return (IFile[]) getLocalManager().allResourcesFor(location, true);
+		return (IFile[]) getLocalManager().allResourcesFor(location, true, memberFlags);
 	}
 
 	/**
@@ -230,6 +244,20 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 */
 	public boolean isHidden() {
 		return false;//the root is never hidden
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.resources.Resource#isHidden(int)
+	 */
+	public boolean isHidden(int options) {
+		return false;//the root is never hidden
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.resources.Resource#isTeamPrivateMember(int)
+	 */
+	public boolean isTeamPrivateMember(int options) {
+		return false;//the root is never a team private member
 	}
 
 	/* (non-Javadoc)

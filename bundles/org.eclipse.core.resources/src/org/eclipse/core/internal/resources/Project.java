@@ -729,8 +729,18 @@ public class Project extends Container implements IProject {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see IResource#isLinked(int)
+	 */
 	public boolean isLinked(int options) {
 		return false;//projects are never linked
+	}
+	
+	/* (non-Javadoc)
+	 * @see IResource#isTeamPrivateMember(int)
+	 */
+	public boolean isTeamPrivateMember(int options) {
+		return false;//projects are never team private members
 	}
 
 	/**

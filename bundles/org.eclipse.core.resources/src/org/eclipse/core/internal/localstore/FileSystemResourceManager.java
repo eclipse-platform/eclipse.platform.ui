@@ -59,7 +59,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			return results;
 		}
 		IPathVariableManager varMan = workspace.getPathVariableManager();
-		IProject[] projects = root.getProjects();
+		IProject[] projects = root.getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			//check the project location
@@ -120,19 +120,45 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 
 	/**
 	 * Returns all resources that correspond to the given file system location,
-	 * including resources under linked resources.  Returns an empty array
-	 * if there are no corresponding resources.
-	 * @param location the file system location
-	 * @param files resources that may exist below the project level can
-	 * be either files or folders.  If this parameter is true, files will be returned,
-	 * otherwise containers will be returned.
+	 * including resources under linked resources. Returns an empty array if
+	 * there are no corresponding resources.
+	 * <p>
+	 * If the {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified
+	 * in the member flags, team private members will be included along with the
+	 * others. If the {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is
+	 * not specified (recommended), the result will omit any team private member
+	 * resources.
+	 * </p>
+	 * <p>
+	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is specified in the member
+	 * flags, hidden members will be included along with the others. If the
+	 * {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended),
+	 * the result will omit any hidden member resources.
+	 * </p>
+	 * 
+	 * @param location
+	 *        the file system location
+	 * @param files
+	 *        resources that may exist below the project level can be either
+	 *        files or folders. If this parameter is true, files will be
+	 *        returned, otherwise containers will be returned.
+	 * @param memberFlags
+	 *        bit-wise or of member flag constants (
+	 *        {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} and
+	 *        {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of
+	 *        interest
 	 */
-	public IResource[] allResourcesFor(URI location, boolean files) {
+	public IResource[] allResourcesFor(URI location, boolean files, int memberFlags) {
 		ArrayList result = allPathsForLocation(location);
 		int count = 0;
 		for (int i = 0, imax = result.size(); i < imax; i++) {
 			//replace the path in the list with the appropriate resource type
 			IResource resource = resourceFor((IPath) result.get(i), files);
+
+			if (resource == null || (((memberFlags & IContainer.INCLUDE_HIDDEN) == 0) && resource.isHidden(IResource.CHECK_ANCESTORS)) 
+					|| (((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0) && resource.isTeamPrivateMember(IResource.CHECK_ANCESTORS)))
+				resource = null;
+
 			result.set(i, resource);
 			//count actual resources - some paths won't have a corresponding resource
 			if (resource != null)

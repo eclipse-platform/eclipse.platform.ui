@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.ByteArrayInputStream;
-
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import junit.framework.Test;
@@ -78,7 +78,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IProject p2 = root.getProject("p2");
 		testFindContainersForLocation(p1, p2);
 	}
-	
+
 	private void replaceProject(IProject project, URI newLocation) throws CoreException {
 		IProjectDescription projectDesc = project.getDescription();
 		projectDesc.setLocationURI(newLocation);
@@ -392,7 +392,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 			fail("1.1", e);
 		}
 	}
-	
+
 	public void testBug234343_folderInHiddenProject() {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IProject hiddenProject = root.getProject(getUniqueString());
@@ -411,10 +411,13 @@ public class IWorkspaceRootTest extends ResourceTest {
 			fail("4.99", e);
 		}
 
-		IContainer[] containers = root.findContainersForLocation(folder.getLocation());
+		IContainer[] containers = root.findContainersForLocationURI(folder.getLocationURI());
 		assertEquals("2.0", 0, containers.length);
+		
+		containers = root.findContainersForLocationURI(folder.getLocationURI(), IContainer.INCLUDE_HIDDEN);
+		assertEquals("3.0", 1, containers.length);
 	}
-	
+
 	public void testBug234343_fileInHiddenProject() {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IProject hiddenProject = root.getProject(getUniqueString());
@@ -433,7 +436,163 @@ public class IWorkspaceRootTest extends ResourceTest {
 			fail("2.0", e);
 		}
 
-		IContainer[] containers = root.findContainersForLocation(file.getLocation());
-		assertEquals("3.0", 0, containers.length);
+		IFile[] files = root.findFilesForLocationURI(file.getLocationURI());
+		assertEquals("3.0", 0, files.length);
+
+		files = root.findFilesForLocationURI(file.getLocationURI(), IContainer.INCLUDE_HIDDEN);
+		assertEquals("4.0", 1, files.length);
+
+		IContainer[] containers = root.findContainersForLocationURI(file.getLocationURI());
+		assertEquals("5.0", 0, containers.length);
+
+		containers = root.findContainersForLocationURI(file.getLocationURI(), IContainer.INCLUDE_HIDDEN);
+		assertEquals("6.0", 1, containers.length);
+	}
+	
+	/*
+	* see bug 232765 for details
+	*/
+	public void testFindMethodsWithHiddenAndTeamPrivateFlags() {
+		checkFindMethods(IResource.NONE, new int[][] { 
+				{IResource.NONE, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, 
+				{IContainer.INCLUDE_HIDDEN, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, 
+				{IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
+				{IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+				}
+		);
+
+		checkFindMethods(IResource.HIDDEN, new int[][] { 
+				{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+				{IContainer.INCLUDE_HIDDEN, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, 
+				{IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
+				{IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0}
+				}
+		);
+		
+		checkFindMethods(IResource.TEAM_PRIVATE, new int[][] { 
+				{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+				{IContainer.INCLUDE_HIDDEN, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+				{IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
+				{IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+				}
+		);
+		
+		checkFindMethods(IResource.TEAM_PRIVATE | IResource.HIDDEN, new int[][] { 
+				{IResource.NONE, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+				{IContainer.INCLUDE_HIDDEN, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+				{IContainer.INCLUDE_HIDDEN | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
+				{IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0}
+				}
+		);
+	}
+
+	public void checkFindMethods(int updateFlags, int[][] results) {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject(getUniqueString());
+		ensureDoesNotExistInWorkspace(project);
+
+		try {
+			project.create(null, IResource.NONE, getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		
+		// a team private folder
+		IFolder teamFolder = createFolder(project, IResource.TEAM_PRIVATE, false);
+
+		IFile mFileInTeamFolder = createFile(teamFolder, updateFlags, false);
+		IFile mLinkedFileInTeamFolder = createFile(teamFolder, updateFlags, true);
+		
+		IFolder mFolderInTeamFolder = createFolder(teamFolder, updateFlags, false);
+		IFolder mLinkedFolderInTeamFolder = createFolder(teamFolder, updateFlags, true);
+
+		// a hidden folder
+		IFolder hiddenFolder = createFolder(project, IResource.HIDDEN, false);
+
+		IFile mFileInHiddenFolder = createFile(hiddenFolder, updateFlags, false);
+		IFile mLinkedFileInHiddenFolder = createFile(hiddenFolder, updateFlags, true);
+		
+		IFolder mFolderInHiddenFolder = createFolder(hiddenFolder, updateFlags, false);
+		IFolder mLinkedFolderInHiddenFolder = createFolder(hiddenFolder, updateFlags, true);
+
+		// a regular folder
+		IFolder folder = createFolder(project, IResource.NONE, false);
+
+		IFile mFileInFolder = createFile(folder, updateFlags, false);
+		IFile mLinkedFileInFolder = createFile(folder, updateFlags, true);
+
+		IFolder mFolderInFolder = createFolder(folder, updateFlags, false);
+		IFolder mLinkedFolderInFolder = createFolder(folder, updateFlags, true);
+		
+		for (int i = 0; i < results.length; i++) {
+			checkFindContainers(hiddenFolder.getLocationURI(), results[i][0], results[i][1]);
+			checkFindFiles(mFileInHiddenFolder.getLocationURI(), results[i][0], results[i][4]);
+			checkFindFiles(mLinkedFileInHiddenFolder.getLocationURI(), results[i][0], results[i][5]);
+			checkFindContainers(mFolderInHiddenFolder.getLocationURI(), results[i][0], results[i][2]);
+			checkFindContainers(mLinkedFolderInHiddenFolder.getLocationURI(), results[i][0], results[i][3]);
+			
+			checkFindContainers(folder.getLocationURI(), results[i][0], results[i][6]);
+			checkFindFiles(mFileInFolder.getLocationURI(), results[i][0], results[i][7]);
+			checkFindFiles(mLinkedFileInFolder.getLocationURI(), results[i][0], results[i][8]);
+			checkFindContainers(mFolderInFolder.getLocationURI(), results[i][0], results[i][9]);
+			checkFindContainers(mLinkedFolderInFolder.getLocationURI(), results[i][0], results[i][10]);
+			
+			checkFindContainers(teamFolder.getLocationURI(), results[i][0], results[i][11]);
+			checkFindFiles(mFileInTeamFolder.getLocationURI(), results[i][0], results[i][12]);
+			checkFindFiles(mLinkedFileInTeamFolder.getLocationURI(), results[i][0], results[i][13]);
+			checkFindContainers(mFolderInTeamFolder.getLocationURI(), results[i][0], results[i][14]);
+			checkFindContainers(mLinkedFolderInTeamFolder.getLocationURI(), results[i][0], results[i][15]);
+		}
+	}
+
+	private void checkFindFiles(URI location, int memberFlags, int foundResources) {
+		IFile[] files = getWorkspace().getRoot().findFilesForLocationURI(location, memberFlags);
+		assertEquals(foundResources, files.length);
+	}
+
+	private void checkFindContainers(URI location, int memberFlags, int foundResources) {
+		IContainer[] containers = getWorkspace().getRoot().findContainersForLocationURI(location, memberFlags);
+		assertEquals(foundResources, containers.length);
+	}
+
+	private IFile createFile(IContainer parent, int updateFlags, boolean linked) {
+		IFile file = parent.getFile(new Path(getUniqueString()));
+		try {
+			if (linked) {
+				try {
+					IPath path = getTempDir().append(getUniqueString());
+					path.toFile().createNewFile();
+					file.createLink(URIUtil.toURI(path), updateFlags, getMonitor());
+					if ((updateFlags & IResource.TEAM_PRIVATE) == IResource.TEAM_PRIVATE)
+						file.setTeamPrivateMember(true);
+				} catch (IOException e) {
+					fail("Can't create the file", e);
+				}
+			} else {
+				file.create(new ByteArrayInputStream("content".getBytes()), updateFlags, getMonitor());
+			}
+		} catch (CoreException e) {
+			fail("Can't create the file", e);
+		}
+		return file;
+	}
+
+	private IFolder createFolder(IContainer parent, int updateFlags, boolean linked) {
+		IFolder folder = parent.getFolder(new Path(getUniqueString()));
+		try {
+			if (linked) {
+				IPath path = getTempDir().append(getUniqueString());
+				path.toFile().mkdir();
+				folder.createLink(URIUtil.toURI(path), updateFlags, getMonitor());
+				if ((updateFlags & IResource.TEAM_PRIVATE) == IResource.TEAM_PRIVATE)
+					folder.setTeamPrivateMember(true);
+			} else {
+				folder.create(updateFlags, true, getMonitor());
+			}
+		} catch (CoreException e) {
+			fail("Can't create the folder", e);
+		}
+		return folder;
 	}
 }

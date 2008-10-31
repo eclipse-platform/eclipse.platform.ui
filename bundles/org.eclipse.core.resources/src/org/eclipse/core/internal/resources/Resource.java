@@ -1241,6 +1241,20 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_HIDDEN);
 	}
+	
+	/* (non-Javadoc)
+	 * @see IResource#isHidden(int)
+	 */
+	public boolean isHidden(int options) {
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		if (flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_HIDDEN))
+			return true;
+		// check ancestors if the appropriate option is set
+		if ((options & CHECK_ANCESTORS) != 0)
+			return getParent().isHidden(options);
+		return false;
+	}
 
 	/* (non-Javadoc)
 	 * @see IResource#isLinked()
@@ -1350,6 +1364,20 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+	}
+	
+	/* (non-Javadoc)
+	 * @see IResource#isTeamPrivateMember(int)
+	 */
+	public boolean isTeamPrivateMember(int options) {
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		if (flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER))
+			return true;
+		// check ancestors if the appropriate option is set
+		if ((options & CHECK_ANCESTORS) != 0)
+			return getParent().isTeamPrivateMember(options);
+		return false;
 	}
 
 	/**

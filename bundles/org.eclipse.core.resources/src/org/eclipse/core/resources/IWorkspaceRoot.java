@@ -75,84 +75,182 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns the handles to all the resources (workspace root, project, folder) in
-	 * the workspace which are mapped to the given path in the local file system.
-	 * Returns an empty array if there are none.
+	 * Returns the handles to all the resources (workspace root, project,
+	 * folder) in the workspace which are mapped to the given path in the local
+	 * file system. Returns an empty array if there are none.
 	 * <p>
-	 * If the path maps to the platform working location, the returned object will
-	 * be a single element array consisting of an object of type <code>ROOT</code>.
-	 * </p><p>
-	 *  If the path maps to a project, the resulting array will contain a resource of 
-	 *  type <code>PROJECT</code>, along with any linked folders that share the
-	 *  same location.  Otherwise the resulting array will contain folders (type
-	 * <code>FOLDER</code>). 
-	 * </p><p>
-	 * The path should be absolute; a relative path will be treated as
-	 * absolute.  The path segments need not be valid names; a
-	 * trailing separator is ignored. The resulting resources may not currently exist.
-	 * </p><p>
-	 * The result will not contain {@link IResource#HIDDEN} projects along with 
-	 * their children.
+	 * If the path maps to the platform working location, the returned object
+	 * will be a single element array consisting of an object of type
+	 * <code>ROOT</code>.
 	 * </p>
-	 * @param location a path in the local file system
-	 * @return the corresponding containers in the workspace, or an empty array if none
+	 * <p>
+	 * If the path maps to a project, the resulting array will contain a
+	 * resource of type <code>PROJECT</code>, along with any linked folders that
+	 * share the same location. Otherwise the resulting array will contain
+	 * folders (type <code>FOLDER</code>).
+	 * </p>
+	 * <p>
+	 * The path should be absolute; a relative path will be treated as absolute.
+	 * The path segments need not be valid names; a trailing separator is
+	 * ignored. The resulting resources may not currently exist.
+	 * </p>
+	 * <p>
+	 * The result will omit team private members and hidden resources. The
+	 * result will omit resources within team private members or hidden
+	 * containers.
+	 * </p>
+	 * 
+	 * @param location
+	 *        a path in the local file system
+	 * @return the corresponding containers in the workspace, or an empty array
+	 *         if none
 	 * @since 2.1
+	 * @deprecated use {@link #findContainersForLocationURI(URI)} instead
 	 */
 	public IContainer[] findContainersForLocation(IPath location);
 
 	/**
-	 * Returns the handles to all the resources (workspace root, project, folder) in
-	 * the workspace which are mapped to the given URI. Returns an empty array 
-	 * if there are none.
+	 * Returns the handles to all the resources (workspace root, project,
+	 * folder) in the workspace which are mapped to the given URI. Returns an
+	 * empty array if there are none.
 	 * <p>
-	 * If the path maps to the platform working location, the returned object will
-	 * be a single element array consisting of an object of type <code>ROOT</code>.
-	 * </p><p>
-	 *  If the path maps to a project, the resulting array will contain a resource of 
-	 *  type <code>PROJECT</code>, along with any linked folders that share the
-	 *  same location.  Otherwise the resulting array will contain folders (type
-	 * <code>FOLDER</code>). 
-	 * </p><p>
-	 * The URI must be absolute; its segments need not be valid names; a
-	 * trailing separator is ignored. The resulting resources may not currently exist.
-	 * </p><p>
-	 * The result will not contain {@link IResource#HIDDEN} projects along with 
-	 * their children.
+	 * If the path maps to the platform working location, the returned object
+	 * will be a single element array consisting of an object of type
+	 * <code>ROOT</code>.
 	 * </p>
-	 * @param location a URI path into some file system
-	 * @return the corresponding containers in the workspace, or an empty array if none
+	 * <p>
+	 * If the path maps to a project, the resulting array will contain a
+	 * resource of type <code>PROJECT</code>, along with any linked folders that
+	 * share the same location. Otherwise the resulting array will contain
+	 * folders (type <code>FOLDER</code>).
+	 * </p>
+	 * <p>
+	 * The URI must be absolute; its segments need not be valid names; a
+	 * trailing separator is ignored. The resulting resources may not currently
+	 * exist.
+	 * </p>
+	 * <p>
+	 * The result will omit team private members and hidden resources. The
+	 * result will omit resources within team private member sor hidden
+	 * containers.
+	 * </p>
+	 * <p>
+	 * This is a convenience method, fully equivalent to
+	 * <code>findContainersForLocationURI(location, IResource.NONE)</code>.
+	 * </p>
+	 * 
+	 * @param location
+	 *        a URI path into some file system
+	 * @return the corresponding containers in the workspace, or an empty array
+	 *         if none
 	 * @since 3.2
 	 */
 	public IContainer[] findContainersForLocationURI(URI location);
+	
+	/**
+	 * Returns the handles to all the resources (workspace root, project,
+	 * folder) in the workspace which are mapped to the given URI. Returns an
+	 * empty array if there are none.
+	 * <p>
+	 * If the {@link #INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified in the
+	 * member flags, team private members will be included along with the
+	 * others. If the {@link #INCLUDE_TEAM_PRIVATE_MEMBERS} flag is not
+	 * specified (recommended), the result will omit any team private member
+	 * resources.
+	 * </p>
+	 * <p>
+	 * If the {@link #INCLUDE_HIDDEN} flag is specified in the member flags,
+	 * hidden members will be included along with the others. If the
+	 * {@link #INCLUDE_HIDDEN} flag is not specified (recommended), the result
+	 * will omit any hidden member resources.
+	 * </p>
+	 * 
+	 * @param location
+	 *        a URI path into some file system
+	 * @param memberFlags
+	 *        bit-wise or of member flag constants (
+	 *        {@link #INCLUDE_TEAM_PRIVATE_MEMBERS} and {@link #INCLUDE_HIDDEN})
+	 *        indicating which members are of interest
+	 * @return the corresponding files in the workspace, or an empty array if
+	 *         none
+	 * @since 3.5
+	 */
+	public IContainer[] findContainersForLocationURI(URI location, int memberFlags);
 
 	/**
-	 * Returns the handles of all files that are mapped to the given path 
-	 * in the local file system.  Returns an empty array if there are none.
-	 * The path should be absolute; a relative path will be treated as
-	 * absolute.  The path segments need not be valid names.
-	 * The resulting files may not currently exist.
+	 * Returns the handles of all files that are mapped to the given path in the
+	 * local file system. Returns an empty array if there are none. The path
+	 * should be absolute; a relative path will be treated as absolute. The path
+	 * segments need not be valid names. The resulting files may not currently
+	 * exist.
 	 * <p>
-	 * The result will not contain files contained in {@link IResource#HIDDEN} projects.
+	 * The result will omit any team private member and hidden resources. The
+	 * result will omit resources within team private member or hidden
+	 * containers.
 	 * </p>
-	 * @param location a path in the local file system
-	 * @return the corresponding files in the workspace, or an empty array if none
+	 * 
+	 * @param location
+	 *        a path in the local file system
+	 * @return the corresponding files in the workspace, or an empty array if
+	 *         none
 	 * @since 2.1
+	 * @deprecated use {@link #findFilesForLocationURI(URI)} instead
 	 */
 	public IFile[] findFilesForLocation(IPath location);
 
 	/**
 	 * Returns the handles of all files that are mapped to the given URI.
-	 * Returns an empty array if there are none.
-	 * The URI must be absolute; its path segments need not be valid names.
-	 * The resulting files may not currently exist.
+	 * Returns an empty array if there are none. The URI must be absolute; its
+	 * path segments need not be valid names. The resulting files may not
+	 * currently exist.
 	 * <p>
-	 * The result will not contain files contained in {@link IResource#HIDDEN} projects.
+	 * The result will omit any team private member and hidden resources. The
+	 * result will omit resources within team private member or hidden
+	 * containers.
 	 * </p>
-	 * @param location a URI path into some file system
-	 * @return the corresponding files in the workspace, or an empty array if none
+	 * <p>
+	 * This is a convenience method, fully equivalent to
+	 * <code>findFilesForLocationURI(location, IResource.NONE)</code>.
+	 * </p>
+	 * 
+	 * @param location
+	 *        a URI path into some file system
+	 * @return the corresponding files in the workspace, or an empty array if
+	 *         none
 	 * @since 3.2
 	 */
 	public IFile[] findFilesForLocationURI(URI location);
+	
+	/**
+	 * Returns the handles of all files that are mapped to the given URI.
+	 * Returns an empty array if there are none. The URI must be absolute; its
+	 * path segments need not be valid names. The resulting files may not
+	 * currently exist.
+	 * <p>
+	 * If the {@link #INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified in the
+	 * member flags, team private members will be included along with the
+	 * others. If the {@link #INCLUDE_TEAM_PRIVATE_MEMBERS} flag is not
+	 * specified (recommended), the result will omit any team private member
+	 * resources.
+	 * </p>
+	 * <p>
+	 * If the {@link #INCLUDE_HIDDEN} flag is specified in the member flags,
+	 * hidden members will be included along with the others. If the
+	 * {@link #INCLUDE_HIDDEN} flag is not specified (recommended), the result
+	 * will omit any hidden member resources.
+	 * </p>
+	 * 
+	 * @param location
+	 *        a URI path into some file system
+	 * @param memberFlags
+	 *        bit-wise or of member flag constants (
+	 *        {@link #INCLUDE_TEAM_PRIVATE_MEMBERS} and {@link #INCLUDE_HIDDEN})
+	 *        indicating which members are of interest
+	 * @return the corresponding files in the workspace, or an empty array if
+	 *         none
+	 * @since 3.5
+	 */
+	public IFile[] findFilesForLocationURI(URI location, int memberFlags);
 
 	/**
 	 * Returns a handle to the  workspace root, project or folder 
@@ -234,7 +332,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * <p>
  	 * This is a convenience method, fully equivalent to <code>getProjects(IResource.NONE)</code>.
  	 * Hidden projects are <b>not</b> included.
- 	 *</p>
+ 	 * </p>
 	 * @return an array of projects
 	 * @see #getProject(String)
 	 * @see IResource#isHidden()
