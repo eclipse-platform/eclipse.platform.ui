@@ -292,7 +292,7 @@ InterruptedException {
         if(inMetaTag && t1.image.equalsIgnoreCase("content") && t2 != //$NON-NLS-1$
 null)
         {
-                currentMetaContent=t2.image.toLowerCase();
+                currentMetaContent=t2.image;
                 if(currentMetaTag != null && currentMetaContent != null) {
                 addMetaTag();
                 }

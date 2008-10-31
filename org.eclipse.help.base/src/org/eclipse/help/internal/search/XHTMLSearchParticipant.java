@@ -24,7 +24,13 @@ import org.xml.sax.Attributes;
  */
 public class XHTMLSearchParticipant extends XMLSearchParticipant {
 	
+	private static final String META_TAG = "meta"; //$NON-NLS-1$
+	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
+	private static final String CONTENT_ATTRIBUTE = "content"; //$NON-NLS-1$
 	private String title;
+	private String summary;
+	private boolean hasDescriptionMetaTag = false;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.search.XMLSearchParticipant#handleEndElement(java.lang.String, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
@@ -37,6 +43,20 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 	 */
 	protected void handleStartElement(String name, Attributes attributes, IParsedXMLContent data) {
 	    title = null;
+	    if (META_TAG.equalsIgnoreCase(name)) {
+	    	String nameAttribute = attributes.getValue(NAME_ATTRIBUTE);
+	    	if (DESCRIPTION.equalsIgnoreCase(nameAttribute)) {
+	    		String descriptionAttribute = attributes.getValue(CONTENT_ATTRIBUTE);
+	    		if (descriptionAttribute != null) {
+	    			hasDescriptionMetaTag = true;
+		    		data.addToSummary(descriptionAttribute);
+	    		}
+	    	}
+	    }
+	}
+	
+	protected void handleStartDocument(IParsedXMLContent data) {
+		hasDescriptionMetaTag = false;
 	}
 	
 	/* (non-Javadoc)
@@ -47,7 +67,9 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 		IPath path = new Path(stackPath);
 		if (path.segment(1).equalsIgnoreCase("body")) { //$NON-NLS-1$
 			data.addText(text);
-			data.addToSummary(text);
+			if (!hasDescriptionMetaTag) {
+				data.addToSummary(text);
+			}
 		} else if (path.segment(1).equalsIgnoreCase("head")) { //$NON-NLS-1$
 			if (path.segment(path.segmentCount() -1).equalsIgnoreCase("title")) { //$NON-NLS-1$
 				if (title == null) { 
@@ -72,5 +94,9 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 			HelpBasePlugin.logError(msg, t);
 			return in;
 		}
+	}
+		
+	public String getSummary() {
+		return summary;
 	}
 }
