@@ -9,6 +9,9 @@
  *      IBM Corporation - initial API and implementation    
  * 		Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
  * 			activated and used by other components.
+ *      Lubomir Marinov <lubomir.marinov@gmail.com> - Fix for bug 182122 -[Dialogs] 
+ *          CheckedTreeSelectionDialog#createSelectionButtons(Composite) fails to 
+ *          align the selection buttons to the right
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -349,13 +352,15 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
     protected Composite createSelectionButtons(Composite composite) {
         Composite buttonComposite = new Composite(composite, SWT.RIGHT);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        buttonComposite.setLayout(layout);
+        layout.numColumns = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		buttonComposite.setLayout(layout);
         buttonComposite.setFont(composite.getFont());
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
                 | GridData.GRAB_HORIZONTAL);
         data.grabExcessHorizontalSpace = true;
-        composite.setData(data);
+        buttonComposite.setLayoutData(data);
         Button selectButton = createButton(buttonComposite,
                 IDialogConstants.SELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_select_all,
                 false);
