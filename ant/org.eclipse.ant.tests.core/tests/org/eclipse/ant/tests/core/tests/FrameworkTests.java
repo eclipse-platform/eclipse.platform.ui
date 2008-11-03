@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
+import org.eclipse.ant.tests.core.testplugin.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
@@ -34,7 +35,7 @@ public class FrameworkTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Ensures that the deprecated means of setting the classpath still works correctly
+	 * Ensures that the deprecated means of setting the class path still works correctly
 	 * Do not fix deprecations unless the deprecated methods are being removed.
 	 * @throws MalformedURLException
 	 * @throws CoreException
@@ -42,10 +43,10 @@ public class FrameworkTests extends AbstractAntTest {
 	public void testClasspathOrderingDeprecated() throws MalformedURLException, CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		
-		String path= getProject().getFolder("lib").getFile("classpathOrdering1.jar").getLocation().toFile().getAbsolutePath();
+		String path= getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("classpathOrdering1.jar").getLocation().toFile().getAbsolutePath();
 		URL url= new URL("file:" + path);
 		
-		path= getProject().getFolder("lib").getFile("classpathOrdering2.jar").getLocation().toFile().getAbsolutePath();
+		path= getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("classpathOrdering2.jar").getLocation().toFile().getAbsolutePath();
 		URL url2= new URL("file:" + path);
 		
 		URL urls[] = prefs.getCustomURLs();
@@ -83,10 +84,10 @@ public class FrameworkTests extends AbstractAntTest {
 	public void testClasspathOrdering() throws CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		
-		String path= getProject().getFolder("lib").getFile("classpathOrdering1.jar").getLocation().toFile().getAbsolutePath();
+		String path= getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("classpathOrdering1.jar").getLocation().toFile().getAbsolutePath();
 		IAntClasspathEntry entry= new AntClasspathEntry(path);
 		
-		path= getProject().getFolder("lib").getFile("classpathOrdering2.jar").getLocation().toFile().getAbsolutePath();
+		path= getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("classpathOrdering2.jar").getLocation().toFile().getAbsolutePath();
 		IAntClasspathEntry entry2= new AntClasspathEntry(path);
 		
 		IAntClasspathEntry entries[] = prefs.getAdditionalClasspathEntries();
@@ -205,7 +206,7 @@ public class FrameworkTests extends AbstractAntTest {
 			AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 			run("echoing.xml");
 			assertTrue("ANT_HOME not set correctly", prefs.getDefaultAntHome().equals(System.getProperty("ant.home")));
-			File antLibDir= new File(prefs.getDefaultAntHome(), "lib"); //$NON-NLS-1$
+			File antLibDir= new File(prefs.getDefaultAntHome(), ProjectHelper.LIB_FOLDER); //$NON-NLS-1$
 			assertTrue("ant.library.dir not set correctly", antLibDir.getAbsolutePath().equals(System.getProperty("ant.library.dir")));
 			prefs.setAntHome("");
 			run("echoing.xml");

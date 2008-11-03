@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ant.tests.core;
 
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -25,6 +26,8 @@ import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.tests.core.testplugin.AntFileRunner;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
+import org.eclipse.ant.tests.core.testplugin.AntTestPlugin;
+import org.eclipse.ant.tests.core.testplugin.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -43,13 +46,47 @@ public abstract class AbstractAntTest extends TestCase {
 	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildLogger"; //$NON-NLS-1$
 	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener";
 	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		assertProject();
+	}
+	
+	/**
+	 * Asserts that the test project has been created and all testing resources have been 
+	 * loaded each time the {@link #setUp()} method is called
+	 * @throws Exception
+	 * @since 3.5
+	 */
+	protected void assertProject() throws Exception {
+		// delete any pre-existing project
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
+		if (!pro.exists()) {
+			// create project and import build files and support files
+			IProject project = ProjectHelper.createProject(ProjectHelper.PROJECT_NAME);
+			IFolder folder = ProjectHelper.addFolder(project, ProjectHelper.BUILDFILES_FOLDER);
+			File root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_BUILDFILES_DIR);
+			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
+			
+			folder = ProjectHelper.addFolder(project, ProjectHelper.RESOURCES_FOLDER);
+			root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_RESOURCES_DIR);
+			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
+			
+			folder = ProjectHelper.addFolder(project, ProjectHelper.LIB_FOLDER);
+			root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_LIB_DIR);
+			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
+		}
+	}
+	
 	/**
 	 * Returns the 'AntTests' project.
 	 * 
 	 * @return the test project
 	 */
 	protected IProject getProject() {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject("AntTests");
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
 	}
 	
 	public AbstractAntTest(String name) {
@@ -57,7 +94,7 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	protected IFile getBuildFile(String buildFileName) {
-		IFile file = getProject().getFolder("buildfiles").getFile(buildFileName);
+		IFile file = getProject().getFolder(ProjectHelper.BUILDFILES_FOLDER).getFile(buildFileName);
 		assertTrue("Could not find build file named: " + buildFileName, file.exists());
 		return file;
 	}
@@ -70,7 +107,7 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected IFile checkFileExists(String fileName) throws CoreException {
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
-		IFile file = getProject().getFolder("buildfiles").getFile(fileName);
+		IFile file = getProject().getFolder(ProjectHelper.BUILDFILES_FOLDER).getFile(fileName);
 		assertTrue("Could not find file named: " + fileName, file.exists());
 		return file;
 	}
@@ -193,7 +230,7 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	protected String getPropertyFileName() {
-		return getProject().getFolder("resources").getFile("test.properties").getLocation().toFile().getAbsolutePath();
+		return getProject().getFolder(ProjectHelper.RESOURCES_FOLDER).getFile("test.properties").getLocation().toFile().getAbsolutePath();
 	}
 	
 	protected void restorePreferenceDefaults() {

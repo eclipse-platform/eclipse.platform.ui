@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.ant.core.Task;
 import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
+import org.eclipse.ant.tests.core.testplugin.ProjectHelper;
 import org.eclipse.core.runtime.CoreException;
 
 public class TaskTests extends AbstractAntTest {
@@ -86,7 +87,7 @@ public class TaskTests extends AbstractAntTest {
 		try {
 			AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 			Task newTask= new Task();
-			String path= getProject().getFolder("lib").getFile("taskFolder").getLocation().toFile().getAbsolutePath();
+			String path= getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("taskFolder").getLocation().toFile().getAbsolutePath();
 			IAntClasspathEntry entry= new AntClasspathEntry(path + File.separatorChar);
 			IAntClasspathEntry entries[] = prefs.getAdditionalClasspathEntries();
 			IAntClasspathEntry newEntries[] = new IAntClasspathEntry[entries.length + 1];
