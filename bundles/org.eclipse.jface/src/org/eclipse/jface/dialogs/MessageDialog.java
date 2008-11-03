@@ -356,7 +356,7 @@ public class MessageDialog extends IconAndMessageDialog {
      *            the dialog's title, or <code>null</code> if none
      * @param message
      *            the message
-     * @return <code>true</code> if the user presses the OK button,
+     * @return <code>true</code> if the user presses the Yes button,
      *         <code>false</code> otherwise
      */
     public static boolean openQuestion(Shell parent, String title,
