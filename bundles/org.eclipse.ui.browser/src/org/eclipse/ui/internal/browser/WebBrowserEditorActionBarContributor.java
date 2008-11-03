@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,7 @@ package org.eclipse.ui.internal.browser;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorActionBarContributor;
 /**
  * ActionBarContributor for the Web browser.
@@ -49,19 +47,6 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	public void setActiveEditor(IEditorPart targetEditor) {
 		if (targetEditor instanceof WebBrowserEditor) {
 			editor = (WebBrowserEditor) targetEditor;
-			WebBrowserEditorInput input = editor.getWebBrowserEditorInput();
-			
-			if (input == null || input.isLocationBarLocal()) {
-				IActionBars actionBars = getActionBars();
-				actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), editor.getCopyAction());
-				actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), editor.getCutAction());
-				actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), editor.getPasteAction());
-			}
-			
-			//if (input.isToolbarGlobal())
-			//	getWebBrowser().backNextListener = this.updater;
-				
-			//editor.updateActions();
 		} else
 			editor = null;
 	}
