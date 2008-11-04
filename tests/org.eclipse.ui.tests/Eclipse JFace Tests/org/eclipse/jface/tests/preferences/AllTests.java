@@ -25,5 +25,7 @@ public class AllTests extends TestSuite {
 
 	public AllTests() {
 		addTestSuite(BooleanFieldEditorTest.class);
+		addTestSuite(StringFieldEditorTest.class);
+		addTestSuite(IntegerFieldEditorTest.class);
 	}
 }
