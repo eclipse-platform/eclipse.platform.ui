@@ -339,6 +339,15 @@ public class StringFieldEditor extends FieldEditor {
                         valueChanged();
                     }
                 });
+                textField.addFocusListener(new FocusAdapter() {
+                	// Ensure that the value is checked on focus loss in case we
+                	// missed a keyRelease or user hasn't released key.
+                	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=214716
+                    public void focusLost(FocusEvent e) {
+                        valueChanged();
+                    }
+                });
+ 
 
                 break;
             case VALIDATE_ON_FOCUS_LOST:
