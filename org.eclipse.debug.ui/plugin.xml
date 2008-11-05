@@ -2023,11 +2023,6 @@ M4 = Platform-specific fourth key
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
-            name="workspace_loc"
-            description="%workspace_loc.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.WorkspaceResolver">
-      </variable>
-      <variable
             name="project_loc"
             description="%project_loc.description"
             resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver">

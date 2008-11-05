@@ -99,6 +99,11 @@
             name="system_property"
             resolver="org.eclipse.debug.internal.core.SystemPropertyResolver"
             description="%system_property.description">
+      </variable>
+      <variable
+            description="%workspace_loc.description"
+            name="workspace_loc"
+            resolver="org.eclipse.debug.internal.core.variables.WorkspaceResolver">
       </variable>      
    </extension>
    
