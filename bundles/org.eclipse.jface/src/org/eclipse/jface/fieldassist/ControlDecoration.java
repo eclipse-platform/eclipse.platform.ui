@@ -185,6 +185,15 @@ public class ControlDecoration {
 	 * The current rectangle used for tracking mouse moves
 	 */
 	private Rectangle decorationRectangle;
+	
+	/**
+	 * The rectangle of the previously used image.  Used
+	 * for redrawing in the case where a smaller image replaces
+	 * a larger one.
+	 * 
+	 * @since 3.5
+	 */
+	private Rectangle previousDecorationRectangle;
 
 	/**
 	 * An internal flag tracking whether we have focus. We use this rather than
@@ -916,6 +925,7 @@ public class ControlDecoration {
 	 *            <code>null</code>.
 	 */
 	public void setImage(Image image) {
+		previousDecorationRectangle = getDecorationRectangle(control.getShell());
 		this.image = image;
 		update();
 	}
@@ -1007,6 +1017,7 @@ public class ControlDecoration {
 	 *            decoration.
 	 */
 	public void setMarginWidth(int marginWidth) {
+		previousDecorationRectangle = getDecorationRectangle(control.getShell());
 		this.marginWidth = marginWidth;
 		update();
 	}
@@ -1020,6 +1031,12 @@ public class ControlDecoration {
 			return;
 		}
 		Rectangle rect = getDecorationRectangle(control.getShell());
+		// If this update is happening due to an image reset, we need to make
+		// sure we clear the area from the old image.
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=212501
+		if (previousDecorationRectangle != null) {
+			rect = rect.union(previousDecorationRectangle);
+		}
 		// Redraw this rectangle in all children
 		control.getShell()
 				.redraw(rect.x, rect.y, rect.width, rect.height, true);
@@ -1028,6 +1045,7 @@ public class ControlDecoration {
 			hover.setText(getDescriptionText(), getDecorationRectangle(control
 					.getParent()), control);
 		}
+		previousDecorationRectangle = null;
 	}
 
 	/*
