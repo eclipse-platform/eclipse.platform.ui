@@ -32,6 +32,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -1844,6 +1845,7 @@ public class ContentProposalAdapter {
 							popup = null;
 						}
 					});
+					internalPopupOpened();
 					notifyPopupOpened();
 				} else if (!autoActivated) {
 					getControl().getDisplay().beep();
@@ -2090,5 +2092,16 @@ public class ContentProposalAdapter {
 	private boolean isControlContentEmpty() {
 		return getControlContentAdapter().getControlContents(getControl())
 				.length() == 0;
+	}
+	
+	/*
+	 * The popup has just opened, but listeners have not yet
+	 * been notified.  Perform any cleanup that is needed.
+	 */
+	private void internalPopupOpened() {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=243612
+		if (control instanceof Combo) {
+			((Combo)control).setListVisible(false);
+		}
 	}
 }
