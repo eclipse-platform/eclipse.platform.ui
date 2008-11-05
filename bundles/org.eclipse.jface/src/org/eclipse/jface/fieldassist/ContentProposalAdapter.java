@@ -423,7 +423,7 @@ public class ContentProposalAdapter {
 			 * Construct an info-popup with the specified parent.
 			 */
 			InfoPopupDialog(Shell parent) {
-				super(parent, PopupDialog.HOVER_SHELLSTYLE, false, false,
+				super(parent, PopupDialog.HOVER_SHELLSTYLE, false, false, false,
 						false, false, null, null);
 			}
 
@@ -594,7 +594,7 @@ public class ContentProposalAdapter {
 			// On platforms where SWT.ON_TOP overrides SWT.RESIZE, we will live
 			// with this.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=126138
-			super(control.getShell(), SWT.RESIZE | SWT.ON_TOP, false, false,
+			super(control.getShell(), SWT.RESIZE | SWT.ON_TOP, false, false, false,
 					false, false, null, infoText);
 			this.proposals = proposals;
 		}
@@ -1699,6 +1699,11 @@ public class ContentProposalAdapter {
 							sb.append(" after being handled by popup"); //$NON-NLS-1$
 							dump(sb.toString(), e);
 						}
+						// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=192633
+						// If the popup is open and this is a valid character, we
+						// want to watch for the modified text.
+						if (propagateKeys && e.character != 0)
+							watchModify = true;
 
 						return;
 					}
@@ -1739,14 +1744,18 @@ public class ContentProposalAdapter {
 							} else {
 								// No autoactivation occurred, so record the key
 								// down as a means to interrupt any
-								// autoactivation
-								// that is pending due to autoactivation delay.
+								// autoactivation that is pending due to
+								// autoactivation delay.
 								receivedKeyDown = true;
+								// watch the modify so we can close the popup in
+								// cases where there is no longer a trigger
+								// character in the content
+								watchModify = true;
 							}
 						} else {
 							// The autoactivate string is null. If the trigger
 							// is also null, we want to act on any modification
-							// to the content.  Set a flag so we'll catch this
+							// to the content. Set a flag so we'll catch this
 							// in the modify event.
 							if (triggerKeyStroke == null) {
 								watchModify = true;
@@ -1755,28 +1764,46 @@ public class ContentProposalAdapter {
 					}
 					break;
 
-				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
-				// Given that we will close the popup when there are no valid
-				// proposals, we must reopen it when there are. This means
-				// we should check modifications in those cases.
-				// See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
-				// The watchModify flag ensures that we don't autoactivate if
-				// the content change was caused by something other than typing.
-				case SWT.Modify:
-					if (triggerKeyStroke == null && autoActivateString == null
-							&& watchModify) {
-						if (DEBUG) {
-							dump("Modify event triggers autoactivation", e); //$NON-NLS-1$
+
+					// There are times when we want to monitor content changes
+					// rather than individual keystrokes to determine whether
+					// the popup should be closed or opened based on the entire
+					// content of the control.
+					// The watchModify flag ensures that we don't autoactivate if
+					// the content change was caused by something other than typing.
+					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
+					case SWT.Modify:
+						if (triggerKeyStroke == null && watchModify) {
+							if (DEBUG) {
+								dump("Modify event triggers popup open or close", e); //$NON-NLS-1$
+							}
+							watchModify = false;
+							// We are in autoactivation mode, either for specific
+							// characters or for all characters. In either case, 
+							// we should close the proposal popup
+							// if there is no content in the control.
+							if (isControlContentEmpty()) {
+								// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=192633
+								closeProposalPopup();
+							} else {
+								// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
+								// Given that we will close the popup when there are
+								// no valid proposals, we must consider reopening it on any
+								// content change when there are no particular autoActivation
+								// characters
+								if (autoActivateString == null) {
+									autoActivate();
+								} else {
+									// Autoactivation characters are defined, but this
+									// modify event does not involve one of them.  See
+									// if any of the autoactivation characters are left
+									// in the content and close the popup if none remain.
+									if (!controlContentContainsAutoActivationCharacter())
+										closeProposalPopup();
+								}
+							}
 						}
-						watchModify = false;
-						// We don't autoactivate if the net change is no
-						// content.  In other words, backspacing to empty 
-						// should never cause a popup to open.
-						if (!isControlContentEmpty()) {
-							autoActivate();
-						}
-					}
-					break;
+						break;
 				default:
 					break;
 				}
@@ -2103,5 +2130,25 @@ public class ContentProposalAdapter {
 		if (control instanceof Combo) {
 			((Combo)control).setListVisible(false);
 		}
+	}
+	
+	/*
+	 * Return whether the control content contains explicit auto
+	 * activation characters.  Used to determine whether the popup
+	 * should be closed when no auto activation characters remain.
+	 * Note that this method does *not* return true if autoactivation
+	 * should occur on any character.  In other words, this method
+	 * should not be used to determine whether autoactivation should
+	 * occur at all.
+	 */
+	private boolean controlContentContainsAutoActivationCharacter() {
+		if (autoActivateString == null || autoActivateString.length() == 0)
+			return false;
+		String content = getControlContentAdapter().getControlContents(getControl());
+		for (int i=0; i<autoActivateString.length(); i++) {
+			if (content.indexOf(autoActivateString.charAt(i)) >= 0)
+				return true;
+		}
+		return false;
 	}
 }
