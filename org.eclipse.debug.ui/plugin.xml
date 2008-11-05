@@ -2108,6 +2108,34 @@ M4 = Platform-specific fourth key
             argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
             variableName="resource_name">
       </variablePresentation>
+	  <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="project_path">
+      </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="project_loc">
+      </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="project_name">
+      </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="container_path">
+      </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="container_loc">
+      </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="container_name">
+      </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="workspace_loc">
+      </variablePresentation>
       <variablePresentation
             argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.SystemPropertyArgumentSelector"
             variableName="system_property"/>
