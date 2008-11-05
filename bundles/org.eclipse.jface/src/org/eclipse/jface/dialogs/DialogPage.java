@@ -204,8 +204,10 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
     }
 
     /**
-     * The <code>DialogPage</code> implementation of an
-     * <code>IDialogPage</code> method does nothing. Subclasses may extend.
+     * The <code>DialogPage</code> implementation of this
+     * <code>IDialogPage</code> method disposes of the page
+     * image if it has one. 
+     * Subclasses may extend.
      */
     public void dispose() {
         // deallocate SWT resources
