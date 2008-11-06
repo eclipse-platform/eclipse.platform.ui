@@ -30,7 +30,7 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 	 * 
 	 * @since org.eclipse.core.runtime 3.2
 	 * 
-	 * @deprecated Marked deprecated to supress warnings. This class is added to support
+	 * @deprecated Marked deprecated to suppress warnings. This class is added to support
 	 * backward compatibility only and should not be used in any new code.
 	 */
 	public Object init(Object object, String name) {
