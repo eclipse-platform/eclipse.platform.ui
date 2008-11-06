@@ -34,6 +34,7 @@ import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Adapter for making a file resource a suitable input for an editor.
@@ -228,5 +229,37 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 	 */
 	public String toString() {
 		return getClass().getName() + "(" + getFile().getFullPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/*
+	 * Allows for the return of an {@link IWorkbenchAdapter} adapter.
+	 * 
+	 * @since 3.5
+	 * 
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (IWorkbenchAdapter.class.equals(adapter)) {
+			return new IWorkbenchAdapter() {
+
+				public Object[] getChildren(Object o) {
+					return new Object[0];
+				}
+
+				public ImageDescriptor getImageDescriptor(Object object) {
+					return FileEditorInput.this.getImageDescriptor();
+				}
+
+				public String getLabel(Object o) {
+					return FileEditorInput.this.getName();
+				}
+
+				public Object getParent(Object o) {
+					return FileEditorInput.this.getFile().getParent();
+				}
+			};
+		}
+
+		return super.getAdapter(adapter);
 	}
 }
