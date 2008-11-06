@@ -1058,7 +1058,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			if (contentProviderIsTreeBased) {
 				TreePath treePath;
 				treePath = getTreePathFromItem(item);
-				if (currentChildCount == 0) {
+				if (currentChildCount == 0 || !((TreeItem)item).getExpanded()) {
 					// item is not expanded (but may have a plus currently)
 					((ILazyTreePathContentProvider) getContentProvider())
 					.updateHasChildren(treePath);
