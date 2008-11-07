@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import org.eclipse.update.core.FeatureContentProvider;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -37,7 +39,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 */
 	public static final FilenameFilter filter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
-			return name.endsWith(FeaturePackagedContentProvider.JAR_EXTENSION);
+			return name.endsWith(FeatureContentProvider.JAR_EXTENSION);
 		}
 	};
 

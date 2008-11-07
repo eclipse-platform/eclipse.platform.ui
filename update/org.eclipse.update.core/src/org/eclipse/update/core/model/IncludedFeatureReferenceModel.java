@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IImport;
 import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.IUpdateConstants;
-import org.eclipse.update.core.Import;
-
 
 /**
  * Included Feature reference model object.
@@ -108,7 +106,7 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	 * @deprecated since 3.0 included feature version is exactly specified
 	 */
 	public int getMatch(){
-		return Import.RULE_PERFECT;
+		return IUpdateConstants.RULE_PERFECT;
 	}
 
 	/**

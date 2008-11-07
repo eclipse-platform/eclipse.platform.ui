@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import org.eclipse.update.internal.model.SiteLocalModel;
+
 import org.eclipse.core.runtime.ListenerList;
 
 import java.io.File;
@@ -97,7 +99,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		setCurrent(false);
 		
 		if (newLocation == null) {
-			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(LocalSite.CONFIG_FILE, now);
+			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(SiteLocalModel.CONFIG_FILE, now);
 			newLocation = UpdateManagerUtils.getURL(((LocalSite)SiteManager.getLocalSite()).getLocationURL(), newFileName, null);
 		}
 		setLocationURLString(newLocation.toExternalForm());

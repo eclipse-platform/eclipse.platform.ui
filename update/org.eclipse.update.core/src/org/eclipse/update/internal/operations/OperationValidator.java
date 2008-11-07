@@ -13,6 +13,8 @@ package org.eclipse.update.internal.operations;
 //import java.io.*;
 //import java.net.*;
 //import java.nio.channels.*;
+import org.eclipse.update.core.IUpdateConstants;
+
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 
 import java.io.File;
@@ -858,8 +860,8 @@ public class OperationValidator implements IOperationValidator {
 						&& version.getMinorComponent() == 0
 						&& version.getServiceComponent() == 0;
 				int rule = iimport.getRule();
-				if (rule == IImport.RULE_NONE)
-					rule = IImport.RULE_COMPATIBLE;
+				if (rule == IUpdateConstants.RULE_NONE)
+					rule = IUpdateConstants.RULE_COMPATIBLE;
 
 				boolean found = false;
 
@@ -889,19 +891,19 @@ public class OperationValidator implements IOperationValidator {
 						if (ignoreVersion)
 							found = true;
 						else if (
-							rule == IImport.RULE_PERFECT
+							rule == IUpdateConstants.RULE_PERFECT
 								&& cversion.isPerfect(version))
 							found = true;
 						else if (
-							rule == IImport.RULE_EQUIVALENT
+							rule == IUpdateConstants.RULE_EQUIVALENT
 								&& cversion.isEquivalentTo(version))
 							found = true;
 						else if (
-							rule == IImport.RULE_COMPATIBLE
+							rule == IUpdateConstants.RULE_COMPATIBLE
 								&& cversion.isCompatibleWith(version))
 							found = true;
 						else if (
-							rule == IImport.RULE_GREATER_OR_EQUAL
+							rule == IUpdateConstants.RULE_GREATER_OR_EQUAL
 								&& cversion.isGreaterOrEqualTo(version))
 							found = true;
 					}
@@ -927,25 +929,25 @@ public class OperationValidator implements IOperationValidator {
 						NLS.bind(Messages.ActivityConstraints_prereq, (new String[] { target, id }));
 
 					if (!ignoreVersion) {
-						if (rule == IImport.RULE_PERFECT)
+						if (rule == IUpdateConstants.RULE_PERFECT)
 							msg =
 								NLS.bind(Messages.ActivityConstraints_prereqPerfect, (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
-						else if (rule == IImport.RULE_EQUIVALENT)
+						else if (rule == IUpdateConstants.RULE_EQUIVALENT)
 							msg =
 								NLS.bind(Messages.ActivityConstraints_prereqEquivalent, (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
-						else if (rule == IImport.RULE_COMPATIBLE)
+						else if (rule == IUpdateConstants.RULE_COMPATIBLE)
 							msg =
 								NLS.bind(Messages.ActivityConstraints_prereqCompatible, (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
-						else if (rule == IImport.RULE_GREATER_OR_EQUAL)
+						else if (rule == IUpdateConstants.RULE_GREATER_OR_EQUAL)
 							msg =
 								NLS.bind(Messages.ActivityConstraints_prereqGreaterOrEqual, (new String[] {
                                 target,
@@ -988,13 +990,13 @@ public class OperationValidator implements IOperationValidator {
 				// have a candidate
 				if (ignoreVersion)
 					return true;
-				if (rule == IImport.RULE_PERFECT && cversion.isPerfect(version))
+				if (rule == IUpdateConstants.RULE_PERFECT && cversion.isPerfect(version))
 					return true;
-				else if (rule == IImport.RULE_EQUIVALENT && cversion.isEquivalentTo(version))
+				else if (rule == IUpdateConstants.RULE_EQUIVALENT && cversion.isEquivalentTo(version))
 					return true;
-				else if (rule == IImport.RULE_COMPATIBLE && cversion.isCompatibleWith(version))
+				else if (rule == IUpdateConstants.RULE_COMPATIBLE && cversion.isCompatibleWith(version))
 					return true;
-				else if (rule == IImport.RULE_GREATER_OR_EQUAL && cversion.isGreaterOrEqualTo(version))
+				else if (rule == IUpdateConstants.RULE_GREATER_OR_EQUAL && cversion.isGreaterOrEqualTo(version))
 					return true;
 			}
 			return false;

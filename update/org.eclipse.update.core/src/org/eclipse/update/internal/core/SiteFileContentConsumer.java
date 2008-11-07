@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import org.eclipse.update.core.FeatureContentProvider;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -275,7 +277,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		IPluginEntry[] pluginEntries = localFeature.getPluginEntries();
 		for (int i = 0; i < pluginEntries.length; i++) {
 			String versionId = pluginEntries[i].getVersionedIdentifier().toString();
-			String pluginID = Site.DEFAULT_PLUGIN_PATH + versionId + FeaturePackagedContentProvider.JAR_EXTENSION;
+			String pluginID = Site.DEFAULT_PLUGIN_PATH + versionId + FeatureContentProvider.JAR_EXTENSION;
 			archive = archiveFactory.createArchiveReferenceModel();
 			archive.setPath(pluginID);
 			try {

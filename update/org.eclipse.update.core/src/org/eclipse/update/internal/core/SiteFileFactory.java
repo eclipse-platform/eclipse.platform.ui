@@ -11,6 +11,8 @@
 package org.eclipse.update.internal.core;
 
 
+import org.eclipse.update.core.FeatureContentProvider;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -341,7 +343,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 				//SiteFileFactory archiveFactory = new SiteFileFactory();				
 				ArchiveReferenceModel archive = createArchiveReferenceModel();
 				String id = (entry.getVersionedIdentifier().toString());
-				String pluginID = Site.DEFAULT_PLUGIN_PATH + id + FeaturePackagedContentProvider.JAR_EXTENSION;
+				String pluginID = Site.DEFAULT_PLUGIN_PATH + id + FeatureContentProvider.JAR_EXTENSION;
 				archive.setPath(pluginID);
 				location = file.toURL().toExternalForm();
 				archive.setURLString(location);

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import org.eclipse.update.core.IUpdateConstants;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,10 +48,10 @@ public class UpdateManagerUtils {
 
 	static {
 		table = new HashMap();
-		table.put("compatible", new Integer(IImport.RULE_COMPATIBLE)); //$NON-NLS-1$
-		table.put("perfect", new Integer(IImport.RULE_PERFECT)); //$NON-NLS-1$
-		table.put("equivalent", new Integer(IImport.RULE_EQUIVALENT)); //$NON-NLS-1$
-		table.put("greaterOrEqual", new Integer(IImport.RULE_GREATER_OR_EQUAL)); //$NON-NLS-1$
+		table.put("compatible", new Integer(IUpdateConstants.RULE_COMPATIBLE)); //$NON-NLS-1$
+		table.put("perfect", new Integer(IUpdateConstants.RULE_PERFECT)); //$NON-NLS-1$
+		table.put("equivalent", new Integer(IUpdateConstants.RULE_EQUIVALENT)); //$NON-NLS-1$
+		table.put("greaterOrEqual", new Integer(IUpdateConstants.RULE_GREATER_OR_EQUAL)); //$NON-NLS-1$
 	}
 
 	// manage URL to File
@@ -529,10 +531,10 @@ public class UpdateManagerUtils {
 	 */
 	public static int getMatchingRule(String rule) {
 		if (rule == null)
-			return IImport.RULE_COMPATIBLE;
+			return IUpdateConstants.RULE_COMPATIBLE;
 		int ruleInt = ((Integer) table.get(rule)).intValue();
-		if (ruleInt == IImport.RULE_NONE)
-			return IImport.RULE_PERFECT;
+		if (ruleInt == IUpdateConstants.RULE_NONE)
+			return IUpdateConstants.RULE_PERFECT;
 		return ruleInt;
 	}
 	
@@ -545,10 +547,10 @@ public class UpdateManagerUtils {
 	public static int getMatchingIdRule(String rule) {
 		
 		if (rule == null)
-			return IImport.RULE_COMPATIBLE;
+			return IUpdateConstants.RULE_COMPATIBLE;
 		if (rule!=null && rule.equalsIgnoreCase("prefix")) //$NON-NLS-1$
-			return IImport.RULE_PREFIX;
-		return IImport.RULE_PERFECT;
+			return IUpdateConstants.RULE_PREFIX;
+		return IUpdateConstants.RULE_PERFECT;
 	}
 	
 	/**

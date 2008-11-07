@@ -303,7 +303,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 						continue;
 					System.out.println("Error while extracting locales from included feature " + featureURL);//$NON-NLS-1$	
 					e.printStackTrace();
-					throw new CoreException( new Status( IStatus.ERROR, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, "Error while extracting locales from included feature " + featureURL, e)); //$NON-NLS-1$ //$NON-NLS-2$
+					throw new CoreException( new Status( IStatus.ERROR, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, "Error while extracting locales from included feature " + featureURL, e)); //$NON-NLS-1$ 
 				}
 				featureList.add(featureURL);
 			}

@@ -89,7 +89,7 @@ public final class URLEncoder {
 		// ftp://user:password@host:port/path 
 		// because the URL constructor does not allow it
 		URL result = url;
-		if (auth == null || auth.equals("") || userinfo == null) // $NON-NLS-1$ $NON-NLS-2$  //$NON-NLS-1$//$NON-NLS-2$
+		if (auth == null || auth.equals("") || userinfo == null) // $NON-NLS-1$ $NON-NLS-2$  //$NON-NLS-1$
 			result =  new URL(url.getProtocol(), host, port, encode(file, query, ref));
 		return result;
 	}
