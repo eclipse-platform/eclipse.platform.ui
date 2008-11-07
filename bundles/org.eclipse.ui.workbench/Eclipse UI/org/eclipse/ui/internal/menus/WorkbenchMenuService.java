@@ -960,20 +960,12 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 		// Handle additions
 		if (menuAdditions.size() > 0) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					handleDynamicAdditions(menuAdditions);
-				}							
-			});
+			handleDynamicAdditions(menuAdditions);
 		}
 		
 		// Handle Removals
 		if (menuRemovals.size() > 0) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					handleDynamicRemovals(menuRemovals);
-				}							
-			});
+			handleDynamicRemovals(menuRemovals);
 		}
 	}
 	
