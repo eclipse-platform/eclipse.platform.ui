@@ -157,10 +157,6 @@ public class FastViewManager {
 						ref.getPane().getStack().setState(IStackPresentationSite.STATE_RESTORED);
 				}
 			}
-			// Remove the view from any FV list that it may be in
-			// Do this here since the view's controls may be about
-			// to be disposed...
-			removeViewReference((IViewReference) partRef, false, true);
 		}
 
 		if (changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {

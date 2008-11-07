@@ -30,5 +30,6 @@ public final class PresentationsTestSuite extends TestSuite {
      */
     public PresentationsTestSuite() {
         addTest(new TestSuite(Bug48589Test.class));
+        addTest(new TestSuite(Bug252484Test.class));
     }
 }
