@@ -66,6 +66,13 @@ public final class ContextService implements IContextService {
 		this.contextPersistence = new ContextPersistence(contextManager);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.contexts.IContextService#deferUpdates(boolean)
+	 */
+	public void deferUpdates(boolean defer) {
+		contextManager.deferUpdates(defer);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -83,6 +90,7 @@ public final class ContextService implements IContextService {
 	 */
 	public final IContextActivation activateContext(final String contextId,
 			final Expression expression) {
+
 		final IContextActivation activation = new ContextActivation(contextId,
 				expression, this);
 		contextAuthority.activateContext(activation);

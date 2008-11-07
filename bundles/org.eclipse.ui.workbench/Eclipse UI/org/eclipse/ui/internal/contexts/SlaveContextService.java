@@ -111,12 +111,17 @@ public class SlaveContextService implements IContextService {
 		fRegisteredShells = new ArrayList();
 	}
 
+	public void deferUpdates(boolean defer) {
+		fParentService.deferUpdates(defer);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String)
 	 */
 	public IContextActivation activateContext(String contextId) {
+		
 		ContextActivation activation = new ContextActivation(contextId,
 				fDefaultExpression, this);
 		return doActivateContext(activation);
@@ -159,6 +164,7 @@ public class SlaveContextService implements IContextService {
 		if (fDefaultExpression!=null) {
 			andExpression.add(fDefaultExpression);
 		}
+
 		ContextActivation activation = new ContextActivation(contextId,
 				andExpression, this);
 		return doActivateContext(activation);

@@ -104,7 +104,6 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
-import org.eclipse.ui.internal.contexts.ContextAuthority;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
@@ -531,7 +530,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			boolean updateNeeded = true;
 			IContextService contextService = (IContextService) getService(IContextService.class);
 			try {
-				contextService.activateContext(ContextAuthority.DEFER_EVENTS);
+				contextService.deferUpdates(true);
 				
 				for (int i = 0; i < perspectives.length; i++) {
 					for (int j = 0; j < objects.length; j++) {
@@ -544,7 +543,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					}
 				}
 			} finally {
-				contextService.activateContext(ContextAuthority.SEND_EVENTS);
+				contextService.deferUpdates(false);
 			}
 
 			if (updateNeeded) {

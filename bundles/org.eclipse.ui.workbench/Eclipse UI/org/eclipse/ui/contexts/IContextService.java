@@ -379,4 +379,21 @@ public interface IContextService extends IServiceWithSources {
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean unregisterShell(Shell shell);
+
+	/**
+	 * Informs the service that a batch operation has started.
+	 * <p>
+	 * <b>Note:</b> You must insure that if you call
+	 * <code>deferUpdates(true)</code> that nothing in your batched operation
+	 * will prevent the matching call to <code>deferUpdates(false)</code>.
+	 * </p>
+	 * 
+	 * @param defer
+	 *            true when starting a batch operation false when ending the
+	 *            operation
+	 * 
+	 * @since 3.5
+	 */
+	public void deferUpdates(boolean defer);
+	
 }

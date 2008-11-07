@@ -89,7 +89,6 @@ import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
-import org.eclipse.ui.internal.contexts.ContextAuthority;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -509,7 +508,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			IContextService service = (IContextService) window
 					.getService(IContextService.class);
 			try {
-				service.activateContext(ContextAuthority.DEFER_EVENTS);
+				service.deferUpdates(true);
 
 				// show the new
 				for (int i = 0; i < newActionSets.size(); i++) {
@@ -526,7 +525,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				oldActionSets = newActionSets;
 
 			} finally {
-				service.activateContext(ContextAuthority.SEND_EVENTS);
+				service.deferUpdates(false);
 			}
 			Perspective persp = getActivePerspective();
 			if (persp == null) {
@@ -4553,7 +4552,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			IContextService service = (IContextService) window
 					.getService(IContextService.class);
 			try {
-				service.activateContext(ContextAuthority.DEFER_EVENTS);
+				service.deferUpdates(true);
 				if (newPersp != null) {
 					IActionSetDescriptor[] newAlwaysOn = newPersp
 							.getAlwaysOnActionSets();
@@ -4590,7 +4589,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					}
 				}
 			} finally {
-				service.activateContext(ContextAuthority.SEND_EVENTS);
+				service.deferUpdates(false);
 			}
 		}
     }

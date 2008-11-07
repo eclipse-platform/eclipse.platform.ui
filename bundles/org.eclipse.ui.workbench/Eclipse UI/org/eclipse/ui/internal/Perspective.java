@@ -54,7 +54,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
-import org.eclipse.ui.internal.contexts.ContextAuthority;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.layout.IWindowTrim;
@@ -820,7 +819,7 @@ public class Perspective {
 		}
         try {
         	if (service!=null) {
-        		service.activateContext(ContextAuthority.DEFER_EVENTS);
+        		service.deferUpdates(true);
         	}
 			for (Iterator iter = temp.iterator(); iter.hasNext();) {
 				IActionSetDescriptor descriptor = (IActionSetDescriptor) iter
@@ -829,7 +828,7 @@ public class Perspective {
 			}
 		} finally {
 			if (service!=null) {
-				service.activateContext(ContextAuthority.SEND_EVENTS);
+				service.deferUpdates(false);
 			}
         }
         newWizardShortcuts = layout.getNewWizardShortcuts();
@@ -1321,7 +1320,7 @@ public class Perspective {
         try { // one big try block, don't kill me here
 			// defer context events
 			if (service != null) {
-				service.activateContext(ContextAuthority.DEFER_EVENTS);
+				service.deferUpdates(true);
 			}
 
 			HashSet knownActionSetIds = new HashSet();
@@ -1450,7 +1449,7 @@ public class Perspective {
         	if (service != null) {
 				StartupThreading.runWithoutExceptions(new StartupRunnable() {
 					public void runWithException() throws Throwable {
-						service.activateContext(ContextAuthority.SEND_EVENTS);
+						service.deferUpdates(false);
 					}
 				});
 			}
@@ -2269,7 +2268,7 @@ public class Perspective {
     protected void addActionSet(IActionSetDescriptor newDesc) {
     	IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
     	try {
-			service.activateContext(ContextAuthority.DEFER_EVENTS);
+			service.deferUpdates(true);
 			for (int i = 0; i < alwaysOnActionSets.size(); i++) {
 				IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOnActionSets
 						.get(i);
@@ -2281,7 +2280,7 @@ public class Perspective {
 			}
 			addAlwaysOn(newDesc);
 		} finally {
-    		service.activateContext(ContextAuthority.SEND_EVENTS);
+    		service.deferUpdates(false);
     	}
     }
 
@@ -2289,7 +2288,7 @@ public class Perspective {
     /* package */void removeActionSet(String id) {
     	IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
     	try {
-			service.activateContext(ContextAuthority.DEFER_EVENTS);
+			service.deferUpdates(true);
 			for (int i = 0; i < alwaysOnActionSets.size(); i++) {
 				IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOnActionSets
 						.get(i);
@@ -2308,7 +2307,7 @@ public class Perspective {
 				}
 			}
 		} finally {
-    		service.activateContext(ContextAuthority.SEND_EVENTS);
+    		service.deferUpdates(false);
     	}
     }
     

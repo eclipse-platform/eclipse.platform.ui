@@ -35,9 +35,6 @@ import org.eclipse.core.internal.commands.util.Util;
 public final class ContextManager extends HandleObjectManager implements
 		IContextListener {
 	
-	private static final String DEFER_EVENTS = "org.eclipse.ui.internal.contexts.deferEvents"; //$NON-NLS-1$
-	private static final String SEND_EVENTS = "org.eclipse.ui.internal.contexts.sendEvents"; //$NON-NLS-1$
-
 	/**
 	 * This flag can be set to <code>true</code> if the context manager should
 	 * print information to <code>System.out</code> when certain boundary
@@ -61,6 +58,35 @@ public final class ContextManager extends HandleObjectManager implements
 	private Set oldIds = null;
 
 	/**
+	 * Informs the manager that a batch operation has started.
+	 * <p>
+	 * <b>Note:</b> You must insure that if you call
+	 * <code>deferUpdates(true)</code> that nothing in your batched operation
+	 * will prevent the matching call to <code>deferUpdates(false)</code>.
+	 * </p>
+	 * 
+	 * @param defer
+	 *            true when starting a batch operation false when ending the
+	 *            operation
+	 * 
+	 * @since 3.5
+	 */
+	public void deferUpdates(boolean defer) {
+		if(defer) {
+			cachingRef++;
+			if (cachingRef==1) {
+				setEventCaching(true);
+			}
+		}else {
+			cachingRef--;
+			if (cachingRef==0) {
+				setEventCaching(false);
+			}
+		}
+	}
+	
+	
+	/**
 	 * Activates a context in this context manager.
 	 * 
 	 * @param contextId
@@ -68,19 +94,6 @@ public final class ContextManager extends HandleObjectManager implements
 	 *            <code>null</code>.
 	 */
 	public final void addActiveContext(final String contextId) {
-		if (DEFER_EVENTS.equals(contextId)) {
-			cachingRef++;
-			if (cachingRef==1) {
-				setEventCaching(true);
-			}
-			return;
-		} else if (SEND_EVENTS.equals(contextId)) {
-			cachingRef--;
-			if (cachingRef==0) {
-				setEventCaching(false);
-			}
-			return;
-		}
 		
 		if (activeContextIds.contains(contextId)) {
 			return;
