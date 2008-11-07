@@ -19,16 +19,12 @@ public interface IConfigurationConstants {
 	public static final String ECLIPSE_PRODUCT = "eclipse.product"; //$NON-NLS-1$
 	public static final String ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
 	public static final String CFG = "config"; //$NON-NLS-1$
-	public static final String CFG_BOOT_PLUGIN = "bootstrap"; //$NON-NLS-1$
 	public static final String CFG_SITE = "site"; //$NON-NLS-1$
 	public static final String CFG_URL = "url"; //$NON-NLS-1$
 	public static final String CFG_POLICY = "policy"; //$NON-NLS-1$
 	public static final String[] CFG_POLICY_TYPE = { "USER-INCLUDE", "USER-EXCLUDE", "MANAGED-ONLY" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	public static final String CFG_POLICY_TYPE_UNKNOWN = "UNKNOWN"; //$NON-NLS-1$
 	public static final String CFG_LIST = "list"; //$NON-NLS-1$
-	public static final String CFG_STAMP = "stamp"; //$NON-NLS-1$
-	public static final String CFG_FEATURE_STAMP = "stamp.features"; //$NON-NLS-1$
-	public static final String CFG_PLUGIN_STAMP = "stamp.plugins"; //$NON-NLS-1$
 	public static final String CFG_UPDATEABLE = "updateable"; //$NON-NLS-1$
 	public static final String CFG_LINK_FILE = "linkfile"; //$NON-NLS-1$
 	public static final String CFG_FEATURE_ENTRY = "feature"; //$NON-NLS-1$
@@ -49,8 +45,6 @@ public interface IConfigurationConstants {
 	public static final String CFG_VERSION = "version"; //$NON-NLS-1$
 	public static final String CFG_TRANSIENT = "transient"; //$NON-NLS-1$
 	public static final String VERSION = "3.0"; //$NON-NLS-1$
-//	public static final String EOF = "eof"; //$NON-NLS-1$
-	public static final int CFG_LIST_LENGTH = 10;
 
 	public static final int DEFAULT_POLICY_TYPE = ISitePolicy.USER_EXCLUDE;
 	public static final String[] DEFAULT_POLICY_LIST = new String[0];

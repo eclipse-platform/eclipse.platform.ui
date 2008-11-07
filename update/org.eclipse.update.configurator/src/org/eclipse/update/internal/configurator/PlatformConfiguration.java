@@ -1217,41 +1217,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return installURL;
 	}
 	
-	// Patch from Phil to support cdc/foundation: will use the method below instead of this one.
-//	private void saveAsXML(OutputStream stream) throws CoreException {	
-//		StreamResult result = null;
-//		try {
-//			DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
-//			Document doc = docBuilder.newDocument();
-//
-//			if (config == null)
-//				throw Utils.newCoreException(Messages.getString("PlatformConfiguration.cannotSaveNonExistingConfig"),null); //$NON-NLS-1$
-//			
-//			config.setDate(new Date());
-//			doc.appendChild(doc.createComment("Created on " + config.getDate().toString())); //$NON-NLS-1$
-//			Element configElement = config.toXML(doc);
-//			doc.appendChild(configElement);
-//
-//			// Write out to a file
-//			
-//			Transformer transformer=transformerFactory.newTransformer();
-//			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-//			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-//			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-//			DOMSource source = new DOMSource(doc);
-//			result = new StreamResult(stream);
-//
-//			transformer.transform(source,result);
-//			//will close the stream in the caller
-//			//stream.close();
-//		} catch (Exception e) {
-//			throw Utils.newCoreException("", e); //$NON-NLS-1$
-//		} finally {
-//			result.setOutputStream(null);
-//			result = null;
-//		}
-//	}
-
 	private void saveAsXML(OutputStream stream) throws CoreException,IOException {			
 		BufferedWriter xmlWriter = new BufferedWriter(new OutputStreamWriter(stream,XML_ENCODING));
 		try {

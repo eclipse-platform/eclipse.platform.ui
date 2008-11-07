@@ -29,10 +29,6 @@ public class FeatureSorter extends ViewerSorter {
 	private int versionOrder;
 	private int providerOrder;
 	
-	public FeatureSorter() {
-		this(FEATURE_LABEL, ASCENDING, ASCENDING, ASCENDING);
-	}
-	
 	public FeatureSorter(int key, int labelOrder, int versionOrder, int providerOrder) {
 		this.key = key;
 		this.labelOrder = labelOrder;

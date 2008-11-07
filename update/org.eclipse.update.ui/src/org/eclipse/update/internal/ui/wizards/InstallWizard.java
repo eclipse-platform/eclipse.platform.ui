@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -53,10 +52,6 @@ public class InstallWizard
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(UpdateUIMessages.InstallWizard_wtitle); 
-	}
-
-	public InstallWizard(UpdateSearchRequest searchRequest, ArrayList jobs) {
-		this(searchRequest);
 	}
 
 	public boolean isRestartNeeded() {

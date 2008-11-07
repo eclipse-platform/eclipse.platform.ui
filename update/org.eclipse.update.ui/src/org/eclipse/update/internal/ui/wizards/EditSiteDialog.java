@@ -22,22 +22,12 @@ public class EditSiteDialog extends NewUpdateSiteDialog {
 	SiteBookmark bookmark;
 	private int ignoreBookmark = -1;
 
-	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark) {
-		super(parentShell);
-		this.bookmark = bookmark;
-	}
-	
 	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark, SiteBookmark[] siteBookmarks) {
 		super(parentShell, siteBookmarks);
 		this.bookmark = bookmark;
 		ignoreBookmark(siteBookmarks);
 	}
 
-	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark, boolean enableOK) {
-		super(parentShell,enableOK);
-		this.bookmark = bookmark;
-	}
-	
 	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark, SiteBookmark[] siteBookmarks, boolean enableOK) {
 		super(parentShell, enableOK, siteBookmarks);
 		this.bookmark = bookmark;

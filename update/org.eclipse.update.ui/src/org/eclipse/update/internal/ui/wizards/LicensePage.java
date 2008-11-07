@@ -54,11 +54,6 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		super.dispose();
 	}
 
-	public LicensePage(IInstallFeatureOperation job) {
-		this(false);
-		setJobs(new IInstallFeatureOperation[] { job });
-	}
-
 	public void setJobs(IInstallFeatureOperation[] jobs) {		
 		this.jobs = jobs;		
 	}

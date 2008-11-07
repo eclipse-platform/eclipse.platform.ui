@@ -28,7 +28,6 @@ import org.osgi.service.startlevel.*;
 public class ConfigurationActivator implements BundleActivator, IBundleGroupProvider, IConfigurationConstants {
 
 	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$
-	public static final String INSTALL_LOCATION = "osgi.installLocation"; //$NON-NLS-1$
 	public static final String LAST_CONFIG_STAMP = "last.config.stamp"; //$NON-NLS-1$
 	public static final String NAME_SPACE = "org.eclipse.update"; //$NON-NLS-1$
 	public static final String UPDATE_PREFIX = "update@"; //$NON-NLS-1$
@@ -502,10 +501,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				bundleGroups.add(features[i]);
 		}
 		return (IBundleGroup[])bundleGroups.toArray(new IBundleGroup[bundleGroups.size()]);
-	}
-
-	public static void setConfigurator(ConfigurationActivator configurator) {
-		ConfigurationActivator.configurator = configurator;
 	}
 
 	public static ConfigurationActivator getConfigurator() {

@@ -40,9 +40,6 @@ public class ActivitiesTableViewer{
 		public ActivitiesContentProvider(boolean showCurrentOnly){
 			this.showCurrentOnly = showCurrentOnly;
 		}
-		public ActivitiesContentProvider(){
-			this.showCurrentOnly = false;
-		}
 		
 		public Object[] getElements(Object element) {
 			InstallConfiguration currentConfig = (InstallConfiguration)element;

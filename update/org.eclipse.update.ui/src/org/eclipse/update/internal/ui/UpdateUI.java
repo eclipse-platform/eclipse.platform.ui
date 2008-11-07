@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Vector;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.Display;
@@ -24,8 +22,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.osgi.framework.Bundle;
@@ -45,7 +41,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	private String appServerHost;
 	private int appServerPort;
 	private UpdateLabelProvider labelProvider;
-	private static boolean remindOnCancel = true;
 
 	/**
 	 * The constructor.
@@ -60,17 +55,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	 */
 	public static UpdateUI getDefault() {
 		return plugin;
-	}
-
-	public static IWorkbenchPage getActivePage() {
-		return getDefault().internalGetActivePage();
-	}
-
-	private IWorkbenchPage internalGetActivePage() {
-		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
-		if (window != null)
-			return window.getActivePage();
-		return null;
 	}
 
 	public static Shell getActiveWorkbenchShell() {
@@ -105,12 +89,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		}
 	}
 	
-	
-
-	public boolean isWebAppStarted() {
-		return appServerHost != null;
-	}
-
 	public String getAppServerHost() {
 		return appServerHost;
 	}
@@ -173,59 +151,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		} else {
 			MessageDialog.openInformation(getActiveWorkbenchShell(), null, status.getMessage());
 		}
-	}
-
-	public static IFeature[] searchSite(
-		String featureId,
-		IConfiguredSite site,
-		boolean onlyConfigured)
-		throws CoreException {
-		IFeatureReference[] references = null;
-
-		if (onlyConfigured)
-			references = site.getConfiguredFeatures();
-		else
-			references = site.getSite().getFeatureReferences();
-		Vector result = new Vector();
-
-		for (int i = 0; i < references.length; i++) {
-			IFeature feature = references[i].getFeature(null);
-			String id = feature.getVersionedIdentifier().getIdentifier();
-			if (featureId.equals(id)) {
-				result.add(feature);
-			}
-		}
-		return (IFeature[]) result.toArray(new IFeature[result.size()]);
-	}
-
-	public static IFeature[] getInstalledFeatures(IFeature feature) {
-		return getInstalledFeatures(feature, true);
-	}
-
-	public static IFeature[] getInstalledFeatures(
-		IFeature feature,
-		boolean onlyConfigured) {
-		Vector features = new Vector();
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfiguredSite[] isites = config.getConfiguredSites();
-			VersionedIdentifier vid = feature.getVersionedIdentifier();
-			String id = vid.getIdentifier();
-
-			for (int i = 0; i < isites.length; i++) {
-				IConfiguredSite isite = isites[i];
-				IFeature[] result =
-					UpdateUI.searchSite(id, isite, onlyConfigured);
-				for (int j = 0; j < result.length; j++) {
-					IFeature installedFeature = result[j];
-					features.add(installedFeature);
-				}
-			}
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
-		}
-		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
 
 	public static URL getOriginatingURL(String id) {
@@ -322,15 +247,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		}
 	}
 	
-	public static boolean getRemindOnCancel() {
-		return remindOnCancel;
-	}
-	
-	public static void setRemindOnCancel(boolean remind) {
-		remindOnCancel = remind; 
-	}
-	
-	
 	/**
 	 * Returns the standard display to be used. The method first checks, if
 	 * the thread calling this method has an associated disaply. If so, this
@@ -343,7 +259,6 @@ public class UpdateUI extends AbstractUIPlugin {
 			display = Display.getDefault();
 		return display;
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPreferences()

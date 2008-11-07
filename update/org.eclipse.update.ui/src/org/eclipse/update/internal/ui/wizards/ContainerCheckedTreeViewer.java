@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
@@ -37,28 +36,10 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
     /**
      * Constructor for ContainerCheckedTreeViewer.
-     * @see CheckboxTreeViewer#CheckboxTreeViewer(Composite)
-     */
-    public ContainerCheckedTreeViewer(Composite parent) {
-        super(parent);
-        initViewer();
-    }
-
-    /**
-     * Constructor for ContainerCheckedTreeViewer.
      * @see CheckboxTreeViewer#CheckboxTreeViewer(Composite,int)
      */
     public ContainerCheckedTreeViewer(Composite parent, int style) {
         super(parent, style);
-        initViewer();
-    }
-
-    /**
-     * Constructor for ContainerCheckedTreeViewer.
-     * @see CheckboxTreeViewer#CheckboxTreeViewer(Tree)
-     */
-    public ContainerCheckedTreeViewer(Tree tree) {
-        super(tree);
         initViewer();
     }
 

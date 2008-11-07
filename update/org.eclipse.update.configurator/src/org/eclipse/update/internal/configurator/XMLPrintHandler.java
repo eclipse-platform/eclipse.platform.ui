@@ -18,8 +18,6 @@ import org.w3c.dom.*;
 
 public class XMLPrintHandler {
 	//	used to print XML file
-	public static final String XML_COMMENT_END_TAG = "-->"; //$NON-NLS-1$
-	public static final String XML_COMMENT_BEGIN_TAG = "<!--"; //$NON-NLS-1$
 	public static final String XML_HEAD = "<?xml version=\"1.0\" encoding=\""; //$NON-NLS-1$
 	public static final String XML_HEAD_END_TAG = "?>"; //$NON-NLS-1$
 	public static final String XML_DBL_QUOTES = "\""; //$NON-NLS-1$
@@ -41,17 +39,6 @@ public class XMLPrintHandler {
 		temp.append(XML_SLASH).append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 
-	}
-
-	
-	public static void printText(Writer xmlWriter, String text) throws IOException{
-		xmlWriter.write(encode(text).toString());
-	}
-
-	public static void printComment(Writer xmlWriter, String comment)throws IOException {
-		StringBuffer temp = new StringBuffer(XML_COMMENT_BEGIN_TAG);
-		temp.append(encode(comment).toString()).append(XML_COMMENT_END_TAG).append("\n"); //$NON-NLS-1$
-		xmlWriter.write(temp.toString());
 	}
 
 	public static void printHead(Writer xmlWriter, String encoding) throws IOException {
