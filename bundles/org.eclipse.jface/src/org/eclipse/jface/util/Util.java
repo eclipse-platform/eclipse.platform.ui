@@ -569,19 +569,6 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>This is a temporary method</b>
-	 * <p>
-	 * This can be removed when the cocoa fragment is implemented.
-	 * </p>
-	 * @return <code>true</code> for carbon platforms
-	 * @since 3.5
-	 */
-	public static final boolean isMacNow() {
-		final String ws = SWT.getPlatform();
-		return WS_CARBON.equals(ws);
-	}
-	
-	/**
 	 * <b>Note:</b> this may be made internal in 3.5
 	 * @return <code>true</code> for gtk platforms
 	 * @since 3.5
