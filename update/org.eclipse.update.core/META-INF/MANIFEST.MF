@@ -22,7 +22,7 @@ Export-Package: org.eclipse.update.configuration,
  org.eclipse.update.operations,
  org.eclipse.update.search,
  org.eclipse.update.standalone
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.update.configurator;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.core.net;bundle-version="[1.0.0,2.0.0)"
 Eclipse-LazyStart: true

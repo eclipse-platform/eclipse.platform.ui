@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,12 @@ package org.eclipse.update.internal.verifier;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.osgi.internal.provisional.verifier.*;
+import org.eclipse.osgi.signedcontent.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.Messages;
@@ -40,13 +37,13 @@ public class CertVerifier extends Verifier {
 	private boolean acceptUnsignedFiles;
 	private IProgressMonitor monitor;
 	private File jarFile;
-	private CertificateVerifierFactory factory;
-	private List trustedCertificates;
+	private SignedContentFactory factory;
+	private List trustedSignerInfos;
 
 	/*
 	 * Default Constructor
 	 */
-	public CertVerifier(CertificateVerifierFactory factory) {
+	public CertVerifier(SignedContentFactory factory) {
 		this.factory = factory;
 		initialize();
 	}
@@ -144,7 +141,7 @@ public class CertVerifier extends Verifier {
 	private CertVerificationResult verify(String file, String identifier) {
 
 		try {
-			CertificateVerifier verifier = factory.getVerifier(new File(file));
+			SignedContent verifier = factory.getSignedContent(new File(file));
 			// verify integrity
 			verifyIntegrity(verifier, identifier);
 
@@ -175,16 +172,15 @@ public class CertVerifier extends Verifier {
 	/*
 	 * Verifies the integrity of the JAR
 	 */
-	private void verifyIntegrity(CertificateVerifier verifier, String identifier) {
+	private void verifyIntegrity(SignedContent verifier, String identifier) {
 		try {
 			if (verifier.isSigned()) {
 				// If the JAR is signed and invalid then mark as corrupted
-				if (verifier.verifyContent().length == 0) {
-					CertificateChain[] roots = verifier.getChains();
-					result.setChains(roots);
-					for (int i = 0; i < roots.length; i++)
-						if (roots[i].isTrusted()) {
-							result.setFoundChain(roots[i]);
+				if (hasValidContent(verifier.getSignedEntries())) {
+					result.setSignedContent(verifier);
+					SignerInfo[] signers = verifier.getSignerInfos();
+					for (int i = 0; i < signers.length; i++)
+						if (signers[i].isTrusted()) {
 							result.setVerificationCode(IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED);
 							break;
 						}
@@ -202,6 +198,19 @@ public class CertVerifier extends Verifier {
 		}
 	}
 
+	private boolean hasValidContent(SignedContentEntry[] signedEntries) {
+		try {
+			for (int i = 0; i < signedEntries.length; i++)
+				signedEntries[i].verify();
+		} catch (InvalidContentException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
+	}
+
+
 	/*
 	 * 
 	 */
@@ -211,21 +220,21 @@ public class CertVerifier extends Verifier {
 			return (acceptUnsignedFiles);
 		if (verifyCode == IVerificationResult.UNKNOWN_ERROR)
 			return false;
-		if (result.getchains() != null) { //getTrustedCertificates() can't be null as it is lazy initialized
-			Iterator iter = getTrustedCertificates().iterator();
-			CertificateChain[] roots = result.getchains();
+		if (result.getSigners() != null) { //getTrustedCertificates() can't be null as it is lazy initialized
+			Iterator iter = getTrustedInfos().iterator();
+			SignerInfo[] signers = result.getSigners();
 
 			// check if this is not a user accepted certificate for this feature	
 			while (iter.hasNext()) {
-				CertificateChain chain = (CertificateChain) iter.next();
-				for (int i = 0; i < roots.length; i++)
-					if (chain.equals(roots[i]))
+				SignerInfo chain = (SignerInfo) iter.next();
+				for (int i = 0; i < signers.length; i++)
+					if (chain.equals(signers[i]))
 						return true;
 			}
 
 			// if certificate pair not found in trusted add it for next time
-			for (int i = 0; i < roots.length; i++) {
-				addTrustedCertificate(roots[i]);
+			for (int i = 0; i < signers.length; i++) {
+				addTrustedSignerInfo(signers[i]);
 			}
 		}
 
@@ -235,20 +244,20 @@ public class CertVerifier extends Verifier {
 	/*
 	 * 
 	 */
-	private void addTrustedCertificate(CertificateChain chain) {
-		if (trustedCertificates == null)
-			trustedCertificates = new ArrayList();
-		if (chain != null)
-			trustedCertificates.add(chain);
+	private void addTrustedSignerInfo(SignerInfo signer) {
+		if (trustedSignerInfos == null)
+			trustedSignerInfos = new ArrayList();
+		if (signer != null)
+			trustedSignerInfos.add(signer);
 	}
 
 	/*
 	 * 
 	 */
-	private List getTrustedCertificates() {
-		if (trustedCertificates == null)
-			trustedCertificates = new ArrayList();
-		return trustedCertificates;
+	private List getTrustedInfos() {
+		if (trustedSignerInfos == null)
+			trustedSignerInfos = new ArrayList();
+		return trustedSignerInfos;
 	}
 
 	/**

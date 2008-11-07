@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,8 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.signedcontent.SignedContentFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.jarprocessor.JarProcessor;
@@ -59,10 +57,10 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 * otherwise reinitialize)
 	 */
 	public IVerifier getVerifier() throws CoreException {
-		CertificateVerifierFactory factory = UpdateCore.getPlugin().getVerifierFactory();
+		SignedContentFactory factory = UpdateCore.getPlugin().getSignedContentFactory();
 		if (jarVerifier == null || jarVerifier.getParent() == null) {
 			if (factory != null)
-				jarVerifier = new CertVerifier(UpdateCore.getPlugin().getVerifierFactory());
+				jarVerifier = new CertVerifier(UpdateCore.getPlugin().getSignedContentFactory());
 			else
 				jarVerifier = new JarVerifier();
 			return jarVerifier;

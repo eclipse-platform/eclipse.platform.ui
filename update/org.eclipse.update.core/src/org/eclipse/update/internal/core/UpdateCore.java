@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,20 +13,13 @@ package org.eclipse.update.internal.core;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
 import org.eclipse.core.net.proxy.IProxyService;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.signedcontent.SignedContentFactory;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IImport;
-import org.eclipse.update.core.JarContentReference;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.connection.ConnectionThreadManagerFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -308,12 +301,12 @@ public class UpdateCore extends Plugin {
 	}
 
 
-	public CertificateVerifierFactory getVerifierFactory() {
+	public SignedContentFactory getSignedContentFactory() {
 		if (verifierFactoryTracker == null) {
-			verifierFactoryTracker = new ServiceTracker(context, CertificateVerifierFactory.class.getName(), null);
+			verifierFactoryTracker = new ServiceTracker(context, SignedContentFactory.class.getName(), null);
 			verifierFactoryTracker.open();
 		}
-		return (CertificateVerifierFactory)verifierFactoryTracker.getService();
+		return (SignedContentFactory)verifierFactoryTracker.getService();
 	}
 	
 	public UpdateSession getUpdateSession() {

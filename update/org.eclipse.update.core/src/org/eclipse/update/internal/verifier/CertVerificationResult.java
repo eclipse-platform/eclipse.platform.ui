@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.internal.verifier;
 
-import java.security.*;
+import java.security.Principal;
 import java.security.cert.*;
 import java.text.DateFormat;
 import java.util.Date;
-
-import org.eclipse.osgi.internal.provisional.verifier.CertificateChain;
+import org.eclipse.osgi.signedcontent.SignedContent;
+import org.eclipse.osgi.signedcontent.SignerInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.Messages;
@@ -30,9 +30,7 @@ public class CertVerificationResult implements IVerificationResult {
 	private int verificationCode;
 	private Exception resultException;
 
-	private CertificateChain[] chains;
-	private CertificateChain foundChain; // certificate found in one keystore
-	
+	private SignedContent signedContent;
 	private String signerInfo;
 	private String verifierInfo;
 	private ContentReference contentReference;
@@ -85,28 +83,13 @@ public class CertVerificationResult implements IVerificationResult {
 		this.verificationCode = verificationCode;
 	}
 
-	void setChains(CertificateChain[] chains) {
-		this.chains = chains;
+	void setSignedContent(SignedContent signedContent) {
+		this.signedContent = signedContent;
 	}
 
-	public CertificateChain[] getchains() {
-		return chains;
+	public SignerInfo[] getSigners() {
+		return signedContent.getSignerInfos();
 	}
-
-	/*
-	 * 
-	 */
-	private CertificateChain getFoundChain() {
-		return foundChain;
-	}
-
-	/*
-	 * 
-	 */
-	public void setFoundChain(CertificateChain foundChain) {
-		this.foundChain = foundChain;
-	}
-
 
 	/*
 	 * Initializes the signerInfo and the VerifierInfo from the Certificate Pair
@@ -114,30 +97,34 @@ public class CertVerificationResult implements IVerificationResult {
 	private void initializeCertificates(){
 		X509Certificate certRoot = null;
 		X509Certificate certIssuer = null;
-		CertificateChain trustedChain;
-		if (getFoundChain() == null) {
-			CertificateChain[] certs = getchains();
-			if (certs.length == 0)
-				return;
-			trustedChain = certs[0];
-		} else {
-			trustedChain = getFoundChain();
+		SignerInfo trustedSigner;
+		SignerInfo[] signers = getSigners();
+		if (signers.length == 0)
+			return;
+		trustedSigner = signers[0];
+		for (int i = 0; i < signers.length; i++) {
+			if (signers[i].isTrusted()) {
+				trustedSigner = signers[i];
+				break;
+			}
 		}
-		certRoot = (X509Certificate) trustedChain.getRoot();
-		certIssuer = (X509Certificate) trustedChain.getSigner();
+		Certificate[] certs = trustedSigner.getCertificateChain();
+		if (certs == null || certs.length == 0)
+			return;
+		certRoot = (X509Certificate) certs[certs.length - 1];
+		certIssuer = (X509Certificate) certs[0];
 
 		StringBuffer strb = new StringBuffer();
 		strb.append(issuerString(certIssuer.getSubjectDN()));
 		strb.append("\r\n"); //$NON-NLS-1$
 		strb.append(NLS.bind(Messages.JarVerificationResult_ValidBetween, (new String[] { dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()) })));
-		strb.append(checkValidity(certIssuer));
+		strb.append(checkValidity(trustedSigner));
 		signerInfo = strb.toString();
 		if (certIssuer != null && !certIssuer.equals(certRoot)) {
 			strb = new StringBuffer();	
 			strb.append(issuerString(certIssuer.getIssuerDN()));
 			strb.append("\r\n"); //$NON-NLS-1$
 			strb.append(NLS.bind(Messages.JarVerificationResult_ValidBetween, (new String[] { dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()) }))); 
-			strb.append(checkValidity(certRoot));
 			verifierInfo = strb.toString();
 		}
 
@@ -146,10 +133,10 @@ public class CertVerificationResult implements IVerificationResult {
 	/*
 	 * Returns a String to show if the certificate is valid
 	 */
-	private String checkValidity(X509Certificate cert) {
+	private String checkValidity(SignerInfo signer) {
 
 		try {
-			cert.checkValidity();
+			signedContent.checkValidity(signer);
 		} catch (CertificateExpiredException e) {
 			return ("\r\n" + Messages.JarVerificationResult_ExpiredCertificate);  //$NON-NLS-1$
 		} catch (CertificateNotYetValidException e) {
