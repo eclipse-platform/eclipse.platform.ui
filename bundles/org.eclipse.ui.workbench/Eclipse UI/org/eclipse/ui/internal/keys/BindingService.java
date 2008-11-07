@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.keys;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -272,4 +273,11 @@ public final class BindingService implements IBindingService {
 		bindingManager.removeBindingManagerListener(listener);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.keys.IBindingService#getConflictsFor(org.eclipse.jface.bindings.TriggerSequence)
+	 */
+	public Collection getConflictsFor(TriggerSequence sequence) {
+		return bindingManager.getConflictsFor(sequence);
+	}
+
 }

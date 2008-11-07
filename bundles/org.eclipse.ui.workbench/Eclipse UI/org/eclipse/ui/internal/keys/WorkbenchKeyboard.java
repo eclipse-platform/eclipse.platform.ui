@@ -30,7 +30,6 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StyledText;
@@ -595,11 +594,19 @@ public final class WorkbenchKeyboard {
 	 *         if no command matches.
 	 */
 	private Binding getPerfectMatch(KeySequence keySequence) {
+		return getBindingService().getPerfectMatch(keySequence);
+	}
+
+	/**
+	 * @return 
+	 * 
+	 */
+	private IBindingService getBindingService() {
 		if (bindingService == null) {
 			bindingService = (IBindingService) workbench
 					.getService(IBindingService.class);
 		}
-		return bindingService.getPerfectMatch(keySequence);
+		return bindingService;
 	}
 
 	final KeySequence getBuffer() {
@@ -649,11 +656,7 @@ public final class WorkbenchKeyboard {
 	 *         <code>false</code> otherwise.
 	 */
 	private boolean isPartialMatch(KeySequence keySequence) {
-		if (bindingService == null) {
-			bindingService = (IBindingService) workbench
-					.getService(IBindingService.class);
-		}
-		return bindingService.isPartialMatch(keySequence);
+		return getBindingService().isPartialMatch(keySequence);
 	}
 
 	/**
@@ -667,11 +670,7 @@ public final class WorkbenchKeyboard {
 	 *         <code>false</code> otherwise.
 	 */
 	private boolean isPerfectMatch(KeySequence keySequence) {
-		if (bindingService == null) {
-			bindingService = (IBindingService) workbench
-					.getService(IBindingService.class);
-		}
-		return bindingService.isPerfectMatch(keySequence);
+		return getBindingService().isPerfectMatch(keySequence);
 	}
 
 	/**
@@ -840,9 +839,7 @@ public final class WorkbenchKeyboard {
 				return false;
 
 			} else {
-				Collection match = (InternalPolicy.currentConflicts == null ? null
-						: (Collection) InternalPolicy.currentConflicts
-								.get(sequenceAfterKeyStroke));
+				Collection match = getBindingService().getConflictsFor(sequenceAfterKeyStroke);
 				if (match != null) {
 					errorSequence = sequenceAfterKeyStroke;
 					errorMatch = match;

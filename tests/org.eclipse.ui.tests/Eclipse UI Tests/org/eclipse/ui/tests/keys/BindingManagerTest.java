@@ -743,6 +743,51 @@ public final class BindingManagerTest extends UITestCase {
 				.getActiveScheme());
 	}
 
+	public void testGetCurrentConflicts() throws NotDefinedException, ParseException {
+		
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme(scheme);
+		contextManager.setActiveContextIds(null);
+
+		Command command1 = commandManager.getCommand("conflictCommand1");
+		ParameterizedCommand parameterizedCommand1 = ParameterizedCommand.generateCommand(command1, null);
+		Command command2 = commandManager.getCommand("conflictCommand2");
+		ParameterizedCommand parameterizedCommand2 = ParameterizedCommand.generateCommand(command2, null);
+		Command command3 = commandManager.getCommand("conflictCommand3");
+		ParameterizedCommand parameterizedCommand3 = ParameterizedCommand.generateCommand(command3, null);
+		KeySequence conflict = KeySequence.getInstance("M1+M2+9");
+		KeySequence noConflict = KeySequence.getInstance("M1+M2+8");
+		Binding binding1 = new KeyBinding(conflict, parameterizedCommand1, "na", "na", null, null, null,
+				Binding.SYSTEM);
+		Binding binding2 = new KeyBinding(conflict, parameterizedCommand2, "na", "na", null, null, null,
+				Binding.SYSTEM);
+		Binding binding3 = new KeyBinding(noConflict, parameterizedCommand3, "na", "na", null, null, null,
+				Binding.SYSTEM);
+		final Binding[] bindings = new Binding[] {binding1, binding2, binding3};
+		bindingManager.setBindings(bindings);
+
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		Map activeBindingsDisregardingContext = bindingManager.getActiveBindingsDisregardingContext();// force a recompute
+		assertNotNull(activeBindingsDisregardingContext);
+		
+		Map currentConflicts = bindingManager.getCurrentConflicts();
+		assertEquals(1, currentConflicts.size()); // we have only one conflict
+		
+		Collection conflictsCollection = bindingManager.getConflictsFor(noConflict);
+		assertNull(conflictsCollection); // no conflict for this keybinding
+		
+		conflictsCollection = bindingManager.getConflictsFor(conflict);
+		assertNotNull(conflictsCollection); // this has one conflict with 2 commands
+		assertEquals(2, conflictsCollection.size());
+
+	}
+	
 	/**
 	 * Verifies that you can set the bindings to null. Verifies that setting the
 	 * bindings clears the cache.

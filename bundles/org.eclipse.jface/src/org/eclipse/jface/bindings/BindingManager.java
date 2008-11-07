@@ -42,7 +42,6 @@ import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
-import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.Util;
 
@@ -83,6 +82,8 @@ public final class BindingManager extends HandleObjectManager implements
 	 * The separator character used in locales.
 	 */
 	private static final String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
+
+	private Map currentConflicts = null;
 
 	/**
 	 * </p>
@@ -2170,12 +2171,42 @@ public final class BindingManager extends HandleObjectManager implements
 		final Map previousBindingsByParameterizedCommand = this.activeBindingsByParameterizedCommand;
 		this.activeBindingsByParameterizedCommand = activeBindingsByCommandId;
 		this.prefixTable = prefixTable;
-		InternalPolicy.currentConflicts = conflicts;
+		currentConflicts = conflicts;
 
 		fireBindingManagerChanged(new BindingManagerEvent(this, true,
 				previousBindingsByParameterizedCommand, false, null, false,
 				false, false));
 	}
+
+	/**
+	 * Provides the current conflicts in the bindings as a Map The key will
+	 * be {@link TriggerSequence} and the value will be the {@link Collection} of
+	 * {@link Binding}
+	 * 
+	 * @return Read-only {@link Map} of the current conflicts. If no conflicts,
+	 *         then return an empty map. Never <code>null</code>
+	 * @since 3.5
+	 */
+	public Map getCurrentConflicts() {
+		if (currentConflicts == null)
+			return Collections.EMPTY_MAP;
+		return Collections.unmodifiableMap(currentConflicts);
+	}
+	
+	/**
+	 * Provides the current conflicts in the keybindings for the given 
+	 * TriggerSequence as a {@link Collection} of {@link Binding}
+	 * 
+	 * @param sequence The sequence for which conflict info is required
+	 * 
+	 * @return Collection of KeyBinding. If no conflicts,
+	 *         then returns a <code>null</code>
+	 * @since 3.5
+	 */
+	public Collection getConflictsFor(TriggerSequence sequence) {
+		return (Collection) getCurrentConflicts().get(sequence);
+	}
+
 
 	/**
 	 * <p>

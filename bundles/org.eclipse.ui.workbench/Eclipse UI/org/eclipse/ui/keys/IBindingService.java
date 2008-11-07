@@ -11,6 +11,7 @@
 package org.eclipse.ui.keys;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -366,4 +367,16 @@ public interface IBindingService extends IDisposable {
 	 *            Whether the key filter should be enabled.
 	 */
 	public void setKeyFilterEnabled(boolean enabled);
+
+	/**
+	 * Provides the current conflicts in the keybindings for the given 
+	 * TriggerSequence as a {@link Collection} of {@link Binding}
+	 * 
+	 * @param sequence The sequence for which conflict info is required
+	 * 
+	 * @return Collection of Bindings. If no conflicts,
+	 *         then returns a <code>null</code>
+	 * @since 3.5
+	 */
+	public Collection getConflictsFor(TriggerSequence sequence);
 }
