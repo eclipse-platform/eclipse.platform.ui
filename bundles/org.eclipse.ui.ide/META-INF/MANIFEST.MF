@@ -50,8 +50,11 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)";resolu
  org.eclipse.help;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.ui.views;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
- org.eclipse.update.configurator;bundle-version="[3.1.100,4.0.0)";resolution:=optional,
  org.eclipse.jface.text;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.forms;bundle-version="[3.3.0,4.0.0)";resolution:=optional
-Import-Package: com.ibm.icu.text
+Import-Package: com.ibm.icu.text,
+ org.eclipse.equinox.internal.provisional.p2.engine,
+ org.eclipse.equinox.internal.provisional.p2.metadata,
+ org.eclipse.equinox.internal.provisional.p2.metadata.query,
+ org.eclipse.equinox.internal.provisional.p2.query
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

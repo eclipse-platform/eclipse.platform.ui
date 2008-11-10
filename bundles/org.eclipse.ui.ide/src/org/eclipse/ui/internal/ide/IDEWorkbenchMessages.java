@@ -33,10 +33,11 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ConfigurationLogUpdateSection_installConfiguration;
 	public static String ConfigurationLogUpdateSection_lastChangedOn;
 	public static String ConfigurationLogUpdateSection_location;
-	public static String ConfigurationLogUpdateSection_configurationSites;
-	public static String ConfigurationLogUpdateSection_configurationFeatures;
-	public static String ConfigurationLogUpdateSection_featureIdAndVersion;
-	public static String ConfigurationLogUpdateSection_plugins;
+	public static String ConfigurationLogUpdateSection_IU;
+	public static String ConfigurationLogUpdateSection_IUHeader;
+	public static String ConfigurationLogUpdateSection_bundle;
+	public static String ConfigurationLogUpdateSection_bundleHeader;
+	public static String ConfigurationLogUpdateSection_timestamp;
 
 	public static String ErrorClosing;
 	public static String ErrorOnSaveAll;
