@@ -84,6 +84,10 @@ import org.eclipse.osgi.util.NLS;
  * 
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.
+ * @deprecated This class is replaced by {@link IEclipsePreferences}. Setting a default
+ * value is accomplished by a setting a value in the {@link DefaultScope}, and setting
+ * an explicit non-default value is accomplished by setting a value in the {@link InstanceScope}.
+ * To obtain a preference value, use the preference accessor methods on {@link IPreferencesService}.
  */
 public class Preferences {
 

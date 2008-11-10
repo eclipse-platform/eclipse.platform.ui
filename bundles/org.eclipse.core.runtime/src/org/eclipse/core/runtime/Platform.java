@@ -84,7 +84,7 @@ public final class Platform {
 	 * @see #getPreferencesService()
 	 * @since 3.0
 	 */
-	public static final String PT_PREFERENCES = Preferences.PT_PREFERENCES;
+	public static final String PT_PREFERENCES =  "preferences"; //$NON-NLS-1$
 
 	/** 
 	 * The simple identifier constant (value "<code>products</code>") of

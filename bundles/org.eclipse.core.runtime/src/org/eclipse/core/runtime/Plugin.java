@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Map;
 import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
 
@@ -161,6 +162,7 @@ public abstract class Plugin implements BundleActivator {
 	 * meaning not yet created and initialized.
 	 * 
 	 * @since 2.0
+	 * @deprecated
 	 */
 	private Preferences preferences = null;
 
@@ -331,7 +333,15 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#setValue(String, String)
 	 * @see Preferences#setToDefault(String)
 	 * @since 2.0
-	 * XXX deprecate since this does not leverage the config, project scopes, etc...
+	 * @deprecated Replaced by {@link IEclipsePreferences}. Preferences are now stored according
+	 * to scopes in the {@link IPreferencesService}. The return value of this method corresponds to
+	 * a combination of the {@link InstanceScope} and the {@link DefaultScope}. To set preferences
+	 * for your plug-in, use <tt>new InstanceScope().getNode(&lt&yourPluginId&gt;)</tt>.  To set default
+	 * preferences for your plug-in, use <tt>new DefaultScope().getNode(&lt;yourPluginId&gt;)</tt>.
+	 * To lookup an integer preference value for your plug-in, use 
+	 * <tt>Platform.getPreferencesService().getInt(&lt;yourPluginId&gt;, &lt;preferenceKey&gt;, &lt;defaultValue&gt;, null)</tt>.
+	 * Similar methods exist on {@link IPreferencesService} for obtaining other kinds
+	 * of preference values (strings, booleans, etc).
 	 */
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
@@ -368,7 +378,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#store(OutputStream, String)
 	 * @see Preferences#needsSaving()
 	 * @since 2.0
-	 * XXX deprecate call flush on the node for this bundle on the instance scope
+	 * @deprecated Replaced by InstanceScope.getNode(&lt;bundleId&gt;).flush()
 	 */
 	public final void savePluginPreferences() {
 		// populate the "preferences" instvar. We still might
@@ -444,6 +454,7 @@ public abstract class Plugin implements BundleActivator {
 	 * It should not be called by clients.
 	 * 
 	 * @since 3.0
+	 * @deprecated
 	 */
 	public final void internalInitializeDefaultPluginPreferences() {
 		initializeDefaultPluginPreferences();
@@ -626,6 +637,7 @@ public abstract class Plugin implements BundleActivator {
 	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	public void startup() throws CoreException {
+		//default implementation does nothing
 	}
 
 	/**
