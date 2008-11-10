@@ -17,7 +17,6 @@ import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 
 /**
  * A log writer that writes log entries.  
- * See PlatformLogReader for reading logs back into memory.
  * <p>
  * Note that this class just provides a bridge from the old ILog interface
  * to the OSGi FrameworkLog interface.
