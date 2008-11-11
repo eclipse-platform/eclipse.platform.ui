@@ -2487,6 +2487,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * Matches text with filter.
 		 * 
 		 * @param text
+		 *            the text to match with the filter
 		 * @return <code>true</code> if text matches with filter pattern,
 		 *         <code>false</code> otherwise
 		 */
