@@ -7,20 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 213145, 241585
+ *     Matthew Hall - bugs 213145, 241585, 246103
  *******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
+import java.util.Collections;
 import java.util.HashSet;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.WritableSet;
@@ -28,6 +31,7 @@ import org.eclipse.core.internal.databinding.beans.JavaBeanObservableMap;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
 
 /**
  * @since 3.2
@@ -164,6 +168,37 @@ public class JavaBeanObservableMapTest extends TestCase {
 		ChangeEventTracker.observe(observable);
 
 		assertTrue(bean.hasListeners("value"));
+	}
+
+	public void testSetBeanProperty_CorrectForNullOldAndNewValues() {
+		// The java bean spec allows the old and new values in a
+		// PropertyChangeEvent to be null, which indicates that an unknown
+		// change occured.
+
+		// This test ensures that JavaBeanObservableValue fires the correct
+		// value diff even if the bean implementor is lazy :-P
+
+		WritableSet set = new WritableSet(new CurrentRealm(true));
+
+		Bean bean = new AnnoyingBean();
+		bean.setValue("old");
+		set.add(bean);
+
+		IObservableMap map = BeansObservables.observeMap(set, Bean.class,
+				"value");
+		MapChangeEventTracker tracker = MapChangeEventTracker.observe(map);
+
+		bean.setValue("new");
+
+		assertEquals(1, tracker.count);
+
+		assertEquals(Collections.EMPTY_SET, tracker.event.diff.getAddedKeys());
+		assertEquals(Collections.singleton(bean), tracker.event.diff
+				.getChangedKeys());
+		assertEquals(Collections.EMPTY_SET, tracker.event.diff.getRemovedKeys());
+
+		assertEquals("old", tracker.event.diff.getOldValue(bean));
+		assertEquals("new", tracker.event.diff.getNewValue(bean));
 	}
 
 	private static class MapChangeListener implements IMapChangeListener {

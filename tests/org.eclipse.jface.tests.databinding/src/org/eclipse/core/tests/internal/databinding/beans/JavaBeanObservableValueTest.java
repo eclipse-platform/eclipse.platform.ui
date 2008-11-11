@@ -9,7 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 171616
  *     Katarzyna Marszalek - test case for bug 198519
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 246103
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -31,6 +31,7 @@ import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
@@ -121,6 +122,23 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertFalse(bean.hasListeners(propertyName));
 	}
 	
+	public void testSetBeanProperty_CorrectForNullOldAndNewValues() {
+		// The java bean spec allows the old and new values in a PropertyChangeEvent to
+		// be null, which indicates that an unknown change occured.
+
+		// This test ensures that JavaBeanObservableValue fires the correct value diff
+		// even if the bean implementor is lazy :-P
+
+		Bean bean = new AnnoyingBean();
+		bean.setValue("old");
+		IObservableValue observable = BeansObservables.observeValue(bean, "value");
+		ValueChangeEventTracker tracker = ValueChangeEventTracker.observe(observable);
+		bean.setValue("new");
+		assertEquals(1, tracker.count);
+		assertEquals("old", tracker.event.diff.getOldValue());
+		assertEquals("new", tracker.event.diff.getNewValue());
+	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(JavaBeanObservableValueTest.class.getName());
 		suite.addTestSuite(JavaBeanObservableValueTest.class);

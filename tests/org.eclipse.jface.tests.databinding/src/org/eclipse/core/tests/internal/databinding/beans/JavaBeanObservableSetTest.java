@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098
+ *     Matthew Hall - bugs 221351, 213145, 244098, 246103
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -15,12 +15,14 @@ package org.eclipse.core.tests.internal.databinding.beans;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -32,6 +34,7 @@ import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTes
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -105,7 +108,29 @@ public class JavaBeanObservableSetTest extends TestCase {
 		ChangeEventTracker.observe(observableSet);
 		assertFalse(bean.hasListeners(propertyName));
 	}
-	
+
+	public void testSetBeanProperty_CorrectForNullOldAndNewValues() {
+		// The java bean spec allows the old and new values in a
+		// PropertyChangeEvent to be null, which indicates that an unknown
+		// change occured.
+
+		// This test ensures that JavaBeanObservableValue fires the correct
+		// value diff even if the bean implementor is lazy :-P
+
+		Bean bean = new AnnoyingBean();
+		bean.setSet(Collections.singleton("old"));
+		IObservableSet observable = BeansObservables.observeSet(
+				new CurrentRealm(true), bean, "set");
+		SetChangeEventTracker tracker = SetChangeEventTracker
+				.observe(observable);
+		bean.setSet(Collections.singleton("new"));
+		assertEquals(1, tracker.count);
+		assertEquals(Collections.singleton("old"), tracker.event.diff
+				.getRemovals());
+		assertEquals(Collections.singleton("new"), tracker.event.diff
+				.getAdditions());
+	}
+
 	static class SetChangeListener implements ISetChangeListener {
 		int count;
 		public void handleSetChange(SetChangeEvent event) {

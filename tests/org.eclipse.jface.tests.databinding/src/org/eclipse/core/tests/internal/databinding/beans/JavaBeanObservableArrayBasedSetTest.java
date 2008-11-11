@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221351)
  *     Brad Reynolds - through JavaBeanObservableArrayBasedListTest.java
- *     Matthew Hall - bug 213145, 244098
+ *     Matthew Hall - bug 213145, 244098, 246103
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -25,6 +25,7 @@ import java.util.HashSet;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -33,6 +34,7 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -129,7 +131,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertEquals(0, bean.getArray().length);
 	}
 
-	public void testRemoveListChangeEvent() throws Exception {
+	public void testRemove_SetChangeEvent() throws Exception {
 		String element = "1";
 		set.add(element);
 		assertEquals(1, set.size());
@@ -165,7 +167,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertEquals(2, bean.getArray().length);
 	}
 
-	public void testAddAllListChangEvent() throws Exception {
+	public void testAddAll_SetChangeEvent() throws Exception {
 		Collection elements = Arrays.asList(new String[] { "1", "2" });
 		assertEquals(0, set.size());
 
@@ -200,7 +202,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertEquals(0, bean.getArray().length);
 	}
 
-	public void testRemoveAllListChangeEvent() throws Exception {
+	public void testRemoveAll_SetChangeEvent() throws Exception {
 		Collection elements = Arrays.asList(new String[] { "1", "2" });
 		set.addAll(elements);
 
@@ -235,7 +237,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertTrue(set.containsAll(Arrays.asList(new String[] { "1", "0" })));
 	}
 
-	public void testRetainAllListChangeEvent() throws Exception {
+	public void testRetainAll_SetChangeEvent() throws Exception {
 		set.addAll(Arrays.asList(new String[] { "0", "1", "2", "3" }));
 
 		SetChangeEventTracker listener = SetChangeEventTracker.observe(set);
@@ -261,7 +263,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		});
 	}
 
-	public void testListChangeEventFiresWhenNewListIsSet() throws Exception {
+	public void testSetChangeEventFiresWhenNewSetIsSet() throws Exception {
 		Bean[] elements = new Bean[] { new Bean(), new Bean() };
 
 		SetChangeEventTracker listener = SetChangeEventTracker.observe(set);
@@ -269,6 +271,28 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertEquals(0, listener.count);
 		bean.setArray(elements);
 		assertEquals(1, listener.count);
+	}
+
+	public void testSetBeanProperty_CorrectForNullOldAndNewValues() {
+		// The java bean spec allows the old and new values in a
+		// PropertyChangeEvent to be null, which indicates that an unknown
+		// change occured.
+
+		// This test ensures that JavaBeanObservableValue fires the correct
+		// value diff even if the bean implementor is lazy :-P
+
+		Bean bean = new AnnoyingBean();
+		bean.setArray(new Object[] { "old" });
+		IObservableSet observable = BeansObservables.observeSet(
+				new CurrentRealm(true), bean, "array");
+		SetChangeEventTracker tracker = SetChangeEventTracker
+				.observe(observable);
+		bean.setArray(new Object[] { "new" });
+		assertEquals(1, tracker.count);
+		assertEquals(Collections.singleton("old"), tracker.event.diff
+				.getRemovals());
+		assertEquals(Collections.singleton("new"), tracker.event.diff
+				.getAdditions());
 	}
 
 	private static void assertPropertyChangeEvent(Bean bean, Runnable runnable) {
@@ -286,7 +310,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertTrue("old value", Arrays.equals(old, (Object[]) event
 				.getOldValue()));
 		assertTrue("new value", Arrays.equals(bean.getArray(), (Object[]) event.getNewValue()));
-		assertFalse("lists are equal", Arrays.equals(bean.getArray(), old));
+		assertFalse("sets are equal", Arrays.equals(bean.getArray(), old));
 	}
 
 	private static class PropertyChangeTracker implements
@@ -326,11 +350,11 @@ public class JavaBeanObservableArrayBasedSetTest extends
 			}
 			Object bean = new Bean(new Object[0]);
 
-			IObservableSet list = new JavaBeanObservableSet(realm, bean,
+			IObservableSet set = new JavaBeanObservableSet(realm, bean,
 					propertyDescriptor, String.class);
 			for (int i = 0; i < elementCount; i++)
-				list.add(createElement(list));
-			return list;
+				set.add(createElement(set));
+			return set;
 		}
 
 		public Object createElement(IObservableCollection collection) {
@@ -342,8 +366,8 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		}
 
 		public void change(IObservable observable) {
-			IObservableSet list = (IObservableSet) observable;
-			list.add(createElement(list));
+			IObservableSet set = (IObservableSet) observable;
+			set.add(createElement(set));
 		}
 	}
 }

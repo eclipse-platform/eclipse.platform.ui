@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223164, 226289, 244098
+ *     Matthew Hall - bug 223164, 226289, 244098, 246103
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -84,11 +84,18 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 					if (!updating) {
 						getRealm().exec(new Runnable() {
 							public void run() {
-								Map oldValue = wrappedMap;
-								Map newValue = (Map) event.getNewValue();
-								wrappedMap = new HashMap(newValue);
-								
-								fireMapChange(Diffs.computeMapDiff(oldValue, newValue));
+								Map oldMap = (Map) event.getOldValue();
+								Map newMap = (Map) event.getNewValue();
+								if (oldMap == null && newMap == null) {
+									oldMap = wrappedMap;
+									newMap = getMap();
+								}
+
+								if (!Util.equals(oldMap, newMap)) {
+									wrappedMap = new HashMap(newMap);
+									fireMapChange(Diffs.computeMapDiff(oldMap,
+											newMap));
+								}
 							}
 						});
 					}
@@ -161,10 +168,11 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 		checkRealm();
 		updating = true;
 		try {
+			boolean add = !wrappedMap.containsKey(key);
 			Object result = wrappedMap.put(key, value);
 			if (!Util.equals(result, value)) {
 				setMap();
-				if (result == null) {
+				if (add) {
 					fireMapChange(Diffs.createMapDiffSingleAdd(key, value));
 				} else {
 					fireMapChange(Diffs.createMapDiffSingleChange(key, result,
@@ -187,8 +195,9 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 				Map.Entry entry = (Entry) it.next();
 				Object key = entry.getKey();
 				Object newValue = entry.getValue();
+				boolean add = !wrappedMap.containsKey(key);
 				Object oldValue = wrappedMap.put(key, newValue);
-				if (oldValue == null) {
+				if (add) {
 					addedKeys.add(key);
 				} else if (!Util.equals(oldValue, newValue)) {
 					changes.put(key, oldValue);
@@ -207,13 +216,14 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 
 	public Object remove(Object key) {
 		checkRealm();
+		if (!wrappedMap.containsKey(key)) {
+			return null;
+		}
 		updating = true;
 		try {
 			Object result = wrappedMap.remove(key);
-			if (result!=null) {
-				setMap();
-				fireMapChange(Diffs.createMapDiffSingleRemove(key, result));
-			}
+			setMap();
+			fireMapChange(Diffs.createMapDiffSingleRemove(key, result));
 			return result;
 		} finally {
 			updating = false;

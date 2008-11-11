@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 164134, 171616
+ *     Matthew Hall - bug 246103
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.beans;
 
@@ -23,7 +24,6 @@ import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.Util;
 import org.eclipse.core.runtime.IStatus;
@@ -41,6 +41,9 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	private ListenerSupport listenerSupport;
 
 	private boolean attachListeners;
+
+	// Applicable only while hasListeners() == true
+	private Object cachedValue;
 
 	/**
 	 * @param realm
@@ -70,25 +73,40 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 		if (!attachListeners) {
 			return;
 		}
-			
-		PropertyChangeListener listener = new PropertyChangeListener() {
-			public void propertyChange(java.beans.PropertyChangeEvent event) {
-				if (!updating) {
-					final ValueDiff diff = Diffs.createValueDiff(event.getOldValue(),
-											event.getNewValue());
-					getRealm().exec(new Runnable(){
-						public void run() {
-							fireValueChange(diff);
-						}});
-				}
-			}
-		};
-		
+
 		if (listenerSupport == null) {
-			listenerSupport = new ListenerSupport(listener, propertyDescriptor.getName());
+			PropertyChangeListener listener = new PropertyChangeListener() {
+				public void propertyChange(
+						final java.beans.PropertyChangeEvent event) {
+					if (!updating) {
+						getRealm().exec(new Runnable() {
+							public void run() {
+								Object oldValue = event.getOldValue();
+								Object newValue = event.getNewValue();
+								if (oldValue == null && newValue == null) {
+									// this condition is provided for in the
+									// bean spec, and indicates that an 
+									// unknown change occured.
+
+									oldValue = cachedValue;
+									newValue = doGetValue();
+								}
+								cachedValue = newValue;
+								if (!Util.equals(oldValue, newValue)) {
+									fireValueChange(Diffs.createValueDiff(
+											oldValue, newValue));
+								}
+							}
+						});
+					}
+				}
+			};
+			listenerSupport = new ListenerSupport(listener, propertyDescriptor
+					.getName());
 		}
 		
 		listenerSupport.hookListener(object);
+		cachedValue = doGetValue();
 	}
 
 	public void doSetValue(Object value) {
@@ -96,16 +114,28 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 		try {
 			Object oldValue = doGetValue();
 			
-			if (Util.equals(oldValue, value)) {
-				return;
+			if (!Util.equals(oldValue, value)) {
+				Method writeMethod = propertyDescriptor.getWriteMethod();
+				if (!writeMethod.isAccessible()) {
+					writeMethod.setAccessible(true);
+				}
+				writeMethod.invoke(object, new Object[] { value });
 			}
 			
-			Method writeMethod = propertyDescriptor.getWriteMethod();
-			if (!writeMethod.isAccessible()) {
-				writeMethod.setAccessible(true);
+			if (hasListeners()) {
+				// oldValue contains the live value which may be different from
+				// the cached value if the bean does not have listener API or
+				// does not fire events properly. For consistency we want to
+				// provide the cached value as the old value, rather than the
+				// live value so that consumers that hook/unhook listeners can
+				// do so without maintaining caches of their own.
+				oldValue = cachedValue;
+				cachedValue = doGetValue();
+				if (!Util.equals(oldValue, cachedValue)) {
+					fireValueChange(Diffs
+							.createValueDiff(oldValue, cachedValue));
+				}
 			}
-			writeMethod.invoke(object, new Object[] { value });
-			fireValueChange(Diffs.createValueDiff(oldValue, doGetValue()));
 		} catch (InvocationTargetException e) {
 			/*
 			 * InvocationTargetException wraps any exception thrown by the
@@ -165,6 +195,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	}
 
 	private void unhookListener() {
+		cachedValue = null;
 		if (listenerSupport != null) {
 			listenerSupport.dispose();
 			listenerSupport = null;

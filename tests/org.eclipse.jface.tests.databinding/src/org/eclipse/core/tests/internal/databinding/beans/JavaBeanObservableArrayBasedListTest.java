@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098
+ *     Matthew Hall - bugs 221351, 213145, 244098, 246103
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -16,13 +16,16 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
@@ -32,6 +35,7 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.internal.databinding.beans.JavaBeanObservableList;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -444,6 +448,29 @@ public class JavaBeanObservableArrayBasedListTest extends
 		assertEquals(0, listener.count);
 		bean.setArray(elements);
 		assertEquals(1, listener.count);
+	}
+
+	public void testSetBeanProperty_CorrectForNullOldAndNewValues() {
+		// The java bean spec allows the old and new values in a
+		// PropertyChangeEvent to be null, which indicates that an unknown
+		// change occured.
+
+		// This test ensures that JavaBeanObservableValue fires the correct
+		// value diff even if the bean implementor is lazy :-P
+
+		Bean bean = new AnnoyingBean();
+		bean.setArray(new Object[] { "old" });
+		IObservableList observable = BeansObservables.observeList(
+				new CurrentRealm(true), bean, "array");
+		ListChangeEventTracker tracker = ListChangeEventTracker
+				.observe(observable);
+		bean.setArray(new Object[] { "new" });
+		assertEquals(1, tracker.count);
+
+		List list = new ArrayList();
+		list.add("old");
+		tracker.event.diff.applyTo(list);
+		assertEquals(Collections.singletonList("new"), list);
 	}
 
 	private static void assertEntry(ListDiffEntry entry, boolean addition,

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bugs 118516, 146397, 226289
+ *     Matthew Hall - bugs 118516, 146397, 226289, 246103
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -38,7 +38,25 @@ import org.eclipse.core.runtime.AssertionFailedException;
 public abstract class AbstractObservableMap extends AbstractMap implements
 		IObservableMap {
 
-	private ChangeSupport changeSupport;
+	private final class PrivateChangeSupport extends ChangeSupport {
+		private PrivateChangeSupport(Realm realm) {
+			super(realm);
+		}
+
+		protected void firstListenerAdded() {
+			AbstractObservableMap.this.firstListenerAdded();
+		}
+
+		protected void lastListenerRemoved() {
+			AbstractObservableMap.this.lastListenerRemoved();
+		}
+
+		protected boolean hasListeners() {
+			return super.hasListeners();
+		}
+	}
+
+	private PrivateChangeSupport changeSupport;
 	private boolean disposed = false;
 
 	private boolean stale;
@@ -66,14 +84,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	 */
 	public AbstractObservableMap(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
-		changeSupport = new ChangeSupport(realm){
-			protected void firstListenerAdded() {
-				AbstractObservableMap.this.firstListenerAdded();
-			}
-			protected void lastListenerRemoved() {
-				AbstractObservableMap.this.lastListenerRemoved();
-			}
-		};
+		changeSupport = new PrivateChangeSupport(realm);
 	}
 
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
@@ -94,6 +105,14 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	public synchronized void addStaleListener(IStaleListener listener) {
 		if (!disposed)
 			changeSupport.addStaleListener(listener);
+	}
+
+	/**
+	 * @return whether the observable map has listeners registered
+	 * @since 1.2
+	 */
+	protected synchronized boolean hasListeners() {
+		return !disposed && changeSupport.hasListeners();
 	}
 
 	/**
