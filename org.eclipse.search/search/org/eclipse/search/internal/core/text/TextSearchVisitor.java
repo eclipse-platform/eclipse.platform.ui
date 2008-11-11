@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
+import java.io.CharConversionException;
 import java.io.IOException;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
@@ -55,6 +56,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
 import org.eclipse.search.core.text.TextSearchScope;
+import org.eclipse.search.internal.core.text.FileCharSequenceProvider.FileCharSequenceException;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -320,6 +322,10 @@ public class TextSearchVisitor {
 				}
 			}
 		} catch (IndexOutOfBoundsException e) {
+		} catch (FileCharSequenceException ex) {
+			if (ex.getCause() instanceof CharConversionException)
+				return true;
+			throw ex;
 		}
 		return false;
 	}
