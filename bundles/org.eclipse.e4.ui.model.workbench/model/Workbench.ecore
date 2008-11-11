@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="workbench"
+    nsURI="http://www.eclipse.org/ui/2008/Workbench" nsPrefix="workbench">
+  <eClassifiers xsi:type="ecore:EClass" name="WorkbenchWindow">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sharedParts" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="ecore:EClass Application.ecore#//Part">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//Window">
+      <eTypeArguments eClassifier="#//Perspective">
+        <eTypeArguments/>
+      </eTypeArguments>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ProxyPart" abstract="true">
+    <eTypeParameters name="P">
+      <eBounds eClassifier="ecore:EClass Application.ecore#//Part">
+        <eTypeArguments/>
+      </eBounds>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="part">
+      <eGenericType eClassifier="ecore:EClass Application.ecore#//Part">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//Part">
+      <eTypeArguments eTypeParameter="#//ProxyPart/P"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Perspective">
+    <eTypeParameters name="P">
+      <eBounds eClassifier="ecore:EClass Application.ecore#//Part">
+        <eTypeArguments/>
+      </eBounds>
+    </eTypeParameters>
+    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//ItemPart">
+      <eTypeArguments eTypeParameter="#//Perspective/P"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+</ecore:EPackage>
