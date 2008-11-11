@@ -384,10 +384,22 @@ public abstract class ListEditor extends FieldEditor {
         }
     }
 
-    /**
-     * Notifies that the list selection has changed.
-     */
-    private void selectionChanged() {
+	/**
+	 * Invoked when the selection in the list has changed.
+	 * 
+	 * <p>
+	 * The default implementation of this method utilizes the selection index
+	 * and the size of the list to toggle the enablement of the up, down and
+	 * remove buttons.
+	 * </p>
+	 * 
+	 * <p>
+	 * Sublcasses may override.
+	 * </p>
+	 * 
+	 * @since 3.5
+	 */
+    protected void selectionChanged() {
 
         int index = list.getSelectionIndex();
         int size = list.getItemCount();
@@ -444,5 +456,55 @@ public abstract class ListEditor extends FieldEditor {
         removeButton.setEnabled(enabled);
         upButton.setEnabled(enabled);
         downButton.setEnabled(enabled);
+    }
+    
+    /**
+     * Return the Add button.  
+     * 
+     * @return the button
+     * @since 3.5
+     */
+    protected Button getAddButton() {
+    	return addButton;
+    }
+    
+    /**
+     * Return the Remove button.  
+     * 
+     * @return the button
+     * @since 3.5
+     */
+    protected Button getRemoveButton() {
+    	return removeButton;
+    }
+    
+    /**
+     * Return the Up button.  
+     * 
+     * @return the button
+     * @since 3.5
+     */
+    protected Button getUpButton() {
+    	return upButton;
+    }
+    
+    /**
+     * Return the Down button.  
+     * 
+     * @return the button
+     * @since 3.5
+     */
+    protected Button getDownButton() {
+    	return downButton;
+    }
+    
+    /**
+     * Return the List.
+     * 
+     * @return the list
+     * @since 3.5
+     */
+    protected List getList() {
+    	return list;
     }
 }
