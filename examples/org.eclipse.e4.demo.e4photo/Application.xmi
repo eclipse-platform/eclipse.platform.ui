@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/Application" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../org.eclipse.e4.ui.model.workbench/model/Application.ecore">
+  <windows x="100" y="100" width="800" height="600">
+    <children policy="HorizontalComposite">
+      <children policy="VerticalComposite">
+        <children>
+          <toolBar/>
+        </children>
+        <children xsi:type="application:Stack">
+          <children xsi:type="application:ContributedPart" name="Library" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library"/>
+        </children>
+        <children xsi:type="application:Stack">
+          <children xsi:type="application:ContributedPart" name="Location" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location"/>
+        </children>
+      </children>
+      <children policy="VerticalComposite">
+        <children xsi:type="application:ContributedPart" name="Preview" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview"/>
+        <children xsi:type="application:Stack">
+          <children xsi:type="application:ContributedPart" name="Thumbnails" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails"/>
+          <children xsi:type="application:ContributedPart" name="Exif" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable"/>
+        </children>
+      </children>
+    </children>
+    <menu/>
+  </windows>
+</application:Application>
