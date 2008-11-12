@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -49,8 +52,8 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public class DefaultEncodingSupport implements IEncodingSupport {
 
-	/** Internal property change listener. */
-	private Preferences.IPropertyChangeListener fPropertyChangeListener;
+	/** Internal preference change listener. */
+	private IPreferenceChangeListener fPreferenceChangeListener;
 	/** The editor this support is associated with. */
 	private StatusTextEditor fTextEditor;
 
@@ -70,9 +73,11 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 
 		fTextEditor= textEditor;
 
-		fPropertyChangeListener= new Preferences.IPropertyChangeListener() {
-			public void propertyChange(Preferences.PropertyChangeEvent e) {
-				if (ResourcesPlugin.PREF_ENCODING.equals(e.getProperty())) {
+		IEclipsePreferences prefs= new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
+
+		fPreferenceChangeListener= new IPreferenceChangeListener() {
+			public void preferenceChange(PreferenceChangeEvent event) {
+				if (ResourcesPlugin.PREF_ENCODING.equals(event.getKey())) {
 					Runnable runnable= new Runnable() {
 						public void run() {
 							setEncoding(null, false); // null means: use default
@@ -97,18 +102,16 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 				}
 			}
 		};
-
-		Preferences p= ResourcesPlugin.getPlugin().getPluginPreferences();
-		p.addPropertyChangeListener(fPropertyChangeListener);
+		
+		prefs.addPreferenceChangeListener(fPreferenceChangeListener);
 	}
 
 	/**
 	 * Disposes this encoding support.
 	 */
 	public void dispose() {
-		Preferences p= ResourcesPlugin.getPlugin().getPluginPreferences();
-		p.removePropertyChangeListener(fPropertyChangeListener);
-
+		IEclipsePreferences prefs= new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		prefs.removePreferenceChangeListener(fPreferenceChangeListener);
 		fTextEditor= null;
 	}
 
