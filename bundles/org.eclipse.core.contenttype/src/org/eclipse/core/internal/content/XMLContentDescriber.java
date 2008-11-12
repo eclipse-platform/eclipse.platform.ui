@@ -109,7 +109,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 			return null;
 		int secondQuote = firstLine.indexOf(quoteChar, firstQuote + 1);
 		if (secondQuote == -1)
-			return isFullXMLDecl(firstLine) ? firstLine.substring(firstQuote + 1) : null;
+			return isFullXMLDecl(firstLine) ? firstLine.substring(firstQuote + 1, firstLine.lastIndexOf(XML_DECL_END)).trim() : null;
 		return firstLine.substring(firstQuote + 1, secondQuote);
 	}
 
