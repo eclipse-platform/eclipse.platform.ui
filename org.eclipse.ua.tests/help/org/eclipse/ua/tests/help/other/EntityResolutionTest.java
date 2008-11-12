@@ -11,7 +11,6 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
@@ -19,12 +18,11 @@ import junit.framework.TestCase;
 
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class EntityResolutionTest extends TestCase {
 	
-	public void resolve(String systemId, boolean isSupportedDtd) {
-		try {
+	public void resolve(String systemId, boolean isSupportedDtd) throws Exception {
+
 			LocalEntityResolver resolver = new LocalEntityResolver();
 			InputSource is = resolver.resolveEntity("publicId", systemId);
 			Reader reader = is.getCharacterStream();
@@ -42,46 +40,41 @@ public class EntityResolutionTest extends TestCase {
 			} else {
 				assertTrue("Unsupported Entity did not return empty stream", read == -1);
 			}
-		} catch (SAXException e) {
-			fail("SAX Exception thrown");
-		} catch (IOException e) {
-			fail("IO Exception thrown");
-		}
 	}
 	
-	public void testXhtml1()  {
+	public void testXhtml1() throws Exception  {
 		resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", true);
 	}
 
-    public void testFramset() {
+    public void testFramset() throws Exception {
 	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd", true);
     }
     
-    public void testFlat() {
+    public void testFlat() throws Exception {
 	    resolve("http://www.w3.org/TR/xhtml11/DTD/xhtml11-flat.dtd", true);
     }
     
-    public void testStrict() {
+    public void testStrict() throws Exception {
 	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd", true);
     }
     
-    public void testTransitional() {
+    public void testTransitional() throws Exception {
 	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", true);
     }
     
-    public void testLat1() {
+    public void testLat1() throws Exception {
 	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent", true);
     }
     
-    public void testSpecial() {
+    public void testSpecial() throws Exception {
 	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent", true);
     }
     
-    public void testResolveSymbol() {
+    public void testResolveSymbol() throws Exception {
 	    resolve("http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent", true);
     }
 	
-	public void testUnsupportedDtds() throws SAXException, IOException {
+	public void testUnsupportedDtds() throws Exception {
 		resolve("xyz", false);
 		resolve("", false);
 		resolve("http://www.w3.org/TR/xhtml2/DTD/xhtml2-transitional.dtd", false);
