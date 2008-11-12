@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
@@ -310,4 +311,20 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
         super.handleEmptyList();
         fLowerList.setEnabled(false);
     }
+    
+    /**
+     * @see AbstractElementListSelectionDialog#validateCurrentSelection()
+     * @since 3.5
+     */
+    protected boolean validateCurrentSelection() {
+    	ISelectionStatusValidator validator = getValidator();
+    	Object lowerSelection = getLowerSelectedElement();
+    	
+    	if (validator != null && lowerSelection != null) {
+    		IStatus status = validator.validate(new Object [] {lowerSelection});
+    		updateStatus(status);
+    		return status.isOK();
+    	}
+        return super.validateCurrentSelection();
+     }
 }
