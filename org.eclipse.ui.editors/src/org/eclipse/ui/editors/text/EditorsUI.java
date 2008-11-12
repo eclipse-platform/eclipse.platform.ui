@@ -12,8 +12,6 @@ package org.eclipse.ui.editors.text;
 
 import java.nio.charset.UnmappableCharacterException;
 
-import org.eclipse.core.runtime.Preferences;
-
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -149,11 +147,12 @@ public final class EditorsUI {
 
 	/**
 	 * Returns the preferences of this plug-in.
-	 *
+	 * 
 	 * @return the plug-in preferences
 	 * @see org.eclipse.core.runtime.Plugin#getPluginPreferences()
+	 * @deprecated replaced by {@link #getPreferenceStore()}
 	 */
-	public static Preferences getPluginPreferences() {
+	public static org.eclipse.core.runtime.Preferences getPluginPreferences() {
 		return EditorsPlugin.getDefault().getPluginPreferences();
 	}
 

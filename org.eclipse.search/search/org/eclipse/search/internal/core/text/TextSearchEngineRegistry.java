@@ -15,8 +15,8 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.SafeRunnable;
 
 import org.eclipse.search.core.text.TextSearchEngine;
@@ -65,13 +65,13 @@ public class TextSearchEngineRegistry {
 	}
 
 	private String getPreferredEngineID() {
-		Preferences prefs= SearchPlugin.getDefault().getPluginPreferences();
+		IPreferenceStore prefs= SearchPlugin.getDefault().getPreferenceStore();
 		String preferedEngine= prefs.getString(SearchPreferencePage.TEXT_SEARCH_ENGINE);
 		return preferedEngine;
 	}
 
 	private void setPreferredEngineID(String id) {
-		Preferences prefs= SearchPlugin.getDefault().getPluginPreferences();
+		IPreferenceStore prefs= SearchPlugin.getDefault().getPreferenceStore();
 		prefs.setValue(SearchPreferencePage.TEXT_SEARCH_ENGINE, id);
 	}
 
