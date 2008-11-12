@@ -1473,7 +1473,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private IFile getWorkspaceFile(IFileStore fileStore) {
 		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-		IFile[] files= workspaceRoot.findFilesForLocation(URIUtil.toPath(fileStore.toURI()));
+		IFile[] files= workspaceRoot.findFilesForLocationURI(fileStore.toURI());
 		if (files != null && files.length == 1)
 			return files[0];
 		return null;

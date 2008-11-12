@@ -773,7 +773,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	 */
 	public boolean performOk() {
 		fOverlayStore.propagate();
-		EditorsPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 
