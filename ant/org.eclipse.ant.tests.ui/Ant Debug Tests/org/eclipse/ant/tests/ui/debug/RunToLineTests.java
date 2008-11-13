@@ -203,6 +203,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
             DebugUIPlugin.getStandardDisplay().syncExec(r);
             waiter.waitForEvent();
             IStackFrame topStackFrame = thread.getTopStackFrame();
+            assertNotNull("There must be a top stack frame", topStackFrame);
             assertEquals("wrong line", expectedLineNumber, topStackFrame.getLineNumber());
 		} finally {
 			terminateAndRemove(thread);
