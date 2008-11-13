@@ -521,7 +521,8 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 					}
 				}
 				debugTarget.terminate();
-				waiter.waitForEvent();
+				Object event = waiter.waitForEvent();
+				assertNotNull("No terminate event was recieved", event);
                 getLaunchManager().removeLaunch(debugTarget.getLaunch());
 			} catch (CoreException e) {
 			}
@@ -530,7 +531,8 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
         // ensure event queue is flushed
         DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.MODEL_SPECIFIC, this);
         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.MODEL_SPECIFIC)});
-        waiter.waitForEvent();
+        Object event = waiter.waitForEvent();
+        assertNotNull("The model specific event was never recieved", event);
 	}
 	
 	/**

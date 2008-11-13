@@ -201,7 +201,8 @@ public class RunToLineTests extends AbstractAntDebugTest {
             };
             DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
             DebugUIPlugin.getStandardDisplay().syncExec(r);
-            waiter.waitForEvent();
+            Object event = waiter.waitForEvent();
+            assertNotNull("no suspend event was recieved", event);
             IStackFrame topStackFrame = thread.getTopStackFrame();
             assertNotNull("There must be a top stack frame", topStackFrame);
             assertEquals("wrong line", expectedLineNumber, topStackFrame.getLineNumber());
