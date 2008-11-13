@@ -235,11 +235,12 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 				|| !monitorBounds.contains(dialogBounds.x + dialogBounds.width,
 						dialogBounds.y + dialogBounds.height)) {
 			// Place it in the center of the monitor if it is not visible
-			// when placed in the center of its parent;
-			dialogBounds.x = monitorBounds.x
-					+ (monitorBounds.width - dialogBounds.width) / 2;
-			dialogBounds.y = monitorBounds.y
-					+ (monitorBounds.height - dialogBounds.height) / 2;
+			// when placed in the center of its parent.
+			// Ensure the origin is visible on the screen.
+			dialogBounds.x = Math.max(0, 
+					monitorBounds.x + (monitorBounds.width - dialogBounds.width) / 2);
+			dialogBounds.y =  Math.max(0, 
+					monitorBounds.y + (monitorBounds.height - dialogBounds.height) / 2);
 		}
 
 		dialog.setLocation(dialogBounds.x, dialogBounds.y);
