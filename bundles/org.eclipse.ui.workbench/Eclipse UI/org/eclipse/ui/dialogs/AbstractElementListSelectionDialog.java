@@ -197,9 +197,8 @@ public abstract class AbstractElementListSelectionDialog extends
     public String getFilter() {
         if (fFilteredList == null) {
 			return fFilter;
-		} else {
-			return fFilteredList.getFilter();
 		}
+		return fFilteredList.getFilter();
     }
 
     /**
