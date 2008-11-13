@@ -183,6 +183,10 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	public static final byte USED_CACHE = 2;
 	public static final byte INVALID_CACHE = 3;
 	public static final byte FLUSHING_CACHE = 4;
+	
+	// This state indicates that FlushJob is scheduled and full flush is going to be performed.
+	// In the meantime the cache was discarded. It is used as a temporary cache till the FlushJob start.
+	public static final byte ABOUT_TO_FLUSH = 5;
 
 	private static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$
 
@@ -207,7 +211,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 
 	synchronized void doFlushCache(final IProgressMonitor monitor, IPath[] toClean) throws CoreException {
 		// nothing to be done if no information cached
-		if (getCacheState() != INVALID_CACHE) {
+		if (getCacheState() != INVALID_CACHE && getCacheState() != ABOUT_TO_FLUSH) {
 			if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 				Policy.debug("Content type cache flush not performed"); //$NON-NLS-1$
 			return;
@@ -299,33 +303,33 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		if (ProjectContentTypes.usesContentTypePreferences(file.getFullPath().segment(0)))
 			// caching for project containing project specific settings is not supported
 			return readDescription(file);
-		switch (getCacheState()) {
-			case INVALID_CACHE :
-				// the cache is not good, flush it
-				flushJob.schedule(1000);
-			//fall through and just read the file
-			case FLUSHING_CACHE :
-				// the cache is being flushed, but is still not good, just read the file
-				return readDescription(file);
+		if (getCacheState() == INVALID_CACHE) {
+			// discard the cache, so it can be used before the flush job starts
+			setCacheState(ABOUT_TO_FLUSH);
+			cache.discardAll();
+			// the cache is not good, flush it
+			flushJob.schedule(1000);
 		}
-		// first look for the flags in the resource info to avoid looking in the cache
-		// don't need to copy the info because the modified bits are not in the deltas
-		if (info == null)
-			return null;
-		if (info.isSet(ICoreConstants.M_NO_CONTENT_DESCRIPTION))
-			// presumably, this file has no known content type
-			return null;
-		if (info.isSet(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION)) {
-			// this file supposedly has a default content description for an "obvious" content type			
-			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-			// try to find the obvious content type matching its name
-			IContentType type = contentTypeManager.findContentTypeFor(file.getName());
-			if (type != null)
-				// we found it, we are done
-				return type.getDefaultDescription();
-			// for some reason, there was no content type for this file name
-			// fix this and keep going			
-			info.clear(ICoreConstants.M_CONTENT_CACHE);
+		if (getCacheState() != ABOUT_TO_FLUSH) {
+			// first look for the flags in the resource info to avoid looking in the cache
+			// don't need to copy the info because the modified bits are not in the deltas
+			if (info == null)
+				return null;
+			if (info.isSet(ICoreConstants.M_NO_CONTENT_DESCRIPTION))
+				// presumably, this file has no known content type
+				return null;
+			if (info.isSet(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION)) {
+				// this file supposedly has a default content description for an "obvious" content type			
+				IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+				// try to find the obvious content type matching its name
+				IContentType type = contentTypeManager.findContentTypeFor(file.getName());
+				if (type != null)
+					// we found it, we are done
+					return type.getDefaultDescription();
+				// for some reason, there was no content type for this file name
+				// fix this and keep going			
+				info.clear(ICoreConstants.M_CONTENT_CACHE);
+			}
 		}
 		synchronized (this) {
 			// tries to get a description from the cache	
@@ -333,22 +337,25 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			if (entry != null && entry.getTimestamp() == info.getContentId())
 				// there was a description in the cache, and it was up to date
 				return (IContentDescription) entry.getCached();
-			// we are going to add an entry to the cache or update the resource info - remember that
-			setCacheState(USED_CACHE);
+			
 			// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
 			IContentDescription newDescription = readDescription(file);
-			if (newDescription == null) {
-				// no content type exists for this file name/contents - remember this
-				info.set(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
-				return null;
-			}
-			if (newDescription.getContentType().getDefaultDescription().equals(newDescription)) {
-				// we got a default description
-				IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
-				if (newDescription.getContentType().equals(defaultForName)) {
-					// it is a default description for the obvious content type given its file name, we don't have to cache					
-					info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
-					return newDescription;
+			if (getCacheState() != ABOUT_TO_FLUSH) {
+				// we are going to add an entry to the cache or update the resource info - remember that
+				setCacheState(USED_CACHE);
+				if (newDescription == null) {
+					// no content type exists for this file name/contents - remember this
+					info.set(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
+					return null;
+				}
+				if (newDescription.getContentType().getDefaultDescription().equals(newDescription)) {
+					// we got a default description
+					IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
+					if (newDescription.getContentType().equals(defaultForName)) {
+						// it is a default description for the obvious content type given its file name, we don't have to cache					
+						info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
+						return newDescription;
+					}
 				}
 			}
 			// we actually got a description filled by a describer (or a default description for a non-obvious type)
@@ -383,8 +390,17 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		}
 		if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 			Policy.debug("Invalidated cache for " + (project == null ? Path.ROOT : project.getFullPath())); //$NON-NLS-1$		
-		if (flush)
+		if (flush) {
+			try {
+				// discard the cache, so it can be used before the flush job starts
+				setCacheState(ABOUT_TO_FLUSH);
+				cache.discardAll();
+			} catch (CoreException e) {
+				Policy.log(e.getStatus());
+			}
+			// the cache is not good, flush it
 			flushJob.flush(project);
+		}
 	}
 
 	/**
@@ -461,7 +477,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		cache = new Cache(100, 1000, 0.1);
 		projectContentTypes = new ProjectContentTypes(workspace);
 		getCacheState();
-		if (cacheState == FLUSHING_CACHE)
+		if (cacheState == FLUSHING_CACHE || cacheState == ABOUT_TO_FLUSH)
 			// in case we died before completing the last flushing 
 			setCacheState(INVALID_CACHE);
 		flushJob = new FlushJob();
