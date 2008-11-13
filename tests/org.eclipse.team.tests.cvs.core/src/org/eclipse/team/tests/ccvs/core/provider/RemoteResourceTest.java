@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,30 @@ import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutToRemoteFolderOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -282,7 +297,7 @@ public class RemoteResourceTest extends EclipseTest {
 	 	IProject project = createProject("testExists", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 	 	ICVSRemoteResource resource1 = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
 	 	assertTrue(resource1.exists(DEFAULT_MONITOR));
-	 	ICVSRemoteResource resource2 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder2/folder3/"));
+	 	ICVSRemoteResource resource2 = CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder2/folder3/"));
 	 	assertTrue(resource2.exists(DEFAULT_MONITOR));
 	 	deleteResources(project, new String[] {"file1.txt", "folder2/folder3/b.txt", "folder2/folder3/c.txt" }, true);
 	 	assertTrue( ! resource1.exists(DEFAULT_MONITOR));
@@ -328,6 +343,44 @@ public class RemoteResourceTest extends EclipseTest {
 	 	remote = checkoutRemote(remote);
 	 	assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(copy), remote, false, true);
 	 }
+	 
+	public void testBug244425() throws CVSException, CoreException,
+			IOException {
+		IProject projectHead = createProject("test", new String[] { "a/",
+				"a/file1.txt", "a/file2.txt" });
+		appendText(projectHead.getFile("a/file1.txt"), "dummy", true);
+		appendText(projectHead.getFile("a/file2.txt"), "dummy", true);
+		commitNewProject(projectHead);
+
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject projectBranch = checkoutCopy(projectHead, "branch");
+		tagProject(projectHead, root, false);
+		tagProject(projectHead, branch, false);
+		updateProject(projectBranch, branch, false);
+
+		// replace the file in original project with a branched one
+		replace(new IResource[] { projectHead.getFile("a/file2.txt") }, branch,
+				true);
+
+		// modify the file on branch
+		appendText(projectBranch.getFile("a/file2.txt"), "dummy2", true);
+		commitProject(projectBranch);
+		
+		// check the file from HEAD 
+		ICVSRemoteResource file1 = getRemoteTree(projectHead
+				.getFile("a/file1.txt"), null, DEFAULT_MONITOR);
+		assertEquals(null, file1.getSyncInfo().getTag());
+		assertEquals("1.2", file1.getSyncInfo().getRevision());
+
+		// we want to be sure that the tree notices that the file is from
+		// a different branch
+		ICVSRemoteResource file2 = getRemoteTree(projectHead
+				.getFile("a/file2.txt"), null, DEFAULT_MONITOR);
+		assertEquals(branch, file2.getSyncInfo().getTag());
+		assertEquals("1.2.2.1", file2.getSyncInfo().getRevision());
+	}
 
 	private ICVSRemoteFolder checkoutRemote(ICVSRemoteFolder remote) throws CVSException, InvocationTargetException, InterruptedException {
 		return CheckoutToRemoteFolderOperation.checkoutRemoteFolder(null, remote, DEFAULT_MONITOR);

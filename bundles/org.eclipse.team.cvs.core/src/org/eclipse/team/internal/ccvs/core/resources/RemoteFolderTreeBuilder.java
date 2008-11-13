@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -326,8 +321,8 @@ public class RemoteFolderTreeBuilder {
 					d.getSyncState(), 
 					file.getName(), 
 					null, /* the revision will be retrieved from the server */
-					getKeywordMode(file), /* use the same keyword mode a the local file */
-					tagForRemoteFolder(remoteRoot, tag));
+					getKeywordMode(file), /* use the same keyword mode as the local file */
+					file.getSyncInfo() != null ? file.getSyncInfo().getTag() : null /* use a tag for the file if available */);
 			}
 			// Add the resource to its parent
 			remoteRoot.setChildren(new ICVSRemoteResource[] {remoteFile});
