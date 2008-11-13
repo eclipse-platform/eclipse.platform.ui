@@ -71,7 +71,10 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			if (isVisibleInMode(set) || isVisibleInMode(previousDefault)) {
 				Utils.asyncExec(new Runnable() {
 					public void run() {
-						if (previousDefault!=null) {
+						if (set == null) {
+							// unset default changeset
+							((AbstractTreeViewer)getViewer()).update(previousDefault, null);
+						} else if (previousDefault != null) {
 							((AbstractTreeViewer)getViewer()).update(new Object[] {previousDefault, set}, null);
 						} else { 
 							// when called for the first time previous default change set is null

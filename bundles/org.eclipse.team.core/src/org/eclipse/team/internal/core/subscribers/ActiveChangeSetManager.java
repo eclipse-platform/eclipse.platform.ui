@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IChangeGroupingRequestor;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
-import org.eclipse.team.internal.core.*;
+import org.eclipse.team.internal.core.Messages;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -255,15 +256,18 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
 	}
 
 	/**
-	 * Make the given set the default set into which all new modifications
-	 * that are not already in another set go.
-	 * @param set the set which is to become the default set
+	 * Make the given set the default set into which all new modifications that
+	 * are not already in another set go.
+	 * 
+	 * @param set
+	 *            the set which is to become the default set or
+	 *            <code>null</code> to unset the default set
 	 */
 	public void makeDefault(ActiveChangeSet set) {
 	    // The default set must be an active set
-	    if (!contains(set)) {
-	        add(set);
-	    }
+		if (set != null && !contains(set)) {
+			add(set);
+		}
 	    ActiveChangeSet oldSet = defaultSet;
 	    defaultSet = set;
 	    fireDefaultChangedEvent(oldSet, defaultSet);
@@ -349,6 +353,9 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
 		}
 		if (getDefaultSet() != null) {
 		    prefs.put(CTX_DEFAULT_SET, getDefaultSet().getTitle());
+		} else {
+			// unset default changeset
+			prefs.remove(CTX_DEFAULT_SET);
 		}
 		try {
             prefs.flush();
