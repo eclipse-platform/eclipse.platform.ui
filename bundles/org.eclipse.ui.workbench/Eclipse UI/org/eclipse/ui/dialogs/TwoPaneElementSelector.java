@@ -6,19 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   IBM Corporation - initial API and implementation 
+ *   IBM Corporation - initial API and implementation
  * 	 Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *    font should be activated and used by other components.
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -31,6 +30,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ILabelProvider;
+
 
 /**
  * A list selection dialog with two panes. Duplicated entries will be folded
@@ -225,16 +230,32 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
     }
 
     private void handleUpperSelectionChanged() {
-        int index = getSelectionIndex();
+        int indices[] = getSelectionIndices();
         fLowerList.removeAll();
-        if (index >= 0) {
-	        fQualifierElements = getFoldedElements(index);
-	        if (fQualifierElements == null) {
-				updateLowerListWidget(new Object[] {});
-			} else {
-				updateLowerListWidget(fQualifierElements);
+		int elementCount = 0;
+		List elements= new ArrayList(indices.length * 5);
+        for (int i= 0; i < indices.length; i++) {
+        	Object[] foldedElements= getFoldedElements(indices[i]);
+			if (foldedElements != null) {
+				elementCount = elementCount + foldedElements.length;
+				elements.add(getFoldedElements(indices[i]));
 			}
-        }
+		}
+		if (elementCount > 0) {
+			fQualifierElements = new Object[elementCount];
+			int destPos = 0;
+			Iterator iterator = elements.iterator();
+			while (iterator.hasNext()) {
+				Object[] objects= (Object[])iterator.next();
+				System.arraycopy(objects, 0, fQualifierElements, destPos, objects.length);
+				destPos = destPos + objects.length;
+			}
+			updateLowerListWidget(fQualifierElements);
+		} else {
+			fQualifierElements = null;
+			updateLowerListWidget(new Object[] {});
+		}
+
         validateCurrentSelection();
     }
 
