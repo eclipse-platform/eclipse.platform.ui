@@ -145,6 +145,9 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 			Object element = row.getItem().getData();
 
 			ViewerCell cell = row.getCell(point);
+			if( cell == null ) {
+				return false;
+			}
 			ViewerColumn viewPart = viewer.getViewerColumn(cell
 					.getColumnIndex());
 
