@@ -115,6 +115,8 @@ public interface ICompletionProposal {
 	 * Returns the string to be displayed in the list of completion proposals.
 	 *
 	 * @return the string to be displayed
+	 * 
+	 * @see ICompletionProposalExtension6#getStyledDisplayString()
 	 */
 	String getDisplayString();
 
