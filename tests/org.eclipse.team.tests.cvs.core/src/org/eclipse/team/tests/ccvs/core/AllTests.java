@@ -9,12 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core;
-
-import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.tests.ccvs.core.mappings.ResourceMapperTests;
 import org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider;
 import org.eclipse.team.tests.ccvs.core.subscriber.AllTestsTeamSubscriber;
@@ -32,13 +29,11 @@ public class AllTests extends EclipseTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
-			suite.addTest(AllTestsProvider.suite());
-			suite.addTest(AllTestsTeamSubscriber.suite());
-			suite.addTest(AllUITests.suite());
-			suite.addTest(ResourceMapperTests.suite());
-			return new CVSUITestSetup(suite);
-		} 
-		return new TestSetup(suite);
+		suite.addTest(AllTestsProvider.suite());
+		suite.addTest(AllTestsTeamSubscriber.suite());
+		suite.addTest(AllUITests.suite());
+		suite.addTest(ResourceMapperTests.suite());
+		return new CVSUITestSetup(suite);
 	}
 }
+
