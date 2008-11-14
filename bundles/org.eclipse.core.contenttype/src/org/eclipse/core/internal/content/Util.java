@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
+import org.eclipse.core.runtime.content.IContentDescription;
 
 public class Util {
 	public static String[] parseItems(String string) {
@@ -106,5 +109,28 @@ public class Util {
 		}
 		// ignore last comma
 		return result.substring(0, result.length() - 1);
+	}
+	
+	/*
+	 * Reads bom from the stream. Note that the stream will not be repositioned 
+	 * when the method returns.
+	 */
+	public static byte[] getByteOrderMark(InputStream input) throws IOException {
+		int first = input.read();
+		if (first == 0xEF) {
+			//look for the UTF-8 Byte Order Mark (BOM)
+			int second = input.read();
+			int third = input.read();
+			if (second == 0xBB && third == 0xBF)
+				return IContentDescription.BOM_UTF_8;
+		} else if (first == 0xFE) {
+			//look for the UTF-16 BOM
+			if (input.read() == 0xFF)
+				return IContentDescription.BOM_UTF_16BE;
+		} else if (first == 0xFF) {
+			if (input.read() == 0xFE)
+				return IContentDescription.BOM_UTF_16LE;
+		}
+		return null;
 	}
 }

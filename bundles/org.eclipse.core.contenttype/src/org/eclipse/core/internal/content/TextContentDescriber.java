@@ -46,7 +46,7 @@ public class TextContentDescriber implements ITextContentDescriber {
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		if (description == null || !description.isRequested(IContentDescription.BYTE_ORDER_MARK))
 			return INDETERMINATE;
-		byte[] bom = getByteOrderMark(contents);
+		byte[] bom = Util.getByteOrderMark(contents);
 		if (bom != null)
 			description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
 		// we want to be pretty loose on detecting the text content type  		
@@ -59,24 +59,5 @@ public class TextContentDescriber implements ITextContentDescriber {
 	 */
 	public QualifiedName[] getSupportedOptions() {
 		return SUPPORTED_OPTIONS;
-	}
-
-	byte[] getByteOrderMark(InputStream input) throws IOException {
-		int first = input.read();
-		if (first == 0xEF) {
-			//look for the UTF-8 Byte Order Mark (BOM)
-			int second = input.read();
-			int third = input.read();
-			if (second == 0xBB && third == 0xBF)
-				return IContentDescription.BOM_UTF_8;
-		} else if (first == 0xFE) {
-			//look for the UTF-16 BOM
-			if (input.read() == 0xFF)
-				return IContentDescription.BOM_UTF_16BE;
-		} else if (first == 0xFF) {
-			if (input.read() == 0xFE)
-				return IContentDescription.BOM_UTF_16LE;
-		}
-		return null;
 	}
 }

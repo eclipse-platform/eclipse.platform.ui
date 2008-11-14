@@ -8,23 +8,40 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.content;
+package org.eclipse.core.runtime.content;
 
 import java.io.*;
+import org.eclipse.core.internal.content.TextContentDescriber;
+import org.eclipse.core.internal.content.Util;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.ITextContentDescriber;
 
 /**
- * A content interpreter for XML files. 
- * This class provides internal basis for XML-based content describers.
+ * A content describer for XML files. This class provides basis for XML-based
+ * content describers.
  * <p>
- * Note: do not add protected/public members to this class if you don't intend to 
- * make them public API.
+ * The document is detected by the describer as <code>VALID</code>, if it
+ * contains an xml declaration with <code>&lt;?xml</code> prefix and the
+ * encoding in the declaration is correct.
  * </p>
- *
+ * Below are sample declarations recognized by the describer as
+ * <code>VALID</code>
+ * <ul>
+ * <li>&lt;?xml version="1.0"?&gt;</li>
+ * <li>&lt;?xml version="1.0"</li>
+ * <li>&lt;?xml version="1.0" encoding="utf-16"?&gt;</li>
+ * <li>&lt;?xml version="1.0" encoding="utf-16?&gt;</li>
+ * </ul>
+ * 
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ *                Clients should use it to provide their own XML-based
+ *                describers that can be referenced by the "describer"
+ *                configuration element in extensions to the
+ *                <code>org.eclipse.core.runtime.contentTypes</code> extension
+ *                point.
+ * @see org.eclipse.core.runtime.content.IContentDescriber
  * @see org.eclipse.core.runtime.content.XMLRootElementContentDescriber2
  * @see "http://www.w3.org/TR/REC-xml *"
+ * @since org.eclipse.core.contenttype 3.4
  */
 public class XMLContentDescriber extends TextContentDescriber implements ITextContentDescriber {
 	private static final QualifiedName[] SUPPORTED_OPTIONS = new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
@@ -33,7 +50,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	private static final String XML_DECL_END = "?>"; //$NON-NLS-1$
 
 	public int describe(InputStream input, IContentDescription description) throws IOException {
-		byte[] bom = getByteOrderMark(input);
+		byte[] bom = Util.getByteOrderMark(input);
 		String xmlDeclEncoding = "UTF-8"; //$NON-NLS-1$
 		input.reset();
 		if (bom != null) {

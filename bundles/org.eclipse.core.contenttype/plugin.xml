@@ -16,7 +16,7 @@
 			priority="high"
 			file-extensions="xml">			
 			<property name="org.eclipse.core.runtime.charset" default="UTF-8"/>
-			<describer class="org.eclipse.core.internal.content.XMLContentDescriber"/>
+			<describer class="org.eclipse.core.runtime.content.XMLContentDescriber"/>
 		</content-type>
 		<!-- a placeholder for setups where JDT's official type is not available -->			
 		<content-type id="org.eclipse.core.runtime.properties" name="%propertiesContentTypeName" 
