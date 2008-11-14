@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
 package org.eclipse.ua.tests.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -23,7 +23,9 @@ import javax.xml.parsers.SAXParserFactory;
 
 import junit.framework.Assert;
 
+import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.xml.sax.Attributes;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -56,6 +58,7 @@ public class XMLUtil extends Assert {
 	private static class Handler extends DefaultHandler {
 		
 		private StringBuffer buf = new StringBuffer();
+		private EntityResolver entityResolver = new LocalEntityResolver();
 		
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
@@ -106,7 +109,11 @@ public class XMLUtil extends Assert {
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-			return new InputSource(new StringReader("")); //$NON-NLS-1$
+			try {
+				return entityResolver.resolveEntity(publicId, systemId);
+			} catch (IOException e) {
+				throw new SAXException();
+			}
 		}
 
 		public String toString() {

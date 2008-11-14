@@ -85,4 +85,8 @@ public class XMLProcessorTest extends TestCase {
 	public void testXhtml() throws Exception {
 		xmlProcess("data/help/dynamic/xhtml.xml");
 	}
+	
+	public void testEntities() throws Exception {
+		xmlProcess("data/help/dynamic/entities.xml");
+	}
 }
