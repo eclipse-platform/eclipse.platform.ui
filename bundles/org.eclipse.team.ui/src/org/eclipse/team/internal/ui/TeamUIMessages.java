@@ -113,6 +113,7 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetDialog_duplicatedWorkingSet_replace;
 	public static String ImportProjectSetDialog_duplicatedWorkingSet_merge;
 	public static String ImportProjectSetDialog_duplicatedWorkingSet_skip;
+	public static String ImportProjectSetDialog_duplicatedWorkingSet_applyToAll;
 
 	public static String information;
     
@@ -315,6 +316,7 @@ public class TeamUIMessages extends NLS {
 	public static String ProjectSetExportWizard_An_error_occurred_creating_the_target_directory_7;
 	public static String ProjectSetExportWizard_Question_8;
 	public static String ProjectSetExportWizard_Target_already_exists__Would_you_like_to_overwrite_it__9;
+
 	public static String ProjectSetImportWizard_Project_Set_1;
 	public static String ProjectSetImportWizard_0;
 	public static String ProjectSetImportWizard_2;

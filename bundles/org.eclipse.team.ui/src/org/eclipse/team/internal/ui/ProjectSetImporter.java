@@ -13,13 +13,18 @@ package org.eclipse.team.internal.ui;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.ui.*;
@@ -89,6 +94,9 @@ public class ProjectSetImporter {
 			  	//try working sets
 			  	IMemento[] sets = xmlMemento.getChildren("workingSets"); //$NON-NLS-1$
 			  	IWorkingSetManager wsManager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
+			  	boolean replaceAll = false;
+			  	boolean mergeAll = false;
+			  	boolean skipAll = false;
 			  	
 			  	for (int i = 0; i < sets.length; i++) {
 					IWorkingSet newWs = wsManager.createWorkingSet(sets[i]);
@@ -97,7 +105,11 @@ public class ProjectSetImporter {
 								.getName());
 						if (oldWs == null) {
 							wsManager.addWorkingSet(newWs);
-						} else {
+						} else if (replaceAll) {
+							replaceWorkingSet(wsManager, newWs, oldWs);
+						} else if (mergeAll) {
+							mergeWorkingSets(newWs, oldWs);
+						} else if (!skipAll) {
 							// a working set with the same name has been found
 							String title = TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_title;
 							String msg = NLS
@@ -109,8 +121,7 @@ public class ProjectSetImporter {
 									TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_merge,
 									TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_skip,
 									IDialogConstants.CANCEL_LABEL };
-
-							final MessageDialog dialog = new MessageDialog(
+							final AdviceDialog dialog = new AdviceDialog(
 									shell, title, null, msg,
 									MessageDialog.QUESTION, buttons, 0);
 							
@@ -122,21 +133,15 @@ public class ProjectSetImporter {
 							
 							switch (dialog.getReturnCode()) {
 							case 0: // overwrite
-								if (oldWs != null)
-									wsManager.removeWorkingSet(oldWs);
-								wsManager.addWorkingSet(newWs);
+								replaceWorkingSet(wsManager, newWs, oldWs);
+								replaceAll = dialog.applyToAll;
 								break;
 							case 1: // combine
-								IAdaptable[] oldElements = oldWs.getElements();
-								IAdaptable[] newElements = newWs.getElements();
-								
-								Set combinedElements = new HashSet();
-								combinedElements.addAll(Arrays.asList(oldElements));
-								combinedElements.addAll(Arrays.asList(newElements));
-								
-								oldWs.setElements((IAdaptable[]) combinedElements.toArray(new IAdaptable[0]));
+								mergeWorkingSets(newWs, oldWs);
+								mergeAll = dialog.applyToAll;
 								break;
 							case 2: // skip
+								skipAll = dialog.applyToAll;
 								break;
 							case 3: // cancel
 							default:
@@ -145,7 +150,6 @@ public class ProjectSetImporter {
 						}
 					}
 				}
-			  	
 			}
 			
 			return (IProject[]) newProjects.toArray(new IProject[newProjects.size()]);
@@ -184,4 +188,38 @@ public class ProjectSetImporter {
 		}
 	}
 	
+	private static void mergeWorkingSets(IWorkingSet newWs, IWorkingSet oldWs) {
+		IAdaptable[] oldElements = oldWs.getElements();
+		IAdaptable[] newElements = newWs.getElements();
+		
+		Set combinedElements = new HashSet();
+		combinedElements.addAll(Arrays.asList(oldElements));
+		combinedElements.addAll(Arrays.asList(newElements));
+		
+		oldWs.setElements((IAdaptable[]) combinedElements.toArray(new IAdaptable[0]));
+	}
+
+	private static void replaceWorkingSet(IWorkingSetManager wsManager, IWorkingSet newWs, IWorkingSet oldWs) {
+		if (oldWs != null)
+			wsManager.removeWorkingSet(oldWs);
+		wsManager.addWorkingSet(newWs);
+	}
+
+	private static class AdviceDialog extends MessageDialog {
+		boolean applyToAll;
+		public AdviceDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
+			super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
+		}
+		protected Control createCustomArea(Composite parent) {
+			final Button checkBox = new Button(parent, SWT.CHECK);
+			checkBox.setText(TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_applyToAll);
+			checkBox.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					applyToAll = checkBox.getSelection();
+				}
+			});
+			return checkBox;
+		}
+	}
+
 }
