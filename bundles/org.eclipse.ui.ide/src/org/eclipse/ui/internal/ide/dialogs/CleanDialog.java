@@ -144,7 +144,9 @@ public class CleanDialog extends MessageDialog {
         //save all dirty editors
         BuildUtilities.saveEditors(null);
         //batching changes ensures that autobuild runs after cleaning
-        WorkspaceJob cleanJob = new WorkspaceJob(IDEWorkbenchMessages.CleanDialog_taskName) {
+		WorkspaceJob cleanJob = new WorkspaceJob(
+				cleanAll ? IDEWorkbenchMessages.CleanDialog_cleanAllTaskName
+						: IDEWorkbenchMessages.CleanDialog_cleanSelectedTaskName) {
             public boolean belongsTo(Object family) {
                 return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
             }
@@ -305,7 +307,7 @@ public class CleanDialog extends MessageDialog {
                     IncrementalProjectBuilder.CLEAN_BUILD, monitor);
         } else {
             try {
-                monitor.beginTask(IDEWorkbenchMessages.CleanDialog_taskName, selection.length);
+                monitor.beginTask(IDEWorkbenchMessages.CleanDialog_cleanSelectedTaskName, selection.length);
                 for (int i = 0; i < selection.length; i++) {
                     ((IProject) selection[i]).build(
                             IncrementalProjectBuilder.CLEAN_BUILD,

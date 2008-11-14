@@ -771,7 +771,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CleanDialog_buildNowButton;
 	public static String CleanDialog_globalBuildButton;
 	public static String CleanDialog_buildSelectedProjectsButton;
-	public static String CleanDialog_taskName;
+	public static String CleanDialog_cleanSelectedTaskName;
+	public static String CleanDialog_cleanAllTaskName;
 	public static String IDEEncoding_EncodingJob;
 	public static String IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink;
 	public static String IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink;
