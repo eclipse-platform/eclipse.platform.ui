@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Ui Plug-in
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;bundle-version="2.4.0",
  org.eclipse.jface;bundle-version="3.4.0",
