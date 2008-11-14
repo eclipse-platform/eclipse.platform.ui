@@ -79,9 +79,9 @@ public class XMLContentDescriberTest extends RuntimeTest {
 		IContentDescription description = null;
 		for (int i = 0; i < flags.length; i++) {
 			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(encodingInContent, encoding, flags[i][0], flags[i][1]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
-			assertNotNull("1.0", description);
-			assertEquals("1.1", Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
-			assertEquals("1.2", expectedEncoding, description.getProperty(IContentDescription.CHARSET));
+			assertNotNull("1.0: " + flags[i][0] + " " + flags[i][1], description);
+			assertEquals("1.1: " + flags[i][0] + " " + flags[i][1], Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
+			assertEquals("1.2: " + flags[i][0] + " " + flags[i][1], expectedEncoding, description.getProperty(IContentDescription.CHARSET));
 		}
 	}
 

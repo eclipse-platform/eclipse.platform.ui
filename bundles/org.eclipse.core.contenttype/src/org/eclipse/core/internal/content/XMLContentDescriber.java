@@ -47,16 +47,14 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 			if (description != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
 				description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
 		}
-		return internalDescribe(new InputStreamReader(input, xmlDeclEncoding), description);
+		return internalDescribe(readXMLDecl(input, xmlDeclEncoding), description);
 	}
 	
-	public int describe(Reader input, IContentDescription description) throws IOException {	
-		return internalDescribe(input, description);
+	public int describe(Reader input, IContentDescription description) throws IOException {
+		return internalDescribe(readXMLDecl(input), description);
 	}
 	
-	private int internalDescribe(Reader input, IContentDescription description) throws IOException {	
-		String line = readXMLDecl(input);
-		
+	private int internalDescribe(String line, IContentDescription description) throws IOException {	
 		// end of stream
 		if (line == null)
 			return INDETERMINATE;
@@ -79,6 +77,33 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	
 	private boolean isFullXMLDecl(String xmlDecl) {
 		return xmlDecl.endsWith(XML_DECL_END);
+	}
+	
+	private String readXMLDecl(InputStream input, String encoding) throws IOException {
+		byte[] xmlDeclEndBytes = XML_DECL_END.getBytes(encoding);
+		
+		// allocate an array for the input
+		int xmlDeclSize = 100 * xmlDeclEndBytes.length/2;
+		byte[] xmlDecl = new byte[xmlDeclSize];
+		
+		// looks for XMLDecl end (?>)
+		int c = 0;
+		int read = 0;
+		
+		// count is incremented when subsequent read characters match the xmlDeclEnd bytes,
+		// the end of xmlDecl is reached, when count equals the xmlDeclEnd length
+		int count = 0;
+	
+		while (read < xmlDecl.length && (c = input.read()) != -1){
+			if (c == xmlDeclEndBytes[count])
+				count++;
+			else
+				count = 0;
+			xmlDecl[read++] = (byte) c;
+			if (count == xmlDeclEndBytes.length) 
+				break;
+		}
+		return new String(xmlDecl, 0, read, encoding);
 	}
 
 	private String readXMLDecl(Reader input) throws IOException {
