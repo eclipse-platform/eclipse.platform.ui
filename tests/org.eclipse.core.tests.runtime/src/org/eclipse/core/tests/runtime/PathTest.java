@@ -41,9 +41,9 @@ public class PathTest extends RuntimeTest {
 
 		return new TestSuite(PathTest.class);
 
-//		TestSuite suite= new TestSuite();
-//		suite.addTest(new PathTest("testCanonicalize"));
-//		return suite;
+		//		TestSuite suite= new TestSuite();
+		//		suite.addTest(new PathTest("testCanonicalize"));
+		//		return suite;
 	}
 
 	public void testAddTrailingSeparator() {
@@ -145,7 +145,6 @@ public class PathTest extends RuntimeTest {
 			assertEquals("6.3", new Path("/c:/foo/bar"), new Path("/c:").append("/foo/bar"));
 			assertEquals("6.4", new Path("/c:/foo/bar"), new Path("/c:").append("foo/bar"));
 		}
-
 
 		assertEquals("6.10", new Path("foo/bar"), new Path("foo").append(new Path("/bar")));
 		assertEquals("6.11", new Path("foo/bar"), new Path("foo").append(new Path("bar")));
@@ -252,7 +251,7 @@ public class PathTest extends RuntimeTest {
 		assertEquals("2.0", Path.EMPTY, new Path(""));
 		assertEquals("2.1", Path.ROOT, new Path("/"));
 		assertEquals("2.2", anyPath, anyPath);
-		
+
 		//should handle slash before the device (see bug 84697)
 		try {
 			if (WINDOWS) {
@@ -285,7 +284,7 @@ public class PathTest extends RuntimeTest {
 		}
 
 	}
-	
+
 	public void testFromPortableString() {
 		assertEquals("1.0", "", Path.fromPortableString("").toString());
 		assertEquals("1.1", "/", Path.fromPortableString("/").toString());
@@ -516,8 +515,39 @@ public class PathTest extends RuntimeTest {
 		assertEquals("2.1", new Path(""), anyPath);
 	}
 
-	public void testMakeUNC() {
+	/**
+	 * Tests for {@link Path#makeRelativeTo(IPath)}.
+	 */
+	public void testMakeRelativeTo() {
+		//valid cases
+		IPath[] bases = new IPath[] {new Path("/a/"), new Path("/a/b")};
+		IPath[] children = new IPath[] {new Path("/a/"), new Path("/a/b"), new Path("/a/b/c")};
+		for (int i = 0; i < bases.length; i++) {
+			for (int j = 0; j < children.length; j++) {
+				final IPath base = bases[i];
+				final IPath child = children[j];
+				IPath result = child.makeRelativeTo(base);
+				assertTrue("1." + i + ',' + j, !result.isAbsolute());
+				assertEquals("2." + i + ',' + j, base.append(result), child);
+			}
+		}
 
+		//invalid cases (no common prefix)
+		bases = new IPath[] {new Path("/"), new Path("/b"), new Path("/b/c")};
+		children = new IPath[] {new Path("/a/"), new Path("/a/b"), new Path("/a/b/c")};
+		for (int i = 0; i < bases.length; i++) {
+			for (int j = 0; j < children.length; j++) {
+				final IPath base = bases[i];
+				final IPath child = children[j];
+				IPath result = child.makeRelativeTo(base);
+				assertTrue("1." + i + ',' + j, !result.isAbsolute());
+				assertEquals("2." + i + ',' + j, base.append(result), child);
+			}
+		}
+
+	}
+
+	public void testMakeUNC() {
 		ArrayList inputs = new ArrayList();
 		ArrayList expected = new ArrayList();
 		ArrayList expectedNon = new ArrayList();
