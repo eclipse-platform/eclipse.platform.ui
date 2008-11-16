@@ -210,8 +210,14 @@ public class ShowViewMenu extends ContributionItem {
 			innerMgr.add(item);
 		}
 
-		// Add Other ..
-		innerMgr.add(new Separator());
+		// We only want to add the separator if there are show view shortcuts,
+		// otherwise, there will be a separator and then the 'Other...' entry
+		// and that looks weird as the separator is separating nothing
+		if (!innerMgr.isEmpty()) {
+			innerMgr.add(new Separator());
+		}
+		
+		// Add Other...
 		innerMgr.add(showDlgAction);
 	}
 
