@@ -77,7 +77,6 @@ public class DocumentReader {
 		ManagedBuilder managedBuilder = new ManagedBuilder();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(false);
-		factory.setExpandEntityReferences(false);
 		managedBuilder.builder= factory.newDocumentBuilder();
 		managedBuilder.builder.setEntityResolver(new LocalEntityResolver());
 		return managedBuilder;
