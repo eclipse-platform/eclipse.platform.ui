@@ -47,15 +47,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
@@ -506,12 +503,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
     private void updateItem(TableItem item, Adapter editor) {
         item.setData(editor);
         item.setText(editor.getText());
-        Image images[] = editor.getImage();
-        for (int i = 0; i < images.length; i++) {
-            if (images[i] != null) {
-				item.setImage(i, images[i]);
-			}
-        }
+        Image image = editor.getImage();
+        if (image != null)
+        	item.setImage(0, image);
     }
 
     /**
@@ -643,7 +637,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         String text[];
 
-        Image images[];
+        Image image;
 
         Adapter(IEditorReference ref) {
             editorRef = ref;
@@ -703,50 +697,41 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
             return text;
         }
 
-        Image[] getImage() {
-            if (images != null) {
-				return images;
+        Image getImage() {
+            if (image != null) {
+				return image;
 			}
-            images = new Image[2];
             if (editorRef != null) {
-                images[0] = editorRef.getTitleImage();
-                WorkbenchPage p = ((WorkbenchPartReference) editorRef)
-                        .getPane().getPage();
-                IPerspectiveDescriptor persp = p.getPerspective();
-                ImageDescriptor image = persp.getImageDescriptor();
-                if (image == null) {
-					image = WorkbenchImages
-                            .getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
-				}
+                image = editorRef.getTitleImage();
             } else {
-                ImageDescriptor image = null;
+                ImageDescriptor imageDesc = null;
                 if (desc != null) {
-					image = desc.getImageDescriptor();
+                	imageDesc = desc.getImageDescriptor();
 				}
-                if (image == null) {
+                if (imageDesc == null) {
                     IEditorRegistry registry = WorkbenchPlugin.getDefault()
                             .getEditorRegistry();
-                    image = registry.getImageDescriptor(input.getName());
+                    imageDesc = registry.getImageDescriptor(input.getName());
 					//TODO: how can this honour content types?  Guessing at the content type perhaps?
 					
-                    if (image == null) {
+                    if (imageDesc == null) {
                         // @issue what should be the default image?
                         // image = registry.getDefaultEditor().getImageDescriptor();
                     }
                 }
-                if (image != null) {
-                    images[0] = (Image) disabledImageCache.get(image);
-                    if (images[0] == null) {
-                        Image enabled = image.createImage();
+                if (imageDesc != null) {
+                    image = (Image) disabledImageCache.get(imageDesc);
+                    if (image == null) {
+                        Image enabled = imageDesc.createImage();
                         Image disabled = new Image(editorsTable.getDisplay(),
                                 enabled, SWT.IMAGE_DISABLE);
                         enabled.dispose();
-                        disabledImageCache.put(image, disabled);
-                        images[0] = disabled;
+                        disabledImageCache.put(imageDesc, disabled);
+                        image = disabled;
                     }
                 }
             }
-            return images;
+            return image;
         }
 
         private void activate() {
