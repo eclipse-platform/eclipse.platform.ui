@@ -467,10 +467,10 @@ public abstract class Window implements IShellProvider {
 	/**
 	 * Creates and returns this window's shell.
 	 * <p>
-	 * The default implementation of this framework method creates a new shell
-	 * and configures it using <code/>configureShell</code>. Rather than
-	 * override this method, subclasses should instead override
-	 * <code/>configureShell</code>.
+	 * This method creates a new shell and configures
+	 * it using <code>configureShell</code>. Subclasses
+	 * should  override <code>configureShell</code> if the
+	 * shell needs to be customized.
 	 * </p>
 	 * 
 	 * @return the shell
