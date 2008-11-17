@@ -1086,8 +1086,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				output.close();
 			}
 		} catch (IOException e) {
-			String message = Messages.resources_exSaveMaster;
-			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
+			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, NLS.bind(Messages.resources_exSaveMaster, location.toOSString()), e);
 		}
 		if (Policy.DEBUG_SAVE_MASTERTABLE)
 			System.out.println("Save master table for " + location + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
