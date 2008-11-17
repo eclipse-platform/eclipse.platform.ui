@@ -11,6 +11,29 @@
 
 <h2>Summary of API changes in 3.5</h2>
 
+<h3>Breakpoint Import Participants</h3>
+The breakpoints framework has been further enhanced to support breakpoint import
+participants, which allows contributors to participate in the importing process
+for any given breakpoint type. Participants can contribute in the decision of whether 
+a breakpoint should be imported and in the verification process once a breakpoint has 
+been imported.
+<p>The API to support this feature includes:</p>
+<ul>
+<li><b><code>org.eclipse.debug.breakpointImportParticipants</code> extension point</b>
+	- Allows a client to register their participant for a given breakpoint type.
+</li>
+<li><b><code>IBreakpointImportParticipant</code> interface</b>
+	- Required implementing interface for all participants.
+</li>
+<li><b><code>org.eclipse.debug.core.DebugPlugin#EXTENSION_POINT_BREAKPOINT_IMPORT_PARTICIPANTS</code> constant</b>
+	- Constant providing the id of the new extension point to clients.
+</li>
+<li><b><code>org.eclipse.debug.core.IBreakpointManager#getImportParticipants(id)</code></b>
+	- convenience method for getting all registered breakpoint participants for the given breakpoint
+	type id. If there are no matching participants a default participant will be returned.
+</li>
+</ul>
+
 <h3>Breakpoints</h3>
 The breakpoints framework has been enhanced to support different breakpoint 
 types to be created within the same part.  This effectively allows different 

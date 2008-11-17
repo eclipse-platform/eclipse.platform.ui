@@ -201,6 +201,13 @@ public class DebugPlugin extends Plugin {
 	public static final String EXTENSION_POINT_LAUNCH_OPTIONS = "launchOptions"; //$NON-NLS-1$
 	
 	/**
+	 * Simple identifier constant for the breakpoint import participant extension point
+	 * 
+	 * @since 3.5
+	 */
+	public static final String EXTENSION_POINT_BREAKPOINT_IMPORT_PARTICIPANTS = "breakpointImportParticipants"; //$NON-NLS-1$
+	
+	/**
 	 * Status code indicating an unexpected error.
 	 * 
 	 * @since 3.4

@@ -14,6 +14,7 @@ package org.eclipse.debug.core;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IBreakpointImportParticipant;
 
 /**
  * The breakpoint manager manages the collection of breakpoints
@@ -227,7 +228,7 @@ public interface IBreakpointManager {
 	
 	/**
 	 * Sets the enabled state of this breakpoint manager. When
-	 * enabled, breakpoints should be honored. When disabled, all
+	 * enabled, breakpoints should be honoured. When disabled, all
 	 * breakpoints should be ignored.
 	 * 
 	 * @param enabled whether this breakpoint manager should be
@@ -246,6 +247,18 @@ public interface IBreakpointManager {
      * @since 3.1
      */
     public String getTypeName(IBreakpoint breakpoint);
+    
+    /**
+     * Returns an array of {@link IBreakpointImportParticipant}s for the given 
+     * breakpoint marker id, never <code>null</code>.
+     * 
+     * @param markertype
+     * @return an array of {@link IBreakpointImportParticipant}s for the given marker type, 
+     * never <code>null</code>
+     * @throws CoreException if an exception occurs
+     * @since 3.5
+     */
+    public IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException; 
 	
 }
 

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -49,6 +50,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IBreakpointImportParticipant;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -71,6 +73,21 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * A collection of breakpoints registered with this manager.
 	 */
 	private Vector fBreakpoints= null;
+	
+	/**
+	 * Map of breakpoint import participants.
+	 * Map has the form:
+	 * <pre>Map(String - markerid, List of {@link IBreakpointImportParticipantDelegate})</pre>
+	 */
+	private HashMap fImportParticipants = null;
+	
+	/**
+	 * A system default import participant that performs legacy comparison support
+	 * when no participants are provided for a given type.
+	 * 
+	 * @since 3.5
+	 */
+	private IBreakpointImportParticipant fDefaultParticipant = null;
 	
 	/**
 	 * A collection of breakpoint markers that have received a POST_CHANGE notification
@@ -158,6 +175,33 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			}
 		}
 		
+	}
+	
+	/**
+	 * Default implementation of a breakpoint import participant
+	 * 
+	 * @since 3.5
+	 */
+	class DefaultImportParticipant implements IBreakpointImportParticipant {
+
+		public boolean matches(Map attributes, IBreakpoint breakpoint) throws CoreException {
+			//perform legacy comparison
+			IMarker marker = breakpoint.getMarker();
+			String type = (String) attributes.get("type"); //$NON-NLS-1$
+			Integer line = (Integer) attributes.get(IMarker.LINE_NUMBER);
+			Object localline = marker.getAttribute(IMarker.LINE_NUMBER);
+			String localtype = marker.getType();
+			if (type.equals(localtype)) {
+				if(line != null && line.equals(localline)) {
+					return true;
+				}
+				else if(line == null) {
+					return true;
+				}
+			}
+			return false;
+		}
+		public void verify(IBreakpoint breakpoint) throws CoreException {}
 	}
 	
 	/**
@@ -293,6 +337,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		fBreakpointListeners = null;
         fBreakpointsListeners = null;
         fBreakpointManagerListeners = null;
+        if(fImportParticipants != null) {
+        	fImportParticipants.clear();
+        	fImportParticipants = null;
+        	fDefaultParticipant = null;
+        }
 	}
 
 	/**
@@ -1097,5 +1146,52 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
         }
         return typeName;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManager#getImportParticipants(java.lang.String)
+	 */
+	public IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException {
+		initializeImportParticipants();
+		ArrayList list = (ArrayList) fImportParticipants.get(markertype);
+		if(list == null) {
+			return new IBreakpointImportParticipant[] {fDefaultParticipant};
+		}
+		IBreakpointImportParticipant[] participants = new IBreakpointImportParticipant[list.size()];
+		BreakpointImportParticipantDelegate delegate = null;
+		for(int i = 0; i < list.size(); i++) {
+			delegate = (BreakpointImportParticipantDelegate) list.get(i);
+			participants[i] = delegate.getDelegate();
+		}
+		if(participants.length == 0) {
+			return new IBreakpointImportParticipant[] {fDefaultParticipant};
+		}
+		return participants; 
+	}
+	
+	/**
+	 * Initializes the cache of breakpoint import participants. Does no work if the cache 
+	 * has already been initialized
+	 */
+	private synchronized void initializeImportParticipants() {
+		if(fImportParticipants == null) {
+			fImportParticipants = new HashMap();
+			fDefaultParticipant = new DefaultImportParticipant();
+			IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_BREAKPOINT_IMPORT_PARTICIPANTS);
+			IConfigurationElement[] elements = ep.getConfigurationElements();
+			String type = null;
+			ArrayList list = null;
+			for(int i = 0; i < elements.length; i++) {
+				type = elements[i].getAttribute(IConfigurationElementConstants.TYPE);
+				if(type != null) {
+					list = (ArrayList) fImportParticipants.get(type);
+					if(list == null) {
+						list = new ArrayList();
+						fImportParticipants.put(type, list);
+					}
+					list.add(new BreakpointImportParticipantDelegate(elements[i]));
+				}
+			}
+		}
+	}
 }
 

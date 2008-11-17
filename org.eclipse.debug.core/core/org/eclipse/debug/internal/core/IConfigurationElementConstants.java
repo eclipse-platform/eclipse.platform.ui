@@ -239,6 +239,12 @@ public interface IConfigurationElementConstants {
 	public static final String DELEGATE = "delegate"; //$NON-NLS-1$
 	
 	/**
+	 * The participant node name for a configuration element.
+	 * <p>Equal to the word: <code>participant</code></p>
+	 */
+	public static final String PARTICIPANT = "participant"; //$NON-NLS-1$
+	
+	/**
 	 * The defaultShortcut node name for a configuration element.
 	 * <p>Equal to the word: <code>defaultShortcut</code></p>
 	 */
