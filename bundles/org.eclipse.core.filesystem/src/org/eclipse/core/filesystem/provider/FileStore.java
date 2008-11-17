@@ -153,8 +153,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This store does not exist.</li>
-	 * <li> The <code>OVERWRITE</code> flag is not specified and a file of the
-	 * same name already exists at the copy destination.</li>
+	 * <li> A file of the same name already exists at the copy destination.</li>
 	 * </ul>
 	 */
 	protected void copyDirectory(IFileInfo sourceInfo, IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
@@ -197,6 +196,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * <li> This store does not exist.</li>
 	 * <li> The <code>OVERWRITE</code> flag is not specified and a file of the
 	 * same name already exists at the copy destination.</li>
+	 * <li> A directory of the same name already exists at the copy destination.</li>
 	 * </ul>
 	 */
 	protected void copyFile(IFileInfo sourceInfo, IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {

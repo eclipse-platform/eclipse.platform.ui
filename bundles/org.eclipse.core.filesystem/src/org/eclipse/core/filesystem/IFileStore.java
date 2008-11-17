@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
- * 	Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
+ * 		IBM Corporation - initial API and implementation
+ * 		Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.filesystem;
 
@@ -108,14 +108,25 @@ public interface IFileStore extends IAdaptable {
 	 * destination are overwritten with the corresponding files from the source
 	 * of the copy operation.  When this flag is not present, existing files at
 	 * the destination are not overwritten and an exception is thrown indicating
-	 * what files could not be copied.
+	 * what files could not be copied. No exception is thrown for directories
+	 * that already exist at the destination.
 	 * </p>
+	 * <p>
+	 * Copying a file into a directory of the same name or vice versa always
+	 * throws a <code>CoreException</code>, regardless of whether the
+	 * <code>OVERWRITE</code> flag is specified or not.
+	 *</p>
 	 * <p>
 	 * The {@link EFS#SHALLOW} option flag indicates how
 	 * this method deals with copying of directories. If the <code>SHALLOW</code> 
 	 * flag is present, then a directory will be copied but the files and directories
 	 * within it will not.  When this flag is not present, all child directories and files
 	 * of a directory are copied recursively.
+	 * </p>
+	 * <p>
+	 * In case of a recursive directory copy exception throwing may be
+	 * deferred. Part of the copy task may be executed without rollback until
+	 * the exception occurs. The order of copy operations is not specified.
 	 * </p>
 	 * 
 	 * @param destination The destination of the copy.
@@ -127,8 +138,12 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li> This store does not exist.</li>
 	 * <li> The parent of the destination file store does not exist.</li>
-	 * <li> The <code>OVERWRITE</code> flag is not specified and a file of the
-	 * same name already exists at the copy destination.</li>
+	 * <li> The <code>OVERWRITE</code> flag is not specified and a
+	 * file of the same name already exists at the copy destination.</li>
+	 * <li> A file is being copied, but a directory of the same name already exists 
+	 * at the copy destination.</li>
+	 * <li> A directory is being copied, but a file of the same name already exists 
+	 * at the copy destination.</li>
 	 * </ul>
 	 */
 	public void copy(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException;
