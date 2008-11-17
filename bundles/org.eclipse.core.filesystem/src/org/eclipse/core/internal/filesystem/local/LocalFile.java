@@ -13,6 +13,7 @@ package org.eclipse.core.internal.filesystem.local;
 import java.io.*;
 import java.net.URI;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.filesystem.Messages;

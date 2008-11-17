@@ -18,6 +18,7 @@ package org.eclipse.core.internal.resources;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;

@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.internal.utils.*;

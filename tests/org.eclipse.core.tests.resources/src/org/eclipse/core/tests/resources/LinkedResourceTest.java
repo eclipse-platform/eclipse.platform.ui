@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
