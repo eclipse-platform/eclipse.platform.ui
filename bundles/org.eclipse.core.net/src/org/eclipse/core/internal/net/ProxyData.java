@@ -21,6 +21,7 @@ public class ProxyData implements IProxyData {
 	private String password;
 	private boolean requiresAuthentication;
 	private String source;
+	private boolean dynamic = false;
 
 	public ProxyData(String type, String host, int port,
 			boolean requiresAuthentication, String source) {
@@ -94,6 +95,14 @@ public class ProxyData implements IProxyData {
 		this.source = source;
 	}
 
+	public boolean isDynamic() {
+		return dynamic;
+	}
+
+	public void setDynamic(boolean dynamic) {
+		this.dynamic = dynamic;
+	}
+
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("type: "); //$NON-NLS-1$
@@ -110,6 +119,8 @@ public class ProxyData implements IProxyData {
 		stringBuffer.append(requiresAuthentication);
 		stringBuffer.append(" source: "); //$NON-NLS-1$
 		stringBuffer.append(source);
+		stringBuffer.append(" dynamic: "); //$NON-NLS-1$
+		stringBuffer.append(dynamic);
 		return stringBuffer.toString();
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	compeople AG (Stefan Liebig) - initial API and implementation
+ *  IBM Corporation - Add proxy providers layer on the top of ProxyManager (bug 255616)
  *******************************************************************************/
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
@@ -63,8 +64,86 @@ public class WinHttpProxyProvider {
 		return proxies;
 	}
 
+	public IProxyData[] getProxyData() {
+		logMessage = null;
+		IProxyData[] proxies;
+		synchronized (this) {
+			proxies = getProxyDataUnsynchronized();
+		}
+		if (logMessage != null)
+			Activator.logError(logMessage, logThrowable);
+		return proxies;
+	}
+
+	private IProxyData[] getProxyDataUnsynchronized() {
+		WinHttpCurrentUserIEProxyConfig newProxyConfig = new WinHttpCurrentUserIEProxyConfig();
+		if (!WinHttp.getIEProxyConfigForCurrentUser(newProxyConfig)) {
+			logError(
+					"WinHttp.GetIEProxyConfigForCurrentUser failed with error '" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return EMPTY_PROXIES;
+		}
+
+		// Explicit proxies defined?
+		if (newProxyConfig.isStaticProxy()) {
+			// Yes, let큦 see if we are still up-to-date
+			if (newProxyConfig.staticProxyChanged(proxyConfig))
+				staticProxyConfig = new StaticProxyConfig(newProxyConfig
+						.getProxy(), newProxyConfig.getProxyBypass());
+
+			return staticProxyConfig.getProxyData();
+		}
+
+		// Let큦 find out if auto detect has changed.
+		if (newProxyConfig.autoDetectChanged(proxyConfig)) {
+			tryWpadGetUrl = newProxyConfig.isAutoDetect();
+			if (!tryWpadGetUrl)
+				wpadAutoConfigUrl = null;
+		}
+
+		// Let큦 find out if pac file url has changed.
+		if (newProxyConfig.autoConfigUrlChanged(proxyConfig))
+			tryPac = newProxyConfig.isAutoConfigUrl();
+
+		if (!tryPac && wpadAutoConfigUrl == null)
+			return new IProxyData[0];
+
+		IProxyData data = new ProxyData(IProxyData.HTTP_PROXY_TYPE, "", -1, //$NON-NLS-1$
+				false, "WINDOWS_IE"); //$NON-NLS-1$
+		data.setDynamic(true);
+		return new IProxyData[] { data }; 
+	}
+
+	public String[] getNonProxiedHosts() {
+		logMessage = null;
+		String[] hosts;
+		synchronized (this) {
+			hosts = getNonProxiedHostsUnsynchronized();
+		}
+		if (logMessage != null)
+			Activator.logError(logMessage, logThrowable);
+		return hosts;
+	}
+
+	private String[] getNonProxiedHostsUnsynchronized() {
+		WinHttpCurrentUserIEProxyConfig newProxyConfig = new WinHttpCurrentUserIEProxyConfig();
+		if (!WinHttp.getIEProxyConfigForCurrentUser(newProxyConfig)) {
+			logError(
+					"WinHttp.GetIEProxyConfigForCurrentUser failed with error '" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return new String[0];
+		}
+		if (newProxyConfig.isStaticProxy()) {
+			// Yes, let큦 see if we are still up-to-date
+			if (newProxyConfig.staticProxyChanged(proxyConfig))
+				staticProxyConfig = new StaticProxyConfig(newProxyConfig
+						.getProxy(), newProxyConfig.getProxyBypass());
+			return staticProxyConfig.getNonProxiedHosts();
+		}
+		return null;
+	}
+
 	/**
-	 * This method is the not synchronized counterpart of <code>getProxyData</code>.
+	 * This method is the not synchronized counterpart of
+	 * <code>getProxyData</code>.
 	 * 
 	 * @param uri
 	 * @return an array of proxies
@@ -205,4 +284,5 @@ public class WinHttpProxyProvider {
 	private static IProxyData[] toArray(List proxies) {
 		return (IProxyData[]) proxies.toArray(new IProxyData[proxies.size()]);
 	}
+
 }

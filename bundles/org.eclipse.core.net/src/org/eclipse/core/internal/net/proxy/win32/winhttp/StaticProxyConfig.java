@@ -8,6 +8,7 @@
  * Contributors:
  * 	compeople AG (Stefan Liebig) - initial API and implementation
  *  IBM Corporation - handling URI without a scheme by select(URI, List) (bug 246065)
+ *  IBM Corporation - Add proxy providers layer on the top of ProxyManager (bug 255616)
  *******************************************************************************/
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.core.net.proxy.IProxyData;
 
 /**
  * StaticProxyConfig wraps certain information of WinHttpCurrentIEProxyConfig,
@@ -68,6 +71,22 @@ public class StaticProxyConfig {
 			}
 		} else
 			proxies.addAll(universalProxies);
+	}
+
+	public IProxyData[] getProxyData() {
+		List proxies = new ArrayList();
+		Iterator it = protocolSpecificProxies.values().iterator();
+		while (it.hasNext()) {
+			List protocolProxies = (List) it.next();
+			if (protocolProxies != null) {
+				proxies.addAll(protocolProxies);
+			}
+		}
+		return (IProxyData[]) proxies.toArray(new IProxyData[0]);
+	}
+
+	public String[] getNonProxiedHosts() {
+		return proxyBypass.getNonProxiedHosts();
 	}
 
 }

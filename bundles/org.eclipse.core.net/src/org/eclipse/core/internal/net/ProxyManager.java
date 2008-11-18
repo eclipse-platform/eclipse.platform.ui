@@ -40,7 +40,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class ProxyManager implements IProxyService, IPreferenceChangeListener {
-	
+
 	private static final String PREF_HAS_MIGRATED = "org.eclipse.core.net.hasMigrated"; //$NON-NLS-1$
 	
 	/**
@@ -134,6 +134,13 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		return result;
 	}
 
+	public String[] getNativeNonProxiedHosts() {
+		if (hasSystemProxies()) {
+			return nativeProxyProvider.getNonProxiedHosts();
+		}
+		return new String[0];
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.net.IProxyManager#setNonProxiedHosts(java.lang.String[])
 	 */
@@ -169,7 +176,14 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		}
 		return result;
 	}
-	
+
+	public IProxyData[] getNativeProxyData() {
+		if (hasSystemProxies()) {
+			return nativeProxyProvider.getProxyData();
+		}
+		return new IProxyData[0];
+	}
+
 	public void setProxyData(IProxyData[] proxies) {
 		checkMigrated();
 		doSetProxyData(proxies);

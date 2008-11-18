@@ -164,11 +164,28 @@ public interface IProxyData {
 	void setSource(String source);
 
 	/**
-	 * Set the values of this data to represent a disabling of its type.
-	 * Note that the proxy type will not be disabled unless the client
-	 * calls {@link IProxyService#setProxyData(IProxyData[])} with the
-	 * disabled data as a parameter. A proxy data can be enabled by setting
-	 * the host.
+	 * Returns if the proxy data is obtained from a dynamic source, a PAC script
+	 * for example.
+	 * 
+	 * @return if proxy setting is dynamic
+	 * @since 1.2
+	 */
+	boolean isDynamic();
+
+	/**
+	 * Sets if the proxy data is obtained from a dynamic source, a PAC script
+	 * for example.
+	 * 
+	 * @param dynamic if proxy setting is dynamic
+	 * @since 1.2
+	 */
+	void setDynamic(boolean dynamic);
+
+	/**
+	 * Set the values of this data to represent a disabling of its type. Note
+	 * that the proxy type will not be disabled unless the client calls
+	 * {@link IProxyService#setProxyData(IProxyData[])} with the disabled data
+	 * as a parameter. A proxy data can be enabled by setting the host.
 	 */
 	void disable();
 

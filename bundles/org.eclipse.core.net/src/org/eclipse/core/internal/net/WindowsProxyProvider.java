@@ -41,4 +41,12 @@ public class WindowsProxyProvider extends AbstractProxyProvider {
 		return winHttpProxyProvider.getProxyData(uri);
 	}
 
+	protected IProxyData[] getProxyData() {
+		return winHttpProxyProvider.getProxyData();
+	}
+
+	protected String[] getNonProxiedHosts() {
+		return winHttpProxyProvider.getNonProxiedHosts();
+	}
+
 }

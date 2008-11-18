@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.internal.net.ProxyData;
+import org.eclipse.core.internal.net.ProxySelector;
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 
@@ -119,6 +120,20 @@ public class SystemProxyTest extends TestCase {
 		assertEquals(3, typeMap.size());
 	}
 
+	private void checkProxySelector() {
+		IProxyData[] proxiesData = ProxySelector.getProxyData("Native");
+		assertNotNull(proxiesData);
+
+		Map typeMap = new HashMap();
+		for (int i = 0; i < proxiesData.length; i++) {
+			assertProxyDataEqual(proxiesData[i], (IProxyData) proxyDataMap
+					.get(proxiesData[i].getType()));
+			typeMap.put(proxiesData[i].getType(), proxiesData[i].getType());
+		}
+
+		assertEquals(3, typeMap.size());
+	}
+
 	/**
 	 * This test needs system env set. See {@link #initializeTestProxyData()}
 	 * for values.
@@ -126,6 +141,15 @@ public class SystemProxyTest extends TestCase {
 	public void testGetProxyDataForHost_LinuxEnvSettings() {
 		initializeTestProxyData("LINUX_ENV");
 		checkGetProxyDataForHost();
+	}
+
+	/**
+	 * This test needs system env set. See {@link #initializeTestProxyData()}
+	 * for values.
+	 */
+	public void testProxySelector_LinuxEnvSettings() {
+		initializeTestProxyData("LINUX_ENV");
+		checkProxySelector();
 	}
 
 	/**
@@ -138,12 +162,30 @@ public class SystemProxyTest extends TestCase {
 	}
 
 	/**
+	 * This test needs Gnome settings set. See
+	 * {@link #initializeTestProxyData()} for values.
+	 */
+	public void testProxySelector_LinuxGnomeSettings() {
+		initializeTestProxyData("LINUX_GNOME");
+		checkProxySelector();
+	}
+
+	/**
 	 * This test needs Windows IE settings manually set. See
 	 * {@link #initializeTestProxyData()} for values.
 	 */
 	public void testGetProxyDataForHost_WindowsIEManualSettings() {
 		initializeTestProxyData("WINDOWS_IE");
 		checkGetProxyDataForHost();
+	}
+
+	/**
+	 * This test needs Windows IE settings manually set. See
+	 * {@link #initializeTestProxyData()} for values.
+	 */
+	public void testProxySelector_WindowsIEManualSettings() {
+		initializeTestProxyData("WINDOWS_IE");
+		checkProxySelector();
 	}
 
 	private void initializeTestProxyData(String proxyDataSource) {

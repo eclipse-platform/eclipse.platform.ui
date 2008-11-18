@@ -53,7 +53,7 @@ public abstract class AbstractProxyProvider {
 
 	protected abstract IProxyData[] getProxyData(URI uri);
 
-	protected String[] getNonProxiedHosts() {
-		return new String[] {};
-	}
+	protected abstract IProxyData[] getProxyData();
+
+	protected abstract String[] getNonProxiedHosts();
 }

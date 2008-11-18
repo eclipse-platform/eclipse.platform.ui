@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	compeople AG (Stefan Liebig) - initial API and implementation
+ *  IBM Corporation - Add proxy providers layer on the top of ProxyManager (bug 255616)
  *******************************************************************************/
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
@@ -82,6 +83,11 @@ public class ProxyBypass {
 	 */
 	private static boolean isBypassLocalAddresses(String proxyBypass) {
 		return proxyBypass.indexOf(BYPASS_LOCAL_ADDESSES_TOKEN) != -1;
+	}
+
+	public String[] getNonProxiedHosts() {
+		String ret = ProxyProviderUtil.replace(proxyBypass, "|", ";"); //$NON-NLS-1$ //$NON-NLS-2$
+		return ret.split(";"); //$NON-NLS-1$
 	}
 
 }

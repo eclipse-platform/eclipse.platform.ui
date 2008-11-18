@@ -7,7 +7,8 @@
  *
  * Contributors:
  * 	compeople AG (Stefan Liebig) - initial API and implementation
- * 	IBM Corporation - bug 246072, adding IProxyData.source support 
+ * 	IBM Corporation - bug 246072 - adding IProxyData.source support
+ *  IBM Corporation - Add proxy providers layer on the top of ProxyManager (bug 255616)
  *******************************************************************************/
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
@@ -138,11 +139,16 @@ public final class ProxyProviderUtil {
 	}
 
 	private static String resolveProxyType(String protocol) {
-		if (protocol.equalsIgnoreCase("socks") || protocol.equalsIgnoreCase("socket")) //$NON-NLS-1$ //$NON-NLS-2$
-			return IProxyData.SOCKS_PROXY_TYPE;
-		if (protocol.equalsIgnoreCase("https")) //$NON-NLS-1$ 
-			return IProxyData.HTTPS_PROXY_TYPE;
-		return IProxyData.HTTP_PROXY_TYPE;
+		return protocol;
+		// The behaviour of this method has been changed in order to
+		// avoid mapping multiple schemas to one proxy type. This
+		// could lead to API misuse.
+
+		//		if (protocol.equalsIgnoreCase("socks") || protocol.equalsIgnoreCase("socket")) //$NON-NLS-1$ //$NON-NLS-2$
+		// return IProxyData.SOCKS_PROXY_TYPE;
+		//		if (protocol.equalsIgnoreCase("https")) //$NON-NLS-1$ 
+		// return IProxyData.HTTPS_PROXY_TYPE;
+		// return IProxyData.HTTP_PROXY_TYPE;
 	}
 
 	private static IProxyData createProxy(String scheme, String host, int port) {

@@ -52,6 +52,10 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 			ProxyData pd = getSystemProxyInfo(uri.getScheme());
 			return pd != null ? new IProxyData[] { pd } : new IProxyData[0];
 		}
+		return getProxyData();
+	}
+
+	public IProxyData[] getProxyData() {
 		String[] commonTypes = new String[] { IProxyData.HTTP_PROXY_TYPE,
 				IProxyData.SOCKS_PROXY_TYPE, IProxyData.HTTPS_PROXY_TYPE };
 		return getProxyForTypes(commonTypes);
