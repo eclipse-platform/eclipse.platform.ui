@@ -544,6 +544,25 @@ public class PathTest extends RuntimeTest {
 				assertEquals("2." + i + ',' + j, base.append(result), child);
 			}
 		}
+	}
+
+	/**
+	 * Tests for {@link Path#makeRelativeTo(IPath)}.
+	 */
+	public void testMakeRelativeToWindows() {
+		if (!WINDOWS)
+			return;
+		IPath[] bases = new IPath[] {new Path("c:/a/"), new Path("c:/a/b")};
+		IPath[] children = new IPath[] {new Path("d:/a/"), new Path("d:/a/b"), new Path("d:/a/b/c")};
+		for (int i = 0; i < bases.length; i++) {
+			for (int j = 0; j < children.length; j++) {
+				final IPath base = bases[i];
+				final IPath child = children[j];
+				IPath result = child.makeRelativeTo(base);
+				assertTrue("1." + i + ',' + j, result.isAbsolute());
+				assertEquals("2." + i + ',' + j, child, result);
+			}
+		}
 
 	}
 
