@@ -16,6 +16,7 @@ import org.eclipse.ui.IViewPart;
  * A view that displays consoles registered with the console manager.
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IConsoleView extends IViewPart {
 	
