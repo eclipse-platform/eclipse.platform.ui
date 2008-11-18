@@ -61,6 +61,9 @@ public class OverrideTestsSelection implements ISelection {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
+		if (getElement() == null) {
+			return super.toString();
+		}
 		return getElement().getName();
 	}
 
