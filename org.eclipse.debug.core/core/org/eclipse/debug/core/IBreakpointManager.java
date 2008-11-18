@@ -31,6 +31,7 @@ import org.eclipse.debug.core.model.IBreakpointImportParticipant;
  * @see org.eclipse.debug.core.IBreakpointListener
  * @see org.eclipse.debug.core.IBreakpointsListener
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IBreakpointManager {
 	/**

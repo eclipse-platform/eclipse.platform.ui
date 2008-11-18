@@ -27,6 +27,7 @@ import org.eclipse.ui.console.IPatternMatchListener;
  * @see org.eclipse.debug.ui.console.IConsoleColorProvider
  * @since 2.1
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IConsole {
 
