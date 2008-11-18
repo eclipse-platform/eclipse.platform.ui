@@ -1087,11 +1087,12 @@ class FindReplaceDialog extends Dialog {
 					pattern.append('\\').append(ch);
 					break;
 
-				case '\n':
-					pattern.append("\\n"); //$NON-NLS-1$
-					break;
 				case '\r':
-					pattern.append("\\r"); //$NON-NLS-1$
+					if (i + 1 < length && string.charAt(i + 1) == '\n')
+						i++;
+					//$FALL-THROUGH$
+				case '\n':
+					pattern.append("\\R"); //$NON-NLS-1$
 					break;
 				case '\t':
 					pattern.append("\\t"); //$NON-NLS-1$
