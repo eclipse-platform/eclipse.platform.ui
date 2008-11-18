@@ -15,7 +15,6 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -55,20 +54,37 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	/**
 	 * A named preference that holds the color used for hyperlinks.
 	 * <p>
-	 * Value is of type <code>String</code>. A RGB color value encoded as a string
-	 * using class <code>PreferenceConverter</code>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string using class
+	 * <code>PreferenceConverter</code>.
 	 * </p>
-	 *
+	 * 
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
 	public final static String HYPERLINK_COLOR= "hyperlinkColor"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that holds the preference whether to use the native link color.
+	 * <p>
+	 * The preference value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.5
+	 */
+	public final static String HYPERLINK_COLOR_SYSTEM_DEFAULT= "hyperlinkColor.SystemDefault"; //$NON-NLS-1$
 
 
 	/** The text viewer. */
 	private ITextViewer fTextViewer;
 	/** The link color. */
 	private Color fColor;
+
+	/**
+	 * Tells whether to use native link color.
+	 * 
+	 * @since 3.5
+	 */
+	private boolean fIsUsingNativeLinkColor;
 	/** The link color specification. May be <code>null</code>. */
 	private RGB fRGB;
 	/** Tells whether to dispose the color on uninstall. */
@@ -94,18 +110,19 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/**
 	 * Creates a new default hyperlink presenter.
-	 *
-	 * @param color the hyperlink color, to be disposed by the caller
+	 * 
+	 * @param color the hyperlink color or <code>null</code> if the existing text color should be
+	 *            preserved; to be disposed by the caller
 	 */
 	public DefaultHyperlinkPresenter(Color color) {
-		fDisposeColor= false;
 		fColor= color;
 	}
 
 	/**
 	 * Creates a new default hyperlink presenter.
-	 *
-	 * @param color the hyperlink color
+	 * 
+	 * @param color the hyperlink color or <code>null</code> if the existing text color should be
+	 *            preserved
 	 */
 	public DefaultHyperlinkPresenter(RGB color) {
 		fRGB= color;
@@ -125,7 +142,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	public void showHyperlinks(IHyperlink[] hyperlinks) {
 		Assert.isLegal(hyperlinks != null && hyperlinks.length == 1);
 		highlightRegion(hyperlinks[0].getHyperlinkRegion());
-		activateCursor();
 	}
 
 	/**
@@ -155,16 +171,16 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		if (fTextViewer instanceof ITextViewerExtension4)
 			((ITextViewerExtension4)fTextViewer).addTextPresentationListener(this);
 
-		StyledText text= fTextViewer.getTextWidget();
-		if (text != null && !text.isDisposed()) {
-			if (fPreferenceStore != null)
-				fColor= createColor(fPreferenceStore, HYPERLINK_COLOR, text.getDisplay());
-			else if (fRGB != null)
+		if (fPreferenceStore != null) {
+			fIsUsingNativeLinkColor= fPreferenceStore.getBoolean(HYPERLINK_COLOR_SYSTEM_DEFAULT);
+			if (!fIsUsingNativeLinkColor)
+				fColor= createColorFromPreferenceStore();
+			fPreferenceStore.addPropertyChangeListener(this);
+		} else if (fRGB != null) {
+			StyledText text= fTextViewer.getTextWidget();
+			if (text != null && !text.isDisposed())
 				fColor= new Color(text.getDisplay(), fRGB);
 		}
-
-		if (fPreferenceStore != null)
-			fPreferenceStore.addPropertyChangeListener(this);
 	}
 
 	/*
@@ -186,12 +202,23 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 			((ITextViewerExtension4)fTextViewer).removeTextPresentationListener(this);
 		fTextViewer= null;
 
-		if (fPreferenceStore != null)
+		if (fPreferenceStore != null) {
 			fPreferenceStore.removePropertyChangeListener(this);
+			fPreferenceStore= null;
+		}
 	}
 
+	/**
+	 * Sets the hyperlink foreground color.
+	 * 
+	 * @param color the hyperlink foreground color or <code>null</code> if the existing text color
+	 *            should be preserved
+	 */
 	public void setColor(Color color) {
 		Assert.isNotNull(fTextViewer);
+		Assert.isTrue(fPreferenceStore == null, "Cannot set color if preference store is set"); //$NON-NLS-1$
+		if (fColor != null && fDisposeColor)
+			fColor.dispose();
 		fColor= color;
 	}
 
@@ -203,7 +230,11 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 			return;
 		IRegion region= textPresentation.getExtent();
 		if (fActiveRegion.getOffset() + fActiveRegion.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > fActiveRegion.getOffset()) {
-			StyleRange styleRange= new StyleRange(fActiveRegion.getOffset(), fActiveRegion.getLength(), fColor, null);
+			Color color= null;
+			if (!fIsUsingNativeLinkColor)
+				color= fColor;
+			StyleRange styleRange= new StyleRange(fActiveRegion.getOffset(), fActiveRegion.getLength(), color, null);
+			styleRange.underlineStyle= SWT.UNDERLINE_LINK;
 			styleRange.underline= true;
 			textPresentation.mergeStyleRange(styleRange);
 		}
@@ -228,20 +259,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 			fTextViewer.invalidateTextPresentation();
 	}
 
-	private void activateCursor() {
-		StyledText text= fTextViewer.getTextWidget();
-		if (text == null || text.isDisposed())
-			return;
-		Display display= text.getDisplay();
-		text.setCursor(display.getSystemCursor(SWT.CURSOR_HAND));
-	}
-
-	private void resetCursor() {
-		StyledText text= fTextViewer.getTextWidget();
-		if (text != null && !text.isDisposed())
-			text.setCursor(null);
-	}
-
 	private void repairRepresentation() {
 
 		if (fActiveRegion == null)
@@ -250,8 +267,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		int offset= fActiveRegion.getOffset();
 		int length= fActiveRegion.getLength();
 		fActiveRegion= null;
-
-		resetCursor();
 
 		// Invalidate ==> remove applied text presentation
 		if (fTextViewer instanceof ITextViewerExtension2)
@@ -320,25 +335,26 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	/**
 	 * Creates a color from the information stored in the given preference store.
-	 *
-	 * @param store the preference store
-	 * @param key the key
-	 * @param display the display
-	 * @return the color or <code>null</code> if there is no such information available
+	 * 
+	 * @return the color or <code>null</code> if there is no such information available or i f the
+	 *         text widget is not available
 	 */
-	private Color createColor(IPreferenceStore store, String key, Display display) {
+	private Color createColorFromPreferenceStore() {
+		StyledText textWidget= fTextViewer.getTextWidget();
+		if (textWidget == null || textWidget.isDisposed())
+			return null;
 
 		RGB rgb= null;
 
-		if (store.contains(key)) {
+		if (fPreferenceStore.contains(HYPERLINK_COLOR)) {
 
-			if (store.isDefault(key))
-				rgb= PreferenceConverter.getDefaultColor(store, key);
+			if (fPreferenceStore.isDefault(HYPERLINK_COLOR))
+				rgb= PreferenceConverter.getDefaultColor(fPreferenceStore, HYPERLINK_COLOR);
 			else
-				rgb= PreferenceConverter.getColor(store, key);
+				rgb= PreferenceConverter.getColor(fPreferenceStore, HYPERLINK_COLOR);
 
 			if (rgb != null)
-				return new Color(display, rgb);
+				return new Color(textWidget.getDisplay(), rgb);
 		}
 
 		return null;
@@ -348,15 +364,18 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (!HYPERLINK_COLOR.equals(event.getProperty()))
+		if (HYPERLINK_COLOR.equals(event.getProperty())) {
+			if (fColor != null && fDisposeColor)
+				fColor.dispose();
+			fColor= createColorFromPreferenceStore();
 			return;
+		}
 
-		if (fDisposeColor && fColor != null && !fColor.isDisposed())
-			fColor.dispose();
-		fColor= null;
-
-		StyledText textWidget= fTextViewer.getTextWidget();
-		if (textWidget != null && !textWidget.isDisposed())
-			fColor= createColor(fPreferenceStore, HYPERLINK_COLOR, textWidget.getDisplay());
+		if (HYPERLINK_COLOR_SYSTEM_DEFAULT.equals(event.getProperty())) {
+			fIsUsingNativeLinkColor= fPreferenceStore.getBoolean(HYPERLINK_COLOR_SYSTEM_DEFAULT);
+			if (!fIsUsingNativeLinkColor && fColor == null)
+				fColor= createColorFromPreferenceStore();
+			return;
+		}
 	}
 }

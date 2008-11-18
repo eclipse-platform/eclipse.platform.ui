@@ -344,6 +344,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public final static String EDITOR_HYPERLINK_COLOR= DefaultHyperlinkPresenter.HYPERLINK_COLOR;
 
 	/**
+	 * A named preference that holds the preference whether to use the native link color.
+	 * <p>
+	 * The preference value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.5
+	 */
+	public final static String EDITOR_HYPERLINK_COLOR_SYSTEM_DEFAULT= DefaultHyperlinkPresenter.HYPERLINK_COLOR_SYSTEM_DEFAULT;
+
+	/**
 	 * A named preference that controls disabling of the overwrite mode.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -524,6 +534,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on MAC; SWT.CONTROL elsewhere
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR_SYSTEM_DEFAULT, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, mod1Name);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
 

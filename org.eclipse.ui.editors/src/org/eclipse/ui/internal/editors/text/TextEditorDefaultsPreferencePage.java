@@ -377,7 +377,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		{TextEditorMessages.TextEditorPreferencePage_selectionBackgroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR},
 		{TextEditorMessages.TextEditorPreferencePage_backgroundColor, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT},
 		{TextEditorMessages.TextEditorPreferencePage_foregroundColor, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT},
-		{TextEditorMessages.HyperlinkColor_label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, null},
+		{TextEditorMessages.HyperlinkColor_label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR_SYSTEM_DEFAULT},
 	};
 
 	private OverlayPreferenceStore fOverlayStore;
@@ -439,6 +439,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR_SYSTEM_DEFAULT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK));
 
