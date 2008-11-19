@@ -8,7 +8,9 @@ import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.Item;
 import org.eclipse.e4.ui.model.application.ItemPart;
+import org.eclipse.e4.ui.model.application.Menu;
 import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.ToolBar;
 import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -128,5 +130,11 @@ public abstract class PartFactory {
 
 	public IServiceLocator getServiceLoctaor() {
 		return serviceLocator;
+	}
+
+	public void createMenu(Object widgetObject, Menu menu) {
+	}
+
+	public void createToolBar(Object widgetObject, ToolBar toolBar) {
 	}
 }

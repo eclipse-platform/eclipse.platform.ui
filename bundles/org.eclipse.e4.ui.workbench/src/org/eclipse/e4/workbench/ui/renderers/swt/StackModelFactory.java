@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
-public class StackModelFactory extends PartFactory {
+public class StackModelFactory extends SWTPartFactory {
 
 	public StackModelFactory() {
 		super();

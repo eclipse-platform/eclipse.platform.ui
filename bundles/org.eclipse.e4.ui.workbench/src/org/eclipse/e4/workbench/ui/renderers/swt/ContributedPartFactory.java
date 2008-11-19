@@ -14,7 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
-public class ContributedPartFactory extends PartFactory {
+public class ContributedPartFactory extends SWTPartFactory {
 
 	private IContributionFactory contributionFactory;
 

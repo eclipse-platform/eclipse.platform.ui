@@ -276,7 +276,10 @@ public class Workbench implements IWorkbench, IServiceLocator,
 			wbw.setHeight(app.getWindows().get(0).getHeight());
 			wbw.setX(app.getWindows().get(0).getX());
 			wbw.setY(app.getWindows().get(0).getY());
+			wbw.setMenu(app.getWindows().get(0).getMenu());
+			wbw.setToolBar(app.getWindows().get(0).getToolBar());
 			wbw.setTrim(ApplicationFactory.eINSTANCE.createTrim());
+			wbw.getHandlers().addAll(app.getWindows().get(0).getHandlers());
 			Perspective<Part<?>> perspective = WorkbenchFactory.eINSTANCE.createPerspective();
 			wbw.getChildren().add(perspective);
 			perspective.getChildren().addAll(app.getWindows().get(0).getChildren());

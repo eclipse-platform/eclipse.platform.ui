@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationPackageImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -518,6 +518,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getHandledItem_Menu() {
+		return (EReference)handledItemEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getMenuItem() {
 		return menuItemEClass;
 	}
@@ -527,17 +536,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMenuItem_Menu() {
-		return (EReference)menuItemEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getMenuItem_Separator() {
-		return (EAttribute)menuItemEClass.getEStructuralFeatures().get(1);
+		return (EAttribute)menuItemEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -547,15 +547,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 */
 	public EClass getToolBarItem() {
 		return toolBarItemEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getToolBarItem_Menu() {
-		return (EReference)toolBarItemEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -759,13 +750,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		handledItemEClass = createEClass(HANDLED_ITEM);
 		createEReference(handledItemEClass, HANDLED_ITEM__HANDLER);
+		createEReference(handledItemEClass, HANDLED_ITEM__MENU);
 
 		menuItemEClass = createEClass(MENU_ITEM);
-		createEReference(menuItemEClass, MENU_ITEM__MENU);
 		createEAttribute(menuItemEClass, MENU_ITEM__SEPARATOR);
 
 		toolBarItemEClass = createEClass(TOOL_BAR_ITEM);
-		createEReference(toolBarItemEClass, TOOL_BAR_ITEM__MENU);
 
 		itemContainerEClass = createEClass(ITEM_CONTAINER);
 		createEReference(itemContainerEClass, ITEM_CONTAINER__ITEMS);
@@ -940,13 +930,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		initEClass(handledItemEClass, HandledItem.class, "HandledItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getHandledItem_Handler(), this.getHandler(), null, "handler", null, 0, 1, HandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getHandledItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, HandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(menuItemEClass, MenuItem.class, "MenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getMenuItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, MenuItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getMenuItem_Separator(), ecorePackage.getEBoolean(), "separator", null, 0, 1, MenuItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(toolBarItemEClass, ToolBarItem.class, "ToolBarItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getToolBarItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, ToolBarItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(itemContainerEClass, ItemContainer.class, "ItemContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		g1 = createEGenericType(itemContainerEClass_I);

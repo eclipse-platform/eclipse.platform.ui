@@ -86,6 +86,12 @@ public class PartRenderer {
 				setFactoryFor(element, factory);
 
 				processHandlers(element);
+				if (element.getMenu() != null) {
+					factory.createMenu(newWidget, element.getMenu());
+				}
+				if (element.getToolBar() != null) {
+					factory.createToolBar(newWidget, element.getToolBar());
+				}
 				return newWidget;
 			}
 		}

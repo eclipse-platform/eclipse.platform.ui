@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ToolBarItem.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -18,42 +18,11 @@ package org.eclipse.e4.ui.model.application;
  * A representation of the model object '<em><b>Tool Bar Item</b></em>'.
  * <!-- end-user-doc -->
  *
- * <p>
- * The following features are supported:
- * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ToolBarItem#getMenu <em>Menu</em>}</li>
- * </ul>
- * </p>
  *
  * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getToolBarItem()
  * @model
  * @generated
  */
 public interface ToolBarItem extends HandledItem {
-	/**
-	 * Returns the value of the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Menu</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Menu</em>' containment reference.
-	 * @see #setMenu(Menu)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getToolBarItem_Menu()
-	 * @model containment="true"
-	 * @generated
-	 */
-	Menu getMenu();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ToolBarItem#getMenu <em>Menu</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Menu</em>' containment reference.
-	 * @see #getMenu()
-	 * @generated
-	 */
-	void setMenu(Menu value);
 
 } // ToolBarItem

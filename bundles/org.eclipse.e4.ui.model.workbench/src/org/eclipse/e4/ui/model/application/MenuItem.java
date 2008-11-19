@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MenuItem.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -21,7 +21,6 @@ package org.eclipse.e4.ui.model.application;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MenuItem#getMenu <em>Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MenuItem#isSeparator <em>Separator</em>}</li>
  * </ul>
  * </p>
@@ -31,32 +30,6 @@ package org.eclipse.e4.ui.model.application;
  * @generated
  */
 public interface MenuItem extends HandledItem {
-	/**
-	 * Returns the value of the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Menu</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Menu</em>' containment reference.
-	 * @see #setMenu(Menu)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMenuItem_Menu()
-	 * @model containment="true"
-	 * @generated
-	 */
-	Menu getMenu();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MenuItem#getMenu <em>Menu</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Menu</em>' containment reference.
-	 * @see #getMenu()
-	 * @generated
-	 */
-	void setMenu(Menu value);
-
 	/**
 	 * Returns the value of the '<em><b>Separator</b></em>' attribute.
 	 * <!-- begin-user-doc -->

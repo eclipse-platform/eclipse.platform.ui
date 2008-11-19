@@ -3,8 +3,10 @@
   <windows x="100" y="100" width="800" height="600">
     <children policy="HorizontalComposite">
       <children policy="VerticalComposite">
-        <children>
-          <toolBar/>
+        <children policy="HorizontalComposite">
+          <toolBar>
+            <items xsi:type="application:ToolBarItem" name="Create Album" handler="//@windows.0/@handlers.1"/>
+          </toolBar>
         </children>
         <children xsi:type="application:Stack">
           <children xsi:type="application:ContributedPart" name="Library" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library"/>
@@ -21,6 +23,26 @@
         </children>
       </children>
     </children>
-    <menu/>
+    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
+    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler"/>
+    <menu>
+      <items xsi:type="application:MenuItem" name="File">
+        <menu>
+          <items xsi:type="application:MenuItem" name="Create Album" handler="//@windows.0/@handlers.1"/>
+          <items xsi:type="application:MenuItem" iconURI="" name="---" separator="true"/>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" handler="//@windows.0/@handlers.0"/>
+        </menu>
+      </items>
+      <items xsi:type="application:MenuItem" name="Edit">
+        <menu>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" handler="//@windows.0/@handlers.0"/>
+        </menu>
+      </items>
+      <items xsi:type="application:MenuItem" name="Help">
+        <menu>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" handler="//@windows.0/@handlers.0"/>
+        </menu>
+      </items>
+    </menu>
   </windows>
 </application:Application>

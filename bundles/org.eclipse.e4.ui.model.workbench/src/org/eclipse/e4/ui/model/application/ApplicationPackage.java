@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationPackage.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -1012,13 +1012,22 @@ public interface ApplicationPackage extends EPackage {
 	int HANDLED_ITEM__HANDLER = ITEM_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__MENU = ITEM_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Handled Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 1;
+	int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MenuItemImpl <em>Menu Item</em>}' class.
@@ -1082,7 +1091,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__MENU = HANDLED_ITEM_FEATURE_COUNT + 0;
+	int MENU_ITEM__MENU = HANDLED_ITEM__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
@@ -1091,7 +1100,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__SEPARATOR = HANDLED_ITEM_FEATURE_COUNT + 1;
+	int MENU_ITEM__SEPARATOR = HANDLED_ITEM_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Menu Item</em>' class.
@@ -1100,7 +1109,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM_FEATURE_COUNT = HANDLED_ITEM_FEATURE_COUNT + 2;
+	int MENU_ITEM_FEATURE_COUNT = HANDLED_ITEM_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ToolBarItemImpl <em>Tool Bar Item</em>}' class.
@@ -1164,7 +1173,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__MENU = HANDLED_ITEM_FEATURE_COUNT + 0;
+	int TOOL_BAR_ITEM__MENU = HANDLED_ITEM__MENU;
 
 	/**
 	 * The number of structural features of the '<em>Tool Bar Item</em>' class.
@@ -1173,7 +1182,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM_FEATURE_COUNT = HANDLED_ITEM_FEATURE_COUNT + 1;
+	int TOOL_BAR_ITEM_FEATURE_COUNT = HANDLED_ITEM_FEATURE_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ItemContainerImpl <em>Item Container</em>}' class.
@@ -1842,6 +1851,17 @@ public interface ApplicationPackage extends EPackage {
 	EReference getHandledItem_Handler();
 
 	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.HandledItem#getMenu <em>Menu</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Menu</em>'.
+	 * @see org.eclipse.e4.ui.model.application.HandledItem#getMenu()
+	 * @see #getHandledItem()
+	 * @generated
+	 */
+	EReference getHandledItem_Menu();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MenuItem <em>Menu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1850,17 +1870,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getMenuItem();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MenuItem#getMenu <em>Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MenuItem#getMenu()
-	 * @see #getMenuItem()
-	 * @generated
-	 */
-	EReference getMenuItem_Menu();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MenuItem#isSeparator <em>Separator</em>}'.
@@ -1882,17 +1891,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getToolBarItem();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.ToolBarItem#getMenu <em>Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ToolBarItem#getMenu()
-	 * @see #getToolBarItem()
-	 * @generated
-	 */
-	EReference getToolBarItem_Menu();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ItemContainer <em>Item Container</em>}'.
@@ -2328,6 +2326,14 @@ public interface ApplicationPackage extends EPackage {
 		EReference HANDLED_ITEM__HANDLER = eINSTANCE.getHandledItem_Handler();
 
 		/**
+		 * The meta object literal for the '<em><b>Menu</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference HANDLED_ITEM__MENU = eINSTANCE.getHandledItem_Menu();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MenuItemImpl <em>Menu Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2336,14 +2342,6 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass MENU_ITEM = eINSTANCE.getMenuItem();
-
-		/**
-		 * The meta object literal for the '<em><b>Menu</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference MENU_ITEM__MENU = eINSTANCE.getMenuItem_Menu();
 
 		/**
 		 * The meta object literal for the '<em><b>Separator</b></em>' attribute feature.
@@ -2362,14 +2360,6 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass TOOL_BAR_ITEM = eINSTANCE.getToolBarItem();
-
-		/**
-		 * The meta object literal for the '<em><b>Menu</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference TOOL_BAR_ITEM__MENU = eINSTANCE.getToolBarItem_Menu();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ItemContainerImpl <em>Item Container</em>}' class.

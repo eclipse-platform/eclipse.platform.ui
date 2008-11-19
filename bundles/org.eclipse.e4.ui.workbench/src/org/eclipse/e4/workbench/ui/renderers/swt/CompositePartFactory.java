@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Factory for <code>org.eclipse.e4.workbench.emf.workbench.Composite</code>
  */
-public class CompositePartFactory extends PartFactory {
+public class CompositePartFactory extends SWTPartFactory {
 	
 	public CompositePartFactory() {
 		super();
