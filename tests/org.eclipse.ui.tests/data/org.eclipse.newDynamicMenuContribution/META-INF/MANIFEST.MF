@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: NewDynamicMenuContribution Plug-in
-Bundle-SymbolicName: org.eclipse.newDynamicMenuContribution;singleton:=true
-Bundle-Version: 1.0.0
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Bundle-ClassPath: menus.jar
-Require-Bundle: org.eclipse.ui;bundle-version="3.5.0"
-Bundle-ActivationPolicy: lazy

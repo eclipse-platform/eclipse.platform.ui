@@ -1,4 +1,0 @@
-This zip is not used any more, please check out dynamic_classes as
-org.eclipse.ui.dynamicCode
-
-dyanmic_classes.zip contains a project that can be used to rebuild any of the jars that are contained within the above dynamic plugin directories.
