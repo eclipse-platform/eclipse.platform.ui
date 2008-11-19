@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Stephan Wahlbrink  - Test fix for bug 200997.
+ *     Dmitry Karasik - Test cases for bug 255384
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
@@ -377,6 +378,60 @@ public class JobTest extends AbstractJobTest {
 	}
 
 	/**
+	 * Tests canceling a job from the shouldRun method. See bug 255384.
+	 */
+	public void testCancelShouldRun() {
+		final String[] failure = new String[1];
+		final Job j = new Job("Test") {
+			volatile int runningCount = 0;
+			boolean cancelled;
+
+			protected IStatus run(IProgressMonitor monitor) {
+				if (++runningCount > 1)
+					failure[0] = "Multiple running at once!";
+				try {
+					Thread.sleep(500);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (--runningCount != 0)
+						failure[0] = "Multiple were running at once!";
+				}
+				return Status.OK_STATUS;
+			}
+
+			public boolean belongsTo(Object family) {
+				return JobTest.this == family;
+			}
+
+			public boolean shouldRun() {
+				if (!cancelled) {
+					cancelled = true;
+					this.sleep();
+					this.cancel();
+					this.schedule();
+					try {
+						Thread.sleep(500);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				return true;
+			}
+		};
+		j.schedule();
+		try {
+			Thread.sleep(1000);
+			Job.getJobManager().join(this, null);
+		} catch (OperationCanceledException e) {
+			fail("4.99", e);
+		} catch (InterruptedException e) {
+			fail("4.99", e);
+		}
+		assertNull(failure[0], failure[0]);
+	}
+
+	/**
 	 * Tests the hook method {@link Job#canceling}.
 	 */
 	public void testCanceling() {
@@ -441,6 +496,66 @@ public class JobTest extends AbstractJobTest {
 			//let the job finish
 			barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			waitForState(job, Job.NONE);
+		}
+	}
+
+	public void testCancelAboutToSchedule() {
+		final boolean[] failure = new boolean[1];
+		final Job j = new Job("testCancelAboutToSchedule") {
+			volatile int runningCount = 0;
+
+			protected IStatus run(IProgressMonitor monitor) {
+				if (++runningCount > 1)
+					failure[0] = true;
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} finally {
+					if (--runningCount != 0)
+						failure[0] = true;
+				}
+				return Status.OK_STATUS;
+			}
+
+			public boolean belongsTo(Object family) {
+				return JobTest.this == family;
+			}
+		};
+		JobChangeAdapter listener = new JobChangeAdapter() {
+			boolean canceled = false;
+
+			public void scheduled(IJobChangeEvent event) {
+				if (event.getJob().belongsTo(JobTest.this) && !canceled) {
+					canceled = true;
+					j.cancel();
+					j.schedule();
+					try {
+						Thread.sleep(100);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		Job.getJobManager().addJobChangeListener(listener);
+		try {
+			j.schedule();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				fail("4.99", e);
+			}
+			try {
+				Job.getJobManager().join(this, null);
+			} catch (OperationCanceledException e) {
+				fail("4.99", e);
+			} catch (InterruptedException e) {
+				fail("4.99", e);
+			}
+			assertFalse("1.0", failure[0]);
+		} finally {
+			Job.getJobManager().removeJobChangeListener(listener);
 		}
 	}
 

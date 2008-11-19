@@ -448,6 +448,10 @@ public class JobManager implements IJobManager {
 	 */
 	private void doSchedule(InternalJob job, long delay) {
 		synchronized (lock) {
+			//job may have been canceled already
+			int state = job.internalGetState();
+			if (state != InternalJob.ABOUT_TO_SCHEDULE && state != Job.SLEEPING)
+				return;
 			//if it's a decoration job with no rule, don't run it right now if the system is busy
 			if (job.getPriority() == Job.DECORATE && job.getRule() == null) {
 				long minDelay = running.size() * 100;
@@ -1155,26 +1159,27 @@ public class JobManager implements IJobManager {
 			if (job == null)
 				return null;
 			//must perform this outside sync block because it is third party code
-			if (job.shouldRun()) {
-				//check for listener veto
+			boolean shouldRun = job.shouldRun();
+			//check for listener veto
+			if (shouldRun)
 				jobListeners.aboutToRun(job);
-				//listeners may have canceled or put the job to sleep
-				synchronized (lock) {
-					if (job.getState() == Job.RUNNING) {
-						InternalJob internal = job;
-						if (internal.isAboutToRunCanceled()) {
-							internal.setAboutToRunCanceled(false);
-							//fall through and end the job below
-						} else {
-							internal.setProgressMonitor(createMonitor(job));
-							//change from ABOUT_TO_RUN to RUNNING
-							internal.internalSetState(Job.RUNNING);
-							break;
-						}
+			//listeners may have canceled or put the job to sleep
+			boolean endJob = false;
+			synchronized (lock) {
+				InternalJob internal = job;
+				if (internal.internalGetState() == InternalJob.ABOUT_TO_RUN) {
+					if (shouldRun && !internal.isAboutToRunCanceled()) {
+						internal.setProgressMonitor(createMonitor(job));
+						//change from ABOUT_TO_RUN to RUNNING
+						internal.internalSetState(Job.RUNNING);
+						break;
 					}
+					internal.setAboutToRunCanceled(false);
+					endJob = true;
+					//fall through and end the job below
 				}
 			}
-			if (job.getState() != Job.SLEEPING) {
+			if (endJob) {
 				//job has been vetoed or canceled, so mark it as done
 				endJob(job, Status.CANCEL_STATUS, true);
 				continue;
