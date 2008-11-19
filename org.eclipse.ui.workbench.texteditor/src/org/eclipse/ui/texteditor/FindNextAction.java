@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.TextUtilities;
@@ -130,7 +131,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		if ((firstLine.length() == 0 || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty())
 			return (String) fFindHistory.get(0);
 		else if (fRegExSearch && fullSelection.length() > 0)
-			return FindReplaceDialog.escapeForRegExPattern(fullSelection);
+			return FindReplaceDocumentAdapter.escapeForRegExPattern(fullSelection);
 		else
 			return firstLine;
 	}

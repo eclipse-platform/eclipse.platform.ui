@@ -641,4 +641,71 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	public String toString() {
 		return fDocument.get();
 	}
+
+	/**
+	 * Escapes special characters in the string, such that the resulting pattern
+	 * matches the given string.
+	 *
+	 * @param string the string to escape
+	 * @return a regex pattern that matches the given string
+	 * @since 3.5
+	 */
+	public static String escapeForRegExPattern(String string) {
+		//implements https://bugs.eclipse.org/bugs/show_bug.cgi?id=44422
+	
+		StringBuffer pattern= new StringBuffer(string.length() + 16);
+		int length= string.length();
+		if (length > 0 && string.charAt(0) == '^')
+			pattern.append('\\');
+		for (int i= 0; i < length; i++) {
+			char ch= string.charAt(i);
+			switch (ch) {
+				case '\\':
+				case '(':
+				case ')':
+				case '[':
+				case ']':
+				case '{':
+				case '}':
+				case '.':
+				case '?':
+				case '*':
+				case '+':
+				case '|':
+					pattern.append('\\').append(ch);
+					break;
+	
+				case '\r':
+					if (i + 1 < length && string.charAt(i + 1) == '\n')
+						i++;
+					//$FALL-THROUGH$
+				case '\n':
+					pattern.append("\\R"); //$NON-NLS-1$
+					break;
+				case '\t':
+					pattern.append("\\t"); //$NON-NLS-1$
+					break;
+				case '\f':
+					pattern.append("\\f"); //$NON-NLS-1$
+					break;
+				case 0x07:
+					pattern.append("\\a"); //$NON-NLS-1$
+					break;
+				case 0x1B:
+					pattern.append("\\e"); //$NON-NLS-1$
+					break;
+	
+				default:
+					if (0 <= ch && ch < 0x20) {
+						pattern.append("\\x"); //$NON-NLS-1$
+						pattern.append(Integer.toHexString(ch).toUpperCase());
+					} else {
+						pattern.append(ch);
+					}
+			}
+		}
+		if (length > 0 && string.charAt(length - 1) == '$')
+			pattern.insert(pattern.length() - 1, '\\');
+		return pattern.toString();
+	}
 }
