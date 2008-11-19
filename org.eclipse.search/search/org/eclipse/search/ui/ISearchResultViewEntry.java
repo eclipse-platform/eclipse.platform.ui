@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IResource;
  * how to model search results. {@link org.eclipse.search.ui.text.AbstractTextSearchResult} and {@link org.eclipse.search.ui.text.Match} can be used to port old searches to the new API design.
  *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISearchResultViewEntry {
 
