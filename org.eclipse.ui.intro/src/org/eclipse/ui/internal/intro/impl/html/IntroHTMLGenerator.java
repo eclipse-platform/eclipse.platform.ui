@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.ui.internal.intro.impl.FontSelection;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -421,38 +422,62 @@ public class IntroHTMLGenerator {
 	 * @return an anchor (&lt;A&gt;) HTMLElement
 	 */
 	private HTMLElement generateIntroLink(IntroLink element, int indentLevel) {
-		HTMLElement anchor = generateAnchorElement(element, indentLevel);
+		String styleId = element.getStyleId();
+		boolean useTable = BaseHelpSystem.isRTL() && "content-link".equals(styleId); //$NON-NLS-1$
+		HTMLElement anchor1 = generateAnchorElement(element, indentLevel);
+		HTMLElement anchor2 = null;
+		HTMLElement labelAnchor = anchor1;
+		int indentBase = indentLevel;
+		if (useTable) {
+			indentBase = indentLevel + 1;
+		    anchor2 = generateAnchorElement(element, indentLevel + 1);
+		    labelAnchor = anchor2;
+		}
 		// add <IMG src="blank.gif">
 		String blankImageURL = BundleUtil.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
 				IIntroConstants.PLUGIN_ID);
 		if (blankImageURL != null) {
-			anchor.addContent(generateImageElement(blankImageURL, null, IIntroHTMLConstants.IMAGE_CLASS_BG,
-					indentLevel + 1));
+			anchor1.addContent(generateImageElement(blankImageURL, null, IIntroHTMLConstants.IMAGE_CLASS_BG,
+					indentBase + 1));
 		}
 		// add link image, if one is specified
 		if (element.getImg() != null) {
-			HTMLElement img = generateIntroElement(element.getImg(), indentLevel + 1);
+			HTMLElement img = generateIntroElement(element.getImg(), indentBase + 1);
 			if (img != null)
-				anchor.addContent(img);
+				anchor1.addContent(img);
 		}
-		HTMLElement imageDiv = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_DIV, indentLevel+1, false);
-		imageDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, 
-				IIntroHTMLConstants.LINK_EXTRA_DIV);
-		anchor.addContent(imageDiv);
+		if (!useTable) {
+			HTMLElement imageDiv = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_DIV, indentBase+1, false);
+			imageDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, 
+					IIntroHTMLConstants.LINK_EXTRA_DIV);
+			anchor1.addContent(imageDiv);
+		}
 		// add <SPAN class="link-label">linkLabel</SPAN>
 		if (element.getLabel() != null) {
 			HTMLElement label = generateSpanElement(IIntroHTMLConstants.SPAN_CLASS_LINK_LABEL,
-					indentLevel + 1);
-			label.addContent(element.getLabel());
-			anchor.addContent(label);
+					indentBase + 2);
+			label.addContent(element.getLabel());			
+			labelAnchor.addContent(label);
 		}
 		IntroText linkText = element.getIntroText();
 		if (linkText != null && linkText.getText() != null) {
-			HTMLElement text = generateIntroElement(linkText, indentLevel + 1);
+			HTMLElement text = generateIntroElement(linkText, indentBase + 3);
 			if (text != null)
-				anchor.addContent(text);
+				labelAnchor.addContent(text);
 		}
-		return anchor;
+		if (!useTable) {
+			return anchor1;
+		}
+		HTMLElement table = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_TABLE, indentLevel, false);
+		HTMLElement tr = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_TR, indentLevel + 1, false);
+		table.addContent(tr);
+		HTMLElement td1 = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_TD, indentLevel + 1, false);
+		HTMLElement td2 = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_TD, indentLevel + 1, false);
+		tr.addContent(td1);
+		tr.addContent(td2);
+		td1.addContent(anchor1);
+		td2.addContent(anchor2);
+		return table;
 	}
 
 	/**
@@ -872,10 +897,14 @@ public class IntroHTMLGenerator {
 			span.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, spanClass);
 		if (spanContent != null)
 			span.addContent(spanContent);
+		if (type != null) {
 		// Create the enclosing text element: <P><SPAN>spanContent</SPAN></P>
 		HTMLElement text = new FormattedHTMLElement(type, indentLevel, false);
 		text.addContent(span);
 		return text;
+		} else {
+			return span;
+		}
 	}
 
 	/**

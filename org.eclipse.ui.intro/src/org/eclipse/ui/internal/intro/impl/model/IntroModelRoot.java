@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.UAElementFactory;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.intro.impl.FontSelection;
@@ -110,6 +111,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
     private static final String ATT_CONFIGURER = "configurer"; //$NON-NLS-1$
     private static final String VAR_THEME = "theme";  //$NON-NLS-1$
+    private static final String VAR_DIRECTION = "direction";  //$NON-NLS-1$
 
     // False if there is no valid contribution to the
     // org.eclipse.ui.intro.config extension point. Start off with true, and set
@@ -942,6 +944,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
     	}
      	if (variable.equals(FontSelection.VAR_FONT_STYLE)) {
      		return FontSelection.getFontStyle();
+    	}
+     	if (variable.equals(VAR_DIRECTION)) {
+    		if (BaseHelpSystem.isRTL()) {
+    			return "rtl"; //$NON-NLS-1$
+    		} else {
+    			return "ltr"; //$NON-NLS-1$
+    		}			
     	}
 		
     	if (configurer!=null)

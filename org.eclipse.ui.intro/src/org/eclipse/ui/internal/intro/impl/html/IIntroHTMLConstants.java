@@ -43,6 +43,9 @@ public interface IIntroHTMLConstants {
     String ELEMENT_HR = "HR"; //$NON-NLS-1$
     String ELEMENT_PARAGRAPH = "P"; //$NON-NLS-1$
     String ELEMENT_STYLE = "STYLE"; //$NON-NLS-1$
+    String ELEMENT_TABLE = "TABLE"; //$NON-NLS-1$
+    String ELEMENT_TR = "TR"; //$NON-NLS-1$
+    String ELEMENT_TD = "TD"; //$NON-NLS-1$
     String ELEMENT_IFrame = "iFrame"; //$NON-NLS-1$
 
     /* HTML attribute names */
