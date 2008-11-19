@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
@@ -37,11 +36,15 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.core.commands.common.EventManager;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
@@ -64,6 +67,8 @@ import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -464,20 +469,20 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	private void saveWorkingSetState(final IMemento memento, List list) {
 		for (Iterator i = list.iterator(); i.hasNext();) {
             final IPersistableElement persistable = (IWorkingSet) i.next();
-			// create a dummy node to write too - the write could fail so we
-			// shouldn't soil the final memento until we're sure it succeeds.
-			final XMLMemento dummy = XMLMemento
-					.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET);
-            dummy.putString(IWorkbenchConstants.TAG_FACTORY_ID,
-            		persistable.getFactoryId());
 			SafeRunner.run(new WorkingSetRunnable() {
 
 				public void run() throws Exception {
+					// create a dummy node to write too - the write could fail so we
+					// shouldn't soil the final memento until we're sure it succeeds.
+					XMLMemento dummy = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET);
+					dummy.putString(IWorkbenchConstants.TAG_FACTORY_ID,
+							persistable.getFactoryId());
 					persistable.saveState(dummy);
+					
 					// if the dummy was created successfully copy it to the real output
-					final IMemento workingSetMemento = memento
+					IMemento workingSetMemento = memento
 							.createChild(IWorkbenchConstants.TAG_WORKING_SET);
-					dummy.putMemento(workingSetMemento);            
+					workingSetMemento.putMemento(dummy);            
 				}
 			});
 			
