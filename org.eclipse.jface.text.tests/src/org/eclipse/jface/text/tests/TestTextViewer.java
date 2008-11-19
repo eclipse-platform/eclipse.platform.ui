@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,12 +172,6 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 	}
 
 	/**
-	 * @see ITextViewer#adjustVisibleRegion(int, int)
-	 */
-	public void adjustVisibleRegion(int p0, int p1) {
-	}
-
-	/**
 	 * @see ITextViewer#overlapsWithVisibleRegion(int, int)
 	 */
 	public boolean overlapsWithVisibleRegion(int p0, int p1) {
@@ -210,7 +204,7 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 	}
 
 	/**
-	 * @see ITextViewer#setDefaultPrefixes(String, String)
+	 * @see ITextViewer#setDefaultPrefixes(String[], String)
 	 */
 	public void setDefaultPrefixes(String[] p0, String p1) {
 	}

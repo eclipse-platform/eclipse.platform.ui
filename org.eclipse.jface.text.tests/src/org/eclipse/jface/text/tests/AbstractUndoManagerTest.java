@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,7 +142,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			String [] strings= new String[count];
 			for (int i= 0; i < count; i++) {
 				final Position position= createRandomPositionPoisson(document.getLength());
-				final String string= createRandomStringPoisson(4);
+				final String string= createRandomStringPoisson();
 				document.replace(position.getOffset(), position.getLength(), string);
 				positions[i]= position;
 				strings[i]= string;
@@ -442,7 +442,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		return (char) (32 + 95 * Math.random());
 	}
 
-	private static String createRandomStringPoisson(int mean) {
+	private static String createRandomStringPoisson() {
 		final int length= getRandomPoissonValue(2);
 		return createRandomString(length);
 	}

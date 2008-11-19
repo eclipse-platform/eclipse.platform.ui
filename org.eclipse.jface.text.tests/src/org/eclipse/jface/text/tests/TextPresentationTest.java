@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,23 +68,14 @@ public class TextPresentationTest extends TestCase {
 			fTextPresentation.addStyleRange(fAllRanges[i]);
 	}
 
-	/**
-	 * @param end is exclusive
-	 */
 	private StyleRange createStyleRange(int start, int end, int style) {
 		return createStyleRange(start, end, null, null, style);
 	}
 
-	/**
-	 * @param end is exclusive
-	 */
 	private StyleRange createStyleRange(int start, int end, Color foreground, Color background, int style) {
 		return new StyleRange(start, end - start, foreground, background, style);
 	}
 
-	/**
-	 * @param end is exclusive
-	 */
 	private StyleRange createStyleRange(int start, int end, int foreground, int background, int style) {
 		return createStyleRange(start, end, createColor(foreground, foreground, foreground), createColor(background, background, background), style);
 	}
@@ -92,6 +83,11 @@ public class TextPresentationTest extends TestCase {
 	private Display fDisplay= Display.getDefault();
 
 	/**
+	 * Creates a new color.
+	 * 
+	 * @param red the amount of red in the color
+	 * @param green the amount of green in the color
+	 * @param blue the amount of blue in the color
 	 * @return <code>null</code> if any of the parameters is smaller than 0 or greater than 255
 	 */
 	private Color createColor(int red, int green, int blue) {

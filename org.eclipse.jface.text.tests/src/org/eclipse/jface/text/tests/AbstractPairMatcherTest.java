@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,10 +35,19 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
  */
 public abstract class AbstractPairMatcherTest extends TestCase {
 
-	/** Constructs a new character pair matcher */
+	/**
+	 * Constructs a new character pair matcher.
+	 * 
+	 * @param chars the characters to match
+	 * @return the character pair matcher
+	 */
 	protected abstract ICharacterPairMatcher createMatcher(final String chars);
 
-	/** Returns the partitioning treated by the matcher */
+	/**
+	 * Returns the partitioning treated by the matcher.
+	 * 
+	 * @return the partition
+	 */
 	protected abstract String getDocumentPartitioning();
 
 	public AbstractPairMatcherTest(String name) {
@@ -59,7 +68,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performReaderTest("#%",    0,  0,  "");
 	}
 
-	/** Very simple checks */
+	/**
+	 * Very simple checks.
+	 * 
+	 * @throws BadLocationException
+	 */
 	public void testSimpleMatchSameMatcher() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "#(   )%");
@@ -71,7 +84,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		matcher.dispose();
 	}
 
-	/** Very simple checks */
+	/**
+	 * Very simple checks.
+	 * 
+	 * @throws BadLocationException
+	 */
 	public void testSimpleMatchDifferentMatchers() throws BadLocationException {
 		performMatch("()[]{}", "#(   )%");
 		performMatch("()[]{}", "#[   ]%");
@@ -81,7 +98,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch("()[]{}", "{%   }#");
 	}
 
-	/** Close matches */
+	/**
+	 * Close matches.
+	 * 
+	 * @throws BadLocationException
+	 */
 	public void testCloseMatches() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "#()%");
@@ -94,7 +115,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	}
 
 
-	/** Checks of simple situations where no matches should be found */
+	/**
+	 * Checks of simple situations where no matches should be found.
+	 * 
+	 * @throws BadLocationException
+	 */
 	public void testIncompleteMatch() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(% ");
@@ -105,7 +130,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		matcher.dispose();
 	}
 
-	/** Test that it doesn't match across different partitions */
+	/**
+	 * Test that it doesn't match across different partitions.
+	 * 
+	 * @throws BadLocationException
+	 */
 	public void testPartitioned() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(% |a a| )#");
@@ -121,7 +150,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		matcher.dispose();
 	}
 
-	/** Test that it works properly next to partition boundaries */
+	/**
+	 * Test that it works properly next to partition boundaries.
+	 * 
+	 * @throws BadLocationException
+	 */
 	public void testTightPartitioned() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(|b)%b|");
@@ -152,7 +185,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		matcher.dispose();
 	}
 
-	/** Test a few boundary conditions */
+	/**
+	 * Test a few boundary conditions.
+	 * 
+	 * * @throws BadLocationException
+	 */
 	public void testBoundaries() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		final StringDocument doc= new StringDocument("abcdefghijkl");
@@ -174,11 +211,14 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/* --- U t i l i t i e s --- */
 
 	/**
-	 * Checks that the test case reader reads the test case as
-	 * specified
+	 * Checks that the test case reader reads the test case as specified.
+	 * 
+	 * @param testString the string to test
+	 * @param expectedPos the expected position
+	 * @param expectedMatch the expected match
+	 * @param expectedString the expected string
 	 */
-	private void performReaderTest(String testString, int expectedPos,
-			int expectedMatch, String expectedString) {
+	private void performReaderTest(String testString, int expectedPos, int expectedMatch, String expectedString) {
 		TestCase t0= createTestCase(testString);
 		assertEquals(expectedPos, t0.fPos);
 		assertEquals(expectedMatch, t0.fMatch);
@@ -187,6 +227,9 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 
 	/**
 	 * Checks that the given matcher matches the input as specified.
+	 * 
+	 * @param matcher the matcher
+	 * @param testCase the test string
 	 */
 	protected void performMatch(final ICharacterPairMatcher matcher, final String testCase) {
 		final TestCase test= createTestCase(testCase);
@@ -218,9 +261,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	}
 
 	/**
-	 * Creates a text case from a string.  In the given string a '%'
-	 * represents the position of the cursor and a '#' represents the
-	 * position of the expected matching character.
+	 * Creates a text case from a string. In the given string a '%' represents the position of the
+	 * cursor and a '#' represents the position of the expected matching character.
+	 * 
+	 * @param str the string for which to create the test case
+	 * @return the created test case
 	 */
 	public TestCase createTestCase(String str) {
 		int pos= str.indexOf("%");
