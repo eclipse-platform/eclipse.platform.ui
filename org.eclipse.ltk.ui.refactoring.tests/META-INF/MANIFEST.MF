@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ltk.ui.refactoring.tests;singleton:=true
-Bundle-Version: 3.3.100.qualifier
+Bundle-Version: 3.4.100.qualifier
 Bundle-ClassPath: refuitests.jar
 Bundle-Activator: org.eclipse.ltk.ui.refactoring.tests.RefactoringUITestPlugin
 Bundle-ActivationPolicy: lazy
@@ -11,12 +11,12 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.ltk.ui.refactoring.examples,
  org.eclipse.ltk.ui.refactoring.tests;x-internal:=true
 Require-Bundle: 
- org.eclipse.core.runtime,
- org.eclipse.ltk.ui.refactoring;bundle-version="[3.4.0,4.0.0)",
- org.eclipse.ui,
+ org.eclipse.core.runtime;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.ltk.ui.refactoring;bundle-version="[3.4.100,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
  org.junit;bundle-version="[3.8.2,3.9.0)",
- org.eclipse.ltk.core.refactoring;bundle-version="[3.4.0,4.0.0)",
- org.eclipse.core.resources,
- org.eclipse.core.filebuffers,
- org.eclipse.text
+ org.eclipse.ltk.core.refactoring;bundle-version="[3.4.100,4.0.0)",
+ org.eclipse.core.resources;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.core.filebuffers;bundle-version="[3.4.100,4.0.0)",
+ org.eclipse.text;bundle-version="[3.5.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
