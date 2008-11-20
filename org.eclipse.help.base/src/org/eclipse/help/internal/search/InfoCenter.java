@@ -129,7 +129,10 @@ public final class InfoCenter implements ISearchEngine {
 			if (frames) {
 				return url + "topic" + href; //$NON-NLS-1$
 			}
-			return url + "topic" + href + "&noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$
+			if (url.indexOf('?')> 0)  {
+				return url + "topic" + href + "&noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$				
+			}
+			return url + "topic" + href + "?noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -222,7 +225,7 @@ public final class InfoCenter implements ISearchEngine {
 
 	private void load(String baseURL, Document doc, Element root,
 			ISearchEngineResultCollector collector, IProgressMonitor monitor) {
-		NodeList topics = root.getElementsByTagName("topic"); //$NON-NLS-1$
+		NodeList topics = root.getElementsByTagName("hit"); //$NON-NLS-1$
 		ISearchEngineResult[] results = new ISearchEngineResult[topics
 				.getLength()];
 		monitor.subTask(HelpBaseResources.InfoCenter_processing);
@@ -241,9 +244,9 @@ public final class InfoCenter implements ISearchEngine {
 		StringBuffer buf = new StringBuffer();
 		buf.append(scope.url);
 		if (!scope.url.endsWith("/")) //$NON-NLS-1$
-			buf.append("/search?searchWord="); //$NON-NLS-1$
+			buf.append("/search?phrase="); //$NON-NLS-1$
 		else
-			buf.append("search?searchWord="); //$NON-NLS-1$
+			buf.append("search?phrase="); //$NON-NLS-1$
 		try {
 			buf.append(URLEncoder.encode(query, "UTF-8")); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
