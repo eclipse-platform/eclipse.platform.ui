@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,8 @@ package org.eclipse.ui.texteditor;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import com.ibm.icu.text.Collator;
 
 import org.osgi.framework.Bundle;
 
@@ -298,34 +294,6 @@ public class MarkerAnnotationPreferences {
 					fPreferences.add(spec);
 			}
 		}
-
-		final Collator collator= Collator.getInstance();
-		Collections.sort(fFragments, new Comparator() {
-			/*
-			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-			 */
-			public int compare(Object o1, Object o2) {
-				if (o1 == o2)
-					return 0;
-
-				AnnotationPreference ap1= (AnnotationPreference)o1;
-				AnnotationPreference ap2= (AnnotationPreference)o2;
-
-				String label1= ap1.getPreferenceLabel();
-				String label2= ap2.getPreferenceLabel();
-
-				if (label1 == null && label2 == null)
-					return 0;
-
-				if (label1 == null)
-					return -1;
-
-				if (label2 == null)
-					return 1;
-
-				return collator.compare(label1, label2);
-			}
-		});
 	}
 
 	/**

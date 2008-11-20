@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -224,7 +224,7 @@ public class SourceViewerDecorationSupport {
 	private ICharacterPairMatcher fCharacterPairMatcher;
 
 	/** Map with annotation type preference per annotation type */
-	private Map fAnnotationTypeKeyMap= new HashMap();
+	private Map fAnnotationTypeKeyMap= new LinkedHashMap();
 	/** Preference key for the cursor line highlighting */
 	private String fCursorLinePainterEnableKey;
 	/** Preference key for the cursor line background color */
