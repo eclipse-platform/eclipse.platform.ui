@@ -48,6 +48,9 @@ public class BreadcrumbsFilter implements IFilter {
 		if (UrlUtil.isBot(req)) {
 			return out;
 		}
+		if ("true".equals(req.getParameter("noframes"))) {  //$NON-NLS-1$//$NON-NLS-2$
+			return out;
+		}
 		String pathInfo = req.getPathInfo();
 		String servletPath = req.getServletPath();
 		if (pathInfo == null || servletPath == null) {
