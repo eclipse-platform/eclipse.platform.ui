@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.net;
 
-import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -28,8 +26,6 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-
-	private ServiceTracker tracker;
 
 	/**
 	 * The constructor
@@ -47,26 +43,13 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	/**
-	 * Return the {@link IProxyService} or <code>null</code> if the service is
-	 * not available.
-	 * 
-	 * @return the {@link IProxyService} or <code>null</code>
-	 */
-	public IProxyService getProxyService() {
-		return (IProxyService) tracker.getService();
-	}
-
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		tracker = new ServiceTracker(getBundle().getBundleContext(),
-				IProxyService.class.getName(), null);
-		tracker.open();
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
-		tracker.close();
 	}
+
 }

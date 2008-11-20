@@ -17,83 +17,57 @@ import org.eclipse.osgi.util.NLS;
 
 public final class NetUIMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.net.messages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.net.messages"; //$NON-NLS-1$
 
 	private NetUIMessages() {
 		// Do not instantiate
 	}
 
-	public static String BUTTON_PREFERENCE_ADD;
-
-	public static String BUTTON_PREFERENCE_EDIT;
-
-	public static String BUTTON_PREFERENCE_REMOVE;
-
-	public static String NonProxyHostsComposite_0;
-
 	public static String ProxyPreferencePage_0;
-
 	public static String ProxyPreferencePage_1;
-
 	public static String ProxyPreferencePage_2;
-
-	public static String ProxyPreferencePage_22;
-
-	public static String ProxyPreferencePage_23;
-
-	public static String ProxyPreferencePage_24;
-
-	public static String ProxyPreferencePage_25;
-
-	public static String ProxyPreferencePage_26;
-
-	public static String ProxyPreferencePage_27;
-
 	public static String ProxyPreferencePage_3;
-
-	public static String ProxyPreferencePage_37;
-
-	public static String ProxyPreferencePage_38;
-
-	public static String ProxyPreferencePage_39;
-
 	public static String ProxyPreferencePage_4;
-
-	public static String ProxyPreferencePage_40;
-
-	public static String ProxyPreferencePage_41;
-
-	public static String ProxyPreferencePage_42;
-
-	public static String ProxyPreferencePage_43;
-
 	public static String ProxyPreferencePage_5;
-
 	public static String ProxyPreferencePage_6;
-
 	public static String ProxyPreferencePage_7;
-
 	public static String ProxyPreferencePage_8;
-
 	public static String ProxyPreferencePage_9;
-	
-	public static String ProxyPreferencePage_44;
-	
-	public static String ProxyPreferencePage_45;
+	public static String ProxyPreferencePage_10;
+	public static String ProxyPreferencePage_11;
+	public static String ProxyPreferencePage_12;
+	public static String ProxyPreferencePage_13;
+	public static String ProxyPreferencePage_14;
+	public static String ProxyPreferencePage_15;
+	public static String ProxyPreferencePage_16;
+	public static String ProxyPreferencePage_17;
+	public static String ProxyPreferencePage_18;
 
-	public static String TITLE_PREFERENCE_HOSTS_DIALOG;
+	public static String ProxyEntryDialog_0;
+	public static String ProxyEntryDialog_1;
+	public static String ProxyEntryDialog_2;
+	public static String ProxyEntryDialog_3;
+	public static String ProxyEntryDialog_4;
+	public static String ProxyEntryDialog_5;
+	public static String ProxyEntryDialog_6;
+	public static String ProxyEntryDialog_7;
+	public static String ProxyEntryDialog_8;
+	public static String ProxyEntryDialog_9;
+	public static String ProxyEntryDialog_10;
+	public static String ProxyEntryDialog_11;
+	public static String ProxyEntryDialog_12;
 
-	public static String LABEL_PREFERENCE_HOSTS_DIALOG;
+	public static String ProxyBypassDialog_0;
+	public static String ProxyBypassDialog_1;
+	public static String ProxyBypassDialog_2;
 
 	public static String UserValidationDialog_0;
-
 	public static String UserValidationDialog_1;
-
 	public static String UserValidationDialog_2;
-
 	public static String UserValidationDialog_3;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, NetUIMessages.class);
 	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,11 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
- * yyyymmdd bug      Email and other contact information
- * -------- -------- -----------------------------------------------------------
- * 20070201   154100 pmoogk@ca.ibm.com - Peter Moogk, Port internet code from WTP to Eclipse base.
  *******************************************************************************/
 package org.eclipse.ui.internal.net;
 
 import org.eclipse.core.internal.net.ProxySelector;
+import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -25,10 +23,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TableColumn;
 
-public class NonProxyHostsLabelProvider extends BaseLabelProvider implements
+public class ProxyEntriesLabelProvider extends BaseLabelProvider implements
 		ITableLabelProvider, IColorProvider {
 
-	public NonProxyHostsLabelProvider() {
+	public ProxyEntriesLabelProvider() {
 		super();
 	}
 
@@ -40,14 +38,33 @@ public class NonProxyHostsLabelProvider extends BaseLabelProvider implements
 		if (element == null) {
 			return null;
 		}
-		ProxyBypassData data = (ProxyBypassData) element;
+		IProxyData data = (IProxyData) element;
 		switch (columnIndex) {
 		case 0:
 			return null;
 		case 1:
-			return data.getHost();
+			return data.getType();
 		case 2:
+			if (data.isDynamic()) {
+				return NetUIMessages.ProxyPreferencePage_18;
+			}
+			return data.getHost();
+		case 3:
+			if (data.isDynamic()) {
+				return NetUIMessages.ProxyPreferencePage_18;
+			}
+			if (data.getPort() == -1) {
+				return ""; //$NON-NLS-1$
+			}
+			return Integer.toString(data.getPort());
+		case 4:
 			return data.getSource();
+		case 5:
+			return Boolean.toString(data.isRequiresAuthentication());
+		case 6:
+			return data.getUserId();
+		case 7:
+			return data.getPassword();
 		default:
 			return null;
 		}
@@ -60,8 +77,13 @@ public class NonProxyHostsLabelProvider extends BaseLabelProvider implements
 	public void createColumns(TableViewer viewer) {
 		String[] titles = {
 				"", //$NON-NLS-1$
-				NetUIMessages.ProxyPreferencePage_13,
-				NetUIMessages.ProxyPreferencePage_14 };
+				NetUIMessages.ProxyPreferencePage_2,
+				NetUIMessages.ProxyPreferencePage_3,
+				NetUIMessages.ProxyPreferencePage_4,
+				NetUIMessages.ProxyPreferencePage_5,
+				NetUIMessages.ProxyPreferencePage_6,
+				NetUIMessages.ProxyPreferencePage_7,
+				NetUIMessages.ProxyPreferencePage_8 };
 		for (int i = 0; i < titles.length; i++) {
 			TableColumn column = new TableViewerColumn(viewer, SWT.NONE)
 					.getColumn();
@@ -71,9 +93,9 @@ public class NonProxyHostsLabelProvider extends BaseLabelProvider implements
 	}
 
 	public Color getBackground(Object element) {
-		if (element instanceof ProxyBypassData) {
-			String provider = ((ProxyBypassData) element).getSource();
-			if (!ProxySelector.canSetBypassHosts(provider)) {
+		if (element instanceof IProxyData) {
+			String provider = ((IProxyData) element).getSource();
+			if (!ProxySelector.canSetProxyData(provider)) {
 				return Display.getCurrent().getSystemColor(
 						SWT.COLOR_INFO_BACKGROUND);
 			}

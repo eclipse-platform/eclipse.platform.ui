@@ -51,8 +51,9 @@ public class ProxySelector {
 		} else if (provider.equals(NATIVE_PROVIDER)) {
 			service.setProxiesEnabled(true);
 			service.setSystemProxiesEnabled(true);
+		} else {
+			throw new IllegalArgumentException("Provider not supported"); //$NON-NLS-1$
 		}
-		throw new IllegalArgumentException("Provider not supported"); //$NON-NLS-1$
 	}
 
 	public static IProxyData[] getProxyData(String provider) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,243 +12,310 @@
  * 20060217   127138 pmoogk@ca.ibm.com - Peter Moogk
  * 20070201   154100 pmoogk@ca.ibm.com - Peter Moogk, Port internet code from WTP to Eclipse base.
  *******************************************************************************/
-
 package org.eclipse.ui.internal.net;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.TreeSet;
+
+import org.eclipse.core.internal.net.ProxySelector;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 
 /**
- * This class is the Composite that consists of the controls for
- * "http.nonProxyHosts" and is used by InternetPreferencesPage.
+ * This class is the Composite that consists of controls for proxy bypass hosts
+ * and is used by ProxyPreferencesPage.
  */
 public class NonProxyHostsComposite extends Composite {
-	private Table table_;
-	TableViewer tableViewer_;
-	private TreeSet tableValues_;
-	private Button add_;
-	private Button edit_;
-	private Button remove_;
 
-	public NonProxyHostsComposite(Composite parent, int style) {
+	private Label hostsLabel;
+	CheckboxTableViewer hostsViewer;
+	private Button addButton;
+	private Button editButton;
+	private Button removeButton;
+
+	protected String currentProvider;
+	private ArrayList bypassHosts = new ArrayList();
+
+	NonProxyHostsComposite(Composite parent, int style) {
 		super(parent, style);
 		createWidgets();
 	}
 
 	protected void createWidgets() {
-		GridLayout layout = new GridLayout();
-		layout.horizontalSpacing = 6;
-		layout.verticalSpacing = 6;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 2;
-		setLayout(layout);
+		setLayout(new GridLayout(2, false));
 
-		table_ = new Table(this, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL
-				| SWT.MULTI | SWT.FULL_SELECTION);
-		GridData data = new GridData(GridData.FILL_BOTH
-				| GridData.VERTICAL_ALIGN_FILL);
+		hostsLabel = new Label(this, SWT.NONE);
+		hostsLabel.setText(NetUIMessages.ProxyPreferencePage_12);
+		hostsLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false,
+				2, 1));
 
-		table_.setLayoutData(data);
-		table_.setHeaderVisible(false);
-		table_.setLinesVisible(true);
+		Table hostsTable = new Table(this, SWT.BORDER | SWT.V_SCROLL
+				| SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
+		hostsTable.setHeaderVisible(true);
+		hostsTable.setLinesVisible(true);
+		hostsTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+				1, 3));
+
+		hostsViewer = new CheckboxTableViewer(hostsTable);
+		NonProxyHostsLabelProvider labelProvider = new NonProxyHostsLabelProvider();
+		NonProxyHostsContentProvider contentProvider = new NonProxyHostsContentProvider();
+		labelProvider.createColumns(hostsViewer);
+		hostsViewer.setContentProvider(contentProvider);
+		hostsViewer.setLabelProvider(labelProvider);
 
 		TableLayout tableLayout = new TableLayout();
+		tableLayout.addColumnData(new ColumnPixelData(18));
+		tableLayout.addColumnData(new ColumnWeightData(50, 50, true));
+		tableLayout.addColumnData(new ColumnWeightData(50, 50, true));
+		hostsTable.setLayout(tableLayout);
 
-		new TableColumn(table_, SWT.NONE);
-		ColumnWeightData colData = new ColumnWeightData(100, 60, false);
-		tableLayout.addColumnData(colData);
+		addButton = createButton(NetUIMessages.ProxyPreferencePage_15);
+		editButton = createButton(NetUIMessages.ProxyPreferencePage_16);
+		removeButton = createButton(NetUIMessages.ProxyPreferencePage_17);
 
-		table_.setLayout(tableLayout);
-
-		tableViewer_ = new TableViewer(table_);
-		tableViewer_.setContentProvider(new NonProxyHostsContentProvider());
-		tableViewer_.setLabelProvider(new NonProxyHostsLabelProvider());
-
-		tableViewer_
+		hostsViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
 						enableButtons();
 					}
 				});
-
-		tableViewer_.addDoubleClickListener(new IDoubleClickListener() {
+		hostsViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				setProvider(currentProvider);
+			}
+		});
+		hostsViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				editSelection();
 			}
 		});
-
-		Composite buttonComp = new Composite(this, SWT.NONE);
-		layout = new GridLayout();
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 8;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 1;
-		buttonComp.setLayout(layout);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_END
-				| GridData.VERTICAL_ALIGN_FILL);
-		buttonComp.setLayoutData(data);
-
-		add_ = createButton(buttonComp, NetUIMessages.BUTTON_PREFERENCE_ADD);
-
-		add_.addSelectionListener(new SelectionAdapter() {
+		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addHost();
 			}
 		});
-
-		edit_ = createButton(buttonComp, NetUIMessages.BUTTON_PREFERENCE_EDIT);
-
-		edit_.addSelectionListener(new SelectionAdapter() {
+		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editSelection();
 			}
 		});
-		edit_.setEnabled(false);
-
-		remove_ = createButton(buttonComp,
-				NetUIMessages.BUTTON_PREFERENCE_REMOVE);
-
-		remove_.addSelectionListener(new SelectionAdapter() {
+		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				removeFromList((IStructuredSelection) tableViewer_
-						.getSelection());
-				tableViewer_.refresh();
+				removeSelection();
 			}
 		});
-		remove_.setEnabled(false);
-	}
 
-	private Button createButton(Composite comp, String label) {
-		Button button = new Button(comp, SWT.PUSH);
-		button.setText(label);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_BEGINNING);
-		button.setLayoutData(data);
-		return button;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
-	 */
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-		table_.setEnabled(enabled);
+		initializeValues();
 		enableButtons();
 	}
 
-	public void setList(String[] hosts) {
-		tableValues_ = new TreeSet(Arrays.asList(hosts));
-
-		tableViewer_.setInput(tableValues_);
-		tableViewer_.refresh();
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		hostsViewer.getTable().setEnabled(enabled);
+		enableButtons();
 	}
 
-	public String[] getList() {
-		return (String[]) tableValues_.toArray(new String[0]);
+	protected void enableButtons() {
+		boolean enabled = getEnabled();
+		if (enabled) {
+			IStructuredSelection selection = (IStructuredSelection) hostsViewer
+					.getSelection();
+			Iterator iterator = selection.iterator();
+			boolean editable = iterator.hasNext();
+			while (iterator.hasNext()) {
+				String provider = ((ProxyBypassData) iterator.next())
+						.getSource();
+				if (!ProxySelector.canSetBypassHosts(provider)) {
+					editable = false;
+				}
+			}
+			addButton.setEnabled(true);
+			editButton.setEnabled(editable);
+			removeButton.setEnabled(editable);
+		} else {
+			addButton.setEnabled(false);
+			editButton.setEnabled(false);
+			removeButton.setEnabled(false);
+		}
+	}
+
+	protected void addHost() {
+		String hosts[] = promptForHost(null);
+		if (hosts != null) {
+			for (int i = 0; i < hosts.length; i++) {
+				bypassHosts.add(0, new ProxyBypassData(hosts[i],
+						getEditableProvider()));
+			}
+			hostsViewer.refresh();
+			setProvider(currentProvider);
+		}
+	}
+
+	private String getEditableProvider() {
+		String providers[] = ProxySelector.getProviders();
+		for (int i = 0; i < providers.length; i++) {
+			if (ProxySelector.canSetBypassHosts(providers[i])) {
+				return providers[i];
+			}
+		}
+		return null;
+	}
+
+	protected void removeSelection() {
+		IStructuredSelection selection = (IStructuredSelection) hostsViewer
+				.getSelection();
+		Iterator it = selection.iterator();
+		while (it.hasNext()) {
+			ProxyBypassData data = (ProxyBypassData) it.next();
+			bypassHosts.remove(data);
+		}
+		hostsViewer.refresh();
+	}
+
+	protected void editSelection() {
+		IStructuredSelection selection = (IStructuredSelection) hostsViewer
+				.getSelection();
+		String selectedHosts = getStringList(selection.iterator());
+		String hosts[] = promptForHost(selectedHosts);
+		if (hosts != null) {
+			Iterator it = selection.iterator();
+			while (it.hasNext()) {
+				ProxyBypassData data = (ProxyBypassData) it.next();
+				bypassHosts.remove(data);
+			}
+			for (int i = 0; i < hosts.length; i++) {
+				bypassHosts.add(0, new ProxyBypassData(hosts[i],
+						getEditableProvider()));
+			}
+			hostsViewer.refresh();
+		}
 	}
 
 	String getStringList(Iterator iterator) {
 		StringBuffer buffer = new StringBuffer();
-
 		if (iterator.hasNext()) {
-			buffer.append((String) iterator.next());
+			ProxyBypassData data = (ProxyBypassData) iterator.next();
+			buffer.append(data.getHost());
 		}
-
 		while (iterator.hasNext()) {
-			buffer.append(',');
-			buffer.append((String) iterator.next());
+			buffer.append(';');
+			ProxyBypassData data = (ProxyBypassData) iterator.next();
+			buffer.append(data.getHost());
 		}
-
 		return buffer.toString();
 	}
 
-	void removeFromList(IStructuredSelection selection) {
-		tableValues_.removeAll(selection.toList());
-	}
-
-	void updateList(String value) {
-		// Split the string with a delimiter of either a vertical bar, a space,
-		// or a comma.
-		String[] hosts = value.split("\\|| |,"); //$NON-NLS-1$
-
-		tableValues_.addAll(Arrays.asList(hosts));
-		tableValues_.remove(""); //$NON-NLS-1$
-		tableViewer_.refresh();
-	}
-
-	void enableButtons() {
-		boolean enabled = getEnabled();
-
-		if (enabled) {
-			boolean itemsSelected = !tableViewer_.getSelection().isEmpty();
-
-			add_.setEnabled(true);
-			edit_.setEnabled(itemsSelected);
-			remove_.setEnabled(itemsSelected);
-		} else {
-			add_.setEnabled(false);
-			edit_.setEnabled(false);
-			remove_.setEnabled(false);
-		}
-	}
-
-	void editSelection() {
-		IStructuredSelection selection = (IStructuredSelection) tableViewer_.getSelection();
-		String selectedHosts = getStringList(selection.iterator());
-		String value = promptForHost(selectedHosts);
-		if (value != null) {
-			removeFromList(selection);
-			updateList(value);
-		}
-	}
-
-	void addHost() {
-		String value = promptForHost(null);
-		if (value != null) {
-			updateList(value);
-		}
-	}
-	
-	private String promptForHost(String selectedHosts) {
+	private String[] promptForHost(String selectedHosts) {
 		InputDialog dialog = new InputDialog(getShell(),
-				NetUIMessages.TITLE_PREFERENCE_HOSTS_DIALOG,
-				NetUIMessages.LABEL_PREFERENCE_HOSTS_DIALOG, selectedHosts,
-				null) {
+				NetUIMessages.ProxyBypassDialog_0,
+				NetUIMessages.ProxyBypassDialog_1, selectedHosts, null) {
 			private ControlDecoration decorator;
+
 			protected Control createDialogArea(Composite parent) {
 				Control createDialogArea = super.createDialogArea(parent);
 				decorator = new ControlDecoration(getText(), SWT.TOP | SWT.LEFT);
-				decorator.setDescriptionText(NetUIMessages.NonProxyHostsComposite_0);
-				decorator.setImage(FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldDecorationRegistry.DEC_INFORMATION).getImage());
+				decorator.setDescriptionText(NetUIMessages.ProxyBypassDialog_2);
+				decorator.setImage(FieldDecorationRegistry.getDefault()
+						.getFieldDecoration(
+								FieldDecorationRegistry.DEC_INFORMATION)
+						.getImage());
 				return createDialogArea;
 			}
+
 			public boolean close() {
 				decorator.dispose();
 				return super.close();
 			}
 		};
 		int result = dialog.open();
-		String value;
 		if (result != Window.CANCEL) {
-			value = dialog.getValue();
-		} else {
-			value = null;
+			String value = dialog.getValue();
+			String hosts[] = value.split("\\;| "); //$NON-NLS-1$
+			ArrayList filtered = new ArrayList();
+			for (int i = 0; i < hosts.length; i++) {
+				if (hosts[i].length() != 0) {
+					filtered.add(hosts[i]);
+				}
+			}
+			return (String[]) filtered.toArray(new String[0]);
 		}
-		return value;
+		return null;
 	}
+
+	private Button createButton(String message) {
+		Button button = new Button(this, SWT.PUSH);
+		button.setText(message);
+		button.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
+		return button;
+	}
+
+	public void initializeValues() {
+		String providers[] = ProxySelector.getProviders();
+		for (int i = 0; i < providers.length; i++) {
+			String[] hosts = ProxySelector.getBypassHosts(providers[i]);
+			for (int j = 0; hosts != null && j < hosts.length; j++) {
+				ProxyBypassData data = new ProxyBypassData(hosts[j],
+						providers[i]);
+				bypassHosts.add(data);
+			}
+		}
+		hostsViewer.setInput(bypassHosts);
+		setProvider(ProxySelector.getDefaultProvider());
+	}
+
+	public void setProvider(String item) {
+		if (item == null) {
+			item = currentProvider;
+		} else {
+			currentProvider = item;
+		}
+		ArrayList selected = new ArrayList();
+		Iterator it = bypassHosts.iterator();
+		while (it.hasNext()) {
+			ProxyBypassData data = (ProxyBypassData) it.next();
+			if (data.getSource().equalsIgnoreCase(item)) {
+				selected.add(data);
+			}
+		}
+		hostsViewer
+				.setCheckedElements(selected.toArray(new ProxyBypassData[0]));
+	}
+
+	public void performApply() {
+		String provider = getEditableProvider();
+		Iterator it = bypassHosts.iterator();
+		ArrayList hosts = new ArrayList();
+		while (it.hasNext()) {
+			ProxyBypassData data = (ProxyBypassData) it.next();
+			if (data.getSource().equals(provider)) {
+				hosts.add(data.getHost());
+			}
+		}
+		String data[] = (String[]) hosts.toArray(new String[0]);
+		ProxySelector.setBypassHosts(provider, data);
+	}
+
 }

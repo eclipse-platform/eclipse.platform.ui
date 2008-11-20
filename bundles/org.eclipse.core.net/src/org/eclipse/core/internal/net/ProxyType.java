@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.net;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.eclipse.core.net.proxy.IProxyData;
@@ -98,7 +99,14 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	}
 
 	public static String[] convertPropertyStringToHosts(String property) {
-		return property.split("\\|"); //$NON-NLS-1$
+		String hosts[] = property.split("\\|"); //$NON-NLS-1$
+		ArrayList ret = new ArrayList();
+		for (int i = 0; i < hosts.length; i++) {
+			if (hosts[i].length() != 0) {
+				ret.add(hosts[i]);
+			}
+		}
+		return (String[]) ret.toArray(new String[0]);
 	}
 
 	public ProxyType(String name) {

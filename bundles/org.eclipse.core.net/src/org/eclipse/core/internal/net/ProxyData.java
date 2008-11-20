@@ -55,6 +55,10 @@ public class ProxyData implements IProxyData {
 	public String getUserId() {
 		return user;
 	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	public void setHost(String host) {
 		if (host.length() == 0)

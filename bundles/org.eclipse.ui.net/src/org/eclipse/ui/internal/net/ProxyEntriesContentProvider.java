@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,18 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
- * yyyymmdd   bug    Email and other contact information
- * -------- -------- -----------------------------------------------------------
- * 20070201   154100 pmoogk@ca.ibm.com - Peter Moogk, Port internet code from WTP to Eclipse base.
  *******************************************************************************/
 package org.eclipse.ui.internal.net;
 
 import java.util.Collection;
 
+import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-public class NonProxyHostsContentProvider implements IStructuredContentProvider {
+public class ProxyEntriesContentProvider implements IStructuredContentProvider {
 
-	public NonProxyHostsContentProvider() {
+	public ProxyEntriesContentProvider() {
 		super();
 	}
 
@@ -30,7 +28,7 @@ public class NonProxyHostsContentProvider implements IStructuredContentProvider 
 
 	public Object[] getElements(Object inputElement) {
 		Collection coll = (Collection) inputElement;
-		return coll.toArray(new ProxyBypassData[0]);
+		return coll.toArray(new IProxyData[0]);
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
