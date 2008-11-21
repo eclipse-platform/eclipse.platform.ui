@@ -596,26 +596,40 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
             }
             
             if (setTopItem) { 
-                TreePath itemPath = getViewerTreePath(delta);
-                Widget topItem = viewer.findItem(itemPath);
+                Widget topItem = viewer.findItem(treePath);
                 if (topItem instanceof TreeItem) {
                     viewer.getTree().setTopItem((TreeItem) topItem);
                 }
             }
 		}
 
-        // If we know the children, look for the reveal delta in 
-        // the child deltas.  For the children with reveal 
-        // flag start a new update.
+        // If we know the child count of the element, look for the reveal 
+        // flag in the child deltas.  For the children with reveal flag start 
+        // a new update.  
+        // If the child delta's index is out of range, strip the reveal flag
+        // since it is no longer applicable.
         if (knowsChildCount) {
-	        IModelDelta[] childDeltas = delta.getChildDeltas();
-	        for (int i = 0; i < childDeltas.length; i++) {
-	            IModelDelta childDelta = childDeltas[i];
-	            int modelIndex = childDelta.getIndex();
-	            if (modelIndex >= 0 && (childDelta.getFlags() & IModelDelta.REVEAL) != 0) {
-	                doUpdateElement(treePath, modelIndex);
-	            }
-	        }
+            Widget item = viewer.findItem(treePath);
+            int childCount = -1;
+            if (item instanceof TreeItem) {
+                childCount = ((TreeItem)item).getItemCount();
+            } else if (item instanceof Tree) {
+                childCount = ((Tree)item).getItemCount();
+            }
+            if (childCount >= 0) {
+		        ModelDelta[] childDeltas = (ModelDelta[])delta.getChildDeltas();
+		        for (int i = 0; i < childDeltas.length; i++) {
+		            ModelDelta childDelta = childDeltas[i];
+		            int modelIndex = childDelta.getIndex();
+    	            if (modelIndex >= 0 && (childDelta.getFlags() & IModelDelta.REVEAL) != 0) {
+    	            	if (modelIndex < childCount) {
+    	            		doUpdateElement(treePath, modelIndex);
+    	            	} else {
+    		            	childDelta.setFlags(childDelta.getFlags() & ~IModelDelta.REVEAL);
+    	            	}	    	            
+    	            }
+		        }
+            }
         }
         
         checkIfRestoreComplete();
