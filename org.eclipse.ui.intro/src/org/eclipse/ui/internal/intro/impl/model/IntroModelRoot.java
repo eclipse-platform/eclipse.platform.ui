@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.UAElementFactory;
-import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.intro.impl.FontSelection;
@@ -946,7 +946,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      		return FontSelection.getFontStyle();
     	}
      	if (variable.equals(VAR_DIRECTION)) {
-    		if (BaseHelpSystem.isRTL()) {
+    		if (ProductPreferences.isRTL()) {
     			return "rtl"; //$NON-NLS-1$
     		} else {
     			return "ltr"; //$NON-NLS-1$

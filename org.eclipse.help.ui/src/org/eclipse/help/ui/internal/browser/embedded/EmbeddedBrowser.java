@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -83,7 +84,7 @@ public class EmbeddedBrowser {
 	public EmbeddedBrowser() {
 		store = HelpUIPlugin.getDefault().getPluginPreferences();
 		int style = SWT.SHELL_TRIM;
-		if (BaseHelpSystem.isRTL())
+		if (ProductPreferences.isRTL())
 			style |= SWT.RIGHT_TO_LEFT;
 		else
 			style |= SWT.LEFT_TO_RIGHT;
@@ -192,7 +193,7 @@ public class EmbeddedBrowser {
 	public EmbeddedBrowser(WindowEvent event, Shell parent) {
 		if (parent == null){
 			int style = SWT.SHELL_TRIM;
-			if (BaseHelpSystem.isRTL())
+			if (ProductPreferences.isRTL())
 				style |= SWT.RIGHT_TO_LEFT;
 			else
 				style |= SWT.LEFT_TO_RIGHT;

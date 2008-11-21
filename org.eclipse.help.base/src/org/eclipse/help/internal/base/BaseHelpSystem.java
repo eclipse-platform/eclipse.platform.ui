@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.help.internal.base;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Locale;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
@@ -58,11 +56,9 @@ public final class BaseHelpSystem {
 	private IBrowser browser;
 	private IBrowser internalBrowser;
 	private HelpDisplay helpDisplay = null;
-	private boolean rtl = false;
 
 	private BaseHelpSystem() {
 		super();
-		rtl = initializeRTL();
 	}
 
 	public static BaseHelpSystem getInstance() {
@@ -306,48 +302,6 @@ public final class BaseHelpSystem {
 		}
 		String name = product.getName();
 		return name == null ? "" : name; //$NON-NLS-1$
-	}
-
-	private static boolean initializeRTL() {
-		// from property
-		String orientation = System.getProperty("eclipse.orientation"); //$NON-NLS-1$
-		if ("rtl".equals(orientation)) { //$NON-NLS-1$
-			return true;
-		} else if ("ltr".equals(orientation)) { //$NON-NLS-1$
-			return false;
-		}
-		// from command line
-		String[] args = Platform.getCommandLineArgs();
-		for (int i = 0; i < args.length; i++) {
-			if ("-dir".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
-				if ((i + 1) < args.length
-						&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
-					return true;
-				}
-				return false;
-			}
-		}
-
-		// Check if the user property is set. If not do not
-		// rely on the vm.
-		if (System.getProperty("osgi.nl.user") == null) //$NON-NLS-1$
-			return false;
-
-		// guess from default locale
-		String locale = Platform.getNL();
-		if (locale == null) {
-			locale = Locale.getDefault().toString();
-		}
-		if (locale.startsWith("ar") || locale.startsWith("fa") //$NON-NLS-1$//$NON-NLS-2$
-				|| locale.startsWith("he") || locale.startsWith("iw") //$NON-NLS-1$//$NON-NLS-2$
-				|| locale.startsWith("ur")) { //$NON-NLS-1$
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean isRTL() {
-		return getInstance().rtl;
 	}
 
 	public static void runLiveHelp(String pluginID, String className, String arg) {	

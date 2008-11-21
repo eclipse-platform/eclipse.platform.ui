@@ -19,7 +19,7 @@ import java.io.StringWriter;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.ui.internal.intro.impl.FontSelection;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -423,7 +423,7 @@ public class IntroHTMLGenerator {
 	 */
 	private HTMLElement generateIntroLink(IntroLink element, int indentLevel) {
 		String styleId = element.getStyleId();
-		boolean useTable = BaseHelpSystem.isRTL() && "content-link".equals(styleId); //$NON-NLS-1$
+		boolean useTable = ProductPreferences.isRTL() && "content-link".equals(styleId); //$NON-NLS-1$
 		HTMLElement anchor1 = generateAnchorElement(element, indentLevel);
 		HTMLElement anchor2 = null;
 		HTMLElement labelAnchor = anchor1;

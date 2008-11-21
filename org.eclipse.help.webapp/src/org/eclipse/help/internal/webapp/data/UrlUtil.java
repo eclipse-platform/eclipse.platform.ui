@@ -32,6 +32,7 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.TString;
+import org.eclipse.help.internal.util.ProductPreferences;
 
 public class UrlUtil {
 	// XML escaped characters mapping
@@ -644,7 +645,7 @@ public class UrlUtil {
 	public static boolean isRTL(HttpServletRequest request,
 			HttpServletResponse response) {
 		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
-			return BaseHelpSystem.isRTL();
+			return ProductPreferences.isRTL();
 		}
 		{
 			if (infocenterDirection == INFOCENTER_DIRECTION_RTL) {

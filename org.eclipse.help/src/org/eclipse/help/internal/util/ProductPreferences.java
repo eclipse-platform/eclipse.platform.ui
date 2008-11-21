@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -53,7 +54,9 @@ public class ProductPreferences {
 	private static Map preferencesToProductIdMap;
 	private static List primaryTocOrdering;
 	private static List[] secondaryTocOrderings;	
-	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
+	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$	
+	private static boolean rtl;
+	private static boolean directionInitialized = false;
 	
 	/*
 	 * Returns the recommended order to display the given toc entries in. Each
@@ -398,5 +401,51 @@ public class ProductPreferences {
 	
 	public static void resetPrimaryTocOrdering() {
 		primaryTocOrdering = null;
+	}
+	
+	public static boolean isRTL() {
+		if (!directionInitialized) {
+			directionInitialized = true;
+			rtl = initializeRTL();
+		}
+		return rtl;
+	}
+	
+	private static boolean initializeRTL() {
+		// from property
+		String orientation = System.getProperty("eclipse.orientation"); //$NON-NLS-1$
+		if ("rtl".equals(orientation)) { //$NON-NLS-1$
+			return true;
+		} else if ("ltr".equals(orientation)) { //$NON-NLS-1$
+			return false;
+		}
+		// from command line
+		String[] args = Platform.getCommandLineArgs();
+		for (int i = 0; i < args.length; i++) {
+			if ("-dir".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
+				if ((i + 1) < args.length
+						&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
+					return true;
+				}
+				return false;
+			}
+		}
+
+		// Check if the user property is set. If not do not
+		// rely on the vm.
+		if (System.getProperty("osgi.nl.user") == null) //$NON-NLS-1$
+			return false;
+
+		// guess from default locale
+		String locale = Platform.getNL();
+		if (locale == null) {
+			locale = Locale.getDefault().toString();
+		}
+		if (locale.startsWith("ar") || locale.startsWith("fa") //$NON-NLS-1$//$NON-NLS-2$
+				|| locale.startsWith("he") || locale.startsWith("iw") //$NON-NLS-1$//$NON-NLS-2$
+				|| locale.startsWith("ur")) { //$NON-NLS-1$
+			return true;
+		}
+		return false;
 	}
 }
