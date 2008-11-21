@@ -5041,7 +5041,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 	{
-		// Hack to get rid of unused warnig
+		// Hack to get rid of unused warning
 		if (false)
 			setActionActivation(true);
 	}
