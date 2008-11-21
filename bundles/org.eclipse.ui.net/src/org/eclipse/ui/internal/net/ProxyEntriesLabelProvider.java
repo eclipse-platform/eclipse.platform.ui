@@ -64,7 +64,14 @@ public class ProxyEntriesLabelProvider extends BaseLabelProvider implements
 		case 6:
 			return data.getUserId();
 		case 7:
-			return data.getPassword();
+			if (data.getPassword() == null) {
+				return null;
+			}
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < data.getPassword().length(); i++) {
+				sb.append('*');
+			}
+			return sb.toString();
 		default:
 			return null;
 		}
