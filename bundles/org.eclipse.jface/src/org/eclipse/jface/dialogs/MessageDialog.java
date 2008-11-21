@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,11 +96,14 @@ public class MessageDialog extends IconAndMessageDialog {
      * The labels of the buttons to appear in the button bar are supplied in
      * this constructor as an array. The <code>open</code> method will return
      * the index of the label in this array corresponding to the button that was
-     * pressed to close the dialog. If the dialog was dismissed without pressing
-     * a button (ESC, etc.) then -1 is returned. Note that the <code>open</code>
-     * method blocks.
+     * pressed to close the dialog.
      * </p>
-     * 
+     * <p>
+     * <strong>Note:</strong> If the dialog was dismissed without pressing
+     * a button (ESC key, close box, etc.) then {@link SWT#DEFAULT} is returned.
+     * Note that the <code>open</code> method blocks.
+     * </p>
+     *
      * @param parentShell
      *            the parent shell
      * @param dialogTitle
@@ -273,6 +276,23 @@ public class MessageDialog extends IconAndMessageDialog {
         // were pressed to close the dialog.
         super.handleShellCloseEvent();
         setReturnCode(SWT.DEFAULT);
+    }
+
+	/**
+	 * Opens this message dialog, creating it first if it has not yet been created.
+	 * <p>
+	 * This method waits until the dialog is closed by the end user, and then it
+	 * returns the dialog's return code. The dialog's return code is either the
+	 * index of the button the user pressed, or {@link SWT#DEFAULT} if the dialog
+	 * has been closed by other means.
+	 * </p>
+	 *
+	 * @return the return code
+	 *
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+    public int open() {
+    	return super.open();
     }
 
     /**

@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.MarkerViewHandler;
@@ -53,7 +56,7 @@ public class DeleteHandler extends MarkerViewHandler {
 				new String[] { IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL }, 0);
 
-		if (dialog.open() == Window.CANCEL) {
+		if (dialog.open() != 0) {
 			return view;
 		}
 
