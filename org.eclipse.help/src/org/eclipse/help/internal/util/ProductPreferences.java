@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 import org.osgi.framework.Bundle;
@@ -47,7 +45,6 @@ import org.osgi.framework.Bundle;
  */
 public class ProductPreferences {
 
-	private static final String TRUE = String.valueOf(true);
 	private static Properties[] productPreferences;
 	private static SequenceResolver orderResolver;
 	private static Map preferencesToPluginIdMap;
@@ -84,9 +81,8 @@ public class ProductPreferences {
 			if (product != null) {
 				pluginId = product.getDefiningBundle().getSymbolicName();
 			}
-			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-			String helpDataFile = prefs.getString(HelpPlugin.HELP_DATA_KEY);
-			String baseTOCS = prefs.getString(HelpPlugin.BASE_TOCS_KEY);
+			String helpDataFile = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.HELP_DATA_KEY, null, null);
+			String baseTOCS = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.BASE_TOCS_KEY, null, null);
 			primaryTocOrdering = getTocOrdering(pluginId, helpDataFile, baseTOCS);
 			// active product has no preference for toc order
 			if (primaryTocOrdering == null) {
@@ -153,12 +149,18 @@ public class ProductPreferences {
 	}
 	
 	/*
+	 * Uses the preference service to get the preference. This has changed slightly in Eclipse 3.5.
+	 * The old behavior was undocumented and I think incorrect - CG.
+	 * 
+	 * Previous behavior:
 	 * Returns the boolean preference for the given key by consulting every
 	 * product's preferences. If any of the products want the preference to
 	 * be true (or use the default and the default is true), returns true.
 	 * Otherwise returns false (if no products want it true).
 	 */
 	public static boolean getBoolean(Plugin plugin, String key) {
+		return Platform.getPreferencesService().getBoolean(plugin.getBundle().getSymbolicName(), key, false, null);
+		/*
 		Properties[] properties = getProductPreferences(true);
 		String defaultValue = plugin.getPluginPreferences().getDefaultString(key);
 		String currentValue = plugin.getPluginPreferences().getString(key);
@@ -176,6 +178,7 @@ public class ProductPreferences {
 			}
 		}
 		return false;
+		*/
 	}
 
 	/*
@@ -296,24 +299,6 @@ public class ProductPreferences {
 			productPreferences = (Properties[])collection.toArray(new Properties[collection.size()]);
 		}
 		return productPreferences;
-	}
-	
-	/*
-	 * Returns all the unique values for the given key in all the properties
-	 * provided. For example, if two of them have "true" and one has "false", it
-	 * will return "true" and "false".
-	 */
-	public static Set getUniqueValues(Plugin plugin, String key, Properties[] properties) {
-		Set set = new HashSet();
-		String defaultValue = plugin.getPluginPreferences().getDefaultString(key);
-		String currentValue = plugin.getPluginPreferences().getString(key);
-		String pluginId = plugin.getBundle().getSymbolicName();
-		for (int i=0;i<properties.length;++i) {
-			String value = (String)properties[i].get(pluginId + '/' + key);
-			set.add(value != null ? value : defaultValue);
-		}
-		set.add(currentValue != null ? currentValue : defaultValue);
-		return set;
 	}
 	
 	/*

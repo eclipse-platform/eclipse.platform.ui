@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.util.SequenceResolver;
 import org.eclipse.jface.action.Action;
@@ -75,15 +74,13 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			if (variableName.startsWith(VAR_INTRO_DESCRIPTION_PREFIX))
 				return ""; //$NON-NLS-1$
 			// nothing - try preferences
-			Preferences prefs = UniversalIntroPlugin.getDefault()
-					.getPluginPreferences();
 			// try to prefix with a product id first
 			String key = product.getId() + "_" + variableName; //$NON-NLS-1$
-			value = prefs.getString(key);
+			value = Platform.getPreferencesService().getString(UniversalIntroPlugin.PLUGIN_ID,  key, "", null); //$NON-NLS-1$
 			if (value.length() == 0) {
 				// try direct variable name
 				key = variableName;
-				value = prefs.getString(key);
+				value = Platform.getPreferencesService().getString(UniversalIntroPlugin.PLUGIN_ID,  key, "", null); //$NON-NLS-1$
 			}
 			if (value.length() > 0)
 				value = resolveVariable(product.getDefiningBundle(), value);

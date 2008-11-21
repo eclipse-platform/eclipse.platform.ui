@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.preferences;
 
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.base.remote.PreferenceFileHandler;
@@ -39,7 +41,6 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	private InfocenterDisplay remoteICPage;
-	Preferences prefs;
 
 	private Button checkbox;
 
@@ -47,9 +48,6 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	 * Creates the preference page
 	 */
 	public HelpContentPreferencePage() {
-
-		prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-
 		
 	}
 
@@ -119,18 +117,18 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		HelpContentBlock currentBlock;
 		RemoteIC[] currentRemoteICArray;
 		
-		prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
 		/*
 		 * (non-Javadoc)
 		 * 
 		 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 		 */
-		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, checkbox.getSelection());
+		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, checkbox.getSelection());
 	
 		currentBlock=remoteICPage.getHelpContentBlock();
 		currentRemoteICArray=currentBlock.getRemoteICList();
      	PreferenceFileHandler.commitRemoteICs(currentRemoteICArray);
-    	HelpBasePlugin.getDefault().savePluginPreferences();
 		
     	RemoteHelp.notifyPreferenceChange();
 		return super.performOk();
@@ -151,7 +149,8 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		checkbox.setText(Messages.HelpContentPreferencePage_remote);
 		checkbox.addListener(SWT.Selection, changeListener);
 
-		boolean isOn = prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON);
+		boolean isOn = Platform.getPreferencesService().getBoolean
+		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 		checkbox.setSelection(isOn);
 	
 	}

@@ -14,10 +14,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.osgi.service.environment.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.browser.IBrowserFactory;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.HelpBaseResources;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -75,9 +83,9 @@ public class BrowserManager {
 		// Find all available browsers
 		browsersDescriptors = createBrowserDescriptors();
 		// 1. set default browser from preferences
-		String defBrowserID = HelpBasePlugin.getDefault()
-				.getPluginPreferences()
-				.getDefaultString(DEFAULT_BROWSER_ID_KEY);
+		DefaultScope defaultScope = new DefaultScope();
+		IEclipsePreferences defaultPreferences = defaultScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		String defBrowserID = defaultPreferences.get(DEFAULT_BROWSER_ID_KEY, null);
 		if (defBrowserID != null && (!"".equals(defBrowserID))) { //$NON-NLS-1$
 			setDefaultBrowserID(defBrowserID);
 		}
@@ -166,8 +174,8 @@ public class BrowserManager {
 					});
 		}
 		// initialize current browser
-		String curBrowserID = HelpBasePlugin.getDefault()
-				.getPluginPreferences().getString(DEFAULT_BROWSER_ID_KEY);
+		String curBrowserID =  
+			Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, DEFAULT_BROWSER_ID_KEY, null, null);
 		if (curBrowserID != null && (!"".equals(curBrowserID))) { //$NON-NLS-1$
 			setCurrentBrowserID(curBrowserID);
 			// may fail if such browser does not exist
@@ -175,8 +183,8 @@ public class BrowserManager {
 		if (currentBrowserDesc == null) {
 			setCurrentBrowserID(getDefaultBrowserID());
 		}
-		setAlwaysUseExternal(HelpBasePlugin.getDefault().getPluginPreferences()
-				.getBoolean(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
+		setAlwaysUseExternal( 
+				Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER, false, null));
 	}
 
 	/**

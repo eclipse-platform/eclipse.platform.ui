@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
@@ -1213,8 +1213,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	private boolean openInternalBrowser(String url) {
-		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		String openMode = pref.getString(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE);
+		String openMode = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, 
+				 IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE, IHelpBaseConstants.P_IN_PLACE, null);
 		boolean openInEditor = IHelpBaseConstants.P_IN_EDITOR.equals(openMode);
 		boolean openInBrowser = IHelpBaseConstants.P_IN_BROWSER.equals(openMode);
 		Shell windowShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();

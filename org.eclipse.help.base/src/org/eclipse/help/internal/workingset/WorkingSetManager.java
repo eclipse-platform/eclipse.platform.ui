@@ -34,9 +34,12 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -392,14 +395,18 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	}
 
 	public String getCurrentWorkingSet() {
-		return HelpBasePlugin.getDefault().getPluginPreferences().getString(
-				BaseHelpSystem.WORKING_SET);
+		return Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID,
+				BaseHelpSystem.WORKING_SET, "", null); //$NON-NLS-1$
 	}
 
 	public void setCurrentWorkingSet(String workingSet) {
-		HelpBasePlugin.getDefault().getPluginPreferences().setValue(
-				BaseHelpSystem.WORKING_SET, workingSet);
-		HelpBasePlugin.getDefault().savePluginPreferences();
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		prefs.put(BaseHelpSystem.WORKING_SET, workingSet);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+		}
 	}
 
 	public void tocsChanged() {

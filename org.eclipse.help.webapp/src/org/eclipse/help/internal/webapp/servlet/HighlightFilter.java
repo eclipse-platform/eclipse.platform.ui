@@ -16,6 +16,7 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.webapp.data.*;
 
@@ -81,7 +82,8 @@ public class HighlightFilter implements IFilter {
 			buf.append(", \"").append(keyword).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		buf.append(scriptPart2);
-		buf.append(HelpBasePlugin.getDefault().getPluginPreferences().getBoolean(HIGHLIGHT_ON));
+		buf.append(Platform.getPreferencesService().getBoolean
+				(HelpBasePlugin.PLUGIN_ID, HIGHLIGHT_ON, false, null));
 		buf.append(scriptPart3);
 		// append "../" to get to the webapp
 		String path = FilterUtils.getRelativePathPrefix(req);

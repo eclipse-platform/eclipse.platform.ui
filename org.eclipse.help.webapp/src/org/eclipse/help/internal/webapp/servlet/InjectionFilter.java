@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.webapp.data.CssUtil;
@@ -68,22 +68,21 @@ public class InjectionFilter implements IFilter {
 		}
 
 		List cssIncludes = new ArrayList();
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 		if (isNav) {
-			addCssFiles(NAV_CSS, cssIncludes, prefs);
+			addCssFiles(NAV_CSS, cssIncludes);
 		} else {
-			addCssFiles(TOPIC_CSS, cssIncludes, prefs);
+			addCssFiles(TOPIC_CSS, cssIncludes);
 		}
 		
 		boolean enabled = isInfocenter || isNav || HelpBasePlugin.getActivitySupport().isRoleEnabled(
 				pathInfo);
 		if ("/ntopic".equals(req.getServletPath())) { //$NON-NLS-1$
 			addNarrow = true;
-			addCssFiles(NARROW_CSS, cssIncludes, prefs);
+			addCssFiles(NARROW_CSS, cssIncludes);
 		}
 		if (!enabled) {
 			addDisabled = true;
-			addCssFiles(DISABLED_CSS, cssIncludes, prefs);
+			addCssFiles(DISABLED_CSS, cssIncludes);
 		}
 		
 		needsLiveHelp = !enabled && HelpBasePlugin.getActivitySupport().getDocumentMessageUsesLiveHelp(addNarrow);
@@ -120,9 +119,8 @@ public class InjectionFilter implements IFilter {
 		}
 	}
 
-	private void addCssFiles(final String preference, List list,
-			Preferences prefs) {
-		String topicCssPath = prefs.getString(preference); 
+	private void addCssFiles(final String preference, List list) {
+		String topicCssPath = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, preference, "", null);  //$NON-NLS-1$
 		String[] cssFiles = CssUtil.getCssFilenames(topicCssPath);
 		for (int i = 0; i < cssFiles.length; i++) {
 			list.add(cssFiles[i]);

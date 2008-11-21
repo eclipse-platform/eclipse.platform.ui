@@ -11,33 +11,34 @@
 package org.eclipse.help.internal.webapp.data;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.util.ProductPreferences;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Preferences for availiable to webapp
  */
 public class WebappPreferences {
-	Preferences prefs;
 	/**
 	 * Constructor.
 	 */
 	public WebappPreferences() {
-		prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 	}
 	/**
 	 * @return String - URL of banner page or null
 	 */
 	public String getBanner() {
-		return prefs.getString("banner"); //$NON-NLS-1$
+		return getPreferenceString("banner"); //$NON-NLS-1$
 	}
 
 	public String getBannerHeight() {
-		return prefs.getString("banner_height"); //$NON-NLS-1$
+		return getPreferenceString("banner_height"); //$NON-NLS-1$
 	}
 
 	public String getHelpHome() {
-		return prefs.getString("help_home"); //$NON-NLS-1$
+		return getPreferenceString("help_home"); //$NON-NLS-1$
 	}
 
 	public boolean isIndexView() {
@@ -54,7 +55,7 @@ public class WebappPreferences {
 	}
 
 	public String getImagesDirectory() {
-		String imagesDirectory = prefs.getString("imagesDirectory"); //$NON-NLS-1$
+		String imagesDirectory = getPreferenceString("imagesDirectory"); //$NON-NLS-1$
 		if (imagesDirectory != null && imagesDirectory.startsWith("/")) //$NON-NLS-1$
 			imagesDirectory = UrlUtil.getHelpURL(imagesDirectory);
 		return imagesDirectory;
@@ -62,23 +63,23 @@ public class WebappPreferences {
 	}
 
 	public String getToolbarBackground() {
-		return prefs.getString("advanced.toolbarBackground"); //$NON-NLS-1$
+		return getPreferenceString("advanced.toolbarBackground"); //$NON-NLS-1$
 	}
 
 	public String getBasicToolbarBackground() {
-		return prefs.getString("basic.toolbarBackground"); //$NON-NLS-1$
+		return getPreferenceString("basic.toolbarBackground"); //$NON-NLS-1$
 	}
 
 	public String getToolbarFont() {
-		return prefs.getString("advanced.toolbarFont"); //$NON-NLS-1$
+		return getPreferenceString("advanced.toolbarFont"); //$NON-NLS-1$
 	}
 
 	public String getViewBackground() {
-		return prefs.getString("advanced.viewBackground"); //$NON-NLS-1$
+		return getPreferenceString("advanced.viewBackground"); //$NON-NLS-1$
 	}
 	
 	public String getViewBackgroundStyle() {
-		String viewBackground = prefs.getString("advanced.viewBackground"); //$NON-NLS-1$
+		String viewBackground = getPreferenceString("advanced.viewBackground"); //$NON-NLS-1$
 		if (viewBackground == null || viewBackground.length() == 0) {
 			return (""); //$NON-NLS-1$
 		}
@@ -86,21 +87,21 @@ public class WebappPreferences {
 	}
 
 	public String getBasicViewBackground() {
-		return prefs.getString("basic.viewBackground"); //$NON-NLS-1$
+		return getPreferenceString("basic.viewBackground"); //$NON-NLS-1$
 	}
 
 	public String getViewFont() {
-		return prefs.getString("advanced.viewFont"); //$NON-NLS-1$
+		return getPreferenceString("advanced.viewFont"); //$NON-NLS-1$
 	}
 
 	public boolean isWindowTitlePrefix() {
 		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "windowTitlePrefix"); //$NON-NLS-1$
 	}
 	public boolean isDontConfirmShowAll() {
-		return prefs.getBoolean("dontConfirmShowAll"); //$NON-NLS-1$
+		return getBooleanPreference("dontConfirmShowAll"); //$NON-NLS-1$
 	}
 	public void setDontConfirmShowAll(boolean dontconfirm) {
-		prefs.setValue("dontConfirmShowAll", dontconfirm); //$NON-NLS-1$
+		setBooleanPreference("dontConfirmShowAll", dontconfirm); //$NON-NLS-1$
 	}
 	public boolean isActiveHelp() {
 		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "activeHelp"); //$NON-NLS-1$
@@ -122,14 +123,33 @@ public class WebappPreferences {
 		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "indexExpandAll"); //$NON-NLS-1$
 	}
 	public boolean isHighlightDefault() {
-		return prefs.getBoolean("default_highlight"); //$NON-NLS-1$
+		return getBooleanPreference("default_highlight"); //$NON-NLS-1$
 	}
 	public void setHighlightDefault(boolean highlight) {
-		prefs.setValue("default_highlight", highlight); //$NON-NLS-1$
+		setBooleanPreference("default_highlight", highlight); //$NON-NLS-1$
 	}
 	
 	public boolean isRestrictTopicParameter() {
-		return prefs.getBoolean("restrictTopicParameter"); //$NON-NLS-1$
+		return getBooleanPreference("restrictTopicParameter"); //$NON-NLS-1$
+	}
+
+	private String getPreferenceString(String key) {
+		return Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, key, "", null); //$NON-NLS-1$
+	}
+
+	private boolean getBooleanPreference(String key) {
+		return Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, key, false, null);
+	}
+	
+	private void setBooleanPreference(String key, boolean value) {
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		prefs.putBoolean(key, value);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

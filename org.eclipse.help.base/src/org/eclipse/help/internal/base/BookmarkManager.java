@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.util.TString;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Code for bookmark management has been moved here so that it can be shared
@@ -27,8 +29,7 @@ import org.eclipse.help.internal.base.util.TString;
  * 
  * @since 3.1
  */
-public class BookmarkManager extends Observable implements
-		Preferences.IPropertyChangeListener {
+public class BookmarkManager extends Observable {
 	// all bookmarks removed
 	public static final int REMOVE_ALL = 1;
 
@@ -43,8 +44,6 @@ public class BookmarkManager extends Observable implements
 
 	// everything changed (by the webapp)
 	public static final int WORLD_CHANGED = 5;
-
-	private boolean ignoreNotification;
 	
 	private ArrayList bookmarks;
 
@@ -99,13 +98,9 @@ public class BookmarkManager extends Observable implements
 	}
 
 	public BookmarkManager() {
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		prefs.addPropertyChangeListener(this);
 	}
 
 	public void close() {
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		prefs.removePropertyChangeListener(this);
 	}
 
 	public void addBookmark(String bookmarkURL, String title) {
@@ -114,9 +109,7 @@ public class BookmarkManager extends Observable implements
 			if (title == null) {
 				return;
 			}
-			Preferences prefs = HelpBasePlugin.getDefault()
-					.getPluginPreferences();
-			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
+			String bookmarks = readBookmarks();
 
 			// separate the url and title by vertical bar
 
@@ -125,15 +118,12 @@ public class BookmarkManager extends Observable implements
 				return;
 			bookmarks = bookmarks
 					+ "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
-			ignoreNotification = true;
-			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
-			HelpBasePlugin.getDefault().savePluginPreferences();
+			saveBookmarks(bookmarks);
 			Bookmark bookmark = new Bookmark(title, bookmarkURL);
 			if (this.bookmarks!=null)
 				this.bookmarks.add(bookmark);
 			setChanged();
 			notifyObservers(new BookmarkEvent(ADD, bookmark));
-			ignoreNotification = false;
 		}
 	}
 
@@ -149,42 +139,32 @@ public class BookmarkManager extends Observable implements
 			if (title == null) {
 				return;
 			}
-			Preferences prefs = HelpBasePlugin.getDefault()
-					.getPluginPreferences();
-			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
+			String bookmarks = readBookmarks();
 			String removeString = "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
 			int i = bookmarks.indexOf(removeString);
 			if (i == -1)
 				return;
 			bookmarks = bookmarks.substring(0, i)
 					+ bookmarks.substring(i + removeString.length());
-			ignoreNotification = true;
-			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
-			HelpBasePlugin.getDefault().savePluginPreferences();
+			saveBookmarks(bookmarks);
 			if (this.bookmarks!=null)
 				this.bookmarks.remove(bookmark);
 			setChanged();
 			notifyObservers(new BookmarkEvent(REMOVE, bookmark));
-			ignoreNotification = false;
 		}
 	}
 
 	public void removeAllBookmarks() {
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		ignoreNotification = true;
-		prefs.setValue(BaseHelpSystem.BOOKMARKS, ""); //$NON-NLS-1$
-		HelpBasePlugin.getDefault().savePluginPreferences();
+		saveBookmarks(""); //$NON-NLS-1$
 		if (bookmarks!=null)
 			bookmarks.clear();
 		setChanged();
 		notifyObservers(new BookmarkEvent(REMOVE_ALL, null));
-		ignoreNotification = false;
 	}
 
 	public IHelpResource[] getBookmarks() {
 		if (bookmarks==null) {
-			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-			String value = prefs.getString(BaseHelpSystem.BOOKMARKS);
+			String value = readBookmarks();
 			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 			bookmarks = new ArrayList();
 			for (int i = 0; tokenizer.hasMoreTokens(); i++) {
@@ -217,17 +197,19 @@ public class BookmarkManager extends Observable implements
 		s = TString.change(s, "\\comma", ","); //$NON-NLS-1$ //$NON-NLS-2$
 		return TString.change(s, "\\escape", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
-	public void propertyChange(PropertyChangeEvent event) {
-		if (ignoreNotification)
-			return;
-		if (event.getProperty().equals(BaseHelpSystem.BOOKMARKS)) {
-			// notify observers about the changes in the preferences
-			// made elsewhere (by the webapp)
-			// Also clear the cache.
-			bookmarks=null;
-			setChanged();
-			notifyObservers(new BookmarkEvent(WORLD_CHANGED, null));
+	
+	private String readBookmarks() {
+		return Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, BaseHelpSystem.BOOKMARKS, "", null); //$NON-NLS-1$
+	}
+	
+	private void saveBookmarks(String bookmarks) {
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		prefs.put(BaseHelpSystem.BOOKMARKS, bookmarks);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
 		}
 	}
+
 }

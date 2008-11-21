@@ -12,7 +12,10 @@ package org.eclipse.help.ui.internal.preferences;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.browser.BrowserManager;
@@ -36,6 +39,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Preference page for selecting default web browser.
@@ -112,8 +116,8 @@ public class HelpPreferencePage extends PreferencePage implements
 		searchLocationCombo.add(Messages.HelpPreferencePage_view);
 		searchLocationCombo.add(Messages.HelpPreferencePage_openInBrowser);
 		searchLocationCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		boolean searchFromBrowser = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER);
+		boolean searchFromBrowser = Platform.getPreferencesService().getBoolean
+		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, false, null);
 		searchLocationCombo.setText(searchFromBrowser ? Messages.HelpPreferencePage_openInBrowser : Messages.HelpPreferencePage_view);
 	}
 
@@ -126,8 +130,8 @@ public class HelpPreferencePage extends PreferencePage implements
 			useExternalCombo.add(Messages.HelpPreferencePage_helpBrowser);
 			useExternalCombo.add(Messages.HelpPreferencePage_externalBrowser);
 			useExternalCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			boolean useExternal = HelpBasePlugin.getDefault().getPluginPreferences()
-					.getBoolean(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER);
+			boolean useExternal = Platform.getPreferencesService().getBoolean
+			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER, false, null);
 			useExternalCombo.setText(useExternal ? Messages.HelpPreferencePage_externalBrowser : Messages.HelpPreferencePage_helpBrowser);
 		}
 	}
@@ -157,8 +161,9 @@ public class HelpPreferencePage extends PreferencePage implements
 			openModeCombo.add(Messages.HelpPreferencePage_openInEditor);
 			openModeCombo.add(Messages.HelpPreferencePage_openInBrowser);
 			openModeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			String openMode = HelpBasePlugin.getDefault()
-			    .getPluginPreferences().getString(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE);
+			String openMode = Platform.getPreferencesService().getString
+			     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE,
+			      IHelpBaseConstants.P_IN_PLACE, null);
 			openModeCombo.setText(openModeToString(openMode));		
 		}
 	}
@@ -171,8 +176,8 @@ public class HelpPreferencePage extends PreferencePage implements
 		dialogHelpCombo.add(Messages.HelpPreferencePage_tray);
 		dialogHelpCombo.add(Messages.HelpPreferencePage_infopop);
 		dialogHelpCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
+		boolean dinfopop = Platform.getPreferencesService().getBoolean
+		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_DIALOG_INFOPOP, false, null);
 		dialogHelpCombo.setText(dinfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_tray);
 	}
 
@@ -185,8 +190,8 @@ public class HelpPreferencePage extends PreferencePage implements
 		windowHelpCombo.add(Messages.HelpPreferencePage_view);
 		windowHelpCombo.add(Messages.HelpPreferencePage_infopop);
 		windowHelpCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
+		boolean winfopop = Platform.getPreferencesService().getBoolean
+		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_WINDOW_INFOPOP, false, null);
 		windowHelpCombo.setText(winfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_view);
 	}
 	
@@ -223,29 +228,26 @@ public class HelpPreferencePage extends PreferencePage implements
 	 * </p>
 	 */
 	protected void performDefaults() {
+		DefaultScope defaultScope = new DefaultScope();
+		IEclipsePreferences defaults = defaultScope.getNode(HelpBasePlugin.PLUGIN_ID);
 		if (useExternalCombo != null) {
-			boolean useExternal = HelpBasePlugin.getDefault()
-					.getPluginPreferences().getDefaultBoolean(
-							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER);
+			boolean useExternal = defaults.getBoolean(
+							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER, false);
 			useExternalCombo.setText(useExternal ? Messages.HelpPreferencePage_externalBrowser : Messages.HelpPreferencePage_helpBrowser);		
 		}	
 		
-		boolean searchFromBrowser = HelpBasePlugin.getDefault()
-		    .getPluginPreferences().getDefaultBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER);
+		boolean searchFromBrowser = defaults.getBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, false);
 		searchLocationCombo.setText(searchFromBrowser ? Messages.HelpPreferencePage_openInBrowser : Messages.HelpPreferencePage_view);
 		
-		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getDefaultBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
+		boolean winfopop = defaults.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP, false);
 		windowHelpCombo.setText(winfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_view);
 
-		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getDefaultBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
+		boolean dinfopop = defaults.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP, false);
 		dialogHelpCombo.setText(dinfopop ? Messages.HelpPreferencePage_infopop : Messages.HelpPreferencePage_tray);
 	
 		if (openModeCombo !=null) {
-		   String openMode = HelpBasePlugin.getDefault()
-				.getPluginPreferences().getDefaultString(
-						IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE);
+		   String openMode = defaults.get(
+						IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE, IHelpBaseConstants.P_IN_PLACE);
 		   openModeCombo.setText(openModeToString(openMode));
 		}
 
@@ -256,27 +258,33 @@ public class HelpPreferencePage extends PreferencePage implements
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
-		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences pref = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
 		if (useExternalCombo != null) {
 			boolean isExternalBrowser = useExternalCombo.getText().equals(Messages.HelpPreferencePage_externalBrowser);		
-			pref.setValue(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER,
+			pref.putBoolean(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER,
 					isExternalBrowser);
 			BrowserManager.getInstance().setAlwaysUseExternal(
 					isExternalBrowser);
 		}
-		pref.setValue(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, 
+		pref.putBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, 
 				searchLocationCombo.getText().equals(Messages.HelpPreferencePage_openInBrowser));
 		
-		pref.setValue(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP,
+		pref.putBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP,
 				windowHelpCombo.getText().equals(Messages.HelpPreferencePage_infopop));
 
-		pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP,
+		pref.putBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP,
 				dialogHelpCombo.getText().equals(Messages.HelpPreferencePage_infopop));
 		if (openModeCombo!=null) {
-			pref.setValue(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE, openModeFromString(openModeCombo.getText()));
+			pref.put(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE, openModeFromString(openModeCombo.getText()));
+		}
+		
+		try {
+			pref.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
 		}
 
-		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 

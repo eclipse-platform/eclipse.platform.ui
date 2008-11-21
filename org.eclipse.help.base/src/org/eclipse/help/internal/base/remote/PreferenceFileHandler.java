@@ -12,9 +12,12 @@ package org.eclipse.help.internal.base.remote;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.osgi.service.prefs.BackingStoreException;
 
 
 
@@ -35,13 +38,17 @@ public class PreferenceFileHandler {
 		 */
 
 		// TODO: Decide if comma is a good delimiter, or if we should use a different delimiter.
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 
-		namePreference = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME);
-		hostPreference = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST);
-		pathPreference = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH);
-		portPreference = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
-		icEnabledPreference = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled);
+		namePreference = Platform.getPreferencesService().getString
+		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, "", null); //$NON-NLS-1$
+		hostPreference = Platform.getPreferencesService().getString
+		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, "", null); //$NON-NLS-1$
+		pathPreference = Platform.getPreferencesService().getString
+		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, "", null); //$NON-NLS-1$
+		portPreference = Platform.getPreferencesService().getString
+		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, "", null); //$NON-NLS-1$
+		icEnabledPreference =Platform.getPreferencesService().getString
+		    (HelpBasePlugin.PLUGIN_ID,IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, "", null); //$NON-NLS-1$
 
 		//Get host array first, and initialize values
 		if(hostPreference.length()==0)
@@ -152,16 +159,19 @@ public class PreferenceFileHandler {
 		}
 
 		// Save new strings to preferences
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 
-		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, name);
-		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, host);
-		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, path);
-		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, port);
-		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, enabledString);
-		
-		HelpBasePlugin.getDefault().savePluginPreferences();
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
 
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, name);
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, host);
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, path);
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, port);
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, enabledString);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+		}
 	}
 
 	/**

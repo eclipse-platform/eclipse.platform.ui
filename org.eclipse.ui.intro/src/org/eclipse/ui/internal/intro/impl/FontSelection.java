@@ -13,10 +13,12 @@ package org.eclipse.ui.internal.intro.impl;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class FontSelection {
 	
@@ -57,14 +59,8 @@ public class FontSelection {
 	}
 	
 	public static final int getScalePercentage() {
-		Preferences prefs = IntroPlugin.getDefault().getPluginPreferences();
-		String scale = prefs.getString(SCALE_FACTOR);
-		try {
-			return Integer.parseInt(scale);
-		} 
-		catch (NumberFormatException n) {
-			return 0;
-		}
+		int scale = Platform.getPreferencesService().getInt(IntroPlugin.PLUGIN_ID,  (SCALE_FACTOR), 0, null);
+		return scale;
 	}
 
 	private static String getFontSizeDeclaration(String element, int baseSize, int percentage, int scale) {
@@ -74,20 +70,26 @@ public class FontSelection {
 	}
 
 	public static void setScalePercentage(int i) {
-		Preferences prefs = IntroPlugin.getDefault().getPluginPreferences();	
-		prefs.setValue(SCALE_FACTOR, "" + i); //$NON-NLS-1$
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(IntroPlugin.PLUGIN_ID);
+		prefs.putInt(SCALE_FACTOR, i); 
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+		}	
 	}
 
 	public static String getFontStyle() {
 		IProduct product = Platform.getProduct();
 		if (product != null) {
 		    String pid = product.getId();
-		    Preferences prefs = IntroPlugin.getDefault().getPluginPreferences();
-	    	String style = prefs.getString(pid + "_" +FontSelection.VAR_FONT_STYLE); //$NON-NLS-1$
+	    	String style = Platform.getPreferencesService().getString
+	    	    (IntroPlugin.PLUGIN_ID,  pid + "_" +FontSelection.VAR_FONT_STYLE, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	    	if (style.length() > 0) {
 	    		return style;
 	    	}
-	    	style = prefs.getString(FontSelection.VAR_FONT_STYLE);
+	    	style = Platform.getPreferencesService().getString
+	    	    (IntroPlugin.PLUGIN_ID,  (FontSelection.VAR_FONT_STYLE), "", null); //$NON-NLS-1$ 
 	    	if (style.length() > 0) {
 	    		return style;
 	    	}

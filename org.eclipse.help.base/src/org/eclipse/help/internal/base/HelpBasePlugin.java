@@ -81,7 +81,6 @@ public class HelpBasePlugin extends Plugin {
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		plugin.savePluginPreferences();
 		BaseHelpSystem.shutdown();
 		this.context = null;
 		plugin = null;

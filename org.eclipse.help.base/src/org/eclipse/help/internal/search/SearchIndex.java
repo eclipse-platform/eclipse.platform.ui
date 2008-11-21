@@ -801,7 +801,7 @@ public class SearchIndex implements ISearchIndex {
 	 * Finds and unzips prebuild index specified in preferences
 	 */
 	private void unzipProductIndex() {
-		String indexPluginId = HelpBasePlugin.getDefault().getPluginPreferences().getString("productIndex"); //$NON-NLS-1$
+		String indexPluginId = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, "productIndex", null, null); //$NON-NLS-1$
 		if (indexPluginId == null || indexPluginId.length() <= 0) {
 			return;
 		}

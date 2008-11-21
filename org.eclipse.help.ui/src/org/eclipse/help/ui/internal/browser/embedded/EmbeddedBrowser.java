@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.Messages;
@@ -65,7 +65,6 @@ public class EmbeddedBrowser {
 	private static final String BROWSER_WIDTH = "browser.w"; //$NON-NLS-1$
 	private static final String BROWSER_HEIGTH = "browser.h"; //$NON-NLS-1$
 	private static final String BROWSER_MAXIMIZED = "browser.maximized"; //$NON-NLS-1$
-	private Preferences store;
 	private static String initialTitle = getWindowTitle();
 	private Shell shell;
 	private Browser browser;
@@ -82,7 +81,6 @@ public class EmbeddedBrowser {
 	 * Constructor for main help window intance
 	 */
 	public EmbeddedBrowser() {
-		store = HelpUIPlugin.getDefault().getPluginPreferences();
 		int style = SWT.SHELL_TRIM;
 		if (ProductPreferences.isRTL())
 			style |= SWT.RIGHT_TO_LEFT;
@@ -109,12 +107,13 @@ public class EmbeddedBrowser {
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				// save position
-				store.setValue(BROWSER_X, Integer.toString(x));
-				store.setValue(BROWSER_Y, Integer.toString(y));
-				store.setValue(BROWSER_WIDTH, Integer.toString(w));
-				store.setValue(BROWSER_HEIGTH, Integer.toString(h));
-				store.setValue(BROWSER_MAXIMIZED, (new Boolean(shell
-						.getMaximized()).toString()));
+				InstanceScope instanceScope = new InstanceScope();
+				IEclipsePreferences prefs = instanceScope.getNode(HelpUIPlugin.PLUGIN_ID);
+				prefs.putInt(BROWSER_X, x);
+				prefs.putInt(BROWSER_Y, y);
+				prefs.putInt(BROWSER_WIDTH, w);
+				prefs.putInt(BROWSER_HEIGTH, h);
+				prefs.putBoolean(BROWSER_MAXIMIZED, (shell.getMaximized()));
 				notifyCloseListners();
 			}
 		});
@@ -126,10 +125,10 @@ public class EmbeddedBrowser {
 		initializeStatusBar(browser);
 		
 		// use saved location and size
-		x = store.getInt(BROWSER_X);
-		y = store.getInt(BROWSER_Y);
-		w = store.getInt(BROWSER_WIDTH);
-		h = store.getInt(BROWSER_HEIGTH);
+		x = Platform.getPreferencesService().getInt(HelpUIPlugin.PLUGIN_ID, BROWSER_X, 0, null);
+		y = Platform.getPreferencesService().getInt(HelpUIPlugin.PLUGIN_ID, BROWSER_Y, 0, null);
+		w = Platform.getPreferencesService().getInt(HelpUIPlugin.PLUGIN_ID, BROWSER_WIDTH, 0, null);
+		h = Platform.getPreferencesService().getInt(HelpUIPlugin.PLUGIN_ID, BROWSER_HEIGTH, 0, null);
 		if (w == 0 || h == 0) {
 			// first launch, use default size
 			w = 1024;
@@ -138,7 +137,7 @@ public class EmbeddedBrowser {
 			y = shell.getLocation().y;
 		}
 		setSafeBounds(shell, x, y, w, h);
-		if (store.getBoolean(BROWSER_MAXIMIZED))
+		if (Platform.getPreferencesService().getBoolean(HelpUIPlugin.PLUGIN_ID, BROWSER_MAXIMIZED, false, null))
 			shell.setMaximized(true);
 		shell.addControlListener(new ControlListener() {
 			public void controlMoved(ControlEvent e) {
@@ -386,8 +385,7 @@ public class EmbeddedBrowser {
 		return shell.isDisposed();
 	}
 	private static String getWindowTitle() {
-		if ("true".equalsIgnoreCase(HelpBasePlugin.getDefault() //$NON-NLS-1$
-				.getPluginPreferences().getString("windowTitlePrefix"))) { //$NON-NLS-1$
+		if (Platform.getPreferencesService().getBoolean(HelpUIPlugin.PLUGIN_ID, "windowTitlePrefix", false, null)) { //$NON-NLS-1$
 			return NLS.bind(Messages.browserTitle, BaseHelpSystem
             .getProductName());
 		}

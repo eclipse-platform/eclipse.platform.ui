@@ -16,7 +16,7 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -56,9 +56,8 @@ public class BreadcrumbsFilter implements IFilter {
 		if (pathInfo == null || servletPath == null) {
 			return out;
 		}
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		String showBreadcrumbs = prefs.getString(IHelpBaseConstants.P_SHOW_BREADCRUMBS);
-		if ("false".equalsIgnoreCase(showBreadcrumbs)) { //$NON-NLS-1$
+		boolean showBreadcrumbs = Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_SHOW_BREADCRUMBS, false, null);
+		if (!showBreadcrumbs) { 
 			try {
 				return new FilterHTMLHeadOutputStream(out, HEAD_CONTENT.getBytes("ASCII")); //$NON-NLS-1$
 			}

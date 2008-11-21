@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@ package org.eclipse.help.internal.base;
 
 import java.util.Locale;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  */
@@ -26,19 +28,24 @@ public class HelpBasePreferenceInitializer extends
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+		DefaultScope defaultScope = new DefaultScope();
+		IEclipsePreferences prefs = defaultScope.getNode(HelpBasePlugin.PLUGIN_ID);
 
 		String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH); //$NON-NLS-1$
 
 		if (os.indexOf("windows") != -1) { //$NON-NLS-1$
 			prefs
-					.setDefault("custom_browser_path", //$NON-NLS-1$
+					.put("custom_browser_path", //$NON-NLS-1$
 							"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1"); //$NON-NLS-1$
 		} else if (os.indexOf("linux") != -1) { //$NON-NLS-1$
-			prefs.setDefault("custom_browser_path", //$NON-NLS-1$
+			prefs.put("custom_browser_path", //$NON-NLS-1$
 					"konqueror %1"); //$NON-NLS-1$
 		} else {
-			prefs.setDefault("custom_browser_path", "mozilla %1"); //$NON-NLS-1$ //$NON-NLS-2$
+			prefs.put("custom_browser_path", "mozilla %1"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
 		}
 	}
 

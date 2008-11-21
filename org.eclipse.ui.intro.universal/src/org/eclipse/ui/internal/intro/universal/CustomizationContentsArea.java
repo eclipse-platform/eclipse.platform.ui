@@ -22,7 +22,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -88,6 +90,7 @@ import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
 import org.eclipse.ui.intro.config.IntroURLFactory;
 import org.osgi.framework.Bundle;
+import org.osgi.service.prefs.BackingStoreException;
 
 
 public class CustomizationContentsArea {
@@ -592,11 +595,9 @@ public class CustomizationContentsArea {
 			return;
 		String pid = product.getId();
 		introRootPages.clear();
-		Preferences uprefs = UniversalIntroPlugin.getDefault().getPluginPreferences();
-		Preferences iprefs = IntroPlugin.getDefault().getPluginPreferences();
 		// 1. Root pages
 		// try product-qualified value first
-		String rootPages = getIntroPreference(INTRO_ROOT_PAGES, fromDefault, pid, uprefs);
+		String rootPages = getIntroPreference(INTRO_ROOT_PAGES, fromDefault, pid, UniversalIntroPlugin.PLUGIN_ID);
 		if (rootPages.length() > 0) {
 			StringTokenizer stok = new StringTokenizer(rootPages, ","); //$NON-NLS-1$
 			while (stok.hasMoreTokens()) {
@@ -610,11 +611,11 @@ public class CustomizationContentsArea {
 		String fontStyle = FontSelection.getFontStyle();
 		useRelativeFonts.setSelection(FontSelection.FONT_RELATIVE.equals(fontStyle));
 		// 3. Active theme
-		String value = getIntroPreference(INTRO_THEME, fromDefault, pid, iprefs);
+		String value = getIntroPreference(INTRO_THEME, fromDefault, pid, IntroPlugin.PLUGIN_ID);
 		if (value.length() > 0)
 			introThemeId = value;
 		// 4. Intro data
-		value = getIntroPreference(INTRO_DATA, fromDefault, pid, uprefs);
+		value = getIntroPreference(INTRO_DATA, fromDefault, pid, UniversalIntroPlugin.PLUGIN_ID);
 		if (value.length() == 0)
 			value = null;
 		if (value != null && value.startsWith("product:")) //$NON-NLS-1$
@@ -625,14 +626,30 @@ public class CustomizationContentsArea {
 	}
 
 	private String getIntroPreference(String key, boolean fromDefault,
-			String pid, Preferences prefs) {
+			String pid, String pluginId) {
+		IEclipsePreferences prefs;
 		String pidKey = pid + "_" + key; //$NON-NLS-1$
-		String rootPages = fromDefault ? prefs.getDefaultString(pidKey) : prefs.getString(pidKey);
-		if (rootPages.length() == 0) {
-			rootPages = fromDefault ? prefs.getDefaultString(key) : prefs
-					.getString(key);
+		String value;
+		if (!fromDefault) {
+		     InstanceScope instanceScope = new InstanceScope();	
+		     prefs = instanceScope.getNode(pluginId);
+		     value = getPreference(key, prefs, pidKey, null);
+		     if (value != null) {
+		    	 return value;
+		     }
 		}
-		return rootPages;
+		DefaultScope defaultScope = new DefaultScope();
+		prefs = defaultScope.getNode(pluginId);
+		return getPreference(key, prefs, pidKey, ""); //$NON-NLS-1$
+	}
+
+	private String getPreference(String key, IEclipsePreferences prefs,
+			String pidKey, String defaultValue) {
+		String value = prefs.get(pidKey, null);
+		if (value == null) {
+			value = prefs.get(key, defaultValue);
+		}
+		return value;
 	}
 
 	public void dispose() {
@@ -744,8 +761,9 @@ public class CustomizationContentsArea {
 	}
 
 	private void saveData() {
-		Preferences uprefs = UniversalIntroPlugin.getDefault().getPluginPreferences();
-		Preferences iprefs = IntroPlugin.getDefault().getPluginPreferences();
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences iprefs = instanceScope.getNode(IntroPlugin.PLUGIN_ID);
+		IEclipsePreferences uprefs = instanceScope.getNode(UniversalIntroPlugin.PLUGIN_ID);
 		boolean toAll = applyToAll.getSelection();
 		IProduct product = Platform.getProduct();
 		if (product == null)
@@ -763,19 +781,19 @@ public class CustomizationContentsArea {
 			sbuf.append((String) introRootPages.get(i));
 		}
 		String key = pid + "_" + INTRO_ROOT_PAGES; //$NON-NLS-1$
-		uprefs.setValue(key, sbuf.toString());
+		uprefs.put(key, sbuf.toString());
 		if (toAll) {
 			key = INTRO_ROOT_PAGES;
-			uprefs.setValue(key, sbuf.toString());
+			uprefs.put(key, sbuf.toString());
 		}
 		// Store font style
 		key = pid + "_" + FontSelection.VAR_FONT_STYLE; //$NON-NLS-1$
 		String fontStyle = useRelativeFonts.getSelection() ? FontSelection.FONT_RELATIVE :
 			FontSelection.FONT_ABSOLUTE;
-		iprefs.setValue(key, fontStyle);
+		iprefs.put(key, fontStyle);
 		if (toAll) {
 			key = FontSelection.VAR_FONT_STYLE;
-			iprefs.setValue(key, fontStyle);
+			iprefs.put(key, fontStyle);
 		}
 		// store page layouts
 		StringWriter writer = new StringWriter();
@@ -784,22 +802,26 @@ public class CustomizationContentsArea {
 		pwriter.close();
 		String value = writer.toString();
 		key = pid + "_" + INTRO_DATA; //$NON-NLS-1$
-		uprefs.setValue(key, value);
+		uprefs.put(key, value);
 		if (toAll) {
 			key = INTRO_DATA;
-			uprefs.setValue(key, value);
+			uprefs.put(key, value);
 		}
 		if (introTheme != null) {
 			key = pid + "_" + INTRO_THEME; //$NON-NLS-1$
 			value = introTheme.getId();
-			iprefs.setValue(key, value);
+			iprefs.put(key, value);
 		}
 		if (toAll) {
 			key = INTRO_THEME;
-			iprefs.setValue(key, value);
+			iprefs.put(key, value);
 		}
-		UniversalIntroPlugin.getDefault().savePluginPreferences();
-		IntroPlugin.getDefault().savePluginPreferences();
+		try {
+			uprefs.flush();
+			iprefs.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void addHomePage() {

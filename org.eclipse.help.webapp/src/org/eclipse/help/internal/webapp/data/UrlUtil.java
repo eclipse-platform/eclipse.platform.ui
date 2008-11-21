@@ -589,8 +589,9 @@ public class UrlUtil {
 		}
 		// if no locales from command line, get them from preferences
 		if (infocenterLocales == null) {
-			StringTokenizer tokenizer = new StringTokenizer(HelpBasePlugin
-					.getDefault().getPluginPreferences().getString("locales"), //$NON-NLS-1$
+			String preferredLocales = Platform.getPreferencesService().getString
+			    (HelpBasePlugin.PLUGIN_ID, ("locales"), "", null); //$NON-NLS-1$ //$NON-NLS-2$
+			StringTokenizer tokenizer = new StringTokenizer(preferredLocales, 
 					" ,\t"); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				if (infocenterLocales == null) {

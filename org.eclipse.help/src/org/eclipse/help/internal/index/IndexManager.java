@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexContribution;
@@ -193,8 +192,7 @@ public class IndexManager {
 		}
 		else {
 			HashSet ignored = new HashSet();
-			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
-			String preferredIndexes = pref.getString(HelpPlugin.IGNORED_INDEXES_KEY);
+			String preferredIndexes = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, null, null);
 			if (preferredIndexes.length() > 0) {
 				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredIndexes, " ;,"); //$NON-NLS-1$
 				while (suggestdOrderedInfosets.hasMoreTokens()) {

@@ -160,7 +160,6 @@ public final class BaseHelpSystem {
 					System.out.println(msg);
 				}
 			});
-			HelpBasePlugin.getDefault().getPluginPreferences();
 		}
 		catch (Exception e) {
 			HelpBasePlugin.getDefault().getLog().log(

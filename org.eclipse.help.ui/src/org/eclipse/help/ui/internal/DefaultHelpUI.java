@@ -12,7 +12,6 @@ package org.eclipse.help.ui.internal;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.browser.IBrowser;
@@ -182,8 +181,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				boolean searchFromBrowser = HelpBasePlugin.getDefault().getPluginPreferences()
-				    .getBoolean(IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER);
+				boolean searchFromBrowser = Platform.getPreferencesService().getBoolean
+				    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SEARCH_FROM_BROWSER, false, null);
 				if (searchFromBrowser) {
 					String parameters = "tab=search"; //$NON-NLS-1$
 					if (expression != null) {
@@ -290,9 +289,10 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	void displayContext(IContext context, int x, int y, boolean noInfopop) {
 		if (context == null)
 			return;
-		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		boolean winfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
-		boolean dinfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP)  || FontUtils.isFontTooLargeForTray();
+		boolean winfopop = Platform.getPreferencesService().getBoolean
+		        (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_WINDOW_INFOPOP, false, null);
+		boolean dinfopop = Platform.getPreferencesService().getBoolean
+		        (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_DIALOG_INFOPOP, false, null)  || FontUtils.isFontTooLargeForTray();
 
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
@@ -311,7 +311,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 					String contextText = context.getText();
 					IHelpResource[] topics = context.getRelatedTopics();
 					boolean isSingleChoiceWithoutDescription = contextText == null && topics.length == 1;
-					String openMode = pref.getString(IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE);
+					String openMode = Platform.getPreferencesService().getString
+					    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_HELP_VIEW_OPEN_MODE, IHelpBaseConstants.P_IN_PLACE, null);
 					if (isSingleChoiceWithoutDescription && IHelpBaseConstants.P_IN_EDITOR.equals(openMode)) {
 						showInWorkbenchBrowser(topics[0].getHref(), true);
 					} else if (isSingleChoiceWithoutDescription && IHelpBaseConstants.P_IN_BROWSER.equals(openMode)) {

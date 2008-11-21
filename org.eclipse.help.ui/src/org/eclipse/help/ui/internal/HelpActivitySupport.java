@@ -17,7 +17,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpActivitySupport;
@@ -26,6 +27,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Wrapper for eclipse ui activity support
@@ -37,7 +39,6 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	private static final String SHOW_DISABLED_ACTIVITIES_ON = "on"; //$NON-NLS-1$
 //	private static final String SHOW_DISABLED_ACTIVITIES_ALWAYS = "always"; //$NON-NLS-1$
 
-	private Preferences pref;
 	private IWorkbenchActivitySupport activitySupport;
 	private boolean userCanToggleFiltering;
 	private boolean filteringEnabled;
@@ -125,10 +126,9 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	public HelpActivitySupport(IWorkbench workbench) {
 		activitySupport = workbench.getActivitySupport();
 		activityDescriptor = new ActivityDescriptor();
-		pref = HelpBasePlugin.getDefault().getPluginPreferences();
 
-		String showDisabledActivities = pref
-				.getString(PREF_KEY_SHOW_DISABLED_ACTIVITIES);
+		String showDisabledActivities = 
+			Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, PREF_KEY_SHOW_DISABLED_ACTIVITIES, "", null); //$NON-NLS-1$
 		userCanToggleFiltering = SHOW_DISABLED_ACTIVITIES_OFF
 				.equalsIgnoreCase(showDisabledActivities)
 				|| SHOW_DISABLED_ACTIVITIES_ON
@@ -148,12 +148,18 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	public void setFilteringEnabled(boolean enabled) {
 		if (userCanToggleFiltering) {
 			filteringEnabled = enabled;
+			InstanceScope instanceScope = new InstanceScope();
+			IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
 			if (enabled) {
-				pref.setValue(PREF_KEY_SHOW_DISABLED_ACTIVITIES,
+				prefs.put(PREF_KEY_SHOW_DISABLED_ACTIVITIES,
 						SHOW_DISABLED_ACTIVITIES_OFF);
 			} else {
-				pref.setValue(PREF_KEY_SHOW_DISABLED_ACTIVITIES,
+				prefs.put(PREF_KEY_SHOW_DISABLED_ACTIVITIES,
 						SHOW_DISABLED_ACTIVITIES_ON);
+			}
+			try {
+				prefs.flush();
+			} catch (BackingStoreException e) {
 			}
 		}
 	}

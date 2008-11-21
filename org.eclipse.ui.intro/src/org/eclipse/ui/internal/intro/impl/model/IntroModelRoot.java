@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.UAElementFactory;
@@ -271,16 +270,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
     
     private void determineHomePage() {
-    	Preferences pref = IntroPlugin.getDefault().getPluginPreferences();
     	String pid = Platform.getProduct().getId();
-    	startPageId = pref.getString(pid + "_INTRO_START_PAGE"); //$NON-NLS-1$
-    	if (startPageId.length() == 0) {
-    		startPageId = pref.getString("INTRO_START_PAGE"); //$NON-NLS-1$
-    	}
-    	String homePagePreference = pref.getString(pid + "_INTRO_HOME_PAGE"); //$NON-NLS-1$
-    	if (homePagePreference.length() == 0) {
-    		homePagePreference = pref.getString("INTRO_HOME_PAGE"); //$NON-NLS-1$
-    	} 
+    	startPageId = getProcessPreference("INTRO_START_PAGE", pid); //$NON-NLS-1$
+    	String homePagePreference = getProcessPreference("INTRO_HOME_PAGE", pid); //$NON-NLS-1$
     	homePage = rootPage;  // Default, may be overridden
     	if (homePagePreference.length() != 0) {
     		AbstractIntroPage page = (AbstractIntroPage) findChild(homePagePreference,
@@ -292,10 +284,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     		    }
     		}
     	}
-    	String standbyPagePreference = pref.getString(pid + "_INTRO_STANDBY_PAGE"); //$NON-NLS-1$
-    	if (standbyPagePreference.length() == 0) {
-    		standbyPagePreference = pref.getString("INTRO_STANDBY_PAGE"); //$NON-NLS-1$
-    	}
+    	String standbyPagePreference = getProcessPreference("INTRO_STANDBY_PAGE", pid); //$NON-NLS-1$
         modelStandbyPageId = getPresentation().getStandbyPageId();
 
         if (standbyPagePreference.length() != 0) {
@@ -312,11 +301,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
     
     private void loadTheme() {
-    	Preferences pref = IntroPlugin.getDefault().getPluginPreferences();
     	String pid = Platform.getProduct().getId();
-    	String themeId = pref.getString(pid+"_INTRO_THEME"); //$NON-NLS-1$
-    	if (themeId.length()==0)
-    		themeId = pref.getString("INTRO_THEME"); //$NON-NLS-1$
+    	String themeId = getProcessPreference("INTRO_THEME", pid); //$NON-NLS-1$
     	
     	IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
     	IConfigurationElement themeElement=null;
@@ -970,5 +956,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
 	public String getStartPageId() {
 		return startPageId;
+	}
+	
+	private String getProcessPreference(String key, String pid) {
+		String result = Platform.getPreferencesService().getString
+		      (IntroPlugin.PLUGIN_ID,  pid + '_' + key, "", null); //$NON-NLS-1$ 
+    	if (result.length() == 0) {
+    		result = Platform.getPreferencesService().getString
+		        (IntroPlugin.PLUGIN_ID,  key, "", null); //$NON-NLS-1$ 
+    	}
+    	return result;
 	}
 }

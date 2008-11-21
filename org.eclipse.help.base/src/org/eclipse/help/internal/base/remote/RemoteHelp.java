@@ -14,7 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -90,8 +90,7 @@ public class RemoteHelp {
 	 */
 	public static boolean isEnabled() {
 		if (isAllowed()) {
-			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-			return prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON);
+			return Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 		}
 		return false;
 	}

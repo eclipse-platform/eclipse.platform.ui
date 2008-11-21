@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
@@ -307,8 +306,7 @@ public class TocManager {
 		}
 		else {
 			HashSet ignored = new HashSet();
-			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
-			String preferredTocs = pref.getString(HelpPlugin.IGNORED_TOCS_KEY);
+			String preferredTocs = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_TOCS_KEY, null, null);
 			if (preferredTocs.length() > 0) {
 				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredTocs, " ;,"); //$NON-NLS-1$
 				while (suggestdOrderedInfosets.hasMoreTokens()) {

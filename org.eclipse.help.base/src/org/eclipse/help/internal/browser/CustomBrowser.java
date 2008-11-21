@@ -42,9 +42,8 @@ public class CustomBrowser implements IBrowser {
 	 * @see org.eclipse.help.browser.IBrowser#displayURL(java.lang.String)
 	 */
 	public void displayURL(String url) throws Exception {
-		String path = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getString(CustomBrowser.CUSTOM_BROWSER_PATH_KEY);
-
+		String path =  Platform.getPreferencesService().getString
+		   (HelpBasePlugin.PLUGIN_ID, CustomBrowser.CUSTOM_BROWSER_PATH_KEY, "", null); //$NON-NLS-1$
 		String[] command = prepareCommand(path, url);
 
 		try {

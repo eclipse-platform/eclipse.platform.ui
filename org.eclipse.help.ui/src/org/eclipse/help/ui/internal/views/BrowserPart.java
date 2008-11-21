@@ -15,7 +15,9 @@ import java.net.URL;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.LinkUtil;
@@ -190,7 +192,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	private void contributeToToolBar(IToolBarManager tbm) {
-		boolean highlight = HelpBasePlugin.getDefault().getPluginPreferences().getBoolean(HIGHLIGHT_ON);
+		boolean highlight = Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, HIGHLIGHT_ON, true, null);
 		showExternalAction = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(browser.getDisplay(), new Runnable() {
@@ -229,7 +231,9 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		highlightAction = new Action() {
 			public void run() {
-				HelpBasePlugin.getDefault().getPluginPreferences().setValue(HIGHLIGHT_ON, highlightAction.isChecked());
+				InstanceScope instanceScope = new InstanceScope();
+				IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+				prefs.putBoolean(HIGHLIGHT_ON, highlightAction.isChecked());
 				if (browser.getUrl().indexOf("resultof")!=-1) browser.execute("setHighlight(" +highlightAction.isChecked()+");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		};
@@ -360,8 +364,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	private void processLiveAction(String url) {
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		if (!"true".equalsIgnoreCase(prefs.getString("activeHelp"))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (!Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, "activeHelp", false, null)) { //$NON-NLS-1$
 			return;
 		}
 

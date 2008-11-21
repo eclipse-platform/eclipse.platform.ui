@@ -11,6 +11,7 @@
 
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
@@ -203,8 +204,8 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	    	// Preference created in case anyone complains about the removal of
 	    	// the dynamic help section. This is not API, not documented and may
 	    	// be removed in a future release.
-	    	useDynamicHelp = HelpBasePlugin.getDefault().getPluginPreferences()
-			   .getDefaultBoolean("show_dynamic_help"); //$NON-NLS-1$
+	    	useDynamicHelp = 
+	    		Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, "show_dynamic_help", false, null); //$NON-NLS-1$
 	    }
 		return useDynamicHelp;
 	}

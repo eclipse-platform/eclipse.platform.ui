@@ -18,12 +18,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.osgi.framework.Bundle;
 import org.xml.sax.Attributes;
@@ -66,7 +67,7 @@ public class HelpData {
 			if (product != null) {
 				pluginId = product.getDefiningBundle().getSymbolicName();
 			}
-			String helpDataFile = HelpPlugin.getDefault().getPluginPreferences().getString(HelpPlugin.HELP_DATA_KEY);
+			String helpDataFile = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.HELP_DATA_KEY, null, null);
 			if (helpDataFile.length() > 0) {
 			    if (helpDataFile.startsWith(PLUGINS_ROOT_SLASH)) {
 				    int nextSlash = helpDataFile.indexOf('/', PLUGINS_ROOT_SLASH.length());
@@ -174,10 +175,10 @@ public class HelpData {
 			}
 		} else {
 			// Derive information from preferences
-			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-			String baseTocs = prefs.getString(HelpPlugin.BASE_TOCS_KEY);
-			String ignoredTocs = prefs.getString(HelpPlugin.IGNORED_TOCS_KEY);
-			String ignoredIndexes = prefs.getString(HelpPlugin.IGNORED_INDEXES_KEY);
+			IPreferencesService preferencesService = Platform.getPreferencesService();
+			String baseTocs = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.BASE_TOCS_KEY, null, null);
+			String ignoredTocs = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_TOCS_KEY, null, null);
+			String ignoredIndexes = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, null, null);
 			tocOrder = ProductPreferences.tokenize(baseTocs);
 			hiddenTocs.addAll(ProductPreferences.tokenize(ignoredTocs));
 			hiddenIndexes.addAll(ProductPreferences.tokenize(ignoredIndexes));
