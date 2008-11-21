@@ -41,6 +41,7 @@ public class AllTests extends TestCase {
 		suite.addTest(ProgressMonitorWrapperTest.suite());
 		suite.addTest(QualifiedNameTest.suite());
 		suite.addTest(StatusTest.suite());
+		suite.addTest(URIUtilTest.suite());
 		suite.addTest(URLTest.suite());
 		return suite;
 	}

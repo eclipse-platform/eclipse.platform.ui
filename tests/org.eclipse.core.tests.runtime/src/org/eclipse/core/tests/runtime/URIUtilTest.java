@@ -12,6 +12,8 @@ package org.eclipse.core.tests.runtime;
 
 import java.io.File;
 import java.net.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.runtime.URIUtil;
 
 /**
@@ -22,6 +24,10 @@ public class URIUtilTest extends RuntimeTest {
 	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
 
 	private static final String[] testPaths = new String[] {"abc", "with spaces", "with%percent"};
+
+	public static Test suite() {
+		return new TestSuite(URIUtilTest.class);
+	}
 
 	/**
 	 * Tests for {@link URLUtil#toFile(URL)}.
@@ -221,7 +227,12 @@ public class URIUtilTest extends RuntimeTest {
 				new URI[] {new URI("file:/a/b"), new URI("http:/foo.com/a/x"), new URI("file:/a/b")}, //
 				//
 				new URI[] {new URI("../plugins/foo.jar"), new URI("file:/eclipse/configuration"), new URI("file:/eclipse/plugins/foo.jar")}, //
-				new URI[] {new URI("file:../plugins/foo.jar"), new URI("file:/eclipse/configuration"), new URI("file:/eclipse/plugins/foo.jar")}, //
+				//cases that can't be made absolute
+				//different scheme
+				new URI[] {new URI("file:../plugins/foo.jar"), new URI("http:/eclipse/configuration"), new URI("file:../plugins/foo.jar")}, //
+				//already absolute
+				new URI[] {new URI("file:../plugins/foo.jar"), new URI("file:/eclipse/configuration"), new URI("file:../plugins/foo.jar")}, //
+				new URI[] {new URI("file:/foo.jar"), new URI("file:/eclipse/configuration"), new URI("file:/foo.jar")}, //
 		};
 
 		for (int i = 0; i < data.length; i++) {
@@ -251,10 +262,12 @@ public class URIUtilTest extends RuntimeTest {
 				new URI[] {new URI("b"), new URI("file:/C:/a/"), new URI("file:/C:/a/b")}, //
 				new URI[] {new URI("b"), new URI("file:/C:/a"), new URI("file:/C:/a/b")}, //
 				new URI[] {new URI("file:/c:/"), new URI("file:/d:/"), new URI("file:/c:/")}, //
+				new URI[] {new URI("/c:/a/b/c"), new URI("file:/d:/a/b/"), new URI("file:/c:/a/b/c")}, //
 				new URI[] {new URI(""), new URI("file:/c:/"), new URI("file:/c:/")}, //
 				//
 				new URI[] {new URI("../plugins/foo.jar"), new URI("file:/c:/eclipse/configuration"), new URI("file:/c:/eclipse/plugins/foo.jar")}, //
-				new URI[] {new URI("file:../plugins/foo.jar"), new URI("file:/c:/eclipse/configuration"), new URI("file:/c:/eclipse/plugins/foo.jar")}, //
+				//already absolute
+				new URI[] {new URI("file:../plugins/foo.jar"), new URI("file:/c:/eclipse/configuration"), new URI("file:../plugins/foo.jar")}, //
 		};
 		for (int i = 0; i < data.length; i++) {
 			URI location = data[i][0];
