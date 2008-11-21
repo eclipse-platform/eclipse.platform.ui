@@ -15,10 +15,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Preferences for the Web browser.
@@ -87,9 +90,15 @@ public class WebBrowserPreference {
 				sb.append("|*|"); //$NON-NLS-1$
 			}
 		}
-		getPreferenceStore().setValue(PREF_INTERNAL_WEB_BROWSER_HISTORY,
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
+		prefs.put(PREF_INTERNAL_WEB_BROWSER_HISTORY,
 				sb.toString());
-		WebBrowserUIPlugin.getInstance().savePluginPreferences();
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -131,8 +140,14 @@ public class WebBrowserPreference {
 	 *            </code>INTERNAL</code>, <code>SYSTEM</code> and <code>EXTERNAL</code>
 	 */
 	public static void setBrowserChoice(int choice) {
-		getPreferenceStore().setValue(PREF_BROWSER_CHOICE, choice);
-		WebBrowserUIPlugin.getInstance().savePluginPreferences();
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
+		prefs.putInt(PREF_BROWSER_CHOICE, choice);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 		updateDefaultEditor(choice);
 	}
 

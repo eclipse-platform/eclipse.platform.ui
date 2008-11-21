@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 /**
@@ -29,7 +33,7 @@ public class BrowserManager extends Observable {
 	protected List browsers;
 	protected IBrowserDescriptor currentBrowser;
 	
-	private Preferences.IPropertyChangeListener pcl;
+	private IPreferenceChangeListener pcl;
 	protected boolean ignorePreferenceChanges = false;
 
 	protected static BrowserManager instance;
@@ -41,9 +45,10 @@ public class BrowserManager extends Observable {
 	}
 
 	private BrowserManager() {
-		pcl = new Preferences.IPropertyChangeListener() {
-			public void propertyChange(Preferences.PropertyChangeEvent event) {
-				String property = event.getProperty();
+		pcl = new IEclipsePreferences.IPreferenceChangeListener() {
+
+			public void preferenceChange(PreferenceChangeEvent event) {
+				String property = event.getKey();
 				if (!ignorePreferenceChanges && property.equals("browsers")) { //$NON-NLS-1$
 					loadBrowsers();
 				}
@@ -54,7 +59,10 @@ public class BrowserManager extends Observable {
 			}
 		};
 		
-		WebBrowserUIPlugin.getInstance().getPluginPreferences().addPropertyChangeListener(pcl);
+
+	    InstanceScope instanceScope = new InstanceScope();
+	    IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
+	    prefs.addPreferenceChangeListener(pcl);
 	}
 
 	protected static void safeDispose() {
@@ -64,9 +72,9 @@ public class BrowserManager extends Observable {
 	}
 
 	protected void dispose() {
-		Preferences prefs = WebBrowserUIPlugin.getInstance().getPluginPreferences();
-		if (prefs != null)
-			prefs.removePropertyChangeListener(pcl);
+	    InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
+		prefs.removePreferenceChangeListener(pcl);
 	}
 
 	public IBrowserDescriptorWorkingCopy createExternalWebBrowser() {
@@ -82,8 +90,8 @@ public class BrowserManager extends Observable {
 	protected void loadBrowsers() {
 		Trace.trace(Trace.FINEST, "Loading web browsers"); //$NON-NLS-1$
 		
-		Preferences prefs = WebBrowserUIPlugin.getInstance().getPluginPreferences();
-		String xmlString = prefs.getString("browsers"); //$NON-NLS-1$
+		String xmlString = Platform.getPreferencesService().getString
+		    (WebBrowserUIPlugin.PLUGIN_ID,  "browsers", null, null); //$NON-NLS-1$
 		if (xmlString != null && xmlString.length() > 0) {
 			browsers = new ArrayList();
 			
@@ -151,9 +159,10 @@ public class BrowserManager extends Observable {
 			StringWriter writer = new StringWriter();
 			memento.save(writer);
 			String xmlString = writer.getBuffer().toString();
-			Preferences prefs = WebBrowserUIPlugin.getInstance().getPluginPreferences();
-			prefs.setValue("browsers", xmlString); //$NON-NLS-1$
-			WebBrowserUIPlugin.getInstance().savePluginPreferences();
+			InstanceScope instanceScope = new InstanceScope();
+		    IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
+			prefs.put("browsers", xmlString); //$NON-NLS-1$
+			prefs.flush();
 		} catch (Exception e) {
 			Trace.trace(Trace.SEVERE, "Could not save browsers", e); //$NON-NLS-1$
 		}
