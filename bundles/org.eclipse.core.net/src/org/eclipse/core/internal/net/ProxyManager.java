@@ -549,4 +549,13 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		// (see preferenceChange)
 		Activator.getInstance().getPreferences().putBoolean(PREF_OS, enabled);
 	}
+
+	public IProxyData[] select(URI uri) {
+		IProxyData data = getProxyDataForHost(uri.getHost(), uri.getScheme());
+		if (data != null) {
+			return new IProxyData[] { data };
+		}
+		return new IProxyData[0];
+	}
+
 }

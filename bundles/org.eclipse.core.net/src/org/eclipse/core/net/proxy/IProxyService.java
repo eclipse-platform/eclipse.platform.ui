@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.net.proxy;
 
+import java.net.URI;
+
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -23,12 +25,8 @@ import org.eclipse.core.runtime.CoreException;
  * {@link #getProxyDataForHost(String, String)}.
  * </p>
  * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
  * @since 1.0
- * @noimplement
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProxyService {
 	
@@ -105,7 +103,22 @@ public interface IProxyService {
 	 * @return the list of know proxy types and their settings
 	 */
 	IProxyData[] getProxyData();
-	
+
+	/**
+	 * Returns all the applicable proxy data to access the specified URI.
+	 * <p>
+	 * Clients that wish to make a connection and need to determine whether to
+	 * use a proxy should use this method.
+	 * </p>
+	 * @param uri
+	 *            the URI for which proxies are returned
+	 * @return list of all applicable proxy data, if no proxy is applicable then
+	 *         an empty array is returned
+	 * 
+	 * @since 1.2
+	 */
+	IProxyData[] select(URI uri);
+
 	/**
 	 * Returns the list of known proxy types and their settings for the
 	 * given host. If proxies are disabled
@@ -117,6 +130,8 @@ public interface IProxyService {
 	 * Clients that wish to make a connection and need to determine whether to
 	 * use a proxy should use this method.
 	 * </p>
+	 * @deprecated This method is deprecated because of its ambiguity. Use
+	 * {@link #select(URI)} instead.
 	 * 
 	 * @param host the host for which a connection is desired
 	 * @return the list of known proxy types and their settings for the
@@ -159,6 +174,8 @@ public interface IProxyService {
 	 * Clients that wish to make a connection and need to determine whether to
 	 * use a proxy should use this method.
 	 * </p>
+	 *  @deprecated This method is deprecated because of its ambiguity. Use
+	 * {@link #select(URI)} instead.
 	 * 
 	 * @param host
 	 *            the host for which a connection is desired

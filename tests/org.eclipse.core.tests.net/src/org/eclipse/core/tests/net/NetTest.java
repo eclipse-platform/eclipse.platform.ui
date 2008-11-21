@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.net;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 import junit.framework.*;
@@ -341,6 +343,26 @@ public class NetTest extends TestCase {
 		assertNull(data);
 
 		this.getProxyManager().setNonProxiedHosts(oldHosts);
+	}
+
+	public void testBug247408() throws CoreException, URISyntaxException {
+		setDataTest(IProxyData.HTTP_PROXY_TYPE);
+		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
+		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
+
+		IProxyData data1 = this.getProxyManager().getProxyDataForHost(
+				"randomhost.com", IProxyData.HTTP_PROXY_TYPE);
+		IProxyData[] data2 = this.getProxyManager().select(
+				new URI("http://randomhost.com"));
+		assertEquals(data2.length, 1);
+		assertEquals(data1, data2[0]);
+
+		IProxyData data3 = this.getProxyManager().getProxyDataForHost(
+				"randomhost.com", null);
+		IProxyData[] data4 = this.getProxyManager().select(
+				new URI(null, "randomhost.com", null, null));
+		assertNull(data3);
+		assertEquals(data4.length, 0);
 	}
 
 }
