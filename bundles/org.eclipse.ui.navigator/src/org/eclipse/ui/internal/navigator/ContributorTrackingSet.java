@@ -63,7 +63,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	 * @see java.util.HashSet#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) { 
-		contentService.rememberContribution(null, o);
+		contentService.forgetContribution(o);
 		return super.remove(o);
 	}
 

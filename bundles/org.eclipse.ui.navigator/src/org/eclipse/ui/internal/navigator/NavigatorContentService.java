@@ -643,11 +643,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public synchronized void rememberContribution(
 			NavigatorContentDescriptor source, Object[] elements) {
-
 		if (source != null && elements != null) {
-			for (int i = 0; i < elements.length; i++) {
-				getContributionMemory().put(elements[i], source);
-			}
+			for (int i = 0; i < elements.length; i++)
+				rememberContribution(source, elements[i]);
 		}
 	}
 
@@ -662,9 +660,25 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public synchronized void rememberContribution(
 			NavigatorContentDescriptor source, Object element) {
-		if (source != null && element != null) {
-			getContributionMemory().put(element, source);
+		Map memory = getContributionMemory();
+		if (element != null)
+		{
+			if (memory.containsKey(element))
+				return;
+			if (source != null)
+				memory.put(element, source);
 		}
+	}
+
+	/**
+	 * Forget about the specified element
+	 * 
+	 * @param element
+	 *            The element to forget.
+	 */
+	public synchronized void forgetContribution(Object element) {
+		if (element != null)
+			getContributionMemory().remove(element);
 	}
 
 	/**
