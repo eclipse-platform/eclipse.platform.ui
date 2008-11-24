@@ -5641,6 +5641,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		setAction(ITextEditorActionConstants.HIPPIE_COMPLETION, action);
 
+		action= new ContentAssistAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ContentAssistProposal.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CONTENT_ASSIST_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction(ITextEditorActionConstants.CONTENT_ASSIST, action);
+		markAsStateDependentAction(ITextEditorActionConstants.CONTENT_ASSIST, true);
+		
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ContentAssistContextInformation.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CONTENT_ASSIST_CONTEXT_INFORMATION_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
+		setAction(ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION, action);
+		markAsStateDependentAction(ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION, true);
+
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.QuickAssist.", this, ISourceViewer.QUICK_ASSIST); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.QUICK_ASSIST_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);

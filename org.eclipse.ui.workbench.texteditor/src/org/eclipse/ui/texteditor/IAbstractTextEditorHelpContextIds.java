@@ -338,6 +338,20 @@ public interface IAbstractTextEditorHelpContextIds {
     String HIPPIE_COMPLETION_ACTION= PREFIX + "hippie_completion" + ACTION_POSTFIX; //$NON-NLS-1$
 
     /**
+     * Help context id for the content assist action.
+     * Value: <code>"org.eclipse.ui.content_assist_action_context"</code>
+     * @since 3.5
+     */
+    String CONTENT_ASSIST_ACTION= PREFIX + "content_assist" + ACTION_POSTFIX; //$NON-NLS-1$
+
+    /**
+     * Help context id for the content assist context information action.
+     * Value: <code>"org.eclipse.ui.content_assist_context_information_action_context"</code>
+     * @since 3.5
+     */
+    String CONTENT_ASSIST_CONTEXT_INFORMATION_ACTION= PREFIX + "content_assist_context_information" + ACTION_POSTFIX; //$NON-NLS-1$
+
+    /**
      * Help context id for the quick assist action.
      * Value: <code>"org.eclipse.ui.quick_assist_action_context"</code>
      * @since 3.2

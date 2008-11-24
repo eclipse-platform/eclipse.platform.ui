@@ -599,6 +599,22 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	String REVISION_HIDE_INFO= "Revision.HideInfo"; //$NON-NLS-1$
 
 	/**
+	 * Name of the content assist action.
+	 * Value: <code>"ContentAssistProposal"</code>
+	 * 
+	 * @since 3.5
+	 */
+	String CONTENT_ASSIST= "ContentAssistProposal"; //$NON-NLS-1$
+
+	/**
+	 * Name of the content assist context information action.
+	 * Value: <code>"ContentAssistContextInformation"</code>
+	 * 
+	 * @since 3.5
+	 */
+	String CONTENT_ASSIST_CONTEXT_INFORMATION= "ContentAssistContextInformation"; //$NON-NLS-1$
+
+	/**
 	 * Name of the quick assist action
 	 * Value: <code>"QuickAssist"</code>
 	 * @since 3.2
