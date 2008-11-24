@@ -21,6 +21,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.osgi.util.NLS;
@@ -249,6 +250,52 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue(((GridData) layoutData).exclude);
 	}
 
+	public void testWithStatusAdapterAndLabelProvider1(){
+		wsdm.setMessageDecorator(new ILabelDecorator(){
+			
+			public Image decorateImage(Image image, Object element) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			public String decorateText(String text, Object element) {
+				// TODO Auto-generated method stub
+				return text.replaceAll("[A-Z][A-Z][A-Z][0-9][0-9]", "");
+			}
+			
+			public void addListener(ILabelProviderListener listener) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public void dispose() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public boolean isLabelProperty(Object element, String property) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			public void removeListener(ILabelProviderListener listener) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		wsdm.addStatusAdapter(createStatusAdapter("XYZ01" + MESSAGE_1), false);
+		Label titleLabel = StatusDialogUtil.getTitleLabel();
+		assertNotNull(titleLabel);
+		assertEquals(MESSAGE_1, titleLabel.getText());
+
+		Label secondaryLabel = StatusDialogUtil.getSingleStatusLabel();
+		assertNotNull(secondaryLabel);
+		assertEquals(WorkbenchMessages.WorkbenchStatusDialog_SeeDetails,
+				secondaryLabel.getText());
+	}
+	
+	
 	/**
 	 * Simple status with title. Check primary and secondary message. Verify
 	 * closing.

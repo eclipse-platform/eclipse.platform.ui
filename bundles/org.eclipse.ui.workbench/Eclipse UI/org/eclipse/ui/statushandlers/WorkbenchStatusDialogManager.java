@@ -41,6 +41,7 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -1095,6 +1096,12 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	 * Header area.
 	 */
 	private Composite titleArea;
+	
+	/**
+	 * The decorator that is used to modify a message extracted from the
+	 * StatusAdapter.
+	 */
+	private ILabelDecorator messageDecorator;
 
 	/**
 	 * Creates workbench status dialog.
@@ -1667,14 +1674,14 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 		if (property instanceof String) {
 			String header = (String) property;
 			if (header.trim().length() > 0) {
-				return header;
+				return decorate(header, statusAdapter);
 			}
 		}
 		// if there was message set in the status
 		IStatus status = statusAdapter.getStatus();
 		if (status.getMessage() != null
 				&& status.getMessage().trim().length() > 0) {
-			return status.getMessage();
+			return decorate(status.getMessage(), statusAdapter);
 		}
 
 		// if status has children
@@ -1686,7 +1693,7 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 		Throwable t = status.getException();
 		if (t != null) {
 			if (t.getMessage() != null && t.getMessage().trim().length() > 0) {
-				return t.getMessage();
+				return decorate(t.getMessage(), statusAdapter);
 			}
 			return t.getClass().getName();
 		}
@@ -1719,24 +1726,30 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 
 		// if there was message set in the status
 		IStatus status = statusAdapter.getStatus();
-		if (status.getMessage() != null
-				&& status.getMessage().trim().length() > 0
-				&& !primary.equals(status.getMessage())) { // we have not
-			// displayed it yet
-			return status.getMessage();
+		String message = status.getMessage();
+		String decoratedMessage = message == null ? null : decorate(message,
+				statusAdapter);
+		if (message != null && message.trim().length() > 0
+				&& !primary.equals(decoratedMessage)) { 
+			/* we have not displayed it yet */
+			return decoratedMessage;
 		}
 		// if status has children
 		if (status.getChildren().length > 0
-				&& !primary.equals(status.getMessage())) {
+				&& !primary.equals(decoratedMessage)) {
 			return WorkbenchMessages.WorkbenchStatusDialog_StatusWithChildren;
 		}
 
 		// check the exception
 		Throwable t = status.getException();
 		if (t != null) {
-			if (t.getMessage() != null && t.getMessage().trim().length() > 0
-					&& !primary.equals(t.getMessage())) {
-				return t.getMessage();
+			if (t.getMessage() != null) {
+				String decoratedThrowable = decorate(t.getMessage(),
+						statusAdapter);
+				if (t.getMessage().trim().length() > 0
+						&& !primary.equals(decoratedThrowable)) {
+					return decoratedThrowable;
+				}
 			}
 			String throwableName = t.getClass().getName();
 			if (!primary.equals(throwableName)) {
@@ -2288,5 +2301,44 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 		if (this.dialog == null)
 			return null;
 		return this.dialog.getShell();
+	}
+
+	/**
+	 * <p>
+	 * This methods sets up the decorator, which is used to modify displayed
+	 * strings extracted from StatusAdapter. The decorator should be used to
+	 * remove technical codes from the dialog, f.e. following message
+	 * "<i>ERR2008 Invalid password</i>" can be translated into
+	 * "<i>Invalid password</i>".
+	 * </p>
+	 * <p>
+	 * The decorator will be applied only to messages extracted from
+	 * StatusAdapter (predefined messages like
+	 * "This status has children statuses. See 'Details' for more information."
+	 * are not affected.
+	 * </p>
+	 * <p>
+	 * This method should not be used together with
+	 * {@link #setStatusListLabelProvider(ITableLabelProvider)}.
+	 * </p>
+	 * 
+	 * @param decorator
+	 *            - the decorator to be set. Only
+	 *            {@link ILabelDecorator#decorateText(String, Object)} method
+	 *            will be used. This method should return <code>null</code> if
+	 *            and only if the first argument is null. StatusAdapter is
+	 *            passed as second parameter. Other methods should have default
+	 *            behavior as they may be used in future versions of the dialog.
+	 * @since 3.5
+	 */
+	public void setMessageDecorator(ILabelDecorator decorator){
+		this.messageDecorator = decorator;
+	}
+	
+	private String decorate(String string, StatusAdapter adapter) {
+		if(messageDecorator != null){
+			string = messageDecorator.decorateText(string, adapter);
+		}
+		return string;
 	}
 }
