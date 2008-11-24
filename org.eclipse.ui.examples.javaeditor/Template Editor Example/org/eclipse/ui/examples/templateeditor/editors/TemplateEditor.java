@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,18 +12,14 @@ package org.eclipse.ui.examples.templateeditor.editors;
 
 import org.eclipse.jface.action.IAction;
 
-import org.eclipse.jface.text.source.ISourceViewer;
-
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.TextOperationAction;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
  * A simple xml editor with template capabilities.
  */
 public class TemplateEditor extends AbstractDecoratedTextEditor {
 
-	private static final String TEMPLATE_PROPOSALS= "template_proposals_action"; //$NON-NLS-1$
 	private ColorManager colorManager;
 
 	/**
@@ -44,14 +40,12 @@ public class TemplateEditor extends AbstractDecoratedTextEditor {
 	protected void createActions() {
 		super.createActions();
 
-		IAction action= new TextOperationAction(
-				TemplateMessages.getResourceBundle(),
-				"Editor." + TEMPLATE_PROPOSALS + ".", //$NON-NLS-1$ //$NON-NLS-2$
-				this,
-				ISourceViewer.CONTENTASSIST_PROPOSALS);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction(TEMPLATE_PROPOSALS, action);
-		markAsStateDependentAction(TEMPLATE_PROPOSALS, true);
+		IAction action= getAction(ITextEditorActionConstants.CONTENT_ASSIST);
+		if (action != null) {
+			action.setText(TemplateMessages.getString("Editor.template_proposals_action.label")); //$NON-NLS-1$
+			action.setToolTipText(TemplateMessages.getString("Editor.template_proposals_action.tooltip")); //$NON-NLS-1$
+			action.setDescription(TemplateMessages.getString("Editor.template_proposals_action.description")); //$NON-NLS-1$
+		}
 	}
 
 }

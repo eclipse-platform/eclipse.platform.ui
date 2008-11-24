@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 import org.eclipse.ui.texteditor.TextEditorAction;
@@ -75,8 +76,8 @@ public class JavaActionContributor extends TextEditorActionContributor {
 		if (part instanceof ITextEditor)
 			editor= (ITextEditor) part;
 
-		fContentAssistProposal.setAction(getAction(editor, "ContentAssistProposal")); //$NON-NLS-1$
-		fContentAssistTip.setAction(getAction(editor, "ContentAssistTip")); //$NON-NLS-1$
+		fContentAssistProposal.setAction(getAction(editor, ITextEditorActionConstants.CONTENT_ASSIST));
+		fContentAssistTip.setAction(getAction(editor, ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION));
 
 		fTogglePresentation.setEditor(editor);
 		fTogglePresentation.update();
