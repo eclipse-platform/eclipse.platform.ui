@@ -11,11 +11,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.net.proxy.unix;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Properties;
 
 import org.eclipse.core.internal.net.AbstractProxyProvider;
 import org.eclipse.core.internal.net.Activator;
@@ -180,14 +178,13 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 	}
 
 	private String getEnv(String env) {
-		Properties props = new Properties();
 		try {
-			props.load(Runtime.getRuntime().exec("env").getInputStream()); //$NON-NLS-1$
-		} catch (IOException e) {
+			return System.getenv(env);
+		} catch (SecurityException e) {
 			Activator.logError(
-					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
+					"Security exception occured wile getting env variable", e); //$NON-NLS-1$
+			return null;
 		}
-		return props.getProperty(env);
 	}
 
 	private static void loadGnomeLib() {
