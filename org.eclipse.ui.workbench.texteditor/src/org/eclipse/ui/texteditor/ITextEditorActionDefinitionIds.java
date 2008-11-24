@@ -17,14 +17,15 @@ import org.eclipse.jface.text.information.IInformationProvider;
 
 
 /**
- * Defines the definitions ids for the text editor actions. These actions are
- * navigation, selection, and modification actions.
+ * Defines the definitions ids for the text editor actions. These actions are navigation, selection,
+ * and modification actions.
  * <p>
  * This interface must not be implemented by clients.
  * </p>
- *
+ * 
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefinitionIds {
 
