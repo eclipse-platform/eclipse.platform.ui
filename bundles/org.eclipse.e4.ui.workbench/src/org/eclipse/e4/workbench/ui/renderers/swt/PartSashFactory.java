@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
@@ -35,10 +36,26 @@ public class PartSashFactory extends SWTPartFactory {
 
 	public void postProcess(Part<?> part) {
 		if (part instanceof org.eclipse.e4.ui.model.application.SashForm<?>) {
+			// do we have any children ?
+			EList<?> kids = part.getChildren();
+			if (kids.size() == 0)
+				return;
+			
 			// set the weights of the sashes
 			SashForm sashForm = (SashForm) part.getWidget();
-			List<Integer> weightList = ((org.eclipse.e4.ui.model.application.SashForm<?>) part)
-					.getWeights();
+			org.eclipse.e4.ui.model.application.SashForm<?> sashPart =
+				(org.eclipse.e4.ui.model.application.SashForm<?>) part;
+			List<Integer> weightList = sashPart.getWeights();
+			
+			// If it's not already initialized the set them all ==
+			if (weightList.size() != kids.size()) {
+				for (int i = 0; i < kids.size(); i++) {
+					System.out.println("Add 100");
+					weightList.add(new Integer(100+i));
+				}
+			}
+			
+			// Set the weights in the control
 			if (weightList.size() > 0) {
 				int count = 0;
 				int[] weights = new int[weightList.size()];
@@ -47,13 +64,7 @@ public class PartSashFactory extends SWTPartFactory {
 					Integer integer = (Integer) iterator.next();
 					weights[count++] = integer;
 				}
-				sashForm.setWeights(weights);
-			} else {
-				// set all the weights equally
-				int nKids = sashForm.getChildren().length;
-				int[] weights = new int[nKids];
-				for (int i = 0; i < nKids; i++)
-					weights[i] = 100;
+				System.out.println("Weights: " + weights);
 				sashForm.setWeights(weights);
 			}
 		}

@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/Application" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../org.eclipse.e4.ui.model.workbench/model/Application.ecore">
   <windows x="100" y="100" width="800" height="600">
-    <children policy="HorizontalComposite">
-      <children policy="VerticalComposite">
-        <children policy="HorizontalComposite">
-          <toolBar>
-            <items xsi:type="application:ToolBarItem" name="Create Album" handler="//@windows.0/@handlers.1"/>
-          </toolBar>
+    <children policy="VerticalComposite">
+      <children xsi:type="application:SashForm" policy="HorizontalSash">
+        <children xsi:type="application:SashForm" policy="VerticalSash">
+          <children xsi:type="application:Stack">
+            <children xsi:type="application:ContributedPart" name="Library" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library"/>
+          </children>
+          <children xsi:type="application:Stack">
+            <children xsi:type="application:ContributedPart" name="Location" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location"/>
+          </children>
         </children>
-        <children xsi:type="application:Stack">
-          <children xsi:type="application:ContributedPart" name="Library" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library"/>
+        <children xsi:type="application:SashForm" policy="VerticalSash">
+          <children xsi:type="application:ContributedPart" name="Preview" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview"/>
+          <children xsi:type="application:Stack">
+            <children xsi:type="application:ContributedPart" name="Thumbnails" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails"/>
+            <children xsi:type="application:ContributedPart" name="Exif" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable"/>
+          </children>
+          <weights>70</weights>
+          <weights>30</weights>
         </children>
-        <children xsi:type="application:Stack">
-          <children xsi:type="application:ContributedPart" name="Location" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location"/>
-        </children>
+        <weights>30</weights>
+        <weights>70</weights>
       </children>
-      <children policy="VerticalComposite">
-        <children xsi:type="application:ContributedPart" name="Preview" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview"/>
-        <children xsi:type="application:Stack">
-          <children xsi:type="application:ContributedPart" name="Thumbnails" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails"/>
-          <children xsi:type="application:ContributedPart" name="Exif" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable"/>
-        </children>
-      </children>
+      <toolBar>
+        <items xsi:type="application:ToolBarItem" name="Create Album" handler="//@windows.0/@handlers.1"/>
+      </toolBar>
     </children>
     <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
     <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler"/>
