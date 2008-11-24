@@ -25,6 +25,7 @@ import org.eclipse.swt.SWT;
  * @see PlatformUI#PLUGIN_ID
  * @see PlatformUI#getPreferenceStore()
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IWorkbenchPreferenceConstants {
 
