@@ -10,6 +10,12 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/ui/editors/text/ITextEditorHelpContextIds.java" type="org.eclipse.ui.editors.text.ITextEditorHelpContextIds">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="IAbstractTextEditorHelpContextIds"/>
+                <message_argument value="ITextEditorHelpContextIds"/>
+            </message_arguments>
+        </filter>
         <filter id="574619656">
             <message_arguments>
                 <message_argument value="IAbstractTextEditorHelpContextIds"/>
