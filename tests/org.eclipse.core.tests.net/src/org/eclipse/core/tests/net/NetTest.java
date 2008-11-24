@@ -365,4 +365,24 @@ public class NetTest extends TestCase {
 		assertEquals(data4.length, 0);
 	}
 
+	public void testBug255981() throws CoreException, URISyntaxException {
+		setDataTest(IProxyData.HTTP_PROXY_TYPE);
+		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
+		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
+
+		this.getProxyManager().setProxiesEnabled(false);
+
+		IProxyData data = this.getProxyManager().getProxyDataForHost(
+				"randomhost.com", IProxyData.HTTP_PROXY_TYPE);
+		assertNull(data);
+
+		IProxyData[] data2 = this.getProxyManager().select(
+				new URI("http://randomhost.com"));
+		assertEquals(data2.length, 0);
+
+		IProxyData data3[] = this.getProxyManager().getProxyDataForHost(
+				"http://randomhost.com");
+		assertEquals(data3.length, 0);
+	}
+
 }

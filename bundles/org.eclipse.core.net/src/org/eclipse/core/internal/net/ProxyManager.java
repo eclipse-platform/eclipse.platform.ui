@@ -300,6 +300,9 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 
 	public IProxyData[] getProxyDataForHost(String host) {
 		checkMigrated();
+		if (!internalIsProxiesEnabled()) {
+			return new IProxyData[0];
+		}
 		URI uri = tryGetURI(host);
 		if (uri == null) {
 			return new IProxyData[0];
@@ -352,6 +355,9 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	 */
 	public IProxyData getProxyDataForHost(String host, String type) {
 		checkMigrated();
+		if (!internalIsProxiesEnabled()) {
+			return null;
+		}
 		if (hasSystemProxies() && isSystemProxiesEnabled())
 			try {
 				URI uri = new URI(type, "//" + host, null); //$NON-NLS-1$
