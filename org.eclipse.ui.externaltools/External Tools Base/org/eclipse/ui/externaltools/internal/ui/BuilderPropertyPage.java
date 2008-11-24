@@ -102,6 +102,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	
 	private CheckboxTableViewer viewer= null;
 	
+	private boolean fWarned = false;
+	
 	private ILabelProvider labelProvider= new BuilderLabelProvider();
 	
 	/**
@@ -423,13 +425,21 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
             }
             if (checked) {
             	enableCommand((ICommand)element, checked);
-            } else if (MessageDialog.openConfirm(shell, ExternalToolsUIMessages.BuilderPropertyPage_6, ExternalToolsUIMessages.BuilderPropertyPage_7)) {
-				enableCommand((ICommand)element, checked);
-			} else {
-				viewer.removeCheckStateListener(this);
-				viewer.setChecked(element, true);
-				viewer.addCheckStateListener(this);
+            	return;
+            } else if (!fWarned) {
+            	if(MessageDialog.openConfirm(shell, ExternalToolsUIMessages.BuilderPropertyPage_6, ExternalToolsUIMessages.BuilderPropertyPage_7)) {
+            		fWarned = true;
+            	}
+			} 
+            if(fWarned) {
+            	enableCommand((ICommand)element, checked);
+            }
+            else {
+            	viewer.removeCheckStateListener(this);
+    			viewer.setChecked(element, true);
+    			viewer.addCheckStateListener(this);
 			}
+            
 		}
 	}
 
