@@ -2076,6 +2076,13 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	 * also to display the second message on the dialog if only one status is
 	 * available.
 	 * 
+	 * <p>
+	 * This method is no longer recommended to use as it is impossible to
+	 * achieve consistent behavior after changing only one label provider.
+	 * </p>
+	 * 
+	 * @deprecated As of 3.5 {@link #setMessageDecorator} is recommended. 
+	 * 
 	 * @param labelProvider
 	 *            a label provider to be used when displaying status adapters.
 	 */
