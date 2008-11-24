@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
+import org.eclipse.ui.menus.AbstractContributionFactory;
 
 /**
  * <p>
@@ -186,13 +187,39 @@ final class MenuPersistence extends RegistryPersistence {
 
 		Iterator i = configElements.iterator();
 		while (i.hasNext()) {
-			IConfigurationElement configElement = (IConfigurationElement) i
+			final IConfigurationElement configElement = (IConfigurationElement) i
 					.next();
-			// Determine the insertion location by parsing the URI
-			String location = configElement.getAttribute(TAG_LOCATION_URI);
-			menuService.addContributionFactory(new MenuAdditionCacheEntry(
-					menuService, configElement, location, configElement
-							.getNamespaceIdentifier()));
+			
+			AbstractContributionFactory newFactory = null;
+			
+			if (isProgramaticContribution(configElement))
+				newFactory = new ProxyMenuAdditionCacheEntry(
+						configElement
+								.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
+								configElement.getNamespaceIdentifier(), configElement);
+
+			else
+				newFactory = new MenuAdditionCacheEntry(
+						menuService,
+						configElement,
+						configElement
+								.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
+								configElement.getNamespaceIdentifier());
+
+			if (newFactory != null)
+				menuService.addContributionFactory(newFactory);
+			
 		}
+	}
+	
+	/**
+	 * Return whether or not this contribution is programmatic (ie: has a class attribute).
+	 * 
+	 * @param menuAddition
+	 * @return whether or not this contribution is programamtic
+	 * @since 3.5
+	 */
+	private boolean isProgramaticContribution(IConfigurationElement menuAddition) {
+		return menuAddition.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null;
 	}
 }

@@ -521,7 +521,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 				if (subCaches != null) {
 					for (Iterator subCacheIter = subCaches.iterator(); subCacheIter
 							.hasNext();) {
-						MenuAdditionCacheEntry mace = (MenuAdditionCacheEntry) subCacheIter.next();
+						AbstractMenuAdditionCacheEntry mace = (AbstractMenuAdditionCacheEntry) subCacheIter.next();
 						removeContributionFactory(mace);
 					}
 				}
@@ -903,10 +903,36 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 */
 	public void handleDynamicAdditions(List menuAdditions) {
 		for (Iterator additionsIter = menuAdditions.iterator(); additionsIter.hasNext();) {
-			IConfigurationElement menuAddition = (IConfigurationElement) additionsIter.next();
-			MenuAdditionCacheEntry newFactory = new MenuAdditionCacheEntry(this, menuAddition);
-			addContributionFactory(newFactory);
+			AbstractContributionFactory newFactory = null;
+			final IConfigurationElement menuAddition = (IConfigurationElement) additionsIter.next();
+			if (isProgramaticContribution(menuAddition))
+				newFactory = new ProxyMenuAdditionCacheEntry(
+						menuAddition
+								.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
+						menuAddition.getNamespaceIdentifier(), menuAddition);
+
+			else
+				newFactory = new MenuAdditionCacheEntry(
+						this,
+						menuAddition,
+						menuAddition
+								.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
+						menuAddition.getNamespaceIdentifier());
+
+			if (newFactory != null)
+				addContributionFactory(newFactory);
 		}
+	}
+
+	/**
+	 * Return whether or not this contribution is programmatic (ie: has a class attribute).
+	 * 
+	 * @param menuAddition
+	 * @return whether or not this contribution is programamtic
+	 * @since 3.5
+	 */
+	private boolean isProgramaticContribution(IConfigurationElement menuAddition) {
+		return menuAddition.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null;
 	}
 
 	/**
@@ -916,7 +942,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	public void handleDynamicRemovals(List menuRemovals) {
 		for (Iterator additionsIter = menuRemovals.iterator(); additionsIter.hasNext();) {
 			IConfigurationElement ceToRemove = (IConfigurationElement) additionsIter.next();
-			MenuAdditionCacheEntry factoryToRemove = findFactory(ceToRemove);
+			AbstractMenuAdditionCacheEntry factoryToRemove = findFactory(ceToRemove);
 			removeContributionFactory(factoryToRemove);
 		}
 	}
@@ -925,14 +951,14 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 * @param ceToRemove
 	 * @return
 	 */
-	private MenuAdditionCacheEntry findFactory(IConfigurationElement ceToRemove) {
+	private AbstractMenuAdditionCacheEntry findFactory(IConfigurationElement ceToRemove) {
 		String uriStr = ceToRemove.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI);
 		MenuLocationURI uri = new MenuLocationURI(uriStr);
 		List factories = getAdditionsForURI(uri);
 		for (Iterator iterator = factories.iterator(); iterator.hasNext();) {
 			AbstractContributionFactory factory = (AbstractContributionFactory) iterator.next();
-			if (factory instanceof MenuAdditionCacheEntry) {
-				MenuAdditionCacheEntry mace = (MenuAdditionCacheEntry) factory;
+			if (factory instanceof AbstractMenuAdditionCacheEntry) {
+				AbstractMenuAdditionCacheEntry mace = (AbstractMenuAdditionCacheEntry) factory;
 				if (mace.getConfigElement().equals(ceToRemove))
 					return mace;
 			}

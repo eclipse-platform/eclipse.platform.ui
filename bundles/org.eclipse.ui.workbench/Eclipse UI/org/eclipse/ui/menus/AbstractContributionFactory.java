@@ -49,6 +49,12 @@ import org.eclipse.ui.services.IServiceLocator;
  * </pre>
  * 
  * </p>
+ * 
+ * <p>
+ * Clients who are providing factories via the <code>org.eclipse.ui.menus</code>
+ * extension point should subclass {@link ExtensionContributionFactory} instead.
+ * </p>
+ * 
  * <p>
  * Only the abstract methods may be implemented.
  * </p>

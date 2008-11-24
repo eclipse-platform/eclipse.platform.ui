@@ -3810,6 +3810,11 @@
          </command>
       </menuContribution>
       <menuContribution
+            class="org.eclipse.ui.tests.menus.DeclaredProgrammaticFactory"
+            locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests?after=org.eclipse.ui.tests.menus.iconsToolbarOnly">
+      
+      </menuContribution>
+      <menuContribution
             locationURI="toolbar:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests">
          <command
                commandId="org.eclipse.ui.tests.menus.iconsDefault"

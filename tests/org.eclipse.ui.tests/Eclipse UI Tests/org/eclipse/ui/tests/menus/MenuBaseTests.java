@@ -16,6 +16,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.tests.menus.DeclaredProgrammaticFactory.MyItem;
 
 /**
  * Performs a number of basic tests for the org.eclipse.ui.menus
@@ -44,7 +45,8 @@ public class MenuBaseTests extends MenuTestCase {
 			"MenuTest.ItemX1",
 			MenuPopulationTest.ID_DEFAULT,
 			MenuPopulationTest.ID_ALL,
-			MenuPopulationTest.ID_TOOLBAR
+			MenuPopulationTest.ID_TOOLBAR,
+			"myitem"
 		};
 		Class[] expectedClasses = {
 			org.eclipse.ui.menus.CommandContributionItem.class,
@@ -58,7 +60,8 @@ public class MenuBaseTests extends MenuTestCase {
 			org.eclipse.ui.menus.CommandContributionItem.class,
 			org.eclipse.ui.menus.CommandContributionItem.class,
 			org.eclipse.ui.menus.CommandContributionItem.class,
-			org.eclipse.ui.menus.CommandContributionItem.class
+			org.eclipse.ui.menus.CommandContributionItem.class,
+			MyItem.class
 		};
 		String[] expectedMenuItemLabels = {
 			"&Basic Cmd",
@@ -71,7 +74,8 @@ public class MenuBaseTests extends MenuTestCase {
 			"Dynamic Menu",
 			"Icons Default",
 			"Icons All",
-			"Icons Toolbar Only"
+			"Icons Toolbar Only",
+			"MyItem"
 		};
 
 	/**

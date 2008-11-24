@@ -38,7 +38,6 @@ import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationF
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
@@ -52,12 +51,10 @@ import org.eclipse.ui.services.IServiceLocator;
  * @since 3.3
  * 
  */
-public class MenuAdditionCacheEntry extends AbstractContributionFactory {
-	private IConfigurationElement additionElement;
-
+public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
+	
 	// Caches
-
-
+	
 	/**
 	 * If an {@link IConfigurationElement} is in the Set then we have already
 	 * tried (and failed) to load the associated ExecutableExtension.
@@ -85,16 +82,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	private boolean hasAdditions = false;
 
 	public MenuAdditionCacheEntry(IMenuService menuService,
-			IConfigurationElement element) {
-		this(menuService, element, element.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI), 
-				element.getNamespaceIdentifier());
-	}
-
-	public MenuAdditionCacheEntry(IMenuService menuService,
 			IConfigurationElement element, String location, String namespace) {
-		super(location, namespace);
+		super(location, namespace, element);
 		this.menuService = menuService;
-		this.additionElement = element;
 		findAdditions();
 		generateSubCaches();
 	}
@@ -103,7 +93,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 * 
 	 */
 	private void generateSubCaches() {
-		IConfigurationElement[] items = additionElement.getChildren();
+		IConfigurationElement[] items = getConfigElement().getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
 			if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)
@@ -178,7 +168,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 					.getActionBarPresentationFactory();
 		}
 
-		IConfigurationElement[] items = additionElement.getChildren();
+		IConfigurationElement[] items = getConfigElement().getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
 			IContributionItem newItem = null;
@@ -510,13 +500,6 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	}
 
 	/**
-	 * @return
-	 */
-	public IConfigurationElement getConfigElement() {
-		return additionElement;
-	}
-
-	/**
 	 * @return Returns the subCaches.
 	 */
 	public List getSubCaches() {
@@ -524,7 +507,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	}
 	
 	private void findAdditions() {
-		IConfigurationElement[] items = additionElement.getChildren();
+		IConfigurationElement[] items = getConfigElement().getChildren();
 		boolean done = false;
 		for (int i = 0; i < items.length && !done; i++) {
 			String itemType = items[i].getName();
