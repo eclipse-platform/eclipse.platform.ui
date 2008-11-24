@@ -50,7 +50,6 @@ public class PartSashFactory extends SWTPartFactory {
 			// If it's not already initialized the set them all ==
 			if (weightList.size() != kids.size()) {
 				for (int i = 0; i < kids.size(); i++) {
-					System.out.println("Add 100");
 					weightList.add(new Integer(100+i));
 				}
 			}
@@ -64,7 +63,6 @@ public class PartSashFactory extends SWTPartFactory {
 					Integer integer = (Integer) iterator.next();
 					weights[count++] = integer;
 				}
-				System.out.println("Weights: " + weights);
 				sashForm.setWeights(weights);
 			}
 		}
