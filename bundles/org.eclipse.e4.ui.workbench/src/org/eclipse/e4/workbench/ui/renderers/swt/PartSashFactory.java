@@ -7,7 +7,10 @@ import org.eclipse.e4.ui.model.application.Part;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 public class PartSashFactory extends SWTPartFactory {
@@ -33,7 +36,7 @@ public class PartSashFactory extends SWTPartFactory {
 
 		return null;
 	}
-
+	
 	public void postProcess(Part<?> part) {
 		if (part instanceof org.eclipse.e4.ui.model.application.SashForm<?>) {
 			// do we have any children ?
@@ -65,6 +68,59 @@ public class PartSashFactory extends SWTPartFactory {
 				}
 				sashForm.setWeights(weights);
 			}
+			
+			// add a size change listener to each child so we can recalculate the
+			// weights on a change...
+			Control[] childCtrls = sashForm.getChildren();
+			for (int i = 0; i < childCtrls.length; i++) {
+				childCtrls[i].addControlListener(new ControlListener() {
+					public void controlMoved(ControlEvent e) {
+					}
+					public void controlResized(ControlEvent e) {
+						// See if we need to re do the weights
+						synchWeights((Control)e.widget);
+					}					
+				});
+			}
+		}	
+	}
+
+	protected void synchWeights(Control ctrl) {
+		if (!(ctrl.getParent() instanceof SashForm))
+			return;
+		
+		SashForm sf = (SashForm) ctrl.getParent();
+		org.eclipse.e4.ui.model.application.SashForm<?> sfm = (org.eclipse.e4.ui.model.application.SashForm<?>) sf.getData(OWNING_ME);
+		int[] ctrlWeights = sf.getWeights();
+		EList<Integer> modelWeights = sfm.getWeights();
+		
+		boolean overWrite = false;
+		if (ctrlWeights.length != modelWeights.size())
+			overWrite = true;
+		else {
+			int i = 0;
+			for (Iterator weightIter = modelWeights.iterator(); weightIter
+					.hasNext();) {
+				Integer integer = (Integer) weightIter.next();
+				if (integer.intValue() != ctrlWeights[i++]) {
+					overWrite = true;
+					break;
+				}
+			}
+		}
+		
+		// reset the model's weights to match the control
+		if (overWrite) {
+			System.out.print("new weights:");
+			modelWeights.clear();
+			for (int i = 0; i < ctrlWeights.length; i++) {
+				System.out.print(" " + ctrlWeights[i]);
+				modelWeights.add(ctrlWeights[i]);
+			}
+			System.out.println();
+		}
+		else {
+			System.out.println("weights OK");
 		}
 	}
 }
