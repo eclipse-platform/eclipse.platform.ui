@@ -14,7 +14,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.eclipse.core.internal.net.ProxyData;
-import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
@@ -35,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class ProxyEntryDialog extends StatusDialog {
 
-	private IProxyData data;
+	private ProxyData data;
 	private String[] addedTypes;
 
 	private Label typeLabel;
@@ -51,7 +50,7 @@ public class ProxyEntryDialog extends StatusDialog {
 	private Label passwordLabel;
 	private Text passwordText;
 
-	public ProxyEntryDialog(Shell parent, IProxyData data, String[] addedArray,
+	public ProxyEntryDialog(Shell parent, ProxyData data, String[] addedArray,
 			String title) {
 		super(parent);
 		if (data == null) {
@@ -63,7 +62,7 @@ public class ProxyEntryDialog extends StatusDialog {
 		this.setTitle(title);
 	}
 
-	public IProxyData getValue() {
+	public ProxyData getValue() {
 		return data;
 	}
 

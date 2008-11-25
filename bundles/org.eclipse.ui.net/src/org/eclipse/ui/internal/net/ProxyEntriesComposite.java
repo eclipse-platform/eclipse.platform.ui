@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.net;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.internal.net.ProxySelector;
-import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -139,7 +139,7 @@ public class ProxyEntriesComposite extends Composite {
 			Iterator iterator = selection.iterator();
 			boolean editable = iterator.hasNext();
 			while (iterator.hasNext()) {
-				String provider = ((IProxyData) iterator.next()).getSource();
+				String provider = ((ProxyData) iterator.next()).getSource();
 				if (!ProxySelector.canSetProxyData(provider)) {
 					editable = false;
 				}
@@ -159,13 +159,13 @@ public class ProxyEntriesComposite extends Composite {
 		ArrayList added = new ArrayList();
 		String editableProvider = getEditableProvider();
 		while (it.hasNext()) {
-			IProxyData data = (IProxyData) it.next();
+			ProxyData data = (ProxyData) it.next();
 			if (data.getSource().equalsIgnoreCase(editableProvider)) {
 				added.add(data.getType());
 			}
 		}
 		String addedArray[] = (String[]) added.toArray(new String[0]);
-		IProxyData data = promptForEntry(null, addedArray,
+		ProxyData data = promptForEntry(null, addedArray,
 				NetUIMessages.ProxyEntryDialog_0);
 		if (data != null) {
 			data.setSource(editableProvider);
@@ -184,7 +184,7 @@ public class ProxyEntriesComposite extends Composite {
 		return null;
 	}
 
-	private IProxyData promptForEntry(IProxyData entry, String[] addedArray,
+	private ProxyData promptForEntry(ProxyData entry, String[] addedArray,
 			String title) {
 		ProxyEntryDialog dialog = new ProxyEntryDialog(getShell(), entry,
 				addedArray, title);
@@ -198,9 +198,9 @@ public class ProxyEntriesComposite extends Composite {
 	protected void editSelection() {
 		Iterator itsel = ((IStructuredSelection) entriesViewer.getSelection())
 				.iterator();
-		IProxyData toEdit = null;
+		ProxyData toEdit = null;
 		if (itsel.hasNext()) {
-			toEdit = ((IProxyData) itsel.next());
+			toEdit = ((ProxyData) itsel.next());
 		} else {
 			return;
 		}
@@ -208,7 +208,7 @@ public class ProxyEntriesComposite extends Composite {
 		ArrayList added = new ArrayList();
 		String editableProvider = getEditableProvider();
 		while (it.hasNext()) {
-			IProxyData data = (IProxyData) it.next();
+			ProxyData data = (ProxyData) it.next();
 			if (data.getSource().equalsIgnoreCase(editableProvider)) {
 				if (data.getType() != toEdit.getType()) {
 					added.add(data.getType());
@@ -216,7 +216,7 @@ public class ProxyEntriesComposite extends Composite {
 			}
 		}
 		String addedArray[] = (String[]) added.toArray(new String[0]);
-		IProxyData data = promptForEntry(toEdit, addedArray,
+		ProxyData data = promptForEntry(toEdit, addedArray,
 				NetUIMessages.ProxyEntryDialog_1);
 		if (data != null) {
 			entriesViewer.refresh();
@@ -228,7 +228,7 @@ public class ProxyEntriesComposite extends Composite {
 				.getSelection();
 		Iterator it = selection.iterator();
 		while (it.hasNext()) {
-			IProxyData data = (IProxyData) it.next();
+			ProxyData data = (ProxyData) it.next();
 			data.setHost(""); //$NON-NLS-1$
 			data.setPort(-1);
 			data.setUserid(null);
@@ -247,7 +247,7 @@ public class ProxyEntriesComposite extends Composite {
 	public void initializeValues() {
 		String providers[] = ProxySelector.getProviders();
 		for (int i = 0; i < providers.length; i++) {
-			IProxyData[] entries = ProxySelector.getProxyData(providers[i]);
+			ProxyData[] entries = ProxySelector.getProxyData(providers[i]);
 			for (int j = 0; j < entries.length; j++) {
 				entries[j].setSource(providers[i]);
 				proxyEntries.add(entries[j]);
@@ -266,12 +266,12 @@ public class ProxyEntriesComposite extends Composite {
 		ArrayList checked = new ArrayList();
 		Iterator it = proxyEntries.iterator();
 		while (it.hasNext()) {
-			IProxyData data = (IProxyData) it.next();
+			ProxyData data = (ProxyData) it.next();
 			if (data.getSource().equalsIgnoreCase(item)) {
 				checked.add(data);
 			}
 		}
-		entriesViewer.setCheckedElements(checked.toArray(new IProxyData[0]));
+		entriesViewer.setCheckedElements(checked.toArray(new ProxyData[0]));
 	}
 
 	public void performApply() {
@@ -279,12 +279,12 @@ public class ProxyEntriesComposite extends Composite {
 		Iterator it = proxyEntries.iterator();
 		ArrayList proxies = new ArrayList();
 		while (it.hasNext()) {
-			IProxyData data = (IProxyData) it.next();
+			ProxyData data = (ProxyData) it.next();
 			if (data.getSource().equals(provider)) {
 				proxies.add(data);
 			}
 		}
-		IProxyData data[] = (IProxyData[]) proxies.toArray(new IProxyData[0]);
+		ProxyData data[] = (ProxyData[]) proxies.toArray(new ProxyData[0]);
 		ProxySelector.setProxyData(provider, data);
 	}
 

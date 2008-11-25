@@ -153,7 +153,7 @@ public final class ProxyProviderUtil {
 
 	private static IProxyData createProxy(String scheme, String host, int port) {
 		String type = resolveProxyType(scheme);
-		IProxyData proxy = new ProxyData(type);
+		ProxyData proxy = new ProxyData(type);
 		proxy.setHost(host);
 		proxy.setPort(port);
 		proxy.setSource("WINDOWS_IE"); //$NON-NLS-1$
@@ -224,7 +224,7 @@ public final class ProxyProviderUtil {
 		String hostname = getHostname(pacHostnameAndPort);
 		if (hostname != null) {
 			int port = getPort(pacHostnameAndPort);
-			IProxyData proxy = new ProxyData(proxyType);
+			ProxyData proxy = new ProxyData(proxyType);
 			proxy.setHost(hostname);
 			proxy.setPort(port);
 			proxy.setSource("WINDOWS_IE"); //$NON-NLS-1$

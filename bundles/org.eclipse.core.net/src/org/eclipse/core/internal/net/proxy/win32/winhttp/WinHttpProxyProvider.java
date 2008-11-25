@@ -107,7 +107,7 @@ public class WinHttpProxyProvider {
 		if (!tryPac && wpadAutoConfigUrl == null)
 			return new IProxyData[0];
 
-		IProxyData data = new ProxyData(IProxyData.HTTP_PROXY_TYPE, "", -1, //$NON-NLS-1$
+		ProxyData data = new ProxyData(IProxyData.HTTP_PROXY_TYPE, "", -1, //$NON-NLS-1$
 				false, "WINDOWS_IE"); //$NON-NLS-1$
 		data.setDynamic(true);
 		return new IProxyData[] { data }; 

@@ -107,7 +107,7 @@ public class StaticProxyConfig {
 			return new IProxyData[0];
 		}
 		IProxyData[] data = new IProxyData[KNOWN_TYPES.length];
-		IProxyData universal = (IProxyData) universalProxies.get(0);
+		ProxyData universal = (ProxyData) universalProxies.get(0);
 		for (int i = 0; i < KNOWN_TYPES.length; i++) {
 			ProxyData newData = new ProxyData(KNOWN_TYPES[i], universal
 					.getHost(), universal.getPort(), universal

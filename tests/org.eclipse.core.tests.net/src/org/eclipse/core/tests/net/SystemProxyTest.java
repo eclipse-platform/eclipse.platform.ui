@@ -88,7 +88,9 @@ public class SystemProxyTest extends TestCase {
 		assertEquals(enabled, this.getProxyManager().isSystemProxiesEnabled());
 	}
 
-	private void assertProxyDataEqual(IProxyData data, IProxyData expectedData) {
+	private void assertProxyDataEqual(IProxyData actual, IProxyData expected) {
+		ProxyData data = (ProxyData) actual;
+		ProxyData expectedData = (ProxyData) expected;
 		assertTrue(expectedData.getType() == data.getType());
 		assertEquals(expectedData.getHost(), data.getHost());
 		assertEquals(expectedData.getPort(), data.getPort());

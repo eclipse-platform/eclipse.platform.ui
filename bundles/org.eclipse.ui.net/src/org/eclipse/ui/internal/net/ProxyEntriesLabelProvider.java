@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.net;
 
+import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.internal.net.ProxySelector;
-import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -38,7 +38,7 @@ public class ProxyEntriesLabelProvider extends BaseLabelProvider implements
 		if (element == null) {
 			return null;
 		}
-		IProxyData data = (IProxyData) element;
+		ProxyData data = (ProxyData) element;
 		switch (columnIndex) {
 		case 0:
 			return null;
@@ -100,8 +100,8 @@ public class ProxyEntriesLabelProvider extends BaseLabelProvider implements
 	}
 
 	public Color getBackground(Object element) {
-		if (element instanceof IProxyData) {
-			String provider = ((IProxyData) element).getSource();
+		if (element instanceof ProxyData) {
+			String provider = ((ProxyData) element).getSource();
 			if (!ProxySelector.canSetProxyData(provider)) {
 				return Display.getCurrent().getSystemColor(
 						SWT.COLOR_INFO_BACKGROUND);

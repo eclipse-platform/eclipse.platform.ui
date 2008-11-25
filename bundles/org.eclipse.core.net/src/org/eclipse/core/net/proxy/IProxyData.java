@@ -140,52 +140,11 @@ public interface IProxyData {
 	boolean isRequiresAuthentication();
 
 	/**
-	 * Returns the proxy source name. This value is useful for diagnosing
-	 * purposes since many OS specific proxy sources could be available in a
-	 * single environment. Null value means that the setting come from Eclipse
-	 * preferences and is not OS specific.
-	 * 
-	 * @since 1.2
-	 * @return name of the proxy setting source, might be <code>null</code>
-	 */
-	String getSource();
-
-	/**
-	 * Sets the proxy source name. This value is useful for diagnosing purposes
-	 * since many OS specific proxy sources could be available in a single
-	 * environment. Null value means that the setting comes from Eclipse
-	 * preferences and is not OS specific.
-	 * 
-	 * @param source
-	 *            proxy setting source name to be set, might be
-	 *            <code>null</code>
-	 * @since 1.2
-	 */
-	void setSource(String source);
-
-	/**
-	 * Returns if the proxy data is obtained from a dynamic source, a PAC script
-	 * for example.
-	 * 
-	 * @return if proxy setting is dynamic
-	 * @since 1.2
-	 */
-	boolean isDynamic();
-
-	/**
-	 * Sets if the proxy data is obtained from a dynamic source, a PAC script
-	 * for example.
-	 * 
-	 * @param dynamic if proxy setting is dynamic
-	 * @since 1.2
-	 */
-	void setDynamic(boolean dynamic);
-
-	/**
-	 * Set the values of this data to represent a disabling of its type. Note
-	 * that the proxy type will not be disabled unless the client calls
-	 * {@link IProxyService#setProxyData(IProxyData[])} with the disabled data
-	 * as a parameter. A proxy data can be enabled by setting the host.
+	 * Set the values of this data to represent a disabling of its type.
+	 * Note that the proxy type will not be disabled unless the client
+	 * calls {@link IProxyService#setProxyData(IProxyData[])} with the
+	 * disabled data as a parameter. A proxy data can be enabled by setting
+	 * the host.
 	 */
 	void disable();
 

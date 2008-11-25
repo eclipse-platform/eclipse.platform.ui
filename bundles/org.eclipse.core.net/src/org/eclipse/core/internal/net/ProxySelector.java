@@ -56,19 +56,25 @@ public class ProxySelector {
 		}
 	}
 
-	public static IProxyData[] getProxyData(String provider) {
+	public static ProxyData[] getProxyData(String provider) {
 		ProxyManager manager = (ProxyManager) ProxyManager.getProxyManager();
 		if (provider.equals(DIRECT_PROVIDER)) {
-			return new IProxyData[0];
+			return new ProxyData[0];
 		} else if (provider.equals(ECLIPSE_PROVIDER)) {
-			return manager.getProxyData();
+			return castArray(manager.getProxyData());
 		} else if (provider.equals(NATIVE_PROVIDER)) {
-			return manager.getNativeProxyData();
+			return castArray(manager.getNativeProxyData());
 		}
 		throw new IllegalArgumentException("Provider not supported"); //$NON-NLS-1$
 	}
 
-	public static void setProxyData(String provider, IProxyData proxies[]) {
+	private static ProxyData[] castArray(IProxyData data[]) {
+		ProxyData[] ret = new ProxyData[data.length];
+		System.arraycopy(data, 0, ret, 0, data.length);
+		return ret;
+	}
+
+	public static void setProxyData(String provider, ProxyData proxies[]) {
 		if (provider.equals(ECLIPSE_PROVIDER)) {
 			IProxyService service = ProxyManager.getProxyManager();
 			try {

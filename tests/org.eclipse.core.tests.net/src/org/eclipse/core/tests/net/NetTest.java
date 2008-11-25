@@ -16,6 +16,7 @@ import java.util.*;
 
 import junit.framework.*;
 
+import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.internal.net.ProxyType;
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
@@ -67,8 +68,10 @@ public class NetTest extends TestCase {
 		return Activator.getDefault().getProxyService();
 	}
 
-	private void assertProxyDataEqual(IProxyData expectedData) {
-		IProxyData data = getProxyManager().getProxyData(expectedData.getType());
+	private void assertProxyDataEqual(IProxyData expected) {
+		ProxyData expectedData = (ProxyData) expected;
+		ProxyData data = (ProxyData) getProxyManager().getProxyData(
+				expectedData.getType());
 		assertEquals(expectedData.getType(), data.getType());
 		assertEquals(expectedData.getHost(), data.getHost());
 		assertEquals(expectedData.getPort(), data.getPort());
