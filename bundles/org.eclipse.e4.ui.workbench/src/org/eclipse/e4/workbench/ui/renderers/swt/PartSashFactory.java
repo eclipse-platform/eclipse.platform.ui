@@ -111,16 +111,10 @@ public class PartSashFactory extends SWTPartFactory {
 		
 		// reset the model's weights to match the control
 		if (overWrite) {
-			System.out.print("new weights:");
 			modelWeights.clear();
 			for (int i = 0; i < ctrlWeights.length; i++) {
-				System.out.print(" " + ctrlWeights[i]);
 				modelWeights.add(ctrlWeights[i]);
 			}
-			System.out.println();
-		}
-		else {
-			System.out.println("weights OK");
 		}
 	}
 }
