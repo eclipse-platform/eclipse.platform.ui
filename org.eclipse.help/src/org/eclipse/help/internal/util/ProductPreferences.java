@@ -81,8 +81,8 @@ public class ProductPreferences {
 			if (product != null) {
 				pluginId = product.getDefiningBundle().getSymbolicName();
 			}
-			String helpDataFile = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.HELP_DATA_KEY, null, null);
-			String baseTOCS = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.BASE_TOCS_KEY, null, null);
+			String helpDataFile = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.HELP_DATA_KEY, "", null); //$NON-NLS-1$
+			String baseTOCS = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.BASE_TOCS_KEY, "", null); //$NON-NLS-1$
 			primaryTocOrdering = getTocOrdering(pluginId, helpDataFile, baseTOCS);
 			// active product has no preference for toc order
 			if (primaryTocOrdering == null) {

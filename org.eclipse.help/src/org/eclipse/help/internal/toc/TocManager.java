@@ -306,7 +306,7 @@ public class TocManager {
 		}
 		else {
 			HashSet ignored = new HashSet();
-			String preferredTocs = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_TOCS_KEY, null, null);
+			String preferredTocs = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_TOCS_KEY, "", null); //$NON-NLS-1$
 			if (preferredTocs.length() > 0) {
 				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredTocs, " ;,"); //$NON-NLS-1$
 				while (suggestdOrderedInfosets.hasMoreTokens()) {

@@ -192,7 +192,7 @@ public class IndexManager {
 		}
 		else {
 			HashSet ignored = new HashSet();
-			String preferredIndexes = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, null, null);
+			String preferredIndexes = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, "", null); //$NON-NLS-1$
 			if (preferredIndexes.length() > 0) {
 				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredIndexes, " ;,"); //$NON-NLS-1$
 				while (suggestdOrderedInfosets.hasMoreTokens()) {

@@ -67,7 +67,7 @@ public class HelpData {
 			if (product != null) {
 				pluginId = product.getDefiningBundle().getSymbolicName();
 			}
-			String helpDataFile = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.HELP_DATA_KEY, null, null);
+			String helpDataFile = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.HELP_DATA_KEY, "", null); //$NON-NLS-1$
 			if (helpDataFile.length() > 0) {
 			    if (helpDataFile.startsWith(PLUGINS_ROOT_SLASH)) {
 				    int nextSlash = helpDataFile.indexOf('/', PLUGINS_ROOT_SLASH.length());
@@ -176,9 +176,9 @@ public class HelpData {
 		} else {
 			// Derive information from preferences
 			IPreferencesService preferencesService = Platform.getPreferencesService();
-			String baseTocs = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.BASE_TOCS_KEY, null, null);
-			String ignoredTocs = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_TOCS_KEY, null, null);
-			String ignoredIndexes = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, null, null);
+			String baseTocs = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.BASE_TOCS_KEY, "", null); //$NON-NLS-1$
+			String ignoredTocs = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_TOCS_KEY, "", null); //$NON-NLS-1$
+			String ignoredIndexes = preferencesService.getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, "", null); //$NON-NLS-1$
 			tocOrder = ProductPreferences.tokenize(baseTocs);
 			hiddenTocs.addAll(ProductPreferences.tokenize(ignoredTocs));
 			hiddenIndexes.addAll(ProductPreferences.tokenize(ignoredIndexes));
