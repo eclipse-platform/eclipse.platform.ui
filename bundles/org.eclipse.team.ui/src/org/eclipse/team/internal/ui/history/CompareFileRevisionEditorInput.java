@@ -40,6 +40,23 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		}
 	};
 	
+	/*
+	 * Returns <code>true</code> if the other object is of type
+	 * <code>CompareFileRevisionEditorInput</code> and both of their
+	 * corresponding left and right objects are identical. The content is not
+	 * considered.
+	 */
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof CompareFileRevisionEditorInput) {
+			CompareFileRevisionEditorInput other = (CompareFileRevisionEditorInput) obj;
+			return other.getLeft().equals(left)
+					&& other.getRightRevision().equals(right);
+		}
+		return false;
+	}
+	
 	public class MyDiffNode extends AbstractCompareInput {
 		public MyDiffNode(ITypedElement left, ITypedElement right) {
 			super(Differencer.CHANGE, null, left, right);

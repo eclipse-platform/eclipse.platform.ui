@@ -235,16 +235,20 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 		return getResource().hashCode();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ResourceNode#equals(java.lang.Object)
+	/*
+	 * Returns <code>true</code> if the other object is of type
+	 * <code>LocalResourceTypedElement</code> and their corresponding resources
+	 * are identical. The content is not considered.
 	 */
-	public boolean equals(Object other) {
-		if (other instanceof LocalResourceTypedElement) {
-			LocalResourceTypedElement otherElement = (LocalResourceTypedElement) other;
-			return otherElement.getResource().equals(getResource()) 
-				&& exists == otherElement.exists;
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof LocalResourceTypedElement) {
+			LocalResourceTypedElement otherElement = (LocalResourceTypedElement) obj;
+			return otherElement.getResource().equals(getResource())
+					&& exists == otherElement.exists;
 		}
-		return super.equals(other);
+		return false;
 	}
 
 	/**

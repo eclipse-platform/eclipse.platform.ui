@@ -186,9 +186,8 @@ public class OpenInCompareAction extends Action {
 	}
 
     public static void openCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
-		// this is how it worked before opening compare editors for multiple
-		// selection was enabled
-		openCompareEditor(input, page, false);
+    	// try to reuse editors, if possible
+		openCompareEditor(input, page, true);
 	}
 	
     public static void openCompareEditor(CompareEditorInput input, IWorkbenchPage page, boolean reuseEditorIfPossible) {
@@ -212,19 +211,23 @@ public class OpenInCompareAction extends Action {
     }
 	
 	/**
-	 * Returns an editor that can be re-used. An open compare editor that
-	 * has un-saved changes cannot be re-used.
-	 * @param input the input being opened
-	 * @param page 
-	 * @return the open editor
+	 * Returns an editor that can be re-used. An open compare editor that has
+	 * un-saved changes cannot be re-used.
+	 * 
+	 * @param input
+	 *            the input being opened
+	 * @param page
+	 * @return an EditorPart or <code>null</code> if none can be found
 	 */
-	public static IEditorPart findReusableCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
+	public static IEditorPart findReusableCompareEditor(
+			CompareEditorInput input, IWorkbenchPage page) {
 		IEditorReference[] editorRefs = page.getEditorReferences();
-		// first loop looking for an editor with the same input 
+		// first loop looking for an editor with the same input
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(false);
-			if(part != null 
-					&& (part.getEditorInput() instanceof SyncInfoCompareInput || part.getEditorInput() instanceof ModelCompareEditorInput) 
+			if (part != null
+					&& (part.getEditorInput() instanceof SyncInfoCompareInput || part
+							.getEditorInput() instanceof ModelCompareEditorInput)
 					&& part instanceof IReusableEditor
 					&& part.getEditorInput().equals(input)) {
 				return part;
@@ -235,15 +238,14 @@ public class OpenInCompareAction extends Action {
 		if (isReuseOpenEditor()) {
 			for (int i = 0; i < editorRefs.length; i++) {
 				IEditorPart part = editorRefs[i].getEditor(false);
-				if(part != null 
-						&& (part.getEditorInput() instanceof SyncInfoCompareInput || part.getEditorInput() instanceof ModelCompareEditorInput) 
-						&& part instanceof IReusableEditor
-						&& !part.isDirty()) {
+				if (part != null
+						&& (part.getEditorInput() instanceof SaveableCompareEditorInput)
+						&& part instanceof IReusableEditor && !part.isDirty()) {
 					return part;
 				}
 			}
 		}
-		
+
 		// no re-usable editor found
 		return null;
 	}
