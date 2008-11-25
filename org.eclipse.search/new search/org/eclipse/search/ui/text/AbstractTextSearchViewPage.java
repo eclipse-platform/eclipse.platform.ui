@@ -1197,18 +1197,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private synchronized void runBatchedUpdates() {
-		if (false /*fBatchedUpdates.size() > 50*/) {
-			Object[] hundredUpdates= new Object[50];
-			Iterator elements= fBatchedUpdates.iterator();
-			for (int i= 0; i < hundredUpdates.length; i++) {
-				hundredUpdates[i]= elements.next();
-				elements.remove();
-			}
-			elementsChanged(hundredUpdates);
-		} else {
-			elementsChanged(fBatchedUpdates.toArray());
-			fBatchedUpdates.clear();
-		}
+		elementsChanged(fBatchedUpdates.toArray());
+		fBatchedUpdates.clear();
 		updateBusyLabel();
 	}
 

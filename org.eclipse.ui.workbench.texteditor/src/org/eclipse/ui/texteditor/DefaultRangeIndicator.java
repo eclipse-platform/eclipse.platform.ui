@@ -157,15 +157,8 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		Color c1;
 		Color c2;
 
-		if (false) {
-			// range lighter
-			c1= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			c2= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		} else {
-			// range darker
-			c1= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
-			c2= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		}
+		c1= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
+		c2= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 
 		RGB rgbs[]= new RGB[] {
 			new RGB(c1.getRed(), c1.getGreen(), c1.getBlue()),
