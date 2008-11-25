@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.net.proxy.IProxyData;
 
 /**
@@ -27,6 +28,7 @@ import org.eclipse.core.net.proxy.IProxyData;
  */
 public class StaticProxyConfig {
 
+	private static final String[] KNOWN_TYPES = {"HTTP", "HTTPS", "FTP", "GOPHER", "SOCKS"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	private List universalProxies = new ArrayList();
 	private Map protocolSpecificProxies = new HashMap();
 	private ProxyBypass proxyBypass;
@@ -69,11 +71,26 @@ public class StaticProxyConfig {
 					proxies.addAll(protocolProxies);
 				}
 			}
-		} else
-			proxies.addAll(universalProxies);
+		} else {
+			IProxyData[] data = getUniversalProxiesData();
+			if (uri.getScheme() != null) {
+				for (int i = 0; i < data.length; i++) {
+					if (uri.getScheme().equalsIgnoreCase(data[i].getType())) {
+						proxies.add(data[i]);
+					}
+				}
+			} else {
+				for (int i = 0; i < data.length; i++) {
+					proxies.add(data[i]);
+				}
+			}
+		}
 	}
 
 	public IProxyData[] getProxyData() {
+		IProxyData[] data = getUniversalProxiesData();
+		if (data.length > 0)
+			return data;
 		List proxies = new ArrayList();
 		Iterator it = protocolSpecificProxies.values().iterator();
 		while (it.hasNext()) {
@@ -83,6 +100,23 @@ public class StaticProxyConfig {
 			}
 		}
 		return (IProxyData[]) proxies.toArray(new IProxyData[0]);
+	}
+
+	private IProxyData[] getUniversalProxiesData() {
+		if (universalProxies.size() == 0) {
+			return new IProxyData[0];
+		}
+		IProxyData[] data = new IProxyData[KNOWN_TYPES.length];
+		IProxyData universal = (IProxyData) universalProxies.get(0);
+		for (int i = 0; i < KNOWN_TYPES.length; i++) {
+			ProxyData newData = new ProxyData(KNOWN_TYPES[i], universal
+					.getHost(), universal.getPort(), universal
+					.isRequiresAuthentication(), universal.getSource());
+			newData.setUserid(universal.getUserId());
+			newData.setPassword(universal.getPassword());
+			data[i] = newData;
+		}
+		return data;
 	}
 
 	public String[] getNonProxiedHosts() {
