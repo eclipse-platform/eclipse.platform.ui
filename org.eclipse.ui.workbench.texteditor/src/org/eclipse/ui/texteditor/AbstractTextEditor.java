@@ -219,26 +219,34 @@ import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
 /**
  * Abstract base implementation of a text editor.
  * <p>
- * Subclasses are responsible for configuring the editor appropriately.
- * The standard text editor, <code>TextEditor</code>, is one such example.</p>
+ * Subclasses are responsible for configuring the editor appropriately. The standard text editor,
+ * <code>TextEditor</code>, is one such example.
+ * </p>
  * <p>
- * If a subclass calls {@linkplain #setEditorContextMenuId(String) setEditorContextMenuId} the argument is
- * used as the id under which the editor's context menu is registered for extensions.
- * If no id is set, the context menu is registered under <b>[editor_id].EditorContext</b>
- * whereby [editor_id] is replaced with the editor's part id.  If the editor is instructed to
- * run in version 1.0 context menu registration compatibility mode, the latter form of the
- * registration even happens if a context menu id has been set via {@linkplain #setEditorContextMenuId(String) setEditorContextMenuId}.
- * If no id is set while in compatibility mode, the menu is registered under
- * {@link #DEFAULT_EDITOR_CONTEXT_MENU_ID}.</p>
+ * If a subclass calls {@linkplain #setEditorContextMenuId(String) setEditorContextMenuId} the
+ * argument is used as the id under which the editor's context menu is registered for extensions. If
+ * no id is set, the context menu is registered under <b>[editor_id].EditorContext</b> whereby
+ * [editor_id] is replaced with the editor's part id. If the editor is instructed to run in version
+ * 1.0 context menu registration compatibility mode, the latter form of the registration even
+ * happens if a context menu id has been set via {@linkplain #setEditorContextMenuId(String)
+ * setEditorContextMenuId}. If no id is set while in compatibility mode, the menu is registered
+ * under {@link #DEFAULT_EDITOR_CONTEXT_MENU_ID}.
+ * </p>
  * <p>
- * If a subclass calls {@linkplain #setRulerContextMenuId(String) setRulerContextMenuId} the argument is
- * used as the id under which the ruler's context menu is registered for extensions.
- * If no id is set, the context menu is registered under <b>[editor_id].RulerContext</b>
- * whereby [editor_id] is replaced with the editor's part id.  If the editor is instructed to
- * run in version 1.0 context menu registration compatibility mode, the latter form of the
- * registration even happens if a context menu id has been set via {@linkplain #setRulerContextMenuId(String) setRulerContextMenuId}.
- * If no id is set while in compatibility mode, the menu is registered under
- * {@link #DEFAULT_RULER_CONTEXT_MENU_ID}.</p>
+ * If a subclass calls {@linkplain #setRulerContextMenuId(String) setRulerContextMenuId} the
+ * argument is used as the id under which the ruler's context menu is registered for extensions. If
+ * no id is set, the context menu is registered under <b>[editor_id].RulerContext</b> whereby
+ * [editor_id] is replaced with the editor's part id. If the editor is instructed to run in version
+ * 1.0 context menu registration compatibility mode, the latter form of the registration even
+ * happens if a context menu id has been set via {@linkplain #setRulerContextMenuId(String)
+ * setRulerContextMenuId}. If no id is set while in compatibility mode, the menu is registered under
+ * {@link #DEFAULT_RULER_CONTEXT_MENU_ID}.
+ * </p>
+ * <p>
+ * As of 3.5, contributers can contribute editor and ruler context menu actions to all subclasses of
+ * this class by using {@link #COMMON_EDITOR_CONTEXT_MENU_ID} and
+ * {@link #COMMON_RULER_CONTEXT_MENU_ID}.
+ * </p>
  */
 public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, INavigationLocationProvider, ISaveablesSource, IPersistableEditor {
 
@@ -2175,6 +2183,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/** Menu id for the ruler context menu. */
 	public static final String DEFAULT_RULER_CONTEXT_MENU_ID= "#RulerContext"; //$NON-NLS-1$
 
+	/**
+	 * Menu id used to contribute to the editor context menu of all textual editors.
+	 * 
+	 * @since 3.5
+	 */
+	public static final String COMMON_EDITOR_CONTEXT_MENU_ID= "#AbstractTextEditorContext"; //$NON-NLS-1$
+
+	/**
+	 * Menu id used to contribute to the ruler context menu of all textual editors.
+	 * 
+	 * @since 3.5
+	 */
+	public static final String COMMON_RULER_CONTEXT_MENU_ID= "#AbstractTextEditorRulerContext"; //$NON-NLS-1$
+
 	/** The width of the vertical ruler. */
 	protected static final int VERTICAL_RULER_WIDTH= 12;
 
@@ -3341,6 +3363,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				getEditorSite().registerContextMenu(partId + ".EditorContext", manager, getSelectionProvider(), isEditorInputIncludedInContextMenu()); //$NON-NLS-1$
 		}
 
+		getEditorSite().registerContextMenu(COMMON_EDITOR_CONTEXT_MENU_ID, manager, getSelectionProvider(), false);
+
 		if (fEditorContextMenuId == null)
 			fEditorContextMenuId= DEFAULT_EDITOR_CONTEXT_MENU_ID;
 
@@ -3365,6 +3389,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (partId != null)
 				getEditorSite().registerContextMenu(partId + ".RulerContext", manager, getSelectionProvider(), false); //$NON-NLS-1$
 		}
+
+		getEditorSite().registerContextMenu(COMMON_RULER_CONTEXT_MENU_ID, manager, getSelectionProvider(), false);
 
 		if (fRulerContextMenuId == null)
 			fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
