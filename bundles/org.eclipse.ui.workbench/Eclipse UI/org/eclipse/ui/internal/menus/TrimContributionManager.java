@@ -155,8 +155,8 @@ public class TrimContributionManager extends ContributionManager {
 		 */
 		public void dispose() {
 			if (tbm != null) {
-				tbm.removeAll();
 				tbm.dispose();
+				tbm.removeAll();
 			}
 		}
 	}
