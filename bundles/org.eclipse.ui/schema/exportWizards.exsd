@@ -146,6 +146,9 @@ interface
                   a relative name of the icon that will be used 
 alongside the wizard name in the export engine listing.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
