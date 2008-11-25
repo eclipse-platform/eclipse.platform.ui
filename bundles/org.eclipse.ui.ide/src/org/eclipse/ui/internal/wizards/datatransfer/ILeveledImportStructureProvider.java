@@ -22,7 +22,7 @@ import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
  * 
  * @since 3.1
  */
-interface ILeveledImportStructureProvider extends IImportStructureProvider {
+public interface ILeveledImportStructureProvider extends IImportStructureProvider {
 	/**
 	 * Returns the entry that this importer uses as the root sentinel.
 	 * 
