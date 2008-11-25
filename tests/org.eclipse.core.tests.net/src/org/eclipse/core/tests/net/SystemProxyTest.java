@@ -89,7 +89,7 @@ public class SystemProxyTest extends TestCase {
 	}
 
 	private void assertProxyDataEqual(IProxyData data, IProxyData expectedData) {
-		assertEquals(expectedData.getType(), data.getType());
+		assertTrue(expectedData.getType() == data.getType());
 		assertEquals(expectedData.getHost(), data.getHost());
 		assertEquals(expectedData.getPort(), data.getPort());
 		assertEquals(expectedData.getUserId(), data.getUserId());

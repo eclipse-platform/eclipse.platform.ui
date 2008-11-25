@@ -174,12 +174,12 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			ProxyType type = proxies[i];
 			result[i] = type.getProxyData(ProxyType.VERIFY_EQUAL);
 		}
-		return result;
+		return resolveType(result);
 	}
 
 	public IProxyData[] getNativeProxyData() {
 		if (hasSystemProxies()) {
-			return nativeProxyProvider.getProxyData();
+			return resolveType(nativeProxyProvider.getProxyData());
 		}
 		return new IProxyData[0];
 	}
@@ -285,7 +285,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 
 	public IProxyData getProxyData(String type) {
 		checkMigrated();
-		return internalGetProxyData(type, ProxyType.VERIFY_EQUAL);
+		return resolveType(internalGetProxyData(type, ProxyType.VERIFY_EQUAL));
 	}
 
 	private IProxyData internalGetProxyData(String type, int verifySystemProperties) {
@@ -308,7 +308,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			return new IProxyData[0];
 		}
 		if (hasSystemProxies() && isSystemProxiesEnabled()) {
-			return nativeProxyProvider.select(uri);
+			return resolveType(nativeProxyProvider.select(uri));
 		}
 
 		if (isHostFiltered(uri))
@@ -320,7 +320,8 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			if (proxyData.getHost() != null)
 				result.add(proxyData);
 		}
-		return (IProxyData[]) result.toArray(new IProxyData[result.size()]);
+		IProxyData ret[] = (IProxyData[]) result.toArray(new IProxyData[result.size()]);
+		return resolveType(ret);
 	}
 
 	public static URI tryGetURI(String host) {
@@ -362,7 +363,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			try {
 				URI uri = new URI(type, "//" + host, null); //$NON-NLS-1$
 				IProxyData[] proxyDatas = nativeProxyProvider.select(uri);
-				return proxyDatas.length > 0 ? nativeProxyProvider.select(uri)[0] : null;
+				return proxyDatas.length > 0 ? resolveType(nativeProxyProvider.select(uri)[0]) : null;
 			} catch (URISyntaxException e) {
 				return null;
 			}
@@ -372,7 +373,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			IProxyData proxyData = data[i];
 			if (proxyData.getType().equalsIgnoreCase(type)
 					&& proxyData.getHost() != null)
-				return proxyData;
+				return resolveType(proxyData);
 		}
 		return null;
 	}
@@ -559,9 +560,34 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	public IProxyData[] select(URI uri) {
 		IProxyData data = getProxyDataForHost(uri.getHost(), uri.getScheme());
 		if (data != null) {
-			return new IProxyData[] { data };
+			return resolveType(new IProxyData[] { data });
 		}
 		return new IProxyData[0];
+	}
+
+	public IProxyData resolveType(IProxyData data) {
+		if (data == null) {
+			return null;
+		}
+		ProxyData d = (ProxyData) data;
+		if (d.getType().equalsIgnoreCase(IProxyData.HTTP_PROXY_TYPE)) {
+			d.setType(IProxyData.HTTP_PROXY_TYPE);
+		} else if (d.getType().equalsIgnoreCase(IProxyData.HTTPS_PROXY_TYPE)) {
+			d.setType(IProxyData.HTTPS_PROXY_TYPE);
+		} else if (d.getType().equalsIgnoreCase(IProxyData.SOCKS_PROXY_TYPE)) {
+			d.setType(IProxyData.SOCKS_PROXY_TYPE);
+		}
+		return d;
+	}
+
+	public IProxyData[] resolveType(IProxyData[] data) {
+		if (data == null) {
+			return null;
+		}
+		for (int i = 0; i < data.length; i++) {
+			resolveType(data[i]);
+		}
+		return data;
 	}
 
 }
