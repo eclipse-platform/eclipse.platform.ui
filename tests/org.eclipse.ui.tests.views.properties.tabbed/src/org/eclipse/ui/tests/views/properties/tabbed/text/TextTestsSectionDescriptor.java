@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,13 +22,16 @@ public class TextTestsSectionDescriptor extends AbstractSectionDescriptor {
 
 	private String word;
 
-	public TextTestsSectionDescriptor(String aWord) {
+	private String tabId;
+
+	public TextTestsSectionDescriptor(String aWord, String aTabId) {
 		super(null);
 		this.word = aWord;
+		this.tabId = aTabId;
 	}
 
 	public String getId() {
-		return word;
+		return word + "@" + Integer.toHexString(word.hashCode());
 	}
 
 	public ISection getSectionClass() {
@@ -36,7 +39,7 @@ public class TextTestsSectionDescriptor extends AbstractSectionDescriptor {
 	}
 
 	public String getTargetTab() {
-		return word;
+		return tabId;
 	}
 
 }

@@ -24,9 +24,9 @@ public class TextTestsTabDescriptor extends AbstractTabDescriptor {
 	public TextTestsTabDescriptor(String aWord) {
 		super();
 		this.word = aWord;
-		getSectionDescriptors().add(new TextTestsSectionDescriptor(aWord));
+		getSectionDescriptors().add(new TextTestsSectionDescriptor(aWord, getId()));
 		/* TextTestsSectionDescriptor2 added to the tests and it is filtered */
-		getSectionDescriptors().add(new TextTestsSectionDescriptor2(aWord));
+		getSectionDescriptors().add(new TextTestsSectionDescriptor2(aWord, getId()));
 	}
 
 	public String getCategory() {
@@ -34,7 +34,7 @@ public class TextTestsTabDescriptor extends AbstractTabDescriptor {
 	}
 
 	public String getId() {
-		return word;
+		return word + "@" + Integer.toHexString(word.hashCode());
 	}
 
 	public String getLabel() {
