@@ -47,6 +47,7 @@ public class JFacePerformanceSuite extends TestSuite {
 		addTest(new TreeAddTest("testAddThousandPreSort", BasicPerformanceTest.GLOBAL));
 		addTest(new ProgressMonitorDialogPerformanceTest("testLongNames"));
 		addTest(new ShrinkingTreeTest("testTreeViewerRefresh"));
+		addTest(new CollatorPerformanceTest("Policy.getComparatorTest"));
 
 	}
 }
