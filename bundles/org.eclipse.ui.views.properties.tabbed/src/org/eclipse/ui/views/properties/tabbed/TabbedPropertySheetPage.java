@@ -108,6 +108,8 @@ public class TabbedPropertySheetPage
 	private IWorkbenchWindow cachedWorkbenchWindow;
 
 	private boolean hasTitleBar;
+	
+	private boolean registerPartActivationListener = true;
 
 	/**
 	 * a listener that is interested in part activation events.
@@ -271,6 +273,23 @@ public class TabbedPropertySheetPage
 	 */
 	public TabbedPropertySheetPage(
 			ITabbedPropertySheetPageContributor tabbedPropertySheetPageContributor) {
+		this(tabbedPropertySheetPageContributor, true);
+	}
+	
+	/**
+	 * create a new tabbed property sheet page.
+	 *
+	 * @param tabbedPropertySheetPageContributor
+	 *            the tabbed property sheet page contributor.	  
+	 * @param showTitleBar
+	 *            boolean indicating if the title bar should be shown; 
+	 *            default value is <code>true</code> 	
+	 * @since 3.5
+	 */
+	public TabbedPropertySheetPage(
+			ITabbedPropertySheetPageContributor tabbedPropertySheetPageContributor,
+			boolean showTitleBar) {
+		hasTitleBar = showTitleBar;
 		contributor = tabbedPropertySheetPageContributor;
 		tabToComposite = new HashMap();
 		selectionQueue = new ArrayList(10);
@@ -361,9 +380,11 @@ public class TabbedPropertySheetPage
 		/**
 		 * Add a part activation listener.
 		 */
-		cachedWorkbenchWindow = getSite().getWorkbenchWindow();
-		cachedWorkbenchWindow.getPartService().addPartListener(
-			partActivationListener);
+		if (registerPartActivationListener) {
+			cachedWorkbenchWindow = getSite().getWorkbenchWindow();
+			cachedWorkbenchWindow.getPartService().addPartListener(
+					partActivationListener);
+		}
 
 		/**
 		 * Add a label provider change listener.
@@ -398,7 +419,7 @@ public class TabbedPropertySheetPage
 		}
 		currentContributorId = contributorId;
 		tabListContentProvider = getTabListContentProvider();
-		hasTitleBar = registry.getLabelProvider() != null;
+		hasTitleBar = hasTitleBar && registry.getLabelProvider() != null;
 
 		if (tabbedPropertyViewer != null) {
 			tabbedPropertyViewer.setContentProvider(tabListContentProvider);
@@ -1005,4 +1026,45 @@ public class TabbedPropertySheetPage
 			}
 		}
 	}
+	
+	/**
+	 * Sets the value indicating if the part activation listener should be registered. Default is true.
+	 * 
+	 * @param registerPartActivationListener true if the part activation listener should be registered
+	 * @since 3.5
+	 */
+	protected void setRegisterPartActivationListener(
+			boolean registerPartActivationListener) {
+		this.registerPartActivationListener = registerPartActivationListener;
+	}
+	
+	/**
+	 * Returns the value indicating if the part activation listener should be registered.
+	 * 
+	 * @return the value indicating if the part activation listener should be registered.
+	 * @since 3.5
+	 */ 
+	protected boolean registerPartActivationListener() {
+		return registerPartActivationListener;
+	}	
+
+	/**
+     * Returns text of the properties title.
+     *  
+     * @return String representing title text.
+	 * @since 3.5
+     */	
+    public String getTitleText() {
+    	return registry.getLabelProvider().getText(currentSelection);
+    }
+    
+    /**
+     * Returns the copy of the title image.
+     * 
+     * @return Image that is used as a title image.
+     * @since 3.5
+     */
+    public Image getTitleImage() {
+		return registry.getLabelProvider().getImage(currentSelection);
+    }
 }
