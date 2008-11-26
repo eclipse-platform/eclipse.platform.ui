@@ -951,4 +951,58 @@ public class TabbedPropertySheetPage
         }
     }
 
+	/**
+	 * Returns the currently selected tab.
+	 * 
+	 * @return the currently selected tab or <code>null</code> if there is no
+	 *         tab selected.
+	 * @since 3.5
+	 */
+	public ITabDescriptor getSelectedTab() {
+		int selectedTab = tabbedPropertyViewer.getSelectionIndex();
+		if (selectedTab != -1) {
+			Object object = tabbedPropertyViewer.getElementAt(selectedTab);
+			if (object instanceof ITabDescriptor) {
+				return (ITabDescriptor) object;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the list of currently active tabs.
+	 * 
+	 * @return the currently active tabs.
+	 * @since 3.5
+	 */
+	public ITabDescriptor[] getActiveTabs() {
+		List elements = tabbedPropertyViewer.getElements();
+		if (elements != null && elements.size() > 0) {
+			ITabDescriptor[] tabDescriptors = (ITabDescriptor[]) elements
+					.toArray(new ITabDescriptor[0]);
+			return tabDescriptors;
+		}
+		return new ITabDescriptor[] {};
+	}
+	
+	/**
+	 * Set the currently selected tab to be that of the provided tab id.
+	 * 
+	 * @param id
+	 *            The string id of the tab to select.
+	 * @since 3.5
+	 */
+	public void setSelectedTab(String id) {
+		List elements = tabbedPropertyViewer.getElements();
+		if (elements != null && elements.size() > 0) {
+			for (Iterator i = elements.iterator(); i.hasNext();) {
+				ITabDescriptor tabDescriptor = (ITabDescriptor) i.next();
+				if (tabDescriptor.getId() != null &&
+						tabDescriptor.getId().equals(id)) {
+					tabbedPropertyViewer.setSelection(new StructuredSelection(
+							tabDescriptor), true);
+				}
+			}
+		}
+	}
 }

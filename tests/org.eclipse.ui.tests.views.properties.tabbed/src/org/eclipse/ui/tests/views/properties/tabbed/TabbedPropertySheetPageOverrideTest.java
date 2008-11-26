@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,11 @@ package org.eclipse.ui.tests.views.properties.tabbed;
 
 import junit.framework.TestCase;
 
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Error;
 import org.eclipse.ui.tests.views.properties.tabbed.model.File;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Folder;
@@ -27,6 +24,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Information;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Warning;
 import org.eclipse.ui.tests.views.properties.tabbed.override.OverrideTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
+import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 
 /**
  * Tests for the override tabs support.
@@ -38,21 +36,9 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 
 	private OverrideTestsView overrideTestsView;
 
-	/**
-	 * Get the list of tabs from the tabbed properties view.
-	 * 
-	 * @return the tab list.
-	 */
-	private TabbedPropertyList getTabbedPropertyList() {
-		Control control = overrideTestsView.getTabbedPropertySheetPage()
-				.getControl();
-		assertTrue(control instanceof TabbedPropertyComposite);
-		TabbedPropertyComposite tabbedPropertyComposite = (TabbedPropertyComposite) control;
-		return tabbedPropertyComposite.getList();
-	}
-
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
@@ -86,6 +72,7 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
@@ -113,16 +100,16 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 		 */
 		overrideTestsView.setSelection(null);
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+		ITabDescriptor[] tabDescriptors = overrideTestsView
+				.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is "Empty Item"
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(),
-				"Empty Item");//$NON-NLS-1$
+		assertEquals("Empty Item", tabDescriptors[0].getLabel());//$NON-NLS-1$
 		/**
 		 * No second tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(1));
+		assertEquals(1, tabDescriptors.length);
 	}
 
 	/**
@@ -135,28 +122,29 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 		 */
 		overrideTestsView.setSelection(Error.class);
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+		ITabDescriptor[] tabDescriptors = overrideTestsView
+				.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is "Information".
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(),
-				"Information");//$NON-NLS-1$
+		assertEquals("Information", tabDescriptors[0].getLabel());//$NON-NLS-1$
 
 		/**
 		 * Second tab is "Warning".
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Warning");//$NON-NLS-1$
+		assertEquals("Warning", tabDescriptors[1].getLabel());//$NON-NLS-1$
 
 		/**
 		 * Third tab is "Error" and is selected.
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(2).toString(), "Error");//$NON-NLS-1$
-		assertTrue(tabbedPropertyList.getSelectionIndex() == 2);
+		assertEquals("Error", tabDescriptors[2].getLabel());//$NON-NLS-1$
+		assertEquals("Error", overrideTestsView.getTabbedPropertySheetPage()
+				.getSelectedTab().getLabel());
 
 		/**
 		 * No fourth tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(3));
+		assertEquals(3, tabDescriptors.length);
 
 	}
 
@@ -170,22 +158,24 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 		 */
 		overrideTestsView.setSelection(File.class);
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+		ITabDescriptor[] tabDescriptors = overrideTestsView
+				.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is "File" and is selected.
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(), "File");//$NON-NLS-1$
-		assertTrue(tabbedPropertyList.getSelectionIndex() == 0);
+		assertEquals("File", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		assertEquals("File", overrideTestsView.getTabbedPropertySheetPage()
+				.getSelectedTab().getLabel());
 
 		/**
-		 * Second tab is "Folder".
+		 * Second tab is "Folder" and is selected.
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Folder");//$NON-NLS-1$
+		assertEquals("Folder", tabDescriptors[1].getLabel());//$NON-NLS-1$
 
 		/**
 		 * No third tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(2));
+		assertEquals(2, tabDescriptors.length);
 	}
 
 	/**
@@ -198,22 +188,24 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 		 */
 		overrideTestsView.setSelection(Folder.class);
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+		ITabDescriptor[] tabDescriptors = overrideTestsView
+				.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is "File".
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(), "File");//$NON-NLS-1$
+		assertEquals("File", tabDescriptors[0].getLabel());//$NON-NLS-1$
 
 		/**
 		 * Second tab is "Folder" and is selected.
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Folder");//$NON-NLS-1$
-		assertTrue(tabbedPropertyList.getSelectionIndex() == 1);
+		assertEquals("Folder", tabDescriptors[1].getLabel());//$NON-NLS-1$
+		assertEquals("Folder", overrideTestsView.getTabbedPropertySheetPage()
+				.getSelectedTab().getLabel());
 
 		/**
 		 * No third tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(2));
+		assertEquals(2, tabDescriptors.length);
 	}
 
 	/**
@@ -226,28 +218,29 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 		 */
 		overrideTestsView.setSelection(Information.class);
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+		ITabDescriptor[] tabDescriptors = overrideTestsView
+				.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is "Information" and is selected.
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(),
-				"Information");//$NON-NLS-1$
-		assertTrue(tabbedPropertyList.getSelectionIndex() == 0);
+		assertEquals("Information", tabDescriptors[0].getLabel());//$NON-NLS-1$
+		assertEquals("Information", overrideTestsView
+				.getTabbedPropertySheetPage().getSelectedTab().getLabel());
 
 		/**
 		 * Second tab is "Warning".
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Warning");//$NON-NLS-1$
+		assertEquals("Warning", tabDescriptors[1].getLabel());//$NON-NLS-1$
 
 		/**
 		 * Third tab is "Error".
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(2).toString(), "Error");//$NON-NLS-1$
+		assertEquals("Error", tabDescriptors[2].getLabel());//$NON-NLS-1$
 
 		/**
 		 * No fourth tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(3));
+		assertEquals(3, tabDescriptors.length);
 	}
 
 	/**
@@ -260,29 +253,28 @@ public class TabbedPropertySheetPageOverrideTest extends TestCase {
 		 */
 		overrideTestsView.setSelection(Warning.class);
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+		ITabDescriptor[] tabDescriptors = overrideTestsView
+				.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is "Information".
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(),
-				"Information");//$NON-NLS-1$
+		assertEquals("Information", tabDescriptors[0].getLabel());//$NON-NLS-1$
 
 		/**
 		 * Second tab is "Warning" and is selected.
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Warning");//$NON-NLS-1$
-		assertTrue(tabbedPropertyList.getSelectionIndex() == 1);
+		assertEquals("Warning", tabDescriptors[1].getLabel());//$NON-NLS-1$
+		assertEquals("Warning", overrideTestsView.getTabbedPropertySheetPage()
+				.getSelectedTab().getLabel());
 
 		/**
 		 * Third tab is "Error".
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(2).toString(), "Error");//$NON-NLS-1$
+		assertEquals("Error", tabDescriptors[2].getLabel());//$NON-NLS-1$
 
 		/**
 		 * No fourth tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(3));
-
+		assertEquals(3, tabDescriptors.length);
 	}
-
 }

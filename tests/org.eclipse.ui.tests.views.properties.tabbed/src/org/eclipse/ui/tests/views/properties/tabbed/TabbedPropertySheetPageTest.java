@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,20 +15,18 @@ import junit.framework.TestCase;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeNode;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.eclipse.ui.tests.views.properties.tabbed.sections.InformationTwoSection;
 import org.eclipse.ui.tests.views.properties.tabbed.sections.NameSection;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsViewContentProvider;
 import org.eclipse.ui.views.properties.tabbed.ISection;
+import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabContents;
 
 public class TabbedPropertySheetPageTest
@@ -106,18 +104,6 @@ public class TabbedPropertySheetPageTest
     }
 
     /**
-     * Get the list of tabs from the tabbed properties view.
-     * 
-     * @return the tab list.
-     */
-    private TabbedPropertyList getTabbedPropertyList() {
-        Control control = testsView.getTabbedPropertySheetPage().getControl();
-        assertTrue(control instanceof TabbedPropertyComposite);
-        TabbedPropertyComposite tabbedPropertyComposite = (TabbedPropertyComposite) control;
-        return tabbedPropertyComposite.getList();
-    }
-
-    /**
      * When One Information Node is selected, three tabs display. Tests
      * typeMapper, labelProvider, propertyCategories, afterTab attributes.
      */
@@ -126,24 +112,24 @@ public class TabbedPropertySheetPageTest
          * select node 0 which is an Information
          */
         setSelection(new TreeNode[] {treeNodes[0]});
-        TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = testsView.getTabbedPropertySheetPage().getActiveTabs();
+        
         /**
          * First tab is Name
          */
-        assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Name");//$NON-NLS-1$
+        assertEquals("Name", tabDescriptors[0].getLabel());//$NON-NLS-1$
         /**
          * Second tab is Information
          */
-        assertEquals(tabbedPropertyList.getElementAt(1).toString(),
-            "Information");//$NON-NLS-1$
+        assertEquals("Information", tabDescriptors[1].getLabel());//$NON-NLS-1$
         /**
          * Third tab is Message
          */
-        assertEquals(tabbedPropertyList.getElementAt(2).toString(), "Message");//$NON-NLS-1$
+        assertEquals("Message", tabDescriptors[2].getLabel());//$NON-NLS-1$
         /**
          * No fourth tab
          */
-        assertNull(tabbedPropertyList.getElementAt(3));
+        assertEquals(3, tabDescriptors.length);
     }
 
     /**
@@ -155,20 +141,19 @@ public class TabbedPropertySheetPageTest
          * select nodes
          */
         setSelection(new TreeNode[] {treeNodes[0], treeNodes[1]});
-        TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = testsView.getTabbedPropertySheetPage().getActiveTabs();
         /**
          * First tab is Information
          */
-        assertEquals(tabbedPropertyList.getElementAt(0).toString(),
-            "Information");//$NON-NLS-1$
+        assertEquals("Information", tabDescriptors[0].getLabel());//$NON-NLS-1$
         /**
          * Second tab is Message
          */
-        assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Message");//$NON-NLS-1$
+        assertEquals("Message", tabDescriptors[1].getLabel());//$NON-NLS-1$
         /**
          * No other tab
          */
-        assertNull(tabbedPropertyList.getElementAt(2));
+        assertEquals(2, tabDescriptors.length);
     }
 
     /**
@@ -180,19 +165,19 @@ public class TabbedPropertySheetPageTest
          * select nodes
          */
         setSelection(new TreeNode[] {treeNodes[1]});
-        TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = testsView.getTabbedPropertySheetPage().getActiveTabs();
         /**
          * First tab is Information
          */
-        assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Name");//$NON-NLS-1$
+        assertEquals("Name", tabDescriptors[0].getLabel());//$NON-NLS-1$
         TabContents tabContents = testsView.getTabbedPropertySheetPage().getCurrentTab();
         /**
          * the tab has two sections.
          */
         ISection[] sections = tabContents.getSections();
-        assertEquals(sections.length, 2);
-        assertEquals(sections[0].getClass(), NameSection.class);
-        assertEquals(sections[1].getClass(), InformationTwoSection.class);
+        assertEquals(2, sections.length);
+        assertEquals(NameSection.class, sections[0].getClass());
+        assertEquals(InformationTwoSection.class, sections[1].getClass());
     }
 
     /**
@@ -204,15 +189,15 @@ public class TabbedPropertySheetPageTest
          * select nodes
          */
         setSelection(new TreeNode[] {treeNodes[1], treeNodes[2], treeNodes[3],});
-        TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = testsView.getTabbedPropertySheetPage().getActiveTabs();
         /**
          * Only tab is Message
          */
-        assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Message");//$NON-NLS-1$
+        assertEquals("Message", tabDescriptors[0].getLabel());//$NON-NLS-1$
         /**
          * No other tab
          */
-        assertNull(tabbedPropertyList.getElementAt(1));
+        assertEquals(1, tabDescriptors.length);
     }
 
     /**
@@ -224,15 +209,15 @@ public class TabbedPropertySheetPageTest
          * select nodes
          */
         setSelection(new TreeNode[] {treeNodes[5], treeNodes[6], treeNodes[7],});
-        TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] TabDescriptors = testsView.getTabbedPropertySheetPage().getActiveTabs();
         /**
          * Only tab is Resource
          */
-        assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Resource");//$NON-NLS-1$
+        assertEquals("Resource", TabDescriptors[0].getLabel());//$NON-NLS-1$
         /**
          * No other tab
          */
-        assertNull(tabbedPropertyList.getElementAt(1));
+        assertEquals(1, TabDescriptors.length);
     }
 
     /**
@@ -243,8 +228,8 @@ public class TabbedPropertySheetPageTest
     public void test_noPropertiesAvailable() {
     	TabContents tabContents = testsView.getTabbedPropertySheetPage().getCurrentTab();
         assertNull(tabContents);
-        TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
-        assertNull(tabbedPropertyList.getElementAt(0));
+        ITabDescriptor[] TabDescriptors = testsView.getTabbedPropertySheetPage().getActiveTabs();
+        assertEquals(0, TabDescriptors.length);
     }
 
 }

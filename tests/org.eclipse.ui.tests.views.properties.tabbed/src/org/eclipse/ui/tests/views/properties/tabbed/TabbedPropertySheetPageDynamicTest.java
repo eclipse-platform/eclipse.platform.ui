@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,11 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsColor;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsElement;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsShape;
@@ -32,6 +29,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsTr
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsViewContentProvider;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
+import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 
 /**
  * Tests for the dynamic tab and section support.
@@ -113,19 +111,6 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	}
 
 	/**
-	 * Get the list of tabs from the tabbed properties view.
-	 * 
-	 * @return the tab list.
-	 */
-	private TabbedPropertyList getTabbedPropertyList() {
-		Control control = dynamicTestsView.getTabbedPropertySheetPage()
-				.getControl();
-		assertTrue(control instanceof TabbedPropertyComposite);
-		TabbedPropertyComposite tabbedPropertyComposite = (TabbedPropertyComposite) control;
-		return tabbedPropertyComposite.getList();
-	}
-
-	/**
 	 * When the three blue nodes are selected, two tabs display.
 	 */
 	public void test_BlueStaticContribution() {
@@ -170,19 +155,19 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 
 		setSelection(selectNodes);
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is Element
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Element");//$NON-NLS-1$
+		assertEquals("Element", tabDescriptors[0].getLabel());//$NON-NLS-1$
 		/**
 		 * Second tab is Color
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Color");//$NON-NLS-1$
+		assertEquals("Color", tabDescriptors[1].getLabel());//$NON-NLS-1$
 		/**
 		 * No other tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(2));
+        assertEquals(2, tabDescriptors.length);
 	}
 
 	/**
@@ -230,19 +215,19 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 
 		setSelection(selectNodes);
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is Element
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Element");//$NON-NLS-1$
+		assertEquals("Element", tabDescriptors[0].getLabel());//$NON-NLS-1$
 		/**
 		 * Second tab is Shape
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Shape");//$NON-NLS-1$
+		assertEquals("Shape", tabDescriptors[1].getLabel());//$NON-NLS-1$
 		/**
 		 * No other tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(2));
+        assertEquals(2, tabDescriptors.length);
 	}
 
 	/**
@@ -252,11 +237,11 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_STATIC);
 		select_blackTriangle();
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * Only three tabs displayed for static contribution.
 		 */
-		assertNull(tabbedPropertyList.getElementAt(3));
+        assertEquals(3, tabDescriptors.length);
 	}
 
 	/**
@@ -266,15 +251,15 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_TABS);
 		select_blackTriangle();
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * Fourth tab is Black
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(3).toString(), "Black");//$NON-NLS-1$
+		assertEquals("Black", tabDescriptors[3].getLabel());//$NON-NLS-1$
 		/**
 		 * No other tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(4));
+        assertEquals(4, tabDescriptors.length);
 	}
 
 	/**
@@ -284,15 +269,15 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_SECTIONS);
 		select_blackTriangle();
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * Only three tabs displayed for dynamic section contribution.
 		 */
-		assertNull(tabbedPropertyList.getElementAt(3));
+        assertEquals(3, tabDescriptors.length);
 	}
 
 	/**
-	 * When the black triangle is selected, four tabs display.
+	 * When the black triangle is selected, three tabs display.
 	 */
 	public void select_blackTriangle() {
 		DynamicTestsTreeNode blackTriangleNode = null;
@@ -308,19 +293,19 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 
 		setSelection(new DynamicTestsTreeNode[] { blackTriangleNode });
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is Element
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Element");//$NON-NLS-1$
+		assertEquals("Element", tabDescriptors[0].getLabel());//$NON-NLS-1$
 		/**
 		 * Second tab is Shape
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Shape");//$NON-NLS-1$
+		assertEquals("Shape", tabDescriptors[1].getLabel());//$NON-NLS-1$
 		/**
 		 * Third tab is Advanced
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(2).toString(), "Advanced");//$NON-NLS-1$
+		assertEquals("Advanced", tabDescriptors[2].getLabel());//$NON-NLS-1$
 	}
 
 	/**
@@ -330,15 +315,15 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_STATIC);
 		select_RedStar();
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * Third tab is Advanced
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(2).toString(), "Advanced");//$NON-NLS-1$
+		assertEquals("Advanced", tabDescriptors[2].getLabel());//$NON-NLS-1$
 		/**
-		 * Only three tabs displayed for static contribution.
+		 * No other tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(3));
+        assertEquals(3, tabDescriptors.length);
 	}
 
 	/**
@@ -348,15 +333,15 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_TABS);
 		select_RedStar();
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * Third tab is Advanced
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(2).toString(), "Advanced");//$NON-NLS-1$
+		assertEquals("Advanced", tabDescriptors[2].getLabel());//$NON-NLS-1$
 		/**
-		 * Only three tabs displayed for dynamic tab contribution.
+		 * No other tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(3));
+        assertEquals(3, tabDescriptors.length);
 	}
 
 	/**
@@ -366,19 +351,19 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_SECTIONS);
 		select_RedStar();
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * Third tab is Star
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(2).toString(), "Star");//$NON-NLS-1$
+		assertEquals("Star", tabDescriptors[2].getLabel());//$NON-NLS-1$
 		/**
 		 * Fourth tab is Advanced
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(3).toString(), "Advanced");//$NON-NLS-1$
+		assertEquals("Advanced", tabDescriptors[3].getLabel());//$NON-NLS-1$
 		/**
 		 * No other tab
 		 */
-		assertNull(tabbedPropertyList.getElementAt(4));
+        assertEquals(4, tabDescriptors.length);
 	}
 
 	/**
@@ -398,15 +383,15 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 
 		setSelection(new DynamicTestsTreeNode[] { redStarNode });
 
-		TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
+        ITabDescriptor[] tabDescriptors = dynamicTestsView.getTabbedPropertySheetPage().getActiveTabs();
 		/**
 		 * First tab is Element
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Element");//$NON-NLS-1$
+		assertEquals("Element", tabDescriptors[0].getLabel());//$NON-NLS-1$
 		/**
 		 * Second tab is Color
 		 */
-		assertEquals(tabbedPropertyList.getElementAt(1).toString(), "Color");//$NON-NLS-1$
+		assertEquals("Color", tabDescriptors[1].getLabel());//$NON-NLS-1$
 	}
 
 }
