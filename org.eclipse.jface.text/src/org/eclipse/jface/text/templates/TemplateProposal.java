@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,8 +126,11 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		return fContext;
 	}
 
-	/*
-	 * @see ICompletionProposal#apply(IDocument)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated This method is no longer called by the framework and clients should overwrite
+	 *             {@link #apply(ITextViewer, char, int, int)} instead
 	 */
 	public final void apply(IDocument document) {
 		// not called anymore
@@ -434,8 +437,11 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		return getReplaceOffset();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#apply(org.eclipse.jface.text.IDocument, char, int)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated This method is no longer called by the framework and clients should overwrite
+	 *             {@link #apply(ITextViewer, char, int, int)} instead
 	 */
 	public void apply(IDocument document, char trigger, int offset) {
 		// not called any longer
