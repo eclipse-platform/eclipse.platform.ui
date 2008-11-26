@@ -105,14 +105,6 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
          * No fifth tab
          */
         assertEquals(4, tabDescriptors.length);
-
-        /**
-         * each tab has one section.
-         */
-        TabContents tabContents = textTestsView.getTabbedPropertySheetPage().getCurrentTab();
-        ISection[] sections = tabContents.getSections();
-        assertEquals(1, sections.length);
-        assertEquals(TextTestsLabelSection.class, sections[0].getClass());
     }
 
 	/**
@@ -153,4 +145,22 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 				.getSelectedTab().getLabel());
 	}
 
+	/**
+	 * This test makes sure that the list of sections has only one section. The
+	 * TextTestsTabDescriptor returns two sections and one section is always
+	 * filtered (Bug 245690).
+	 */
+	public void test_listOfSections() {
+        IDocument document = textTestsView.getViewer().getDocument();
+        document.set("This is a test");
+        textTestsView.getViewer().setSelectedRange(0, 14);
+
+        /**
+         * each tab has one section.
+         */
+        TabContents tabContents = textTestsView.getTabbedPropertySheetPage().getCurrentTab();
+        ISection[] sections = tabContents.getSections();
+        assertEquals(1, sections.length);
+        assertEquals(TextTestsLabelSection.class, sections[0].getClass());
+	}
 }
