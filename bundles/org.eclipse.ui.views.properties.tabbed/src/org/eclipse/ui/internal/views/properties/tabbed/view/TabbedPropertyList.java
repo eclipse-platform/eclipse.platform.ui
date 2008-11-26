@@ -810,19 +810,6 @@ public class TabbedPropertyList
 				FormColors.blend(white, widgetBackground.getRGB(), 75));
 	}
 
-	public void dispose() {
-		hoverGradientStart.dispose();
-		hoverGradientEnd.dispose();
-		defaultGradientStart.dispose();
-		defaultGradientEnd.dispose();
-		indentedDefaultBackground.dispose();
-		indentedHoverBackground.dispose();
-		navigationElementShadowStroke.dispose();
-		bottomNavigationElementShadowStroke1.dispose();
-		bottomNavigationElementShadowStroke2.dispose();
-		super.dispose();
-	}
-
 	/**
 	 * Get the height of a tab. The height of the tab is the height of the text
 	 * plus buffer.
