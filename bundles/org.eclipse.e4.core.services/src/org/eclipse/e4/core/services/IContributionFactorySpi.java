@@ -9,5 +9,5 @@ public interface IContributionFactorySpi {
 			IServiceLocator serviceLocator);
 
 	public Object call(Object object, String methodName,
-			IServiceLocator serviceLocator);
+			IServiceLocator serviceLocator, Object defaultValue);
 }
