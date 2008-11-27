@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
@@ -23,10 +24,6 @@ import org.w3c.dom.Element;
 
 /**
  * SWT Helper to link w3c Element with SWT widget.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class SWTElementHelpers {
 
@@ -82,7 +79,8 @@ public class SWTElementHelpers {
 	}
 
 	/**
-	 * Return the SWT Control wich is wrapped to the object <code>element</code>.
+	 * Return the SWT Control which is wrapped to the object
+	 * <code>element</code>.
 	 * 
 	 * @param element
 	 * @return
@@ -96,6 +94,26 @@ public class SWTElementHelpers {
 				Object widget = elt.getNativeWidget();
 				if (widget instanceof Control)
 					return (Control) widget;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the SWT Widget which is wrapped to the object <code>element</code>.
+	 * 
+	 * @param element
+	 * @return
+	 */
+	public static Widget getWidget(Object element) {
+		if (element instanceof Widget) {
+			return (Widget) element;
+		} else {
+			if (element instanceof CSSStylableElement) {
+				CSSStylableElement elt = (CSSStylableElement) element;
+				Object widget = elt.getNativeWidget();
+				if (widget instanceof Widget)
+					return (Widget) widget;
 			}
 		}
 		return null;
