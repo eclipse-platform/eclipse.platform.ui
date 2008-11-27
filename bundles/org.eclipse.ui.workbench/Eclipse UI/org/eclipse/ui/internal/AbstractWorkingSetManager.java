@@ -90,7 +90,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			StatusManager.getManager().handle(
 					StatusUtil.newStatus(PlatformUI.PLUGIN_ID, exception));
 		}
-	};
+	}
     private SortedSet workingSets = new TreeSet(WorkingSetComparator.INSTANCE);
     
     /**
@@ -164,10 +164,11 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     	PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this, ExtensionTracker
 				.createExtensionPointFilter(getExtensionPointFilter()));
 	}
-    
-    /**
+
+	/**
+	 * Returns the working sets extension point.
 	 * 
-	 * @return
+	 * @return the working sets extension point
 	 * @since 3.3
 	 */
 	private IExtensionPoint getExtensionPointFilter() {
@@ -302,7 +303,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * Adds the specified working set to the list of recently used
      * working sets.
      * 
-     * @param workingSet working set to added to the list of recently 
+     * @param workingSet working set to added to the list of recently
      * 	used working sets.
      */
     protected void internalAddRecentWorkingSet(IWorkingSet workingSet) {
@@ -322,7 +323,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * Tests the receiver and the object for equality
      * 
      * @param object object to compare the receiver to
-     * @return true=the object equals the receiver, it has the same 
+     * @return true=the object equals the receiver, it has the same
      * 	working sets. false otherwise
      */
     public boolean equals(Object object) {
@@ -362,17 +363,17 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     }
 
     /**
-     * Notify property change listeners about a change to the list of 
+     * Notify property change listeners about a change to the list of
      * working sets.
      * 
-     * @param changeId one of 
-     * 	IWorkingSetManager#CHANGE_WORKING_SET_ADD 
+     * @param changeId one of
+     * 	IWorkingSetManager#CHANGE_WORKING_SET_ADD
      * 	IWorkingSetManager#CHANGE_WORKING_SET_REMOVE
-     * 	IWorkingSetManager#CHANGE_WORKING_SET_CONTENT_CHANGE 
+     * 	IWorkingSetManager#CHANGE_WORKING_SET_CONTENT_CHANGE
      * 	IWorkingSetManager#CHANGE_WORKING_SET_NAME_CHANGE
-     * @param oldValue the removed working set or null if a working set 
+     * @param oldValue the removed working set or null if a working set
      * 	was added or changed.
-     * @param newValue the new or changed working set or null if a working 
+     * @param newValue the new or changed working set or null if a working
      * 	set was removed.
      */
     protected void firePropertyChange(String changeId, Object oldValue,
@@ -482,7 +483,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 					// if the dummy was created successfully copy it to the real output
 					IMemento workingSetMemento = memento
 							.createChild(IWorkbenchConstants.TAG_WORKING_SET);
-					workingSetMemento.putMemento(dummy);            
+					workingSetMemento.putMemento(dummy);
 				}
 			});
 			
@@ -551,7 +552,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     }
 
     /**
-     * Saves the list of most recently used working sets in the persistence 
+     * Saves the list of most recently used working sets in the persistence
      * store.
      * 
      * @param memento the persistence store
@@ -570,7 +571,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     }
 
    /**
-     * Restores the list of most recently used working sets from the 
+     * Restores the list of most recently used working sets from the
      * persistence store.
      * 
      * @param memento the persistence store
@@ -779,7 +780,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 					}});
 			}
 		}
-    }	
+    }
     
     
     /* (non-Javadoc)
@@ -829,7 +830,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			if (object instanceof IWorkingSetElementAdapter) {
 				removeElementAdapter((IWorkingSetElementAdapter) object);
 			}
-		} 
+		}
 	}
 
 	/**
@@ -867,7 +868,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			}
 		});
 		synchronized (updaters) {
-			updaters.values().remove(updater);			
+			updaters.values().remove(updater);
 		}
 		firePropertyChange(IWorkingSetManager.CHANGE_WORKING_SET_UPDATER_UNINSTALLED, updater, null);
 	}
