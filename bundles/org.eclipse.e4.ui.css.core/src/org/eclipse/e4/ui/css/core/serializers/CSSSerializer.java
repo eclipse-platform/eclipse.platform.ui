@@ -22,13 +22,9 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**
- * CSS Serializer to retrieve default CSSStyleDeclaration of the SWT Widgets,
- * Swing JComponent.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ * CSS Serializer to retrieve default CSSStyleDeclaration of the SWT Widgets.
  */
+
 public class CSSSerializer {
 
 	public CSSSerializer() {
