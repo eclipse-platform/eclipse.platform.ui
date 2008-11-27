@@ -19,8 +19,12 @@ import org.eclipse.e4.ui.css.core.impl.dom.properties.CSSBorderPropertiesImpl;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTHelpers;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
+
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyBorderSWTHandler extends
@@ -45,6 +49,14 @@ public class CSSPropertyBorderSWTHandler extends
 								.getResourcesRegistry()));
 			}
 			super.applyCSSProperty(border, property, value, pseudo, engine);
+			if((parent.getData("CSS_SUPPORTS_BORDERS") != null) && 
+					(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+				int pixelValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PT);
+				if(property.equals("border-width")) {
+					((FillLayout) parent.getLayout()).marginWidth = pixelValue;
+					((FillLayout) parent.getLayout()).marginHeight = pixelValue;
+				}
+			}
 			return true;
 		} else {
 			if (element instanceof CSSBorderProperties) {
