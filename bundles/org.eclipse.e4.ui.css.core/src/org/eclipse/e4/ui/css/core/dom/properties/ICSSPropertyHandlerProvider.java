@@ -22,10 +22,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  * CSS Property.</li>
  * <li>the strategy to get the CSS default style declaration of an element</li>
  * </ul>
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface ICSSPropertyHandlerProvider {
 
