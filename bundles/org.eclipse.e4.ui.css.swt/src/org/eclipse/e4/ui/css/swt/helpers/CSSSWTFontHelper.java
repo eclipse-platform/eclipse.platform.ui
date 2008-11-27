@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
@@ -21,6 +22,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSPrimitiveValue;
 
 /**
@@ -29,12 +31,31 @@ import org.w3c.dom.css.CSSPrimitiveValue;
  * <li>get CSS2FontProperties from Font of SWT Control.</li>
  * <li>get Font of SWT Control from CSS2FontProperties.</li>
  * </ul>
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSSWTFontHelper {
+
+	/**
+	 * Get CSS2FontProperties from Control stored into Data of Control. If
+	 * CSS2FontProperties doesn't exist, create it from Font of Control and
+	 * store it into Data of Control.
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static CSS2FontProperties getCSS2FontProperties(Widget widget,
+			Font font, CSSElementContext context) {
+		// Search into Data of Control if CSS2FontProperties exist.
+		CSS2FontProperties fontProperties = CSS2FontPropertiesHelpers
+				.getCSS2FontProperties(context);
+		if (fontProperties == null) {
+			// CSS2FontProperties doesn't exist, create it
+			fontProperties = getCSS2FontProperties(font);
+			// store into ClientProperty the CSS2FontProperties
+			CSS2FontPropertiesHelpers.setCSS2FontProperties(fontProperties,
+					context);
+		}
+		return fontProperties;
+	}
 
 	/**
 	 * Get CSS2FontProperties from Control stored into Data of Control. If
@@ -68,20 +89,22 @@ public class CSSSWTFontHelper {
 	 */
 	public static CSS2FontProperties getCSS2FontProperties(Font font) {
 		// Create CSS Font Properties
-		FontData fontData = getFirstFontData(font);
 		CSS2FontProperties fontProperties = new CSS2FontPropertiesImpl();
-		// Update font-family
-		String fontFamily = getFontFamily(font);
-		fontProperties.setFamily(new CSS2PrimitiveValueImpl(fontFamily));
-		// Update font-size
-		int fontSize = fontData.getHeight();
-		fontProperties.setSize(new CSS2PrimitiveValueImpl(fontSize));
-		// Update font-weight
-		String fontWeight = getFontWeight(font);
-		fontProperties.setWeight((new CSS2PrimitiveValueImpl(fontWeight)));
-		// Update font-style
-		String fontStyle = getFontStyle(font);
-		fontProperties.setStyle((new CSS2PrimitiveValueImpl(fontStyle)));
+		if (font != null) {
+			FontData fontData = getFirstFontData(font);
+			// Update font-family
+			String fontFamily = getFontFamily(font);
+			fontProperties.setFamily(new CSS2PrimitiveValueImpl(fontFamily));
+			// Update font-size
+			int fontSize = fontData.getHeight();
+			fontProperties.setSize(new CSS2PrimitiveValueImpl(fontSize));
+			// Update font-weight
+			String fontWeight = getFontWeight(font);
+			fontProperties.setWeight((new CSS2PrimitiveValueImpl(fontWeight)));
+			// Update font-style
+			String fontStyle = getFontStyle(font);
+			fontProperties.setStyle((new CSS2PrimitiveValueImpl(fontStyle)));
+		}
 		return fontProperties;
 	}
 
