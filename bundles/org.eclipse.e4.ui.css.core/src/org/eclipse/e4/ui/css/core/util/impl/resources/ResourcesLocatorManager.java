@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
-import org.eclipse.e4.ui.css.core.util.utils.StringUtils;
+import org.eclipse.e4.ui.css.core.utils.StringUtils;
 
 /**
  * Resources locator manager implementation.
