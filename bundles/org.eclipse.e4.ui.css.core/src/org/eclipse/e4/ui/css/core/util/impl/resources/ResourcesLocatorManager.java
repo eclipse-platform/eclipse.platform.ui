@@ -22,10 +22,6 @@ import org.eclipse.e4.ui.css.core.util.utils.StringUtils;
 
 /**
  * Resources locator manager implementation.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class ResourcesLocatorManager implements IResourcesLocatorManager {
 
