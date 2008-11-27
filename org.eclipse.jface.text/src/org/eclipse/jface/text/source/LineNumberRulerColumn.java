@@ -889,7 +889,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			Rectangle clArea= textWidget.getClientArea();
 			if (!clArea.isEmpty()) {
 				int firstPixel= 0;
-				int lastPixel= clArea.height - 1; // XXX what about margins? don't take trims as they include scrollbars
+				int lastPixel= clArea.height - 1; // XXX: what about margins? don't take trims as they include scrollbars
 				int first= JFaceTextUtil.getLineIndex(textWidget, firstPixel);
 				int last= JFaceTextUtil.getLineIndex(textWidget, lastPixel);
 				return last - first;

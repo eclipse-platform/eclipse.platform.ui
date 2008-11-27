@@ -129,7 +129,7 @@ public final class JFaceTextUtil {
 	private static int computeLastVisiblePixel(StyledText widget) {
 		int caHeight= widget.getClientArea().height;
 		int lastPixel= caHeight - 1;
-		// XXX what if there is a margin? can't take trim as this includes the scrollbars which are not part of the client area
+		// XXX: what if there is a margin? can't take trim as this includes the scrollbars which are not part of the client area
 //		if ((textWidget.getStyle() & SWT.BORDER) != 0)
 //			lastPixel -= 4;
 		return lastPixel;

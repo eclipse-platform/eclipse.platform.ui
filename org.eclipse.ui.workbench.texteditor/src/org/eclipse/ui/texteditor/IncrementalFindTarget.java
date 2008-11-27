@@ -751,7 +751,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			return ((IFindReplaceTargetExtension) fTarget).getLineSelection();
 
-		return null; // XXX should not return null
+		return null; // XXX: should not return null
 	}
 
 	/*
