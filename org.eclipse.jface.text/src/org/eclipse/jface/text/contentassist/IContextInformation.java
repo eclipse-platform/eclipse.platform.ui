@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,10 +63,13 @@ public interface IContextInformation {
 	String getInformationDisplayString();
 
 	/**
-	 * Compares the given object with this receiver. Two context informations are
-	 * equal if there information display strings and their context display strings
-	 * are equal.
-	 *
+	 * Compares the given object with this receiver. Two context informations are equal if there
+	 * information display strings and their context display strings are equal.
+	 * <p>
+	 * <strong>Note:</strong> As specified in {@link Object#equals(Object)} clients will most likely
+	 * also have to implement {@link Object#hashCode()}.
+	 * </p>
+	 * 
 	 * @see Object#equals(Object)
 	 */
 	boolean equals(Object object);
