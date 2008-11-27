@@ -116,53 +116,51 @@ public class PropertyTesterTests extends TestCase {
 	}
 
 	public void testDynamicPlugin() throws Exception {
-		if (!TEST_DYNAMIC_AND_ACTIVATION)
-			return;
-
-		A receiver= new A();
-		Property p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue(!p.isInstantiated());
-		Bundle bundle= Platform.getBundle("org.eclipse.core.expressions.tests.dynamic"); //$NON-NLS-1$
-		bundle.start();
-		p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue(p.isInstantiated());
-		bundle.stop();
-		bundle.uninstall();
-		boolean exception= false;
-		try {
+		if (TEST_DYNAMIC_AND_ACTIVATION) {
+			A receiver= new A();
+			Property p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue(!p.isInstantiated());
+			Bundle bundle= Platform.getBundle("org.eclipse.core.expressions.tests.dynamic"); //$NON-NLS-1$
+			bundle.start();
 			p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (CoreException e) {
-			exception= true;
-		} catch (InvalidRegistryObjectException e) {
-			// The uninstall events are sent out in a separate thread.
-			// So the type extension registry might not be flushed even
-			// though the bundle has already been uninstalled.
-			exception= true;
+			assertTrue(p.isInstantiated());
+			bundle.stop();
+			bundle.uninstall();
+			boolean exception= false;
+			try {
+				p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (CoreException e) {
+				exception= true;
+			} catch (InvalidRegistryObjectException e) {
+				// The uninstall events are sent out in a separate thread.
+				// So the type extension registry might not be flushed even
+				// though the bundle has already been uninstalled.
+				exception= true;
+			}
+			assertTrue("Core exception not thrown", exception);
 		}
-		assertTrue("Core exception not thrown", exception);
 	}
 
 	public void testPluginActivation() throws Exception {
-		if (!TEST_DYNAMIC_AND_ACTIVATION)
-			return;
+		if (TEST_DYNAMIC_AND_ACTIVATION) {
+			Bundle bundle= Platform.getBundle("org.eclipse.core.expressions.tests.forceActivation"); //$NON-NLS-1$
+			assertTrue(bundle.getState() == Bundle.RESOLVED);
 
-		Bundle bundle= Platform.getBundle("org.eclipse.core.expressions.tests.forceActivation"); //$NON-NLS-1$
-		assertTrue(bundle.getState() == Bundle.RESOLVED);
+			A receiver= new A();
+			TestExpression exp= new TestExpression("org.eclipse.core.expressions.tests.forceActivation", "testing", null, null, true);
+			EvaluationContext context= new EvaluationContext(null, receiver);
+			EvaluationResult result= exp.evaluate(context);
+			assertTrue(result == EvaluationResult.NOT_LOADED);
+			assertTrue(bundle.getState() == Bundle.RESOLVED);
+			Property p= TestExpression.testGetTypeExtensionManager().getProperty(receiver, "org.eclipse.core.expressions.tests.forceActivation", "testing", false); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue(!p.isInstantiated());
 
-		A receiver= new A();
-		TestExpression exp= new TestExpression("org.eclipse.core.expressions.tests.forceActivation", "testing", null, null, true);
-		EvaluationContext context= new EvaluationContext(null, receiver);
-		EvaluationResult result= exp.evaluate(context);
-		assertTrue(result == EvaluationResult.NOT_LOADED);
-		assertTrue(bundle.getState() == Bundle.RESOLVED);
-		Property p= TestExpression.testGetTypeExtensionManager().getProperty(receiver, "org.eclipse.core.expressions.tests.forceActivation", "testing", false); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue(!p.isInstantiated());
-
-		context.setAllowPluginActivation(true);
-		exp.evaluate(context);
-		assertTrue(bundle.getState() == Bundle.ACTIVE);
-		p= TestExpression.testGetTypeExtensionManager().getProperty(receiver, "org.eclipse.core.expressions.tests.forceActivation", "testing", false); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue(p.isInstantiated());
+			context.setAllowPluginActivation(true);
+			exp.evaluate(context);
+			assertTrue(bundle.getState() == Bundle.ACTIVE);
+			p= TestExpression.testGetTypeExtensionManager().getProperty(receiver, "org.eclipse.core.expressions.tests.forceActivation", "testing", false); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue(p.isInstantiated());
+		}
 	}
 
 	public void testPlatformTester() throws Exception {
