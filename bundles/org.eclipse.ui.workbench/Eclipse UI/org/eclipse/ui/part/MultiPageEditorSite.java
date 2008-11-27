@@ -33,12 +33,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
-import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
 
@@ -139,6 +140,12 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 						getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), getMultiPageEditor().getSite(),
 						this, null, 3));
+		serviceLocator.registerService(IMultiPageEditorSiteHolder.class,
+				new IMultiPageEditorSiteHolder() {
+					public MultiPageEditorSite getSite() {
+						return MultiPageEditorSite.this;
+					}
+				});
 	}
 
 	/**

@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.services;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -37,6 +38,7 @@ public class ContributedServiceTest extends UITestCase {
 	}
 
 	public void testGlobalService() throws Exception {
+		assertNotNull(getWorkbench().getService(IWorkbench.class));
 		IWorkbenchLocationService wls = (IWorkbenchLocationService) getWorkbench()
 				.getService(IWorkbenchLocationService.class);
 		assertNotNull(wls.getWorkbench());
@@ -56,6 +58,7 @@ public class ContributedServiceTest extends UITestCase {
 
 	public void testWindowService() throws Exception {
 		IServiceLocator locator = getWorkbench().getActiveWorkbenchWindow();
+		assertNotNull(locator.getService(IWorkbenchWindow.class));
 		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
 				.getService(IWorkbenchLocationService.class);
 		assertNotNull(wls.getWorkbenchWindow());
@@ -98,6 +101,7 @@ public class ContributedServiceTest extends UITestCase {
 
 	public void testLocalServiceCreated() throws Exception {
 		IServiceLocator parent = getWorkbench().getActiveWorkbenchWindow();
+		assertNotNull(parent.getService(IWorkbenchWindow.class));
 		IWorkbenchLocationService wls = (IWorkbenchLocationService) parent
 				.getService(IWorkbenchLocationService.class);
 		assertNotNull(wls.getWorkbenchWindow());

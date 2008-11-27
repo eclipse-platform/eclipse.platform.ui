@@ -3924,6 +3924,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.WINDOW_SCOPE,
 						getWorkbench(), this, null, null, null, 1));
+		// added back for legacy reasons
+		serviceLocator.registerService(IWorkbenchWindow.class, this);
 		
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class,

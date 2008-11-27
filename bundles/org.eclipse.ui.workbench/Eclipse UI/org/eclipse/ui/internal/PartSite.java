@@ -182,6 +182,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE,
 						getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), this, null, null, 2));
+		// added back for legacy reasons
+		serviceLocator.registerService(IWorkbenchPartSite.class, this);
 	}
 
 	/**
