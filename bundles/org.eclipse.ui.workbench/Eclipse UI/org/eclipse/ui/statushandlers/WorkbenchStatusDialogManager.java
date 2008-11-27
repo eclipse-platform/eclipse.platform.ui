@@ -1049,6 +1049,12 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	private ToolBar toolBar;
 	
 	/**
+	 * 
+	 * @see #setShowSupport
+	 */
+	private boolean showSupport = false;
+	
+	/**
 	 * This item is used to launch support tray
 	 */
 	private ToolItem launchTrayButton;
@@ -1225,6 +1231,9 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 				}
 				refresh();
 				refreshDialogSize();
+				if(supportTray.providesSupport() && showSupport){
+					openTray(supportTray);
+				}
 			}
 
 		} else {
@@ -2308,6 +2317,17 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 		if (this.dialog == null)
 			return null;
 		return this.dialog.getShell();
+	}
+	
+	/**
+	 * This method indicates, if the dialog should automatically open available
+	 * support. The default setting is false.
+	 * 
+	 * @param showSupport
+	 * @since 3.5
+	 */
+	public void setShowSupport(boolean showSupport){
+		this.showSupport = showSupport;
 	}
 
 	/**

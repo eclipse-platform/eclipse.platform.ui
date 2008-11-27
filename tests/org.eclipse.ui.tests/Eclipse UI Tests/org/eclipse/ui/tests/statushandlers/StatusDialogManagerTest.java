@@ -417,6 +417,19 @@ public class StatusDialogManagerTest extends TestCase {
 		wsdm.addStatusAdapter(statusAdapter, false);
 		openSupportArea(statusAdapter, passed);
 	}
+	
+	/**
+	 * Tests if support area appears by default if appropriate flag is set up.
+	 */
+	public void testSupport2(){
+		StatusAdapter statusAdapter = createStatusAdapter(MESSAGE_1);
+		wsdm.setShowSupport(true);
+		final StatusAdapter[] passed = new StatusAdapter[] { null };
+		Composite[] support = new Composite[] { null };
+		setupSupportArea(passed, support);
+		wsdm.addStatusAdapter(statusAdapter, false);
+		assertEquals(statusAdapter, passed[0]);
+	}
 
 	/**
 	 * Tests if details can be closed and opened 2 times tests if correct status
