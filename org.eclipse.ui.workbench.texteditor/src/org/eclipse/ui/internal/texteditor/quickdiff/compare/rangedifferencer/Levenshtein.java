@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -508,9 +508,11 @@ public final class Levenshtein {
 		if (row == fRow)
 			return fCurrentRow[column];
 
-		if (ASSERT && !(row == fRow - fStep && ((fStep > 0 && row >= fRowStart && row <= fRowEnd) || fStep < 0 && row <= fRowStart && row >= fRowEnd))) {
-			Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
-			return SKIP; // dummy
+		if (ASSERT) {
+			if (!(row == fRow - fStep && ((fStep > 0 && row >= fRowStart && row <= fRowEnd) || fStep < 0 && row <= fRowStart && row >= fRowEnd))) {
+				Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
+				return SKIP; // dummy
+			}
 		}
 
 		return fPreviousRow[column];
@@ -535,11 +537,10 @@ public final class Levenshtein {
 		} else {
 			if (row == fRow)
 				fCurrentRow[column]= value;
-			else if (ASSERT && !(row == fRow - fStep
-					&& ((fStep > 0 && row >= fRowStart && row <= fRowEnd)
-					  || fStep < 0 && row <= fRowStart && row >= fRowEnd)))
-				Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
-			else
+			else if (ASSERT) {
+				if (!(row == fRow - fStep && ((fStep > 0 && row >= fRowStart && row <= fRowEnd) || fStep < 0 && row <= fRowStart && row >= fRowEnd)))
+					Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
+			} else
 				fPreviousRow[column]= value;
 		}
 	}
