@@ -112,6 +112,10 @@ public class TextViewer extends Viewer implements
 	/** Internal flag to indicate the debug state. */
 	private static final boolean TRACE_DOUBLE_CLICK= false;
 
+	// FIXME always use setRedraw to avoid flickering due to scrolling
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=158746
+	private static final boolean REDRAW_BUG_158746= true;
+
 	/**
 	 * Width constraint for text hovers (in characters).
 	 * @since 3.4
@@ -1401,9 +1405,11 @@ public class TextViewer extends Viewer implements
 		 */
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
 			IRewriteTarget target= TextViewer.this.getRewriteTarget();
-			// FIXME always use setRedraw to avoid flickering due to scrolling
-			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=158746
-			boolean toggleRedraw= true || event.getSession().getSessionType() != DocumentRewriteSessionType.UNRESTRICTED_SMALL;
+			final boolean toggleRedraw;
+			if (REDRAW_BUG_158746)
+				toggleRedraw= true;
+			else
+				toggleRedraw= event.getSession().getSessionType() != DocumentRewriteSessionType.UNRESTRICTED_SMALL;
 			final boolean viewportStabilize= !toggleRedraw;
 			if (DocumentRewriteSessionEvent.SESSION_START == event.getChangeType()) {
 				if (toggleRedraw)
