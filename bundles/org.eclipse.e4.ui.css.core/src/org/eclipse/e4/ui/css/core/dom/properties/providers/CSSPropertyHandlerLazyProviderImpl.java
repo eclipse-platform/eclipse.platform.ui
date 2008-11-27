@@ -36,7 +36,7 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  */
 public class CSSPropertyHandlerLazyProviderImpl extends
 		AbstractCSSPropertyHandlerProvider {
- 
+
 	private static Log logger = LogFactory
 			.getLog(CSSPropertyHandlerLazyProviderImpl.class);
 
@@ -159,7 +159,9 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.e4.ui.css.core.dom.properties.providers.AbstractCSSPropertyHandlerProvider#getDefaultCSSStyleDeclaration(org.eclipse.e4.ui.css.core.engine.CSSEngine, org.eclipse.e4.ui.css.core.dom.CSSStylableElement, org.w3c.dom.css.CSSStyleDeclaration)
+	 * @see org.eclipse.e4.ui.css.core.dom.properties.providers.AbstractCSSPropertyHandlerProvider#getDefaultCSSStyleDeclaration(org.eclipse.e4.ui.css.core.engine.CSSEngine,
+	 *      org.eclipse.e4.ui.css.core.dom.CSSStylableElement,
+     *      org.w3c.dom.css.CSSStyleDeclaration)
 	 */
 	protected CSSStyleDeclaration getDefaultCSSStyleDeclaration(
 			CSSEngine engine, CSSStylableElement stylableElement,
@@ -177,7 +179,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 					for (int j = 0; j < compositePropertiesNames.length; j++) {
 						propertyName = compositePropertiesNames[j];
 						String s = getCSSPropertyStyle(engine, stylableElement,
-								propertyName);
+								propertyName, pseudoE);
 						if (s != null) {
 							if (style == null)
 								style = new StringBuffer();
@@ -186,7 +188,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 					}
 				} else {
 					String s = getCSSPropertyStyle(engine, stylableElement,
-							propertyName);
+							propertyName, pseudoE);
 					if (s != null) {
 						if (style == null)
 							style = new StringBuffer();
@@ -197,8 +199,8 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 			if (style != null) {
 				CSSStyleDeclaration defaultStyleDeclaration = engine
 						.parseStyleDeclaration(style.toString());
-				stylableElement
-						.setDefaultStyleDeclaration(pseudoE, defaultStyleDeclaration);
+				stylableElement.setDefaultStyleDeclaration(pseudoE,
+						defaultStyleDeclaration);
 				return defaultStyleDeclaration;
 			}
 		}

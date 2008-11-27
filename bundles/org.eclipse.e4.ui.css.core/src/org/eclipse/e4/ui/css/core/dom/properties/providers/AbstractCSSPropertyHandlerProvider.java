@@ -18,10 +18,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**
  * Abstract CSS Property handler.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public abstract class AbstractCSSPropertyHandlerProvider implements
 		ICSSPropertyHandlerProvider {
@@ -33,7 +29,8 @@ public abstract class AbstractCSSPropertyHandlerProvider implements
 	 *      java.lang.Object, org.w3c.dom.css.CSSStyleDeclaration)
 	 */
 	public CSSStyleDeclaration getDefaultCSSStyleDeclaration(CSSEngine engine,
-			Object widget, CSSStyleDeclaration newStyle, String pseudoE) throws Exception {
+			Object widget, CSSStyleDeclaration newStyle, String pseudoE)
+			throws Exception {
 		Element elt = engine.getElement(widget);
 		if (elt != null) {
 			if (elt instanceof CSSStylableElement) {
@@ -55,18 +52,19 @@ public abstract class AbstractCSSPropertyHandlerProvider implements
 	 * @return
 	 */
 	protected String getCSSPropertyStyle(CSSEngine engine,
-			CSSStylableElement stylableElement, String propertyName) {
+			CSSStylableElement stylableElement, String propertyName,
+			String pseudo) {
 		String propertyValue = engine.retrieveCSSProperty(stylableElement,
-				propertyName);
+				propertyName, pseudo);
 		StringBuffer style = null;
-		if (propertyValue != null) {
-			if (style == null)
-				style = new StringBuffer();
-			style.append(propertyName);
-			style.append(":");
-			style.append(propertyValue);
-			style.append(";");
-		}
+		// if (propertyValue != null) {
+		if (style == null)
+			style = new StringBuffer();
+		style.append(propertyName);
+		style.append(":");
+		style.append(propertyValue);
+		style.append(";");
+		// }
 		return (style == null ? null : style.toString());
 	}
 

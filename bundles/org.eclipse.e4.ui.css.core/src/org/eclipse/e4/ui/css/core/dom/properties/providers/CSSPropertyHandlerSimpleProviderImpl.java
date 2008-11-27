@@ -240,7 +240,7 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 		for (Iterator iterator = propertyNames.iterator(); iterator.hasNext();) {
 			String propertyName = (String) iterator.next();
 			String s = getCSSPropertyStyle(engine, stylableElement,
-					propertyName);
+					propertyName, pseudoE);
 			if (s != null) {
 				if (style == null)
 					style = new StringBuffer();
