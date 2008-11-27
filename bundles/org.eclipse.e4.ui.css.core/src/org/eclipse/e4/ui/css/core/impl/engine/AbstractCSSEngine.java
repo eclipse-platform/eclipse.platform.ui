@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
+import org.eclipse.e4.ui.css.core.utils.StringUtils;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
@@ -40,7 +41,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
-import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
+import org.apache.batik.css.engine.sac.ExtendedSelector;
 import org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.w3c.css.sac.AttributeCondition;
@@ -116,6 +117,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	private List propertyHandlerProviders = new ArrayList();
 
 	private Map currentCSSPropertiesApplyed = new HashMap();
+
+	private boolean throwError;
 
 	private Map valueConverters = null;
 
@@ -396,6 +399,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * @see org.eclipse.e4.ui.core.css.engine.CSSEngine#applyStyleDeclaration(java.lang.Object,
 	 *      org.w3c.dom.css.CSSStyleDeclaration, java.lang.String)
 	 */
+
 	public void applyStyleDeclaration(Object element,
 			CSSStyleDeclaration style, String pseudo) {
 		// Apply style
@@ -423,7 +427,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 						handlers2.add(propertyHandler2);
 				}
 			} catch (Exception e) {
-				handleExceptions(e);
+				if (throwError
+						|| (!throwError && !(e instanceof UnsupportedPropertyException)))
+					handleExceptions(e);
 			}
 		}
 		if (handlers2 != null) {
@@ -573,8 +579,13 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				if (oldDefaultStyleDeclaration != null) {
 					// Second apply styles, apply the initial style
 					// before apply the new style
-					applyStyleDeclaration(element, defaultStyleDeclaration,
-							pseudoE);
+					try {
+						throwError = false;
+						applyStyleDeclaration(element, defaultStyleDeclaration,
+								pseudoE);
+					} finally {
+						throwError = true;
+					}
 				}
 			}
 			if (applyStylesToChildNodes) {
@@ -607,7 +618,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			return null;
 		Collection handlers = getCSSPropertyHandlers(property);
 		if (handlers == null) {
-			throw new UnsupportedPropertyException(property);
+			if (throwError)
+				throw new UnsupportedPropertyException(property);
+			return null;
 		}
 		try {
 			for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
@@ -624,12 +637,15 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 
 		} catch (Exception e) {
-			handleExceptions(e);
+			if (throwError
+					|| (!throwError && !(e instanceof UnsupportedPropertyException)))
+				handleExceptions(e);
 		}
 		return null;
 	}
 
-	public String retrieveCSSProperty(Object widget, String property) {
+	public String retrieveCSSProperty(Object widget, String property,
+			String pseudo) {
 		try {
 			Collection handlers = getCSSPropertyHandlers(property);
 			if (handlers == null) {
@@ -638,7 +654,10 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
 				ICSSPropertyHandler handler = (ICSSPropertyHandler) iterator
 						.next();
-				return handler.retrieveCSSProperty(widget, property, this);
+				String value = handler.retrieveCSSProperty(widget, property,
+						pseudo, this);
+				if (!StringUtils.isEmpty(value))
+					return value;
 			}
 		} catch (Exception e) {
 			handleExceptions(e);
@@ -950,6 +969,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public String convert(Object value, Object toType, Object context)
 			throws Exception {
+		if (value == null)
+			return null;
 		ICSSValueConverter converter = getCSSValueConverter(toType);
 		if (converter != null) {
 			return converter.convert(value, this, context);
