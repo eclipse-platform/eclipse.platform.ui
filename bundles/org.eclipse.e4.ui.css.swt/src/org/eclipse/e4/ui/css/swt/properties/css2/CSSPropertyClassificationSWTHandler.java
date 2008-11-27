@@ -41,10 +41,10 @@ public class CSSPropertyClassificationSWTHandler extends
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
-			return super.retrieveCSSProperty(control, property, engine);
+			return super.retrieveCSSProperty(control, property, pseudo, engine);
 		}
 		return null;
 	}
@@ -75,8 +75,8 @@ public class CSSPropertyClassificationSWTHandler extends
 		}
 	}
 
-	public String retrieveCSSPropertyCursor(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyCursor(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		Control control = (Control) element;
 		Cursor cursor = null;
 		try {
@@ -89,8 +89,8 @@ public class CSSPropertyClassificationSWTHandler extends
 		return engine.convert(cursor, Cursor.class, null);
 	}
 
-	public String retrieveCSSPropertyVisibility(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyVisibility(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		Control control = (Control) element;
 		// if (control.isVisible())
 		return "visible";

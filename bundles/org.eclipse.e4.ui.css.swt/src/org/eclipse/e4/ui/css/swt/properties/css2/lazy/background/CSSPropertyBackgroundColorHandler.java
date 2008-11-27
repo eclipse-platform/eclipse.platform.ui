@@ -40,7 +40,7 @@ public class CSSPropertyBackgroundColorHandler extends
 
 	}
 
-	public String retrieveCSSProperty(Control control, String property,
+	public String retrieveCSSProperty(Control control, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
 		Color color = control.getBackground();
 		return engine.convert(color, Color.class, null);

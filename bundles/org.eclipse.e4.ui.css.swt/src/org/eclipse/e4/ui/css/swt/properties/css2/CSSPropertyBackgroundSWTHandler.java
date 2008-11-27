@@ -45,10 +45,10 @@ public class CSSPropertyBackgroundSWTHandler extends
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
-			return super.retrieveCSSProperty(control, property, engine);
+			return super.retrieveCSSProperty(control, property, pseudo, engine);
 		}
 		return null;
 	}
@@ -110,30 +110,30 @@ public class CSSPropertyBackgroundSWTHandler extends
 	}
 
 	public String retrieveCSSPropertyBackgroundAttachment(Object widget,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
 	public String retrieveCSSPropertyBackgroundColor(Object element,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		Control control = (Control) element;
 		Color color = control.getBackground();
 		return engine.convert(color, Color.class, null);
 	}
 
 	public String retrieveCSSPropertyBackgroundImage(Object widget,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		// TODO : manage path of Image.
 		return "none";
 	}
 
 	public String retrieveCSSPropertyBackgroundPosition(Object widget,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 
 	public String retrieveCSSPropertyBackgroundRepeat(Object widget,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		return null;
 	}
 }

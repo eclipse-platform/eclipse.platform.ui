@@ -41,10 +41,10 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
-			return super.retrieveCSSProperty(control, property, engine);
+			return super.retrieveCSSProperty(control, property, pseudo, engine);
 		}
 		return null;
 	}
@@ -77,11 +77,11 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 					// Add ModifyListener
 					listener = new VerifyListener() {
 						public void verifyText(VerifyEvent e) {
-//							System.out.println(e);
-//							int start = e.start;
-//							int end = e.end;
-//							e.text = getTextTransform(e.text, text.getText(),
-//									value);
+							// System.out.println(e);
+							// int start = e.start;
+							// int end = e.end;
+							// e.text = getTextTransform(e.text, text.getText(),
+							// value);
 						}
 					};
 					text.addVerifyListener(listener);
@@ -114,15 +114,15 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 		}
 	}
 
-	public String retrieveCSSPropertyColor(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyColor(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		Control control = (Control) element;
 		Color color = control.getForeground();
 		return engine.convert(color, Color.class, null);
 	}
 
 	public String retrieveCSSPropertyTextTransform(Object element,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		String text = null;
 		Control control = (Control) element;
 		// if (control instanceof Text) {

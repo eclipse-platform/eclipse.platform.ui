@@ -37,7 +37,7 @@ public class CSSPropertyBackgroundImageHandler extends
 			control.setBackgroundImage(image);
 	}
 
-	public String retrieveCSSProperty(Control control, String property,
+	public String retrieveCSSProperty(Control control, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
 		return "none";
 	}

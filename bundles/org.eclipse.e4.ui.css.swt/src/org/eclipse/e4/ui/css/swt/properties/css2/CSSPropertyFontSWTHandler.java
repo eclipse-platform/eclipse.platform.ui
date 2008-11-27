@@ -49,50 +49,50 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
-			return super.retrieveCSSProperty(control, property, engine);
+			return super.retrieveCSSProperty(control, property, pseudo, engine);
 		}
 		return null;
 	}
 
-	public String retrieveCSSPropertyFontAdjust(Object element, CSSEngine engine)
-			throws Exception {
-		return null;
-	}
-
-	public String retrieveCSSPropertyFontFamily(Object element, CSSEngine engine)
-			throws Exception {
-		Control control = (Control) element;
-		return CSSSWTFontHelper.getFontFamily(control);
-	}
-
-	public String retrieveCSSPropertyFontSize(Object element, CSSEngine engine)
-			throws Exception {
-		Control control = (Control) element;
-		return CSSSWTFontHelper.getFontSize(control);
-	}
-
-	public String retrieveCSSPropertyFontStretch(Object element,
+	public String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
 
-	public String retrieveCSSPropertyFontStyle(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyFontFamily(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
+		Control control = (Control) element;
+		return CSSSWTFontHelper.getFontFamily(control);
+	}
+
+	public String retrieveCSSPropertyFontSize(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
+		Control control = (Control) element;
+		return CSSSWTFontHelper.getFontSize(control);
+	}
+
+	public String retrieveCSSPropertyFontStretch(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
+		return null;
+	}
+
+	public String retrieveCSSPropertyFontStyle(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		Control control = (Control) element;
 		return CSSSWTFontHelper.getFontStyle(control);
 
 	}
 
-	public String retrieveCSSPropertyFontVariant(Object element,
+	public String retrieveCSSPropertyFontVariant(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		return null;
 	}
 
-	public String retrieveCSSPropertyFontWeight(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyFontWeight(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		Control control = (Control) element;
 		return CSSSWTFontHelper.getFontWeight(control);
 	}
