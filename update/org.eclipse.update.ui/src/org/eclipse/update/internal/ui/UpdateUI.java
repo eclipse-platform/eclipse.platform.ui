@@ -180,17 +180,20 @@ public class UpdateUI extends AbstractUIPlugin {
 
 	
 	/**
-	 * Prompts the user to restart
+	 * Prompts the user to restart, and performs the restart if the user gives the ok.
+	 * 
 	 * @param restartIsReallyNeeded true when a restart is needed, false if the user feels lucky (tm) and wants the changes
 	 * applied to the current config
+	 * @return <code>true</code> if the system is restarting, and <code>false</code> otherwise
 	 */
-	public static void requestRestart(boolean restartIsReallyNeeded) {
+	public static boolean requestRestart(boolean restartIsReallyNeeded) {
 		boolean restart =
 			RestartDialog.openQuestion(
 				getActiveWorkbenchShell(),
 				restartIsReallyNeeded);
 		if (restart)
-			PlatformUI.getWorkbench().restart();
+			return PlatformUI.getWorkbench().restart();
+		return false;
 	}
 
 	public static void showURL(String url) {

@@ -148,13 +148,16 @@ public class ReplaceFeatureVersionWizardPage extends WizardPage {
 					OperationsManager
 						.getOperationFactory()
 						.createReplaceFeatureVersionOperation(currentFeature, anotherFeature);
+				boolean restarting = false;
 				try {
 					boolean restartNeeded = revertOperation.execute(monitor, null);
-					UpdateUI.requestRestart(restartNeeded);
+					restarting = UpdateUI.requestRestart(restartNeeded);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
-					monitor.done();
+					//if the system is already shutdown, ending the monitor here will fail
+					if (!restarting)
+						monitor.done();
 				}
 			}
 		};
