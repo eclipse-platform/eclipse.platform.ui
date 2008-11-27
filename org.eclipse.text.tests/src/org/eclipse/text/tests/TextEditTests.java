@@ -54,16 +54,7 @@ public class TextEditTests extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite result= new TestSuite(THIS);
-		if (false) {	// For hot code replace when debugging test cases
-			result.addTestSuite(THIS);
-			result.addTestSuite(THIS);
-			result.addTestSuite(THIS);
-			result.addTestSuite(THIS);
-			result.addTestSuite(THIS);
-			result.addTestSuite(THIS);
-		}
-		return result;
+		return new TestSuite(THIS);
 	}
 
 	protected void setUp() throws Exception {
