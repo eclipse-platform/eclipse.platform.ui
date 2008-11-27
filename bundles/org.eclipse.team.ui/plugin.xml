@@ -154,6 +154,15 @@
                enablesFor="1"
                overrideActionId="replaceFromHistory"
                tooltip="%ReplaceLocalHistory.tooltip"/>
+         <action
+               class="org.eclipse.team.internal.ui.actions.CompareAction"
+               enablesFor="2+"
+               id="org.eclipse.team.ui.compareWithEachOther"
+               label="%CompareWithEachOtherAction.label"
+               menubarPath="compareWithMenu/compareWithGroup"
+               overrideActionId="compareWithEachOther"
+               tooltip="CompareWithEachOtherAction.tooltip">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IResource"

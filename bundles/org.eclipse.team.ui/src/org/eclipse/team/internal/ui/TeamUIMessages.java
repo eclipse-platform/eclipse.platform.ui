@@ -225,6 +225,10 @@ public class TeamUIMessages extends NLS {
 	public static String RevisionAnnotationController_0;
 
 	public static String SaveableCompareEditorInput_0;
+	public static String SaveablesCompareEditorInput_twoWayTitle;
+	public static String SaveablesCompareEditorInput_twoWayTooltip;
+	public static String SaveablesCompareEditorInput_threeWayTitle;
+	public static String SaveablesCompareEditorInput_threeWayTooltip;
 
 	public static String ShowLocalHistory_0;
 
@@ -692,4 +696,9 @@ public class TeamUIMessages extends NLS {
 	public static String TeamAction_errorTitle;
 	public static String TeamAction_handlerNotEnabledTitle;
 	public static String TeamAction_handlerNotEnabledMessage;
+	
+	public static String SelectAncestorDialog_title;
+	public static String SelectAncestorDialog_message;
+	public static String SelectAncestorDialog_option;
+
 }
