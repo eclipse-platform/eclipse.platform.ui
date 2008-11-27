@@ -21,9 +21,6 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSPropertyFontXMLHandler extends AbstractCSSPropertyFontHandler {
 
@@ -31,7 +28,7 @@ public class CSSPropertyFontXMLHandler extends AbstractCSSPropertyFontHandler {
 
 	public boolean applyCSSProperty(Object node, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (node instanceof Element) {
+		if (node instanceof Element && ((Node) node).getOwnerDocument() != null) {
 			super.applyCSSProperty((Element) node, property, value, pseudo,
 					engine);
 			return true;
@@ -72,44 +69,44 @@ public class CSSPropertyFontXMLHandler extends AbstractCSSPropertyFontHandler {
 		}
 	}
 
-	public String retrieveCSSPropertyFontAdjust(Object element, CSSEngine engine)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String retrieveCSSPropertyFontFamily(Object element, CSSEngine engine)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String retrieveCSSPropertyFontSize(Object element, CSSEngine engine)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String retrieveCSSPropertyFontStretch(Object element,
+	public String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String retrieveCSSPropertyFontStyle(Object element, CSSEngine engine)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String retrieveCSSPropertyFontVariant(Object element,
+	public String retrieveCSSPropertyFontFamily(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String retrieveCSSPropertyFontWeight(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyFontSize(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String retrieveCSSPropertyFontStretch(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String retrieveCSSPropertyFontStyle(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String retrieveCSSPropertyFontVariant(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String retrieveCSSPropertyFontWeight(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

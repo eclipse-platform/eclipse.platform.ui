@@ -18,9 +18,6 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSPropertyBackgroundXMLHandler extends
 		AbstractCSSPropertyBackgroundHandler {
@@ -30,41 +27,41 @@ public class CSSPropertyBackgroundXMLHandler extends
 	public boolean applyCSSProperty(Object node, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if (node instanceof Element) {
-			super.applyCSSProperty((Element) node, property, value, pseudo, engine);
+			super.applyCSSProperty((Element) node, property, value, pseudo,
+					engine);
 			return true;
 		}
 		return false;
 	}
 
 	public String retrieveCSSPropertyBackgroundAttachment(Object element,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public String retrieveCSSPropertyBackgroundColor(Object element,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public String retrieveCSSPropertyBackgroundImage(Object element,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public String retrieveCSSPropertyBackgroundPosition(Object element,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public String retrieveCSSPropertyBackgroundRepeat(Object element,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
+
 }
