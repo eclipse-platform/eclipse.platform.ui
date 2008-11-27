@@ -31,10 +31,6 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * w3c Element which wrap SWT widget to manage HTML/XUL selectors.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class SWTHTMLElement extends SWTElement {
 
