@@ -28,10 +28,6 @@ import org.w3c.dom.css.CSSValue;
  * <li>CSS Value to {@link FontData}</li>.
  * <li>{@link FontData} to String CSS Value</li>
  * </ul>
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter {
 
@@ -57,6 +53,10 @@ public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter 
 			if (context instanceof Control) {
 				Control control = (Control) context;
 				Font font = control.getFont();
+				fontData = CSSSWTFontHelper.getFirstFontData(font);
+			}
+			if (context instanceof Font) {
+				Font font = (Font)context;
 				fontData = CSSSWTFontHelper.getFirstFontData(font);
 			}
 		}
