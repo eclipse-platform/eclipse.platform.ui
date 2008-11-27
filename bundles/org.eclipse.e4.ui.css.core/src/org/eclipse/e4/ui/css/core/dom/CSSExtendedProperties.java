@@ -7,18 +7,16 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom;
 
-import org.w3c.dom.css.CSS3Properties;
+import org.w3c.dom.css.CSS2Properties;
 
-/**
- * Custom CSS Properties which extends CSS3 and CSS2 properties.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
- */
-public interface CSSExtendedProperties extends CSS3Properties {
+//TODO KM: removed the reference to CSS3Properties for expediency in getting things to compile
+//TODO KM: either we should settle on CCS2 and delete this interface, or figure out how to ref CSS3
+
+public interface CSSExtendedProperties extends CSS2Properties {
+
 
 }
