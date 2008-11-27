@@ -5066,9 +5066,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActivationCodeTrigger.uninstall();
 		}
 	}
+
+	private static final boolean HACK_TO_SUPPRESS_UNUSUED_WARNING= false;
 	{
-		// Hack to get rid of unused warning
-		if (false)
+		if (HACK_TO_SUPPRESS_UNUSUED_WARNING)
 			setActionActivation(true);
 	}
 
