@@ -685,7 +685,19 @@ public class FilteredTree extends Composite {
 		previousFilterText = getFilterString();
 		// cancel currently running job first, to prevent unnecessary redraw
 		refreshJob.cancel();
-		refreshJob.schedule(200);
+		refreshJob.schedule(getRefreshJobDelay());
+	}
+	
+	/**
+	 * Return the time delay that should be used when scheduling the
+	 * filter refresh job.  Subclasses may override.
+	 * 
+	 * @return a time delay in milliseconds before the job should run
+	 * 
+	 * @since 3.5
+	 */
+	protected long getRefreshJobDelay() {
+		return 200;
 	}
 
 	/**
