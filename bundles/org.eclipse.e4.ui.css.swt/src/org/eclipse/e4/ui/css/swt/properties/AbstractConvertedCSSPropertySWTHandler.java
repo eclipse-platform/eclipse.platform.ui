@@ -32,7 +32,7 @@ public abstract class AbstractConvertedCSSPropertySWTHandler extends
 		}
 	}
 
-	protected String retrieveCSSProperty(Object value, CSSEngine engine) {
+	protected String retrieveCSSProperty(Object value, String pseudo, CSSEngine engine) {
 		Object toType = getToType(value);
 		if (toType != null) {
 			try {

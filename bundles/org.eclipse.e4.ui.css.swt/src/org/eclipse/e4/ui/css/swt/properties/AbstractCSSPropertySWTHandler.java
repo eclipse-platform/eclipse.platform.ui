@@ -19,10 +19,6 @@ import org.w3c.dom.css.CSSValue;
 /**
  * Abstract CSS Property SWT Handler to check if the <code>element</code>
  * coming from applyCSSProperty and retrieveCSSProperty methods is SWT Control.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public abstract class AbstractCSSPropertySWTHandler implements
 		ICSSPropertyHandler {
@@ -52,13 +48,13 @@ public abstract class AbstractCSSPropertySWTHandler implements
 	 * @see org.eclipse.e4.ui.core.css.dom.properties.ICSSPropertyHandler#retrieveCSSProperty(java.lang.Object,
 	 *      java.lang.String, org.eclipse.e4.ui.core.css.engine.CSSEngine)
 	 */
-	public String retrieveCSSProperty(Object element, String property,
+	public String retrieveCSSProperty(Object element, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
 			// The SWT control is retrieved
 			// the retrieve CSS property can be done.
-			return retrieveCSSProperty(control, property, engine);
+			return retrieveCSSProperty(control, property, pseudo, engine);
 		}
 		return null;
 	}
@@ -90,6 +86,6 @@ public abstract class AbstractCSSPropertySWTHandler implements
 	 * @throws Exception
 	 */
 	protected abstract String retrieveCSSProperty(Control control,
-			String property, CSSEngine engine) throws Exception;
+			String property, String pseudo, CSSEngine engine) throws Exception;
 
 }
