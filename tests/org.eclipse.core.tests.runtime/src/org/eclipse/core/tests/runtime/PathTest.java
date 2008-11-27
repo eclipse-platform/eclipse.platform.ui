@@ -532,6 +532,12 @@ public class PathTest extends RuntimeTest {
 			}
 		}
 
+		//for equal/identical paths, the relative path should be empty
+		IPath equalBase = new Path("/a/b");
+		assertEquals("3.1", "", new Path("/a/b").makeRelativeTo(equalBase).toString());
+		assertEquals("3.2", "", new Path("/a/b/").makeRelativeTo(equalBase).toString());
+		assertEquals("3.3", "", equalBase.makeRelativeTo(equalBase).toString());
+
 		//invalid cases (no common prefix)
 		bases = new IPath[] {new Path("/"), new Path("/b"), new Path("/b/c")};
 		children = new IPath[] {new Path("/a/"), new Path("/a/b"), new Path("/a/b/c")};
@@ -540,8 +546,8 @@ public class PathTest extends RuntimeTest {
 				final IPath base = bases[i];
 				final IPath child = children[j];
 				IPath result = child.makeRelativeTo(base);
-				assertTrue("1." + i + ',' + j, !result.isAbsolute());
-				assertEquals("2." + i + ',' + j, base.append(result), child);
+				assertTrue("6." + i + ',' + j, !result.isAbsolute());
+				assertEquals("7." + i + ',' + j, base.append(result), child);
 			}
 		}
 	}
