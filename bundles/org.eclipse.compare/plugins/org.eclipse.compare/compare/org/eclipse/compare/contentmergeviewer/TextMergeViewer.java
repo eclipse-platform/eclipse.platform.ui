@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -100,6 +101,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -162,6 +164,7 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -392,6 +395,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private DocumentMerger fMerger;
 	/** The current diff */
 	private Diff fCurrentDiff;
+	
+	/**
+	 * Preference key for highlighting current line.
+	 */
+	private final static String CURRENT_LINE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
+	/**
+	 * Preference key for highlight color of current line.
+	 */
+	private final static String CURRENT_LINE_COLOR= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
+	
+	private List fSourceViewerDecorationSupport = new ArrayList(3);
 
 	private final class InternalOutlineViewerCreator extends OutlineViewerCreator implements ISelectionChangedListener {
 		public Viewer findStructureViewer(Viewer oldViewer,
@@ -1727,6 +1741,13 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (fIgnoreWhitespace != null)
 			fIgnoreWhitespace.dispose();
 		
+		if (fSourceViewerDecorationSupport != null) {
+			for (Iterator iterator = fSourceViewerDecorationSupport.iterator(); iterator.hasNext();) {
+				((SourceViewerDecorationSupport) iterator.next()).dispose();
+			}
+			fSourceViewerDecorationSupport = null;
+		}
+
 		super.handleDispose(event);
   	}
   	  	  				 		
@@ -2283,7 +2304,16 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 		configureTextViewer(part);
 		
+		getSourceViewerDecorationSupport(part).install(fPreferenceStore);
+
 		return part;
+	}
+
+	private SourceViewerDecorationSupport getSourceViewerDecorationSupport(ISourceViewer viewer) {
+		SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(viewer, null, null, EditorsUI.getSharedTextColors());
+		support.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
+		fSourceViewerDecorationSupport.add(support);
+		return support;
 	}
 
 	private void contributeFindAction(MergeSourceViewer viewer) {
