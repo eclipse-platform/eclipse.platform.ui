@@ -20,10 +20,6 @@ import org.w3c.dom.css.CSSValue;
  * <li>retrieve default CSS Property value from element like Swing Component,
  * SWT Widget.</li>
  * </ul>
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface ICSSPropertyHandler {
 
@@ -60,7 +56,7 @@ public interface ICSSPropertyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception;
+	public String retrieveCSSProperty(Object element, String property, 
+			String pseudo, CSSEngine engine) throws Exception;
 
 }

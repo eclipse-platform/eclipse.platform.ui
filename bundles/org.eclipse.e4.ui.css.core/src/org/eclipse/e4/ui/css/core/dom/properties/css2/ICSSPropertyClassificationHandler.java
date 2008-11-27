@@ -17,9 +17,6 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Classification Property Handler.
  * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  * @see http://www.w3schools.com/css/css_reference.asp#classification
  */
 public interface ICSSPropertyClassificationHandler extends ICSSPropertyHandler {
@@ -107,21 +104,21 @@ public interface ICSSPropertyClassificationHandler extends ICSSPropertyHandler {
 	public void applyCSSPropertyVisibility(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyClear(Object element, CSSEngine engine)
-			throws Exception;
+	public String retrieveCSSPropertyClear(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyCursor(Object element, CSSEngine engine)
-			throws Exception;
+	public String retrieveCSSPropertyCursor(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyDisplay(Object element, CSSEngine engine)
-			throws Exception;
+	public String retrieveCSSPropertyDisplay(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFloat(Object element, CSSEngine engine)
-			throws Exception;
+	public String retrieveCSSPropertyFloat(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyPosition(Object element, CSSEngine engine)
-			throws Exception;
-	
-	public String retrieveCSSPropertyVisibility(Object element, CSSEngine engine)
-	throws Exception;	
+	public String retrieveCSSPropertyPosition(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
+
+	public String retrieveCSSPropertyVisibility(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
 }

@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 /**
  * {@link CSSExtendedProperties} implementation.
  */
-public class CSSExtendedPropertiesImpl extends CSS3PropertiesImpl implements
+public class CSSExtendedPropertiesImpl extends CSS2PropertiesImpl implements
 		CSSExtendedProperties {
 
 	public CSSExtendedPropertiesImpl(Object widget, CSSEngine engine) {

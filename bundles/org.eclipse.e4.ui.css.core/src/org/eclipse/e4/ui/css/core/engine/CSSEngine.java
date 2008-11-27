@@ -32,9 +32,6 @@ import org.w3c.dom.stylesheets.StyleSheet;
  * CSS Engine interface used to parse style sheet and apply styles to something
  * (UI SWT, UI Swing...).
  * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface CSSEngine {
 
@@ -332,9 +329,11 @@ public interface CSSEngine {
 	 * 
 	 * @param widget
 	 * @param property
+	 * @param pseudo
 	 * @return
 	 */
-	public String retrieveCSSProperty(Object node, String property);
+	public String retrieveCSSProperty(Object node, String property, String pseudo);
+
 
 	/*--------------- Default Style -----------------*/
 

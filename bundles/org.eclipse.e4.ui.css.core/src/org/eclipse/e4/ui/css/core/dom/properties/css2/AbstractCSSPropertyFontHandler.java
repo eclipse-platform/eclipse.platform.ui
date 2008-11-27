@@ -41,27 +41,27 @@ public abstract class AbstractCSSPropertyFontHandler extends
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		if ("font-family".equals(property)) {
-			return retrieveCSSPropertyFontFamily(element, engine);
+			return retrieveCSSPropertyFontFamily(element, pseudo, engine);
 		}
 		if ("font-size".equals(property)) {
-			return retrieveCSSPropertyFontSize(element, engine);
+			return retrieveCSSPropertyFontSize(element, pseudo, engine);
 		}
 		if ("font-adjust".equals(property)) {
-			return retrieveCSSPropertyFontAdjust(element, engine);
+			return retrieveCSSPropertyFontAdjust(element, pseudo, engine);
 		}
 		if ("font-stretch".equals(property)) {
-			return retrieveCSSPropertyFontStretch(element, engine);
+			return retrieveCSSPropertyFontStretch(element, pseudo, engine);
 		}
 		if ("font-style".equals(property)) {
-			return retrieveCSSPropertyFontStyle(element, engine);
+			return retrieveCSSPropertyFontStyle(element, pseudo, engine);
 		}
 		if ("font-variant".equals(property)) {
-			return retrieveCSSPropertyFontVariant(element, engine);
+			return retrieveCSSPropertyFontVariant(element, pseudo, engine);
 		}
 		if ("font-weight".equals(property)) {
-			return retrieveCSSPropertyFontWeight(element, engine);
+			return retrieveCSSPropertyFontWeight(element, pseudo, engine);
 		}
 		return null;
 	}

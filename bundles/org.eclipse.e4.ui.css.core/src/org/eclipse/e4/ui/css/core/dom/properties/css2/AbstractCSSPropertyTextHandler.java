@@ -31,12 +31,12 @@ public abstract class AbstractCSSPropertyTextHandler implements
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		if ("color".equals(property)) {
-			return retrieveCSSPropertyColor(element, engine);
+			return retrieveCSSPropertyColor(element, pseudo, engine);
 		}
 		if ("text-transform".equals(property)) {
-			return retrieveCSSPropertyTextTransform(element, engine);
+			return retrieveCSSPropertyTextTransform(element, pseudo, engine);
 		}
 		return null;
 	}
@@ -51,14 +51,14 @@ public abstract class AbstractCSSPropertyTextHandler implements
 		throw new UnsupportedPropertyException("text-transform");
 	}
 
-	public String retrieveCSSPropertyColor(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyColor(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		return null;
 	}
 
 	public String retrieveCSSPropertyTextTransform(Object element,
-			CSSEngine engine) throws Exception {
-		return "none";
+			String pseudo, CSSEngine engine) throws Exception {
+		return null;
 	}
 
 	protected String getTextTransform(String text, CSSValue value,
@@ -87,14 +87,15 @@ public abstract class AbstractCSSPropertyTextHandler implements
 		return text;
 	}
 
-	protected String getTextTransform(String textToInsert, String oldText, CSSValue value) {
+	protected String getTextTransform(String textToInsert, String oldText,
+			CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
 			String textTransform = primitiveValue.getStringValue();
 			if ("capitalize".equals(textTransform)) {
 				String newText = StringUtils.capitalize(oldText + textToInsert);
 				if (newText.length() > 0) {
-					return newText.substring(newText.length() -1);
+					return newText.substring(newText.length() - 1);
 				}
 			}
 			if ("uppercase".equals(textTransform)) {
@@ -112,7 +113,7 @@ public abstract class AbstractCSSPropertyTextHandler implements
 		}
 		return textToInsert;
 	}
-	
+
 	protected boolean hasTextTransform(CSSValue value) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;

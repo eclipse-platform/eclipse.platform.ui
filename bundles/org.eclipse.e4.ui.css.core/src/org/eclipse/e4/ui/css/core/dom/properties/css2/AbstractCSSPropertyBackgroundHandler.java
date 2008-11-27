@@ -50,21 +50,23 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		if ("background-attachment".equals(property)) {
-			return retrieveCSSPropertyBackgroundAttachment(element, engine);
+			return retrieveCSSPropertyBackgroundAttachment(element, pseudo,
+					engine);
 		}
 		if ("background-color".equals(property)) {
-			return retrieveCSSPropertyBackgroundColor(element, engine);
+			return retrieveCSSPropertyBackgroundColor(element, pseudo, engine);
 		}
 		if ("background-image".equals(property)) {
-			return retrieveCSSPropertyBackgroundImage(element, engine);
+			return retrieveCSSPropertyBackgroundImage(element, pseudo, engine);
 		}
 		if ("background-position".equals(property)) {
-			return retrieveCSSPropertyBackgroundPosition(element, engine);
+			return retrieveCSSPropertyBackgroundPosition(element, pseudo,
+					engine);
 		}
 		if ("background-repeat".equals(property)) {
-			return retrieveCSSPropertyBackgroundRepeat(element, engine);
+			return retrieveCSSPropertyBackgroundRepeat(element, pseudo, engine);
 		}
 		return null;
 	}
@@ -72,21 +74,22 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackground(java.lang.Object,
+	 * @see org.akrogen.tkui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackground(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
+	 *      org.akrogen.tkui.core.css.engine.CSSEngine)
 	 */
 	public void applyCSSPropertyBackground(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		super.applyCSSPropertyComposite(element, "background", value, pseudo, engine);
+		super.applyCSSPropertyComposite(element, "background", value, pseudo,
+				engine);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundAttachment(java.lang.Object,
+	 * @see org.akrogen.tkui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundAttachment(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
+	 *      org.akrogen.tkui.core.css.engine.CSSEngine)
 	 */
 	public void applyCSSPropertyBackgroundAttachment(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
@@ -96,9 +99,9 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundColor(java.lang.Object,
+	 * @see org.akrogen.tkui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundColor(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
+	 *      org.akrogen.tkui.core.css.engine.CSSEngine)
 	 */
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
@@ -108,9 +111,9 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundImage(java.lang.Object,
+	 * @see org.akrogen.tkui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundImage(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
+	 *      org.akrogen.tkui.core.css.engine.CSSEngine)
 	 */
 	public void applyCSSPropertyBackgroundImage(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
@@ -120,9 +123,9 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundPosition(java.lang.Object,
+	 * @see org.akrogen.tkui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundPosition(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
+	 *      org.akrogen.tkui.core.css.engine.CSSEngine)
 	 */
 	public void applyCSSPropertyBackgroundPosition(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
@@ -132,9 +135,9 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundRepeat(java.lang.Object,
+	 * @see org.akrogen.tkui.core.css.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundRepeat(java.lang.Object,
 	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.ui.core.css.engine.CSSEngine)
+	 *      org.akrogen.tkui.core.css.engine.CSSEngine)
 	 */
 	public void applyCSSPropertyBackgroundRepeat(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {

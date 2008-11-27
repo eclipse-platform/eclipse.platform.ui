@@ -27,38 +27,38 @@ public abstract class AbstractCSSPropertyClassificationHandler implements
 		}
 		if ("display".equals(property)) {
 			applyCSSPropertyDisplay(element, value, pseudo, engine);
-		}		
+		}
 		if ("float".equals(property)) {
 			applyCSSPropertyFloat(element, value, pseudo, engine);
-		}		
+		}
 		if ("position".equals(property)) {
 			applyCSSPropertyPosition(element, value, pseudo, engine);
-		}			
+		}
 		if ("visibility".equals(property)) {
 			applyCSSPropertyVisibility(element, value, pseudo, engine);
-		}						
+		}
 		return false;
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
-			CSSEngine engine) throws Exception {
+			String pseudo, CSSEngine engine) throws Exception {
 		if ("clear".equals(property)) {
-			return retrieveCSSPropertyClear(element, engine);
+			return retrieveCSSPropertyClear(element, pseudo, engine);
 		}
 		if ("cursor".equals(property)) {
-			return retrieveCSSPropertyCursor(element, engine);
+			return retrieveCSSPropertyCursor(element, pseudo, engine);
 		}
 		if ("display".equals(property)) {
-			return retrieveCSSPropertyDisplay(element, engine);
+			return retrieveCSSPropertyDisplay(element, pseudo, engine);
 		}
 		if ("float".equals(property)) {
-			return retrieveCSSPropertyFloat(element, engine);
+			return retrieveCSSPropertyFloat(element, pseudo, engine);
 		}
 		if ("position".equals(property)) {
-			return retrieveCSSPropertyPosition(element, engine);
+			return retrieveCSSPropertyPosition(element, pseudo, engine);
 		}
 		if ("visibility".equals(property)) {
-			return retrieveCSSPropertyVisibility(element, engine);
+			return retrieveCSSPropertyVisibility(element, pseudo, engine);
 		}
 		return null;
 	}
@@ -75,7 +75,7 @@ public abstract class AbstractCSSPropertyClassificationHandler implements
 
 	public void applyCSSPropertyDisplay(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		throw new UnsupportedPropertyException("display");		
+		throw new UnsupportedPropertyException("display");
 	}
 
 	public void applyCSSPropertyFloat(Object element, CSSValue value,
@@ -93,34 +93,34 @@ public abstract class AbstractCSSPropertyClassificationHandler implements
 		throw new UnsupportedPropertyException("visibility");
 	}
 
-	public String retrieveCSSPropertyClear(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyClear(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		return null;
 	}
 
-	public String retrieveCSSPropertyCursor(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyCursor(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		return null;
 	}
 
-	public String retrieveCSSPropertyDisplay(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyDisplay(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		return null;
 	}
 
-	public String retrieveCSSPropertyFloat(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyFloat(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		return null;
 	}
 
-	public String retrieveCSSPropertyPosition(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyPosition(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		return null;
 	}
 
-	public String retrieveCSSPropertyVisibility(Object element, CSSEngine engine)
-			throws Exception {
+	public String retrieveCSSPropertyVisibility(Object element, String pseudo,
+			CSSEngine engine) throws Exception {
 		return null;
 	}
-	
+
 }

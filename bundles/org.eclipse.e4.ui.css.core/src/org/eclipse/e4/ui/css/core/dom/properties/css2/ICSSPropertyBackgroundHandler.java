@@ -16,10 +16,7 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * CSS2 Background Property Handler.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
+ *
  * @see http://www.w3schools.com/css/css_reference.asp#background
  */
 public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
@@ -109,18 +106,23 @@ public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyBackgroundAttachment(Object element,
+			String pseudo,
 			CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyBackgroundColor(Object element,
+			String pseudo,
 			CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyBackgroundImage(Object element,
+			String pseudo,
 			CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyBackgroundPosition(Object element,
+			String pseudo,
 			CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyBackgroundRepeat(Object element,
+			String pseudo,
 			CSSEngine engine) throws Exception;
 
 }

@@ -17,9 +17,6 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Dimension Property Handler.
  * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  * @see http://www.w3schools.com/css/css_reference.asp#dimension
  */
 public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
@@ -110,14 +107,14 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 			String pseudo, CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyHeight(Object widget, String property,
-			CSSEngine engine) throws Exception;
+			String pseudo, CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyMaxHeight(Object widget, String property,
-			CSSEngine engine) throws Exception;
+			String pseudo, CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyMinHeight(Object widget, String property,
-			CSSEngine engine) throws Exception;
+			String pseudo, CSSEngine engine) throws Exception;
 
 	public String retrieveCSSPropertyMinWidth(Object widget, String property,
-			CSSEngine engine) throws Exception;
+			String pseudo, CSSEngine engine) throws Exception;
 }

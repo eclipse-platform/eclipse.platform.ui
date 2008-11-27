@@ -17,9 +17,6 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Font Property Handler.
  * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  * @see http://www.w3schools.com/css/css_reference.asp#font
  */
 public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
@@ -132,25 +129,25 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	public void applyCSSPropertyFontWeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontFamily(Object element, CSSEngine engine)
-			throws Exception;
-
-	public String retrieveCSSPropertyFontSize(Object element, CSSEngine engine)
-			throws Exception;
-
-	public String retrieveCSSPropertyFontAdjust(Object element, CSSEngine engine)
-			throws Exception;
-
-	public String retrieveCSSPropertyFontStretch(Object element,
+	public String retrieveCSSPropertyFontFamily(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontStyle(Object element, CSSEngine engine)
-			throws Exception;
-
-	public String retrieveCSSPropertyFontVariant(Object element,
+	public String retrieveCSSPropertyFontSize(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontWeight(Object element, CSSEngine engine)
-			throws Exception;
+	public String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
+
+	public String retrieveCSSPropertyFontStretch(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
+
+	public String retrieveCSSPropertyFontStyle(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
+
+	public String retrieveCSSPropertyFontVariant(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
+
+	public String retrieveCSSPropertyFontWeight(Object element, String pseudo,
+			CSSEngine engine) throws Exception;
 
 }
