@@ -648,18 +648,19 @@ public class Workbench implements IWorkbench, IServiceLocator,
 		URI uri = URI.createURI(uriString);
 		Bundle bundle = getBundle(uri);
 		if (bundle != null) {
-			String className = uri.segment(2);
-			// hack to get JavaScript support
-			int indexOfColon = className.indexOf(":");
-			if (indexOfColon != -1) {
-				String prefix = className.substring(0, indexOfColon);
+			if (uri.segmentCount() > 3) {
+				String prefix = uri.segment(2);
 				IContributionFactorySpi factory = (IContributionFactorySpi) languages
-						.get(prefix);
-				return factory.create(bundle, className
-						.substring(indexOfColon + 1), serviceLocator);
+					.get(prefix);
+				StringBuffer resource = new StringBuffer(uri.segment(3));
+				for (int i=4; i<uri.segmentCount(); i++) {
+					resource.append('/');
+					resource.append(uri.segment(i));
+				}
+				return factory.create(bundle, resource.toString(), serviceLocator);
 			}
 			try {
-				Class targetClass = bundle.loadClass(className);
+				Class targetClass = bundle.loadClass(uri.segment(2));
 				return createObject(targetClass, serviceLocator);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -672,15 +673,13 @@ public class Workbench implements IWorkbench, IServiceLocator,
 	public Object call(Object object, String uriString, String methodName,
 			IServiceLocator serviceLocator, Object defaultValue) {
 		URI uri = URI.createURI(uriString);
-		// hack to get JavaScript support
-		String className = uri.segment(1);
-		int indexOfColon = className.indexOf(":");
-		if (indexOfColon != -1) {
-			String prefix = className.substring(0, indexOfColon);
+		if (uri.segmentCount() > 3) {
+			String prefix = uri.segment(2);
 			IContributionFactorySpi factory = (IContributionFactorySpi) languages
-					.get(prefix);
-			return factory.call(object, methodName, serviceLocator);
+				.get(prefix);
+			return factory.call(object, methodName, serviceLocator, defaultValue);
 		}
+		String className = uri.segment(1);
 
 		Method targetMethod = null;
 
