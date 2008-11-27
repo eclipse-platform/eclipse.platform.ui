@@ -128,7 +128,7 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 	 * @param toLocalSiteUrl - path of local site (new mirror site)
 	 * @param fid - feature id of featuring being mirror (optional - can be null)
 	 * @param ver - version of feature to be mirrored (optional - can be null)
-	 * @param mirUrl - directory location of policy.xml (optional - can be mull)
+	 * @param mirUrl - directory location of policy.xml (optional - can be null)
 	 * @return
 	 */
 	public String[] getCommand(
@@ -468,7 +468,7 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 
 	// ensure exit without problems
 	public void testExitValue() throws Exception {
-		assertEquals(exitValue, 0);
+		assertEquals(0, exitValue);
 	}
 	
 	// ensure output string buffer ends with "Mirror command completed
