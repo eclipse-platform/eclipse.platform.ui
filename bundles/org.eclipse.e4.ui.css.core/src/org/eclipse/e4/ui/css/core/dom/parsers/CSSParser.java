@@ -32,10 +32,6 @@ import org.w3c.dom.css.CSSValue;
  * <li>CSS value and return {@link CSSValue}.</li>
  * <li>CSS rule and return {@link CSSRule}.</li>
  * </ul>
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface CSSParser {
 

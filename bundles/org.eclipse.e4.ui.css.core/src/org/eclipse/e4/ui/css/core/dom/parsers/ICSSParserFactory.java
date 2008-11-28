@@ -12,10 +12,6 @@ package org.eclipse.e4.ui.css.core.dom.parsers;
 
 /**
  * CSS Parser factory to manage instance of {@link CSSParser}.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface ICSSParserFactory {
 
