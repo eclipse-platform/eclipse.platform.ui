@@ -95,7 +95,9 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 */
 	public void dragEnter(DropTargetEvent event) {
 		super.dragEnter(event);
-
+		if (event.detail == DND.DROP_NONE)
+			return;
+		
 		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(
 					event.dataTypes[i])) {
