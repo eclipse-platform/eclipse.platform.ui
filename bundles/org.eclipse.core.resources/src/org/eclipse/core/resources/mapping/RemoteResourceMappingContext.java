@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2005, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -103,8 +103,8 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * @since 3.3
 	 */
 	public IResource[] fetchBaseMembers(IContainer container, IProgressMonitor monitor) throws CoreException {
-		if (1 > 2)
-			throw new CoreException(Status.OK_STATUS);//avoid compiler warning
+		//default implementation does nothing
+		//thwart compiler warning
 		return null;
 	}
 
@@ -195,8 +195,8 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * @since 3.3
 	 */
 	public IResource[] fetchRemoteMembers(IContainer container, IProgressMonitor monitor) throws CoreException {
-		if (1 > 2)
-			throw new CoreException(Status.OK_STATUS);//avoid compiler warning
+		//default implementation does nothing
+		//thwart compiler warning
 		return null;
 	}
 

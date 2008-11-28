@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
 
 /**
  * A lock used to control write access to the resources in a workspace.
@@ -26,11 +25,11 @@ public class WorkspaceLock {
 
 	/**
 	 * Returns a new workspace lock.
+	 * @throws CoreException if fails.
 	 */
 	public WorkspaceLock(IWorkspace workspace) throws CoreException {
+		//default implementation does nothing
 		//thwart compiler warning
-		if (false)
-			throw new CoreException(Status.OK_STATUS);
 	}
 
 	/**
@@ -39,12 +38,12 @@ public class WorkspaceLock {
 	 * <p>
 	 * Clients may extend this method but should not otherwise call it.
 	 * </p>
+	 * @throws InterruptedException if fails while acquiring the lock.
 	 * @see #release()
 	 */
 	public boolean acquire() throws InterruptedException {
+		//default implementation does nothing
 		//thwart compiler warning
-		if (false)
-			throw new InterruptedException();
 		return false;
 	}
 

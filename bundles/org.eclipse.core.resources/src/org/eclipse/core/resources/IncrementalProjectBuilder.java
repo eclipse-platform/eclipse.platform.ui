@@ -166,8 +166,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 */
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		//default implementation does nothing
-		if (false)
-			throw new CoreException(Status.OK_STATUS);//thwart compiler warning
+		//thwart compiler warning
 	}
 
 	/**
@@ -323,13 +322,12 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * 	}
 	 * }
 	 * </pre>
-	 * 
 	 * </p>
+	 * @throws CoreException if fails.
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+		//default implementation does nothing
 		//thwart compiler warning
-		if (false)
-			throw new CoreException(Status.OK_STATUS);
 	}
 
 	/**
