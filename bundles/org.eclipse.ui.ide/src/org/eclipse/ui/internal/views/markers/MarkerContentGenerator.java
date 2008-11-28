@@ -154,7 +154,9 @@ public class MarkerContentGenerator {
 			IResource[] focusResources) {
 
 		int filterType = filterGroup.getScope();
-
+		
+		filterGroup.refresh(); 
+		
 		switch (filterType) {
 		case MarkerFieldFilterGroup.ON_ANY: {
 			findMarkers(returnMarkers, new IResource[] { ResourcesPlugin

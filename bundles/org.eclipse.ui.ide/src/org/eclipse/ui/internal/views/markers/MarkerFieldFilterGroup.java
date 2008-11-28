@@ -155,6 +155,7 @@ class MarkerFieldFilterGroup {
 	private MarkerEntry testEntry = new MarkerEntry(null);
 	private IWorkingSet workingSet;
 	private Collection workingSetPaths;
+	private IResource[] wSetResources;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -390,7 +391,34 @@ class MarkerFieldFilterGroup {
 		return workingSetPaths;
 
 	}
+	
+	/**
+	 * Gather the resource is in the working set
+	 */
+	private void computeWorkingSetResources() {
+		if(workingSet!=null){
+			 /* MarkerFieldFilterGroup will have to re-get the resources in 
+			 * a working set for every marker it filters using the select method
+			 * Or we may do this once before the markers are filtered.A IResourceChangeListener??		 
+			 */
+			wSetResources=getResourcesInWorkingSet();
+		}
+	}
 
+	/**
+	 * Return true if the resource is in the working set
+	 * @param resource
+	 * @return boolean
+	 */
+	private boolean isInWorkingSet(IResource resource) {
+		if(wSetResources==null)computeWorkingSetResources();
+		for (int i = 0; i < wSetResources.length; i++) {
+			if(wSetResources[i].getFullPath().isPrefixOf(resource.getFullPath())){
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * Initialise the working set for the receiver. Use the window working set
 	 * for the working set and set the scope to ON_WORKING_SET if they are to be
@@ -642,8 +670,7 @@ class MarkerFieldFilterGroup {
 
 		if (scope == ON_WORKING_SET && workingSet != null
 				&& !workingSet.isEmpty()) {
-			if (!getWorkingSetPaths().contains(
-					marker.getResource().getFullPath().toString()))
+			if (!isInWorkingSet(marker.getResource()))
 				return false;
 		}
 
@@ -692,6 +719,14 @@ class MarkerFieldFilterGroup {
 	void setWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;
 		workingSetPaths = null;
+	}
 
+	/**
+	 * IResourceChangeListener, a better option??
+	 * 
+	 */	
+	void refresh() {
+		 computeWorkingSetResources();
+		 getWorkingSetPaths();
 	}
 }
