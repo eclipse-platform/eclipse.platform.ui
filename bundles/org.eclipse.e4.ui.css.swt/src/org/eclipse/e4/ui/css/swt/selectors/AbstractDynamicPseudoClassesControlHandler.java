@@ -18,10 +18,6 @@ import org.eclipse.swt.widgets.Control;
 /**
  * Abstract SWT class to manage dynamic pseudo classes handler like (...:focus,
  * ...:hover) with SWT Control.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public abstract class AbstractDynamicPseudoClassesControlHandler implements
 		IDynamicPseudoClassesHandler {

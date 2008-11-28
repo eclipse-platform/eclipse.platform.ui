@@ -19,10 +19,6 @@ import org.eclipse.swt.widgets.Control;
 /**
  * SWT class to manage dynamic pseudo classes handler ...:hover with SWT
  * Control.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class DynamicPseudoClassesSWTHoverHandler extends
 		AbstractDynamicPseudoClassesControlHandler {

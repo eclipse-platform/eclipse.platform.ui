@@ -60,7 +60,7 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.akrogen.tkui.css.core.dom.ExtendedDocumentCSS#addStyleSheet(org.w3c.dom.stylesheets.StyleSheet)
+	 * @see org.eclipse.e4.css.core.dom.ExtendedDocumentCSS#addStyleSheet(org.w3c.dom.stylesheets.StyleSheet)
 	 */
 	public void addStyleSheet(StyleSheet styleSheet) {
 		styleSheetList.addStyleSheet(styleSheet);
@@ -68,7 +68,7 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.akrogen.tkui.css.core.dom.ExtendedDocumentCSS#removeAllStyleSheets()
+	 * @see org.eclipse.e4.css.core.dom.ExtendedDocumentCSS#removeAllStyleSheets()
 	 */
 	public void removeAllStyleSheets() {
 		styleSheetList.removeAllStyleSheets();

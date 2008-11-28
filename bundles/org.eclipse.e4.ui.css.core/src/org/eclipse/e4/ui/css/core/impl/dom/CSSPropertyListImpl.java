@@ -29,7 +29,7 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.akrogen.tkui.css.core.dom.CSSPropertyList#getLength()
+	 * @see org.eclipse.e4.css.core.dom.CSSPropertyList#getLength()
 	 */
 	public int getLength() {
 		return (properties != null) ? properties.size() : 0;
@@ -37,7 +37,7 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.akrogen.tkui.css.core.dom.CSSPropertyList#item(int)
+	 * @see org.eclipse.e4.css.core.dom.CSSPropertyList#item(int)
 	 */
 	public CSSProperty item(int index) {
 		return (properties != null) ? (CSSProperty) properties.get(index)

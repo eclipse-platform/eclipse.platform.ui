@@ -14,10 +14,6 @@ import org.eclipse.e4.ui.css.core.serializers.CSSSerializerConfiguration;
 
 /**
  * {@link CSSSerializerConfiguration} configuration used to get style of SWT control.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSSWTSerializerConfiguration extends CSSSerializerConfiguration {
 
