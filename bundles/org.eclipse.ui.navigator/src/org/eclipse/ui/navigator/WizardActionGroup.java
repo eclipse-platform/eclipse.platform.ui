@@ -68,8 +68,6 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * Clients may instantiate, but not subclass WizardActionGroup.
  * </p>
  * 
- * @noextend This class is not intended to be subclassed by clients.
- * 
  * @see PlatformUI#getWorkbench()
  * @see IWorkbench#getNewWizardRegistry()
  * @see IWorkbench#getImportWizardRegistry()
