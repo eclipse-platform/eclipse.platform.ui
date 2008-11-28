@@ -79,6 +79,8 @@ public class StyledCellLabelProviderTests {
 		display.dispose();
 	}
 
+	protected boolean useBold;
+
 	public StyledCellLabelProviderTests() {
 	}
 
@@ -105,8 +107,18 @@ public class StyledCellLabelProviderTests {
 		stylingButton.setText("enable styling");
 		stylingButton.setSelection(true);
 		
-		final TableViewer tableViewer= new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		final Button boldButton = new Button(composite, SWT.CHECK);
+		boldButton.setText("use bold");
 
+		final TableViewer tableViewer= new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		
+		boldButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				useBold = boldButton.getSelection();
+				tableViewer.refresh();
+			}
+		});
+		
 		operation[0] = new Runnable(){
 			public void run() {
 				tableViewer.refresh();
@@ -184,7 +196,7 @@ public class StyledCellLabelProviderTests {
        	return styleData;
     }
 	
-	private static class ExampleLabelProvider extends StyledCellLabelProvider {
+	private class ExampleLabelProvider extends StyledCellLabelProvider {
 
 		private final Styler fBoldStyler; 
 		
@@ -202,7 +214,7 @@ public class StyledCellLabelProviderTests {
 			if (element instanceof File) {
 				File file= (File) element;
 				
-				Styler style= file.isDirectory() ? fBoldStyler: null;
+				Styler style= file.isDirectory() && useBold ? fBoldStyler: null;
 				StyledString styledString= new StyledString(file.getName(), style);
 				String decoration = MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
 				styledString.append(decoration, StyledString.COUNTER_STYLER);
