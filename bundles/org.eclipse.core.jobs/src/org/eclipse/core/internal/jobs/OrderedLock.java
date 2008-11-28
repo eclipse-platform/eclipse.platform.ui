@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,10 +104,9 @@ public class OrderedLock implements ILock, ISchedulingRule {
 			System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... " + this); //$NON-NLS-1$ //$NON-NLS-2$
 		success = doAcquire(semaphore, delay);
 		manager.resumeSuspendedLocks(Thread.currentThread());
-		if (DEBUG && success)
-			System.out.println("[" + Thread.currentThread() + "] Operation started... " + this); //$NON-NLS-1$ //$NON-NLS-2$
-		else if (DEBUG)
-			System.out.println("[" + Thread.currentThread() + "] Operation timed out... " + this); //$NON-NLS-1$ //$NON-NLS-2$	
+		if (DEBUG)
+			System.out.println("[" + Thread.currentThread() +  //$NON-NLS-1$
+					(success ? "] Operation started... " : "] Operation timed out... ") + this); //$NON-NLS-1$ //$NON-NLS-2$ //}
 		return success;
 	}
 
