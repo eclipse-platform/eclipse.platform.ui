@@ -98,6 +98,8 @@ public class NavigatorTestBase extends TestCase {
 		for (int i = 0; i < projects.length; i++) {
 			projects[i].delete(true, null);
 		}
+		// Hide it, we want a new one each time
+		EditorTestHelper.showView(_navigatorInstanceId, false);
 	}
 
 }

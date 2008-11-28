@@ -20,6 +20,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
@@ -28,6 +30,7 @@ import org.eclipse.ui.internal.WorkingSet;
 import org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider;
 import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
+import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
@@ -136,4 +139,67 @@ public class WorkingSetTest extends NavigatorTestBase {
 				workingSet));
 	}
 
+	// bug 244174 test property to switch back and forth between working sets
+	// as top level and not
+	public void testTopLevelChange() throws Exception {
+
+		IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
+		p1.create(null);
+		p1.open(null);
+		IFile f1 = p1.getFile("f1");
+		f1.create(new ByteArrayInputStream(new byte[] {}), true, null);
+
+		IExtensionStateModel extensionStateModel = contentService
+				.findStateModel(WorkingSetsContentProvider.EXTENSION_ID);
+
+		// Force the content provider to be loaded so that it responds to the 
+		// working set events
+		INavigatorContentExtension ce = 
+				contentService.getContentExtensionById(WorkingSetsContentProvider.EXTENSION_ID);
+		ce.getContentProvider();
+		
+		IWorkingSet workingSet = new WorkingSet("ws1", "ws1",
+				new IAdaptable[] { p1 });
+
+		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
+		.getActionProvider(contentService, _actionService,
+				WorkingSetActionProvider.class);
+		IPropertyChangeListener l = provider.getFilterChangeListener();
+		PropertyChangeEvent event = new PropertyChangeEvent(this,
+				WorkingSetFilterActionGroup.CHANGE_WORKING_SET, null,
+				workingSet);
+		l.propertyChange(event);
+
+		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchPage activePage = activeWindow.getActivePage();
+		activePage.setWorkingSets(new IWorkingSet[] {workingSet});
+
+		extensionStateModel.setBooleanProperty(
+				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
+		viewer.refresh();
+
+		TreeItem[] items = viewer.getTree().getItems();
+
+		assertTrue("First item needs to be working set", items[0].getData().equals(
+				workingSet));
+
+		extensionStateModel.setBooleanProperty(
+				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, false);
+		viewer.refresh();
+
+		items = viewer.getTree().getItems();
+		assertTrue("First item needs to be project", items[0].getData().equals(
+				p1));
+
+		extensionStateModel.setBooleanProperty(
+				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
+		viewer.refresh();
+
+		items = viewer.getTree().getItems();
+		assertTrue("First item needs to be working set", items[0].getData().equals(
+				workingSet));
+
+	}
+
+	
 }
