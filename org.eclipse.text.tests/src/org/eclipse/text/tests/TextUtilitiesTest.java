@@ -134,7 +134,8 @@ public class TextUtilitiesTest extends TestCase {
 
 	/**
 	 * Constructor for UtilitiesTest.
-	 * @param name
+	 * 
+	 * @param name the name
 	 */
 	public TextUtilitiesTest(String name) {
 		super(name);
