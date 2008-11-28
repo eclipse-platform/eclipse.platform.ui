@@ -55,7 +55,6 @@ public class ProductProperties extends BrandingProperties implements
 
     private static final String ABOUT_MAPPINGS = "$nl$/about.mappings"; //$NON-NLS-1$
 
-    private static String[] systemPropertiesKeys = new String[0];
     private static String[] mappings = loadMappings();
 
     private static String[] loadMappings() {
@@ -89,30 +88,14 @@ public class ProductProperties extends BrandingProperties implements
         if (bundle != null) {
             boolean found = true;
             int i = 0;
-            ArrayList systemPropertiesKeysList = new ArrayList();
             while (found) {
                 try {
-                	String nextString = bundle.getString(Integer.toString(i));
-                	int length = nextString.length();
-                	/*
-                	 * Check if the mapping value is a system property, specified
-                	 * by '$' at the beginning and end of the string.  If so, add 
-                	 * the key to the systemPropertiesKeys array and insert array
-                	 * indices "{i}" to allow the string to be formatted again with 
-                	 * the new system property values.
-                	 */
-                	if (length > 2 && nextString.indexOf('$') == 0 && nextString.lastIndexOf('$') == length - 1) {
-                		int newIndex = systemPropertiesKeysList.size();
-                		systemPropertiesKeysList.add(nextString.substring(1, length-1));
-                		nextString = "{" + newIndex + "}"; //$NON-NLS-1$ //$NON-NLS-2$
-                	}
-                    mappingsList.add(nextString);
+                    mappingsList.add(bundle.getString(Integer.toString(i)));
                 } catch (MissingResourceException e) {
                     found = false;
                 }
                 i++;
             }
-            systemPropertiesKeys = (String[]) systemPropertiesKeysList.toArray(new String[systemPropertiesKeysList.size()]) ;
         }
         return (String[]) mappingsList.toArray(new String[mappingsList.size()]);
     }
@@ -268,34 +251,24 @@ public class ProductProperties extends BrandingProperties implements
         if (property.indexOf('{') == -1) {
 			return property;
 		}
-        property = MessageFormat.format(property, mappings);
-        
+        String[] tempMappings = (String[])mappings.clone(); 
         /*
-         * If there is still a "{" character, check if there are
-         * System properties in the systemPropertiesKeys array that 
-         * need to be loaded. 
-         */
-        if (property.indexOf('{') == -1) {
-        	return property;
+    	 * Check if the mapping value is a system property, specified
+    	 * by '$' at the beginning and end of the string.  If so, update
+    	 * the mappings array with the system property value.  
+    	 */
+        for (int i=0; i<tempMappings.length; i++) {
+        	String nextString = tempMappings[i];
+        	int length = nextString.length();
+        	
+        	if (length > 2 && nextString.charAt(0) == '$' && nextString.charAt(length-1) == '$') {
+        		String systemPropertyKey = nextString.substring(1, length-1);
+        		// If system property is not set, insert an empty String
+        		tempMappings[i] = System.getProperty(systemPropertyKey, ""); //$NON-NLS-1$;
+        	}
         }
-        
-        if (systemPropertiesKeys.length == 0) 
-			return property;
-        
-        /*
-         * Create a String array of the actual values to be mapped
-         * to the system properties keys.
-         */
-        String[] systemPropertiesMappings = new String[systemPropertiesKeys.length];
-        for (int i=0; i < systemPropertiesKeys.length; i++){
-        	String systemProperty = systemPropertiesKeys[i];
-        	// If system property is not set, insert an empty String
-        	systemPropertiesMappings[i] = System.getProperty(systemProperty, ""); //$NON-NLS-1$
-        }
-        /*
-         * Format string with the system properties values.
-         */
-	    return MessageFormat.format(property, systemPropertiesMappings);
+
+        return MessageFormat.format(property, tempMappings);
     }
 
     /**
