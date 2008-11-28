@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Control;
 public class CSSPropertyFontFamilyHandler extends
 		AbstractCSSPropertyFontSWTHandler {
 
-	public String retrieveCSSProperty(Control control, String property,
+	public String retrieveCSSProperty(Control control, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
 		return CSSSWTFontHelper.getFontFamily(control);
 	}

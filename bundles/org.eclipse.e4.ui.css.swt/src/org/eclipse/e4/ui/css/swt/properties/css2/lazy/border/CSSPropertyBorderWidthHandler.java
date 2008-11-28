@@ -16,8 +16,8 @@ import org.eclipse.swt.widgets.Control;
 public class CSSPropertyBorderWidthHandler extends
 		AbstractCSSPropertyBorderSWTHandler {
 
-	public String retrieveCSSProperty(Control control, String property,
-			CSSEngine engine) throws Exception {
+	public String retrieveCSSProperty(Control control, String property, String pseudo, 
+			CSSEngine engine) throws Exception { 
 		return "0";
 	}
 

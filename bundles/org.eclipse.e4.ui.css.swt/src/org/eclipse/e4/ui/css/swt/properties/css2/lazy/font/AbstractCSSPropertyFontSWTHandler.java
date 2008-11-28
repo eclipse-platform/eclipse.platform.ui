@@ -40,6 +40,6 @@ public abstract class AbstractCSSPropertyFontSWTHandler extends
 	}
 
 	public abstract String retrieveCSSProperty(Control control,
-			String property, CSSEngine engine) throws Exception;
+			String property, String pseudo, CSSEngine engine) throws Exception;
 
 }

@@ -33,7 +33,7 @@ public class CSSPropertyFontHandler extends
 		return false;
 	}
 
-	public String retrieveCSSProperty(Object widget, String property,
+	public String retrieveCSSProperty(Object widget, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
 		return null;
 	}

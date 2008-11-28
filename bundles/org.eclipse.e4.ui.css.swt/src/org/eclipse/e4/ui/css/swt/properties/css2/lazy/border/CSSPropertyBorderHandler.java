@@ -22,7 +22,7 @@ public class CSSPropertyBorderHandler extends
 		AbstractCSSPropertyBorderCompositeHandler implements
 		ICSSPropertyHandler2Delegate {
 
-	public boolean applyCSSProperty(Object element, String property,
+	public boolean applyCSSProperty(Object element, String property, 
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
@@ -33,7 +33,7 @@ public class CSSPropertyBorderHandler extends
 		return false;
 	}
 
-	public String retrieveCSSProperty(Object widget, String property,
+	public String retrieveCSSProperty(Object widget, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
 		return null;
 	}

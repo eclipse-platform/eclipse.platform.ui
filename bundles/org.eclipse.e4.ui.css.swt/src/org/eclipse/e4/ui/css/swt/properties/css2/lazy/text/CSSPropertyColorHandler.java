@@ -26,10 +26,10 @@ public class CSSPropertyColorHandler extends
 		}
 	}
 
-	public String retrieveCSSProperty(Control control, String property,
+	public String retrieveCSSProperty(Control control, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
 		Color color = control.getForeground();
-		return retrieveCSSProperty(color, engine);
+		return retrieveCSSProperty(color, pseudo, engine);
 	}
 
 	protected Object getToType(Object value) {
