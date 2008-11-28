@@ -590,6 +590,7 @@ public class TeamUIMessages extends NLS {
 	public static String OpenRevisionAction_DeletedRevisionMessage;
 	public static String GenericHistoryView_ErrorFetchingEntries;
 	public static String TeamContentProviderDescriptor_1;
+	public static String TeamContentProviderDescriptor_2;
 	public static String MergeIncomingChangesAction_0;
 	public static String AdditionalMappingsDialog_0;
 	public static String AdditionalMappingsDialog_1;

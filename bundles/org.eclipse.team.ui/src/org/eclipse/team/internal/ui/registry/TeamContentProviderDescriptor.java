@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,8 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
- * A team content provider descriptor associates a model provider
- * with a navigator content extension
+ * A team content provider descriptor associates a model provider with a
+ * navigator content extension
  */
 public class TeamContentProviderDescriptor implements ITeamContentProviderDescriptor {
 
@@ -55,29 +55,41 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 	 * Initialize this descriptor based on the provided extension point.
 	 */
 	protected void readExtension(IExtension extension) throws CoreException {
-		//read the extension
+		// read the extension
 		String id = extension.getUniqueIdentifier(); // id not required
 		IConfigurationElement[] elements = extension.getConfigurationElements();
-		int count = elements.length;
-		for (int i = 0; i < count; i++) {
-			IConfigurationElement element = elements[i];
-			configElement = element;
+
+		// there has to be exactly one team content provider element
+		// in the provided extension (see teamContentProviders.exsd)
+		if (elements.length == 1) {
+			IConfigurationElement element = elements[0];
 			String name = element.getName();
 			if (name.equalsIgnoreCase(TAG_TEAM_CONTENT_PROVIDER)) {
+				configElement = element;
 				modelProviderId = element.getAttribute(ATT_MODEL_PROVIDER_ID);
-				contentExtensionId = element.getAttribute(ATT_CONTENT_EXTENSION_ID);
-				String supportsFlatLayoutString = element.getAttribute(ATT_SUPPORTS_FLAT_LAYOUT);
+				contentExtensionId = element
+						.getAttribute(ATT_CONTENT_EXTENSION_ID);
+				String supportsFlatLayoutString = element
+						.getAttribute(ATT_SUPPORTS_FLAT_LAYOUT);
 				if (supportsFlatLayoutString != null) {
-					supportsFlatLayout = Boolean.valueOf(supportsFlatLayoutString).booleanValue();
+					supportsFlatLayout = Boolean.valueOf(
+							supportsFlatLayoutString).booleanValue();
 				}
 				contentProviderName = extension.getLabel();
 			}
-			break;
+		} else {
+			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_2,
+					new String[] { TAG_TEAM_CONTENT_PROVIDER,
+							id == null ? "" : id })); //$NON-NLS-1$
 		}
 		if (modelProviderId == null)
-			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1, new String[] { ATT_MODEL_PROVIDER_ID, TAG_TEAM_CONTENT_PROVIDER, id == null ? "" : id})); //$NON-NLS-1$
+			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1,
+					new String[] { ATT_MODEL_PROVIDER_ID,
+							TAG_TEAM_CONTENT_PROVIDER, id == null ? "" : id })); //$NON-NLS-1$
 		if (contentExtensionId == null)
-			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1, new String[] { ATT_CONTENT_EXTENSION_ID, TAG_TEAM_CONTENT_PROVIDER, id == null ? "" : id})); //$NON-NLS-1$
+			fail(NLS.bind(TeamUIMessages.TeamContentProviderDescriptor_1,
+					new String[] { ATT_CONTENT_EXTENSION_ID,
+							TAG_TEAM_CONTENT_PROVIDER, id == null ? "" : id })); //$NON-NLS-1$
 	}
 	
 	protected void fail(String reason) throws CoreException {
