@@ -14,10 +14,22 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
+import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 
 public class CSSRuleListImpl implements CSSRuleList, Serializable {
 
-	PLACEHOLDER // this class is a stub, needs to be written
+	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public int getLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public CSSRule item(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

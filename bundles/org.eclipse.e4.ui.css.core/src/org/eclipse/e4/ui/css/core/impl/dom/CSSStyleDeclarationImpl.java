@@ -13,14 +13,69 @@
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
+
+import org.w3c.dom.DOMException;
+import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSValue;
 
 public class CSSStyleDeclarationImpl extends AbstractCSSNode implements
 		CSSStyleDeclaration, Serializable {
 
+	PLACEHOLDER; // this class is a stub, needs to be written
+
 	public CSSStyleDeclarationImpl(Object object) {
 		// TODO Auto-generated constructor stub
 	}
-	
-	PLACEHOLDER // this class is a stub, needs to be written
+
+	public String getCssText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public CSSRule getParentRule() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CSSValue getPropertyCSSValue(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getPropertyPriority(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getPropertyValue(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String item(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String removeProperty(String arg0) throws DOMException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setCssText(String arg0) throws DOMException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setProperty(String arg0, String arg1, String arg2)
+			throws DOMException {
+		// TODO Auto-generated method stub
+		
+	}	
 }

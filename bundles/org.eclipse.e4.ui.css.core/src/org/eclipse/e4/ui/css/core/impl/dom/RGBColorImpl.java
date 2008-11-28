@@ -14,10 +14,25 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
+import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.RGBColor;
 
 public class RGBColorImpl implements RGBColor, Serializable {
+	PLACEHOLDER; // this class is a stub, needs to be written
 
-	PLACEHOLDER // this class is a stub, needs to be written
+	public CSSPrimitiveValue getBlue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CSSPrimitiveValue getGreen() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CSSPrimitiveValue getRed() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

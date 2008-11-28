@@ -14,10 +14,31 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
+import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.Rect;
 
 public class RectImpl implements Rect, Serializable {
 
-	PLACEHOLDER // this class is a stub, needs to be written
+	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public CSSPrimitiveValue getBottom() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CSSPrimitiveValue getLeft() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CSSPrimitiveValue getRight() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CSSPrimitiveValue getTop() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

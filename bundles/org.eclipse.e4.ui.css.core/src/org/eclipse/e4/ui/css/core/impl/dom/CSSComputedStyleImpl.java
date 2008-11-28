@@ -29,10 +29,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  * CSS computed style which concatenate list of CSSComputedStyleImpl to manage
  * styles coming from Condition Selector (ex : Label#MyId) and other selectors
  * (ex : Label).
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSComputedStyleImpl extends CSSStyleDeclarationImpl implements
 		CSSStyleDeclaration {

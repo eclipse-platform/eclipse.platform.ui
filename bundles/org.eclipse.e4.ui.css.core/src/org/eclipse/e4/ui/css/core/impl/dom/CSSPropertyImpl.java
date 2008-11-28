@@ -15,9 +15,34 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 import java.io.Serializable;
 
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
+import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyImpl implements CSSProperty, Serializable {
+	PLACEHOLDER; // this class is a stub, needs to be written
 
-	PLACEHOLDER // this class is a stub, needs to be written
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CSSValue getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean isImportant() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setImportant(boolean important) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setValue(CSSValue value) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

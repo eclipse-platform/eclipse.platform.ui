@@ -18,6 +18,21 @@ import org.w3c.dom.css.Counter;
 
 public class CounterImpl implements Counter, Serializable {
 
-	PLACEHOLDER // this class is a stub, needs to be written
+	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public String getIdentifier() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getListStyle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getSeparator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
