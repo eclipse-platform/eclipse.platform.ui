@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.internal.utils.IStringPoolParticipant;
 import org.eclipse.core.internal.utils.StringPool;
@@ -162,8 +163,15 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	public void setAttributes(Map map) {
 		if (map == null)
 			attributes = null;
-		else
-			attributes = new MarkerAttributeMap(map);
+		else {
+			attributes = new MarkerAttributeMap(map.size());
+			for (Iterator i = map.keySet().iterator(); i.hasNext();) {
+				Object key = i.next();
+				Assert.isTrue(key instanceof String);
+				Object value = map.get(key);
+				setAttribute((String) key, MarkerInfo.checkValidAttribute(value));
+			}
+		}
 	}
 
 	public void setAttributes(String[] attributeNames, Object[] values) {

@@ -464,12 +464,18 @@ public interface IMarker extends IAdaptable {
 	 * an instance of one of the following classes: 
 	 * <code>String</code>, <code>Integer</code>, or <code>Boolean</code>.
 	 * If the value is <code>null</code>, the attribute is considered to be undefined.
+	 * 
+	 * <p>
+	 * The attribute value cannot be <code>String</code> 
+	 * whose UTF encoding exceeds 65535 bytes.
+	 * </p>
+	 * 
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication 
 	 * that this marker has been modified.
 	 * </p>
-	 *
+	 * 
 	 * @param attributeName the name of the attribute
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 * @exception CoreException if this method fails. Reasons include:
@@ -509,6 +515,12 @@ public interface IMarker extends IAdaptable {
 	 * <code>Integer</code>, or <code>Boolean</code>.
 	 * If a value is <code>null</code>, the new value of the 
 	 * attribute is considered to be undefined.
+	 * 
+	 * <p>
+	 * The values of the attributes cannot be <code>String</code> 
+	 * whose UTF encoding exceeds 65535 bytes.
+	 * </p>
+	 * 
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication 
@@ -534,6 +546,12 @@ public interface IMarker extends IAdaptable {
 	 * Attributes previously set on the marker but not included in the given map
 	 * are considered to be removals. Setting the given map to be <code>null</code>
 	 * is equivalent to removing all marker attributes.
+	 * 
+	 * <p>
+	 * The values of the attributes cannot be <code>String</code> 
+	 * whose UTF encoding exceeds 65535 bytes.
+	 * </p>
+	 * 
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication 
