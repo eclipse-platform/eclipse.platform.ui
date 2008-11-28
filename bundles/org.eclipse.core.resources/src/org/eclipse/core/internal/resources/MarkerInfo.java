@@ -13,9 +13,9 @@ package org.eclipse.core.internal.resources;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
-import org.eclipse.core.internal.utils.IStringPoolParticipant;
-import org.eclipse.core.internal.utils.StringPool;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.osgi.util.NLS;
 
 public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolParticipant {
 
@@ -81,7 +81,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 			return value;
 		}
 		//if we got here, it's an invalid attribute value type
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException(NLS.bind(Messages.resources_wrongMarkerAttributeValueType, value.getClass().getName()));
 	}
 
 	public MarkerInfo() {

@@ -156,6 +156,7 @@ public class Messages extends NLS {
 	public static String resources_errorDeleting;
 	public static String resources_errorMarkersDelete;
 	public static String resources_errorMarkersMove;
+	public static String resources_wrongMarkerAttributeValueType;
 	public static String resources_errorMembers;
 	public static String resources_errorMoving;
 	public static String resources_errorMultiRefresh;
