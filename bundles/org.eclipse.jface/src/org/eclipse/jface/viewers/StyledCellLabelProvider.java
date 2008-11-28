@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * A {@link StyledCellLabelProvider} supports styled labels by using owner
@@ -37,14 +38,6 @@ import org.eclipse.swt.widgets.Event;
  * {@link ViewerCell#setStyleRanges(StyleRange[])} to set style ranges
  * on the label.
  * </p>
- * <p>
- * The current version of the {@link StyledCellLabelProvider} will ignore all font settings on
- * {@link StyleRange}. Different fonts would make labels wider, and the native
- * selection drawing could not be reused.
- * </p>
- * 
- * <p><strong>NOTE:</strong> This API is experimental and may be deleted or
- * changed before 3.4 is released.</p>
  * 
  * @since 3.4
  */
@@ -75,6 +68,9 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	
 	private ColumnViewer viewer;
 	private ViewerColumn column;
+	
+	private Widget itemOfLastMeasure;
+	private int deltaOfLastMeasure;
 
 	/**
 	 * Creates a new StyledCellLabelProvider. By default, owner draw is enabled, focus is drawn and no
@@ -200,8 +196,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			int orientation = viewer.getControl().getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
 			cachedTextLayout = new TextLayout(display);
 			cachedTextLayout.setOrientation(orientation);
-		} else {
-			cachedTextLayout.setText(""); // make sure no previous ranges are cleared //$NON-NLS-1$
 		}
 		return cachedTextLayout;
 	}
@@ -214,37 +208,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	private boolean drawFocus(Event event) {
 		return (event.detail & SWT.FOCUSED) != 0
 				&& (this.style & NO_FOCUS) == 0;
-	}
-
-	/**
-	 * Returns a {@link TextLayout} instance for the given cell
-	 * configured with the style ranges. The text layout instance is managed by
-	 * the label provider. Caller of the method must not dispose the text
-	 * layout.
-	 * 
-	 * @param diplay
-	 *            the current display
-	 * @param applyColors
-	 *            if set, create colors in the result
-	 * @param cell
-	 *            the viewer cell
-	 * @return a TextLayout instance
-	 */
-	private TextLayout getTextLayoutForInfo(Display display, ViewerCell cell, boolean applyColors) {
-		TextLayout layout = getSharedTextLayout(display);
-		
-		layout.setText(cell.getText());
-		layout.setFont(cell.getFont()); // set also if null to clear previous usages
-		
-		StyleRange[] styleRanges = cell.getStyleRanges();
-		if (styleRanges != null) { // user didn't fill styled ranges
-			for (int i = 0; i < styleRanges.length; i++) {
-				StyleRange curr = prepareStyleRange(styleRanges[i], applyColors);
-				layout.setStyle(curr, curr.start, curr.start + curr.length - 1);
-			}
-		}
-
-		return layout;
 	}
 	
 	/**
@@ -263,10 +226,8 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	protected StyleRange prepareStyleRange(StyleRange styleRange, boolean applyColors) {
 		// if no colors apply or font is set, create a clone and clear the
 		// colors and font
-		if (styleRange.font != null || !applyColors
-				&& (styleRange.foreground != null || styleRange.background != null)) {
+		if (!applyColors && (styleRange.foreground != null || styleRange.background != null)) {
 			styleRange = (StyleRange) styleRange.clone();
-			styleRange.font = null; // ignore font settings until bug 168807 is resolved
 			if (!applyColors) {
 				styleRange.foreground = null;
 				styleRange.background = null;
@@ -305,7 +266,53 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	 *      java.lang.Object)
 	 */
 	protected void measure(Event event, Object element) {
-		// use native measuring
+		if (!isOwnerDrawEnabled())
+			return;
+		
+		ViewerCell cell= getViewerCell(event, element);
+		boolean applyColors = useColors(event); // returns false because of bug 228376 
+		
+		TextLayout layout = getSharedTextLayout(event.display);
+		
+		int textWidthDelta = deltaOfLastMeasure = updateTextLayout(layout, cell, applyColors);
+		/* remove-begin if bug 228695 fixed */
+		itemOfLastMeasure = event.item;
+		/* remove-end if bug 228695 fixed */
+
+		event.width += textWidthDelta;
+	}
+
+	/**
+	 * @param layout
+	 * @param cell
+	 * @param applyColors
+	 * @return the text width delta (0 if the text layout contains no other font)
+	 */
+	private int updateTextLayout(TextLayout layout, ViewerCell cell,
+			boolean applyColors) {
+		layout.setText(""); //$NON-NLS-1$  //make sure all previous ranges are cleared (see bug 226090)
+		
+		layout.setText(cell.getText());
+		layout.setFont(cell.getFont()); // set also if null to clear previous usages
+		
+		int originalTextWidth = layout.getBounds().width; // text width without any styles
+		boolean containsOtherFont= false;
+		
+		StyleRange[] styleRanges = cell.getStyleRanges();
+		if (styleRanges != null) { // user didn't fill styled ranges
+			for (int i = 0; i < styleRanges.length; i++) {
+				StyleRange curr = prepareStyleRange(styleRanges[i], applyColors);
+				layout.setStyle(curr, curr.start, curr.start + curr.length - 1);
+				if (curr.font != null) {
+					containsOtherFont= true;
+				}
+			}
+		}
+		int textWidthDelta = 0;
+		if (containsOtherFont) {
+			textWidthDelta = layout.getBounds().width - originalTextWidth;
+		}
+		return textWidthDelta;
 	}
 	
 	/*
@@ -321,6 +328,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 		ViewerCell cell= getViewerCell(event, element);
 
 		boolean applyColors = useColors(event);
+		
 		GC gc = event.gc;
 		// remember colors to restore the GC later
 		Color oldForeground = gc.getForeground();
@@ -337,7 +345,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 				gc.setBackground(background);
 			}
 		}
-
 		Image image = cell.getImage();
 		if (image != null) {
 			Rectangle imageBounds = cell.getImageBounds();
@@ -353,10 +360,31 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			}
 		}
 
-		TextLayout textLayout = getTextLayoutForInfo(event.display, cell, applyColors);
-
 		Rectangle textBounds = cell.getTextBounds();
 		if (textBounds != null) {
+			TextLayout textLayout= getSharedTextLayout(event.display);
+
+			/* remove-begin if bug 228695 fixed */
+			if (event.item != itemOfLastMeasure) {
+				// fLayout has not been configured in 'measure()'
+				deltaOfLastMeasure = updateTextLayout(textLayout, cell, applyColors);
+				itemOfLastMeasure = event.item;
+			}
+			/* remove-end if bug 228695 fixed */
+			
+			/* remove-begin if bug 228376 fixed */
+			if (!applyColors) {
+				// need to remove colors for selected elements: measure doesn't provide that information, see bug 228376 
+				StyleRange[] styleRanges= cell.getStyleRanges();
+				if (styleRanges != null) {
+					for (int i= 0; i < styleRanges.length; i++) {
+						StyleRange curr = prepareStyleRange(styleRanges[i], applyColors);
+						textLayout.setStyle(curr, curr.start, curr.start + curr.length - 1);
+					}
+				}
+			}
+			/* remove-end if bug 228376 fixed */
+			
 			Rectangle layoutBounds = textLayout.getBounds();
 	
 			int x = textBounds.x;
@@ -368,7 +396,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 
 		if (drawFocus(event)) {
 			Rectangle focusBounds = cell.getViewerRow().getBounds();
-			gc.drawFocus(focusBounds.x, focusBounds.y, focusBounds.width,
+			gc.drawFocus(focusBounds.x, focusBounds.y, focusBounds.width + deltaOfLastMeasure,
 					focusBounds.height);
 		}
 		

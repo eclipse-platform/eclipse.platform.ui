@@ -17,19 +17,25 @@ import java.text.MessageFormat;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -77,12 +83,15 @@ public class Snippet049StyledCellLabelProvider {
 		Label label= new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		label.setText("Viewer with a StyledCellLabelProvider:"); //$NON-NLS-1$
-
-		ExampleLabelProvider labelProvider= new ExampleLabelProvider();
-		FileSystemContentProvider contentProvider= new FileSystemContentProvider();
 		
 		final TableViewer tableViewer= new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
+		FontData[] boldFontData= getModifiedFontData(tableViewer.getTable().getFont().getFontData(), SWT.BOLD);
+
+		Font boldFont = new Font(Display.getCurrent(), boldFontData);
+		ExampleLabelProvider labelProvider= new ExampleLabelProvider(boldFont);
+		FileSystemContentProvider contentProvider= new FileSystemContentProvider();
+		
 		tableViewer.setContentProvider(contentProvider);
 		tableViewer.setLabelProvider(labelProvider);
 
@@ -93,14 +102,29 @@ public class Snippet049StyledCellLabelProvider {
 		return composite;
 	}
 	
+	private static FontData[] getModifiedFontData(FontData[] originalData, int additionalStyle) {
+		FontData[] styleData = new FontData[originalData.length];
+		for (int i = 0; i < styleData.length; i++) {
+			FontData base = originalData[i];
+			styleData[i] = new FontData(base.getName(), base.getHeight(), base.getStyle() | additionalStyle);
+		}
+       	return styleData;
+    }
+	
 	private static class ExampleLabelProvider extends StyledCellLabelProvider {
 
 		private static int IMAGE_SIZE= 16;
 		private static final Image IMAGE1= new Image(DISPLAY, DISPLAY.getSystemImage(SWT.ICON_WARNING).getImageData().scaledTo(IMAGE_SIZE, IMAGE_SIZE));
 		private static final Image IMAGE2= new Image(DISPLAY, DISPLAY.getSystemImage(SWT.ICON_ERROR).getImageData().scaledTo(IMAGE_SIZE, IMAGE_SIZE));
 
+		private final Styler fBoldStyler; 
 		
-		public ExampleLabelProvider() {
+		public ExampleLabelProvider(final Font boldFont) {
+			fBoldStyler= new Styler() {
+				public void applyStyles(TextStyle textStyle) {
+					textStyle.font= boldFont;
+				}
+			};
 		}
 		
 		public void update(ViewerCell cell) {
@@ -109,7 +133,8 @@ public class Snippet049StyledCellLabelProvider {
 			if (element instanceof File) {
 				File file= (File) element;
 				
-				StyledString styledString= new StyledString(file.getName());
+				Styler style= file.isDirectory() ? fBoldStyler: null;
+				StyledString styledString= new StyledString(file.getName(), style);
 				String decoration = MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
 				styledString.append(decoration, StyledString.COUNTER_STYLER);
 				
@@ -126,6 +151,10 @@ public class Snippet049StyledCellLabelProvider {
 			}
 
 			super.update(cell);
+		}
+		
+		protected void measure(Event event, Object element) {
+			super.measure(event, element);
 		}
 	}
 
