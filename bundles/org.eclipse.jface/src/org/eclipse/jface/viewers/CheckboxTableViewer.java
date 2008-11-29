@@ -13,8 +13,8 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,6 +27,9 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * A concrete viewer based on an SWT <code>Table</code>
  * control with checkboxes on each node.
+ * <p>This class supports setting an {@link ICheckStateProvider} to 
+ * set the checkbox states. To see standard SWT behavior, view
+ * SWT Snippet274.</p>
  * <p>
  * This class is not intended to be subclassed outside the viewer framework. 
  * It is designed to be instantiated with a pre-existing SWT table control and configured
@@ -41,6 +44,11 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * List of check state listeners (element type: <code>ICheckStateListener</code>).
      */
     private ListenerList checkStateListeners = new ListenerList();
+    
+    /**
+     * Provides the desired state of the check boxes.
+     */
+    private ICheckStateProvider checkStateProvider;
 
     /**
      * Creates a table viewer on a newly-created table control under the given parent.
@@ -139,8 +147,34 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
     public void addCheckStateListener(ICheckStateListener listener) {
         checkStateListeners.add(listener);
     }
-
+    
     /**
+     * Sets the {@link ICheckStateProvider} for this {@link CheckboxTreeViewer}.
+     * The check state provider will supply the logic for deciding whether the
+     * check box associated with each item should be checked, grayed or 
+     * unchecked. 
+     * @param checkStateProvider	The provider.
+     * @since 3.5
+     */
+    public void setCheckStateProvider(ICheckStateProvider checkStateProvider) {
+    	this.checkStateProvider = checkStateProvider;
+    	refresh();
+    }
+    
+    /*
+     * Extends this method to update check box states.
+     */
+    protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
+    	super.doUpdateItem(widget, element, fullMap);
+    	if(!widget.isDisposed()) {
+    		if(checkStateProvider != null) {
+				setChecked(element, checkStateProvider.isChecked(element));
+				setGrayed(element, checkStateProvider.isGrayed(element));
+			}
+    	}
+	}
+
+	/**
      * Creates a new table control with one column.
      *
      * @param parent the parent control
@@ -275,7 +309,16 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * Method declared on Viewer.
      */
     protected void preservingSelection(Runnable updateCode) {
-
+    	//If a check provider is present, it determines the state across input
+    	//changes.
+    	if(checkStateProvider != null) {
+    		//Try to preserve the selection, let the ICheckProvider manage 
+    		//the check states
+    		super.preservingSelection(updateCode);
+    		return;
+    	}
+    	
+    	//Preserve checked items
         TableItem[] children = getTable().getItems();
         CustomHashtable checked = newHashtable(children.length * 2 + 1);
         CustomHashtable grayed = newHashtable(children.length * 2 + 1);
