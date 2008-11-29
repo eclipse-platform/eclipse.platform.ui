@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
@@ -165,7 +164,7 @@ public class EditorTestHelper {
 		boolean interrupted= true;
 		while (interrupted) {
 			try {
-				Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 				interrupted= false;
 			} catch (InterruptedException e) {
 				interrupted= true;
@@ -199,7 +198,7 @@ public class EditorTestHelper {
 	}
 	
 	public static boolean allJobsQuiet() {
-		IJobManager jobManager= Platform.getJobManager();
+		IJobManager jobManager= Job.getJobManager();
 		Job[] jobs= jobManager.find(null);
 		for (int i= 0; i < jobs.length; i++) {
 			Job job= jobs[i];

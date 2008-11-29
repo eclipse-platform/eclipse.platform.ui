@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.util;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,11 +26,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.tests.navigator.NavigatorTestsPlugin;
 
 public class ProjectUnzipUtil {
@@ -39,18 +38,18 @@ public class ProjectUnzipUtil {
 	private IPath zipLocation;
 	private String[] projectNames;
 	private IPath rootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-	private static final String META_PROJECT_NAME = ".project";   //$NON-NLS-1$
+	private static final String META_PROJECT_NAME = ".project"; //$NON-NLS-1$
 
 	public ProjectUnzipUtil(IPath aLocalZipFilePath, String[] aProjectNames) {
 		zipLocation = getLocalPath(aLocalZipFilePath);
 		projectNames = aProjectNames;
 
-	} 
+	}
 
 	public IPath getLocalPath(IPath zipFilePath) {
-		URL url = NavigatorTestsPlugin.getDefault().find(zipFilePath);
+		URL url = FileLocator.find(NavigatorTestsPlugin.getDefault().getBundle(), zipFilePath, null);
 		try {
-			url = Platform.asLocalURL(url);
+			url = FileLocator.toFileURL(url);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -70,13 +69,13 @@ public class ProjectUnzipUtil {
 			return false;
 		}
 
-		return true; 
+		return true;
 	}
-	
+
 	public boolean reset() {
 		try {
 			expandZip();
-			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null); 
+			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
 			e.printStackTrace();
 			return false;
@@ -85,7 +84,7 @@ public class ProjectUnzipUtil {
 			return false;
 		}
 
-		return true; 
+		return true;
 	}
 
 	private IProgressMonitor getProgessMonitor() {
@@ -130,7 +129,6 @@ public class ProjectUnzipUtil {
 		return rootLocation.append(name);
 	}
 
-
 	public static void copy(InputStream in, OutputStream out) throws IOException {
 		byte[] buffer = new byte[1024];
 		try {
@@ -163,7 +161,5 @@ public class ProjectUnzipUtil {
 
 		}
 	}
-
-
 
 }
