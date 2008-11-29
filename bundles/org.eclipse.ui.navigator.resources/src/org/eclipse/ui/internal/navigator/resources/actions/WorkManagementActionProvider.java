@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
@@ -34,34 +35,40 @@ public class WorkManagementActionProvider extends CommonActionProvider {
 	private AddBookmarkAction addBookmarkAction;
 
 	public void init(ICommonActionExtensionSite aSite) {
-		Shell shell = aSite.getViewSite().getShell();
-		addBookmarkAction = new AddBookmarkAction(shell);
-		addTaskAction = new AddTaskAction(shell);
+		final Shell shell = aSite.getViewSite().getShell();
+		IShellProvider sp = new IShellProvider() {
+			public Shell getShell() {
+				return shell;
+			}
+		};
+		addBookmarkAction = new AddBookmarkAction(sp, true);
+		addTaskAction = new AddTaskAction(sp);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
+	 * @see
+	 * org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars
+	 * )
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
-		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(),
-				addBookmarkAction);
-		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(),
-				addTaskAction);
+		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), addBookmarkAction);
+		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), addTaskAction);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
+	 * @see
+	 * org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.
+	 * ActionContext)
 	 */
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		if (context != null && context.getSelection() instanceof IStructuredSelection) {
-			IStructuredSelection sSel = (IStructuredSelection) context
-					.getSelection();
+			IStructuredSelection sSel = (IStructuredSelection) context.getSelection();
 			addBookmarkAction.selectionChanged(sSel);
 			addTaskAction.selectionChanged(sSel);
 		} else {

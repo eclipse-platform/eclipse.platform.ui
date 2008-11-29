@@ -65,18 +65,25 @@ public class WorkbenchNavigatorMessages extends NLS {
 	/** Message key. */
 	public static String MoveResourceAction_checkMoveMessage;
 
+	/** Message key. */
 	public static String WorkingSetRootModeActionGroup_Top_Level_Element_;
 
+	/** Message key. */
 	public static String WorkingSetRootModeActionGroup_Project_;
 
+	/** Message key. */
 	public static String WorkingSetRootModeActionGroup_Working_Set_;
 
+	/** Message key. */
 	public static String CopyAction_Cop_;
 
+	/** Message key. */
 	public static String CopyAction_Copy_selected_resource_s_;
 
+	/** Message key. */
 	public static String PasteAction_Past_;
 
+	/** Message key. */
 	public static String PasteAction_Paste_selected_resource_s_;
 
 	static {

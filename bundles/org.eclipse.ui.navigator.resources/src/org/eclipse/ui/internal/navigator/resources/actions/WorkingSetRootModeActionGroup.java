@@ -50,7 +50,7 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	private int currentSelection;
 	private MenuItem[] items;
 
-	private class TopLevelContentAction extends Action implements IAction {
+	private class TopLevelContentAction extends Action  {
 
 		private final boolean groupWorkingSets;
 
@@ -89,8 +89,8 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	 * Create an action group that will listen to the stateModel and update the
 	 * structuredViewer when necessary.
 	 * 
-	 * @param structuredViewer
-	 * @param stateModel
+	 * @param aStructuredViewer
+	 * @param aStateModel
 	 */
 	public WorkingSetRootModeActionGroup(StructuredViewer aStructuredViewer,
 			IExtensionStateModel aStateModel) {
@@ -238,6 +238,9 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 
 	}
 
+	/**
+	 * @param sStateModel
+	 */
 	public void setStateModel(IExtensionStateModel sStateModel) {
 		stateModel = sStateModel;
 	}

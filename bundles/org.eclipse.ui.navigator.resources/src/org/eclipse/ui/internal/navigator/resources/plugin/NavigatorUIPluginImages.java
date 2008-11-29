@@ -26,9 +26,10 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
  * Handles all images and icons for the ui.
  * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in
- * progress. There is a guarantee neither that this API will work nor that it will remain the same.
- * Please do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is a guarantee neither that this API will work
+ * nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
  * </p>
  * 
  * @since 3.2
@@ -49,8 +50,8 @@ public class NavigatorUIPluginImages {
 	/**
 	 * Gets the current image.
 	 * 
-	 * @param key -
-	 *            Name of the icon.
+	 * @param key
+	 *            - Name of the icon.
 	 * @return Image
 	 */
 	public static Image get(String key) {
@@ -60,10 +61,10 @@ public class NavigatorUIPluginImages {
 	/**
 	 * Create and returns a image descriptor.
 	 * 
-	 * @param String
-	 *            prefix - Icon dir structure.
-	 * @param String
-	 *            name - The name of the icon.
+	 * @param prefix
+	 *            - Icon dir structure.
+	 * @param name
+	 *            - The name of the icon.
 	 * @return ImageDescriptor
 	 */
 	private static ImageDescriptor create(String prefix, String name) {
@@ -73,10 +74,10 @@ public class NavigatorUIPluginImages {
 	/**
 	 * Creates the icon url
 	 * 
-	 * @param String
-	 *            prefix - Icon dir structure.
-	 * @param String
-	 *            name - The name of the icon.
+	 * @param prefix
+	 *            - Icon dir structure.
+	 * @param name
+	 *            - The name of the icon.
 	 * @return URL
 	 */
 	private static URL makeIconFileURL(String prefix, String name) {
@@ -91,8 +92,8 @@ public class NavigatorUIPluginImages {
 	}
 
 	/**
-	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
-	 * are retrieved from the *lcl16 folders.
+	 * Sets the three image descriptors for enabled, disabled, and hovered to an
+	 * action. The actions are retrieved from the *lcl16 folders.
 	 * 
 	 * @param action
 	 *            the action
@@ -106,12 +107,12 @@ public class NavigatorUIPluginImages {
 	/**
 	 * Sets all available image descriptors for the given action.
 	 * 
-	 * @param action -
-	 *            The action associated with the icon.
-	 * @param type -
-	 *            The type of icon.
-	 * @param relPath -
-	 *            The relative path of the icon.
+	 * @param action
+	 *            - The action associated with the icon.
+	 * @param type
+	 *            - The type of icon.
+	 * @param relPath
+	 *            - The relative path of the icon.
 	 */
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		// /*relPath= relPath.substring(NAVIGATORUI_NAME_PREFIX_LENGTH);*/

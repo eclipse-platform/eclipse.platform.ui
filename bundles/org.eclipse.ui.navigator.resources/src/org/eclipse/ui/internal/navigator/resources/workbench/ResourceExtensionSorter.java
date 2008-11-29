@@ -14,6 +14,11 @@ package org.eclipse.ui.internal.navigator.resources.workbench;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
+ * TODO - This refers to the deprecated ResourceSorter, however we are stuck with this
+ * for the time being because the CommonSorter extension point uses a ViewerSorter.
+ * We should provide an option for a ViewerComparator and then we can remove this
+ * class.
+ * 
  * @since 3.2
  * 
  */

@@ -73,6 +73,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * @see IWorkbench#getImportWizardRegistry()
  * @see IWorkbench#getExportWizardRegistry()
  * @since 3.2
+ * @noextend
  * 
  */
 public final class WizardActionGroup extends ActionGroup {

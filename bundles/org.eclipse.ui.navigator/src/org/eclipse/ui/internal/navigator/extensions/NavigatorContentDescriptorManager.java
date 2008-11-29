@@ -29,6 +29,7 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.OverridePolicy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**

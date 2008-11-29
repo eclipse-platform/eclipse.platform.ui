@@ -26,11 +26,11 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptor;
-import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
+import org.eclipse.ui.navigator.OverridePolicy;
 
 /**
  * <p>

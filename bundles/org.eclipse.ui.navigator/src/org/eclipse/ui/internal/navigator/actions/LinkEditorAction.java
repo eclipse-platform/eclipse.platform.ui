@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -45,7 +44,7 @@ import org.eclipse.ui.progress.UIJob;
  * @since 3.2
  */
 public class LinkEditorAction extends Action implements
-		ISelectionChangedListener, IAction, IPropertyListener {
+		ISelectionChangedListener, IPropertyListener {
 
 	private static final long BRIEF_DELAY = 100;
 

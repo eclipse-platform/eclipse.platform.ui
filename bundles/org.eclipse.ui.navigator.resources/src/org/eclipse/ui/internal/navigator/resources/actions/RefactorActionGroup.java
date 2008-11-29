@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
@@ -33,18 +34,17 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  * @since 2.0
  */
 public class RefactorActionGroup extends ActionGroup {
- 
 
 	private RenameResourceAction renameAction;
 
-	private MoveResourceAction moveAction; 
+	private MoveResourceAction moveAction;
 
 	private Shell shell;
 
 	private Tree tree;
 
 	/**
-	 *  
+	 * 
 	 * @param aShell
 	 * @param aTree
 	 */
@@ -52,17 +52,15 @@ public class RefactorActionGroup extends ActionGroup {
 		shell = aShell;
 		tree = aTree;
 		makeActions();
-	} 
+	}
 
 	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection = (IStructuredSelection) getContext()
-				.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
 		boolean anyResourceSelected = !selection.isEmpty()
-				&& ResourceSelectionUtil.allResourcesAreOfType(selection,
-						IResource.PROJECT | IResource.FOLDER | IResource.FILE);
- 
-		if (anyResourceSelected) { 
+				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+
+		if (anyResourceSelected) {
 			moveAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_REORGANIZE, moveAction);
 			renameAction.selectionChanged(selection);
@@ -71,14 +69,12 @@ public class RefactorActionGroup extends ActionGroup {
 	}
 
 	public void fillActionBars(IActionBars actionBars) {
- 
-		//renameAction.setTextActionHandler(textActionHandler);
-		updateActionBars(); 
 
-		actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(),
-				moveAction);
-		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(),
-				renameAction);
+		// renameAction.setTextActionHandler(textActionHandler);
+		updateActionBars();
+
+		actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(), moveAction);
+		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
 	}
 
 	/**
@@ -100,18 +96,22 @@ public class RefactorActionGroup extends ActionGroup {
 	}
 
 	protected void makeActions() {
+		IShellProvider sp = new IShellProvider() {
+			public Shell getShell() {
+				return shell;
+			}
+		};
 
-		moveAction = new MoveResourceAction(shell);
+		moveAction = new MoveResourceAction(sp);
 		moveAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.MOVE);
-		
-		renameAction = new RenameResourceAction(shell, tree);
+
+		renameAction = new RenameResourceAction(sp, tree);
 		renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
 	}
 
 	public void updateActionBars() {
-		IStructuredSelection selection = (IStructuredSelection) getContext()
-				.getSelection();
- 
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+
 		moveAction.selectionChanged(selection);
 		renameAction.selectionChanged(selection);
 	}

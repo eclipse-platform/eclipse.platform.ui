@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.navigator.filters;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.CommonViewer;
 
@@ -29,7 +28,7 @@ import org.eclipse.ui.navigator.CommonViewer;
  * 
  * @since 3.2
  */
-public class SelectFiltersAction extends Action implements IAction {
+public class SelectFiltersAction extends Action {
 
 	private final CommonViewer commonViewer;
 	private FilterActionGroup filterGroup; 

@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
@@ -28,7 +29,7 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class EditActionGroup extends ActionGroup {
 
@@ -38,19 +39,18 @@ public class EditActionGroup extends ActionGroup {
 
 	private DeleteResourceAction deleteAction;
 
-	private PasteAction pasteAction; 
+	private PasteAction pasteAction;
 
 	private TextActionHandler textActionHandler;
 
 	private Shell shell;
 
 	/**
-	 *  
+	 * 
 	 * @param aShell
-	 * @param aTree
 	 */
 	public EditActionGroup(Shell aShell) {
-		shell = aShell; 
+		shell = aShell;
 		makeActions();
 	}
 
@@ -63,22 +63,20 @@ public class EditActionGroup extends ActionGroup {
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection = (IStructuredSelection) getContext()
-				.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
 		boolean anyResourceSelected = !selection.isEmpty()
-				&& ResourceSelectionUtil.allResourcesAreOfType(selection,
-						IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 
 		copyAction.selectionChanged(selection);
 		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, copyAction);
 		pasteAction.selectionChanged(selection);
-		//menu.insertAfter(copyAction.getId(), pasteAction);
+		// menu.insertAfter(copyAction.getId(), pasteAction);
 		menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, pasteAction);
 
 		if (anyResourceSelected) {
 			deleteAction.selectionChanged(selection);
-			//menu.insertAfter(pasteAction.getId(), deleteAction);
+			// menu.insertAfter(pasteAction.getId(), deleteAction);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, deleteAction);
 		}
 	}
@@ -86,12 +84,13 @@ public class EditActionGroup extends ActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 
 		if (textActionHandler == null) {
-			textActionHandler = new TextActionHandler(actionBars); // hook handlers
+			textActionHandler = new TextActionHandler(actionBars); // hook
+																	// handlers
 		}
 		textActionHandler.setCopyAction(copyAction);
 		textActionHandler.setPasteAction(pasteAction);
 		textActionHandler.setDeleteAction(deleteAction);
-		//renameAction.setTextActionHandler(textActionHandler);
+		// renameAction.setTextActionHandler(textActionHandler);
 		updateActionBars();
 
 		textActionHandler.updateActionBars();
@@ -111,8 +110,7 @@ public class EditActionGroup extends ActionGroup {
 
 			// Swallow the event.
 			event.doit = false;
-
-		}  
+		}
 	}
 
 	protected void makeActions() {
@@ -120,33 +118,32 @@ public class EditActionGroup extends ActionGroup {
 
 		pasteAction = new PasteAction(shell, clipboard);
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-		pasteAction.setDisabledImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
-		pasteAction.setImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		pasteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		pasteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
-		copyAction.setDisabledImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
-		copyAction.setImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
- 
-		deleteAction = new DeleteResourceAction(shell);
-		deleteAction.setDisabledImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-		deleteAction.setImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+
+		IShellProvider sp = new IShellProvider() {
+			public Shell getShell() {
+				return shell;
+			}
+		};
+
+		deleteAction = new DeleteResourceAction(sp);
+		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
 	}
 
 	public void updateActionBars() {
-		IStructuredSelection selection = (IStructuredSelection) getContext()
-				.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
 		copyAction.selectionChanged(selection);
 		pasteAction.selectionChanged(selection);
-		deleteAction.selectionChanged(selection); 
+		deleteAction.selectionChanged(selection);
 	}
 }

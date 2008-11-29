@@ -13,7 +13,6 @@ package org.eclipse.ui.navigator;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 
 /**
  * 
@@ -35,9 +34,9 @@ import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 public interface INavigatorContentDescriptor {
 
 	/**
-	 * Returns the navgiator content extension id
+	 * Returns the navigator content extension id
 	 * 
-	 * @return the navgiator content extension id
+	 * @return the navigator content extension id
 	 */
 	String getId();
 
@@ -108,6 +107,7 @@ public interface INavigatorContentDescriptor {
 	/**
 	 * @return Returns the overridePolicy or null if this extension does not
 	 *         override another extension.
+	 * @since 3.4
 	 */
 	OverridePolicy getOverridePolicy();
 

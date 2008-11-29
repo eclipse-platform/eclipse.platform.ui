@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.navigator.filters;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.navigator.NavigatorFilterService;
@@ -24,7 +23,7 @@ import org.eclipse.ui.navigator.ICommonFilterDescriptor;
  * @since 3.2
  * 
  */
-public class ToggleFilterAction extends Action implements IAction {
+public class ToggleFilterAction extends Action {
 
 	private ICommonFilterDescriptor descriptor;
 

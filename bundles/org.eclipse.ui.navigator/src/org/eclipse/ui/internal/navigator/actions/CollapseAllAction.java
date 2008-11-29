@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.navigator.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -20,7 +19,7 @@ import org.eclipse.ui.navigator.CommonViewer;
  * This action delegate collapses all expanded elements in a Navigator view.
  * 
  */
-public class CollapseAllAction extends Action implements IAction {
+public class CollapseAllAction extends Action {
 
 	private final CommonViewer commonViewer;
 

@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.navigator.extensions;
+package org.eclipse.ui.navigator;
 
 /**
  * <p>
  * Enumeration of the OverridePolicy values supported by the Common Navigator.
  * </p>
  * 
- * @since 3.2
+ * @since 3.4
  */
 public final class OverridePolicy {
 

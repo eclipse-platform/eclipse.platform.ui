@@ -30,9 +30,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * A quick menu actions provides support to assign short cuts to sub menus.
@@ -78,7 +76,7 @@ public abstract class QuickMenuAction extends Action {
 		MenuManager menu = new MenuManager();
 		fillMenu(menu);
 		final Menu widget = menu.createContextMenu(focus.getShell());
-		Point location = computeMenuLocation(focus, widget);
+		Point location = computeMenuLocation(focus);
 		if (location == null) {
 			return;
 		}
@@ -109,19 +107,13 @@ public abstract class QuickMenuAction extends Action {
 	 * @return the short cut as a human readable string or <code>null</code>
 	 */
 	public String getShortCutString() {
-		final ICommandManager commandManager = PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-		final ICommand command = commandManager.getCommand(getActionDefinitionId());
-		if (command.isDefined()) {
-			List l = command.getKeySequenceBindings();
-			if (!l.isEmpty()) {
-				IKeySequenceBinding binding = (IKeySequenceBinding) l.get(0);
-				return binding.getKeySequence().format();
-			}
-		}
-		return null;  
+		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		if (bindingService == null)
+			return null;
+		return bindingService.getBestActiveBindingFormattedFor(getActionDefinitionId());
 	}
 
-	private Point computeMenuLocation(Control focus, Menu menu) {
+	private Point computeMenuLocation(Control focus) {
 		Point cursorLocation = focus.getDisplay().getCursorLocation();
 		Rectangle clientArea = null;
 		Point result = null;

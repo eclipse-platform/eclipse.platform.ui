@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.navigator" version="2">
+    <resource path="src/org/eclipse/ui/navigator/CommonViewer.java" type="org.eclipse.ui.navigator.CommonViewer">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="TreeViewer"/>
+                <message_argument value="CommonViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorContentDescriptor.java" type="org.eclipse.ui.navigator.INavigatorContentDescriptor">
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorContentDescriptor"/>
+                <message_argument value="getOverridePolicy()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/navigator/NavigatorActionService.java" type="org.eclipse.ui.navigator.NavigatorActionService">
         <filter id="338944126">
             <message_arguments>
