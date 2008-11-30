@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 175069 [Preferences] ResourceInfoPage is not setting dialog font on all widgets
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -22,6 +23,7 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -108,9 +110,6 @@ public class ResourceInfoPage extends PropertyPage {
 	 * @return the composite for the group
 	 */
 	private Composite createBasicInfoGroup(Composite parent, IResource resource) {
-
-		Font font = parent.getFont();
-
 		Composite basicInfoComposite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -121,7 +120,6 @@ public class ResourceInfoPage extends PropertyPage {
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		basicInfoComposite.setLayoutData(data);
-		basicInfoComposite.setFont(font);
 
 		// The group for path
 		Label pathLabel = new Label(basicInfoComposite, SWT.NONE);
@@ -129,7 +127,6 @@ public class ResourceInfoPage extends PropertyPage {
 		GridData gd = new GridData();
 		gd.verticalAlignment = SWT.TOP;
 		pathLabel.setLayoutData(gd);
-		pathLabel.setFont(font);
 
 		// path value label
 		Text pathValueText = new Text(basicInfoComposite, SWT.WRAP
@@ -142,21 +139,18 @@ public class ResourceInfoPage extends PropertyPage {
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalAlignment = GridData.FILL;
 		pathValueText.setLayoutData(gd);
-		pathValueText.setFont(font);
 		pathValueText.setBackground(pathValueText.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 
 		// The group for types
 		Label typeTitle = new Label(basicInfoComposite, SWT.LEFT);
 		typeTitle.setText(TYPE_TITLE);
-		typeTitle.setFont(font);
 
 		Text typeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
 		typeValue.setText(IDEResourceInfoUtils.getTypeString(resource,
 				getContentDescription(resource)));
 		typeValue.setBackground(typeValue.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
-		typeValue.setFont(font);
 
 		// The group for location
 		Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
@@ -164,7 +158,6 @@ public class ResourceInfoPage extends PropertyPage {
 		gd = new GridData();
 		gd.verticalAlignment = SWT.TOP;
 		locationTitle.setLayoutData(gd);
-		locationTitle.setFont(font);
 
 		Text locationValue = new Text(basicInfoComposite, SWT.WRAP
 				| SWT.READ_ONLY);
@@ -176,7 +169,6 @@ public class ResourceInfoPage extends PropertyPage {
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalAlignment = GridData.FILL;
 		locationValue.setLayoutData(gd);
-		locationValue.setFont(font);
 		locationValue.setBackground(locationValue.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 
@@ -187,7 +179,6 @@ public class ResourceInfoPage extends PropertyPage {
 			gd = new GridData();
 			gd.verticalAlignment = SWT.TOP;
 			resolvedLocationTitle.setLayoutData(gd);
-			resolvedLocationTitle.setFont(font);
 
 			Text resolvedLocationValue = new Text(basicInfoComposite, SWT.WRAP
 					| SWT.READ_ONLY);
@@ -198,7 +189,6 @@ public class ResourceInfoPage extends PropertyPage {
 			gd.grabExcessHorizontalSpace = true;
 			gd.horizontalAlignment = GridData.FILL;
 			resolvedLocationValue.setLayoutData(gd);
-			resolvedLocationValue.setFont(font);
 			resolvedLocationValue.setBackground(resolvedLocationValue
 					.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		}
@@ -206,7 +196,6 @@ public class ResourceInfoPage extends PropertyPage {
 			// The group for size
 			Label sizeTitle = new Label(basicInfoComposite, SWT.LEFT);
 			sizeTitle.setText(SIZE_TITLE);
-			sizeTitle.setFont(font);
 
 			Text sizeValue = new Text(basicInfoComposite, SWT.LEFT
 					| SWT.READ_ONLY);
@@ -216,7 +205,6 @@ public class ResourceInfoPage extends PropertyPage {
 			gd.grabExcessHorizontalSpace = true;
 			gd.horizontalAlignment = GridData.FILL;
 			sizeValue.setLayoutData(gd);
-			sizeValue.setFont(font);
 			sizeValue.setBackground(sizeValue.getDisplay().getSystemColor(
 					SWT.COLOR_WIDGET_BACKGROUND));
 		}
@@ -260,7 +248,6 @@ public class ResourceInfoPage extends PropertyPage {
 		GridData data = new GridData(GridData.FILL);
 		data.grabExcessHorizontalSpace = true;
 		composite.setLayoutData(data);
-		composite.setFont(parent.getFont());
 
 		createBasicInfoGroup(composite, resource);
 		createSeparator(composite);
@@ -297,6 +284,8 @@ public class ResourceInfoPage extends PropertyPage {
 			encodingEditor.setEnabled(false, composite);
 			lineDelimiterEditor.setEnabled(false);
 		}
+		
+		Dialog.applyDialogFont(composite);
 
 		return composite;
 	}
@@ -329,7 +318,6 @@ public class ResourceInfoPage extends PropertyPage {
 		this.editableBox.setAlignment(SWT.LEFT);
 		this.editableBox.setText(READ_ONLY);
 		this.editableBox.setSelection(this.previousReadOnlyValue);
-		this.editableBox.setFont(composite.getFont());
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		this.editableBox.setLayoutData(data);
@@ -349,7 +337,6 @@ public class ResourceInfoPage extends PropertyPage {
 		this.executableBox.setAlignment(SWT.LEFT);
 		this.executableBox.setText(EXECUTABLE);
 		this.executableBox.setSelection(this.previousExecutableValue);
-		this.executableBox.setFont(composite.getFont());
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		this.executableBox.setLayoutData(data);
@@ -369,7 +356,6 @@ public class ResourceInfoPage extends PropertyPage {
 		this.archiveBox.setAlignment(SWT.LEFT);
 		this.archiveBox.setText(ARCHIVE);
 		this.archiveBox.setSelection(this.previousArchiveValue);
-		this.archiveBox.setFont(composite.getFont());
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		this.archiveBox.setLayoutData(data);
@@ -389,7 +375,6 @@ public class ResourceInfoPage extends PropertyPage {
 		this.derivedBox.setAlignment(SWT.LEFT);
 		this.derivedBox.setText(DERIVED);
 		this.derivedBox.setSelection(this.previousDerivedValue);
-		this.derivedBox.setFont(composite.getFont());
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		this.derivedBox.setLayoutData(data);
@@ -431,17 +416,14 @@ public class ResourceInfoPage extends PropertyPage {
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);
-		composite.setFont(font);
 
 		Label timeStampLabel = new Label(composite, SWT.NONE);
 		timeStampLabel.setText(TIMESTAMP_TITLE);
-		timeStampLabel.setFont(font);
 
 		// timeStamp value label
 		Text timeStampValue = new Text(composite, SWT.READ_ONLY);
 		timeStampValue.setText(IDEResourceInfoUtils
 				.getDateStringValue(resource));
-		timeStampValue.setFont(font);
 		timeStampValue.setBackground(timeStampValue.getDisplay()
 				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		timeStampValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
