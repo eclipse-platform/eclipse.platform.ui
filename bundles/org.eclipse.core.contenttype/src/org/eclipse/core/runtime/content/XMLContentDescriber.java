@@ -71,7 +71,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		return internalDescribe(readXMLDecl(input), description);
 	}
 	
-	private int internalDescribe(String line, IContentDescription description) throws IOException {	
+	private int internalDescribe(String line, IContentDescription description) throws IOException {
 		// end of stream
 		if (line == null)
 			return INDETERMINATE;
@@ -85,12 +85,12 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 			String charset = getCharset(line);
 			if (charset != null && !isCharsetValid(charset))
 				return INVALID;
-			if (charset != null && !charset.matches("[uU][tT][fF](-)?8")) //$NON-NLS-1$
+			if (charset != null && !charset.equalsIgnoreCase("utf8") && !charset.equalsIgnoreCase("utf-8"))
 				// only set property if value is not default (avoid using a non-default content description)
 				description.setProperty(IContentDescription.CHARSET, charset);
 		}
 		return VALID;
-	} 
+	}
 	
 	private boolean isFullXMLDecl(String xmlDecl) {
 		return xmlDecl.endsWith(XML_DECL_END);
@@ -125,16 +125,16 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 
 	private String readXMLDecl(Reader input) throws IOException {
 		BufferedReader reader = new BufferedReader(input);
-		StringBuffer buffer = new StringBuffer();
+		String xmlDecl = new String();
 		String line = null;
 
-		while (buffer.length() < 100 && ((line = reader.readLine()) != null)) {
-			buffer.append(line);
+		while (xmlDecl.length() < 100 && ((line = reader.readLine()) != null)) {
+			xmlDecl = xmlDecl + line;
 			if (line.indexOf(XML_DECL_END) != -1) {
-				return buffer.substring(0, buffer.indexOf(XML_DECL_END) + XML_DECL_END.length());
+				return xmlDecl.substring(0, xmlDecl.indexOf(XML_DECL_END) + XML_DECL_END.length());
 			}
 		}
-		return buffer.toString();
+		return xmlDecl;
 	}
 
 	private String getCharset(String firstLine) {
@@ -156,7 +156,17 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	}
 
 	private boolean isCharsetValid(String charset) {
-		return charset.matches("[A-Za-z]([A-Za-z0-9._\\-])*");
+		char c = charset.charAt(0);
+		if (!(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z'))
+			return false;
+
+		for (int i = 1; i < charset.length(); i++) {
+			c = charset.charAt(i);
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-')
+				continue;
+			return false;
+		}
+		return true;
 	}
 
 	public QualifiedName[] getSupportedOptions() {
