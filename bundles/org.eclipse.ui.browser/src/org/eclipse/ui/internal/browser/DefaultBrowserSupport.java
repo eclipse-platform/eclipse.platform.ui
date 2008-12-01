@@ -177,8 +177,9 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			// Remove it from the window map and
 			// also remove the window map itself if it is empty.
 			Integer key = ((InternalBrowserInstance) browser).getWindowKey();
-			HashMap wmap = (HashMap) browserIdMap.get(baseId);
-			if (wmap != null) {
+			Object entry = browserIdMap.get(baseId);
+			if (entry != null && entry instanceof HashMap) {
+				HashMap wmap = (HashMap) entry;
 				wmap.remove(key);
 				if (wmap.isEmpty())
 					browserIdMap.remove(baseId);
