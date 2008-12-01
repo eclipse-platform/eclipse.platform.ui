@@ -18,10 +18,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
-import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryControl;
 import org.eclipse.ltk.internal.ui.refactoring.history.SortableRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
@@ -167,9 +167,11 @@ public class RefactoringUI {
 	 *         operations for open editors if they implement
 	 *         <code>IRewriteTarget
 	 *  </code>
+	 * @deprecated use {@link PerformChangeOperation#PerformChangeOperation(Change)}.
+	 *             Since 3.1, undo batching is implemented in {@link TextChange}.
 	 */
 	public static PerformChangeOperation createUIAwareChangeOperation(Change change) {
-		return new UIPerformChangeOperation(null, change, null);
+		return new PerformChangeOperation(change);
 	}
 
 	private RefactoringUI() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
+
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -25,8 +26,10 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 
+import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.UndoEdit;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
@@ -247,6 +250,53 @@ public class TextFileChange extends TextChange {
 	 */
 	protected final Change createUndoChange(UndoEdit edit) {
 		return createUndoChange(edit, fContentStamp);
+	}
+
+	/*
+	 * @see org.eclipse.ltk.core.refactoring.TextChange#performEdits(org.eclipse.jface.text.IDocument)
+	 * @since 3.5
+	 */
+	protected UndoEdit performEdits(final IDocument document) throws BadLocationException, MalformedTreeException {
+		if (! fBuffer.isSynchronizationContextRequested()) {
+			return super.performEdits(document);
+		}
+		
+		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
+		
+		/** The lock for waiting for computation in the UI thread to complete. */
+		final Lock completionLock= new Lock();
+		final UndoEdit[] result= new UndoEdit[1];
+		final BadLocationException[] exception= new BadLocationException[1];
+		Runnable runnable= new Runnable() {
+			public void run() {
+				synchronized (completionLock) {
+					try {
+						result[0]= TextFileChange.super.performEdits(document);
+					} catch (BadLocationException e) {
+						exception[0]= e;
+					} finally {
+						completionLock.fDone= true;
+						completionLock.notifyAll();
+					}
+				}
+			}
+		};
+		
+		synchronized (completionLock) {
+			fileBufferManager.execute(runnable);
+			while (! completionLock.fDone) {
+				try {
+					completionLock.wait(500);
+				} catch (InterruptedException x) {
+				}
+			}
+		}
+		
+		if (exception[0] != null) {
+			throw exception[0];
+		}
+		
+		return result[0];
 	}
 
 	/**

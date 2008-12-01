@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -270,7 +270,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 * @param monitor
 	 *            the progress monitor to use
 	 * @return the document
-	 * @throws CoreException
+	 * @throws CoreException if the document could not successfully be acquired
 	 */
 	private IDocument acquireDocument(final IProgressMonitor monitor) throws CoreException {
 		if (fCount > 0)
@@ -760,16 +760,12 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 		IDocument result= null;
 		IDocument document= null;
-		DocumentRewriteSession session= null;
 
 		try {
 
 			document= acquireDocument(new SubProgressMonitor(monitor, 1));
 			if (document != null) {
 				result= new Document(document.get());
-
-				if (result instanceof IDocumentExtension4)
-					session= ((IDocumentExtension4) result).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
 
 				performChanges(result, null, true);
 			}
@@ -778,12 +774,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			throw Changes.asCoreException(exception);
 		} finally {
 			if (document != null) {
-				try {
-					if (session != null && result != null)
-						((IDocumentExtension4) result).stopRewriteSession(session);
-				} finally {
-					releaseDocument(document, new SubProgressMonitor(monitor, 1));
-				}
+				releaseDocument(document, new SubProgressMonitor(monitor, 1));
 			}
 			monitor.done();
 		}
@@ -861,12 +852,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		monitor.beginTask("", 3); //$NON-NLS-1$
 
 		IDocument document= null;
-		DocumentRewriteSession session= null;
 
 		try {
 			document= acquireDocument(new SubProgressMonitor(monitor, 1));
-			if (document instanceof IDocumentExtension4)
-				session= ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
 
 			final LinkedList undoList= new LinkedList();
 			performChanges(document, undoList, false);
@@ -880,12 +868,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			throw Changes.asCoreException(exception);
 		} finally {
 			if (document != null) {
-				try {
-					if (session != null)
-						((IDocumentExtension4) document).stopRewriteSession(session);
-				} finally {
-					releaseDocument(document, new SubProgressMonitor(monitor, 1));
-				}
+				releaseDocument(document, new SubProgressMonitor(monitor, 1));
 			}
 			monitor.done();
 		}
@@ -905,13 +888,63 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 *             if the edit tree could not be applied
 	 */
 	private void performChanges(final IDocument document, final LinkedList undoList, final boolean preview) throws BadLocationException {
+		if (! fBuffer.isSynchronizationContextRequested()) {
+			performChangesInSynchronizationContext(document, undoList, preview);
+			return;
+		}
+		
+		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
+		
+		/** The lock for waiting for computation in the UI thread to complete. */
+		final Lock completionLock= new Lock();
+		final BadLocationException[] exception= new BadLocationException[1];
+		Runnable runnable= new Runnable() {
+			public void run() {
+				synchronized (completionLock) {
+					try {
+						performChangesInSynchronizationContext(document, undoList, preview);
+					} catch (BadLocationException e) {
+						exception[0]= e;
+					} finally {
+						completionLock.fDone= true;
+						completionLock.notifyAll();
+					}
+				}
+			}
+		};
+		
+		synchronized (completionLock) {
+			fileBufferManager.execute(runnable);
+			while (! completionLock.fDone) {
+				try {
+					completionLock.wait(500);
+				} catch (InterruptedException x) {
+				}
+			}
+		}
+		
+		if (exception[0] != null) {
+			throw exception[0];
+		}
+	}
 
-		for (final Iterator iterator= fChanges.iterator(); iterator.hasNext();) {
-			final ComposableBufferChange change= (ComposableBufferChange) iterator.next();
-
-			final UndoEdit edit= createTextEditProcessor(change, document, undoList != null ? TextEdit.CREATE_UNDO : TextEdit.NONE, preview).performEdits();
-			if (undoList != null)
-				undoList.addFirst(edit);
+	private void performChangesInSynchronizationContext(final IDocument document, final LinkedList undoList, final boolean preview) throws BadLocationException {
+		DocumentRewriteSession session= null;
+		try {
+			if (document instanceof IDocumentExtension4)
+				session= ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
+	
+			for (final Iterator iterator= fChanges.iterator(); iterator.hasNext();) {
+				final ComposableBufferChange change= (ComposableBufferChange) iterator.next();
+	
+				final UndoEdit edit= createTextEditProcessor(change, document, undoList != null ? TextEdit.CREATE_UNDO : TextEdit.NONE, preview).performEdits();
+				if (undoList != null)
+					undoList.addFirst(edit);
+			}
+			
+		} finally {
+			if (session != null)
+				((IDocumentExtension4) document).stopRewriteSession(session);
 		}
 	}
 
@@ -922,7 +955,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 *            the document to release
 	 * @param monitor
 	 *            the progress monitor
-	 * @throws CoreException
+	 * @throws CoreException if the document could not successfully be released
 	 */
 	private void releaseDocument(final IDocument document, final IProgressMonitor monitor) throws CoreException {
 		Assert.isTrue(fCount > 0);

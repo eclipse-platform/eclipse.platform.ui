@@ -231,38 +231,58 @@ public abstract class TextChange extends TextEditBasedChange {
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		pm.beginTask("", 3); //$NON-NLS-1$
 		IDocument document= null;
-		DocumentRewriteSession session= null;
 
 		try {
 			document= acquireDocument(new SubProgressMonitor(pm, 1));
-			if (document instanceof IDocumentExtension4) {
-				session= ((IDocumentExtension4)document).startRewriteSession(
-					DocumentRewriteSessionType.UNRESTRICTED);
-			}
 
-			LinkedModeModel.closeAllModels(document);
-
-			TextEditProcessor processor= createTextEditProcessor(document, TextEdit.CREATE_UNDO, false);
-
-			UndoEdit undo= processor.performEdits();
+			UndoEdit undo= performEdits(document);
+			
 			commit(document, new SubProgressMonitor(pm, 1));
 			return createUndoChange(undo);
+			
 		} catch (BadLocationException e) {
 			throw Changes.asCoreException(e);
+		} catch (MalformedTreeException e) {
+			throw Changes.asCoreException(e);
 		} finally {
-			if (document != null) {
-				try {
-					if (session != null) {
-						((IDocumentExtension4)document).stopRewriteSession(session);
-					}
-				} finally {
-					releaseDocument(document, new SubProgressMonitor(pm, 1));
-				}
-			}
+			releaseDocument(document, new SubProgressMonitor(pm, 1));
 			pm.done();
 		}
 	}
 
+	/**
+	 * Executes the text edits on the given document.
+	 * Sublasses that override this method should call <code>super.performEdits(document)</code>.
+	 * 
+	 * @param document the document
+	 * @return an object representing the undo of the executed edits
+	 * @exception MalformedTreeException is thrown if the edit tree isn't
+	 *  in a valid state. This exception is thrown before any edit is executed.
+	 *  So the document is still in its original state.
+	 * @exception BadLocationException is thrown if one of the edits in the
+	 *  tree can't be executed. The state of the document is undefined if this
+	 *  exception is thrown.
+	 * @since 3.5
+	 */
+	protected UndoEdit performEdits(IDocument document) throws BadLocationException, MalformedTreeException {
+		DocumentRewriteSession session= null;
+		try {
+			if (document instanceof IDocumentExtension4) {
+				session= ((IDocumentExtension4)document).startRewriteSession(
+					DocumentRewriteSessionType.UNRESTRICTED);
+			}
+	
+			LinkedModeModel.closeAllModels(document);
+			TextEditProcessor processor= createTextEditProcessor(document, TextEdit.CREATE_UNDO, false);
+			return processor.performEdits();
+			
+		} finally {
+			if (session != null) {
+				((IDocumentExtension4)document).stopRewriteSession(session);
+			}
+		}
+	}
+	
 	//---- Method to access the current content of the text change ---------
 
 	/**

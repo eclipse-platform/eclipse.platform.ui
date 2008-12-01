@@ -20,10 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.IWizardContainer;
@@ -52,28 +48,15 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 	protected void executeChange(final IProgressMonitor pm) throws CoreException {
 		if (fDisplay != null && !fDisplay.isDisposed()) {
 			final Throwable[] exception= new Throwable[1];
-			final ISchedulingRule rule= ResourcesPlugin.getWorkspace().getRoot();
-			final Thread callerThread= Thread.currentThread();
+			/** Cancel button to re-enable, or <code>null</code> to do nothing. */
+			final Button[] cancelToEnable= new Button[1];
+			
 			final ISafeRunnable safeRunnable= new ISafeRunnable() {
 				public void run() {
-					try {
-						final Button cancel= getCancelButton();
-						boolean enabled= true;
-						if (cancel != null && !cancel.isDisposed()) {
-							enabled= cancel.isEnabled();
-							cancel.setEnabled(false);
-						}
-						try {
-							UIPerformChangeOperation.super.executeChange(pm);
-						} finally {
-							if (cancel != null && !cancel.isDisposed()) {
-								cancel.setEnabled(enabled);
-							}
-						}
-					} catch(CoreException e) {
-						exception[0]= e;
-					} finally {
-						Job.getJobManager().transferRule(rule, callerThread);
+					Button cancel= getCancelButton();
+					if (cancel != null && !cancel.isDisposed() && cancel.isEnabled()) {
+						cancelToEnable[0]= cancel;
+						cancel.setEnabled(false);
 					}
 				}
 				public void handleException(Throwable e) {
@@ -85,29 +68,39 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 					SafeRunner.run(safeRunnable);
 				}
 			};
-			Job.getJobManager().transferRule(rule, fDisplay.getThread());
-			fDisplay.syncExec(r);
-			if (exception[0] != null) {
-				if (exception[0] instanceof CoreException) {
-					IStatus status= ((CoreException)exception[0]).getStatus();
-					// it is more important to get the original cause of the
-					// exception. Therefore create a new status and take
-					// over the exception trace from the UI thread.
-					throw new CoreException(new MultiStatus(
-							RefactoringUIPlugin.getPluginId(), IStatus.ERROR,
-							new IStatus[] {status}, status.getMessage(), exception[0]));
-				} else {
-					String message= exception[0].getMessage();
-					throw new CoreException(new Status(
-						IStatus.ERROR, RefactoringUIPlugin.getPluginId(),IStatus.ERROR,
-						message == null
-							? RefactoringUIMessages.ChangeExceptionHandler_no_details
-							: message,
-						exception[0]));
+			try {
+				fDisplay.syncExec(r);
+				if (exception[0] != null) {
+					if (exception[0] instanceof CoreException) {
+						IStatus status= ((CoreException)exception[0]).getStatus();
+						// it is more important to get the original cause of the
+						// exception. Therefore create a new status and take
+						// over the exception trace from the UI thread.
+						throw new CoreException(new MultiStatus(
+								RefactoringUIPlugin.getPluginId(), IStatus.ERROR,
+								new IStatus[] {status}, status.getMessage(), exception[0]));
+					} else {
+						String message= exception[0].getMessage();
+						throw new CoreException(new Status(
+							IStatus.ERROR, RefactoringUIPlugin.getPluginId(),IStatus.ERROR,
+							message == null
+								? RefactoringUIMessages.ChangeExceptionHandler_no_details
+								: message,
+							exception[0]));
+					}
+				}
+				super.executeChange(pm);
+			} finally {
+				if (cancelToEnable[0] != null) {
+					fDisplay.syncExec(new Runnable() {
+						public void run() {
+							if (!cancelToEnable[0].isDisposed()) {
+								cancelToEnable[0].setEnabled(true);
+							}
+						}
+					});
 				}
 			}
-		} else {
-			super.executeChange(pm);
 		}
 	}
 
