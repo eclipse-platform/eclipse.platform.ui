@@ -529,6 +529,19 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 
 	/**
 	 * Returns a boolean indicating whether the workbench is in the process of
+	 * starting. During this phase, it is not safe to make calls to other
+	 * methods of the workbench, or of objects owned by the workbench. To delay
+	 * work until after the workbench has been initialized, use {@link IStartup}
+	 * or {@link Display#asyncExec(Runnable)}.
+	 * 
+	 * @return <code>true</code> if the workbench is in the process of starting,
+	 *         <code>false</code> otherwise
+	 * @since 3.5
+	 */
+	public boolean isStarting();
+	
+	/**
+	 * Returns a boolean indicating whether the workbench is in the process of
 	 * closing.
 	 * 
 	 * @return <code>true</code> if the workbench is in the process of

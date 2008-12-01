@@ -1697,7 +1697,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *         running the event loop.
 	 */
 	public boolean isStarting() {
-		return isStarting;
+		return isStarting && isRunning();
 	}
 
 	/*
