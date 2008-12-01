@@ -142,7 +142,7 @@ public class CommandContributionItemParameter {
 	/**
 	 * Build the parameter object.
 	 * <p>
-	 * <b>Note:</b> This method should not be called outside the framework.
+	 * <b>Note:</b> This constructor should not be called outside the framework.
 	 * </p>
 	 * 
 	 * @param serviceLocator
@@ -181,6 +181,7 @@ public class CommandContributionItemParameter {
 	 *            <code>null</code>
 	 * @param visibleEnabled
 	 *            Visibility tracking for the menu contribution.
+	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public CommandContributionItemParameter(IServiceLocator serviceLocator,
 			String id, String commandId, Map parameters, ImageDescriptor icon,

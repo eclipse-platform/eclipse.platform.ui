@@ -26,4 +26,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/menus/CommandContributionItemParameter.java" type="org.eclipse.ui.menus.CommandContributionItemParameter">
+        <filter id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.menus.CommandContributionItemParameter"/>
+                <message_argument value="CommandContributionItemParameter(IServiceLocator, String, String, Map, ImageDescriptor, ImageDescriptor, ImageDescriptor, String, String, String, int, String, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
