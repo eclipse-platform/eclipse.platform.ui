@@ -11,6 +11,7 @@
  *     		[Wizards] ProjectContentsLocationArea uses wrong file separator
  *     Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
  *		    Bug 224997 [Workbench] Impossible to copy project
+ *     Alena Laskavaia - fix for bug 2035
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide.dialogs;
@@ -24,6 +25,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -38,6 +40,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemConfiguration;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
 
@@ -74,6 +77,8 @@ public class ProjectContentsLocationArea {
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
 	private static final String FILE_SCHEME = "file"; //$NON-NLS-1$
+
+	private static final String SAVED_LOCATION_ATTR = "OUTSIDE_LOCATION"; //$NON-NLS-1$
 
 	private Label locationLabel;
 
@@ -308,6 +313,15 @@ public class ProjectContentsLocationArea {
 		return browseButton;
 	}
 
+	private IDialogSettings getDialogSettings() {
+		IDialogSettings ideDialogSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings result = ideDialogSettings.getSection(getClass().getName());
+		if (result == null) {
+			result = ideDialogSettings.addNewSection(getClass().getName());
+		}
+		return result;
+	}
+	
 	/**
 	 * Open an appropriate directory browser
 	 */
@@ -322,6 +336,11 @@ public class ProjectContentsLocationArea {
 
 			if (info == null || !(info.exists()))
 				dirName = IDEResourceInfoUtils.EMPTY_STRING;
+		} else {
+			String value = getDialogSettings().get(SAVED_LOCATION_ATTR);
+			if (value != null) {
+				dirName = value;
+			}
 		}
 
 		FileSystemConfiguration config = getSelectedConfiguration();
@@ -344,8 +363,10 @@ public class ProjectContentsLocationArea {
 				selectedDirectory = uri.toString();
 		}
 
-		if (selectedDirectory != null)
+		if (selectedDirectory != null) {
 			updateLocationField(selectedDirectory);
+			getDialogSettings().put(SAVED_LOCATION_ATTR, selectedDirectory);
+		}
 	}
 
 	/**
