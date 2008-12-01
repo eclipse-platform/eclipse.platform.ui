@@ -78,7 +78,7 @@ public class EmbeddedBrowser {
 	private long modalRequestTime = 0;
 	private Vector closeListeners = new Vector(1);
 	/**
-	 * Constructor for main help window intance
+	 * Constructor for main help window instance
 	 */
 	public EmbeddedBrowser() {
 		int style = SWT.SHELL_TRIM;
