@@ -79,7 +79,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension2;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -109,7 +108,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * The completion processor for the Ant Editor.
  */
-public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor implements IContentAssistProcessor, ICompletionListener  {       
+public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor implements ICompletionListener  {       
  
 	private static final class ProposalComparator implements Comparator {
 		public int compare(Object o1, Object o2) {
