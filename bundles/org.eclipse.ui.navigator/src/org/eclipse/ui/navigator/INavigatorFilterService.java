@@ -39,12 +39,10 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * after each call to {@link #setActiveFilterIds(String[])}.
  * </p> 
  * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
  * @see INavigatorContentService#getFilterService()
  * @see ViewerFilter
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.2
  * 
  */

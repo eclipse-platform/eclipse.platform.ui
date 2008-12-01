@@ -28,10 +28,6 @@ import org.eclipse.swt.dnd.TransferData;
  * support this capability in their own viewers.
  * </p>
  * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
  * @see CommonDragAdapter
  * @see CommonDragAdapterAssistant
  * @see CommonDropAdapter
@@ -45,6 +41,7 @@ import org.eclipse.swt.dnd.TransferData;
  *      href="http://www.eclipse.org/articles/Article-Workbench-DND/drag_drop.html">Drag
  *      and Drop in the Eclipse UI (Custom Transfer Types)</a>
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.2
  * 
  * 

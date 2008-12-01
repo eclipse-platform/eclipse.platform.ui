@@ -16,18 +16,17 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * 
- * The descriptor provides a handle to a content extension. Information such as
+ * The descriptor provides a the low-level handle to a content extension. Information such as
  * the Id, the name, the priority, and whether the descriptor provides one or
- * more root elements is provided.
- * 
+ * more root elements is provided.  This descriptor is used to form the 
+ * {@link INavigatorContentExtension}.
  * 
  * <p>
- * There is one {@link INavigatorContentExtension} for each content service.
- * There is only one {@link INavigatorContentDescriptor} for each extension.
+ * There is a one-to-one correspondence between the {@link INavigatorContentDescriptor} and
+ * {@link INavigatorContentExtension}. 
  * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.
- * 
  * @since 3.2
  * 
  */
@@ -121,13 +120,13 @@ public interface INavigatorContentDescriptor {
 	 * 
 	 * Does not force the creation of the set of overriding extensions.
 	 * 
-	 * @return True if this extension has overridding extensions.
+	 * @return True if this extension has overriding extensions.
 	 */
 	boolean hasOverridingExtensions();
 
 	/**
-	 * @return The set of overridding extensions (of type
-	 *         {@link INavigatorContentDescriptor}
+	 * @return The set of overriding extensions (of type
+	 *         {@link INavigatorContentDescriptor})
 	 */
 	Set getOverriddingExtensions();
 

@@ -26,6 +26,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -33,13 +34,6 @@ import org.eclipse.ui.navigator.OverridePolicy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
  * @since 3.2
  */
 public class NavigatorContentDescriptorManager {
@@ -253,6 +247,10 @@ public class NavigatorContentDescriptorManager {
 		if(toComputeOverrides) {
 			addDescriptorsForPossibleChild(anElement, firstClassDescriptorsSet,
 				aVisibilityAssistant, descriptors);
+			if (Policy.DEBUG_RESOLUTION) {
+				System.out.println("Find descriptors for: (" + anElement+//$NON-NLS-1$
+						"): " + descriptors); //$NON-NLS-1$
+			}
 		} else {
 
 			NavigatorContentDescriptor descriptor;
@@ -295,12 +293,31 @@ public class NavigatorContentDescriptorManager {
 
 			if (descriptor.hasOverridingExtensions()) {
 
-				boolean isOverridden = addDescriptorsForPossibleChild(
-						anElement, descriptor.getOverriddingExtensions(),
-						aVisibilityAssistant, theFoundDescriptors);
+				boolean isOverridden;
 
-				if (!isOverridden && isApplicable) {
-					theFoundDescriptors.add(descriptor);
+				boolean oldWay = true;
+				if (oldWay) {
+					isOverridden = addDescriptorsForPossibleChild(anElement,
+							descriptor.getOverriddingExtensions(),
+							aVisibilityAssistant, theFoundDescriptors);
+
+					if (!isOverridden && isApplicable) {
+						theFoundDescriptors.add(descriptor);
+					}
+				} else {
+					// Part of the proposed solution for bug 252293, will turn
+					// this on when testing is completed
+					Set overridingDescriptors = new TreeSet(
+							ExtensionPriorityComparator.INSTANCE);
+					isOverridden = addDescriptorsForPossibleChild(anElement,
+							descriptor.getOverriddingExtensions(),
+							aVisibilityAssistant, overridingDescriptors);
+
+					if (!isOverridden && isApplicable) {
+						theFoundDescriptors.add(descriptor);
+					} else if (isOverridden) {
+						theFoundDescriptors.addAll(overridingDescriptors);
+					}
 				}
 
 			} else if (isApplicable) {
@@ -389,12 +406,21 @@ public class NavigatorContentDescriptorManager {
 				if (desc.getSuppressedExtensionId() == null) {
 					firstClassDescriptorsMap.put(desc.getId(), desc);
 					firstClassDescriptorsSet.add(desc);
+					if (Policy.DEBUG_EXTENSION_SETUP) {
+						System.out.println("First class descriptor: " + desc); //$NON-NLS-1$
+					}
 				} else {
 					overridingDescriptors.add(desc);
+					if (Policy.DEBUG_EXTENSION_SETUP) {
+						System.out.println("Overriding descriptor: " + desc); //$NON-NLS-1$
+					}
 				}
 				allDescriptors.put(desc.getId(), desc);
 				if (desc.hasSaveablesProvider()) {
 					saveablesProviderDescriptors.add(desc);
+					if (Policy.DEBUG_EXTENSION_SETUP) {
+						System.out.println("Saveables provider descriptor: " + desc); //$NON-NLS-1$
+					}
 				}
 			}
 		}
@@ -415,6 +441,9 @@ public class NavigatorContentDescriptorManager {
 						.get(descriptor.getSuppressedExtensionId());
 				if (overriddenDescriptor != null) {
 
+					if (Policy.DEBUG_EXTENSION_SETUP) {
+						System.out.println(descriptor + " overrides: " + overriddenDescriptor); //$NON-NLS-1$
+					}
 					/*
 					 * add the descriptor as an overriding extension for its
 					 * suppressed extension
@@ -427,6 +456,9 @@ public class NavigatorContentDescriptorManager {
 					 * extension
 					 */
 					if (descriptor.getOverridePolicy() == OverridePolicy.InvokeAlwaysRegardlessOfSuppressedExt) {
+						if (Policy.DEBUG_EXTENSION_SETUP) {
+							System.out.println(descriptor + " is first class"); //$NON-NLS-1$
+						}
 						firstClassDescriptorsMap.put(descriptor.getId(),
 								descriptor);
 						firstClassDescriptorsSet.add(descriptor);

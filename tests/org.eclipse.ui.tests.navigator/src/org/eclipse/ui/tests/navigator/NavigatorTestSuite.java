@@ -33,6 +33,7 @@ public final class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(INavigatorContentServiceTests.class));
 		addTest(new TestSuite(ProgrammaticOpenTest.class));
 		addTest(new TestSuite(PipelineTest.class));
+		//addTest(new TestSuite(OverrideTest.class));
 		//addTest(new TestSuite(CreateProjectTest.class));
 		
 	}

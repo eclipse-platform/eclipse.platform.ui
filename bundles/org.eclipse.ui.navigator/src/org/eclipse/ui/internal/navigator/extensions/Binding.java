@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.Policy;
 
 class Binding {
 
@@ -60,6 +61,10 @@ class Binding {
 			if (pattern.matcher(anExtensionId).matches()) {
 				// keep track of the result for next time
 				knownIds.put(anExtensionId, Boolean.TRUE);
+				if (Policy.DEBUG_RESOLUTION) {
+					System.out.println("Binding: " + TAG_EXTENSION +//$NON-NLS-1$
+							" to: " + anExtensionId); //$NON-NLS-1$
+				}
 				return true;
 			}
 		}

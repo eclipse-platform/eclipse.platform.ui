@@ -37,6 +37,11 @@ public class NavigatorTestBase extends TestCase {
 
 	public static final String COMMON_NAVIGATOR_TEST_EXT = "org.eclipse.ui.tests.navigator.testContent"; //$NON-NLS-1$
 
+	public static final String TEST_CONTENT1 = "org.eclipse.ui.tests.navigator.testOverriddenContent1";
+	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testOverriddenContent2";
+	public static final String TEST_OVERRIDE1= "org.eclipse.ui.tests.navigator.testOverride1";
+	public static final String TEST_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testOverride2";
+
 	protected String _navigatorInstanceId;
 
 	protected Set expectedChildren = new HashSet();

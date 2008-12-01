@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator.extension;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -26,23 +27,21 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
-public class TestLabelProvider extends LabelProvider implements
+public abstract class TestLabelProvider extends LabelProvider implements
 		ICommonLabelProvider, IDescriptionProvider, IColorProvider,
 		IFontProvider {
 
 	private FontData boldFontData = new FontData();
 
 	private Font boldFont;
-	
-	private Color backgroundColor;
 
 	public void init(ICommonContentExtensionSite aSite) {
-
 		boldFontData.setStyle(SWT.BOLD);
-
 		boldFont = new Font(Display.getDefault(), boldFontData);
+	}
 
-		backgroundColor = new Color(Display.getDefault(), 100, 149, 237);
+	protected String getColorName() {
+		return "";
 	}
 
 	public Image getImage(Object element) {
@@ -55,7 +54,10 @@ public class TestLabelProvider extends LabelProvider implements
 	public String getText(Object element) {
 		if (element instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) element;
-			return data.getName();
+			return getColorName() + data.getName();
+		}
+		if (element instanceof IResource) {
+			return getColorName() + ((IResource) element).getName();
 		}
 		return null;
 	}
@@ -79,20 +81,11 @@ public class TestLabelProvider extends LabelProvider implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 * @see
+	 * org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
-		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
-	public Color getBackground(Object element) {
-		return backgroundColor;
 	}
 
 	/*
@@ -112,10 +105,9 @@ public class TestLabelProvider extends LabelProvider implements
 
 	public void dispose() {
 		final Font f = boldFont;
-		final Color c = backgroundColor;
+		final Color c = getBackground(null);
 		boldFont = null;
-		backgroundColor = null;
-		Display.getCurrent().timerExec(20, new Runnable(){
+		Display.getCurrent().timerExec(20, new Runnable() {
 			public void run() {
 				f.dispose();
 				c.dispose();

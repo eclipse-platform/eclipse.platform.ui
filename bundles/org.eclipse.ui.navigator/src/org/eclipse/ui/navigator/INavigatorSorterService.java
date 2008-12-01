@@ -27,12 +27,10 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * <b>org.eclipse.ui.navigator.viewer/viewerContentBinding</b> extension.
  * </p>
  * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
  * @see INavigatorContentService#getSorterService()
  * @see ViewerSorter
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.2
  */
 public interface INavigatorSorterService {

@@ -40,12 +40,6 @@ import org.eclipse.ui.navigator.Priority;
 /**
  * Encapsulates the <code>org.eclipse.ui.navigator.navigatorContent</code>
  * extension point.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  */
@@ -408,7 +402,7 @@ public final class NavigatorContentDescriptor implements
 	}
 
 	/**
-	 * @return The set of overridding extensions (of type
+	 * @return The set of overriding extensions (of type
 	 *         {@link INavigatorContentDescriptor}
 	 */
 	public Set getOverriddingExtensions() {

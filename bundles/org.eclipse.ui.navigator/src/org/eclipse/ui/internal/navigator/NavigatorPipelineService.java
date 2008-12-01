@@ -34,7 +34,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	private NavigatorContentService contentService;
 
 	/**
-	 * Create a pipeline assistnat for the given content service.
+	 * Create a pipeline assistant for the given content service.
 	 * 
 	 * @param aContentService
 	 *            The content service that will drive this pipeline assistant.

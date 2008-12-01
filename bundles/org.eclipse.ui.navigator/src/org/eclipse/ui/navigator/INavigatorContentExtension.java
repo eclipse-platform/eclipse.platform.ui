@@ -17,17 +17,15 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 /**
  * The content extension represents the components of a <b>navigatorContent</b>
  * extension. These handles are managed by a content service
- * {@link INavigatorContentService}.
+ * {@link INavigatorContentService}.  An extensions is formed from the
+ * {@link INavigatorContentDescriptor}. 
  * 
  * <p>
- * There is one {@link INavigatorContentExtension} for each content service.
- * There is only one {@link INavigatorContentDescriptor} for each extension.
+ * There is a one-to-one correspondence between the {@link INavigatorContentDescriptor} and
+ * {@link INavigatorContentExtension}. 
  * </p>
- *  
  * 
- *<p>
- * This interface is not intended to be implemented by clients.
- *</p>
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.2
  * 
  */

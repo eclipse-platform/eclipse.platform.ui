@@ -130,7 +130,7 @@ public class INavigatorContentServiceTests extends TestCase {
 				assertEquals(
 						"There should be one test-type child of the project.",
 						1, projectChildren.length);
-				assertEquals("Parent", contentServiceLabelProvider
+				assertEquals("BlueParent", contentServiceLabelProvider
 						.getText(projectChildren[0]));
 				Object[] testRootChildren = contentServiceContentProvider
 						.getChildren(projectChildren[0]);

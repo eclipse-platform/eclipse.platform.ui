@@ -269,7 +269,7 @@ public interface INavigatorContentService {
 	 * @param extensionIds
 	 *            The list of extensions to make visible.
 	 * @param isRoot
-	 *            whether the context provider shold be a root content provider
+	 *            whether the context provider should be a root content provider
 	 * @return A list of all INavigatorContentDescriptors that correspond to the
 	 *         given extensionIds.
 	 */

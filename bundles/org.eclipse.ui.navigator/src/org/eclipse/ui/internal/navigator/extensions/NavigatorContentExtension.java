@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -32,12 +33,6 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  */
@@ -49,7 +44,7 @@ public class NavigatorContentExtension implements IMementoAware,
 	private NavigatorContentService contentService;
 
 	private NavigatorContentDescriptor descriptor;
- 
+
 	private ICommonContentProvider contentProvider;
 
 	private ICommonLabelProvider labelProvider;
@@ -83,14 +78,16 @@ public class NavigatorContentExtension implements IMementoAware,
 		Assert.isNotNull(aDescriptor);
 
 		descriptor = aDescriptor;
-		contentService = aContentService; 
+		contentService = aContentService;
 		viewerManager = aViewerManager;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getId()
+	 * @see
+	 * org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension
+	 * #getId()
 	 */
 	public String getId() {
 		return descriptor.getId();
@@ -99,7 +96,9 @@ public class NavigatorContentExtension implements IMementoAware,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getDescriptor()
+	 * @see
+	 * org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension
+	 * #getDescriptor()
 	 */
 	public INavigatorContentDescriptor getDescriptor() {
 		return descriptor;
@@ -108,7 +107,8 @@ public class NavigatorContentExtension implements IMementoAware,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorContentExtension#getContentProvider()
+	 * @see
+	 * org.eclipse.ui.navigator.INavigatorContentExtension#getContentProvider()
 	 */
 	public ITreeContentProvider getContentProvider() {
 
@@ -160,7 +160,9 @@ public class NavigatorContentExtension implements IMementoAware,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getLabelProvider()
+	 * @see
+	 * org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension
+	 * #getLabelProvider()
 	 */
 	public ICommonLabelProvider getLabelProvider() {
 		if (labelProvider != null || labelProviderInitializationFailed) {
@@ -175,14 +177,16 @@ public class NavigatorContentExtension implements IMementoAware,
 
 					if (tempLabelProvider instanceof ICommonLabelProvider) {
 						labelProvider = (ICommonLabelProvider) tempLabelProvider;
-							labelProvider.init(new CommonContentExtensionSite(
-									getId(), contentService, appliedMemento));
+						labelProvider.init(new CommonContentExtensionSite(
+								getId(), contentService, appliedMemento));
 					} else {
 						labelProvider = new SafeDelegateCommonLabelProvider(
 								tempLabelProvider);
-					}					
-					
-					labelProvider.addListener( (ILabelProviderListener)contentService.createCommonLabelProvider() );
+					}
+
+					labelProvider
+							.addListener((ILabelProviderListener) contentService
+									.createCommonLabelProvider());
 				}
 			} catch (CoreException e) {
 				labelProviderInitializationFailed = true;
@@ -205,43 +209,47 @@ public class NavigatorContentExtension implements IMementoAware,
 	 */
 	public void dispose() {
 		try {
-			synchronized (this) {  
-					
+			synchronized (this) {
+
 				SafeRunner.run(new ISafeRunnable() {
 
-					public void handleException(Throwable exception) { 
-						String msg = exception.getMessage() != null ? exception.getMessage() : exception.toString() ;							
+					public void handleException(Throwable exception) {
+						String msg = exception.getMessage() != null ? exception
+								.getMessage() : exception.toString();
 						NavigatorPlugin.logError(0, msg, exception);
-						
+
 					}
 
 					public void run() throws Exception {
 						if (contentProvider != null) {
 							contentProvider.dispose();
-						} 
+						}
 
 					}
-					
-				}); 
-				
+
+				});
+
 				SafeRunner.run(new ISafeRunnable() {
 
-					public void handleException(Throwable exception) { 
-						String msg = exception.getMessage() != null ? exception.getMessage() : exception.toString() ;							
+					public void handleException(Throwable exception) {
+						String msg = exception.getMessage() != null ? exception
+								.getMessage() : exception.toString();
 						NavigatorPlugin.logError(0, msg, exception);
-						
+
 					}
 
 					public void run() throws Exception {
 						if (labelProvider != null) {
-							labelProvider.removeListener((ILabelProviderListener)contentService.createCommonLabelProvider());
+							labelProvider
+									.removeListener((ILabelProviderListener) contentService
+											.createCommonLabelProvider());
 							labelProvider.dispose();
 						}
 
 					}
-					
-				});				
- 	
+
+				});
+
 			}
 		} finally {
 			isDisposed = true;
@@ -256,7 +264,9 @@ public class NavigatorContentExtension implements IMementoAware,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getAdapter(java.lang.Class)
+	 * @see
+	 * org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension
+	 * #getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		return null;
@@ -287,7 +297,9 @@ public class NavigatorContentExtension implements IMementoAware,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#isLoaded()
+	 * @see
+	 * org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension
+	 * #isLoaded()
 	 */
 	public boolean isLoaded() {
 		return contentProvider != null;
@@ -304,11 +316,12 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	public void saveState(IMemento aMemento) {
 		synchronized (this) {
-			if(contentProvider != null && contentProvider instanceof IMementoAware)
-				((IMementoAware)contentProvider).saveState(aMemento);
-			if(labelProvider != null && labelProvider instanceof IMementoAware)
-				((IMementoAware)labelProvider).saveState(aMemento);
-			
+			if (contentProvider != null
+					&& contentProvider instanceof IMementoAware)
+				((IMementoAware) contentProvider).saveState(aMemento);
+			if (labelProvider != null && labelProvider instanceof IMementoAware)
+				((IMementoAware) labelProvider).saveState(aMemento);
+
 		}
 	}
 
@@ -329,10 +342,13 @@ public class NavigatorContentExtension implements IMementoAware,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getStateModel()
+	 * @see
+	 * org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension
+	 * #getStateModel()
 	 */
 	public IExtensionStateModel getStateModel() {
-		return contentService.getExtensionStateService().getExtensionStateModel(getDescriptor());
+		return contentService.getExtensionStateService()
+				.getExtensionStateModel(getDescriptor());
 	}
 
 	/**
@@ -363,6 +379,10 @@ public class NavigatorContentExtension implements IMementoAware,
 		}
 		if (overridingExtensions.size() == 0) {
 			return NO_EXTENSIONS;
+		}
+		if (Policy.DEBUG_EXTENSION_SETUP) {
+			System.out.println(this +  " overriding: "+//$NON-NLS-1$
+					"(trigger pt: " + anElement + "): " + overridingExtensions); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return (NavigatorContentExtension[]) overridingExtensions
 				.toArray(new NavigatorContentExtension[overridingExtensions
@@ -398,6 +418,10 @@ public class NavigatorContentExtension implements IMementoAware,
 		}
 		if (overridingExtensions.size() == 0) {
 			return NO_EXTENSIONS;
+		}
+		if (Policy.DEBUG_EXTENSION_SETUP) {
+			System.out.println(this +  " overriding: "+//$NON-NLS-1$
+					"(poss child: " + anElement + "): " + overridingExtensions); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return (NavigatorContentExtension[]) overridingExtensions
 				.toArray(new NavigatorContentExtension[overridingExtensions

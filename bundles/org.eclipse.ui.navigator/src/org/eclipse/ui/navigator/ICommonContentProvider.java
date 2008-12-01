@@ -24,8 +24,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * </p>
  * 
  * <p>
- * Clients may (but are not required to) implement this interface if there is no
- * cause to do so. {@link ITreeContentProvider} is respected by the Common
+ * Clients may implement this interface if they require the methods defined here.
+ * {@link ITreeContentProvider} is respected by the Common
  * Navigator.
  * </p>
  * 

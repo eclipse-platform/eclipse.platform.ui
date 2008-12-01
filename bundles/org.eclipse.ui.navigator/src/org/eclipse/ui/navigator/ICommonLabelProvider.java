@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
  * viewer in general. 
  * </p>
  * <p>
- * Clients need not implement this interface if there is no cause to do so.
+ * Clients may implement this interface if they require the methods provided here.
  * {@link org.eclipse.jface.viewers.ILabelProvider} is respected by the Common
  * Navigator.
  * </p>

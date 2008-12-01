@@ -26,6 +26,11 @@ expand to the right node.
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <choice>
@@ -549,7 +554,7 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
    <element name="override">
       <annotation>
          <documentation>
-            When the &lt;b&gt;triggerPoints&lt;/b&gt; expression of the suppressed extension and the declared extension are both &lt;i&gt;enabled&lt;/i&gt; on a given element, this extension will be invoked, but its suppressed extension will not. Clients that specify an &lt;b&gt;override&lt;/b&gt; element must also provide a content provider which implements &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, which provides methods to intercept requests for children, parents, and direct updates to the viewer.
+            When the &lt;b&gt;triggerPoints&lt;/b&gt; expression of the suppressed extension and the declared extension are both &lt;i&gt;enabled&lt;/i&gt; on a given element, this extension will be invoked, but its suppressed extension will not. Clients that specify an &lt;b&gt;override&lt;/b&gt; element may provide a content provider which implements &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, which provides methods to intercept requests for children, parents, and direct updates to the viewer.
 &lt;br&gt;&lt;br&gt;
          </documentation>
       </annotation>
@@ -880,7 +885,6 @@ using this feature.
 &lt;/p&gt;
       </documentation>
    </annotation>
-
 
 
 

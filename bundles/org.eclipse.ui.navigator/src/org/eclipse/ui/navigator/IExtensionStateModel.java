@@ -24,10 +24,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * model.
  * </p>
  * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.2
  * 
  */

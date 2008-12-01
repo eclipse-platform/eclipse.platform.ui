@@ -18,8 +18,7 @@ import org.eclipse.ui.Saveable;
 
 /**
  * 
- * This interface is not intended to be implemented by clients.
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.2
  * 
  */

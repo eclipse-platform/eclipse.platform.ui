@@ -17,10 +17,7 @@ import org.eclipse.jface.action.Separator;
  * Provides a basic metadata about the abstract viewer for a particular content
  * service.
  * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.2
  * 
  */
