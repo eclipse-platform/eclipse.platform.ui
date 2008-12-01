@@ -36,10 +36,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class Util {
@@ -682,6 +684,61 @@ public final class Util {
 			}
 		}
 		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[list.size()]);
+	}
+	
+	/**
+	 * Two {@link String}s presented in a list form.
+	 * This method can be used to form a longer list by providing a list for
+	 * <code>item1</code> and an item to append to the list for 
+	 * <code>item2</code>.  
+	 * 
+	 * @param item1	a string
+	 * @param item2	a string
+	 * @return	a string which presents <code>item1</code> and 
+	 * 	<code>item2</code> in a list form.
+	 */
+	public static String createList(String item1, String item2) {
+		return NLS.bind(WorkbenchMessages.Util_List, item1, item2);
+	}
+	
+	/**
+	 * Creates a {@link String} representing the elements in <code>items</code>
+	 * as a list. This method uses the {@link Object#toString()} method on the
+	 * objects to create them as a String.
+	 * @param items	the List to make into a String
+	 * @return	a string which presents <code>items</code> in String form. 
+	 */
+	public static String createList(List items) {
+		String list = null;
+		for (Iterator i = items.iterator(); i.hasNext();) {
+			Object object = i.next();
+			final String string = object == null ? WorkbenchMessages.Util_listNull : object.toString();
+			if(list == null) {
+				list = string;
+			} else {
+				list = createList(list, string);
+			}
+		}
+		return safeString(list);
+	}
+	
+	/**
+	 * Creates a {@link String} representing the elements in <code>items</code>
+	 * as a list. This method uses the {@link Object#toString()} method on the
+	 * objects to create them as a String.
+	 * @param items	the array to make into a String
+	 * @return	a string which presents <code>items</code> in String form. 
+	 */
+	public static String createList(Object[] items) {
+		String list = null;
+		for (int i = 0; i < items.length; i++) {
+			if(list == null) {
+				list = items[i].toString();
+			} else {
+				list = createList(list, items[i].toString());
+			}
+		}
+		return safeString(list);
 	}
 
 	/**

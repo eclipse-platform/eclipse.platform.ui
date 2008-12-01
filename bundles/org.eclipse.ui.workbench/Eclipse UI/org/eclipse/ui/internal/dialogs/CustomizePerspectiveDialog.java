@@ -11,104 +11,150 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.DefaultToolTip;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
+import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.OpenPerspectiveAction;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.ActionSetActionBars;
 import org.eclipse.ui.internal.ActionSetContributionItem;
-import org.eclipse.ui.internal.ActionSetMenuManager;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Perspective;
-import org.eclipse.ui.internal.PluginActionContributionItem;
 import org.eclipse.ui.internal.PluginActionCoolBarContributionItem;
 import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.ui.internal.PluginActionSetBuilder;
+import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
+import org.eclipse.ui.internal.dialogs.TreeManager.CheckListener;
+import org.eclipse.ui.internal.dialogs.TreeManager.TreeItem;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
+import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardCategory;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * Dialog to allow users the ability to customize the perspective. This includes
@@ -116,1658 +162,3173 @@ import org.eclipse.ui.wizards.IWizardCategory;
  * or groups of commands.
  * 
  */
-// @issue need to break this not to show menu specific page
 public class CustomizePerspectiveDialog extends TrayDialog {
-	private DefaultToolTip actionSetMenuViewerTooltip;
-	
-	private DefaultToolTip actionSetToolbarViewerTooltip;
-	
-	private DefaultToolTip actionSetsViewerTooltip;
-	
-    private Perspective perspective;
 
-    WorkbenchWindow window;
+	private static final String TOOLBAR_ICON = "$nl$/icons/full/obj16/toolbar.gif"; //$NON-NLS-1$
+	private static final String SUBMENU_ICON = "$nl$/icons/full/obj16/submenu.gif"; //$NON-NLS-1$
+	private static final String MENU_ICON = "$nl$/icons/full/obj16/menu.gif"; //$NON-NLS-1$
+	private static final String WARNING_ICON = "$nl$/icons/full/obj16/warn_tsk.gif"; //$NON-NLS-1$
 
-    private TabFolder tabFolder;
+	private static final String SHORTCUT_CONTRIBUTION_ITEM_ID_OPEN_PERSPECTIVE = "openPerspective"; //$NON-NLS-1$
+	private static final String SHORTCUT_CONTRIBUTION_ITEM_ID_SHOW_VIEW = "showView"; //$NON-NLS-1$
 
-    private CheckboxTableViewer actionSetsViewer;
+	private static final String SHORTCUT_COMMAND_ID_NEW_WIZARD = "org.eclipse.ui.newWizard"; //$NON-NLS-1$
+	private static final String SHORTCUT_COMMAND_ID_SHOW_PERSPECTIVE = "org.eclipse.ui.perspectives.showPerspective"; //$NON-NLS-1$
 
-    private TreeViewer actionSetMenuViewer;
+	private static final String SHORTCUT_COMMAND_PARAM_ID_NEW_WIZARD = "newWizardId"; //$NON-NLS-1$
+	private static final String SHORTCUT_COMMAND_PARAM_ID_SHOW_PERSPECTIVE = "org.eclipse.ui.perspectives.showPerspective.perspectiveId"; //$NON-NLS-1$
 
-    private TreeViewer actionSetToolbarViewer;
+	private static final String KEYS_PREFERENCE_PAGE_ID = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
 
-    private Combo menusCombo;
+	private static final String NEW_LINE = System.getProperty("line.separator"); //$NON-NLS-1$
 
-    private CheckboxTreeViewer menuCategoriesViewer;
+	private static final int MIN_TOOLTIP_WIDTH = 160;
 
-    private CheckboxTableViewer menuItemsViewer;
+	private WorkbenchWindow window;
 
-    private static int lastSelectedTab = -1;
+	private Perspective perspective;
 
-    private static int lastSelectedMenuIndex = 0;
+	private TabFolder tabFolder;
 
-    private static String lastSelectedActionSetId = null;
+	private final static int TAB_WIDTH_IN_DLUS = 490;
 
-    private final static int TAB_WIDTH_IN_DLUS = 490;
+	private final static int TAB_HEIGHT_IN_DLUS = 230;
 
-    private final static int TAB_HEIGHT_IN_DLUS = 230;
+	private final String shortcutMenuColumnHeaders[] = {
+			WorkbenchMessages.ActionSetSelection_menuColumnHeader,
+			WorkbenchMessages.ActionSetSelection_descriptionColumnHeader };
 
-    private final String shortcutMenuColumnHeaders[] = {
-            WorkbenchMessages.ActionSetSelection_menuColumnHeader,
-            WorkbenchMessages.ActionSetSelection_descriptionColumnHeader };
+	private int[] shortcutMenuColumnWidths = { 125, 300 };
 
-    private int[] shortcutMenuColumnWidths = { 125, 300 };
+	ImageDescriptor menuImageDescriptor = null;
 
-    private ActionSetDescriptor selectedActionSet = null;
+	ImageDescriptor submenuImageDescriptor = null;
 
-    private ShortcutMenu selectedMenuCategory = null;
+	ImageDescriptor toolbarImageDescriptor = null;
 
-    ImageDescriptor menuImageDescriptor = null;
+	ImageDescriptor warningImageDescriptor = null;
 
-    ImageDescriptor submenuImageDescriptor = null;
+	private TreeManager treeManager;
 
-    ImageDescriptor toolbarImageDescriptor = null;
+	private DisplayItem menuItems;
 
-    ShortcutMenu rootMenu;
+	private DisplayItem toolBarItems;
 
-    private ArrayList actionSets = new ArrayList();
+	private Category shortcuts;
 
-    private Hashtable actionSetStructures = new Hashtable();
+	private DisplayItem wizards;
+
+	private DisplayItem perspectives;
+
+	private DisplayItem views;
+
+	private Map idToActionSet = new HashMap();
+
+	private final List actionSets = new ArrayList();
 
 	private IWorkbenchWindowConfigurer configurer;
 
-    private List initiallyActive = new ArrayList();
+	private TabItem actionSetTab;
 
-    class ActionSetDisplayItem extends Object {
-        /**
-         * Tree representation for action set menu and toolbar items.  
-         */
-        ArrayList children = new ArrayList();
+	private CheckboxTableViewer actionSetAvailabilityTable;
 
-        ActionSetDisplayItem parent = null;
+	private CheckboxTreeViewer menuStructureViewer1;
 
-        private String id = null;
+	private CheckboxTreeViewer menuStructureViewer2;
 
-        private String text = ""; //$NON-NLS-1$
+	private CheckboxTreeViewer toolbarStructureViewer1;
 
-        String description = ""; //$NON-NLS-1$
+	private CheckboxTreeViewer toolbarStructureViewer2;
 
-        ImageDescriptor imageDescriptor;
+	private Set toDispose;
 
-        int type = MENUITEM;
+	private CustomizeActionBars customizeActionBars;
 
-        private final static int MENUITEM = 0;
+	private Font tooltipHeading;
 
-        private final static int TOOLITEM = 1;
+	/**
+	 * A Listener for a list of command groups, that updates the viewer and
+	 * filter who are dependent on the action set selection.
+	 * 
+	 * @since 3.5
+	 */
+	private static final class ActionSetSelectionChangedListener implements
+			ISelectionChangedListener {
+		private final TreeViewer filterViewer;
+		private final ActionSetFilter filter;
 
-        ActionSetDisplayItem(String id) {
-            this(null, id, "", MENUITEM); //$NON-NLS-1$
-        }
+		public ActionSetSelectionChangedListener(TreeViewer viewer,
+				ActionSetFilter menuStructureFilterByActionSet) {
+			this.filterViewer = viewer;
+			this.filter = menuStructureFilterByActionSet;
+		}
 
-        private ActionSetDisplayItem(ActionSetDisplayItem parent, String id,
-                String text, int type) {
-            if (parent != null) {
-                parent.children.add(this);
-                this.parent = parent;
-            }
-            this.id = id;
-            this.type = type;
-            this.text = removeShortcut(text);
-            this.text = DialogUtil.removeAccel(this.text);
-        }
+		public void selectionChanged(SelectionChangedEvent event) {
+			Object element = ((IStructuredSelection) event.getSelection())
+					.getFirstElement();
+			filter.setActionSet((ActionSet) element);
+			filterViewer.refresh();
+			filterViewer.expandAll();
+		}
+	}
 
-        private ActionSetDisplayItem find(String itemId) {
-            for (int i = 0; i < children.size(); i++) {
-                ActionSetDisplayItem child = (ActionSetDisplayItem) children
-                        .get(i);
-                if (itemId.equals(child.id)) {
-					return child;
+	/**
+	 * A filter which will only show action sets which contribute items in the
+	 * given tree structure.
+	 * 
+	 * @since 3.5
+	 */
+	private static final class ShowUsedActionSetsFilter extends ViewerFilter {
+		private DisplayItem rootItem;
+
+		public ShowUsedActionSetsFilter(DisplayItem rootItem) {
+			this.rootItem = rootItem;
+		}
+
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			return (includeInSetStructure(rootItem, (ActionSet) element));
+		}
+	}
+
+	/**
+	 * Represents a menu item or a tool bar item.
+	 * 
+	 * @since 3.5
+	 */
+	private class DisplayItem extends TreeItem {
+		/** The logic item represented */
+		private IContributionItem item;
+
+		/** The action set this item belongs to (optional) */
+		private ActionSet actionSet;
+
+		public DisplayItem(String label, IContributionItem item) {
+			treeManager.super(label == null ? null : DialogUtil
+					.removeAccel(removeShortcut(label)));
+			this.item = item;
+		}
+
+		public void setActionSet(ActionSet actionSet) {
+			this.actionSet = actionSet;
+			if (actionSet != null)
+				actionSet.addItem(this);
+		}
+
+		public ActionSet getActionSet() {
+			return actionSet;
+		}
+
+		public IContributionItem getIContributionItem() {
+			return item;
+		}
+	}
+
+	/**
+	 * Represents a menu item whose content is dynamic. Contains a list of the
+	 * current items being displayed.
+	 * 
+	 * @since 3.5
+	 */
+	private class DynamicContributionItem extends DisplayItem {
+		private List preview;
+
+		public DynamicContributionItem(IContributionItem item) {
+			super(WorkbenchMessages.HideItems_dynamicItemName, item);
+			preview = new ArrayList();
+		}
+
+		public void addCurrentItem(MenuItem item) {
+			preview.add(item);
+		}
+
+		public List getCurrentItems() {
+			return preview;
+		}
+	}
+
+	/**
+	 * @param descriptor
+	 * @param window
+	 * @return the appropriate {@link IContributionItem} for the given wizard
+	 */
+	private static ActionContributionItem getIContributionItem(
+			IWizardDescriptor descriptor, IWorkbenchWindow window) {
+		IAction action = new NewWizardShortcutAction(window, descriptor);
+		return new ActionContributionItem(action);
+	}
+
+	/**
+	 * @param descriptor
+	 * @param window
+	 * @return the appropriate {@link IContributionItem} for the given
+	 *         perspective
+	 */
+	private static ActionContributionItem getIContributionItem(
+			IPerspectiveDescriptor descriptor, IWorkbenchWindow window) {
+		IAction action = new OpenPerspectiveAction(window, descriptor, null);
+		return new ActionContributionItem(action);
+	}
+
+	/**
+	 * @param window
+	 * @return the appropriate {@link IContributionItem} for showing views
+	 */
+	private static ActionContributionItem getIContributionItem(
+			IWorkbenchWindow window) {
+		IAction action = ActionFactory.SHOW_VIEW_MENU.create(window);
+		return new ActionContributionItem(action);
+	}
+
+	/**
+	 * Represents a menu item which needs to be shown in the Shortcuts tab.
+	 * 
+	 * @since 3.5
+	 */
+	private class ShortcutItem extends DisplayItem {
+		/** The description to show in the table */
+		private String description;
+
+		/** The category this shortcut is in (should be set) */
+		private Category category;
+
+		private Object descriptor;
+
+		public ShortcutItem(String label, IWizardDescriptor descriptor) {
+			super(label, CustomizePerspectiveDialog.getIContributionItem(
+					descriptor, window));
+			this.descriptor = descriptor;
+		}
+
+		public ShortcutItem(String label, IPerspectiveDescriptor descriptor) {
+			super(label, CustomizePerspectiveDialog.getIContributionItem(
+					descriptor, window));
+			this.descriptor = descriptor;
+		}
+
+		public ShortcutItem(String label, IViewDescriptor descriptor) {
+			super(label, CustomizePerspectiveDialog
+					.getIContributionItem(window));
+			this.descriptor = descriptor;
+		}
+
+		public Object getDescriptor() {
+			return descriptor;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setCategory(Category category) {
+			this.category = category;
+		}
+
+		public Category getCategory() {
+			return category;
+		}
+	}
+
+	/**
+	 * Represents a category in the shortcuts menu. Since categories can have a
+	 * tree-structure, the functionality provided by the TreeManager and
+	 * TreeItem classes is used, however the logic for visibility changes and
+	 * gray states is more sophisticated.
+	 * 
+	 * @since 3.5
+	 */
+	private class Category extends TreeItem {
+		/** The logic item represented */
+		private Object data;
+
+		/** ShortcutItems which are contributed in this Category */
+		private List contributionItems;
+
+		public Category(String label, Object data) {
+			treeManager.super(label == null ? null : DialogUtil
+					.removeAccel(removeShortcut(label)));
+			this.data = data;
+			this.contributionItems = new ArrayList();
+		}
+
+		public Object getData() {
+			return data;
+		}
+
+		public List getContributionItems() {
+			return contributionItems;
+		}
+
+		/**
+		 * Adds another ShortcutItem to this Category's list of ShortcutItems
+		 * and creates a pseudo-child/parent relationship.
+		 * 
+		 * @param item
+		 *            the item to add
+		 */
+		public void addShortcutItem(ShortcutItem item) {
+			contributionItems.add(item);
+			item.setCategory(this);
+		}
+
+		/**
+		 * While the child/parent state in the Category hierarchy is
+		 * automatically maintained, the pseudo-child/parent relationship must
+		 * be explicitly updated. This method will update Categories if their
+		 * states need to change as a result of their ShortcutItems.
+		 */
+		public void update() {
+			for (Iterator i = contributionItems.iterator(); i.hasNext();) {
+				DisplayItem item = (DisplayItem) i.next();
+				if (item.getState()) {
+					this.setCheckState(true);
+					return;
 				}
-            }
-            return null;
-        }
-
-        /**
-         * @param actionSetId the action to fill
-         * @param item the item to fill 
-         */
-        public void fillMenusFor(String actionSetId, IContributionItem item) {
-            if (item instanceof ContributionManager) {
-                ContributionManager mgr = (ContributionManager) item;
-                IContributionItem[] items = mgr.getItems();
-                for (int i = 0; i < items.length; i++) {
-                    IContributionItem mgrItem = items[i];
-                    if (mgrItem instanceof ActionSetContributionItem) {
-                        ActionSetContributionItem actionSetItem = (ActionSetContributionItem) mgrItem;
-                        if (actionSetItem.getActionSetId().equals(actionSetId)) {
-                            IContributionItem innerItem = actionSetItem
-                                    .getInnerItem();
-                            if (innerItem instanceof MenuManager) {
-                                MenuManager inner = (MenuManager) actionSetItem
-                                        .getInnerItem();
-                                ActionSetDisplayItem node = new ActionSetDisplayItem(
-                                        this, inner.getId(), inner
-                                                .getMenuText(), MENUITEM);
-                                node.fillMenusFor(actionSetId, inner);
-                            } else if (innerItem instanceof ActionSetMenuManager) {
-                                ActionSetMenuManager inner = (ActionSetMenuManager) actionSetItem
-                                        .getInnerItem();
-                                MenuManager parentMgr = (MenuManager) inner
-                                        .getParent();
-                                ActionSetDisplayItem node = new ActionSetDisplayItem(
-                                        this, inner.getId(), parentMgr
-                                                .getMenuText(), MENUITEM);
-                                node.fillMenusFor(actionSetId, parentMgr);
-                            } else if (innerItem instanceof PluginActionContributionItem) {
-                                PluginActionContributionItem inner = (PluginActionContributionItem) actionSetItem
-                                        .getInnerItem();
-                                ActionSetDisplayItem node = new ActionSetDisplayItem(
-                                        this, inner.getId(), inner.getAction()
-                                                .getText(), MENUITEM);
-                                IAction action = inner.getAction();
-                                if (action != null) {
-                                    node.imageDescriptor = action
-                                            .getImageDescriptor();
-                                    node.description = action.getDescription();
-                                }
-                            }
-                        }
-                    } else if (mgrItem instanceof MenuManager) {
-                        MenuManager menuMgr = (MenuManager) mgrItem;
-                        boolean found = containsActionSet(menuMgr, actionSetId);
-                        if (found) {
-                            ActionSetDisplayItem node = new ActionSetDisplayItem(
-                                    this, menuMgr.getId(), menuMgr
-                                            .getMenuText(), MENUITEM);
-                            node.fillMenusFor(actionSetId, menuMgr);
-                        }
-                    }
-                }
-            }
-        }
-
-        /**
-         * @param actionSetId the action set to fill
-         * @param mgr the manager to fill into
-         */
-        public void fillToolsFor(String actionSetId, CoolBarManager mgr) {
-            IContributionItem[] items = mgr.getItems();
-            for (int i = 0; i < items.length; i++) {
-                if (items[i] instanceof IToolBarContributionItem) {
-                	IToolBarContributionItem cbItem = (IToolBarContributionItem) items[i];
-                    IContributionItem[] subItems = cbItem.getToolBarManager()
-                            .getItems();
-                    for (int j = 0; j < subItems.length; j++) {
-                        IContributionItem subItem = subItems[j];
-                        if (subItem instanceof PluginActionCoolBarContributionItem) {
-                            PluginActionCoolBarContributionItem actionItem = (PluginActionCoolBarContributionItem) subItem;
-                            if (actionItem.getActionSetId().equals(actionSetId)) {
-                                String toolbarId = cbItem.getId();
-                                ActionSetDisplayItem toolbar = find(toolbarId);
-                                if (toolbar == null) {
-                                    String toolbarText = window
-                                            .getToolbarLabel(toolbarId);
-                                    toolbar = new ActionSetDisplayItem(this,
-                                            toolbarId, toolbarText, TOOLITEM);
-                                }
-                                IAction action = actionItem.getAction();
-                                String toolItemText = action.getToolTipText();
-                                if (toolItemText == null) {
-									toolItemText = action.getText();
-								}
-                                ActionSetDisplayItem toolItem = new ActionSetDisplayItem(
-                                        toolbar, action.getId(), toolItemText,
-                                        TOOLITEM);
-                                toolItem.imageDescriptor = action
-                                        .getImageDescriptor();
-                                toolItem.description = action.getDescription();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        int getDepth() {
-            if (parent == null) {
-				return 0;
 			}
-            return parent.getDepth() + 1;
-        }
 
-        String getDisplayText() {
-            if (type == MENUITEM) {
-                if (children.size() > 0) {
-                    if (parent.id.equals("Root")) { //$NON-NLS-1$
-                        return NLS.bind(WorkbenchMessages.ActionSetSelection_menubarLocation, text );
-                    }
-                }
-                return text;
-            } 
-            if (children.size() > 0) {
-				return NLS.bind(WorkbenchMessages.ActionSetSelection_toolbarLocation, text );
-			} 
-            
-            return text;
-        }
+			this.setCheckState(false);
+		}
 
-        protected boolean isTopLevelMenu() {
-            if (parent == null) {
+		/**
+		 * Changes the state of all pseudo-descendant ShortcutItems, causing the
+		 * effective state of this Category and all its sub-Categories to match.
+		 * 
+		 * @param state
+		 *            The state to set this branch to.
+		 */
+		public void setItemsState(boolean state) {
+			for (Iterator i = contributionItems.iterator(); i.hasNext();) {
+				DisplayItem item = (DisplayItem) i.next();
+				item.setCheckState(state);
+			}
+			for (Iterator i = getChildren().iterator(); i.hasNext();) {
+				Category category = (Category) i.next();
+				category.setItemsState(state);
+			}
+		}
+	}
+
+	/**
+	 * Represents an action set, under which ContributionItems exist. There is
+	 * no inherent hierarchy in action sets - they exist independent of one
+	 * another, simply contribution menu items and tool bar items.
+	 * 
+	 * @since 3.5
+	 */
+	private class ActionSet {
+		/** The descriptor which describes the action set represented */
+		private ActionSetDescriptor descriptor;
+
+		/** ContributionItems contributed by this action set */
+		private List contributionItems;
+
+		private boolean active;
+
+		public ActionSet(ActionSetDescriptor descriptor, boolean active) {
+			this.descriptor = descriptor;
+			this.active = active;
+			this.contributionItems = new ArrayList();
+		}
+
+		public void addItem(DisplayItem item) {
+			contributionItems.add(item);
+		}
+
+		public String toString() {
+			return descriptor.getLabel();
+		}
+
+		public boolean isActive() {
+			return active;
+		}
+
+		public void setActive(boolean active) {
+			boolean wasActive = this.active;
+			this.active = active;
+			if (!active) {
+				for (Iterator i = contributionItems.iterator(); i.hasNext();) {
+					DisplayItem item = (DisplayItem) i.next();
+					item.setCheckState(false);
+				}
+			}
+			if (wasActive != active) {
+				actionSetAvailabilityChanged();
+			}
+		}
+	}
+
+	/**
+	 * A label provider to include the description field of ShortcutItems in the
+	 * table.
+	 * 
+	 * @since 3.5
+	 */
+	private class ShortcutLabelProvider extends
+			TreeManager.TreeItemLabelProvider implements ITableLabelProvider {
+		public Image getColumnImage(Object element, int columnIndex) {
+			if (columnIndex == 0)
+				return this.getImage(element);
+			return null;
+		}
+
+		public String getColumnText(Object element, int columnIndex) {
+			if (columnIndex == 1)
+				return ((ShortcutItem) element).getDescription();
+			return this.getText(element);
+		}
+
+		public void addListener(ILabelProviderListener listener) {
+		}
+
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		public void removeListener(ILabelProviderListener listener) {
+		}
+	}
+
+	/**
+	 * Provides the check logic for the categories viewer in the shortcuts tab.
+	 * Categories have a dual concept of children - their proper children
+	 * (sub-Categories, as in the wizards), and the actual elements they
+	 * contribute to the menu system. The check state must take this into
+	 * account.
+	 * 
+	 * @since 3.5
+	 */
+	private static class CategoryCheckProvider implements ICheckStateProvider {
+		public boolean isChecked(Object element) {
+			Category category = (Category) element;
+
+			if (category.getChildren().isEmpty()
+					&& category.getContributionItems().isEmpty())
 				return false;
+
+			// To be checked, any sub-Category can be checked.
+			for (Iterator i = category.getChildren().iterator(); i.hasNext();) {
+				Category child = (Category) i.next();
+				if (isChecked(child))
+					return true;
 			}
-            return parent.parent == null;
-        }
-        
-        public String toString() {
-        	StringBuffer sb = new StringBuffer();
-        	for (int i = getDepth(); --i >= 0;) {
-        		sb.append("  "); //$NON-NLS-1$
-        	}
-    		sb.append("id: "); //$NON-NLS-1$
-    		sb.append(id);
-    		sb.append("  text: "); //$NON-NLS-1$
-    		sb.append(text);
-        	sb.append('\n');
-        	for (int i = 0; i < children.size(); ++i) {
-        		sb.append(children.get(i));
-        	}
-        	return sb.toString();
-        		
-        }
-    }
 
-    /**
-     * The proxy IActionBarConfigurer that gets passed to the application's
-     * ActionBarAdvisor.  This is used to construct a representation of the
-     * window's hardwired menus and toolbars in order to display their
-     * structure properly in the preview panes.
-     */
-    public class CustomizeActionBars implements IActionBarConfigurer2,
+			// To be checked, any ShortcutItem can be checked.
+			for (Iterator i = category.getContributionItems().iterator(); i
+					.hasNext();) {
+				DisplayItem item = (DisplayItem) i.next();
+				if (item.getState())
+					return true;
+			}
+
+			return false;
+		}
+
+		public boolean isGrayed(Object element) {
+			boolean hasChecked = false;
+			boolean hasUnchecked = false;
+			Category category = (Category) element;
+
+			// Search in sub-Categories and ShortcutItems for one that is
+			// checked and one that is unchecked.
+
+			for (Iterator i = category.getChildren().iterator(); i.hasNext();) {
+				Category child = (Category) i.next();
+				if (isGrayed(child))
+					return true;
+				if (isChecked(child))
+					hasChecked = true;
+				else
+					hasUnchecked = true;
+				if (hasChecked && hasUnchecked)
+					return true;
+			}
+
+			for (Iterator i = category.getContributionItems().iterator(); i
+					.hasNext();) {
+				DisplayItem item = (DisplayItem) i.next();
+				if (item.getState())
+					hasChecked = true;
+				else
+					hasUnchecked = true;
+				if (hasChecked && hasUnchecked)
+					return true;
+			}
+
+			return false;
+		}
+	}
+
+	/**
+	 * A tooltip which, given a model element, will display its icon (if there
+	 * is one), name, and a description (if there is one).
+	 * 
+	 * @since 3.5
+	 */
+	private abstract class NameAndDescriptionToolTip extends ToolTip {
+		public NameAndDescriptionToolTip(Control control) {
+			super(control);
+		}
+
+		protected abstract Object getModelElement(Event event);
+
+		/**
+		 * Adds logic to only show a tooltip if a meaningful item is under the
+		 * cursor.
+		 */
+		protected boolean shouldCreateToolTip(Event event) {
+			return super.shouldCreateToolTip(event)
+					&& getModelElement(event) != null;
+		}
+
+		protected Composite createToolTipContentArea(Event event,
+				Composite parent) {
+			Object modelElement = getModelElement(event);
+
+			Image iconImage = null;
+			String nameString = null;
+
+			if (modelElement instanceof DisplayItem) {
+				iconImage = ((DisplayItem) modelElement).getImage();
+				nameString = ((DisplayItem) modelElement).getLabel();
+			} else if (modelElement instanceof ActionSet) {
+				nameString = ((ActionSet) modelElement).descriptor.getLabel();
+			}
+
+			// Create the content area
+			Composite composite = new Composite(parent, SWT.NONE);
+			composite.setBackground(parent.getDisplay().getSystemColor(
+					SWT.COLOR_INFO_BACKGROUND));
+			composite.setLayout(new GridLayout(2, false));
+
+			// The title area with the icon (if there is one) and label.
+			Label title = createEntry(composite, iconImage, nameString);
+			title.setFont(tooltipHeading);
+			GridDataFactory.createFrom((GridData)title.getLayoutData())
+				.hint(SWT.DEFAULT, SWT.DEFAULT)
+				.minSize(MIN_TOOLTIP_WIDTH, 1)
+				.applyTo(title);
+
+			// The description (if there is one)
+			String descriptionString = getDescription(modelElement);
+			if (descriptionString != null) {
+				createEntry(composite, null, descriptionString);
+			}
+
+			// Other Content to add
+			addContent(composite, modelElement);
+
+			return composite;
+		}
+
+		/**
+		 * Adds a line of information to <code>parent</code>. If
+		 * <code>icon</code> is not <code>null</code>, an icon is placed on the
+		 * left, and then a label with <code>text</code>.
+		 * 
+		 * @param parent
+		 *            the composite to add the entry to
+		 * @param icon
+		 *            the icon to place next to the text. <code>null</code> for
+		 *            none.
+		 * @param text
+		 *            the text to display
+		 * @return the created label
+		 */
+		protected Label createEntry(Composite parent, Image icon, String text) {
+			if (icon != null) {
+				Label iconLabel = new Label(parent, SWT.NONE);
+				iconLabel.setImage(icon);
+				iconLabel.setBackground(parent.getDisplay().getSystemColor(
+						SWT.COLOR_INFO_BACKGROUND));
+				iconLabel.setData(new GridData());
+			}
+
+			Label textLabel = new Label(parent, SWT.WRAP);
+			
+			if(icon == null) {
+				GridDataFactory.generate(textLabel, 2, 1);
+			} else {
+				GridDataFactory.generate(textLabel, 1, 1);
+			}
+			
+			textLabel.setText(text);
+			textLabel.setBackground(parent.getDisplay().getSystemColor(
+					SWT.COLOR_INFO_BACKGROUND));
+			return textLabel;
+		}
+
+		/**
+		 * Adds a line of information to <code>parent</code>. If
+		 * <code>icon</code> is not <code>null</code>, an icon is placed on the
+		 * left, and then a label with <code>text</code>, which supports using
+		 * anchor tags to creates links
+		 * 
+		 * @param parent
+		 *            the composite to add the entry to
+		 * @param icon
+		 *            the icon to place next to the text. <code>null</code> for
+		 *            none.
+		 * @param text
+		 *            the text to display
+		 * @return the created link
+		 */
+		protected Link createEntryWithLink(Composite parent, Image icon,
+				String text) {
+			if (icon != null) {
+				Label iconLabel = new Label(parent, SWT.NONE);
+				iconLabel.setImage(icon);
+				iconLabel.setBackground(parent.getDisplay().getSystemColor(
+						SWT.COLOR_INFO_BACKGROUND));
+				iconLabel.setData(new GridData());
+			}
+			
+			Link textLink = new Link(parent, SWT.WRAP);
+
+			if(icon == null) {
+				GridDataFactory.generate(textLink, 2, 1);
+			}
+			
+			textLink.setText(text);
+			textLink.setBackground(parent.getDisplay().getSystemColor(
+					SWT.COLOR_INFO_BACKGROUND));
+			return textLink;
+		}
+
+		protected void addContent(Composite destination, Object modelElement) {
+		}
+	}
+
+	/**
+	 * A tooltip with useful information based on the type of ContributionItem
+	 * the cursor hovers over in a Table.
+	 * 
+	 * @since 3.5
+	 */
+	private class TableToolTip extends NameAndDescriptionToolTip {
+		private Table table;
+
+		public TableToolTip(Table table) {
+			super(table);
+			this.table = table;
+		}
+
+		protected Object getModelElement(Event event) {
+			TableItem tableItem = table.getItem(new Point(event.x, event.y));
+			if (tableItem == null)
+				return null;
+			return tableItem.getData();
+		}
+	}
+
+	/**
+	 * A tooltip with useful information based on the type of ContributionItem
+	 * the cursor hovers over in a Tree. In addition to the content provided by
+	 * the {@link NameAndDescriptionToolTip} this includes action set
+	 * information and key binding data.
+	 * 
+	 * @since 3.5
+	 */
+	private class ItemDetailToolTip extends NameAndDescriptionToolTip {
+		private Tree tree;
+		private boolean showActionSet;
+		private boolean showKeyBindings;
+		private ViewerFilter filter;
+		
+		/**
+		 * @param tree
+		 *            The tree for the tooltip to hover over
+		 */
+		private ItemDetailToolTip(Tree tree, boolean showActionSet,
+				boolean showKeyBindings, ViewerFilter filter) {
+			super(tree);
+			this.tree = tree;
+			this.showActionSet = showActionSet;
+			this.showKeyBindings = showKeyBindings;
+			this.filter = filter;
+			this.setHideOnMouseDown(false);
+			this.setShift(new Point(-5, -5));
+		}
+
+		protected void addContent(Composite destination, Object modelElement) {
+			final DisplayItem item = (DisplayItem) modelElement;
+
+			// Show any relevant action set info
+			if (showActionSet) {
+				if(item.getActionSet() != null) {
+					// Which action set, with link
+					final String actionSetName = item.getActionSet().descriptor
+							.getLabel();
+	
+					String text;
+					Image image = null;
+	
+					// If the action set is not available, explain why the
+					// visibility of the ContributionItem cannot be changed.
+					if (isAvailable(item)) {
+						text = NLS.bind(
+								WorkbenchMessages.HideItems_itemInActionSet,
+								actionSetName);
+					} else {
+						image = warningImageDescriptor.createImage();
+						text = NLS
+								.bind(
+										WorkbenchMessages.HideItems_itemInUnavailableActionSet,
+										actionSetName);
+					}
+	
+					Link actionSetLink = createEntryWithLink(destination, image,
+							text);
+					actionSetLink.addSelectionListener(new SelectionListener() {
+						public void widgetDefaultSelected(SelectionEvent e) {
+							widgetSelected(e);
+						}
+	
+						public void widgetSelected(SelectionEvent e) {
+							hide();
+							viewActionSet(item);
+						}
+					});
+				} else if (!isEffectivelyAvailable(item, filter)) {
+					// If this item is unavailable, but not because it is in an
+					// unavailable action set, but rather because its children are.
+					Image image = warningImageDescriptor.createImage();
+	
+					Set actionGroup = new LinkedHashSet();
+					collectDescendantCommandGroups(actionGroup, item);
+	
+					Link link;
+	
+					// Just one child
+					if (actionGroup.size() == 1) {
+						ActionSet actionSet = (ActionSet) actionGroup.iterator()
+								.next();
+						String s = NLS
+								.bind(
+										WorkbenchMessages.HideItems_unavailableChildCommandGroup,
+										actionSet.descriptor.getId(),
+										actionSet.descriptor.getLabel());
+						link = createEntryWithLink(destination, image, s);
+					} else {
+						// Multiple children
+						String commandGroupList = null;
+	
+						for (Iterator i = actionGroup.iterator(); i.hasNext();) {
+							ActionSet actionSet = (ActionSet) i.next();
+	
+							// For each action set, make a link for it, set the href
+							// to its id
+							String commandGroupLink = MessageFormat.format(
+									"<a href=\"{0}\">{1}</a>", //$NON-NLS-1$
+									new Object[] { actionSet.descriptor.getId(),
+											actionSet.descriptor.getLabel() });
+	
+							if (commandGroupList == null)
+								commandGroupList = commandGroupLink;
+							else
+								commandGroupList = Util.createList(
+										commandGroupList, commandGroupLink);
+						}
+						commandGroupList = NLS
+								.bind(
+										"{0}{1}", new Object[] { NEW_LINE, commandGroupList }); //$NON-NLS-1$
+						String s = NLS
+								.bind(
+										WorkbenchMessages.HideItems_unavailableChildCommandGroups,
+										commandGroupList);
+						link = createEntryWithLink(destination, image, s);
+					}
+	
+					link.addSelectionListener(new SelectionListener() {
+						public void widgetDefaultSelected(SelectionEvent e) {
+							widgetSelected(e);
+						}
+	
+						public void widgetSelected(SelectionEvent e) {
+							ActionSet actionSet = (ActionSet) idToActionSet
+									.get(e.text);
+							if (actionSet != null) {
+								hide();
+								viewActionSet(actionSet);
+							}
+						}
+					});
+				}
+			}
+
+			// Show key binding info
+			if (showKeyBindings && getCommandID(item) != null) {
+				// See if there is a command associated with the command id
+				ICommandService commandService = (ICommandService) window
+						.getService(ICommandService.class);
+				Command command = commandService.getCommand(getCommandID(item));
+
+				if (command != null && command.isDefined()) {
+					// Find the bindings and list them as a string
+					Binding[] bindings = getKeyBindings(item);
+					String keybindings = keyBindingsAsString(bindings);
+
+					String text = null;
+
+					// Is it possible for this item to be visible?
+					final boolean available = (item.getActionSet() == null)
+							|| (item.getActionSet().isActive());
+
+					if (bindings.length > 0) {
+						if (available)
+							text = NLS.bind(
+									WorkbenchMessages.HideItems_keyBindings,
+									keybindings);
+						else
+							text = NLS
+									.bind(
+											WorkbenchMessages.HideItems_keyBindingsActionSetUnavailable,
+											keybindings);
+					} else {
+						if (available)
+							text = WorkbenchMessages.HideItems_noKeyBindings;
+						else
+							text = WorkbenchMessages.HideItems_noKeyBindingsActionSetUnavailable;
+					}
+
+					// Construct link to go to the preferences page for key
+					// bindings
+					final Object highlight;
+					if (bindings.length == 0) {
+						Map parameters = new HashMap();
+
+						// If item is a shortcut, need to add a parameter to go
+						// to
+						// the correct item
+						if (item instanceof ShortcutItem) {
+							if (isNewWizard(item)) {
+								parameters.put(
+										SHORTCUT_COMMAND_PARAM_ID_NEW_WIZARD,
+										getParamID(item));
+							} else if (isShowPerspective(item)) {
+								parameters
+										.put(
+												SHORTCUT_COMMAND_PARAM_ID_SHOW_PERSPECTIVE,
+												getParamID(item));
+							} else if (isShowView(item)) {
+								parameters.put(
+										ShowViewMenu.VIEW_ID_PARM,
+										getParamID(item));
+							}
+						}
+
+						ParameterizedCommand pc = ParameterizedCommand
+								.generateCommand(command, parameters);
+						highlight = pc;
+					} else {
+						highlight = bindings[0];
+					}
+
+					Link bindingLink = createEntryWithLink(destination, null,
+							text);
+
+					bindingLink.addSelectionListener(new SelectionListener() {
+						public void widgetDefaultSelected(SelectionEvent e) {
+							widgetDefaultSelected(e);
+						}
+
+						public void widgetSelected(SelectionEvent e) {
+							PreferenceDialog dialog = PreferencesUtil
+									.createPreferenceDialogOn(getShell(),
+											KEYS_PREFERENCE_PAGE_ID,
+											new String[0], highlight);
+							hide();
+							dialog.open();
+						}
+					});
+				}
+			}
+
+			// Show dynamic menu item info
+			if (item instanceof DynamicContributionItem) {
+				DynamicContributionItem dynamic = ((DynamicContributionItem) item);
+				StringBuffer text = new StringBuffer();
+				final List currentItems = dynamic.getCurrentItems();
+
+				if (currentItems.size() > 0) {
+					// Create a list of the currently displayed items
+					text.append(WorkbenchMessages.HideItems_dynamicItemList);
+					for (Iterator i = currentItems.iterator(); i.hasNext();) {
+						MenuItem menuItem = (MenuItem) i.next();
+						text.append(NEW_LINE).append("- ") //$NON-NLS-1$
+								.append(menuItem.getText());
+					}
+				} else {
+					text
+							.append(WorkbenchMessages.HideItems_dynamicItemEmptyList);
+				}
+				createEntry(destination, null, text.toString());
+			}
+		}
+
+		protected Object getModelElement(Event event) {
+			org.eclipse.swt.widgets.TreeItem treeItem = tree.getItem(new Point(
+					event.x, event.y));
+			if (treeItem == null)
+				return null;
+			return treeItem.getData();
+		}
+	}
+
+	/**
+	 * Filters out contribution items which are not in a given action set.
+	 * 
+	 * @since 3.5
+	 */
+	private static class ActionSetFilter extends ViewerFilter {
+		private ActionSet actionSet;
+
+		public void setActionSet(ActionSet actionSet) {
+			this.actionSet = actionSet;
+		}
+
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			if (!(element instanceof DisplayItem))
+				return false;
+			if (actionSet == null)
+				return false;
+			return includeInSetStructure((DisplayItem) element, actionSet);
+		}
+	}
+
+	/**
+	 * A check provider which calculates checked state based on leaf states in
+	 * the tree (as opposed to children in a model).
+	 * 
+	 * @since 3.5
+	 */
+	private static class FilteredTreeCheckProvider implements
+			ICheckStateProvider {
+		private ITreeContentProvider contentProvider;
+		private ViewerFilter filter;
+
+		public FilteredTreeCheckProvider(ITreeContentProvider contentProvider,
+				ViewerFilter filter) {
+			this.contentProvider = contentProvider;
+			this.filter = filter;
+		}
+
+		public void setFilter(ViewerFilter filter) {
+			this.filter = filter;
+		}
+
+		public boolean isChecked(Object element) {
+			TreeItem treeItem = (TreeItem) element;
+			return getLeafStates(treeItem, contentProvider, filter) != TreeManager.CHECKSTATE_UNCHECKED;
+		}
+
+		public boolean isGrayed(Object element) {
+			TreeItem treeItem = (TreeItem) element;
+			return getLeafStates(treeItem, contentProvider, filter) == TreeManager.CHECKSTATE_GRAY;
+		}
+	}
+
+	/**
+	 * A check listener to bring about the expected change in a model based on a
+	 * check event in a filtered viewer. Since the checked state of a parent in
+	 * a filtered viewer is not based on its model state, but rather its leafs'
+	 * states, when a non-leaf element's check state changes, its model state
+	 * does not necessarily change, but its leafs' model states do.
+	 * 
+	 * @since 3.5
+	 */
+	private static class FilteredViewerCheckListener implements
+			ICheckStateListener {
+		private ITreeContentProvider contentProvider;
+		private ViewerFilter filter;
+
+		public FilteredViewerCheckListener(
+				ITreeContentProvider contentProvider, ViewerFilter filter) {
+			this.contentProvider = contentProvider;
+			this.filter = filter;
+		}
+
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			setAllLeafs((DisplayItem) event.getElement(), event
+					.getChecked(), contentProvider, filter);
+		}
+	}
+
+	/**
+	 * On a model change, update a filtered listener. While the check listener
+	 * provided by the model will take care of the elements which change, since
+	 * we simulate our own check state of parents, the parents may need to be
+	 * updated.
+	 * 
+	 * @since 3.5
+	 */
+	private final class FilteredModelCheckListener implements CheckListener {
+		private final ActionSetFilter filter;
+		private final StructuredViewer viewer;
+
+		private FilteredModelCheckListener(ActionSetFilter filter,
+				StructuredViewer viewer) {
+			this.filter = filter;
+			this.viewer = viewer;
+		}
+
+		public void checkChanged(TreeItem changedItem) {
+			TreeItem item = changedItem;
+			boolean update = false;
+
+			// Force an update on all parents.
+			while (item != null) {
+				update = update || filter.select(null, null, item);
+				if (update) {
+					viewer.update(item, null);
+				}
+				item = item.getParent();
+			}
+		}
+	}
+
+	/**
+	 * A check listener which, upon changing the check state of a contribution
+	 * item, checks if that item is eligible to be checked (i.e. it is in an
+	 * available action set), and if not, informs the user of the illegal
+	 * operation. If the operation is legal, the event is forwarded to the check
+	 * listener to actually perform a useful action.
+	 * 
+	 * @since 3.5
+	 */
+	private class UnavailableContributionItemCheckListener implements
+			ICheckStateListener {
+		private CheckboxTreeViewer viewer;
+		private ICheckStateListener originalListener;
+
+		/**
+		 * @param viewer
+		 *            the viewer being listened to
+		 * @param originalListener
+		 *            the listener to invoke upon a legal action
+		 */
+		public UnavailableContributionItemCheckListener(
+				CheckboxTreeViewer viewer, ICheckStateListener originalListener) {
+			this.viewer = viewer;
+			this.originalListener = originalListener;
+		}
+
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			DisplayItem item = (DisplayItem) event.getElement();
+			ViewerFilter[] filters = viewer.getFilters();
+			boolean isEffectivelyAvailable = isEffectivelyAvailable(item, filters.length > 0 ? filters[0] : null);
+
+			if (isEffectivelyAvailable) {
+				// legal action - invoke the listener which will do actual work
+				originalListener.checkStateChanged(event);
+				return;
+			}
+
+			boolean isAvailable = isAvailable(item);
+			viewer.update(event.getElement(), null);
+
+			if (isAvailable) {
+				// the case where this item is unavailable because of its
+				// children
+				if (viewer.getExpandedState(item)) {
+					MessageBox mb = new MessageBox(viewer.getControl()
+							.getShell(), SWT.OK | SWT.ICON_WARNING);
+					mb
+							.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
+					mb
+							.setMessage(NLS
+									.bind(
+											WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText,
+											item.getLabel()));
+					mb.open();
+				} else {
+					MessageBox mb = new MessageBox(viewer.getControl()
+							.getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
+					mb
+							.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
+					mb
+							.setMessage(NLS
+									.bind(
+											WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText,
+											item.getLabel())
+									+ WorkbenchMessages.HideItemsCannotMakeVisible_expandItemText);
+					if (mb.open() == SWT.YES) {
+						viewer.setExpandedState(item, true);
+					}
+				}
+			} else {
+				// the case where this item is unavailable because it belongs to
+				// an
+				// unavailable action set
+				MessageBox mb = new MessageBox(viewer.getControl().getShell(),
+						SWT.YES | SWT.NO | SWT.ICON_WARNING);
+				mb
+						.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
+				final String errorExplanation = NLS
+						.bind(
+								WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandGroupText,
+								item.getLabel(), item.getActionSet());
+				final String message = NLS
+						.bind(
+								"{0}{1}{1}{2}", new Object[] { errorExplanation, NEW_LINE, WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab }); //$NON-NLS-1$
+				mb.setMessage(message);
+				if (mb.open() == SWT.YES) {
+					viewActionSet(item);
+				}
+			}
+		}
+	}
+
+	/**
+	 * A label provider which takes the default label provider in the
+	 * TreeManager, and adds on functionality to gray out text and icons of
+	 * contribution items whose action sets are unavailable.
+	 * 
+	 * @since 3.5
+	 * 
+	 */
+	private class GrayOutUnavailableLabelProvider extends
+			TreeManager.TreeItemLabelProvider implements IColorProvider {
+		private Display display;
+		private ViewerFilter filter;
+
+		public GrayOutUnavailableLabelProvider(Display display, ViewerFilter filter) {
+			this.display = display;
+			this.filter = filter;
+		}
+
+		public Color getBackground(Object element) {
+			return null;
+		}
+
+		public Color getForeground(Object element) {
+			if (!isEffectivelyAvailable((DisplayItem) element, filter)) {
+				return display.getSystemColor(SWT.COLOR_GRAY);
+			}
+			return null;
+		}
+
+		public Image getImage(Object element) {
+			Image actual = super.getImage(element);
+
+			if (element instanceof DisplayItem && actual != null) {
+				DisplayItem item = (DisplayItem) element;
+				if (!isEffectivelyAvailable(item, filter)) {
+					ImageDescriptor original = ImageDescriptor
+							.createFromImage(actual);
+					ImageDescriptor disable = ImageDescriptor.createWithFlags(
+							original, SWT.IMAGE_DISABLE);
+					Image newImage = disable.createImage();
+					toDispose.add(newImage);
+					return newImage;
+				}
+			}
+
+			return actual;
+		}
+	}
+
+	/**
+	 * The proxy IActionBarConfigurer that gets passed to the application's
+	 * ActionBarAdvisor. This is used to construct a representation of the
+	 * window's hardwired menus and toolbars in order to display their structure
+	 * properly in the preview panes.
+	 * 
+	 * @since 3.5
+	 */
+	public class CustomizeActionBars implements IActionBarConfigurer2,
 			IActionBars2 {
-        
-        IWorkbenchWindowConfigurer configurer;
-        
-        /**
-         * Fake action bars to use to build the menus and toolbar contributions for the
-         * workbench.  We cannot use the actual workbench action bars, since doing so would
-         * make the action set items visible.  
-         */
-        MenuManager menuManager = new MenuManager();
-        CoolBarManager coolBarManager = new CoolBarManager();
-        StatusLineManager statusLineManager = new StatusLineManager();
-        
-        /**
-         * Create a new instance of this class.
-         * 
-         * @param configurer the configurer
-         */
-        public CustomizeActionBars(IWorkbenchWindowConfigurer configurer) {
-            this.configurer = configurer;
-        }
 
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.application.IActionBarConfigurer#getWindowConfigurer()
-         */
-        public IWorkbenchWindowConfigurer getWindowConfigurer() {
-            return configurer;
-        }
-        
-        /*
-         *  (non-Javadoc)
-         * @see org.eclipse.ui.application.IActionBarConfigurer#getMenuManager()
-         */
-        public IMenuManager getMenuManager() {
-            return menuManager;
-        }
+		IWorkbenchWindowConfigurer configurer;
 
-        /*
-         *  (non-Javadoc)
-         * @see org.eclipse.ui.application.IActionBarConfigurer#getStatusLineManager()
-         */
-        public IStatusLineManager getStatusLineManager() {
-            return statusLineManager;
-        }
+		/**
+		 * Fake action bars to use to build the menus and toolbar contributions
+		 * for the workbench. We cannot use the actual workbench action bars,
+		 * since doing so would make the action set items visible.
+		 */
+		private MenuManager menuManager = new MenuManager();
+		private CoolBarManager coolBarManager = new CoolBarManager();
+		private StatusLineManager statusLineManager = new StatusLineManager();
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.internal.AbstractActionBarConfigurer#getCoolBarManager()
-         */
-        public ICoolBarManager getCoolBarManager() {
-            return coolBarManager;
-        }
+		/**
+		 * Create a new instance of this class.
+		 * 
+		 * @param configurer
+		 *            the configurer
+		 */
+		public CustomizeActionBars(IWorkbenchWindowConfigurer configurer) {
+			this.configurer = configurer;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IActionBars#getToolBarManager()
-         */
-        public IToolBarManager getToolBarManager() {
-            return null;
-        }
+		public IWorkbenchWindowConfigurer getWindowConfigurer() {
+			return configurer;
+		}
 
-        public void setGlobalActionHandler(String actionID, IAction handler) {
-        }
+		public IMenuManager getMenuManager() {
+			return menuManager;
+		}
 
-        public void updateActionBars() {
-        }
+		public IStatusLineManager getStatusLineManager() {
+			return statusLineManager;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IActionBars#clearGlobalActionHandlers()
-         */
-        public void clearGlobalActionHandlers() {
-        }
+		public ICoolBarManager getCoolBarManager() {
+			return coolBarManager;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IActionBars#getGlobalActionHandler(java.lang.String)
-         */
-        public IAction getGlobalActionHandler(String actionId) {
-            return null;
-        }
+		public IToolBarManager getToolBarManager() {
+			return null;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.application.IActionBarConfigurer#registerGlobalAction(org.eclipse.jface.action.IAction)
-         */
-        public void registerGlobalAction(IAction action) {
-        }
+		public void setGlobalActionHandler(String actionID, IAction handler) {
+		}
 
-        /**
-         * Clean up the action bars.
-         */
+		public void updateActionBars() {
+		}
+
+		public void clearGlobalActionHandlers() {
+		}
+
+		public IAction getGlobalActionHandler(String actionId) {
+			return null;
+		}
+
+		public void registerGlobalAction(IAction action) {
+		}
+
+		/**
+		 * Clean up the action bars.
+		 */
 		public void dispose() {
 			coolBarManager.dispose();
-	        menuManager.dispose();	
-	        statusLineManager.dispose();
-	    }
+			menuManager.dispose();
+			statusLineManager.dispose();
+		}
 
 		public final IServiceLocator getServiceLocator() {
 			return configurer.getWindow();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarContributionItem(org.eclipse.jface.action.IToolBarManager, java.lang.String)
-		 */
-		public IToolBarContributionItem createToolBarContributionItem(IToolBarManager toolBarManager, String id) {
+		public IToolBarContributionItem createToolBarContributionItem(
+				IToolBarManager toolBarManager, String id) {
 			return new ToolBarContributionItem2(toolBarManager, id);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarManager(int)
-		 */
 		public IToolBarManager createToolBarManager() {
 			return new ToolBarManager();
 		}
-    }
+	}
 
-    class ShortcutMenuItemContentProvider implements IStructuredContentProvider {
+	/**
+	 * Create an instance of this Dialog.
+	 * 
+	 * @param configurer
+	 *            the configurer
+	 * @param persp
+	 *            the perspective
+	 */
+	public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer,
+			Perspective persp) {
+		super(configurer.getWindow().getShell());
+		this.treeManager = new TreeManager();
+		this.configurer = configurer;
+		perspective = persp;
+		window = (WorkbenchWindow) configurer.getWindow();
 
-        ShortcutMenuItemContentProvider() {
-        }
+		toDispose = new HashSet(); 
 
-        public Object[] getElements(Object input) {
-            if (input instanceof ShortcutMenu) {
-                return ((ShortcutMenu) input).getItems().toArray();
-            }
-            return new Object[0];
-        }
+		initializeIcons();
 
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        }
+		initializeActionSetInput();
+		loadMenuAndToolbarStructure();
+	}
 
-        public void dispose() {
-        }
-    }
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		String title = perspective.getDesc().getLabel();
 
-    class ShortcutMenuItemLabelProvider extends LabelProvider implements
-            ITableLabelProvider {
-        private Map imageTable = new Hashtable();
-
-        private final static int COLUMN_ID = 0;
-
-        private final static int COLUMN_DESCRIPTION = 1;
-
-        ShortcutMenuItemLabelProvider() {
-        }
-
-        public final void dispose() {
-            for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
-                ((Image) i.next()).dispose();
-            }
-            imageTable = null;
-        }
-
-        public Image getColumnImage(Object element, int index) {
-            if (index != COLUMN_ID) {
-				return null;
-			}
-            ImageDescriptor descriptor = null;
-            if (element instanceof IPerspectiveDescriptor) {
-                descriptor = ((IPerspectiveDescriptor) element)
-                        .getImageDescriptor();
-            } else if (element instanceof IViewDescriptor) {
-                descriptor = ((IViewDescriptor) element).getImageDescriptor();
-            } else if (element instanceof WorkbenchWizardElement) {
-                descriptor = ((WorkbenchWizardElement) element)
-                        .getImageDescriptor();
-            }
-            if (descriptor == null) {
-				return null;
-			}
-            //obtain the cached image corresponding to the descriptor
-            if (imageTable == null) {
-                imageTable = new Hashtable(40);
-            }
-            Image image = (Image) imageTable.get(descriptor);
-            if (image == null) {
-                image = descriptor.createImage();
-                imageTable.put(descriptor, image);
-            }
-            return image;
-        }
-
-        public String getColumnText(Object element, int columnIndex) {
-            String text = null;
-            switch (columnIndex) {
-            case COLUMN_ID:
-                text = getText(element);
-                break;
-            case COLUMN_DESCRIPTION:
-                if (element instanceof IPerspectiveDescriptor) {
-                    text = ((IPerspectiveDescriptor) element).getDescription();
-                } else if (element instanceof IViewDescriptor) {
-                    text = ((IViewDescriptor) element).getDescription();
-                } else if (element instanceof WorkbenchWizardElement) {
-                    text = ((WorkbenchWizardElement) element).getDescription();
-                }
-                break;
-            }
-            if (text == null) {
-				text = ""; //$NON-NLS-1$
-			}
-            return text;
-        }
-
-        public String getText(Object element) {
-            String text = null;
-            if (element instanceof IPerspectiveDescriptor) {
-                text = ((IPerspectiveDescriptor) element).getLabel();
-            } else if (element instanceof IViewDescriptor) {
-                text = ((IViewDescriptor) element).getLabel();
-            } else if (element instanceof WorkbenchWizardElement) {
-                text = ((WorkbenchWizardElement) element).getLabel(element);
-            }
-            if (text == null) {
-				text = ""; //$NON-NLS-1$
-			}
-            return text;
-        }
-    }
-
-    class ShortcutMenu extends Object {
-        /**
-         * Tree representation for the shortcut items.  
-         */
-        private final static String ID_VIEW = "org.eclipse.ui.views"; //$NON-NLS-1$
-
-        private final static String ID_WIZARD = "org.eclipse.ui.wizards"; //$NON-NLS-1$
-
-        private final static String ID_PERSP = "org.eclipse.ui.perspectives"; //$NON-NLS-1$
-
-        String id;
-
-        String label;
-
-        private ArrayList items = new ArrayList();
-
-        private ArrayList checkedItems = new ArrayList();
-
-        ArrayList children = new ArrayList();
-
-        ShortcutMenu parent = null;
-
-        ShortcutMenu(ShortcutMenu parent, String id, String label) {
-            super();
-            this.id = id;
-            this.parent = parent;
-            this.label = removeShortcut(label);
-            this.label = DialogUtil.removeAccel(this.label);
-            if (parent != null) {
-				parent.children.add(this);
-			}
-        }
-
-        void addItem(Object item) {
-            items.add(item);
-        }
-
-        void addCheckedItem(Object item) {
-            checkedItems.add(item);
-        }
-
-        public String toString() {
-            return label;
-        }
-
-        ArrayList getCheckedItems() {
-            return checkedItems;
-        }
-
-        ArrayList getCheckedItemIds() {
-            ArrayList ids = new ArrayList();
-            if (getMenuId() == ID_PERSP) {
-                for (int i = 0; i < checkedItems.size(); i++) {
-                    IPerspectiveDescriptor item = (IPerspectiveDescriptor) checkedItems
-                            .get(i);
-                    ids.add(item.getId());
-                }
-            } else if (getMenuId() == ID_VIEW) {
-                for (int i = 0; i < checkedItems.size(); i++) {
-                    IViewDescriptor item = (IViewDescriptor) checkedItems
-                            .get(i);
-                    ids.add(item.getId());
-                }
-            } else if (getMenuId() == ID_WIZARD) {
-                for (int i = 0; i < checkedItems.size(); i++) {
-                    WorkbenchWizardElement item = (WorkbenchWizardElement) checkedItems
-                            .get(i);
-                    ids.add(item.getId());
-                }
-            }
-            for (int i = 0; i < children.size(); i++) {
-                ShortcutMenu menu = (ShortcutMenu) children.get(i);
-                ids.addAll(menu.getCheckedItemIds());
-            }
-            return ids;
-        }
-
-        ArrayList getChildren() {
-            return children;
-        }
-
-        ArrayList getItems() {
-            return items;
-        }
-
-        private String getMenuId() {
-            if (parent == rootMenu) {
-				return id;
-			}
-
-            return parent.getMenuId();
-        }
-
-        ArrayList getSubtreeItems() {
-            ArrayList subtreeItems = new ArrayList();
-            subtreeItems.add(this);
-            for (int i = 0; i < children.size(); i++) {
-                ShortcutMenu child = (ShortcutMenu) children.get(i);
-                subtreeItems.addAll(child.getSubtreeItems());
-            }
-            return subtreeItems;
-        }
-
-        Object getItem(String menuItemId) {
-            for (int i = 0; i < items.size(); i++) {
-                Object item = items.get(i);
-                String itemId = null;
-                if (id == ID_PERSP) {
-                    itemId = ((IPerspectiveDescriptor) item).getId();
-                } else if (id == ID_VIEW) {
-                    itemId = ((IViewDescriptor) item).getId();
-                } else if (id == ID_WIZARD) {
-                    itemId = ((WorkbenchWizardElement) item).getId();
-                }
-                if (menuItemId.equals(itemId)) {
-					return item;
-				}
-            }
-            return null;
-        }
-
-        boolean isFullyChecked() {
-            if (getItems().size() != getCheckedItems().size()) {
-				return false;
-			}
-            for (int i = 0; i < children.size(); i++) {
-                ShortcutMenu child = (ShortcutMenu) children.get(i);
-                if (!child.isFullyChecked()) {
-					return false;
-				}
-            }
-            return true;
-        }
-
-        boolean isFullyUnchecked() {
-            if (getCheckedItems().size() != 0) {
-				return false;
-			}
-            for (int i = 0; i < children.size(); i++) {
-                ShortcutMenu child = (ShortcutMenu) children.get(i);
-                if (!child.isFullyUnchecked()) {
-					return false;
-				}
-            }
-            return true;
-        }
-
-        void removeCheckedItem(Object item) {
-            checkedItems.remove(item);
-        }
-
-        void checked(boolean checked) {
-            checkedItems = new ArrayList();
-            if (checked) {
-                checkedItems.addAll(items);
-            }
-            for (int i = 0; i < children.size(); i++) {
-                ShortcutMenu child = (ShortcutMenu) children.get(i);
-                child.checked(checked);
-            }
-        }
-    }
-
-    class TreeContentProvider implements ITreeContentProvider {
-        public void dispose() {
-        }
-
-        public Object[] getChildren(Object element) {
-            if (element instanceof ActionSetDisplayItem) {
-                ActionSetDisplayItem node = (ActionSetDisplayItem) element;
-                return node.children.toArray();
-            } else if (element instanceof ShortcutMenu) {
-                ShortcutMenu node = (ShortcutMenu) element;
-                return node.children.toArray();
-            } else if (element instanceof ArrayList) {
-            	return ((ArrayList) element).toArray();
-            }
-            return new Object[0];
-        }
-
-        public Object[] getElements(Object element) {
-            return getChildren(element);
-        }
-
-        public Object getParent(Object element) {
-            if (element instanceof ActionSetDisplayItem) {
-                ActionSetDisplayItem node = (ActionSetDisplayItem) element;
-                return node.parent;
-            } else if (element instanceof ShortcutMenu) {
-                ShortcutMenu node = (ShortcutMenu) element;
-                return node.parent;
-            }
-            return null;
-        }
-
-        public boolean hasChildren(Object element) {
-            if (element instanceof ActionSetDisplayItem) {
-                ActionSetDisplayItem node = (ActionSetDisplayItem) element;
-                return node.children.size() > 0;
-            } else if (element instanceof ShortcutMenu) {
-                ShortcutMenu node = (ShortcutMenu) element;
-                return node.children.size() > 0;
-            }
-            return false;
-        }
-
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        }
-    }
-
-    class ActionSetLabelProvider extends LabelProvider {
-        private Map imageTable = new Hashtable();
-
-        public void dispose() {
-            for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
-                ((Image) i.next()).dispose();
-            }
-            imageTable = null;
-        }
-
-        public Image getImage(Object element) {
-            ActionSetDisplayItem item = (ActionSetDisplayItem) element;
-            ImageDescriptor descriptor = item.imageDescriptor;
-            if (descriptor == null) {
-                if (item.type == ActionSetDisplayItem.MENUITEM) {
-                    if (item.children.size() > 0) {
-                        if (item.isTopLevelMenu()) {
-							descriptor = menuImageDescriptor;
-						} else {
-							descriptor = submenuImageDescriptor;
-						}
-                    } else {
-						return null;
-					}
-                } else if (item.type == ActionSetDisplayItem.TOOLITEM) {
-                    if (item.children.size() > 0) {
-						descriptor = toolbarImageDescriptor;
-					} else {
-						return null;
-					}
-                } else {
-                    return null;
-                }
-            }
-            //obtain the cached image corresponding to the descriptor
-            if (imageTable == null) {
-                imageTable = new Hashtable(40);
-            }
-            Image image = (Image) imageTable.get(descriptor);
-            if (image == null) {
-                image = descriptor.createImage();
-                imageTable.put(descriptor, image);
-            }
-            return image;
-        }
-
-        public String getText(Object element) {
-            if (element instanceof ActionSetDisplayItem) {
-                ActionSetDisplayItem item = (ActionSetDisplayItem) element;
-                String text = item.getDisplayText();
-                if ((item.type == ActionSetDisplayItem.MENUITEM)
-                        && (item.children.size() > 0)) {
-					text = text + "  >"; //$NON-NLS-1$ 
-				}
-                return text;
-            }
-            return ""; //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Create an instance of this Dialog.
-     * 
-     * @param configurer the configurer
-     * @param persp the perspective
-     */
-    public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer, Perspective persp) {
-        super(configurer.getWindow().getShell());        
-        this.configurer = configurer;
-        perspective = persp;
-        window = (WorkbenchWindow) configurer.getWindow();
-        
-        initializeActionSetInput();
-        initializeShortcutMenuInput();
-    }
-
-    /**
-     * Adds listeners for the Commands tab.
-     * 
-     * @since 3.0
-     */
-    private void addActionSetsListeners() {
-        tabFolder.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event) {
-                handleTabSelected(event);
-            }
-        });
-        actionSetsViewer
-                .addSelectionChangedListener(new ISelectionChangedListener() {
-                    public void selectionChanged(SelectionChangedEvent event) {
-                        handleActionSetSelected(event);
-                    }
-                });
-        actionSetsViewer.getControl().addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {
-                handleActionSetViewerKeyPressed(e);
-            }
-
-            public void keyReleased(KeyEvent e) {
-            }
-        });
-        actionSetMenuViewer.getControl().addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {
-                handleActionSetMenuViewerKeyPressed(e);
-            }
-
-            public void keyReleased(KeyEvent e) {
-            }
-        });
-        actionSetToolbarViewer.getControl().addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {
-                handleActionSetToolbarViewerKeyPressed(e);
-            }
-
-            public void keyReleased(KeyEvent e) {
-            }
-        });
-    }
-
-    /**
-     * Adds listeners for the Shortcuts tab.
-     * 
-     * @since 3.0
-     */
-    private void addShortcutListeners() {
-        menusCombo.addSelectionListener(new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // do nothing
-            }
-
-            public void widgetSelected(SelectionEvent e) {
-                handleMenuSelected();
-            }
-        });
-        menusCombo.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                handleMenuModified();
-            }
-        });
-        menuCategoriesViewer
-                .addSelectionChangedListener(new ISelectionChangedListener() {
-                    public void selectionChanged(SelectionChangedEvent event) {
-                        handleMenuCategorySelected(event);
-                    }
-                });
-        menuCategoriesViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
-                handleMenuCategoryChecked(event);
-            }
-        });
-        menuItemsViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
-                handleMenuItemChecked(event);
-            }
-        });
-    }
-
-    private PluginActionSet buildMenusAndToolbarsFor(CustomizeActionBars customizeActionBars, ActionSetDescriptor actionSetDesc) {
-        String id = actionSetDesc.getId();
-        ActionSetActionBars bars = new ActionSetActionBars(
-        		customizeActionBars, window, customizeActionBars, id);
-        PluginActionSetBuilder builder = new PluginActionSetBuilder();
-        PluginActionSet actionSet = null;
-        try {
-            actionSet = (PluginActionSet) actionSetDesc.createActionSet();
-            actionSet.init(null, bars);
-        } catch (CoreException ex) {
-            WorkbenchPlugin
-                    .log("Unable to create action set " + actionSetDesc.getId(), ex); //$NON-NLS-1$
-            return null;
-        }
-        builder.buildMenuAndToolBarStructure(actionSet, window);
-        return actionSet;
-    }
-
-    private void checkInitialActionSetSelections() {
-        // Check off the action sets that are active for the perspective.
-        IActionSetDescriptor[] actionSetDescriptors = ((WorkbenchPage)window.getActivePage()).getActionSets();
-        initiallyActive  = Arrays.asList(actionSetDescriptors);
-        if (actionSets != null) {
-            for (int i = 0; i < actionSetDescriptors.length; i++) {
-				actionSetsViewer.setChecked(actionSetDescriptors[i], true);
-			}
-        }
-    }
-
-    private void checkInitialMenuCategorySelections(ShortcutMenu menu) {
-        // Check off the shortcut categories that are active for the perspective.
-        if (menu.children.size() == 0) {
-			updateMenuCategoryCheckedState(menu);
-		} else {
-            for (int i = 0; i < menu.children.size(); i++) {
-                ShortcutMenu child = (ShortcutMenu) menu.children.get(i);
-                checkInitialMenuCategorySelections(child);
-            }
-        }
-    }
-
-    public boolean close() {
-        if (showShortcutTab()) {
-            lastSelectedMenuIndex = menusCombo.getSelectionIndex();
-        }
-        lastSelectedTab = tabFolder.getSelectionIndex();
-        IStructuredSelection selection = (IStructuredSelection) actionSetsViewer
-                .getSelection();
-        if (selection.isEmpty()) {
-			lastSelectedActionSetId = null;
-		} else {
-			lastSelectedActionSetId = ((ActionSetDescriptor) selection
-                    .getFirstElement()).getId();
-		}
-        return super.close();
-    }
-
-    protected void configureShell(Shell shell) {
-        super.configureShell(shell);
-        String title=perspective.getDesc().getLabel();
-        
-        title = NLS.bind(WorkbenchMessages.ActionSetSelection_customize,title);
-        shell.setText(title);
-        window.getWorkbench().getHelpSystem().setHelp(shell,
+		title = NLS.bind(WorkbenchMessages.ActionSetSelection_customize, title);
+		shell.setText(title);
+		window.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
-    }
+	}
 
-    boolean containsActionSet(MenuManager mgr, String actionSetId) {
-        // Return whether or not the given menuManager contains items for the
-        // given actionSetId.
-        IContributionItem[] menuItems = mgr.getItems();
-        for (int j = 0; j < menuItems.length; j++) {
-            IContributionItem menuItem = menuItems[j];
-            if (menuItem instanceof ActionSetContributionItem) {
-                ActionSetContributionItem actionSetItem = (ActionSetContributionItem) menuItem;
-                if (actionSetItem.getActionSetId().equals(actionSetId)) {
-                    return true;
-                }
-            } else if (menuItem instanceof MenuManager) {
-                MenuManager childMgr = (MenuManager) menuItem;
-                boolean found = containsActionSet(childMgr, actionSetId);
-                if (found) {
-					return true;
+	protected Control createDialogArea(Composite parent) {
+		// Create a font for titles in the tooltips
+		FontData[] defaultFont = JFaceResources.getDefaultFont().getFontData();
+		FontData boldFontData = new FontData(defaultFont[0].getName(),
+				defaultFont[0].getHeight(), SWT.BOLD);
+		tooltipHeading = new Font(parent.getDisplay(), boldFontData);
+
+		Composite composite = (Composite) super.createDialogArea(parent);
+
+		// tab folder
+		tabFolder = new TabFolder(composite, SWT.NONE);
+
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.widthHint = convertHorizontalDLUsToPixels(TAB_WIDTH_IN_DLUS);
+		gd.heightHint = convertVerticalDLUsToPixels(TAB_HEIGHT_IN_DLUS);
+		tabFolder.setLayoutData(gd);
+
+		// Tool Bar Item Hiding Page
+		TabItem tab = new TabItem(tabFolder, SWT.NONE);
+		tab.setText(WorkbenchMessages.HideToolBarItems_toolBarItemsTab);
+		tab.setControl(createToolBarVisibilityPage(tabFolder));
+		applyDialogFont(tabFolder);
+
+		// Menu Item Hiding Page
+		tab = new TabItem(tabFolder, SWT.NONE);
+		tab.setControl(createMenuVisibilityPage(tabFolder));
+		tab.setText(WorkbenchMessages.HideMenuItems_menuItemsTab);
+		applyDialogFont(tabFolder);
+
+		// Action Set Availability Page
+		actionSetTab = new TabItem(tabFolder, SWT.NONE);
+		actionSetTab
+				.setText(WorkbenchMessages.ActionSetSelection_actionSetsTab);
+		actionSetTab.setControl(createActionSetAvailabilityPage(tabFolder));
+		applyDialogFont(tabFolder);
+
+		// Shortcuts Page
+		if (showShortcutTab()) {
+			TabItem item1 = new TabItem(tabFolder, SWT.NONE);
+			item1.setText(WorkbenchMessages.Shortcuts_shortcutTab);
+			item1.setControl(createShortCutsPage(tabFolder));
+		}
+
+		return composite;
+	}
+
+	private Composite createShortCutsPage(Composite parent) {
+		GridData data;
+
+		Composite menusComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		menusComposite.setLayout(layout);
+
+		// Select... label
+		Label label = new Label(menusComposite, SWT.WRAP);
+		label.setText(NLS.bind(
+				WorkbenchMessages.Shortcuts_selectShortcutsLabel, perspective
+						.getDesc().getLabel()));
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		label.setLayoutData(data);
+
+		Label sep = new Label(menusComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		SashForm sashComposite = new SashForm(menusComposite, SWT.HORIZONTAL);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		sashComposite.setLayoutData(data);
+
+		// Menus List
+		Composite menusGroup = new Composite(sashComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		menusGroup.setLayout(layout);
+		menusGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		label = new Label(menusGroup, SWT.WRAP);
+		label.setText(WorkbenchMessages.Shortcuts_availableMenus);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		Combo menusCombo = new Combo(menusGroup, SWT.READ_ONLY);
+		menusCombo
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		ComboViewer menusViewer = new ComboViewer(menusCombo);
+		menusViewer.setContentProvider(TreeManager.getTreeContentProvider());
+		menusViewer.setLabelProvider(TreeManager.getLabelProvider());
+
+		// Categories Tree
+		label = new Label(menusGroup, SWT.WRAP);
+		label.setText(WorkbenchMessages.Shortcuts_availableCategories);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		final CheckboxTreeViewer menuCategoriesViewer = new CheckboxTreeViewer(
+				menusGroup);
+		menuCategoriesViewer.getControl().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
+		menuCategoriesViewer.setLabelProvider(TreeManager.getLabelProvider());
+		menuCategoriesViewer.setContentProvider(TreeManager
+				.getTreeContentProvider());
+		menuCategoriesViewer.setComparator(new WorkbenchViewerComparator());
+		menuCategoriesViewer.setCheckStateProvider(new CategoryCheckProvider());
+		menuCategoriesViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Category category = (Category) event.getElement();
+				category.setItemsState(event.getChecked());
+				updateCategoryAndParents(menuCategoriesViewer, category);
+			}
+		});
+
+		treeManager.addListener(new CheckListener() {
+			public void checkChanged(TreeItem changedItem) {
+				if (changedItem instanceof Category) {
+					menuCategoriesViewer.update(changedItem, null);
+				} else if (changedItem instanceof ShortcutItem) {
+					ShortcutItem item = (ShortcutItem) changedItem;
+					if (item.getCategory() != null) {
+						item.getCategory().update();
+						updateCategoryAndParents(menuCategoriesViewer, item
+								.getCategory());
+					}
 				}
-            }
-        }
-        return false;
-    }
-
-    private Composite createActionSetsPage(Composite parent) {
-    	GridData data;
-    	
-        Composite actionSetsComposite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        actionSetsComposite.setLayout(layout);
-
-        // Select... label
-        Label label = new Label(actionSetsComposite, SWT.WRAP);
-        label
-                .setText(NLS.bind(WorkbenchMessages.ActionSetSelection_selectActionSetsLabel,perspective.getDesc().getLabel() ));
-        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        label.setLayoutData(data);
-
-        Label sep = new Label(actionSetsComposite, SWT.HORIZONTAL
-                | SWT.SEPARATOR);
-        sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-        SashForm sashComposite = new SashForm(actionSetsComposite,
-                SWT.HORIZONTAL);
-        data = new GridData(SWT.FILL, SWT.FILL, true, true);
-        sashComposite.setLayoutData(data);
-
-        // Action Set List Composite
-        Composite actionSetGroup = new Composite(sashComposite, SWT.NONE);
-        layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        actionSetGroup.setLayout(layout);
-        actionSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        label = new Label(actionSetGroup, SWT.WRAP);
-        label.setText(WorkbenchMessages.ActionSetSelection_availableActionSets);
-        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        
-        actionSetsViewer = CheckboxTableViewer.newCheckList(actionSetGroup,
-                SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        actionSetsViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        actionSetsViewer.setLabelProvider(new WorkbenchLabelProvider());
-        actionSetsViewer.setContentProvider(new ArrayContentProvider());
-        actionSetsViewer.setComparator(new ActionSetComparator());
-        actionSetsViewerTooltip = new DefaultToolTip(actionSetsViewer.getControl(),ToolTip.RECREATE,true){
-
-			public Point getLocation(Point tipSize, Event event) {
-				return getShell().getDisplay().getCursorLocation();
 			}
-        	
-        };
+		});
 
-        // Menu and toolbar composite
-        Composite actionGroup = new Composite(sashComposite, SWT.NONE);
-        layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.makeColumnsEqualWidth = true;
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        layout.horizontalSpacing = 0;
-        actionGroup.setLayout(layout);
-        actionGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		// Menu items list
+		Composite menuItemsGroup = new Composite(sashComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		menuItemsGroup.setLayout(layout);
+		menuItemsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
 
-        Composite menubarGroup = new Composite(actionGroup, SWT.NONE);
-        layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        menubarGroup.setLayout(layout);
-        menubarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        
-        label = new Label(menubarGroup, SWT.WRAP);
-        label.setText(WorkbenchMessages.ActionSetSelection_menubarActions); 
-        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		label = new Label(menuItemsGroup, SWT.WRAP);
+		label.setText(WorkbenchMessages.Shortcuts_allShortcuts);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        actionSetMenuViewer = new TreeViewer(menubarGroup);
-        actionSetMenuViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-        actionSetMenuViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        actionSetMenuViewer.setLabelProvider(new ActionSetLabelProvider());
-        actionSetMenuViewer.setContentProvider(new TreeContentProvider());
-        actionSetMenuViewerTooltip = new DefaultToolTip(actionSetMenuViewer.getControl(),ToolTip.RECREATE, true) {
+		final CheckboxTableViewer menuItemsViewer = CheckboxTableViewer
+				.newCheckList(menuItemsGroup, SWT.BORDER | SWT.H_SCROLL
+						| SWT.V_SCROLL);
+		Table menuTable = menuItemsViewer.getTable();
+		menuTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		menuItemsViewer.setLabelProvider(new ShortcutLabelProvider());
+		menuItemsViewer.setCheckStateProvider(TreeManager
+				.getCheckStateProvider());
+		menuItemsViewer.addCheckStateListener(treeManager
+				.getViewerCheckStateListener());
+		treeManager.getCheckListener(menuItemsViewer);
 
-			public Point getLocation(Point tipSize, Event event) {
-				return getShell().getDisplay().getCursorLocation();
+		menuItemsViewer
+				.setContentProvider(new TreeManager.TreeItemContentProvider() {
+					public Object[] getChildren(Object parentElement) {
+						if (parentElement instanceof Category)
+							return ((Category) parentElement)
+									.getContributionItems().toArray();
+						return super.getChildren(parentElement);
+					}
+				});
+		menuItemsViewer.setComparator(new WorkbenchViewerComparator());
+
+		// update menuCategoriesViewer, and menuItemsViewer on a change to
+		// menusViewer
+		menusViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						Category category = (Category) ((IStructuredSelection) event
+								.getSelection()).getFirstElement();
+						menuCategoriesViewer.setInput(category);
+						menuItemsViewer.setInput(category);
+						if (category.getChildren().size() != 0) {
+							setSelectionOn(menuCategoriesViewer, category
+									.getChildren().get(0));
+						}
+					}
+				});
+
+		// update menuItemsViewer on a change to menuCategoriesViewer
+		menuCategoriesViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						Category category = (Category) ((IStructuredSelection) event
+								.getSelection()).getFirstElement();
+						menuItemsViewer.setInput(category);
+					}
+				});
+
+		menuTable.setHeaderVisible(true);
+		int[] columnWidths = new int[shortcutMenuColumnWidths.length];
+		for (int i = 0; i < shortcutMenuColumnWidths.length; i++) {
+			columnWidths[i] = convertHorizontalDLUsToPixels(shortcutMenuColumnWidths[i]);
+		}
+		for (int i = 0; i < shortcutMenuColumnHeaders.length; i++) {
+			TableColumn tc = new TableColumn(menuTable, SWT.NONE, i);
+			tc.setResizable(true);
+			tc.setText(shortcutMenuColumnHeaders[i]);
+			tc.setWidth(columnWidths[i]);
+		}
+		sashComposite.setWeights(new int[] { 30, 70 });
+
+		menusViewer.setInput(shortcuts);
+
+		if (shortcuts.getChildren().size() > 0) {
+			setSelectionOn(menusViewer, shortcuts.getChildren().get(0));
+		}
+
+		return menusComposite;
+	}
+
+	private Composite createActionSetAvailabilityPage(Composite parent) {
+		GridData data;
+
+		Composite actionSetsComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		actionSetsComposite.setLayout(layout);
+
+		// Select... label
+		Label label = new Label(actionSetsComposite, SWT.WRAP);
+		label.setText(NLS.bind(
+				WorkbenchMessages.ActionSetSelection_selectActionSetsLabel,
+				perspective.getDesc().getLabel()));
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		label.setLayoutData(data);
+
+		Label sep = new Label(actionSetsComposite, SWT.HORIZONTAL
+				| SWT.SEPARATOR);
+		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		SashForm sashComposite = new SashForm(actionSetsComposite,
+				SWT.HORIZONTAL);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		sashComposite.setLayoutData(data);
+
+		// Action Set List Composite
+		Composite actionSetGroup = new Composite(sashComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		actionSetGroup.setLayout(layout);
+		actionSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
+
+		label = new Label(actionSetGroup, SWT.WRAP);
+		label.setText(WorkbenchMessages.ActionSetSelection_availableActionSets);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		final CheckboxTableViewer actionSetsViewer = CheckboxTableViewer
+				.newCheckList(actionSetGroup, SWT.BORDER | SWT.H_SCROLL
+						| SWT.V_SCROLL);
+		actionSetAvailabilityTable = actionSetsViewer;
+		actionSetsViewer.getTable().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
+		actionSetsViewer.setLabelProvider(new LabelProvider());
+		actionSetsViewer.setContentProvider(new ArrayContentProvider());
+		actionSetsViewer.setComparator(new WorkbenchViewerComparator());
+		actionSetsViewer.setCheckStateProvider(new ICheckStateProvider() {
+			public boolean isChecked(Object element) {
+				return ((ActionSet) element).isActive();
 			}
-        	
-        };
 
-        Composite toolbarGroup = new Composite(actionGroup, SWT.NONE);
-        layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        toolbarGroup.setLayout(layout);
-        toolbarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        
-        label = new Label(toolbarGroup, SWT.WRAP);
-        label.setText(WorkbenchMessages.ActionSetSelection_toolbarActions);
-        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-        actionSetToolbarViewer = new TreeViewer(toolbarGroup);
-        actionSetToolbarViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-        actionSetToolbarViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        actionSetToolbarViewer
-                .setLabelProvider(new ActionSetLabelProvider());
-        actionSetToolbarViewer.setContentProvider(new TreeContentProvider());
-        actionSetToolbarViewerTooltip = new DefaultToolTip(actionSetToolbarViewer.getControl(),ToolTip.RECREATE,true){
-
-			public Point getLocation(Point tipSize, Event event) {
-				return getShell().getDisplay().getCursorLocation();
+			public boolean isGrayed(Object element) {
+				return false;
 			}
-        	
-        };
+		});
+		actionSetsViewer.setInput(actionSets.toArray());
 
-        sashComposite.setWeights(new int[] { 30, 70 });
+		Table table = actionSetsViewer.getTable();
+		new TableToolTip(table);
 
-        // Use F2... label
-        label = new Label(actionSetsComposite, SWT.WRAP);
-        label.setText(WorkbenchMessages.ActionSetSelection_selectActionSetsHelp);
-        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		final ActionSet[] selectedActionSet = { null };
 
-        return actionSetsComposite;
-    }
-
-    /**
-     * Returns whether the shortcut tab should be shown.
-     * 
-     * @return <code>true</code> if the shortcut tab should be shown,
-     * and <code>false</code> otherwise
-     * @since 3.0
-     */
-    private boolean showShortcutTab() {
-        return window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)
-                || window
-                        .containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)
-                || window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
-    }
-
-    protected Control createDialogArea(Composite parent) {
-        Composite composite = (Composite) super.createDialogArea(parent);
-
-        // tab folder
-        tabFolder = new TabFolder(composite, SWT.NONE);
-        
-        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-        gd.widthHint = convertHorizontalDLUsToPixels(TAB_WIDTH_IN_DLUS);
-        gd.heightHint = convertVerticalDLUsToPixels(TAB_HEIGHT_IN_DLUS);
-        tabFolder.setLayoutData(gd);
-
-        // Shortcuts tab
-        if (showShortcutTab()) {
-            TabItem item1 = new TabItem(tabFolder, SWT.NONE);
-            item1.setText(WorkbenchMessages.ActionSetSelection_menuTab);
-            item1.setControl(createMenusPage(tabFolder));
-            addShortcutListeners();
-            ArrayList children = rootMenu.getChildren();
-            String[] itemNames = new String[children.size()];
-            for (int i = 0; i < children.size(); i++) {
-                itemNames[i] = ((ShortcutMenu) children.get(i)).label;
-            }
-            menusCombo.setItems(itemNames);
-        }
-
-        // Commands tab
-        TabItem item = new TabItem(tabFolder, SWT.NONE);
-        item.setText(WorkbenchMessages.ActionSetSelection_actionSetsTab); 
-        item.setControl(createActionSetsPage(tabFolder));
-        applyDialogFont(tabFolder);
-        addActionSetsListeners();
-        actionSetsViewer.setInput(actionSets);
-        checkInitialActionSetSelections();
-
-        // now that both tabs are set up, initialize selections
-        setInitialSelections();
-
-        return composite;
-    }
-
-    private Composite createMenusPage(Composite parent) {
-    	GridData data;
-
-        Composite menusComposite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        menusComposite.setLayout(layout);
-
-        // Select... label
-        Label label = new Label(menusComposite, SWT.WRAP);
-        label.setText(NLS.bind(WorkbenchMessages.ActionSetSelection_selectMenusLabel,  perspective.getDesc().getLabel() )); 
-        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        label.setLayoutData(data);
-
-        Label sep = new Label(menusComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-        sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-        SashForm sashComposite = new SashForm(menusComposite, SWT.HORIZONTAL);
-        data = new GridData(SWT.FILL, SWT.FILL, true, true);
-        sashComposite.setLayoutData(data);
-
-        // Menus List
-        Composite menusGroup = new Composite(sashComposite, SWT.NONE);
-        layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        menusGroup.setLayout(layout);
-        menusGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        label = new Label(menusGroup, SWT.WRAP);
-        label.setText(WorkbenchMessages.ActionSetSelection_availableMenus); 
-        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-        menusCombo = new Combo(menusGroup, SWT.READ_ONLY);
-        menusCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-        // Categories Tree
-        label = new Label(menusGroup, SWT.WRAP);
-        label.setText(WorkbenchMessages.ActionSetSelection_availableCategories);
-        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-        menuCategoriesViewer = new CheckboxTreeViewer(menusGroup);
-        menuCategoriesViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        menuCategoriesViewer.setLabelProvider(new LabelProvider());
-        menuCategoriesViewer.setContentProvider(new TreeContentProvider());
-        menuCategoriesViewer.setComparator(new WorkbenchViewerComparator());
-
-        // Menu items list
-        Composite menuItemsGroup = new Composite(sashComposite, SWT.NONE);
-        layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        menuItemsGroup.setLayout(layout);
-        menuItemsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        label = new Label(menuItemsGroup, SWT.WRAP);
-        label.setText(WorkbenchMessages.ActionSetSelection_menuItems);
-        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-        menuItemsViewer = CheckboxTableViewer.newCheckList(menuItemsGroup,
-                SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        Table menuTable = menuItemsViewer.getTable();
-        menuTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        menuItemsViewer.setLabelProvider(new ShortcutMenuItemLabelProvider());
-        menuItemsViewer
-                .setContentProvider(new ShortcutMenuItemContentProvider());
-        menuItemsViewer.setComparator(new WorkbenchViewerComparator());
-
-        menuTable.setHeaderVisible(true);
-        int[] columnWidths = new int[shortcutMenuColumnWidths.length];
-        for (int i = 0; i < shortcutMenuColumnWidths.length; i++) {
-            columnWidths[i] = convertHorizontalDLUsToPixels(shortcutMenuColumnWidths[i]);
-        }
-        for (int i = 0; i < shortcutMenuColumnHeaders.length; i++) {
-            TableColumn tc = new TableColumn(menuTable, SWT.NONE, i);
-            tc.setResizable(true);
-            tc.setText(shortcutMenuColumnHeaders[i]);
-            tc.setWidth(columnWidths[i]);
-        }
-        sashComposite.setWeights(new int[] { 30, 70 });
-        return menusComposite;
-    }
-
-    void handleActionSetMenuViewerKeyPressed(KeyEvent event) {
-        // popup the description for the selected action set menu item
-        if (event.keyCode == SWT.F2 && event.stateMask == 0) {
-            IStructuredSelection sel = (IStructuredSelection) actionSetMenuViewer
-                    .getSelection();
-            ActionSetDisplayItem element = (ActionSetDisplayItem) sel
-                    .getFirstElement();
-            if (element != null) {
-                String desc = element.description;
-                if (desc == null || desc.equals("")) { //$NON-NLS-1$
-                    desc = WorkbenchMessages.ActionSetSelection_noDesc;
-                }
-                actionSetMenuViewerTooltip.setText(desc);
-                // Passing 0,0 because tooltip is always opened on current cursor position
-                actionSetMenuViewerTooltip.show(new Point(0,0));
-            }
-        }
-    }
-
-    void handleActionSetSelected(SelectionChangedEvent event) {
-        IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-        ActionSetDescriptor element = (ActionSetDescriptor) sel
-                .getFirstElement();
-        if (element == selectedActionSet) {
-			return;
-		}
-        String actionSetId = element.getId();
-        // Hash table is used to cache previous selections
-        ArrayList structures = (ArrayList) actionSetStructures.get(actionSetId);
-        ActionSetDisplayItem menubarStructure = null;
-        ActionSetDisplayItem toolbarStructure = null;
-        // If the actionset has never been selected then we need to populate the structures
-        if (structures == null) {
-            structures = new ArrayList(2);
-            menubarStructure = new ActionSetDisplayItem("Menubar"); //$NON-NLS-1$
-            toolbarStructure = new ActionSetDisplayItem("Toolbar"); //$NON-NLS-1$
-            
-            // Build the menus and toolbars for it using our fake action bars.
-        	// Can't reuse customizeActionBars between action sets due to action set menu reuse.  See bug 94827 for details.
-        	CustomizeActionBars customizeActionBars = new CustomizeActionBars(configurer);
-            // Fill current actionBars in the "fake" workbench action bars
-            window.fillActionBars(customizeActionBars,
-                    ActionBarAdvisor.FILL_PROXY | ActionBarAdvisor.FILL_MENU_BAR
-                            | ActionBarAdvisor.FILL_COOL_BAR);
-            // Populate the action bars with the action set
-            PluginActionSet actionSet = buildMenusAndToolbarsFor(customizeActionBars, element);
-            // Build the representation to show
-            menubarStructure.fillMenusFor(actionSetId,
-            		customizeActionBars.menuManager);
-            toolbarStructure.fillToolsFor(actionSetId,
-            		customizeActionBars.coolBarManager);
-            // Be sure to dispose the custom bars or we'll leak
-            if (actionSet!=null) {
-            	actionSet.dispose();
-            }
-            customizeActionBars.dispose();
-
-            // Add menubarStructure and toolbarStructure to arrayList
-            structures.add(menubarStructure);
-            structures.add(toolbarStructure);
-            // Add the structure to the hash table with key actionSetId
-            actionSetStructures.put(actionSetId, structures);
-        }
-        // retrieve the actionsets from the arraylist
-        if (menubarStructure == null) {
-			menubarStructure = (ActionSetDisplayItem) structures.get(0);
-		}
-        if (toolbarStructure == null) {
-			toolbarStructure = (ActionSetDisplayItem) structures.get(1);
-		}
-
-        // fill the menu structure table
-        actionSetMenuViewer.setInput(menubarStructure);
-        if (menubarStructure.children.size() > 0) {
-            actionSetMenuViewer
-                    .reveal(menubarStructure.children.get(0));
-        }
-
-        // fill the toolbar structure table
-        actionSetToolbarViewer.setInput(toolbarStructure);
-        if (toolbarStructure.children.size() > 0) {
-            actionSetToolbarViewer.reveal(toolbarStructure.children
-                    .get(0));
-        }
-        selectedActionSet = element;
-    }
-
-    void handleActionSetToolbarViewerKeyPressed(KeyEvent event) {
-        // popup the description for the selected action set toolbar item
-        if (event.keyCode == SWT.F2 && event.stateMask == 0) {
-            IStructuredSelection sel = (IStructuredSelection) actionSetToolbarViewer
-                    .getSelection();
-            ActionSetDisplayItem element = (ActionSetDisplayItem) sel
-                    .getFirstElement();
-            if (element != null) {
-                String desc = element.description;
-                if (desc == null || desc.equals("")) { //$NON-NLS-1$
-                    desc = WorkbenchMessages.ActionSetSelection_noDesc; 
-                }
-                actionSetToolbarViewerTooltip.setText(desc);
-                // Passing 0,0 because tooltip is always opened on current cursor position
-                actionSetToolbarViewerTooltip.show(new Point(0,0));
-            }
-        }
-    }
-
-    void handleActionSetViewerKeyPressed(KeyEvent event) {
-        // popup the description for the selected action set
-        if (event.keyCode == SWT.F2 && event.stateMask == 0) {
-            IStructuredSelection sel = (IStructuredSelection) actionSetsViewer
-                    .getSelection();
-            ActionSetDescriptor element = (ActionSetDescriptor) sel
-                    .getFirstElement();
-            if (element != null) {
-                String desc = element.getDescription();
-                if (desc == null || desc.equals("")) { //$NON-NLS-1$
-                    desc = WorkbenchMessages.ActionSetSelection_noDesc; 
-                }
-                actionSetsViewerTooltip.setText(desc);
-                // Passing 0,0 because tooltip is always opened on current cursor position
-                actionSetsViewerTooltip.show(new Point(0,0));
-            }
-        }
-    }
-
-    void handleMenuCategoryChecked(CheckStateChangedEvent event) {
-        ShortcutMenu checkedCategory = (ShortcutMenu) event.getElement();
-        boolean checked = event.getChecked();
-        checkedCategory.checked(checked);
-        // check/uncheck the element's category subtree
-        menuCategoriesViewer.setSubtreeChecked(checkedCategory, checked);
-        // set gray state of the element's category subtree, all items should
-        // not be grayed
-        ArrayList subtree = checkedCategory.getSubtreeItems();
-        ShortcutMenu menuItemInput = (ShortcutMenu) menuItemsViewer.getInput();
-        for (int i = 0; i < subtree.size(); i++) {
-            Object child = subtree.get(i);
-            menuCategoriesViewer.setGrayed(child, false);
-            if (child == menuItemInput) {
-				menuItemsViewer.setAllChecked(checked);
+		// Filter to show only branches necessary for the selected action set.
+		final ViewerFilter setFilter = new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
+				if (selectedActionSet[0] == null)
+					return false;
+				return includeInSetStructure((DisplayItem) element,
+						selectedActionSet[0]);
 			}
-        }
-        menuCategoriesViewer.setGrayed(checkedCategory, false);
-        updateMenuCategoryCheckedState(checkedCategory.parent);
-    }
+		};
 
-    void handleMenuCategorySelected(SelectionChangedEvent event) {
-        IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-        ShortcutMenu element = (ShortcutMenu) sel.getFirstElement();
-        if (element == selectedMenuCategory) {
-			return;
+		// Updates the check state of action sets
+		actionSetsViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				final ActionSet actionSet = (ActionSet) event.getElement();
+				if (event.getChecked()) {
+					actionSet.setActive(true);
+					for (Iterator i = actionSet.contributionItems.iterator(); i
+							.hasNext();) {
+						DisplayItem item = (DisplayItem) i.next();
+						item.setCheckState(true);
+					}
+				} else {
+					actionSet.setActive(false);
+				}
+			}
+		});
+
+		// Menu and toolbar composite
+		Composite actionGroup = new Composite(sashComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = 0;
+		actionGroup.setLayout(layout);
+		actionGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		Composite menubarGroup = new Composite(actionGroup, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		menubarGroup.setLayout(layout);
+		menubarGroup
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		label = new Label(menubarGroup, SWT.WRAP);
+		label.setText(WorkbenchMessages.ActionSetSelection_menubarActions);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		final TreeViewer actionSetMenuViewer = new TreeViewer(menubarGroup);
+		actionSetMenuViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		actionSetMenuViewer.getControl().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
+		actionSetMenuViewer.setUseHashlookup(true);
+		actionSetMenuViewer.setContentProvider(TreeManager
+				.getTreeContentProvider());
+		actionSetMenuViewer.setLabelProvider(TreeManager.getLabelProvider());
+		actionSetMenuViewer.addFilter(setFilter);
+		actionSetMenuViewer.setInput(menuItems);
+
+		Tree tree = actionSetMenuViewer.getTree();
+		new ItemDetailToolTip(tree, false, true, setFilter);
+
+		Composite toolbarGroup = new Composite(actionGroup, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		toolbarGroup.setLayout(layout);
+		toolbarGroup
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		label = new Label(toolbarGroup, SWT.WRAP);
+		label.setText(WorkbenchMessages.ActionSetSelection_toolbarActions);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		final TreeViewer actionSetToolbarViewer = new TreeViewer(toolbarGroup);
+		actionSetToolbarViewer
+				.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		actionSetToolbarViewer.getControl().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
+		actionSetToolbarViewer.setContentProvider(TreeManager
+				.getTreeContentProvider());
+		actionSetToolbarViewer.setLabelProvider(TreeManager.getLabelProvider());
+		actionSetToolbarViewer.addFilter(setFilter);
+		actionSetToolbarViewer.setInput(toolBarItems);
+
+		tree = actionSetToolbarViewer.getTree();
+		new ItemDetailToolTip(tree, false, true, setFilter);
+
+		// Updates the menu item and toolbar items tree viewers when the
+		// selection changes
+		actionSetsViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						selectedActionSet[0] = (ActionSet) ((IStructuredSelection) event
+								.getSelection()).getFirstElement();
+						actionSetMenuViewer.setInput(menuItems);
+						actionSetToolbarViewer.setInput(toolBarItems);
+					}
+				});
+
+		sashComposite.setWeights(new int[] { 30, 70 });
+
+		return actionSetsComposite;
+	}
+
+	/**
+	 * Creates the page used to allow users to choose menu items to hide.
+	 */
+	private Composite createMenuVisibilityPage(Composite parent) {
+		GridData data;
+
+		Composite hideMenuItemsComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		hideMenuItemsComposite.setLayout(layout);
+
+		// Label for entire tab
+		Label label = new Label(hideMenuItemsComposite, SWT.WRAP);
+		label.setText(WorkbenchMessages.HideMenuItems_chooseMenuItemsLabel);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		label.setLayoutData(data);
+
+		Label sep = new Label(hideMenuItemsComposite, SWT.HORIZONTAL
+				| SWT.SEPARATOR);
+		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		// Main contents of tab
+		final PageBook book = new PageBook(hideMenuItemsComposite, SWT.NONE);
+		data = new GridData(GridData.FILL_BOTH);
+		book.setLayoutData(data);
+
+		// Simple view: just the menu structure
+		final Composite simpleComposite = createItemStructureGroup(book,
+				WorkbenchMessages.HideMenuItems_menuStructure);
+		menuStructureViewer1 = initStructureViewer(simpleComposite,
+				new TreeManager.ViewerCheckStateListener(), null);
+
+		// Update the viewer when the model changes
+		treeManager.getCheckListener(menuStructureViewer1); // To update ctv on
+															// model changes
+
+		// Simply grab the checkstate out of the model
+		menuStructureViewer1.setCheckStateProvider(TreeManager
+				.getCheckStateProvider());
+
+		// Init with input
+		menuStructureViewer1.setInput(menuItems);
+
+		// Advanced view: action set with filtered menu structure
+		final SashForm advancedComposite = new SashForm(book, SWT.HORIZONTAL);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		advancedComposite.setLayoutData(data);
+
+		// Action set list
+		final TableViewer actionSetViewer = initActionSetViewer(createActionSetGroup(advancedComposite));
+
+		// Filter to only show action sets which have useful menu items
+		actionSetViewer.addFilter(new ShowUsedActionSetsFilter(menuItems));
+
+		// Init with input
+		actionSetViewer.setInput(actionSets.toArray());
+
+		// Filter to only show items in the current action set
+		final ActionSetFilter menuStructureFilterByActionSet = new ActionSetFilter();
+
+		final Composite menuStructureComposite = createItemStructureGroup(
+				advancedComposite,
+				WorkbenchMessages.HideMenuItems_menuStructure);
+		final ICheckStateListener menuStructureFilter = new FilteredViewerCheckListener(
+				TreeManager.getTreeContentProvider(),
+				menuStructureFilterByActionSet);
+		menuStructureViewer2 = initStructureViewer(menuStructureComposite,
+				menuStructureFilter, menuStructureFilterByActionSet);
+
+		treeManager.addListener(new FilteredModelCheckListener(
+				menuStructureFilterByActionSet, menuStructureViewer2));
+
+		menuStructureViewer2.addFilter(menuStructureFilterByActionSet);
+
+		// Update filter when a new action set is selected
+		actionSetViewer
+				.addSelectionChangedListener(new ActionSetSelectionChangedListener(
+						menuStructureViewer2, menuStructureFilterByActionSet));
+
+		// Check state provider to emulate standard SWT
+		// behaviour on visual tree
+		menuStructureViewer2
+				.setCheckStateProvider(new FilteredTreeCheckProvider(
+						TreeManager.getTreeContentProvider(),
+						menuStructureFilterByActionSet));
+
+		// Init input
+		menuStructureViewer2.setInput(menuItems);
+
+		// Override any attempts to set an item to visible
+		// which exists in an unavailable action set
+		treeManager.addListener(new CheckListener() {
+			public void checkChanged(TreeItem changedItem) {
+				if (!(changedItem instanceof DisplayItem))
+					return;
+				if (!changedItem.getState())
+					return;
+				if (isAvailable((DisplayItem) changedItem))
+					return;
+				changedItem.setCheckState(false);
+			}
+		});
+
+		final Button showCommandGroupFilterButton = new Button(
+				hideMenuItemsComposite, SWT.CHECK);
+		showCommandGroupFilterButton
+				.setText(WorkbenchMessages.HideItems_turnOnActionSets);
+		showCommandGroupFilterButton
+				.addSelectionListener(new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+					}
+
+					public void widgetSelected(SelectionEvent e) {
+						if (showCommandGroupFilterButton.getSelection()) {
+							Object o = ((StructuredSelection) menuStructureViewer1
+									.getSelection()).getFirstElement();
+							ActionSet initSelectAS = null;
+							DisplayItem initSelectCI = null;
+							if (o instanceof DisplayItem) {
+								initSelectCI = ((DisplayItem) o);
+								initSelectAS = initSelectCI.getActionSet();
+							}
+							if (initSelectAS == null) {
+								initSelectAS = (ActionSet) actionSetViewer
+										.getElementAt(0);
+							}
+							setSelectionOn(actionSetViewer, initSelectAS);
+							actionSetViewer.reveal(initSelectAS);
+							if (initSelectCI != null) {
+								setSelectionOn(menuStructureViewer2,
+										initSelectCI);
+								menuStructureViewer2.reveal(initSelectCI);
+							}
+							book.showPage(advancedComposite);
+						} else {
+							book.showPage(simpleComposite);
+						}
+					}
+				});
+
+		book.showPage(simpleComposite);
+		advancedComposite.setWeights(new int[] { 30, 70 });
+
+		return hideMenuItemsComposite;
+	}
+
+	/**
+	 * Creates the page used to allow users to choose menu items to hide.
+	 */
+	private Composite createToolBarVisibilityPage(Composite parent) {
+		GridData data;
+
+		Composite hideToolbarItemsComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		hideToolbarItemsComposite.setLayout(layout);
+
+		// Label for entire tab
+		Label label = new Label(hideToolbarItemsComposite, SWT.WRAP);
+		label
+				.setText(WorkbenchMessages.HideToolBarItems_chooseToolBarItemsLabel);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		label.setLayoutData(data);
+
+		Label sep = new Label(hideToolbarItemsComposite, SWT.HORIZONTAL
+				| SWT.SEPARATOR);
+		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		// Main contents of tab
+		final PageBook book = new PageBook(hideToolbarItemsComposite, SWT.NONE);
+		data = new GridData(GridData.FILL_BOTH);
+		book.setLayoutData(data);
+
+		// Simple view: just the toolbar structure
+		final Composite simpleComposite = createItemStructureGroup(book,
+				WorkbenchMessages.HideToolBarItems_toolBarStructure);
+		toolbarStructureViewer1 = initStructureViewer(simpleComposite,
+				new TreeManager.ViewerCheckStateListener(), null);
+
+		// Update the viewer when the model changes
+		treeManager.getCheckListener(toolbarStructureViewer1); // To update ctv
+																// on model
+																// changes
+
+		// Simply grab the check state out of the model
+		toolbarStructureViewer1.setCheckStateProvider(TreeManager
+				.getCheckStateProvider());
+
+		// Init with input
+		toolbarStructureViewer1.setInput(toolBarItems);
+
+		// Advanced view: action set with filtered toolbar structure
+		final SashForm advancedComposite = new SashForm(book, SWT.HORIZONTAL);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		advancedComposite.setLayoutData(data);
+
+		// Action set list
+		final TableViewer actionSetViewer = initActionSetViewer(createActionSetGroup(advancedComposite));
+
+		// Filter to only show action sets which have useful toolbar items
+		actionSetViewer.addFilter(new ShowUsedActionSetsFilter(toolBarItems));
+
+		// Init with input
+		actionSetViewer.setInput(actionSets.toArray());
+
+		// Filter to only show items in the current action set
+		final ActionSetFilter toolbarStructureFilterByActionSet = new ActionSetFilter();
+
+		final Composite toolbarStructureComposite = createItemStructureGroup(
+				advancedComposite,
+				WorkbenchMessages.HideToolBarItems_toolBarStructure);
+		final ICheckStateListener toolbarStructureFilter = new FilteredViewerCheckListener(
+				TreeManager.getTreeContentProvider(),
+				toolbarStructureFilterByActionSet);
+		toolbarStructureViewer2 = initStructureViewer(
+				toolbarStructureComposite, toolbarStructureFilter, 
+				toolbarStructureFilterByActionSet);
+
+		toolbarStructureViewer2.addFilter(toolbarStructureFilterByActionSet);
+
+		treeManager.addListener(new FilteredModelCheckListener(
+				toolbarStructureFilterByActionSet, toolbarStructureViewer2));
+
+		// Update filter when a new action set is selected
+		actionSetViewer
+				.addSelectionChangedListener(new ActionSetSelectionChangedListener(
+						toolbarStructureViewer2,
+						toolbarStructureFilterByActionSet));
+
+		// Check state provider to emulate standard SWT
+		// behaviour on visual tree
+		toolbarStructureViewer2
+				.setCheckStateProvider(new FilteredTreeCheckProvider(
+						TreeManager.getTreeContentProvider(),
+						toolbarStructureFilterByActionSet));
+
+		// Init input
+		toolbarStructureViewer2.setInput(toolBarItems);
+
+		// Override any attempts to set an item to visible
+		// which exists in an unavailable action set
+		treeManager.addListener(new CheckListener() {
+			public void checkChanged(TreeItem changedItem) {
+				if (!(changedItem instanceof DisplayItem))
+					return;
+				if (!changedItem.getState())
+					return;
+				if (isAvailable((DisplayItem) changedItem))
+					return;
+				changedItem.setCheckState(false);
+			}
+		});
+
+		final Button showCommandGroupFilterButton = new Button(
+				hideToolbarItemsComposite, SWT.CHECK);
+		showCommandGroupFilterButton
+				.setText(WorkbenchMessages.HideItems_turnOnActionSets);
+		showCommandGroupFilterButton
+				.addSelectionListener(new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+					}
+
+					public void widgetSelected(SelectionEvent e) {
+						if (showCommandGroupFilterButton.getSelection()) {
+							Object o = ((StructuredSelection) toolbarStructureViewer1
+									.getSelection()).getFirstElement();
+							ActionSet initSelectAS = null;
+							DisplayItem initSelectCI = null;
+							if (o instanceof DisplayItem) {
+								initSelectCI = ((DisplayItem) o);
+								initSelectAS = initSelectCI.getActionSet();
+							}
+							if (initSelectAS == null) {
+								initSelectAS = (ActionSet) actionSetViewer
+										.getElementAt(0);
+							}
+							setSelectionOn(actionSetViewer, initSelectAS);
+							actionSetViewer.reveal(initSelectAS);
+							if (initSelectCI != null) {
+								setSelectionOn(toolbarStructureViewer2,
+										initSelectCI);
+								toolbarStructureViewer2.reveal(initSelectCI);
+							}
+							book.showPage(advancedComposite);
+						} else {
+							book.showPage(simpleComposite);
+						}
+					}
+				});
+
+		book.showPage(simpleComposite);
+		advancedComposite.setWeights(new int[] { 30, 70 });
+
+		return hideToolbarItemsComposite;
+	}
+
+	/**
+	 * Creates a table to display action sets.
+	 * 
+	 * @param parent
+	 * @return a viewer to display action sets
+	 */
+	private TableViewer initActionSetViewer(Composite parent) {
+		// List of categories
+		final TableViewer actionSetViewer = new TableViewer(parent, SWT.BORDER
+				| SWT.H_SCROLL | SWT.V_SCROLL);
+		actionSetViewer.getTable().setLayoutData(
+				new GridData(GridData.FILL_BOTH));
+		actionSetViewer.setLabelProvider(new LabelProvider());
+		actionSetViewer.setComparator(new WorkbenchViewerComparator());
+		actionSetViewer.setContentProvider(new ArrayContentProvider());
+
+		// Tooltip on tree items
+		Table table = actionSetViewer.getTable();
+		new TableToolTip(table);
+		return actionSetViewer;
+	}
+
+	/**
+	 * Creates a CheckboxTreeViewer to display menu or toolbar structure.
+	 * 
+	 * @param parent
+	 * @param checkStateListener
+	 *            the listener which listens to the viewer for check changes
+	 * @param filter the filter used in the viewer (null for none)
+	 * @return A viewer within <code>parent</code> which will show menu or
+	 *         toolbar structure. It comes setup, only missing a
+	 *         CheckStateProvider and its input.
+	 */
+	private CheckboxTreeViewer initStructureViewer(Composite parent,
+			ICheckStateListener checkStateListener, ViewerFilter filter) {
+		CheckboxTreeViewer ctv = new CheckboxTreeViewer(parent, SWT.BORDER
+				| SWT.H_SCROLL | SWT.V_SCROLL);
+		ctv.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		ctv.setUseHashlookup(true);
+		ctv.setContentProvider(TreeManager.getTreeContentProvider());
+		// use an UnavailableContributionItemCheckListener to filter check
+		// events: if it is legal, forward it to the actual checkStateListener,
+		// if not, inform the user
+		ctv.addCheckStateListener(new UnavailableContributionItemCheckListener(
+				ctv, checkStateListener));
+		ctv.setLabelProvider(new GrayOutUnavailableLabelProvider(parent
+				.getDisplay(), filter));
+		new ItemDetailToolTip(ctv.getTree(), true, true, filter);
+		return ctv;
+	}
+
+	/**
+	 * Creates a composite to put a tree viewer in to display menu or toolbar
+	 * items.
+	 */
+	private static Composite createItemStructureGroup(
+			final Composite composite, String labelText) {
+		GridLayout layout;
+		Label label;
+		layout = new GridLayout();
+		Composite menubarGroup = new Composite(composite, SWT.NONE);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		menubarGroup.setLayout(layout);
+		menubarGroup
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		label = new Label(menubarGroup, SWT.WRAP);
+		label.setText(labelText);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		return menubarGroup;
+	}
+
+	/**
+	 * Creates a composite to put a viewer in to display action sets.
+	 */
+	private static Composite createActionSetGroup(final Composite composite) {
+		GridLayout layout;
+		Label label;
+		Composite actionSetGroup = new Composite(composite, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		actionSetGroup.setLayout(layout);
+		actionSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
+
+		label = new Label(actionSetGroup, SWT.WRAP);
+		label.setText(WorkbenchMessages.HideItems_commandGroupTitle);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		return actionSetGroup;
+	}
+
+	/**
+	 * Set the selection on a structured viewer.
+	 * 
+	 * @param viewer
+	 * @param selected
+	 */
+	private void setSelectionOn(Viewer viewer, final Object selected) {
+		viewer.setSelection(new IStructuredSelection() {
+			public Object getFirstElement() {
+				return selected;
+			}
+
+			public Iterator iterator() {
+				return toList().iterator();
+			}
+
+			public int size() {
+				return 1;
+			}
+
+			public Object[] toArray() {
+				return new Object[] { selected };
+			}
+
+			public List toList() {
+				return Arrays.asList(toArray());
+			}
+
+			public boolean isEmpty() {
+				return false;
+			}
+		});
+	}
+
+	/**
+	 * Searches deeply to see if <code>item</code> is a node in a branch
+	 * containing a ContributionItem contributed by <code>set</code>.
+	 * 
+	 * @param item
+	 *            the item in question
+	 * @param set
+	 *            the action set to look for
+	 * @return true iff <code>item</code> is required in build a tree including
+	 *         elements in <code>set</code>
+	 */
+	private static boolean includeInSetStructure(DisplayItem item,
+			ActionSet set) {
+		if (item.actionSet != null && item.actionSet.equals(set))
+			return true;
+		for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
+			DisplayItem child = (DisplayItem) i.next();
+			if (includeInSetStructure(child, set))
+				return true;
 		}
-        if (element != menuItemsViewer.getInput()) {
-            menuItemsViewer.setInput(element);
-        }
-        if (element != null) {
-            menuItemsViewer.setCheckedElements(element.getCheckedItems()
-                    .toArray());
-        }
-    }
+		return false;
+	}
 
-    void handleMenuItemChecked(CheckStateChangedEvent event) {
-        ShortcutMenu selectedMenu = (ShortcutMenu) menuItemsViewer.getInput();
-        boolean itemChecked = event.getChecked();
-        Object item = event.getElement();
-        if (itemChecked) {
-            selectedMenu.addCheckedItem(item);
-        } else {
-            selectedMenu.removeCheckedItem(item);
-        }
-        updateMenuCategoryCheckedState(selectedMenu);
-    }
-
-    void handleMenuModified() {
-        String text = menusCombo.getText();
-        String[] items = menusCombo.getItems();
-        int itemIndex = -1;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].equals(text)) {
-                itemIndex = i;
-                break;
-            }
-        }
-        if (itemIndex == -1) {
-			return;
+	/**
+	 * @param item
+	 * @return true iff the item is available - i.e. if it belongs to an action
+	 *         set, that that action set is available
+	 */
+	private static boolean isAvailable(DisplayItem item) {
+		if (item.getActionSet() == null)
+			return true;
+		if (item.getActionSet().isActive())
+			return true;
+		for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
+			DisplayItem child = (DisplayItem) i.next();
+			if (isAvailable(child))
+				return true;
 		}
-        ShortcutMenu element = (ShortcutMenu) rootMenu.children.get(itemIndex);
-        handleMenuSelected(element);
-    }
+		return false;
+	}
 
-    void handleMenuSelected() {
-        int i = menusCombo.getSelectionIndex();
-        ShortcutMenu element = (ShortcutMenu) rootMenu.children.get(i);
-        handleMenuSelected(element);
-    }
-
-    void handleMenuSelected(ShortcutMenu element) {
-        if (element != menuCategoriesViewer.getInput()) {
-            menuCategoriesViewer.setInput(element);
-            menuCategoriesViewer.expandAll();
-            if (element != null) {
-                if (element.getChildren().size() > 0) {
-                    StructuredSelection sel = new StructuredSelection(element
-                            .getChildren().get(0));
-                    menuCategoriesViewer.setSelection(sel, true);
-                } else {
-                    menuItemsViewer.setInput(element);
-                    menuItemsViewer.setCheckedElements(element
-                            .getCheckedItems().toArray());
-                }
-            } else {
-                menuCategoriesViewer.setInput(element);
-                menuItemsViewer.setInput(element);
-            }
-            checkInitialMenuCategorySelections(rootMenu);
-        }
-    }
-
-    void handleTabSelected(SelectionEvent event) {
-        TabItem item = (TabItem) event.item;
-        Control control = item.getControl();
-        if (control != null) {
-			control.setFocus();
+	/**
+	 * @param item
+	 * @return true iff the item will show up in a menu or tool bar structure -
+	 *         i.e. it is available, or has a child which is available thus must
+	 *         be displayed in order to display the child
+	 */
+	private static boolean isEffectivelyAvailable(DisplayItem item, ViewerFilter filter) {
+		if (!isAvailable(item))
+			return false;
+		final List children = item.getChildren();
+		if (children.isEmpty())
+			return true;
+		for (Iterator i = children.iterator(); i.hasNext();) {
+			DisplayItem child = (DisplayItem) i.next();
+			if(filter != null && !filter.select(null, null, child))
+				continue;
+			if (isAvailable(child)) {
+				return true;
+			}
 		}
-    }
+		for (Iterator i = children.iterator(); i.hasNext();) {
+			DisplayItem child = (DisplayItem) i.next();
+			if(filter != null && !filter.select(null, null, child))
+				continue;
+			if (isEffectivelyAvailable(child, filter)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private void initializeActionSetInput() {
-        // Just get the action sets at this point.  Do not load the action set until it
-        // is actually selected in the dialog.
-        ActionSetRegistry reg = WorkbenchPlugin.getDefault()
-                .getActionSetRegistry();
-        IActionSetDescriptor[] sets = reg.getActionSets();
-        for (int i = 0; i < sets.length; i++) {
-            ActionSetDescriptor actionSetDesc = (ActionSetDescriptor) sets[i];
-            if (WorkbenchActivityHelper.filterItem(actionSetDesc)) {
+	/**
+	 * @param collection
+	 *            a collection, into which all command groups (action sets)
+	 *            which contribute <code>item</code> or its descendants will be
+	 *            placed
+	 * @param item
+	 */
+	private static void collectDescendantCommandGroups(Collection collection,
+			DisplayItem item) {
+		List children = item.getChildren();
+		for (Iterator i = children.iterator(); i.hasNext();) {
+			DisplayItem child = (DisplayItem) i.next();
+			if (child.getActionSet() != null) {
+				collection.add(child.getActionSet());
+			}
+			collectDescendantCommandGroups(collection, child);
+		}
+	}
+
+	/**
+	 * Gets the keybindings associated with a ContributionItem.
+	 */
+	private Binding[] getKeyBindings(DisplayItem item) {
+		IBindingService bindingService = (IBindingService) window
+				.getService(IBindingService.class);
+
+		if (!(bindingService instanceof BindingService))
+			return new Binding[0];
+
+		String id = getCommandID(item);
+		String param = getParamID(item);
+
+		BindingManager bindingManager = ((BindingService) bindingService)
+				.getBindingManager();
+
+		Collection allBindings = bindingManager
+				.getActiveBindingsDisregardingContextFlat();
+
+		List foundBindings = new ArrayList(2);
+
+		for (Iterator i = allBindings.iterator(); i.hasNext();) {
+			Binding binding = (Binding) i.next();
+			if (binding.getParameterizedCommand() == null)
+				continue;
+			if (binding.getParameterizedCommand().getId() == null)
+				continue;
+			if (binding.getParameterizedCommand().getId().equals(id)) {
+				if (param == null) {
+					// We found it!
+					foundBindings.add(binding);
+				} else {
+					// command parameters are only used in the shortcuts
+					Map m = binding.getParameterizedCommand().getParameterMap();
+					String key = null;
+					if (isNewWizard(item)) {
+						key = SHORTCUT_COMMAND_PARAM_ID_NEW_WIZARD;
+					} else if (isShowView(item)) {
+						key = ShowViewMenu.VIEW_ID_PARM;
+					} else if (isShowPerspective(item)) {
+						key = SHORTCUT_COMMAND_PARAM_ID_SHOW_PERSPECTIVE;
+					}
+
+					if (key != null) {
+						if (param.equals(m.get(key))) {
+							foundBindings.add(binding);
+						}
+					}
+				}
+			}
+		}
+
+		Binding[] bindings = (Binding[]) foundBindings
+				.toArray(new Binding[foundBindings.size()]);
+
+		return bindings;
+	}
+
+	/**
+	 * @param bindings
+	 * @return a String representing the key bindings in <code>bindings</code>
+	 */
+	private String keyBindingsAsString(Binding[] bindings) {
+		String keybindings = null;
+		for (int i = 0; i < bindings.length; i++) {
+			// Unfortunately, bindings may be reported more than once:
+			// check to see if this one has already been recorded.
+			boolean alreadyRecorded = false;
+			for (int j = 0; j < i && !alreadyRecorded; j++) {
+				if (bindings[i].getTriggerSequence().equals(
+						bindings[j].getTriggerSequence())) {
+					alreadyRecorded = true;
+				}
+			}
+			if (!alreadyRecorded) {
+				String keybinding = bindings[i].getTriggerSequence().format();
+				if (i == 0) {
+					keybindings = keybinding;
+				} else {
+					keybindings = Util.createList(keybindings, keybinding);
+				}
+			}
+		}
+		return keybindings;
+	}
+
+	/**
+	 * On a change to availability, updates the appropriate widgets.
+	 */
+	private void actionSetAvailabilityChanged() {
+		menuStructureViewer1.refresh();
+		menuStructureViewer2.refresh();
+		toolbarStructureViewer1.refresh();
+		toolbarStructureViewer2.refresh();
+	}
+
+	private void initializeActionSetInput() {
+		// Just get the action sets at this point. Do not load the action set
+		// until it is actually selected in the dialog.
+		ActionSetRegistry reg = WorkbenchPlugin.getDefault()
+				.getActionSetRegistry();
+		IActionSetDescriptor[] sets = reg.getActionSets();
+		IActionSetDescriptor[] actionSetDescriptors = ((WorkbenchPage) window
+				.getActivePage()).getActionSets();
+		List initiallyAvailableActionSets = Arrays.asList(actionSetDescriptors);
+
+		for (int i = 0; i < sets.length; i++) {
+			ActionSetDescriptor actionSetDesc = (ActionSetDescriptor) sets[i];
+			if (WorkbenchActivityHelper.filterItem(actionSetDesc)) {
 				continue;
 			}
-            actionSets.add(actionSetDesc);
-        }
-        String iconPath = "$nl$/icons/full/obj16/menu.gif";//$NON-NLS-1$
-        URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
-        menuImageDescriptor = ImageDescriptor.createFromURL(url);
+			ActionSet actionSet = new ActionSet(actionSetDesc,
+					initiallyAvailableActionSets.contains(actionSetDesc));
+			idToActionSet.put(actionSetDesc.getId(), actionSet);
+			actionSets.add(actionSet);
+		}
+	}
 
-        iconPath = "$nl$/icons/full/obj16/submenu.gif";//$NON-NLS-1$
-        url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
-        submenuImageDescriptor = ImageDescriptor.createFromURL(url);
+	private void initializeIcons() {
+		String iconPath = MENU_ICON;
+		URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
+		menuImageDescriptor = ImageDescriptor.createFromURL(url);
 
-        iconPath = "$nl$/icons/full/obj16/toolbar.gif";//$NON-NLS-1$
-        url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
-        toolbarImageDescriptor = ImageDescriptor.createFromURL(url);
-    }
+		iconPath = SUBMENU_ICON;
+		url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
+		submenuImageDescriptor = ImageDescriptor.createFromURL(url);
 
-    private void initializeShortCutMenu(ShortcutMenu menu,
-    		IWizardCategory  element, List activeIds) {
-        ShortcutMenu category = new ShortcutMenu(menu, element.getId(), element
-                .getLabel());
-        Object[] wizards = element.getWizards();
-        for (int i = 0; i < wizards.length; i++) {
-            WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
-            category.addItem(wizard);
-            if (activeIds.contains(wizard.getId())) {
-				category.addCheckedItem(wizard);
+		iconPath = TOOLBAR_ICON;
+		url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
+		toolbarImageDescriptor = ImageDescriptor.createFromURL(url);
+
+		iconPath = WARNING_ICON;
+		url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
+		warningImageDescriptor = ImageDescriptor.createFromURL(url);
+	}
+
+	private void initializeNewWizardsMenu(DisplayItem menu,
+			Category parentCategory, IWizardCategory element, List activeIds) {
+		Category category = new Category(element.getLabel(), element.getId());
+		parentCategory.addChild(category);
+
+		Object[] wizards = element.getWizards();
+		for (int i = 0; i < wizards.length; i++) {
+			WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
+
+			ShortcutItem item = new ShortcutItem(wizard.getLabel(), wizard);
+			item.setLabel(wizard.getLabel());
+			item.setDescription(wizard.getDescription());
+			if (wizard.getImageDescriptor() != null) {
+				item.setImageDescriptor(wizard.getImageDescriptor());
 			}
-        }
-        // @issue should not pass in null
-        IWizardCategory [] children = element.getCategories();
-        for (int i = 0; i < children.length; i++) {
-            initializeShortCutMenu(category, children[i], activeIds);
-        }
-    }
+			item.setCheckState(activeIds.contains(wizard.getId()));
+			menu.addChild(item);
+			category.addShortcutItem(item);
+		}
+		// @issue should not pass in null
+		IWizardCategory[] children = element.getCategories();
+		for (int i = 0; i < children.length; i++) {
+			initializeNewWizardsMenu(menu, category, children[i], activeIds);
+		}
+	}
 
-    private void initializeShortcutMenuInput() {
-        rootMenu = new ShortcutMenu(null, "Root", ""); //$NON-NLS-1$ //$NON-NLS-2$
-        List activeIds;
+	private void initializeNewWizardsMenu(DisplayItem menu) {
+		Category rootForNewWizards = new Category(
+				WorkbenchMessages.ActionSetDialogInput_wizardCategory, null);
+		shortcuts.addChild(rootForNewWizards);
 
-        if (window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)) {
-            ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu,
-                    ShortcutMenu.ID_WIZARD, WorkbenchMessages.ActionSetDialogInput_wizardCategory); 
-            
-            IWizardCategory wizardCollection = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
+		IWizardCategory wizardCollection = WorkbenchPlugin.getDefault()
+				.getNewWizardRegistry().getRootCategory();
+		IWizardCategory[] wizardCategories = wizardCollection.getCategories();
+		List activeIDs = Arrays.asList(perspective.getNewWizardShortcuts());
 
-            IWizardCategory [] wizardCategories = wizardCollection.getCategories();
-            activeIds = Arrays.asList(perspective.getNewWizardShortcuts());
-            for (int i = 0; i < wizardCategories.length; i++) {
-                IWizardCategory element = wizardCategories[i];
-                if (WorkbenchActivityHelper.filterItem(element)) {
-					continue;
+		for (int i = 0; i < wizardCategories.length; i++) {
+			IWizardCategory element = wizardCategories[i];
+			if (WorkbenchActivityHelper.filterItem(element)) {
+				continue;
+			}
+
+			initializeNewWizardsMenu(menu, rootForNewWizards, element,
+					activeIDs);
+		}
+	}
+
+	private void initializePerspectivesMenu(DisplayItem menu) {
+		Category rootForPerspectives = new Category(
+				WorkbenchMessages.ActionSetDialogInput_perspectiveCategory,
+				null);
+		shortcuts.addChild(rootForPerspectives);
+
+		IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry();
+		IPerspectiveDescriptor[] persps = perspReg.getPerspectives();
+
+		List activeIds = Arrays.asList(perspective.getPerspectiveShortcuts());
+
+		for (int i = 0; i < persps.length; i++) {
+			IPerspectiveDescriptor perspective = persps[i];
+			if (WorkbenchActivityHelper.filterItem(perspective)) {
+				continue;
+			}
+
+			ShortcutItem child = new ShortcutItem(perspective.getLabel(),
+					perspective);
+			child.setImageDescriptor(perspective.getImageDescriptor());
+			child.setDescription(perspective.getDescription());
+			child.setCheckState(activeIds.contains(perspective.getId()));
+			menu.addChild(child);
+
+			rootForPerspectives.addShortcutItem(child);
+		}
+	}
+
+	private void initializeViewsMenu(DisplayItem menu) {
+		Category rootForViews = new Category(
+				WorkbenchMessages.ActionSetDialogInput_viewCategory, null);
+
+		shortcuts.addChild(rootForViews);
+
+		IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
+		IViewCategory[] categories = viewReg.getCategories();
+
+		List activeIds = Arrays.asList(perspective.getShowViewShortcuts());
+
+		for (int i = 0; i < categories.length; i++) {
+			IViewCategory category = categories[i];
+			if (WorkbenchActivityHelper.filterItem(category)) {
+				continue;
+			}
+
+			Category viewCategory = new Category(category.getLabel(), category);
+			rootForViews.addChild(viewCategory);
+
+			IViewDescriptor[] views = category.getViews();
+
+			if (views != null) {
+				for (int j = 0; j < views.length; j++) {
+					IViewDescriptor view = views[j];
+					if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID)) {
+						continue;
+					}
+					if (WorkbenchActivityHelper.filterItem(view)) {
+						continue;
+					}
+
+					ShortcutItem child = new ShortcutItem(view.getLabel(), view);
+					child.setImageDescriptor(view.getImageDescriptor());
+					child.setDescription(view.getDescription());
+					child.setCheckState(activeIds.contains(view.getId()));
+					menu.addChild(child);
+					viewCategory.addShortcutItem(child);
 				}
-                initializeShortCutMenu(wizardMenu, element, activeIds);
-            }
-        }
+			}
+		}
+	}
 
-        if (window.containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)) {
-            ShortcutMenu perspMenu = new ShortcutMenu(
-                    rootMenu,
-                    ShortcutMenu.ID_PERSP,
-                    WorkbenchMessages.ActionSetDialogInput_perspectiveCategory);
-            IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault()
-                    .getPerspectiveRegistry();
-            IPerspectiveDescriptor[] persps = perspReg.getPerspectives();
-            for (int i = 0; i < persps.length; i++) {
-                if (WorkbenchActivityHelper.filterItem(persps[i])) {
-					continue;
-				}
-                perspMenu.addItem(persps[i]);
-            }
-            activeIds = Arrays.asList(perspective.getPerspectiveShortcuts());
-            for (int i = 0; i < activeIds.size(); i++) {
-                String id = (String) activeIds.get(i);
-                Object item = perspMenu.getItem(id);
-                if (item != null) {
-					perspMenu.addCheckedItem(item);
-				}
-            }
-        }
+	/**
+	 * Loads the current perspective's menu structure and also loads which menu
+	 * items are visible and not.
+	 */
+	private void loadMenuAndToolbarStructure() {
+		WorkbenchWindow workbenchWindow = (WorkbenchWindow) PlatformUI
+				.getWorkbench().getActiveWorkbenchWindow();
 
-        if (window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU)) {
-            ShortcutMenu viewMenu = new ShortcutMenu(rootMenu,
-                    ShortcutMenu.ID_VIEW, WorkbenchMessages.ActionSetDialogInput_viewCategory); 
-            IViewRegistry viewReg = WorkbenchPlugin.getDefault()
-                    .getViewRegistry();
-            IViewCategory [] categories = viewReg.getCategories();
-            activeIds = Arrays.asList(perspective.getShowViewShortcuts());
-            for (int i = 0; i < categories.length; i++) {
-                IViewCategory category = categories[i];
-                if (WorkbenchActivityHelper.filterItem(category)) {
-					continue;
+		customizeActionBars = new CustomizeActionBars(configurer);
+
+		// Fill fake action bars with static menu information.
+		window.fillActionBars(customizeActionBars, ActionBarAdvisor.FILL_PROXY
+				| ActionBarAdvisor.FILL_MENU_BAR
+				| ActionBarAdvisor.FILL_COOL_BAR);
+
+		// 3.3 start
+		final IMenuService menuService = (IMenuService) window
+				.getService(IMenuService.class);
+		menuService.populateContributionManager(
+				(ContributionManager) customizeActionBars.getMenuManager(),
+				MenuUtil.MAIN_MENU);
+		ICoolBarManager coolbar = customizeActionBars.getCoolBarManager();
+		if (coolbar != null) {
+			menuService.populateContributionManager(
+					(ContributionManager) coolbar, MenuUtil.MAIN_TOOLBAR);
+		}
+		// 3.3 end
+
+		// Populate the action bars with the action sets' data
+		for (Iterator i = actionSets.iterator(); i.hasNext();) {
+			ActionSet actionSet = (ActionSet) i.next();
+			ActionSetDescriptor descriptor = actionSet.descriptor;
+			PluginActionSet pluginActionSet = buildMenusAndToolbarsFor(
+					customizeActionBars, descriptor);
+
+			if (pluginActionSet != null) {
+				pluginActionSet.dispose();
+			}
+		}
+
+		// Make all menu items visible so they are included in the list.
+		customizeActionBars.menuManager.setVisible(true);
+
+		makeAllContributionsVisible(customizeActionBars.menuManager);
+
+		// Get the menu from the action bars
+		Menu menu = customizeActionBars.menuManager
+				.createMenuBar((Decorations) workbenchWindow.getShell());
+
+		CoolBar cb = customizeActionBars.coolBarManager
+				.createControl(workbenchWindow.getShell());
+		cb.equals(cb);
+
+		// Ensure the menu is completely built by updating the menu manager.
+		// (This method call requires a menu already be created)
+		customizeActionBars.menuManager.updateAll(true);
+		customizeActionBars.coolBarManager.update(true);
+
+		shortcuts = new Category("", null); //$NON-NLS-1$
+		toolBarItems = createToolBarStructure(cb);
+		menuItems = createMenuStructure(menu);
+	}
+
+	private PluginActionSet buildMenusAndToolbarsFor(
+			CustomizeActionBars customizeActionBars,
+			ActionSetDescriptor actionSetDesc) {
+		String id = actionSetDesc.getId();
+		ActionSetActionBars bars = new ActionSetActionBars(customizeActionBars,
+				window, customizeActionBars, id);
+		bars.getMenuManager().setVisible(true);
+		PluginActionSetBuilder builder = new PluginActionSetBuilder();
+		PluginActionSet actionSet = null;
+		try {
+			actionSet = (PluginActionSet) actionSetDesc.createActionSet();
+			actionSet.init(null, bars);
+		} catch (CoreException ex) {
+			WorkbenchPlugin.log(
+					"Unable to create action set " + actionSetDesc.getId(), ex); //$NON-NLS-1$
+			return null;
+		}
+		builder.buildMenuAndToolBarStructure(actionSet, window);
+		return actionSet;
+	}
+
+	private static String getCommandID(DisplayItem item) {
+		Object object = item.getIContributionItem();
+
+		if (item instanceof ShortcutItem && isShowView(item)) {
+			return ShowViewMenu.SHOW_VIEW_ID;
+		}
+
+		return getIDFromIContributionItem(object);
+	}
+
+	/**
+	 * Given an object, tries to find an id which will uniquely identify it.
+	 * 
+	 * @param object
+	 *            an instance of {@link IContributionItem},
+	 *            {@link IPerspectiveDescriptor}, {@link IViewDescriptor} or
+	 *            {@link WorkbenchWizardElement}.
+	 * @return an id
+	 * @throws IllegalArgumentException
+	 *             if object is not one of the listed types
+	 */
+	public static String getIDFromIContributionItem(Object object) {
+		if (object instanceof ActionContributionItem) {
+			ActionContributionItem item = (ActionContributionItem) object;
+			IAction action = item.getAction();
+			if (action == null)
+				return null;
+			if (action instanceof NewWizardShortcutAction) {
+				return SHORTCUT_COMMAND_ID_NEW_WIZARD;
+			}
+			if (action instanceof OpenPerspectiveAction) {
+				return SHORTCUT_COMMAND_ID_SHOW_PERSPECTIVE;
+			}
+			String id = action.getActionDefinitionId();
+			if (id != null) {
+				return id;
+			}
+			return action.getId();
+		}
+		if (object instanceof ActionSetContributionItem) {
+			ActionSetContributionItem item = (ActionSetContributionItem) object;
+			IContributionItem subitem = item.getInnerItem();
+			return getIDFromIContributionItem(subitem);
+		}
+		if (object instanceof CommandContributionItem) {
+			CommandContributionItem item = (CommandContributionItem) object;
+			ParameterizedCommand command = item.getCommand();
+			return command.getId();
+		}
+		if (object instanceof IPerspectiveDescriptor) {
+			return ((IPerspectiveDescriptor) object).getId();
+		}
+		if (object instanceof IViewDescriptor) {
+			return ((IViewDescriptor) object).getId();
+		}
+		if (object instanceof WorkbenchWizardElement) {
+			return ((WorkbenchWizardElement) object).getLocalId();
+		}
+		if (object instanceof IContributionItem) {
+			String id = ((IContributionItem) object).getId();
+			if (id != null)
+				return id;
+			return object.getClass().getName();
+		}
+		return null;	//couldn't determine the id
+	}
+
+	private static String getDescription(Object object) {
+		if (object instanceof DisplayItem) {
+			DisplayItem item = (DisplayItem) object;
+
+			if (isNewWizard(item)) {
+				ShortcutItem shortcut = (ShortcutItem) item;
+				IWizardDescriptor descriptor = (IWizardDescriptor) shortcut
+						.getDescriptor();
+				return descriptor.getDescription();
+			}
+
+			if (isShowPerspective(item)) {
+				ShortcutItem shortcut = (ShortcutItem) item;
+				IPerspectiveDescriptor descriptor = (IPerspectiveDescriptor) shortcut
+						.getDescriptor();
+				return descriptor.getDescription();
+			}
+
+			if (isShowView(item)) {
+				ShortcutItem shortcut = (ShortcutItem) item;
+				IViewDescriptor descriptor = (IViewDescriptor) shortcut
+						.getDescriptor();
+				return descriptor.getDescription();
+			}
+
+			if (item instanceof DynamicContributionItem) {
+				return WorkbenchMessages.HideItems_dynamicItemDescription;
+			}
+
+			IContributionItem contrib = item.getIContributionItem();
+			return getDescription(contrib);
+		}
+
+		if (object instanceof ActionSet) {
+			ActionSet actionSet = (ActionSet) object;
+			return actionSet.descriptor.getDescription();
+		}
+
+		return null;
+	}
+
+	private static String getDescription(IContributionItem item) {
+		if (item instanceof ActionContributionItem) {
+			ActionContributionItem aci = (ActionContributionItem) item;
+			IAction action = aci.getAction();
+			if (action == null)
+				return null;
+			return action.getDescription();
+		}
+		if (item instanceof ActionSetContributionItem) {
+			ActionSetContributionItem asci = (ActionSetContributionItem) item;
+			IContributionItem subitem = asci.getInnerItem();
+			return getDescription(subitem);
+		}
+		return null;
+	}
+
+	private static String getParamID(DisplayItem object) {
+		if (object instanceof ShortcutItem) {
+			ShortcutItem shortcutItem = (ShortcutItem) object;
+
+			if (isNewWizard(shortcutItem)) {
+				ActionContributionItem item = (ActionContributionItem) object
+						.getIContributionItem();
+				NewWizardShortcutAction nwsa = (NewWizardShortcutAction) item
+						.getAction();
+				return nwsa.getLocalId();
+			}
+
+			if (isShowPerspective(shortcutItem)) {
+				ActionContributionItem item = (ActionContributionItem) object
+						.getIContributionItem();
+				OpenPerspectiveAction opa = (OpenPerspectiveAction) item
+						.getAction();
+				return opa.getLocalId();
+			}
+
+			if (isShowView(shortcutItem)) {
+				IViewDescriptor descriptor = (IViewDescriptor) shortcutItem
+						.getDescriptor();
+				return descriptor.getId();
+			}
+		}
+
+		return null;
+	}
+
+	private static boolean isNewWizard(DisplayItem item) {
+		if (!(item instanceof ShortcutItem))
+			return false;
+		return ((ShortcutItem) item).getDescriptor() instanceof IWizardDescriptor;
+	}
+
+	private static boolean isShowPerspective(DisplayItem item) {
+		if (!(item instanceof ShortcutItem))
+			return false;
+		return ((ShortcutItem) item).getDescriptor() instanceof IPerspectiveDescriptor;
+	}
+
+	private static boolean isShowView(DisplayItem item) {
+		if (!(item instanceof ShortcutItem))
+			return false;
+		return ((ShortcutItem) item).getDescriptor() instanceof IViewDescriptor;
+	}
+
+	private static String getActionSetID(IContributionItem item) {
+		if (item instanceof ActionSetContributionItem) {
+			ActionSetContributionItem asci = (ActionSetContributionItem) item;
+			return asci.getActionSetId();
+		}
+		if (item instanceof PluginActionCoolBarContributionItem) {
+			PluginActionCoolBarContributionItem pacbci = (PluginActionCoolBarContributionItem) item;
+			return pacbci.getActionSetId();
+		}
+		return null;
+	}
+
+	/**
+	 * Causes all items under the manager to be visible, so they can be read.
+	 * 
+	 * @param manager
+	 */
+	private static void makeAllContributionsVisible(IContributionManager manager) {
+		IContributionItem[] items = manager.getItems();
+
+		for (int i = 0; i < items.length; i++) {
+			makeContributionVisible(items[i]);
+		}
+	}
+
+	/**
+	 * Makes all items under the item to be visible, so they can be read.
+	 * 
+	 * @param item
+	 */
+	private static void makeContributionVisible(IContributionItem item) {
+		item.setVisible(true);
+
+		if (item instanceof IContributionManager) {
+			makeAllContributionsVisible((IContributionManager) item);
+		}
+		if (item instanceof SubContributionItem) {
+			makeContributionVisible(((SubContributionItem) item).getInnerItem());
+		}
+	}
+
+	private DisplayItem createMenuStructure(Menu menu) {
+		DisplayItem root = new DisplayItem("", null); //$NON-NLS-1$
+		createMenuEntries(menu, root, true);
+		return root;
+	}
+
+	private void createMenuEntries(Menu menu, DisplayItem parent,
+			boolean trackDynamics) {
+		if (menu == null)
+			return;
+		MenuItem[] menuItems = menu.getItems();
+
+		Map findDynamics = new HashMap();
+		DynamicContributionItem dynamicEntry = null;
+
+		if (trackDynamics && menu.getParentItem() != null) {
+			Object data = menu.getParentItem().getData();
+			if (data instanceof IContributionManager) {
+				IContributionManager manager = (IContributionManager) data;
+				IContributionItem[] items = manager.getItems();
+				for (int i = 0; i < items.length; i++) {
+					if (items[i].isDynamic()) {
+						findDynamics.put(i > 0 ? items[i - 1] : null, items[i]);
+					}
 				}
-                ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category
-                        .getId(), category.getLabel());
-                IViewDescriptor [] views = category.getViews();
-                if (views != null) {
-                    for (int j = 0; j < views.length; j++) {
-                        IViewDescriptor view = views[j];
-                        if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID)) {
-							continue;
+
+				if (findDynamics.containsKey(null)) {
+					IContributionItem item = (IContributionItem) findDynamics
+							.get(null);
+					dynamicEntry = new DynamicContributionItem(item);
+					parent.addChild(dynamicEntry);
+				}
+			}
+		}
+
+		for (int i = 0; i < menuItems.length; i++) {
+			if (!menuItems[i].getText().equals("")) { //$NON-NLS-1$
+				IContributionItem contributionItem = (IContributionItem) menuItems[i]
+						.getData();
+				if (dynamicEntry != null
+						&& contributionItem.equals(dynamicEntry
+								.getIContributionItem())) {
+					dynamicEntry.addCurrentItem(menuItems[i]);
+				} else {
+					DisplayItem menuEntry = new DisplayItem(
+							menuItems[i].getText(), contributionItem);
+
+					menuEntry.setImage(menuItems[i].getImage());
+					menuEntry.setActionSet((ActionSet) idToActionSet
+							.get(getActionSetID(contributionItem)));
+					parent.addChild(menuEntry);
+
+					if (ActionFactory.NEW.getId()
+							.equals(((IContributionItem) menuItems[i].getData())
+									.getId())) {
+						initializeNewWizardsMenu(menuEntry);
+						wizards = menuEntry;
+						createMenuEntries(menuItems[i].getMenu(), menuEntry,
+								false);
+					} else if (SHORTCUT_CONTRIBUTION_ITEM_ID_OPEN_PERSPECTIVE
+							.equals(((IContributionItem) menuItems[i].getData())
+									.getId())) {
+						initializePerspectivesMenu(menuEntry);
+						perspectives = menuEntry;
+						createMenuEntries(menuItems[i].getMenu(), menuEntry,
+								false);
+					} else if (SHORTCUT_CONTRIBUTION_ITEM_ID_SHOW_VIEW
+							.equals(((IContributionItem) menuItems[i].getData())
+									.getId())) {
+						initializeViewsMenu(menuEntry);
+						views = menuEntry;
+						createMenuEntries(menuItems[i].getMenu(), menuEntry,
+								false);
+					} else {
+						createMenuEntries(menuItems[i].getMenu(), menuEntry,
+								trackDynamics);
+					}
+
+					if (menuEntry.getChildren().isEmpty()) {
+						menuEntry
+								.setCheckState(getMenuItemIsVisible(menuEntry));
+					}
+
+					if (menuItems[i].getImage() == null) {
+						if (parent != null && parent.getParent() == null) {
+							menuEntry.setImageDescriptor(menuImageDescriptor);
+						} else if (menuEntry.getChildren().size() > 0) {
+							menuEntry
+									.setImageDescriptor(submenuImageDescriptor);
 						}
-                        if (WorkbenchActivityHelper.filterItem(view)) {
-							continue;
-						}
-                        viewCategory.addItem(view);
-                        if (activeIds.contains(view.getId())) {
-							viewCategory.addCheckedItem(view);
-						}
-                    }
-                }
-            }
-        }
-    }
+					}
+				}
+				if (trackDynamics
+						&& findDynamics.containsKey(menuItems[i].getData())) {
+					IContributionItem item = (IContributionItem) findDynamics
+							.get(menuItems[i].getData());
+					dynamicEntry = new DynamicContributionItem(item);
+					dynamicEntry
+							.setCheckState(getMenuItemIsVisible(dynamicEntry));
+					parent.addChild(dynamicEntry);
+				}
+			}
+		}
+	}
 
-    protected void okPressed() {
-        if (showShortcutTab()) {
-            ArrayList menus = rootMenu.children;
-            for (int i = 0; i < menus.size(); i++) {
-                ShortcutMenu menu = (ShortcutMenu) menus.get(i);
-                if (ShortcutMenu.ID_VIEW.equals(menu.id)) {
-                    perspective.setShowViewActionIds(menu.getCheckedItemIds());
-                } else if (ShortcutMenu.ID_PERSP.equals(menu.id)) {
-                    perspective.setPerspectiveActionIds(menu
-                            .getCheckedItemIds());
-                } else if (ShortcutMenu.ID_WIZARD.equals(menu.id)) {
-                    perspective.setNewWizardActionIds(menu.getCheckedItemIds());
-                }
-            }
-        }
+	private boolean getMenuItemIsVisible(DisplayItem item) {
+		return isAvailable(item)
+				&& !(perspective.getHiddenMenuItems()
+						.contains(getCommandID(item)));
+	}
 
-        ArrayList toAdd = new ArrayList();
-        ArrayList toRemove = new ArrayList();
-        toRemove.addAll(initiallyActive);
-        
-        Object[] selected = actionSetsViewer.getCheckedElements();
-        for (int i = 0; i < selected.length; i++) {
-            Object obj = selected[i];
-            toRemove.remove(obj);
-            if (!initiallyActive.contains(toRemove)) {
-                toAdd.add(obj);
-            }
-        }
-        
-        perspective.turnOnActionSets((IActionSetDescriptor[]) toAdd.toArray(new IActionSetDescriptor[toAdd.size()]));
-        perspective.turnOffActionSets((IActionSetDescriptor[]) toRemove.toArray(new IActionSetDescriptor[toAdd.size()]));
+	private boolean getToolbarItemIsVisible(DisplayItem item) {
+		return isAvailable(item)
+				&& !(perspective.getHiddenToolbarItems()
+						.contains(getCommandID(item)));
+	}
 
-        super.okPressed();
-    }
-    
-    String removeShortcut(String label) {
-        if (label == null) {
+	/**
+	 * Causes a viewer to update the state of a category and all its ancestors.
+	 * 
+	 * @param viewer
+	 * @param category
+	 */
+	private void updateCategoryAndParents(StructuredViewer viewer,
+			Category category) {
+		while (category.getParent() != shortcuts) {
+			viewer.update(category, null);
+			category = (Category) category.getParent();
+		}
+	}
+
+	private DisplayItem createToolBarStructure(CoolBar coolbar) {
+		DisplayItem root = new DisplayItem(null, null); // Create a
+																	// root
+		createToolbarEntries(coolbar, root);
+		return root;
+	}
+
+	private void createToolbarEntries(CoolBar coolbar, DisplayItem parent) {
+		if (coolbar == null)
+			return;
+		CoolItem[] items = coolbar.getItems();
+		List entries = new ArrayList(items.length);
+
+		for (int i = 0; i < items.length; i++) {
+			IContributionItem contributionItem = (IContributionItem) items[i]
+					.getData();
+			String text;
+			if (contributionItem instanceof IToolBarContributionItem) {
+				IToolBarContributionItem item = (IToolBarContributionItem) contributionItem;
+				text = window.getToolbarLabel(item.getId());
+				if (text == null || text.equals("")) //$NON-NLS-1$
+					text = items[i].getText();
+
+			} else {
+				text = items[i].getText();
+			}
+			DisplayItem toolBarEntry = new DisplayItem(text,
+					contributionItem);
+			if (items[i].getImage() == null) {
+				toolBarEntry.setImageDescriptor(toolbarImageDescriptor);
+			}
+			toolBarEntry.setActionSet((ActionSet) idToActionSet
+					.get(getActionSetID(contributionItem)));
+			parent.addChild(toolBarEntry);
+
+			Control control = items[i].getControl();
+
+			if (control instanceof ToolBar) {
+				ToolItem[] toolitems = ((ToolBar) control).getItems();
+				createToolbarEntries(toolitems, toolBarEntry);
+			}
+
+			entries.add(toolBarEntry);
+		}
+	}
+
+	private void createToolbarEntries(ToolItem[] toolitems,
+			DisplayItem parent) {
+		if (toolitems == null)
+			return;
+
+		for (int i = 0; i < toolitems.length; i++) {
+			IContributionItem contributionItem = (IContributionItem) toolitems[i]
+					.getData();
+			DisplayItem toolBarEntry = new DisplayItem(toolitems[i]
+					.getToolTipText(), contributionItem);
+			toolBarEntry.setImage(toolitems[i].getImage());
+			toolBarEntry.setActionSet((ActionSet) idToActionSet
+					.get(getActionSetID(contributionItem)));
+			contributionItem.setVisible(true);// force parents to update
+			toolBarEntry.setCheckState(getToolbarItemIsVisible(toolBarEntry));
+			parent.addChild(toolBarEntry);
+		}
+	}
+
+	/**
+	 * Returns whether the shortcut tab should be shown.
+	 * 
+	 * @return <code>true</code> if the shortcut tab should be shown, and
+	 *         <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	private boolean showShortcutTab() {
+		return window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)
+				|| window
+						.containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)
+				|| window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
+	}
+
+	private ArrayList getVisibleIDs(TreeItem root) {
+		ArrayList ids = new ArrayList(root.getChildren().size());
+		for (Iterator i = root.getChildren().iterator(); i.hasNext();) {
+			DisplayItem object = (DisplayItem) i.next();
+			if (object instanceof ShortcutItem && object.getState()) {
+				ids.add(getParamID(object));
+			}
+		}
+		return ids;
+	}
+
+	private List getInvisibleIDs(DisplayItem item) {
+		List ids = new ArrayList();
+		collectInvisibleIDs(item, ids);
+		return ids;
+	}
+
+	private void collectInvisibleIDs(DisplayItem item, List collection) {
+		if (item instanceof ShortcutItem)
+			return;
+
+		if (item.getChildren().size() > 0) {
+			for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
+				collectInvisibleIDs((DisplayItem) i.next(), collection);
+			}
+		} else if (!item.getState()) {
+			String id = getCommandID(item);
+			collection.add(id);
+		}
+	}
+
+	protected void okPressed() {
+		// Shortcuts
+		if (showShortcutTab()) {
+			perspective.setNewWizardActionIds(getVisibleIDs(wizards));
+			perspective.setPerspectiveActionIds(getVisibleIDs(perspectives));
+			perspective.setShowViewActionIds(getVisibleIDs(views));
+		}
+
+		// Action Sets
+		ArrayList toAdd = new ArrayList();
+		ArrayList toRemove = new ArrayList();
+
+		for (Iterator i = actionSets.iterator(); i.hasNext();) {
+			ActionSet actionSet = (ActionSet) i.next();
+			if (actionSet.isActive()) {
+				toAdd.add(actionSet.descriptor);
+			} else {
+				toRemove.add(actionSet.descriptor);
+			}
+		}
+
+		perspective.turnOnActionSets((IActionSetDescriptor[]) toAdd
+				.toArray(new IActionSetDescriptor[toAdd.size()]));
+		perspective.turnOffActionSets((IActionSetDescriptor[]) toRemove
+				.toArray(new IActionSetDescriptor[toAdd.size()]));
+
+		// Menu and ToolBar Items
+		perspective.setHiddenMenuItems(getInvisibleIDs(menuItems));
+		perspective.setHiddenToolbarItems(getInvisibleIDs(toolBarItems));
+
+		super.okPressed();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.TrayDialog#close()
+	 */
+	public boolean close() {
+		tooltipHeading.dispose();
+
+		for (Iterator i = toDispose.iterator(); i.hasNext();) {
+			Resource resource = (Resource) i.next();
+			resource.dispose();
+		}
+
+		customizeActionBars.dispose();
+
+		return super.close();
+	}
+
+	private String removeShortcut(String label) {
+		if (label == null) {
 			return label;
 		}
-        int end = label.lastIndexOf('@');
-        if (end >= 0) {
+		int end = label.lastIndexOf('@');
+		if (end >= 0) {
 			label = label.substring(0, end);
 		}
-        return label;
-    }
 
-    private void setInitialSelections() {
-        Object item = actionSetsViewer.getElementAt(0);
-        if (lastSelectedActionSetId != null) {
-            for (int i = 0; i < actionSets.size(); i++) {
-                ActionSetDescriptor actionSet = (ActionSetDescriptor) actionSets
-                        .get(i);
-                if (actionSet.getId().equals(lastSelectedActionSetId)) {
-                    item = actionSet;
-                    break;
-                }
-            }
-        }
-        if (item != null) {
-        	StructuredSelection sel = new StructuredSelection(item);
-        	actionSetsViewer.setSelection(sel, true);
-        }
-
-        if (showShortcutTab()) {
-            menusCombo.select(lastSelectedMenuIndex);
-        }
-
-        if (lastSelectedTab != -1) {
-            tabFolder.setSelection(lastSelectedTab);
-        }
-
-        if ((tabFolder.getSelectionIndex() == 0) && showShortcutTab()) {
-            menusCombo.setFocus();
-        } else {
-            actionSetsViewer.getControl().setFocus();
-        }
-    }
-
-    private void updateMenuCategoryCheckedState(ShortcutMenu menu) {
-        if (menu == rootMenu) {
-			return;
+		end = label.lastIndexOf('\t');
+		if (end >= 0) {
+			label = label.substring(0, end);
 		}
-        if (menu.isFullyChecked()) {
-            menuCategoriesViewer.setParentsGrayed(menu, false);
-            menuCategoriesViewer.setChecked(menu, true);
-        } else if (menu.isFullyUnchecked()) {
-            menuCategoriesViewer.setParentsGrayed(menu, false);
-            menuCategoriesViewer.setChecked(menu, false);
-        } else {
-            menuCategoriesViewer.setParentsGrayed(menu, true);
-            menuCategoriesViewer.setChecked(menu, true);
-        }
-        updateMenuCategoryCheckedState(menu.parent);
-    }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#applyDialogFont()
-     */
-    protected boolean applyDialogFont() {
-        return false;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-     */
-    protected boolean isResizable() {
-    	return true;
-    }
+		return label;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#applyDialogFont()
+	 */
+	protected boolean applyDialogFont() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
+
+	private void viewActionSet(final DisplayItem item) {
+		viewActionSet(item.getActionSet());
+	}
+
+	/**
+	 * @param item
+	 */
+	private void viewActionSet(final ActionSet actionSet) {
+		tabFolder.setSelection(actionSetTab);
+		actionSetAvailabilityTable.reveal(actionSet);
+		setSelectionOn(actionSetAvailabilityTable, actionSet);
+		actionSetAvailabilityTable.getControl().setFocus();
+	}
+
+	/**
+	 * Determines the state <code>item</code> should be (checked, gray or
+	 * unchecked) based only on the leafs underneath it (unless it is indeed a
+	 * leaf).
+	 * 
+	 * @param item
+	 *            the item to find the state of
+	 * @param provider
+	 *            the content provider which will provide <code>item</code>'s
+	 *            children
+	 * @param filter
+	 *            the filter that will only select elements in the currently
+	 *            chosen action set
+	 * @return {@link TreeManager#CHECKSTATE_CHECKED},
+	 *         {@link TreeManager#CHECKSTATE_GRAY} or
+	 *         {@link TreeManager#CHECKSTATE_UNCHECKED}
+	 */
+	private static int getLeafStates(TreeItem item,
+			ITreeContentProvider provider, ViewerFilter filter) {
+		Object[] children = provider.getChildren(item);
+
+		boolean checkedFound = false;
+		boolean uncheckedFound = false;
+
+		for (int i = 0; i < children.length; i++) {
+			if (filter.select(null, null, children[i])) {
+				TreeItem child = (TreeItem) children[i];
+				switch (getLeafStates(child, provider, filter)) {
+				case TreeManager.CHECKSTATE_CHECKED: {
+					checkedFound = true;
+					break;
+				}
+				case TreeManager.CHECKSTATE_GRAY: {
+					checkedFound = uncheckedFound = true;
+					break;
+				}
+				case TreeManager.CHECKSTATE_UNCHECKED: {
+					uncheckedFound = true;
+					break;
+				}
+				}
+				if (checkedFound && uncheckedFound) {
+					return TreeManager.CHECKSTATE_GRAY;
+				}
+			}
+		}
+
+		if (!checkedFound && !uncheckedFound)
+			return item.getState() ? TreeManager.CHECKSTATE_CHECKED
+					: TreeManager.CHECKSTATE_UNCHECKED;
+		return checkedFound ? TreeManager.CHECKSTATE_CHECKED
+				: TreeManager.CHECKSTATE_UNCHECKED;
+	}
+
+	/**
+	 * Sets all leafs under a {@link DisplayItem} to either visible or
+	 * invisible. This is for use with the action set trees, where the only
+	 * state used is that of leafs, and the rest is rolled up to the parents.
+	 * Thus, this method effectively sets the state of the entire branch.
+	 * 
+	 * @param item
+	 *            the item whose leafs underneath (or itself, if it is a leaf)
+	 *            to <code>value</code>
+	 * @param value
+	 *            <code>true</code>for visible, <code>false</code> for invisible
+	 * @param provider
+	 *            the content provider which will provide <code>item</code>'s
+	 *            children
+	 * @param filter
+	 *            the filter that will only select elements in the currently
+	 *            chosen action set
+	 */
+	private static void setAllLeafs(DisplayItem item, boolean value,
+			ITreeContentProvider provider, ViewerFilter filter) {
+		Object[] children = provider.getChildren(item);
+		boolean isLeaf = true;
+
+		for (int i = 0; i < children.length; i++) {
+			isLeaf = false;
+			if (filter.select(null, null, children[i])) {
+				DisplayItem child = (DisplayItem) children[i];
+				setAllLeafs(child, value, provider, filter);
+			}
+		}
+
+		if (isLeaf) {
+			item.setCheckState(value);
+		}
+	}
 }

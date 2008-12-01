@@ -254,7 +254,7 @@ public class ToolBarManager extends ContributionManager implements
 				//			}
 				for (int i = 0; i < items.length; ++i) {
 					IContributionItem ci = items[i];
-					if (!ci.isVisible()) {
+					if (!isChildVisible(ci)) {
 						continue;
 					}
 					if (ci.isSeparator()) {
@@ -437,4 +437,19 @@ public class ToolBarManager extends ContributionManager implements
 		}
 	}
 
+	private boolean isChildVisible(IContributionItem item) {
+		Boolean v;
+		
+		IContributionManagerOverrides overrides = getOverrides();
+		if(overrides == null) {
+			v = null;
+		} else {
+			v = getOverrides().getVisible(item); 
+		}
+		
+		if (v != null) {
+			return v.booleanValue();
+		}
+		return item.isVisible();
+	}
 }

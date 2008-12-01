@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -100,6 +102,12 @@ public class Perspective {
     protected ArrayList showViewShortcuts;
 
     protected ArrayList perspectiveShortcuts;
+    
+    /**	IDs of menu items the user has chosen to hide	*/
+    protected Collection hideMenuIDs;
+    
+    /**	IDs of toolbar items the user has chosen to hide	*/
+    protected Collection hideToolBarIDs;
 
     //private List fastViews;
     protected FastViewManager fastViewManager = null;
@@ -156,6 +164,8 @@ public class Perspective {
         this.viewFactory = page.getViewFactory();
         alwaysOnActionSets = new ArrayList(2);
         alwaysOffActionSets = new ArrayList(2);
+        hideMenuIDs = new HashSet();
+        hideToolBarIDs = new HashSet();
         
         // We'll only make a FastView Manager if there's a
         // Trim manager in the WorkbenchWindow
@@ -1409,6 +1419,20 @@ public class Perspective {
 				String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
 				perspectiveShortcuts.add(id);
 			}
+			
+	        // Load hidden menu item ids
+	        actions = memento.getChildren(IWorkbenchConstants.TAG_HIDE_MENU);
+	        hideMenuIDs = new HashSet();
+	        for (int x = 0; x < actions.length; x++) {
+	        	String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
+	        	hideMenuIDs.add(id);
+	        }
+	        actions = memento.getChildren(IWorkbenchConstants.TAG_HIDE_TOOLBAR);
+	        hideToolBarIDs = new HashSet();
+	        for (int x = 0; x < actions.length; x++) {
+	        	String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
+	        	hideToolBarIDs.add(id);
+	        }
 
 			ArrayList extActionSets = getPerspectiveExtensionActionSets();
 			for (int i = 0; i < extActionSets.size(); i++) {
@@ -1693,6 +1717,20 @@ public class Perspective {
             IMemento child = memento
                     .createChild(IWorkbenchConstants.TAG_PERSPECTIVE_ACTION);
             child.putString(IWorkbenchConstants.TAG_ID, str);
+        }
+        
+        // Save hidden menu item ids
+        itr = hideMenuIDs.iterator();
+        while(itr.hasNext()) {
+        	String str = (String) itr.next();
+        	IMemento child = memento.createChild(IWorkbenchConstants.TAG_HIDE_MENU);
+        	child.putString(IWorkbenchConstants.TAG_ID, str);
+        }
+        itr = hideToolBarIDs.iterator();
+        while(itr.hasNext()) {
+        	String str = (String) itr.next();
+        	IMemento child = memento.createChild(IWorkbenchConstants.TAG_HIDE_TOOLBAR);
+        	child.putString(IWorkbenchConstants.TAG_ID, str);
         }
 
         // Get visible views.
@@ -2537,4 +2575,33 @@ public class Perspective {
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
         return useNewMinMax;
     }
+	
+	/**	@return a Collection of IDs of items to be hidden from the menu bar	*/
+	public Collection getHiddenMenuItems() {
+		return hideMenuIDs;
+	}
+	
+	/**	Hides the menu item	*/
+	public void setHiddenMenuItems(Collection items) {
+		hideMenuIDs = items;
+		page.getActionBars().getMenuManager().updateAll(true);
+	}
+	
+	/**	@return a Collection of IDs of items to be hidden from the tool bar	*/
+	public Collection getHiddenToolbarItems() {
+		return hideToolBarIDs;
+	}
+	
+	/**	Hides the menu item	*/
+	public void setHiddenToolbarItems(Collection items) {
+		hideToolBarIDs = items;
+		IWorkbenchWindow wbw = page.getWorkbenchWindow();
+		if (wbw instanceof WorkbenchWindow) {
+			final CoolBarManager cbm = ((WorkbenchWindow)wbw).getCoolBarManager();
+			if(cbm != null) {
+				cbm.update(true);
+			}
+		}
+	}
+
 }

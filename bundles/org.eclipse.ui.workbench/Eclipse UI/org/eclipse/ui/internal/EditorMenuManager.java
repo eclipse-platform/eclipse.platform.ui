@@ -82,6 +82,13 @@ public class EditorMenuManager extends SubMenuManager {
         public String getText(IContributionItem item) {
             return getParentMenuManager().getOverrides().getText(item);
         }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.action.IContributionManagerOverrides#getVisible(org.eclipse.jface.action.IContributionItem)
+         */
+        public Boolean getVisible(IContributionItem item) {
+        	return getParentMenuManager().getOverrides().getVisible(item);
+        }
     }
 
     private Overrides overrides = new Overrides();

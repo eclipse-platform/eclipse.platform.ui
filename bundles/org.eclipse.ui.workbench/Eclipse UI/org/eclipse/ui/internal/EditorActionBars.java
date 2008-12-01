@@ -65,6 +65,13 @@ public class EditorActionBars extends SubActionBars2 {
 		public String getText(IContributionItem item) {
 			return null;
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.IContributionManagerOverrides#getVisible(org.eclipse.jface.action.IContributionItem)
+		 */
+		public Boolean getVisible(IContributionItem item) {
+			return null;
+		}
 	}
 
 	/**

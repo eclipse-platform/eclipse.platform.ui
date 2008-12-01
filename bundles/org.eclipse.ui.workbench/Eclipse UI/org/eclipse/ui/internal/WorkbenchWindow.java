@@ -41,15 +41,18 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -1153,6 +1156,138 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		};
 	}
 
+	private IContributionManagerOverrides menuOverride = new IContributionManagerOverrides() {
+
+		public Integer getAccelerator(IContributionItem item) {
+			return null;
+		}
+
+		public String getAcceleratorText(IContributionItem item) {
+			return null;
+		}
+
+		public Boolean getEnabled(IContributionItem item) {
+			return null;
+		}
+
+		public String getText(IContributionItem item) {
+			return null;
+		}
+
+		public Boolean getVisible(IContributionItem item) {
+			final IWorkbenchPage page = getActivePage();
+			
+			if(page == null) {
+				return null;
+			}
+			
+			Perspective perspective = ((WorkbenchPage)page).getActivePerspective();
+
+			//Find the command ID
+			String id = CustomizePerspectiveDialog.getIDFromIContributionItem(item);
+			
+			if(id == null)
+				return null;
+					
+			//Has the client intentionally hidden the menu item?
+			if(perspective != null && perspective.getHiddenMenuItems().contains(id)) {
+				return Boolean.FALSE;
+			} 
+			
+			//Short circuit this logic
+			if(!item.isVisible())
+				return Boolean.FALSE;
+			
+			//Usually, if all children are hidden, the menu will
+			//automatically be hidden (i.e. the above isVisible
+			//call will return false). In some cases, unfortunately,
+			//this is not the case, so we must calculate it ourself.
+			IContributionItem[] children = null;
+			if(item instanceof IMenuManager) {
+				children = ((IMenuManager)item).getItems();
+			}
+			
+			if(item instanceof SubContributionItem) {
+				IContributionItem inner = ((SubContributionItem)item).getInnerItem();
+				if(inner instanceof IMenuManager) {
+					children = ((IMenuManager)inner).getItems();
+				}
+			}
+			
+			if(children == null) {
+				return null;
+			} 
+			
+			for (int i = 0; i < children.length; i++) {
+				IContributionItem child = children[i];
+				if(getVisible(child) != Boolean.FALSE && !child.isSeparator()) {
+					if(child.isDynamic()) {
+						Menu menu = new Menu(getShell(), SWT.NONE);
+						
+						child.fill(menu, 0);
+						
+						boolean hasChildren = (menu.getItems().length > 0); 
+						
+						menu.dispose();
+						
+						if(!hasChildren) {
+							return Boolean.FALSE;
+						}
+					}
+					return null;
+				}
+			}
+			
+			return Boolean.FALSE;
+		}
+	};
+	
+	private IContributionManagerOverrides toolbarOverride = new IContributionManagerOverrides() {
+
+		public Integer getAccelerator(IContributionItem item) {
+			return null;
+		}
+
+		public String getAcceleratorText(IContributionItem item) {
+			return null;
+		}
+
+		public Boolean getEnabled(IContributionItem item) {
+			return null;
+		}
+
+		public String getText(IContributionItem item) {
+			return null;
+		}
+
+		public Boolean getVisible(IContributionItem item) {
+			final IWorkbenchPage page = getActivePage();
+			
+			if(page == null) {
+				return null;
+			}
+			
+			Perspective perspective = ((WorkbenchPage)page).getActivePerspective();
+
+			//Find the command ID
+			String id = CustomizePerspectiveDialog.getIDFromIContributionItem(item);
+			
+			if(id == null)
+				return null;
+					
+			//Has the client intentionally hidden the menu item?
+			if(perspective != null && perspective.getHiddenToolbarItems().contains(id)) {
+				return Boolean.FALSE;
+			} 
+			
+			//Short circuit this logic
+			if(!item.isVisible())
+				return Boolean.FALSE;
+					
+			return null;
+		}
+	};
+	
     /**
 	 * <p>
 	 * Returns a new menu manager for this workbench window. This menu manager
@@ -1165,7 +1300,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @return a menu manager for this workbench window; never <code>null</code>.
 	 */
 	protected MenuManager createMenuManager() {
-		return super.createMenuManager();
+		MenuManager manager = super.createMenuManager();
+		manager.setOverrides(menuOverride);
+		return manager;
 	}
 
 	/**
@@ -3765,7 +3902,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.2
      */
     protected ICoolBarManager createCoolBarManager2(int style) {
-        return getActionBarPresentationFactory().createCoolBarManager();
+        final ICoolBarManager2 coolBarManager = getActionBarPresentationFactory().createCoolBarManager();
+        coolBarManager.setOverrides(toolbarOverride);
+		return coolBarManager;
     }
 
     /**
@@ -3777,7 +3916,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.2
      */
     protected IToolBarManager createToolBarManager2(int style) {
-        return getActionBarPresentationFactory().createToolBarManager();
+        final IToolBarManager2 toolBarManager = getActionBarPresentationFactory().createToolBarManager();
+        toolBarManager.setOverrides(toolbarOverride);
+		return toolBarManager;
     }
     
     /**

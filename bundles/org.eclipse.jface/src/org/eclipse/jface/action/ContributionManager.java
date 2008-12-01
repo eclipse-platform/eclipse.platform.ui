@@ -245,6 +245,10 @@ public abstract class ContributionManager implements IContributionManager {
 				public String getText(IContributionItem item) {
 					return null;
 				}
+
+				public Boolean getVisible(IContributionItem item) {
+					return null;
+				}
 			};
 		}
 		return overrides;

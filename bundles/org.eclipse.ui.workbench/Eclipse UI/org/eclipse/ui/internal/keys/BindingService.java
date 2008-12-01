@@ -250,6 +250,10 @@ public final class BindingService implements IBindingService {
 	public BindingPersistence getBindingPersistence() {
 		return bindingPersistence;
 	}
+	
+	public BindingManager getBindingManager() {
+		return bindingManager;
+	}
 
 	/*
 	 * (non-Javadoc)

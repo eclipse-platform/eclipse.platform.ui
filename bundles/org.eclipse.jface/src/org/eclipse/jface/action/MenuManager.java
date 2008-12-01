@@ -427,6 +427,9 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                     public String getText(IContributionItem item) {
                         return null;
                     }
+    				public Boolean getVisible(IContributionItem item) {
+    					return null;
+    				}
                 };
             } else {
                 overrides = parent.getOverrides();
@@ -554,7 +557,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         IContributionItem[] childItems = getItems();
         boolean visibleChildren = false;
         for (int j = 0; j < childItems.length; j++) {
-            if (childItems[j].isVisible() && !childItems[j].isSeparator()) {
+            if (isChildVisible(childItems[j]) && !childItems[j].isSeparator()) {
                 visibleChildren = true;
                 break;
             }
@@ -750,7 +753,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 IContributionItem separator = null;
                 for (int i = 0; i < items.length; ++i) {
                     IContributionItem ci = items[i];
-                    if (!ci.isVisible()) {
+                    if (!isChildVisible(ci)) {
 						continue;
 					}
                     if (ci.isSeparator()) {
@@ -850,7 +853,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                     IContributionItem ci = items[i];
                     if (ci instanceof IMenuManager) {
                         IMenuManager mm = (IMenuManager) ci;
-                        if (mm.isVisible()) {
+                        if (isChildVisible(mm)) {
                             mm.updateAll(force);
                         }
                     }
@@ -970,4 +973,12 @@ public class MenuManager extends ContributionManager implements IMenuManager {
             }
         }
     }
+    
+	private boolean isChildVisible(IContributionItem item) {
+		Boolean v = getOverrides().getVisible(item);
+		if (v != null) {
+			return v.booleanValue();
+		}
+		return item.isVisible();
+	}
 }

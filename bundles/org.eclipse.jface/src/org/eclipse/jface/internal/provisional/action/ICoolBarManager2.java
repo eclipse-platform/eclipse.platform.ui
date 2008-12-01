@@ -11,6 +11,7 @@
 package org.eclipse.jface.internal.provisional.action;
 
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -124,5 +125,14 @@ public interface ICoolBarManager2 extends ICoolBarManager {
      * @since 3.2
 	 */
     public void setItems(IContributionItem[] newItems);
+    
+	/**
+	 * Sets the overrides for this contribution manager
+	 * 
+	 * @param newOverrides
+	 *            the overrides for the items of this manager
+	 * @since 3.5
+	 */
+	public void setOverrides(IContributionManagerOverrides newOverrides);
 
 }

@@ -352,7 +352,18 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	ParameterizedCommand getCommand() {
+	/**
+	 * Returns the ParameterizedCommand for this contribution.
+	 * <p>
+	 * <strong>NOTE:</strong> The returned object should be treated
+	 * as 'read-only', do <b>not</b> execute this instance or attempt
+	 * to modify its state.
+	 * </p>
+	 * @return The parameterized command for this contribution.
+	 * 
+	 * @since 3.5
+	 */
+	public ParameterizedCommand getCommand() {
 		return command;
 	}
 

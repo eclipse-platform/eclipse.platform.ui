@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -425,7 +426,7 @@ public class CoolBarManager extends ContributionManager implements
             if (items[i].isSeparator()) {
                 separatorFound = true;
             }
-            if ((separatorFound) && (items[i].isVisible())
+            if ((separatorFound) && (isChildVisible(items[i]))
                     && (!items[i].isGroupMarker()) && (!items[i].isSeparator())) {
                 numRows++;
                 separatorFound = false;
@@ -841,7 +842,7 @@ public class CoolBarManager extends ContributionManager implements
             final List visibleItems = new ArrayList(items.length);
             for (int i = 0; i < items.length; i++) {
                 final IContributionItem item = items[i];
-                if (item.isVisible()) {
+                if (isChildVisible(item)) {
                     visibleItems.add(item);
                 }
             }
@@ -916,6 +917,10 @@ public class CoolBarManager extends ContributionManager implements
 
                 // Otherwise, a new item has to be added.
                 final int start = coolBar.getItemCount();
+                IToolBarManager manager = ((ToolBarContributionItem)sourceItem).getToolBarManager();
+            	if(manager instanceof IToolBarManager2) {
+            		((IToolBarManager2)manager).setOverrides(getOverrides());
+            	}
                 sourceItem.fill(coolBar, destinationIndex);
                 final int newItems = coolBar.getItemCount() - start;
                 for (int i = 0; i < newItems; i++) {
@@ -1009,7 +1014,7 @@ public class CoolBarManager extends ContributionManager implements
                 foundSeparator = true;
             }
             if ((!item.isSeparator()) && (!item.isGroupMarker())
-                    && (item.isVisible()) && (coolItem != null)
+                    && (isChildVisible(item)) && (coolItem != null)
                     && (foundSeparator)) {
                 wrapIndices[j] = coolBar.indexOf(coolItem);
                 j++;
@@ -1038,4 +1043,20 @@ public class CoolBarManager extends ContributionManager implements
             coolBar.setWrapIndices(wrapIndices);
         }
     }
+    
+	private boolean isChildVisible(IContributionItem item) {
+		Boolean v;
+		
+		IContributionManagerOverrides overrides = getOverrides();
+		if(overrides == null) {
+			v = null;
+		} else {
+			v = getOverrides().getVisible(item); 
+		}
+		
+		if (v != null) {
+			return v.booleanValue();
+		}
+		return item.isVisible();
+	}
 }

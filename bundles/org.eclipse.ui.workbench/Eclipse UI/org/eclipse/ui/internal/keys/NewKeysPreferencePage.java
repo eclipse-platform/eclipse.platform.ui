@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -1255,6 +1257,15 @@ public class NewKeysPreferencePage extends PreferencePage implements
 					.getBindingModel().getBindingToElement().get(data);
 			fFilteredTree.getViewer().setSelection(new StructuredSelection(be),
 					true);
+		}
+		if (data instanceof ParameterizedCommand) {
+			Map commandToElement = keyController.getBindingModel().getCommandToElement();
+			
+			BindingElement be = (BindingElement)commandToElement.get(data);
+			if(be != null) {
+				fFilteredTree.getViewer().setSelection(new StructuredSelection(be),
+					true);
+			}
 		}
 	}
 

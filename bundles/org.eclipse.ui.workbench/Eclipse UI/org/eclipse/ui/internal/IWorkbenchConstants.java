@@ -197,6 +197,10 @@ public interface IWorkbenchConstants {
     public static final String TAG_NEW_WIZARD_ACTION = "new_wizard_action"; //$NON-NLS-1$
 
     public static final String TAG_PERSPECTIVE_ACTION = "perspective_action"; //$NON-NLS-1$
+    
+    public static final String TAG_HIDE_MENU = "hide_menu_item_id"; //$NON-NLS-1$
+    	
+    public static final String TAG_HIDE_TOOLBAR = "hide_toolbar_item_id"; //$NON-NLS-1$
 
     public static final String TAG_VIEW = "view"; //$NON-NLS-1$
 

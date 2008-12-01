@@ -236,7 +236,11 @@ public class ShowInMenu extends ContributionItem implements
 	 * @return the source part or <code>null</code>
 	 */
 	private IWorkbenchPart getSourcePart() {
-		IWorkbenchPage page = getWindow().getActivePage();
+		IWorkbenchWindow window = getWindow();
+		
+		if(window == null)	return null;
+		
+		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
 			return page.getActivePart();
 		}
@@ -328,6 +332,8 @@ public class ShowInMenu extends ContributionItem implements
 	}
 
 	protected IWorkbenchWindow getWindow() {
+		if(locator == null) return null;
+		
 		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
 				.getService(IWorkbenchLocationService.class);
 

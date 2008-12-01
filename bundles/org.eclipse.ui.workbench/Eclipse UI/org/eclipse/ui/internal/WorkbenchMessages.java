@@ -179,22 +179,48 @@ public class WorkbenchMessages extends NLS {
 	public static String ActionSetDialogInput_perspectiveCategory;
 	public static String ActionSetDialogInput_wizardCategory;
 
-	public static String ActionSetSelection_menuTab;
+	public static String Shortcuts_shortcutTab;
+	public static String Shortcuts_selectShortcutsLabel;
+	public static String Shortcuts_availableMenus;
+	public static String Shortcuts_availableCategories;
+	public static String Shortcuts_allShortcuts;
+	
 	public static String ActionSetSelection_actionSetsTab;
 	public static String ActionSetSelection_selectActionSetsLabel;
-	public static String ActionSetSelection_selectActionSetsHelp;
 	public static String ActionSetSelection_availableActionSets;
 	public static String ActionSetSelection_menubarActions;
 	public static String ActionSetSelection_toolbarActions;
-	public static String ActionSetSelection_selectMenusLabel;
-	public static String ActionSetSelection_availableMenus;
-	public static String ActionSetSelection_availableCategories;
-	public static String ActionSetSelection_menuItems;
 	public static String ActionSetSelection_descriptionColumnHeader;
 	public static String ActionSetSelection_menuColumnHeader;
-	public static String ActionSetSelection_toolbarLocation;
-	public static String ActionSetSelection_menubarLocation;
-	public static String ActionSetSelection_noDesc;
+	
+	public static String HideItems_itemInActionSet; 
+	public static String HideItems_itemInUnavailableActionSet;
+	public static String HideItems_unavailableChildCommandGroup;
+	public static String HideItems_unavailableChildCommandGroups;
+	public static String HideItems_keyBindings;
+	public static String HideItems_keyBindingsActionSetUnavailable;
+	public static String HideItems_noKeyBindings;
+	public static String HideItems_noKeyBindingsActionSetUnavailable;
+	public static String HideItems_commandGroupTitle;
+	public static String HideItems_turnOnActionSets;
+	public static String HideItems_dynamicItemName;
+	public static String HideItems_dynamicItemDescription;
+	public static String HideItems_dynamicItemList;
+	public static String HideItems_dynamicItemEmptyList;
+
+	public static String HideItemsCannotMakeVisible_dialogTitle;
+	public static String HideItemsCannotMakeVisible_unavailableCommandGroupText;
+	public static String HideItemsCannotMakeVisible_switchToCommandGroupTab;
+	public static String HideItemsCannotMakeVisible_unavailableChildrenText;
+	public static String HideItemsCannotMakeVisible_expandItemText;
+	
+	public static String HideMenuItems_menuItemsTab;
+	public static String HideMenuItems_chooseMenuItemsLabel;
+	public static String HideMenuItems_menuStructure;
+	
+	public static String HideToolBarItems_toolBarItemsTab;
+	public static String HideToolBarItems_chooseToolBarItemsLabel;
+	public static String HideToolBarItems_toolBarStructure;
 
 	public static String SavePerspective_text;
 	public static String SavePerspective_toolTip;
@@ -1063,5 +1089,9 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkingSetGroup_WorkingSets_group;
 	public static String WorkingSetGroup_WorkingSetSelection_message;
 	public static String WorkingSetGroup_EnableWorkingSet_button;
+	
+	// Util
+	public static String Util_List;
+	public static String Util_listNull;
 	
 }
