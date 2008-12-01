@@ -183,6 +183,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @param attributes
 	 * @param participants
 	 * @return the marker for an existing breakpoint or <code>null</code> if one could not be located
+	 * @since 3.5
 	 */
 	protected IMarker findExistingMarker(Map attributes, IBreakpointImportParticipant[] participants) {
 		IBreakpoint[] bps = fManager.getBreakpoints();		 
@@ -209,6 +210,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * </ul>
 	 * @param memento
 	 * @return a new map of all of the breakpoint attributes from the given memento.
+	 * @since 3.5
 	 */
 	protected Map collectBreakpointProperties(IMemento memento) {
 		HashMap map = new HashMap();
@@ -267,6 +269,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @param marker
 	 * @param attributes
 	 * @param participants
+	 * @since 3.5
 	 */
 	protected void restoreBreakpoint(IMarker marker, final Map attributes, IBreakpointImportParticipant[] participants) {
 		String key = null;
