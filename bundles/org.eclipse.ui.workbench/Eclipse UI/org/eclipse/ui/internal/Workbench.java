@@ -446,6 +446,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.WORKBENCH_SCOPE,
 						this, null, null, null, null, 0));
+		// added back for legacy reasons
+		serviceLocator.registerService(IWorkbench.class, this);
 	}
 
 	/**

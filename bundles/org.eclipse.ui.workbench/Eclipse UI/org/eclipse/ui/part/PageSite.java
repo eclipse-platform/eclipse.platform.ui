@@ -27,6 +27,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -103,6 +104,12 @@ public class PageSite implements IPageSite, INestable {
 				new WorkbenchLocationService(IServiceScopes.PAGESITE_SCOPE,
 						getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), parentSite, null, this, 3));
+		serviceLocator.registerService(IPageSiteHolder.class,
+				new IPageSiteHolder() {
+					public IPageSite getSite() {
+						return PageSite.this;
+					}
+				});
 	}
 
 	/**
