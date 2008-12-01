@@ -134,10 +134,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		 * @see org.eclipse.ui.dialogs.FilteredTree#updateToolbar(boolean)
 		 */
 		protected void updateToolbar(boolean visible) {
-			if (filterToolBar != null) {
-				filterToolBar.getControl().setVisible(
-						viewerFilter != null || visible);
-			}
+			super.updateToolbar(viewerFilter != null || visible);
 		}
 
 		/*
@@ -320,8 +317,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		leftLayout.numColumns = 1;
 		leftLayout.marginHeight = 0;
 		leftLayout.marginTop = IDialogConstants.VERTICAL_MARGIN;
-		leftLayout.marginWidth = 0;
-		leftLayout.marginLeft = IDialogConstants.HORIZONTAL_MARGIN;
+		leftLayout.marginWidth = IDialogConstants.HORIZONTAL_MARGIN;
 		leftLayout.horizontalSpacing = 0;
 		leftLayout.verticalSpacing = 0;
 		leftArea.setLayout(leftLayout);
