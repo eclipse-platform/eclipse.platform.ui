@@ -73,7 +73,6 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * @see IWorkbench#getImportWizardRegistry()
  * @see IWorkbench#getExportWizardRegistry()
  * @since 3.2
- * @noextend
  * 
  */
 public final class WizardActionGroup extends ActionGroup {
@@ -307,7 +306,7 @@ public final class WizardActionGroup extends ActionGroup {
 	 *            The wizard action ids to set. These should be defined through
 	 *            <b>org.eclipse.ui.xxxWizards</b>
 	 */
-	protected synchronized void setWizardActionDescriptors(CommonWizardDescriptor[] theWizardDescriptors) { 
+	private synchronized void setWizardActionDescriptors(CommonWizardDescriptor[] theWizardDescriptors) { 
 		descriptors = theWizardDescriptors;
 	}
 	  
