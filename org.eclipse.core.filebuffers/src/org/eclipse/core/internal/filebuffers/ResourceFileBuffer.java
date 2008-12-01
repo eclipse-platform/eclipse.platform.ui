@@ -176,7 +176,11 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 
 					if (fileChange != null) {
 						fileChange.preRun();
-						fManager.execute(fileChange, isSynchronizationContextRequested());
+						if (isSynchronizationContextRequested()) {
+							fManager.execute(fileChange);
+						} else {
+							fileChange.run();
+						}
 					}
 				}
 			}

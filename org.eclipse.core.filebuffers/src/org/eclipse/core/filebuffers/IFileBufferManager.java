@@ -239,6 +239,16 @@ public interface IFileBufferManager {
 	void setSynchronizationContext(ISynchronizationContext context);
 
 	/**
+	 * Executes the given runnable in the synchronization context of this file buffer manager.
+	 * If there is no synchronization context connected with this manager, the runnable is
+	 * directly executed.
+	 *
+	 * @param runnable the runnable to be executed
+	 * @since 3.5
+	 */
+	public void execute(Runnable runnable);
+	
+	/**
 	 * The caller requests that the synchronization context is used to
 	 * synchronize the given location with its file buffer. This call as no
 	 * effect if there is no file buffer managed for the given location.

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 import org.eclipse.core.internal.filebuffers.Progress;
-import org.eclipse.core.internal.filebuffers.TextFileBufferManager;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -194,12 +193,7 @@ public class GenericFileBufferOperationRunner {
 
 	private void executeInContext(Runnable runnable) {
 		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
-		if (fileBufferManager instanceof TextFileBufferManager) {
-			TextFileBufferManager manager= (TextFileBufferManager) fileBufferManager;
-			manager.execute(runnable, true);
-		} else {
-			runnable.run();
-		}
+		fileBufferManager.execute(runnable);
 	}
 
 	private IFileBuffer[] findUnsynchronizedFileBuffers(IFileBuffer[] fileBuffers) {

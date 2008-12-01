@@ -627,15 +627,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	/**
-	 * Executes the given runnable in the synchronization context of this file buffer manager.
-	 * If there is no synchronization context connected with this manager, the runnable is
-	 * directly executed.
-	 *
-	 * @param runnable the runnable to be executed
-	 * @param requestSynchronizationContext <code>true</code> if the synchronization context is requested for the execution
+	 * {@inheritDoc}
 	 */
-	public void execute(Runnable runnable, boolean requestSynchronizationContext) {
-		if (requestSynchronizationContext && fSynchronizationContext != null)
+	public void execute(Runnable runnable) {
+		if (fSynchronizationContext != null)
 			fSynchronizationContext.run(runnable);
 		else
 			runnable.run();
