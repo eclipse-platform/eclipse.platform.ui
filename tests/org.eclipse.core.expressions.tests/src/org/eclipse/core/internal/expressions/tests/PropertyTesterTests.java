@@ -144,20 +144,20 @@ public class PropertyTesterTests extends TestCase {
 	public void testPluginActivation() throws Exception {
 		if (TEST_DYNAMIC_AND_ACTIVATION) {
 			Bundle bundle= Platform.getBundle("org.eclipse.core.expressions.tests.forceActivation"); //$NON-NLS-1$
-			assertTrue(bundle.getState() == Bundle.RESOLVED);
+			assertEquals(Bundle.STARTING, bundle.getState());
 
 			A receiver= new A();
 			TestExpression exp= new TestExpression("org.eclipse.core.expressions.tests.forceActivation", "testing", null, null, true);
 			EvaluationContext context= new EvaluationContext(null, receiver);
 			EvaluationResult result= exp.evaluate(context);
-			assertTrue(result == EvaluationResult.NOT_LOADED);
-			assertTrue(bundle.getState() == Bundle.RESOLVED);
+			assertEquals(EvaluationResult.NOT_LOADED, result);
+			assertEquals(Bundle.STARTING, bundle.getState());
 			Property p= TestExpression.testGetTypeExtensionManager().getProperty(receiver, "org.eclipse.core.expressions.tests.forceActivation", "testing", false); //$NON-NLS-1$ //$NON-NLS-2$
 			assertTrue(!p.isInstantiated());
 
 			context.setAllowPluginActivation(true);
 			exp.evaluate(context);
-			assertTrue(bundle.getState() == Bundle.ACTIVE);
+			assertEquals(Bundle.ACTIVE, bundle.getState());
 			p= TestExpression.testGetTypeExtensionManager().getProperty(receiver, "org.eclipse.core.expressions.tests.forceActivation", "testing", false); //$NON-NLS-1$ //$NON-NLS-2$
 			assertTrue(p.isInstantiated());
 		}
