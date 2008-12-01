@@ -16,23 +16,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Element;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ICountable;
-import org.eclipse.core.expressions.IIterable;
+import org.w3c.dom.Element;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ICountable;
+import org.eclipse.core.expressions.IIterable;
+
 public class Expressions {
 
 	/**
-	 * Cache to optimize instanceof computation. Map of String->Map(String, Boolean).
+	 * Cache to optimize instanceof computation. Map of Key->Boolean.
 	 */
-	private static final Map knownClasses = new HashMap();
+	private static Map fgKnownClasses;
 
 	/* debugging flag to enable tracing */
 	public static final boolean TRACING;
@@ -53,23 +57,37 @@ public class Expressions {
 	}
 
 	private static synchronized boolean isSubtype(Class clazz, String type) {
-		String clazzName = clazz.getName();
-		Map nameMap = (Map) knownClasses.get(clazzName);
-		if (nameMap != null) {
-			Object obj = nameMap.get(type);
+		Key classKey= new Key(clazz, type);
+		Map knownClassesMap= getKnownClasses();
+		Object obj= knownClassesMap.get(classKey);
 			if (obj != null)
 				return ((Boolean)obj).booleanValue();
-		}
-		if (nameMap == null) {
-			nameMap = new HashMap();
-			knownClasses.put(clazzName, nameMap);
-		}
-		boolean isSubtype = uncachedIsSubtype(clazz, type);
-		nameMap.put(type, isSubtype ? Boolean.TRUE : Boolean.FALSE);
+		boolean isSubtype= uncachedIsSubtype(clazz, type);
+		knownClassesMap.put(classKey, isSubtype ? Boolean.TRUE : Boolean.FALSE);
 		return isSubtype;
 	}
+	
+	private static Map getKnownClasses() {
+		if (fgKnownClasses == null) {
+			fgKnownClasses= new HashMap();
+			BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
+			BundleListener listener= new BundleListener() {
+				public void bundleChanged(BundleEvent event) {
+					// invalidate the cache if any of the bundles is stopped
+					if (event.getType() == BundleEvent.STOPPED) {
+						synchronized (Expressions.class) {
+							fgKnownClasses.clear();
+		}
+		}
+	}
+			};
+			ExpressionPlugin.fgBundleListener= listener;
+			bundleContext.addBundleListener(listener);
+		}
+		return fgKnownClasses;
+	}
 
-	private static boolean uncachedIsSubtype(Class clazz, String type) {
+	public static boolean uncachedIsSubtype(Class clazz, String type) {
 		if (clazz.getName().equals(type))
 			return true;
 		Class superClass= clazz.getSuperclass();

@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -56,6 +58,8 @@ import org.eclipse.core.runtime.Platform;
 
 
 public class ExpressionTests extends TestCase {
+
+	private static final int TYPE_ITERATIONS = 10000;
 
 	public static class CollectionWrapper {
 		public Collection collection;
@@ -954,4 +958,56 @@ public class ExpressionTests extends TestCase {
 		context= new EvaluationContext(context, Collections.singletonList(probExpr));
 		assertEquals(EvaluationResult.TRUE, probExpr.evaluate(context));
 	}
+	
+	public void testSubType() throws Exception {
+		EvaluationContext context= new EvaluationContext(null, IEvaluationContext.UNDEFINED_VARIABLE);
+		ArrayList list= new ArrayList();
+		HashSet o1= new HashSet();
+		EvaluationContext c1= new EvaluationContext(null, o1);
+		list.add(o1);
+		ArrayList o2= new ArrayList();
+		EvaluationContext c2= new EvaluationContext(null, o2);
+		list.add(o2);
+		LinkedList o3= new LinkedList();
+		EvaluationContext c3= new EvaluationContext(null, o3);
+		list.add(o3);
+		context.addVariable("selection", list);
+
+		WithExpression with= new WithExpression("selection");
+		IterateExpression iterate= new IterateExpression("and", "false");
+		with.add(iterate);
+		InstanceofExpression iCollection= new InstanceofExpression("java.util.Collection");
+		iterate.add(iCollection);
+
+		InstanceofExpression iSet= new InstanceofExpression("java.util.Set");
+		InstanceofExpression iList= new InstanceofExpression("java.util.List");
+
+		assertEquals(EvaluationResult.TRUE, iSet.evaluate(c1));
+		assertEquals(EvaluationResult.FALSE, iList.evaluate(c1));
+		assertEquals(EvaluationResult.FALSE, iSet.evaluate(c2));
+		assertEquals(EvaluationResult.TRUE, iList.evaluate(c2));
+		assertEquals(EvaluationResult.FALSE, iSet.evaluate(c3));
+		assertEquals(EvaluationResult.TRUE, iList.evaluate(c3));
+
+		assertEquals(EvaluationResult.TRUE, with.evaluate(context));
+	}
+
+	public void testSubTypeTiming() throws Exception {
+		HashSet o1= new HashSet();
+		long cachedStart= System.currentTimeMillis();
+		for (int i= 0; i < TYPE_ITERATIONS; i++) {
+			assertTrue(Expressions.isInstanceOf(o1, "java.util.Set"));
+			assertFalse(Expressions.isInstanceOf(o1, "java.util.List"));
+		}
+		long cachedDelta= System.currentTimeMillis() - cachedStart;
+
+		long instanceStart= System.currentTimeMillis();
+		for (int i= 0; i < TYPE_ITERATIONS; i++) {
+			assertTrue(Expressions.uncachedIsSubtype(o1.getClass(), "java.util.Set"));
+			assertFalse(Expressions.uncachedIsSubtype(o1.getClass(), "java.util.List"));
+		}
+		long instanceDelta= System.currentTimeMillis() - instanceStart;
+		assertTrue(cachedDelta * 2 < instanceDelta);
+	}
+
 }
