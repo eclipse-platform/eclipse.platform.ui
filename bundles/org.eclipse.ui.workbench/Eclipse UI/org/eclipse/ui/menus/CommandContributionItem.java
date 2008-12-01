@@ -155,6 +155,8 @@ public final class CommandContributionItem extends ContributionItem {
 	 */
 	private boolean visibleEnabled;
 
+	private Display display;
+
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
@@ -185,6 +187,9 @@ public final class CommandContributionItem extends ContributionItem {
 				.getService(IHandlerService.class);
 		bindingService = (IBindingService) contributionParameters.serviceLocator
 				.getService(IBindingService.class);
+		IWorkbenchLocationService workbenchLocationService = (IWorkbenchLocationService) contributionParameters.serviceLocator.getService(IWorkbenchLocationService.class);
+		display = workbenchLocationService.getWorkbench().getDisplay();
+		
 		createCommand(contributionParameters.commandId,
 				contributionParameters.parameters);
 
@@ -325,15 +330,8 @@ public final class CommandContributionItem extends ContributionItem {
 		if (commandEvent.isHandledChanged()) {
 			dropDownMenuOverride = null;
 		}
-		if (widget == null || widget.isDisposed()) {
-			return;
-		}
-		Display display = widget.getDisplay();
 		Runnable update = new Runnable() {
 			public void run() {
-				if (commandEvent.getCommand().isDefined()) {
-					update(null);
-				}
 				if (commandEvent.isEnabledChanged()
 						|| commandEvent.isHandledChanged()) {
 					if (visibleEnabled) {
@@ -342,6 +340,9 @@ public final class CommandContributionItem extends ContributionItem {
 							parent.update(true);
 						}
 					}
+				}
+				if (commandEvent.getCommand().isDefined()) {
+					update(null);
 				}
 			}
 		};
