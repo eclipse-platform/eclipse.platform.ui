@@ -126,6 +126,7 @@ public class CVSUIMessages extends NLS {
 	public static String separator;
 
 	public static String nameAndRevision;
+	public static String nameRevisionAndAuthor;
 	public static String currentRevision;
 
 	public static String AddAction_addFailed;

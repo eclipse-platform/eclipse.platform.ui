@@ -27,6 +27,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -348,25 +349,65 @@ public class Utils {
 		Utils.initAction(a, prefix, bundle, null);
 	}
 	
-	public static void updateLabels(SyncInfo sync, CompareConfiguration config) {
+	public static void updateLabels(SyncInfo sync, CompareConfiguration config, IProgressMonitor monitor) {
 		final IResourceVariant remote = sync.getRemote();
 		final IResourceVariant base = sync.getBase();
+		String baseAuthor = null;
+		String remoteAuthor = null;
 		String localContentId = sync.getLocalContentIdentifier();
+		if (isShowAuthor()) {
+			baseAuthor = getAuthor(base, monitor);
+			remoteAuthor = getAuthor(remote, monitor);
+		}
 		if (localContentId != null) {
 			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId }));
 		} else {
 			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel);
 		}
 		if (remote != null) {
-			config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() }));
+			if (remoteAuthor != null) {
+				config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelAuthorExists, new String[] { remote.getContentIdentifier(), remoteAuthor }));
+			} else {
+				config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() }));
+			}
 		} else {
 			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel);
 		}
 		if (base != null) {
-			config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() }));
+			if (baseAuthor != null) {
+				config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelAuthorExists, new String[] { base.getContentIdentifier(), baseAuthor }));
+			} else {
+				config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() }));
+			}
 		} else {
 			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel);
 		}
+	}
+
+	private static boolean isShowAuthor() {
+		IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
+		return store.getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR);
+	}
+
+	private static String getAuthor(IResourceVariant variant,
+			IProgressMonitor monitor) {
+		String author = null;
+		if (variant instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) variant;
+			IFileRevision revision = (IFileRevision) adaptable
+					.getAdapter(IFileRevision.class);
+			if (revision == null)
+				return null;
+			try {
+				IFileRevision complete = revision.withAllProperties(monitor);
+				if (complete != null) {
+					author = complete.getAuthor();
+				}
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
+		return author;
 	}
 
 	public static String getLocalContentId(IDiff diff) {

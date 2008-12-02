@@ -20,23 +20,17 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
  * A compare input for comparing remote resources. Use <code>CVSLocalCompareInput</code> 
@@ -100,7 +94,19 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			ICVSResource resource = edition;
 			if (edition instanceof ICVSRemoteFile) {
 				try {
-					return NLS.bind(CVSUIMessages.nameAndRevision, new String[] { resource.getName(), ((ICVSRemoteFile)edition).getRevision() }); 
+					String name = resource.getName();
+					String revision = ((ICVSRemoteFile)edition).getRevision();
+					String msg = null;
+					if (isShowAuthor()) {
+						String author = ((ICVSRemoteFile) edition).getLogEntry(
+								new NullProgressMonitor()).getAuthor();
+						msg = NLS.bind(CVSUIMessages.nameRevisionAndAuthor,
+								new String[] { name, revision, author });
+					} else {
+						msg = NLS.bind(CVSUIMessages.nameAndRevision,
+								new String[] { name, revision });
+					}
+					return msg;
 				} catch (TeamException e) {
 					// fall through
 				}
@@ -125,7 +131,12 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		}
 		return element.getName();
 	}
-	
+
+	private boolean isShowAuthor() {
+		IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
+		return store.getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR);
+	}
+
 	/**
 	 * Returns the label for the given input element.
 	 */

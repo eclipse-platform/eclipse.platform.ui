@@ -251,10 +251,13 @@ public class TeamUIMessages extends NLS {
 
 	public static String SyncInfoCompareInput_localLabel;
 	public static String SyncInfoCompareInput_localLabelExists;
+	public static String SyncInfoCompareInput_localLabelAuthorExists;
 	public static String SyncInfoCompareInput_remoteLabel;
 	public static String SyncInfoCompareInput_baseLabel;
 	public static String SyncInfoCompareInput_remoteLabelExists;
+	public static String SyncInfoCompareInput_remoteLabelAuthorExists;
 	public static String SyncInfoCompareInput_baseLabelExists;
+	public static String SyncInfoCompareInput_baseLabelAuthorExists;
 	public static String SyncInfoCompareInput_title;
 	public static String SyncInfoCompareInput_0;
 	public static String SyncInfoCompareInput_1;
