@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe (benjamin.cabe@anyware-tech.com) - patch (see Bugzilla #255466) 
  ******************************************************************************/
 
 package org.eclipse.ui.internal.forms;
@@ -149,10 +150,10 @@ public class MessageManager implements IMessageManager {
 			if (!(obj instanceof Message))
 				return false;
 			Message msg = (Message) obj;
-			return msg.getPrefix() == null ? getPrefix() == null : msg.getPrefix().equals(getPrefix()) &&
-					msg.getControl() == null ? getControl() == null : msg.getControl().equals(getControl()) &&
-					msg.getMessageType() == getMessageType() &&
-					msg.getMessage() == null ? getMessage() == null : msg.getMessage().equals(getMessage()) &&
+			return (msg.getPrefix() == null ? getPrefix() == null : msg.getPrefix().equals(getPrefix())) &&
+					(msg.getControl() == null ? getControl() == null : msg.getControl().equals(getControl())) &&
+					(msg.getMessageType() == getMessageType()) &&
+					(msg.getMessage() == null ? getMessage() == null : msg.getMessage().equals(getMessage())) &&
 					msg.getKey().equals(getKey());
 		}
 	}
