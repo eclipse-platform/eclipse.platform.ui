@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 						if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
 							String author = ((FileRevisionTypedElement)element).getAuthor();
 							if (author != null) {
-								return NLS.bind(TeamUIMessages.Utils_20, new String[] { revision.getContentIdentifier(), author });
+								return NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelAuthorExists, new String[] { revision.getContentIdentifier(), author });
 							} else if (revision.isPropertyMissing()) {
 								fetchAuthors(input);
 							}
@@ -105,7 +105,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 						if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
 							String author = ((FileRevisionTypedElement)element).getAuthor();
 							if (author != null) {
-								return NLS.bind(TeamUIMessages.Utils_21, new String[] { revision.getContentIdentifier(), author });
+								return NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelAuthorExists, new String[] { revision.getContentIdentifier(), author });
 							} else if (revision.isPropertyMissing()) {
 								fetchAuthors(input);
 							}
