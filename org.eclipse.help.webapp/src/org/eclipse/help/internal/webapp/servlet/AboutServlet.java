@@ -80,6 +80,13 @@ public class AboutServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
 		Locale locale = req.getLocale();
+		StringBuffer buf = new StringBuffer();
+		buf.append(XHTML_1);
+		String showParam = req.getParameter("show"); //$NON-NLS-1$
+		if ("agent".equalsIgnoreCase(showParam)) { //$NON-NLS-1$
+			getAgent(req, resp);
+			return;
+		}
 		String sortParam = req.getParameter("sortColumn"); //$NON-NLS-1$
 		int sortColumn = 3;
 		if (sortParam != null) {
@@ -88,9 +95,7 @@ public class AboutServlet extends HttpServlet {
 			} catch (NumberFormatException e) {
 			}	
 		}
-		StringBuffer buf = new StringBuffer();
 
-		buf.append(XHTML_1);
 		String title = WebappResources.getString("aboutPlugins", locale); //$NON-NLS-1$
 		buf.append(UrlUtil.htmlEncode(title));
 		buf.append(XHTML_2);
@@ -126,6 +131,22 @@ public class AboutServlet extends HttpServlet {
 		buf.append(XHTML_3);
 		String response = buf.toString();
 		resp.getWriter().write(response);		
+	}
+
+	private void getAgent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		StringBuffer buf = new StringBuffer();
+		buf.append(XHTML_1);
+		String title = WebappResources.getString("userAgent", req.getLocale()); //$NON-NLS-1$
+		buf.append(UrlUtil.htmlEncode(title));
+		buf.append(XHTML_2);
+		buf.append("<h1>"); //$NON-NLS-1$
+		buf.append(title);
+		buf.append("</h1>"); //$NON-NLS-1$
+		String agent = req.getHeader("User-Agent"); //$NON-NLS-1$
+		buf.append(UrlUtil.htmlEncode(agent));
+		buf.append(XHTML_3);
+		String response = buf.toString();
+		resp.getWriter().write(response);	
 	}
 
 	private String headerRowFor(PluginDetails details) {
