@@ -17,7 +17,9 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.0.0";visibil
  org.eclipse.e4.core.services;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.e4.workbench.ui,
+Export-Package: org.eclipse.e4.workbench.modeling,
+ org.eclipse.e4.workbench.ui,
  org.eclipse.e4.workbench.ui.behaviors,
+ org.eclipse.e4.workbench.ui.internal;x-internal:=true,
  org.eclipse.e4.workbench.ui.renderers.swt,
  org.eclipse.e4.workbench.ui.utils
