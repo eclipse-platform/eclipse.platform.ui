@@ -9,13 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 159768
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 218269
+ *     Matthew Hall - bug 218269, 254524
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
 
 import java.util.Collections;
 
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -33,6 +35,7 @@ public abstract class Binding extends ValidationStatusProvider {
 	protected DataBindingContext context;
 	private IObservable target;
 	private IObservable model;
+	private IDisposeListener disposeListener;
 	
 	/**
 	 * Creates a new binding.
@@ -56,6 +59,17 @@ public abstract class Binding extends ValidationStatusProvider {
 	 */
 	public final void init(DataBindingContext context) {
 		this.context = context;
+		if (target.isDisposed())
+			throw new IllegalArgumentException("Target observable is disposed"); //$NON-NLS-1$
+		if (model.isDisposed())
+			throw new IllegalArgumentException("Model observable is disposed"); //$NON-NLS-1$
+		this.disposeListener = new IDisposeListener() {
+			public void handleDispose(DisposeEvent staleEvent) {
+				dispose();
+			}
+		};
+		target.addDisposeListener(disposeListener);
+		model.addDisposeListener(disposeListener);
 		preInit();
 		context.addBinding(this);
 		postInit();
@@ -119,6 +133,15 @@ public abstract class Binding extends ValidationStatusProvider {
 			context.removeBinding(this);
 		}
 		context = null;
+		if (disposeListener != null) {
+			if (target != null) {
+				target.removeDisposeListener(disposeListener);
+			}
+			if (model != null) {
+				model.removeDisposeListener(disposeListener);
+			}
+			disposeListener = null;
+		}
 		target = null;
 		model = null;
 		super.dispose();
