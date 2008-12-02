@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,113 +10,67 @@
  *******************************************************************************/
 package org.eclipse.help.internal.server;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.equinox.http.jetty.JettyConfigurator;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
+import org.eclipse.help.server.HelpServer;
 
 public class WebappManager {
+	
+	private static HelpServer server;
+	private static final String SERVER_EXTENSION_ID = "org.eclipse.help.base.server"; //$NON-NLS-1$
+	private static final String SERVER_CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
 
-	private static String host;
-	private static int port = -1;
-	private static final int AUTO_SELECT_JETTY_PORT = 0;
+    private static HelpServer getHelpServer() {
+    	if (server == null) {
+    		createWebappServer();
+    	}
+    	if (server == null) {
+    		server = new JettyHelpServer();
+    	}
+    	return server;
+    }
 	
 	public static void start(String webappName) throws Exception {
-		Dictionary d = new Hashtable();
-		
-		configurePort();
-		d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
-
-		// set the base URL
-		d.put("context.path", "/help"); //$NON-NLS-1$ //$NON-NLS-2$
-		d.put("other.info", "org.eclipse.help"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		// suppress Jetty INFO/DEBUG messages to stderr
-		Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
-
-		JettyConfigurator.startServer(webappName, d);
-		checkBundle();
-		
-	}
-	
-	/*
-	 * Ensures that the bundle with the specified name and the highest available
-	 * version is started and reads the port number
-	 */
-	private static void checkBundle() throws InvalidSyntaxException, BundleException {
-		Bundle bundle = Platform.getBundle("org.eclipse.equinox.http.registry"); //$NON-NLS-1$if (bundle != null) {
-		if (bundle.getState() == Bundle.RESOLVED) {
-			bundle.start(Bundle.START_TRANSIENT);
-		}
-		if (port == -1) {
-			// Jetty selected a port number for us
-			ServiceReference[] reference = bundle.getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=org.eclipse.help)"); //$NON-NLS-1$ //$NON-NLS-2$
-			Object assignedPort = reference[0].getProperty("http.port"); //$NON-NLS-1$
-			port = Integer.parseInt((String)assignedPort);
-		}
+		getHelpServer().start(webappName);
 	}
 
 	public static void stop(String webappName) throws CoreException {
-		try {
-			JettyConfigurator.stopServer(webappName);
-		}
-		catch (Exception e) {
-			HelpBasePlugin.logError("An error occured while stopping the help server", e); //$NON-NLS-1$
-		}
+		getHelpServer().stop(webappName);
 	}
 
 	public static int getPort() {
-		return port;
-	}
-
-	private static void configurePort() {
-		if (port == -1) {
-			String portCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("server_port"); //$NON-NLS-1$
-			if (portCommandLineOverride != null && portCommandLineOverride.trim().length() > 0) {
-				try {
-					port = Integer.parseInt(portCommandLineOverride);
-				}
-				catch (NumberFormatException e) {
-					String msg = "Help server port specified in VM arguments is invalid (" + portCommandLineOverride + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpBasePlugin.logError(msg, e);
-				}
-			}
-		}
-	}
-	
-	/*
-	 * Get the port number which will be passed to Jetty
-	 */
-	private static int getPortParameter() {
-		if (port == -1) { 
-			return AUTO_SELECT_JETTY_PORT;
-		}
-		return port;
+		return getHelpServer().getPort();
 	}
 
 	public static String getHost() {
-		if (host == null) {
-			String hostCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("server_host"); //$NON-NLS-1$
-			if (hostCommandLineOverride != null && hostCommandLineOverride.trim().length() > 0) {
-				host = hostCommandLineOverride;
-			}
-			else {
-				host = "127.0.0.1"; //$NON-NLS-1$
-			}
-		}
-		return host;
+        return getHelpServer().getHost();
 	}
 	
-	private WebappManager() {
+	private static void createWebappServer() {
+		IExtensionPoint point = Platform.getExtensionRegistry()
+				.getExtensionPoint(SERVER_EXTENSION_ID );
+		if (point != null) {
+			IExtension[] extensions = point.getExtensions();
+			if (extensions.length != 0) {
+				// We need to pick up the non-default configuration
+				IConfigurationElement[] elements = extensions[0]
+						.getConfigurationElements();
+				if (elements.length == 0) 
+					return;
+				IConfigurationElement serverElement  = elements[0];
+				// Instantiate the app server
+				try {
+					server = (HelpServer) (serverElement
+							.createExecutableExtension(SERVER_CLASS_ATTRIBUTE));
+				} catch (CoreException e) {
+					HelpBasePlugin.logStatus(e.getStatus());
+				}
+			}
+		}
 	}
 	
 }

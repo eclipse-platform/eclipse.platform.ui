@@ -34,6 +34,7 @@ Export-Package: org.apache.lucene.demo.html;x-internal:=true,
    org.eclipse.ui.intro,
    org.eclipse.help.webapp",
  org.eclipse.help.search,
+ org.eclipse.help.server,
  org.eclipse.help.standalone
 Require-Bundle: org.apache.lucene;bundle-version="[1.9.1,2.0.0)";visibility:=reexport,
  org.apache.lucene.analysis;bundle-version="[1.9.1,2.0.0)";visibility:=reexport,
