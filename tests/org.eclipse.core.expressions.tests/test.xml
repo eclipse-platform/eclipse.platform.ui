@@ -38,7 +38,7 @@
   	<property name="expressions-folder" 
               value="${eclipse-home}/expressions_folder"/>
     <delete dir="${expressions-folder}" quiet="true"/>
-    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${expressions-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
