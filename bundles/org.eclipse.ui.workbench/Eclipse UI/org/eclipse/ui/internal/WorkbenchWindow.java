@@ -48,7 +48,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
@@ -1192,53 +1191,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			//Has the client intentionally hidden the menu item?
 			if(perspective != null && perspective.getHiddenMenuItems().contains(id)) {
 				return Boolean.FALSE;
-			} 
-			
-			//Short circuit this logic
-			if(!item.isVisible())
-				return Boolean.FALSE;
-			
-			//Usually, if all children are hidden, the menu will
-			//automatically be hidden (i.e. the above isVisible
-			//call will return false). In some cases, unfortunately,
-			//this is not the case, so we must calculate it ourself.
-			IContributionItem[] children = null;
-			if(item instanceof IMenuManager) {
-				children = ((IMenuManager)item).getItems();
 			}
-			
-			if(item instanceof SubContributionItem) {
-				IContributionItem inner = ((SubContributionItem)item).getInnerItem();
-				if(inner instanceof IMenuManager) {
-					children = ((IMenuManager)inner).getItems();
-				}
-			}
-			
-			if(children == null) {
-				return null;
-			} 
-			
-			for (int i = 0; i < children.length; i++) {
-				IContributionItem child = children[i];
-				if(getVisible(child) != Boolean.FALSE && !child.isSeparator()) {
-					if(child.isDynamic()) {
-						Menu menu = new Menu(getShell(), SWT.NONE);
-						
-						child.fill(menu, 0);
-						
-						boolean hasChildren = (menu.getItems().length > 0); 
-						
-						menu.dispose();
-						
-						if(!hasChildren) {
-							return Boolean.FALSE;
-						}
-					}
-					return null;
-				}
-			}
-			
-			return Boolean.FALSE;
+			return null;
 		}
 	};
 	
