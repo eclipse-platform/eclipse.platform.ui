@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -234,7 +234,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         // creates a composite with standard margins and spacing
         Composite contents = new Composite(parentComposite, SWT.NONE);
 
-        contents.setLayout(new GridLayout(4, false));
+        contents.setLayout(new GridLayout(3, false));
         contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         if (newVariable) {
@@ -263,12 +263,15 @@ public class PathVariableDialog extends TitleAreaDialog {
         variableNameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
         variableNameField.setText(variableName);
         variableNameField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-        		false, 3, 1));
+        		false));
         variableNameField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 variableNameModified();
             }
         });
+        
+        // this is a padding control to take up space in the GridLayout
+        new Label(contents, SWT.LEAD);
         
         // variable value label
         variableValueLabel = new Label(contents, SWT.LEAD);
@@ -287,7 +290,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         
         Composite buttonsComposite = new Composite(contents, SWT.NONE);
         buttonsComposite.setLayoutData(new GridData(SWT.END, SWT.CENTER, false,
-        		false, 2, 1));
+        		false));
         GridLayout layout = new GridLayout(2, true);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
