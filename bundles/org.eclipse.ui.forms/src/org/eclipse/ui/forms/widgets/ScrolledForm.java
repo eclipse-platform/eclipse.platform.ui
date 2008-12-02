@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.IMessageManager;
-import org.eclipse.ui.internal.forms.MessageManager;
 
 /**
  * ScrolledForm is a control that is capable of scrolling an instance of the
@@ -51,8 +50,6 @@ import org.eclipse.ui.internal.forms.MessageManager;
  */
 public class ScrolledForm extends SharedScrolledComposite {
 	private Form content;
-
-	private MessageManager messageManager;
 
 	private boolean customMenu;
 
@@ -312,8 +309,6 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * @since org.eclipse.ui.forms 3.4
 	 */
 	public IMessageManager getMessageManager() {
-		if (messageManager == null)
-			messageManager = new MessageManager(this);
-		return messageManager;
+		return content.getMessageManager();
 	}
 }

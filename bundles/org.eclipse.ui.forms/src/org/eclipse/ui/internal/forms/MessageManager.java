@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.IMessagePrefixProvider;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
@@ -46,7 +47,7 @@ public class MessageManager implements IMessageManager {
 	private Hashtable decorators = new Hashtable();
 	private Hashtable oldDecorators;
 	private boolean autoUpdate = true;
-	private ScrolledForm scrolledForm;
+	private Form form;
 	private IMessagePrefixProvider prefixProvider = DEFAULT_PREFIX_PROVIDER;
 	private int decorationPosition = SWT.LEFT | SWT.BOTTOM;
 	private static FieldDecoration standardError = FieldDecorationRegistry
@@ -196,7 +197,7 @@ public class MessageManager implements IMessageManager {
 		private String prefix;
 
 		ControlDecorator(Control control) {
-			this.decoration = new ControlDecoration(control, decorationPosition, scrolledForm.getBody());
+			this.decoration = new ControlDecoration(control, decorationPosition, form.getBody());
 		}
 		
 		private ControlDecorator (ControlDecorator cd) {
@@ -217,7 +218,7 @@ public class MessageManager implements IMessageManager {
 		void updatePosition() {
 			Control control = decoration.getControl();
 			decoration.dispose();
-			this.decoration = new ControlDecoration(control, decorationPosition, scrolledForm.getBody());
+			this.decoration = new ControlDecoration(control, decorationPosition, form.getBody());
 			update();
 		}
 
@@ -314,7 +315,19 @@ public class MessageManager implements IMessageManager {
 	 *            the form to control
 	 */
 	public MessageManager(ScrolledForm scrolledForm) {
-		this.scrolledForm = scrolledForm;
+		this.form = scrolledForm.getForm();
+	}
+
+	/**
+	 * Creates a new instance of the message manager that will work with the
+	 * provided form.
+	 * 
+	 * @param form
+	 *            the form to control
+	 * @since org.eclipse.ui.forms 3.4
+	 */
+	public MessageManager(Form form) {
+		this.form = form;
 	}
 
 	/*
@@ -488,8 +501,8 @@ public class MessageManager implements IMessageManager {
 
 	private void update(ArrayList mergedList) {
 		pruneControlDecorators();
-		if (scrolledForm.getForm().getHead().getBounds().height == 0 || mergedList.isEmpty() || mergedList == null) {
-			scrolledForm.setMessage(null, IMessageProvider.NONE);
+		if (form.getHead().getBounds().height == 0 || mergedList.isEmpty() || mergedList == null) {
+			form.setMessage(null, IMessageProvider.NONE);
 			return;
 		}
 		ArrayList peers = createPeers(mergedList);
@@ -501,7 +514,7 @@ public class MessageManager implements IMessageManager {
 			// a single message
 			IMessage message = (IMessage) peers.get(0);
 			messageText = message.getMessage();
-			scrolledForm.setMessage(messageText, maxType, array);
+			form.setMessage(messageText, maxType, array);
 		} else {
 			// show a summary message for the message
 			// and list of errors for the details
@@ -511,7 +524,7 @@ public class MessageManager implements IMessageManager {
 						new String[] { peers.size() + "" }); //$NON-NLS-1$
 			else
 				messageText = SINGLE_MESSAGE_SUMMARY_KEYS[maxType];
-			scrolledForm.setMessage(messageText, maxType, array);
+			form.setMessage(messageText, maxType, array);
 		}
 	}
 

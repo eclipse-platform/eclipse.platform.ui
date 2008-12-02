@@ -27,7 +27,9 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IMessage;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.internal.forms.MessageManager;
 import org.eclipse.ui.internal.forms.widgets.FormHeading;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
@@ -100,6 +102,8 @@ public class Form extends Composite {
 	private SizeCache headCache = new SizeCache();
 
 	private FormText selectionText;
+
+	private MessageManager messageManager;
 
 	private class FormLayout extends Layout implements ILayoutExtension {
 		public int computeMinimumWidth(Composite composite, boolean flushCache) {
@@ -787,5 +791,18 @@ public class Form extends Composite {
 			selectionText.clearSelection();
 		}
 		this.selectionText = text;
+	}
+	
+	/**
+	 * Returns the message manager that will keep track of messages in this
+	 * form. 
+	 * 
+	 * @return the message manager instance
+	 * @since org.eclipse.ui.forms 3.4
+	 */
+	public IMessageManager getMessageManager() {
+		if (messageManager == null)
+			messageManager = new MessageManager(this);
+		return messageManager;
 	}
 }
