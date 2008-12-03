@@ -16,6 +16,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.ui.tests.harness.util.TweakletCheckTest;
 import org.eclipse.ui.tests.markers.MarkersViewColumnSizeTest;
+import org.eclipse.ui.tests.statushandlers.StatusHandlerConfigurationSuite;
+import org.eclipse.ui.tests.statushandlers.StatusHandlingConfigurationTest;
 
 /**
  * @since 3.1
@@ -39,6 +41,16 @@ public class SessionTests extends TestSuite {
 		addEditorTests();
 		addViewStateTests();
 		addThemeTests();
+		addStatusHandlingTests();
+	}
+
+	/**
+	 * 
+	 */
+	private void addStatusHandlingTests() {
+		//actually we do not care which workspace is used
+		addTest(new StatusHandlerConfigurationSuite("themeSessionTests",
+				StatusHandlingConfigurationTest.class));
 	}
 
 	/**

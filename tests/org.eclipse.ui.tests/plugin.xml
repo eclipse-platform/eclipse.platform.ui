@@ -3626,6 +3626,10 @@
             handlerId="org.eclipse.ui.tests.statushandlers.TestStatusHandler"
             productId="org.eclipse.sdk.ide">
       </statusHandlerProductBinding>
+      <statusHandler
+            class="org.eclipse.ui.tests.statushandlers.FreeStatusHandler"
+            id="org.eclipse.ui.tests.statushandlers.FreeStatusHandler">
+      </statusHandler>
    </extension>
 <!-- Sample invalid extension ! (illegal child) --> 
    <extension
