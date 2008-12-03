@@ -1,5 +1,0 @@
-instructions.configure=\
-  addRepository(type:0,location:http${#58}//download.eclipse.org/eclipse/updates/3.4);\
-  addRepository(type:1,location:http${#58}//download.eclipse.org/eclipse/updates/3.4);\
-  addRepository(type:0,location:http${#58}//download.eclipse.org/releases/ganymede);\
-  addRepository(type:1,location:http${#58}//download.eclipse.org/releases/ganymede);
