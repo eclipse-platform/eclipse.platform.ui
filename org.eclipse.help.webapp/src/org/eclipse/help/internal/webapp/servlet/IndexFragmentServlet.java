@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ import org.eclipse.help.internal.webapp.data.ActivitiesData;
 import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
+import com.ibm.icu.text.Collator;
+
 /*
  * Creates xml representing selected parts of the index
  * Parameter "start" represents the part of the index to start reading from
@@ -57,6 +59,7 @@ public class IndexFragmentServlet extends HttpServlet {
 	private static final String MODE = "mode"; //$NON-NLS-1$
 	private static final String ENTRY = "entry"; //$NON-NLS-1$
 	private static final String SHOW_ALL = "showAll"; //$NON-NLS-1$
+	private Collator collator = Collator.getInstance();
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -181,7 +184,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			if (catLeft != catRight) {
 				return catLeft - catRight;
 			} else {
-				return left.compareTo(right);
+				return collator.compare(left, right);
 			}
 		}
 

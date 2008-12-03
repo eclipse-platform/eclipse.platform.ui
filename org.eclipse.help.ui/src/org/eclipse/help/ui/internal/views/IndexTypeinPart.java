@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation 2008 - Bug 248079 – [Help][Index] unicode sort issue in index view
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
@@ -34,6 +35,8 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+
+import com.ibm.icu.text.Collator;
 
 
 public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHelpUIConstants {
@@ -199,33 +202,15 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 				to = i;
 			}
 		}
-
-		return -1;
+		if (from >= rootItems.length) {
+			return rootItems.length - 1;
+		} else {
+			return from;
+		}
 	}
 
-	/*
-	 * TODO optimize
-	 */
 	int compare(String keyword, String pattern) {
-		int kI = 0, pI = 0;
-		char kCh, pCh;
-
-		while (kI < keyword.length() && pI < pattern.length()) {
-			kCh = Character.toLowerCase(keyword.charAt(kI));
-			pCh = Character.toLowerCase(pattern.charAt(pI));
-			if (kCh > pCh) {
-				return 1;
-			} else if (kCh < pCh) {
-				return -1;
-			}
-			kI++;
-			pI++;
-		}
-		if (keyword.length() >= pattern.length()) {
-			return 0;
-		} else {
-			return -1;
-		}
+		return Collator.getInstance().compare(keyword, pattern);
 	}
 
 	protected void doOpen() {

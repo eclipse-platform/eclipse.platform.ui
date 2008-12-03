@@ -31,6 +31,8 @@ import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.toc.HrefUtil;
 
+import com.ibm.icu.text.Collator;
+
 /*
  * Assembles individual keyword index contributions into a complete, fully
  * sorted master index.
@@ -185,6 +187,7 @@ public class IndexAssembler {
 	}
 
 	private class IndexComparator implements Comparator {
+		Collator collator = Collator.getInstance();
 		public int compare(Object o1, Object o2) {
 			/*
 			 * First separate the objects into different groups by type;
@@ -194,10 +197,12 @@ public class IndexAssembler {
 			int c1 = getCategory((UAElement)o1);
 			int c2 = getCategory((UAElement)o2);
 			if (c1 == c2) {
+
 				// same type of object; compare alphabetically
-				String s1 = getLabel((UAElement)o1).toLowerCase();
-				String s2 = getLabel((UAElement)o2).toLowerCase();
-				return s1.compareTo(s2);
+				String s1 = getLabel((UAElement)o1);
+				String s2 = getLabel((UAElement)o2);
+				//return s1.compareTo(s2);
+				return collator.compare(s1, s2);
 			}
 			else {
 				// different types; compare by type
