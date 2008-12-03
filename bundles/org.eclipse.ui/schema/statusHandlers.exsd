@@ -90,7 +90,7 @@ A fully qualified name of a class which extends &lt;code&gt;org.eclipse.ui.statu
 &lt;/p&gt;
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.statushandlers.AbstractStatusHandler:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.statushandlers.AbstractStatusHandler"/>
                </appinfo>
             </annotation>
          </attribute>
