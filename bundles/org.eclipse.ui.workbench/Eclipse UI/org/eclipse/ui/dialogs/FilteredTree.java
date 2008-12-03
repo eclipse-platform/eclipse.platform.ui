@@ -371,7 +371,10 @@ public class FilteredTree extends Composite {
 					&& patternFilter.isElementSelectable(items[i].getData())) {
 				return items[i];
 			}
-			return getFirstMatchingItem(items[i].getItems());
+			TreeItem treeItem = getFirstMatchingItem(items[i].getItems());
+			if (treeItem != null) {
+				return treeItem;
+			}
 		}
 		return null;
 	}
