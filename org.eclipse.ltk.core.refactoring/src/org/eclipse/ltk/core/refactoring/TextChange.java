@@ -252,7 +252,7 @@ public abstract class TextChange extends TextEditBasedChange {
 
 	/**
 	 * Executes the text edits on the given document.
-	 * Sublasses that override this method should call <code>super.performEdits(document)</code>.
+	 * Subclasses that override this method should call <code>super.performEdits(document)</code>.
 	 * 
 	 * @param document the document
 	 * @return an object representing the undo of the executed edits
