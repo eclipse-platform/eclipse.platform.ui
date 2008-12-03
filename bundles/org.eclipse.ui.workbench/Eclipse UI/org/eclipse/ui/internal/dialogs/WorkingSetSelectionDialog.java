@@ -86,10 +86,12 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
      * Creates a working set selection dialog.
      *
      * @param parentShell the parent shell
-     * @param multi true=more than one working set can be chosen 
-     * 	in the dialog. false=only one working set can be chosen. Multiple
-     * 	working sets can still be selected and removed from the list but
-     * 	the dialog can only be closed when a single working set is selected.
+     * @param multi decides how the results are returned with 
+     *  <code>WorkingSetSelectionDialog#getSelection()</code> or 
+     *  <code>WorkingSetSelectionDialog#getResult()</code>. true= working sets 
+     *  chosen in the dialog are returned as an array of working set.false= returns 
+     *  an array having a single aggregate working set of all working sets selected 
+     *  in the dialog.
      * @param workingSetIds a list of working set ids which are valid workings sets
      *  to be selected, created, removed or edited, or <code>null</code> if all currently
      *  available working set types are valid 
