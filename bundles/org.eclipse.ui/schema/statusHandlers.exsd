@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="statusHandlers" name="Status handlers"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 This extension point is used to register implementations of status handlers in the workbench. A handler can be associated with a product and this association is also contributed via this extension point.
@@ -21,6 +21,11 @@ If there is no status handler associated with a product, the status handling fac
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="statusHandler" minOccurs="0" maxOccurs="unbounded"/>
@@ -45,9 +50,9 @@ If there is no status handler associated with a product, the status handling fac
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -81,12 +86,12 @@ The name of the preference file is set in product extension
             <annotation>
                <documentation>
                   &lt;p&gt;
-A fully qualified name of a class which extends &lt;code&gt;org.eclipse.ui.errors.AbstractStatusHandler&lt;/code&gt;.
+A fully qualified name of a class which extends &lt;code&gt;org.eclipse.ui.statushandlers.AbstractStatusHandler&lt;/code&gt;.
 &lt;/p&gt;
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.errors.AbstractStatusHandler"/>
-               </appInfo>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.statushandlers.AbstractStatusHandler:"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -94,9 +99,9 @@ A fully qualified name of a class which extends &lt;code&gt;org.eclipse.ui.error
 
    <element name="parameter">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             &lt;p&gt;
 This element defines parameters for instances of specified status handler class.
@@ -155,18 +160,18 @@ These bindings determine which handler is appropriate for the current product (a
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.3
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 The following is an example of the definition for handler with prefix parameter.
@@ -223,9 +228,9 @@ The handler can be defined in other plugin.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;/p&gt;
 The value of the &lt;code&gt;class&lt;/code&gt; attribute in &lt;code&gt;statusHandler&lt;/code&gt; element must be the fully qualified name of a class that extends &lt;code&gt;org.eclipse.ui.statushandlers.AbstractStatusHandler&lt;/code&gt;.
@@ -240,9 +245,9 @@ The value of the &lt;code&gt;productId&lt;/code&gt; attribute in &lt;code&gt;sta
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 The platform supplies basic implementation of &lt;code&gt;org.eclipse.ui.statushandlers.AbstractStatusHandler&lt;/code&gt;.
@@ -252,9 +257,9 @@ It is &lt;code&gt;org.eclipse.ui.statushandlers.WorkbenchErrorHandler&lt;/code&g
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2006, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
