@@ -73,7 +73,7 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * </ul>
  * </p> 
  * <p>
- * Clients may implement this interface.
+ * Clients may subclass this.
  * </p>
  * 
  * @see INavigatorDnDService
