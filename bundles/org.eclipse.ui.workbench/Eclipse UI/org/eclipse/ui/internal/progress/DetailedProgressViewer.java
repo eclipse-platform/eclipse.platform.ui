@@ -473,13 +473,10 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	public void setFocus() {
 		Control[] children = control.getChildren();
 		if (children.length > 0) {
-			for (int i = 0; i < children.length; i++) {
-				ProgressInfoItem item = (ProgressInfoItem) children[i];
-				item.setButtonFocus();
-				return;
-			}
-		} else
+			((ProgressInfoItem)children[0]).setButtonFocus();
+		} else {
 			noEntryArea.setFocus();
+		}
 	}
 
 	/**
