@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     QNX - Alena Laskavaia Bug 240330 - [Memory View] Items per row should not be limited to 16
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
@@ -43,8 +44,12 @@ import org.eclipse.ui.part.PageBook;
 public class FormatTableRenderingDialog extends TrayDialog
 	{
 
-		private int[] fColumnSizes = new int[] {1, 2, 4, 8, 16};
-		private int[] fRowSizes = new int[] {1, 2, 4, 8, 16};
+		// possible number of addressable units per column
+		private int[] fColumnSizes = new int[] {1, 2, 4, 8, 16, 32, 64, 128};
+		
+		// possible number of addressable units per column
+		private int[] fRowSizes = new int[] {1, 2, 4, 8, 16, 32, 64, 128};
+		
 		private Combo fColumnControl;
 		private Combo fRowControl;
 		

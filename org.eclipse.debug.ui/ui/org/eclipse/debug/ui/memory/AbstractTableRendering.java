@@ -1369,9 +1369,10 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	/**
 	 * Format view tab based on the bytes per line and column.
 	 * 
-	 * @param bytesPerLine - number of bytes per line, possible values: (1 / 2 / 4 / 8 / 16) * addressableSize
-	 * @param columnSize - number of bytes per column, possible values: (1 / 2 / 4 / 8 / 16) * addressableSize
+	 * @param bytesPerLine - number of bytes per line, possible values: (1 / 2 / 4 / 8 / 16 / 32 / 64 / 128) * addressableSize
+	 * @param columnSize - number of bytes per column, possible values: (1 / 2 / 4 / 8 / 16 / 32 / 64 / 128) * addressableSize
 	 * @return true if format is successful, false, otherwise
+	 * 
 	 */
 	public boolean format(int bytesPerLine, int columnSize)
 	{	
