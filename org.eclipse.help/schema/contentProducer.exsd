@@ -1,18 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclipse.help" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.help" id="contentProducer" name="Help Content Producer"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          For providing dynamic, generated at run time, help content. Content producers are registered per plug-in and only work within the plug-in scope. In order to reuse a content producer in another plug-in, &lt;code&gt;binding&lt;/code&gt; element should be used. This strategy prevents plug-ins from highjacking content producing for all the plug-ins. By binding to a content producer, a plug-in gives it permission to control content producing for all the documents in the granting plug-in.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
-         <choice minOccurs="1" maxOccurs="unbounded">
+         <choice>
             <element ref="contentProducer"/>
             <element ref="binding"/>
          </choice>
@@ -35,9 +40,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -58,9 +63,9 @@
                <documentation>
                   the implementation class for the help content producer.  This class must implement the &lt;samp&gt;org.eclipse.help.IHelpContentProducer&lt;/samp&gt; interface.  This attribute may be omitted, and the nested &lt;samp&gt;producer&lt;/samp&gt; element may be provided instead.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.IHelpContentProducer"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -76,9 +81,9 @@
                <documentation>
                   the implementation class for the help content producer.  This class must implement the &lt;samp&gt;org.eclipse.help.IHelpContentProducer&lt;/samp&gt; interface.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.IHelpContentProducer"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -121,18 +126,18 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is a sample usage of the content producer extension point:
 
@@ -149,9 +154,9 @@
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The supplied content producer class must implement the &lt;samp&gt;org.eclipse.help.IHelpContentProducer&lt;/samp&gt; interface.
 The producer is responsible for providing content for dynamic help resources from a plug-in.  The method of content producer is called by help for every help resource obtained from the plug-in.
@@ -159,18 +164,18 @@ The producer is responsible for providing content for dynamic help resources fro
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          None.  If a documentation plug-in does not provide help content producer or a call to it results in null, help system searches doc.zip and file system in the plug-in install location for a static document and displays its content.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2000, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
