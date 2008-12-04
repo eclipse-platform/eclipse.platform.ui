@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.workbench; singleton:=true
 Bundle-Version: 3.5.0.qualifier
-Bundle-ClassPath: compatibility.jar,
+Bundle-ClassPath: e4-workbench.jar,
+ compatibility.jar,
  .
 Bundle-Activator: org.eclipse.ui.internal.WorkbenchPlugin
 Bundle-ActivationPolicy: lazy
