@@ -355,6 +355,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	protected void computeInformation() {
 		fAllowMouseExit= false;
 		MouseEvent event= getHoverEvent();
+		if ((event.stateMask & SWT.BUTTON_MASK) != 0) {
+			setInformation(null, null);
+			return;
+		}
 		IAnnotationHover hover= getHover(event);
 		if (hover == null) {
 			setInformation(null, null);
