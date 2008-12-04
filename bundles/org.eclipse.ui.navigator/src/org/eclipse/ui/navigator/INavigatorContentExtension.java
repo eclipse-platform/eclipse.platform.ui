@@ -17,12 +17,14 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 /**
  * The content extension represents the components of a <b>navigatorContent</b>
  * extension. These handles are managed by a content service
- * {@link INavigatorContentService}.  An extensions is formed from the
+ * {@link INavigatorContentService}.  An extension is formed from the
  * {@link INavigatorContentDescriptor}. 
  * 
  * <p>
- * There is a one-to-one correspondence between the {@link INavigatorContentDescriptor} and
- * {@link INavigatorContentExtension}. 
+ * There is a one-to-many correspondence between the {@link INavigatorContentDescriptor} and
+ * {@link INavigatorContentExtension}.  An instance of the {@link INavigatorContentExtension} is
+ * created for each {@link INavigatorContentDescriptor} used by a 
+ * {@link INavigatorContentService}.
  * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.

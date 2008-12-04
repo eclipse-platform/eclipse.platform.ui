@@ -22,8 +22,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * {@link INavigatorContentExtension}.
  * 
  * <p>
- * There is a one-to-one correspondence between the {@link INavigatorContentDescriptor} and
- * {@link INavigatorContentExtension}. 
+ * There is a one-to-many correspondence between the {@link INavigatorContentDescriptor} and
+ * {@link INavigatorContentExtension}.  An instance of the {@link INavigatorContentExtension} is
+ * created for each {@link INavigatorContentDescriptor} used by a 
+ * {@link INavigatorContentService}.
  * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.
