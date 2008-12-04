@@ -18,13 +18,24 @@ import java.util.Map;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
+
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -461,6 +472,23 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		mgr.add(fDisplayConsoleAction);
 		if (fOpenConsoleAction != null) {
 		    mgr.add(fOpenConsoleAction);
+		    if (mgr instanceof ToolBarManager) {
+		    	ToolBarManager tbm= (ToolBarManager) mgr;
+				final ToolBar tb= tbm.getControl();
+				tb.addMouseListener(new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						ToolItem ti= tb.getItem(new Point(e.x, e.y));
+						if (ti.getData() instanceof ActionContributionItem) {
+							ActionContributionItem actionContributionItem= (ActionContributionItem) ti.getData();
+							Event event= new Event();
+							event.widget= ti;
+							event.x= e.x;
+							event.y= e.y;
+							actionContributionItem.getAction().runWithEvent(event);
+						}
+					}
+				});
+		    }
 		}
 	}
 

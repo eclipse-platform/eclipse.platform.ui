@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,19 @@
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolItem;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -46,7 +52,24 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
     public void dispose() {
         fFactoryExtensions = null;
     }
-
+    
+    /*
+     * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
+     * @since 3.5
+     */
+    public void runWithEvent(Event event) {
+    	if (event.widget instanceof ToolItem) {
+			ToolItem toolItem= (ToolItem) event.widget;
+			Control control= toolItem.getParent();
+    		Menu menu= getMenu(control);
+    		
+    		Rectangle bounds= toolItem.getBounds();
+    		Point topLeft= new Point(bounds.x, bounds.y + bounds.height);
+    		menu.setLocation(control.toDisplay(topLeft));
+    		menu.setVisible(true);
+    	}
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
      */
