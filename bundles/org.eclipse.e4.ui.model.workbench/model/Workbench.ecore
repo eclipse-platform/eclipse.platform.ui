@@ -41,4 +41,9 @@
       <eTypeArguments eTypeParameter="#//Perspective/P"/>
     </eGenericSuperTypes>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WorkbenchModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="wbWindows" upperBound="-1"
+        eType="#//WorkbenchWindow" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="curWBW" eType="#//WorkbenchWindow"/>
+  </eClassifiers>
 </ecore:EPackage>
