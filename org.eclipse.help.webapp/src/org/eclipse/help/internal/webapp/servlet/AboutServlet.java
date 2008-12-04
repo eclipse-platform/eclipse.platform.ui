@@ -24,9 +24,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.IBundleGroup;
-import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.osgi.framework.Bundle;
@@ -74,7 +73,7 @@ public class AboutServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = -1426745453574711075L;
 	private static final String XHTML_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n<title>"; //$NON-NLS-1$
-	private static final String XHTML_2 = "</title>\n</head>\n<body>\n"; //$NON-NLS-1$
+	private static final String XHTML_2 = "</title>\n <style type = \"text/css\"> td { padding-right : 10px; }</style></head>\n<body>\n"; //$NON-NLS-1$
 	private static final String XHTML_3 = "</body>\n</html>"; //$NON-NLS-1$
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -103,18 +102,12 @@ public class AboutServlet extends HttpServlet {
 		buf.append(XHTML_2);
 		buf.append("<table>");  //$NON-NLS-1$
 		List plugins = new ArrayList();
-		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-        if (providers != null) {
-			for (int i = 0; i < providers.length; ++i) {
-                IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
-                for (int j = 0; j < bundleGroups.length; ++j) {
-                	Bundle[] bundles = bundleGroups[j].getBundles();
-	                for (int k = 0; k < bundles.length; k++) {
-	                	plugins.add(pluginDetails(bundles[k]));
-	                }
-				}
-            }
-		}
+
+		Bundle[] bundles = HelpWebappPlugin.getContext().getBundles();
+		for (int k = 0; k < bundles.length; k++) {
+         	plugins.add(pluginDetails(bundles[k]));
+        }
+		
         Comparator pluginComparator = new PluginComparator(sortColumn);
 		Collections.sort(plugins, pluginComparator );
 		String[] headerColumns = new String[]{

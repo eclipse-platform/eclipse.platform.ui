@@ -61,6 +61,8 @@ public class HelpWebappPlugin extends Plugin {
 		return plugin;
 	}
 
+	private static BundleContext bundleContext;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -69,7 +71,7 @@ public class HelpWebappPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		//bundleContext = context;
+		bundleContext = context;
 		// Setup debugging options
 		// Setup debugging options
 		DEBUG = isDebugging();
@@ -87,5 +89,9 @@ public class HelpWebappPlugin extends Plugin {
 		plugin = null;
 		//bundleContext = null;
 		super.stop(context);
+	}
+	
+	public static BundleContext getContext() {
+		return bundleContext;
 	}
 }
