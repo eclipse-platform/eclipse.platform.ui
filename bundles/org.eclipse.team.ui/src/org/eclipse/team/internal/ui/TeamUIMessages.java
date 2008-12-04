@@ -159,6 +159,16 @@ public class TeamUIMessages extends NLS {
 	public static String LocalHistoryPage_NoRevisionsFound;
 
 	public static String LocalHistoryPage_OpenAction;
+	
+	public static String LocalHistoryPage_OpenWithMenu;
+	
+	public static String LocalHistoryPage_OpenWithMenu_Other;
+	
+	public static String LocalHistoryPage_OpenWithMenu_OtherDialogDescription;
+	
+	public static String LocalHistoryPage_OpenWithMenu_DefaultEditorDescription;
+	
+	public static String LocalHistoryPage_OpenEditorError;
 
 	public static String LocalHistoryPage_OverwriteMessage;
 

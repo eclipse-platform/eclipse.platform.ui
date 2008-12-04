@@ -42,8 +42,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.core.history.LocalFileHistory;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
-import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
+import org.eclipse.team.internal.ui.actions.*;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
@@ -85,6 +84,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	private Action getContentsAction;
 	private CompareRevisionAction compareAction;
 	private OpenRevisionAction openAction;
+	private OpenWithMenu openWithMenu;
 	
 	private HistoryResourceListener resourceListener;
 	
@@ -393,6 +393,14 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 						openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 					}
 				});
+				
+				// Add 'Open With...'  sub-menu
+				openWithMenu = new OpenWithMenu(this);
+				treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+					public void widgetSelected(SelectionEvent e) {
+						openWithMenu.selectionChanged((IStructuredSelection) treeViewer.getSelection());
+					}
+				});
 			}
 			
 			treeViewer.addOpenListener(new IOpenListener() {
@@ -479,6 +487,12 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		if (file != null && !parentSite.isModal()){
 			if (openAction != null)
 				manager.add(openAction);
+			if (openWithMenu != null) {
+				MenuManager openWithSubmenu = new MenuManager(
+						TeamUIMessages.LocalHistoryPage_OpenWithMenu);
+				openWithSubmenu.add(openWithMenu);
+				manager.add(openWithSubmenu);
+			}
 			if (compareAction != null)
 				manager.add(compareAction);
 			if (getContentsAction != null) {

@@ -61,8 +61,7 @@ import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
-import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
+import org.eclipse.team.internal.ui.actions.*;
 import org.eclipse.team.internal.ui.history.*;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.history.*;
@@ -101,6 +100,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	/* private */CompareRevisionAction compareAction;
 	/* private */OpenRevisionAction openAction;
+	private OpenWithMenu openWithMenu;
 	
 	private CVSHistoryFilterAction  cvsHistoryFilter;
 	private IAction toggleTextAction;
@@ -529,6 +529,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		});
 		
+		// Add 'Open With...'  sub-menu
+		openWithMenu = new OpenWithMenu(this);
+		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				openWithMenu.selectionChanged((IStructuredSelection) treeViewer.getSelection());
+			}
+		});
+		
 		treeViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent e) {
 				if (getSite() != null) {
@@ -839,6 +847,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		if (file != null && !parentSite.isModal()){
 			manager.add(openAction);
+			
+			MenuManager openWithSubmenu = new MenuManager(
+					CVSUIMessages.CVSHistoryPage_OpenWithMenu);
+			openWithSubmenu.add(openWithMenu);
+			manager.add(openWithSubmenu);
+			
 			manager.add(compareAction);
 			manager.add(new Separator("openCompare")); //$NON-NLS-1$
 		}

@@ -1161,6 +1161,7 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_CompareModeToggleAction;
 	public static String CVSHistoryPage_FilterHistoryTooltip;
 	public static String CVSHistoryPage_OpenAction;
+	public static String CVSHistoryPage_OpenWithMenu;
 	public static String CVSHistoryPage_GroupByDate;
 	public static String CVSHistoryPage_Today;
 	public static String CVSHistoryPage_Yesterday;

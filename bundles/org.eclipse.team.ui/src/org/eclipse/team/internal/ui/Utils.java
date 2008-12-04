@@ -1069,26 +1069,50 @@ public class Utils {
 		}
 	}
 	
-	public static IEditorPart openEditor(IWorkbenchPage page, FileRevisionEditorInput editorInput) throws PartInitException {
+	public static IEditorPart openEditor(IWorkbenchPage page,
+			FileRevisionEditorInput editorInput) throws PartInitException {
 		String id = getEditorId(editorInput);
+		return openEditor(page, editorInput, id);
+	}
+
+	public static IEditorPart openEditor(IWorkbenchPage page,
+			FileRevisionEditorInput editorInput, String editorId)
+			throws PartInitException {
 		try {
-			IEditorPart part= page.openEditor(editorInput, id, OpenStrategy.activateOnOpen());
+			IEditorPart part = page.openEditor(editorInput, editorId,
+					OpenStrategy.activateOnOpen());
 			// See bug 90582 for the reasons behind this discouraged access
 			if (part instanceof ErrorEditorPart) {
 				page.closeEditor(part, false);
 				part = null;
 			}
 			if (part == null) {
-				throw new PartInitException(NLS.bind(TeamUIMessages.Utils_17, id));
+				throw new PartInitException(NLS.bind(TeamUIMessages.Utils_17,
+						editorId));
 			}
 			return part;
 		} catch (PartInitException e) {
-			if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
+			if (editorId.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
 				throw e;
 			} else {
-				return page.openEditor(editorInput,"org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+				return page.openEditor(editorInput,
+						"org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 			}
 		}
+	}
+	
+	public static IEditorDescriptor[] getEditors(IFileRevision revision) {
+		IEditorRegistry registry = PlatformUI.getWorkbench()
+				.getEditorRegistry();
+		// so far only the revision name is used to find editors
+		return registry.getEditors(revision.getName()/*, getContentType(revision) */);
+	}
+	
+	public static IEditorDescriptor getDefaultEditor(IFileRevision revision) {
+		// so far only the revision name is used to find the default editor
+		IEditorRegistry registry = PlatformUI.getWorkbench()
+				.getEditorRegistry();
+		return registry.getDefaultEditor(revision.getName()/*, getContentType(revision) */);
 	}
 
 	private static String getEditorId(FileRevisionEditorInput editorInput) {
