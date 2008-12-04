@@ -32,6 +32,8 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
+import com.ibm.icu.text.Collator;
+
 public class AboutServlet extends HttpServlet {
 
 	private static final int NUMBER_OF_COLUMNS = 4;
@@ -59,7 +61,7 @@ public class AboutServlet extends HttpServlet {
 		public int compare(Object o1, Object o2) {
 			PluginDetails pd1 = (PluginDetails) o1;
 			PluginDetails pd2 = (PluginDetails) o2;
-			return pd1.columns[column].compareTo(pd2.columns[column]);
+			return Collator.getInstance().compare(pd1.columns[column], pd2.columns[column]);
 		}
 
 	}

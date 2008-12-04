@@ -35,6 +35,8 @@ import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 import org.osgi.framework.Bundle;
 
+import com.ibm.icu.text.Collator;
+
 /*
  * Reads and processes product preferences by considering not only the active
  * product, but all installed products.
@@ -237,7 +239,7 @@ public class ProductPreferences {
 			if (!(name2 instanceof String)) {
 				return 1;
 			}
-			return ((String)name1).compareToIgnoreCase((String)name2);
+			return Collator.getInstance().compare((String)name1, (String)name2);
 		}
 		
 	}
