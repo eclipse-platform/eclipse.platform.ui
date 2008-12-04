@@ -608,7 +608,7 @@ public class NavigatorContentServiceContentProvider implements
 	 * </p>
 	 * <p>
 	 * This method should handle any cleanup associated with the old input
-	 * element and any initiailization associated with the new input element.
+	 * element and any initialization associated with the new input element.
 	 * </p>
 	 * {@inheritDoc}
 	 * 
