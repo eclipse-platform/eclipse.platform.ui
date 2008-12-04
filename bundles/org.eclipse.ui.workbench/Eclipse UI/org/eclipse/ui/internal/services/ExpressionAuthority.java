@@ -108,6 +108,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 				changeVariable(variableName, variableValue);
 			}
 		}
+		sourceChanged(0, currentState);
 	}
 
 	/**
