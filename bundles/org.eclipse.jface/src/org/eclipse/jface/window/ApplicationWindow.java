@@ -352,8 +352,8 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      */
     protected void createTrimWidgets(Shell shell) {
         if (menuBarManager != null) {
+        	shell.setMenuBar(menuBarManager.createMenuBar((Decorations) shell));
             menuBarManager.updateAll(true);
-            shell.setMenuBar(menuBarManager.createMenuBar((Decorations) shell));
         }
 
         if (showTopSeperator()) {
