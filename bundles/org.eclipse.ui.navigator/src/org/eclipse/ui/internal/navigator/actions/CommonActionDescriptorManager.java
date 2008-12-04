@@ -279,7 +279,7 @@ public class CommonActionDescriptorManager {
 							"An actionProvider has been defined as the child " + //$NON-NLS-1$
 							"of a navigatorContent extension that does not specify " + //$NON-NLS-1$
 							"an <enablement/> or <possibleChildren /> expression. Please " + //$NON-NLS-1$
-							"review the documenation and correct this error.", null); //$NON-NLS-1$
+							"review the documentation and correct this error.", null); //$NON-NLS-1$
 					}
 					for (int i = 0; i < actionProviders.length; i++) { 
 						if(defaultEnablement == null) { 
