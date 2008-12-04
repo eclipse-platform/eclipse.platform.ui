@@ -19,6 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.console.ConsoleManager;
 import org.eclipse.ui.internal.console.ConsolePluginImages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -115,16 +116,10 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the standard display to be used. The method first checks, if
-	 * the thread calling this method has an associated display. If so, this
-	 * display is returned. Otherwise the method returns the default display.
+	 * Returns the workbench display.
 	 */
 	public static Display getStandardDisplay() {
-		Display display= Display.getCurrent();
-		if (display == null) {
-			display= Display.getDefault();
-		}
-		return display;		
+		return PlatformUI.getWorkbench().getDisplay();	
 	}
 	
 	/**
