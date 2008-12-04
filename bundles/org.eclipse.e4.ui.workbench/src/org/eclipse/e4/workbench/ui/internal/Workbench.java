@@ -39,7 +39,6 @@ import org.eclipse.e4.ui.model.application.Application;
 import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.ContributedPart;
-import org.eclipse.e4.ui.model.application.Menu;
 import org.eclipse.e4.ui.model.application.Part;
 import org.eclipse.e4.ui.model.application.Window;
 import org.eclipse.e4.ui.model.workbench.Perspective;
@@ -83,8 +82,12 @@ public class Workbench implements IWorkbench, IServiceLocator,
 	private ModelService modelService;
 	private IServiceLocator serviceLocator;
 
-	private ILegacyHook legacyHook;
+	public IServiceLocator getServiceLocator() {
+		return serviceLocator;
+	}
 
+	private ILegacyHook legacyHook;
+	
 	// UI Construction...
 	private PartRenderer renderer;
 	private int rv;
@@ -211,7 +214,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 			resource.getContents().add((EObject) workbench);
 
 			// Should set up such things as initial perspective id here...
-			String initialPerspectiveId = "org.eclipse.e4.compatibility.testPerspective";
+			String initialPerspectiveId = "org.eclipse.e4.ui.workbench.fragment.testPerspective";
 			populateWBModel(workbench, workbenchDefinitionInstance,
 					initialPerspectiveId);
 		} else {
@@ -243,6 +246,10 @@ public class Workbench implements IWorkbench, IServiceLocator,
 
 		if (legacyHook != null) {
 			wbw = WorkbenchFactory.eINSTANCE.createWorkbenchWindow();
+			wbw.setWidth(1280);
+			wbw.setHeight(1024);
+			wbw.setX(100);
+			wbw.setY(100);
 			wbw.setName("E4 Workbench Window [Java, Debug]");
 			wbw.setTrim(ApplicationFactory.eINSTANCE.createTrim());
 			Part<Part<?>> cp = ApplicationFactory.eINSTANCE.createPart();
@@ -254,11 +261,12 @@ public class Workbench implements IWorkbench, IServiceLocator,
 			cp = ApplicationFactory.eINSTANCE.createPart();
 			wbw.getTrim().setRightTrim(cp);
 
-			Menu mainMenu = ApplicationFactory.eINSTANCE.createMenu();
-			legacyHook.loadMenu(mainMenu);
-			wbw.setMenu(mainMenu);
+//			Menu mainMenu = ApplicationFactory.eINSTANCE.createMenu();
+//			legacyHook.loadMenu(mainMenu);
+//			wbw.setMenu(mainMenu);
 
 			Perspective<?> persp = WorkbenchFactory.eINSTANCE.createPerspective();
+			persp.setId(initialPerspectiveId);
 			persp.setName("Java Perspective");
 			legacyHook.loadPerspective(persp);
 			wbw.getChildren().add(persp);
@@ -352,9 +360,9 @@ public class Workbench implements IWorkbench, IServiceLocator,
 		ILegacyHook impl = null;
 		if (hooks.length > 0) {
 			try {
-				impl = (ILegacyHook) hooks[0]
-						.createExecutableExtension("class");
+				impl = (ILegacyHook) hooks[0].createExecutableExtension("class");
 				legacyHook = impl;
+				legacyHook.init(this);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -490,7 +498,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 			int offset = 0;
 			for (int i = 0; i < factories.length; i++) {
 				String clsSpec = factories[i].getAttribute("class");
-				if (clsSpec.indexOf("Palette") >= 0
+				if (clsSpec.indexOf("Legacy") >= 0
 						|| clsSpec.indexOf("PartSash") >= 0) {
 					IConfigurationElement tmp = factories[offset];
 					factories[offset++] = factories[i];
@@ -764,5 +772,14 @@ public class Workbench implements IWorkbench, IServiceLocator,
 			throw new RuntimeException(e);
 		}
 
+	}
+	
+	public Display getDisplay() {
+		return appWindow.getDisplay();
+	}
+
+	public void closeWindow(WorkbenchWindow workbenchWindow) {
+		//needs proper closing protocol
+		((Shell)workbenchWindow.getWidget()).close();
 	}
 }

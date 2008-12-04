@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchFactory.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -50,6 +50,15 @@ public interface WorkbenchFactory extends EFactory {
 	 * @generated
 	 */
 	<P extends Part<?>> Perspective<P> createPerspective();
+
+	/**
+	 * Returns a new object of class '<em>Model</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Model</em>'.
+	 * @generated
+	 */
+	WorkbenchModel createWorkbenchModel();
 
 	/**
 	 * Returns the package supported by this factory.

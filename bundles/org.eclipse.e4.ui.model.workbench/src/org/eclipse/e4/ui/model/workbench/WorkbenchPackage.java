@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchPackage.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -94,6 +94,33 @@ public interface WorkbenchPackage extends EPackage {
 	int WORKBENCH_WINDOW__OWNER = ApplicationPackage.WINDOW__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WORKBENCH_WINDOW__ID = ApplicationPackage.WINDOW__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WORKBENCH_WINDOW__MENU = ApplicationPackage.WINDOW__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WORKBENCH_WINDOW__TOOL_BAR = ApplicationPackage.WINDOW__TOOL_BAR;
+
+	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -128,24 +155,6 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int WORKBENCH_WINDOW__HANDLERS = ApplicationPackage.WINDOW__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WORKBENCH_WINDOW__MENU = ApplicationPackage.WINDOW__MENU;
-
-	/**
-	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WORKBENCH_WINDOW__TOOL_BAR = ApplicationPackage.WINDOW__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -284,6 +293,33 @@ public interface WorkbenchPackage extends EPackage {
 	int PROXY_PART__OWNER = ApplicationPackage.PART__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXY_PART__ID = ApplicationPackage.PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXY_PART__MENU = ApplicationPackage.PART__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXY_PART__TOOL_BAR = ApplicationPackage.PART__TOOL_BAR;
+
+	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -318,24 +354,6 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROXY_PART__HANDLERS = ApplicationPackage.PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PROXY_PART__MENU = ApplicationPackage.PART__MENU;
-
-	/**
-	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PROXY_PART__TOOL_BAR = ApplicationPackage.PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -411,6 +429,33 @@ public interface WorkbenchPackage extends EPackage {
 	int PERSPECTIVE__OWNER = ApplicationPackage.ITEM_PART__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__ID = ApplicationPackage.ITEM_PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__MENU = ApplicationPackage.ITEM_PART__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__TOOL_BAR = ApplicationPackage.ITEM_PART__TOOL_BAR;
+
+	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -445,24 +490,6 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int PERSPECTIVE__HANDLERS = ApplicationPackage.ITEM_PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__MENU = ApplicationPackage.ITEM_PART__MENU;
-
-	/**
-	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__TOOL_BAR = ApplicationPackage.ITEM_PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -538,6 +565,44 @@ public interface WorkbenchPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.WorkbenchModelImpl <em>Model</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchModelImpl
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getWorkbenchModel()
+	 * @generated
+	 */
+	int WORKBENCH_MODEL = 3;
+
+	/**
+	 * The feature id for the '<em><b>Wb Windows</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WORKBENCH_MODEL__WB_WINDOWS = 0;
+
+	/**
+	 * The feature id for the '<em><b>Cur WBW</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WORKBENCH_MODEL__CUR_WBW = 1;
+
+	/**
+	 * The number of structural features of the '<em>Model</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WORKBENCH_MODEL_FEATURE_COUNT = 2;
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.WorkbenchWindow <em>Window</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -588,6 +653,38 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getPerspective();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.WorkbenchModel <em>Model</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Model</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchModel
+	 * @generated
+	 */
+	EClass getWorkbenchModel();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.workbench.WorkbenchModel#getWbWindows <em>Wb Windows</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Wb Windows</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchModel#getWbWindows()
+	 * @see #getWorkbenchModel()
+	 * @generated
+	 */
+	EReference getWorkbenchModel_WbWindows();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.workbench.WorkbenchModel#getCurWBW <em>Cur WBW</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Cur WBW</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchModel#getCurWBW()
+	 * @see #getWorkbenchModel()
+	 * @generated
+	 */
+	EReference getWorkbenchModel_CurWBW();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -656,6 +753,32 @@ public interface WorkbenchPackage extends EPackage {
 		 * @generated
 		 */
 		EClass PERSPECTIVE = eINSTANCE.getPerspective();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.WorkbenchModelImpl <em>Model</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchModelImpl
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getWorkbenchModel()
+		 * @generated
+		 */
+		EClass WORKBENCH_MODEL = eINSTANCE.getWorkbenchModel();
+
+		/**
+		 * The meta object literal for the '<em><b>Wb Windows</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference WORKBENCH_MODEL__WB_WINDOWS = eINSTANCE.getWorkbenchModel_WbWindows();
+
+		/**
+		 * The meta object literal for the '<em><b>Cur WBW</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference WORKBENCH_MODEL__CUR_WBW = eINSTANCE.getWorkbenchModel_CurWBW();
 
 	}
 

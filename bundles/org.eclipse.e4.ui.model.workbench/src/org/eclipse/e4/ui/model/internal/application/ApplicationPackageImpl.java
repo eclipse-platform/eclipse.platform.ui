@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.2 2008/11/19 22:51:52 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -275,6 +275,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getApplicationElement_Id() {
+		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getApplication() {
 		return applicationEClass;
 	}
@@ -303,7 +312,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * @generated
 	 */
 	public EAttribute getPart_Policy() {
-		return (EAttribute)partEClass.getEStructuralFeatures().get(0);
+		return (EAttribute)partEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -312,24 +321,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * @generated
 	 */
 	public EReference getPart_Children() {
-		return (EReference)partEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getPart_ActiveChild() {
-		return (EReference)partEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getPart_Handlers() {
 		return (EReference)partEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -338,7 +329,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getPart_Menu() {
+	public EReference getPart_ActiveChild() {
 		return (EReference)partEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -347,8 +338,26 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getPart_ToolBar() {
+	public EReference getPart_Handlers() {
 		return (EReference)partEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPart_Menu() {
+		return (EReference)partEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPart_ToolBar() {
+		return (EReference)partEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -714,17 +723,18 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		// Create classes and their features
 		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__OWNER);
+		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ID);
 
 		applicationEClass = createEClass(APPLICATION);
 		createEReference(applicationEClass, APPLICATION__WINDOWS);
 
 		partEClass = createEClass(PART);
+		createEReference(partEClass, PART__MENU);
+		createEReference(partEClass, PART__TOOL_BAR);
 		createEAttribute(partEClass, PART__POLICY);
 		createEReference(partEClass, PART__CHILDREN);
 		createEReference(partEClass, PART__ACTIVE_CHILD);
 		createEReference(partEClass, PART__HANDLERS);
-		createEReference(partEClass, PART__MENU);
-		createEReference(partEClass, PART__TOOL_BAR);
 		createEReference(partEClass, PART__TRIM);
 		createEAttribute(partEClass, PART__WIDGET);
 		createEReference(partEClass, PART__PARENT);
@@ -888,20 +898,21 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		// Initialize classes and features; add operations and parameters
 		initEClass(applicationElementEClass, ApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_Owner(), ecorePackage.getEJavaObject(), "owner", null, 0, 1, ApplicationElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getApplicationElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, ApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(applicationEClass, Application.class, "Application", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		g1 = createEGenericType(applicationEClass_W);
 		initEReference(getApplication_Windows(), g1, null, "windows", null, 1, -1, Application.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(partEClass, Part.class, "Part", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getPart_Menu(), this.getMenu(), null, "menu", null, 0, 1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getPart_ToolBar(), this.getToolBar(), null, "toolBar", null, 0, 1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPart_Policy(), ecorePackage.getEString(), "policy", null, 0, 1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		g1 = createEGenericType(partEClass_P);
 		initEReference(getPart_Children(), g1, this.getPart_Parent(), "children", null, 0, -1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		g1 = createEGenericType(partEClass_P);
 		initEReference(getPart_ActiveChild(), g1, null, "activeChild", null, 0, 1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPart_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPart_Menu(), this.getMenu(), null, "menu", null, 0, 1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getPart_ToolBar(), this.getToolBar(), null, "toolBar", null, 0, 1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPart_Trim(), this.getTrim(), null, "trim", null, 0, 1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPart_Widget(), ecorePackage.getEJavaObject(), "widget", null, 0, 1, Part.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		g1 = createEGenericType(this.getPart());

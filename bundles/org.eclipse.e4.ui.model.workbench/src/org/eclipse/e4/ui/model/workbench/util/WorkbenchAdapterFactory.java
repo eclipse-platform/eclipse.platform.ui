@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchAdapterFactory.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.workbench.util;
 
@@ -96,6 +96,10 @@ public class WorkbenchAdapterFactory extends AdapterFactoryImpl {
 				return createPerspectiveAdapter();
 			}
 			@Override
+			public Adapter caseWorkbenchModel(WorkbenchModel object) {
+				return createWorkbenchModelAdapter();
+			}
+			@Override
 			public Adapter caseApplicationElement(ApplicationElement object) {
 				return createApplicationElementAdapter();
 			}
@@ -174,6 +178,20 @@ public class WorkbenchAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPerspectiveAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.WorkbenchModel <em>Model</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchModel
+	 * @generated
+	 */
+	public Adapter createWorkbenchModelAdapter() {
 		return null;
 	}
 

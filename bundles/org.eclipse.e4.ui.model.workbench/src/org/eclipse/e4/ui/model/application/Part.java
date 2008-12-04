@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: Part.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -22,12 +22,12 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
+ *   <li>{@link org.eclipse.e4.ui.model.application.Part#getMenu <em>Menu</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.Part#getToolBar <em>Tool Bar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.Part#getPolicy <em>Policy</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.Part#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.Part#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.Part#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.Part#getMenu <em>Menu</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.Part#getToolBar <em>Tool Bar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.Part#getTrim <em>Trim</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.Part#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.Part#getParent <em>Parent</em>}</li>

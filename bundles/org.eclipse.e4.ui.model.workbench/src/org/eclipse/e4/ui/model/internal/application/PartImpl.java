@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: PartImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -43,12 +43,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getMenu <em>Menu</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getToolBar <em>Tool Bar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getPolicy <em>Policy</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getMenu <em>Menu</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getToolBar <em>Tool Bar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getTrim <em>Trim</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.PartImpl#getParent <em>Parent</em>}</li>
@@ -59,6 +59,26 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @generated
  */
 public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implements Part<P> {
+	/**
+	 * The cached value of the '{@link #getMenu() <em>Menu</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMenu()
+	 * @generated
+	 * @ordered
+	 */
+	protected Menu menu;
+
+	/**
+	 * The cached value of the '{@link #getToolBar() <em>Tool Bar</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getToolBar()
+	 * @generated
+	 * @ordered
+	 */
+	protected ToolBar toolBar;
+
 	/**
 	 * The default value of the '{@link #getPolicy() <em>Policy</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -108,26 +128,6 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 	 * @ordered
 	 */
 	protected EList<Handler> handlers;
-
-	/**
-	 * The cached value of the '{@link #getMenu() <em>Menu</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMenu()
-	 * @generated
-	 * @ordered
-	 */
-	protected Menu menu;
-
-	/**
-	 * The cached value of the '{@link #getToolBar() <em>Tool Bar</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getToolBar()
-	 * @generated
-	 * @ordered
-	 */
-	protected ToolBar toolBar;
 
 	/**
 	 * The cached value of the '{@link #getTrim() <em>Trim</em>}' containment reference.
@@ -510,14 +510,14 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ApplicationPackage.PART__CHILDREN:
-				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
-			case ApplicationPackage.PART__HANDLERS:
-				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case ApplicationPackage.PART__MENU:
 				return basicSetMenu(null, msgs);
 			case ApplicationPackage.PART__TOOL_BAR:
 				return basicSetToolBar(null, msgs);
+			case ApplicationPackage.PART__CHILDREN:
+				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+			case ApplicationPackage.PART__HANDLERS:
+				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case ApplicationPackage.PART__TRIM:
 				return basicSetTrim(null, msgs);
 			case ApplicationPackage.PART__PARENT:
@@ -548,6 +548,10 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case ApplicationPackage.PART__MENU:
+				return getMenu();
+			case ApplicationPackage.PART__TOOL_BAR:
+				return getToolBar();
 			case ApplicationPackage.PART__POLICY:
 				return getPolicy();
 			case ApplicationPackage.PART__CHILDREN:
@@ -557,10 +561,6 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 				return basicGetActiveChild();
 			case ApplicationPackage.PART__HANDLERS:
 				return getHandlers();
-			case ApplicationPackage.PART__MENU:
-				return getMenu();
-			case ApplicationPackage.PART__TOOL_BAR:
-				return getToolBar();
 			case ApplicationPackage.PART__TRIM:
 				return getTrim();
 			case ApplicationPackage.PART__WIDGET:
@@ -582,6 +582,12 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case ApplicationPackage.PART__MENU:
+				setMenu((Menu)newValue);
+				return;
+			case ApplicationPackage.PART__TOOL_BAR:
+				setToolBar((ToolBar)newValue);
+				return;
 			case ApplicationPackage.PART__POLICY:
 				setPolicy((String)newValue);
 				return;
@@ -595,12 +601,6 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 			case ApplicationPackage.PART__HANDLERS:
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends Handler>)newValue);
-				return;
-			case ApplicationPackage.PART__MENU:
-				setMenu((Menu)newValue);
-				return;
-			case ApplicationPackage.PART__TOOL_BAR:
-				setToolBar((ToolBar)newValue);
 				return;
 			case ApplicationPackage.PART__TRIM:
 				setTrim((Trim)newValue);
@@ -623,6 +623,12 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case ApplicationPackage.PART__MENU:
+				setMenu((Menu)null);
+				return;
+			case ApplicationPackage.PART__TOOL_BAR:
+				setToolBar((ToolBar)null);
+				return;
 			case ApplicationPackage.PART__POLICY:
 				setPolicy(POLICY_EDEFAULT);
 				return;
@@ -634,12 +640,6 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 				return;
 			case ApplicationPackage.PART__HANDLERS:
 				getHandlers().clear();
-				return;
-			case ApplicationPackage.PART__MENU:
-				setMenu((Menu)null);
-				return;
-			case ApplicationPackage.PART__TOOL_BAR:
-				setToolBar((ToolBar)null);
 				return;
 			case ApplicationPackage.PART__TRIM:
 				setTrim((Trim)null);
@@ -662,6 +662,10 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case ApplicationPackage.PART__MENU:
+				return menu != null;
+			case ApplicationPackage.PART__TOOL_BAR:
+				return toolBar != null;
 			case ApplicationPackage.PART__POLICY:
 				return POLICY_EDEFAULT == null ? policy != null : !POLICY_EDEFAULT.equals(policy);
 			case ApplicationPackage.PART__CHILDREN:
@@ -670,10 +674,6 @@ public class PartImpl<P extends Part<?>> extends ApplicationElementImpl implemen
 				return activeChild != null;
 			case ApplicationPackage.PART__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case ApplicationPackage.PART__MENU:
-				return menu != null;
-			case ApplicationPackage.PART__TOOL_BAR:
-				return toolBar != null;
 			case ApplicationPackage.PART__TRIM:
 				return trim != null;
 			case ApplicationPackage.PART__WIDGET:

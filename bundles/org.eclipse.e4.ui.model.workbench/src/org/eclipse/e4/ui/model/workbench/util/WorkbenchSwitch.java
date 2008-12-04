@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchSwitch.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.workbench.util;
 
@@ -128,6 +128,12 @@ public class WorkbenchSwitch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case WorkbenchPackage.WORKBENCH_MODEL: {
+				WorkbenchModel workbenchModel = (WorkbenchModel)theEObject;
+				T result = caseWorkbenchModel(workbenchModel);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -174,6 +180,21 @@ public class WorkbenchSwitch<T> {
 	 * @generated
 	 */
 	public <P extends Part<?>> T casePerspective(Perspective<P> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Model</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseWorkbenchModel(WorkbenchModel object) {
 		return null;
 	}
 

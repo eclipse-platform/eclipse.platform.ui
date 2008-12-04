@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchPackageImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.workbench;
 
@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.workbench.Perspective;
 import org.eclipse.e4.ui.model.workbench.ProxyPart;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
+import org.eclipse.e4.ui.model.workbench.WorkbenchModel;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
 
@@ -57,6 +58,13 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * @generated
 	 */
 	private EClass perspectiveEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass workbenchModelEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -181,6 +189,33 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getWorkbenchModel() {
+		return workbenchModelEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getWorkbenchModel_WbWindows() {
+		return (EReference)workbenchModelEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getWorkbenchModel_CurWBW() {
+		return (EReference)workbenchModelEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public WorkbenchFactory getWorkbenchFactory() {
 		return (WorkbenchFactory)getEFactoryInstance();
 	}
@@ -211,6 +246,10 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 		createEReference(proxyPartEClass, PROXY_PART__PART);
 
 		perspectiveEClass = createEClass(PERSPECTIVE);
+
+		workbenchModelEClass = createEClass(WORKBENCH_MODEL);
+		createEReference(workbenchModelEClass, WORKBENCH_MODEL__WB_WINDOWS);
+		createEReference(workbenchModelEClass, WORKBENCH_MODEL__CUR_WBW);
 	}
 
 	/**
@@ -283,6 +322,10 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 		initEReference(getProxyPart_Part(), g1, null, "part", null, 0, 1, ProxyPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(perspectiveEClass, Perspective.class, "Perspective", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(workbenchModelEClass, WorkbenchModel.class, "WorkbenchModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getWorkbenchModel_WbWindows(), this.getWorkbenchWindow(), null, "wbWindows", null, 0, -1, WorkbenchModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getWorkbenchModel_CurWBW(), this.getWorkbenchWindow(), null, "curWBW", null, 0, 1, WorkbenchModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Create resource
 		createResource(eNS_URI);

@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchFactoryImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.workbench;
 
@@ -70,6 +70,7 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 		switch (eClass.getClassifierID()) {
 			case WorkbenchPackage.WORKBENCH_WINDOW: return createWorkbenchWindow();
 			case WorkbenchPackage.PERSPECTIVE: return createPerspective();
+			case WorkbenchPackage.WORKBENCH_MODEL: return createWorkbenchModel();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -93,6 +94,16 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 	public <P extends Part<?>> Perspective<P> createPerspective() {
 		PerspectiveImpl<P> perspective = new PerspectiveImpl<P>();
 		return perspective;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public WorkbenchModel createWorkbenchModel() {
+		WorkbenchModelImpl workbenchModel = new WorkbenchModelImpl();
+		return workbenchModel;
 	}
 
 	/**

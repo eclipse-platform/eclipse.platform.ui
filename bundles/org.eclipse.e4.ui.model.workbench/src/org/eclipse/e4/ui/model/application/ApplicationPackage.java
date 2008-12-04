@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
+ * $Id: ApplicationPackage.java,v 1.2 2008/11/19 22:51:52 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -93,13 +93,22 @@ public interface ApplicationPackage extends EPackage {
 	int APPLICATION_ELEMENT__OWNER = 0;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION_ELEMENT__ID = 1;
+
+	/**
 	 * The number of structural features of the '<em>Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_ELEMENT_FEATURE_COUNT = 1;
+	int APPLICATION_ELEMENT_FEATURE_COUNT = 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ApplicationImpl <em>Application</em>}' class.
@@ -119,6 +128,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int APPLICATION__OWNER = APPLICATION_ELEMENT__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__ID = APPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
@@ -158,40 +176,13 @@ public interface ApplicationPackage extends EPackage {
 	int PART__OWNER = APPLICATION_ELEMENT__OWNER;
 
 	/**
-	 * The feature id for the '<em><b>Policy</b></em>' attribute.
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART__POLICY = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__ACTIVE_CHILD = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__HANDLERS = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int PART__ID = APPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -200,7 +191,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__MENU = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int PART__MENU = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -209,7 +200,43 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__TOOL_BAR = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+	int PART__TOOL_BAR = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Policy</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__POLICY = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__ACTIVE_CHILD = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__HANDLERS = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -276,6 +303,33 @@ public interface ApplicationPackage extends EPackage {
 	int STACK__OWNER = PART__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STACK__ID = PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STACK__MENU = PART__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STACK__TOOL_BAR = PART__TOOL_BAR;
+
+	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -310,24 +364,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int STACK__HANDLERS = PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STACK__MENU = PART__MENU;
-
-	/**
-	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STACK__TOOL_BAR = PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -394,6 +430,33 @@ public interface ApplicationPackage extends EPackage {
 	int SASH_FORM__OWNER = PART__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SASH_FORM__ID = PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SASH_FORM__MENU = PART__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SASH_FORM__TOOL_BAR = PART__TOOL_BAR;
+
+	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -428,24 +491,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int SASH_FORM__HANDLERS = PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SASH_FORM__MENU = PART__MENU;
-
-	/**
-	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SASH_FORM__TOOL_BAR = PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -521,6 +566,33 @@ public interface ApplicationPackage extends EPackage {
 	int ITEM_PART__OWNER = PART__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM_PART__ID = PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM_PART__MENU = PART__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM_PART__TOOL_BAR = PART__TOOL_BAR;
+
+	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -555,24 +627,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int ITEM_PART__HANDLERS = PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM_PART__MENU = PART__MENU;
-
-	/**
-	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM_PART__TOOL_BAR = PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -666,6 +720,33 @@ public interface ApplicationPackage extends EPackage {
 	int CONTRIBUTED_PART__OWNER = ITEM_PART__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTRIBUTED_PART__ID = ITEM_PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTRIBUTED_PART__MENU = ITEM_PART__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTRIBUTED_PART__TOOL_BAR = ITEM_PART__TOOL_BAR;
+
+	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -700,24 +781,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int CONTRIBUTED_PART__HANDLERS = ITEM_PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONTRIBUTED_PART__MENU = ITEM_PART__MENU;
-
-	/**
-	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONTRIBUTED_PART__TOOL_BAR = ITEM_PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -829,6 +892,15 @@ public interface ApplicationPackage extends EPackage {
 	int CONTRIBUTION__OWNER = APPLICATION_ELEMENT__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTRIBUTION__ID = APPLICATION_ELEMENT__ID;
+
+	/**
 	 * The feature id for the '<em><b>URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -875,6 +947,15 @@ public interface ApplicationPackage extends EPackage {
 	int HANDLER__OWNER = CONTRIBUTION__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__ID = CONTRIBUTION__ID;
+
+	/**
 	 * The feature id for the '<em><b>URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -919,6 +1000,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int ITEM__OWNER = APPLICATION_ELEMENT__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__ID = APPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -974,6 +1064,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int HANDLED_ITEM__OWNER = ITEM__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__ID = ITEM__ID;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1047,6 +1146,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MENU_ITEM__OWNER = HANDLED_ITEM__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__ID = HANDLED_ITEM__ID;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1131,6 +1239,15 @@ public interface ApplicationPackage extends EPackage {
 	int TOOL_BAR_ITEM__OWNER = HANDLED_ITEM__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR_ITEM__ID = HANDLED_ITEM__ID;
+
+	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1204,6 +1321,15 @@ public interface ApplicationPackage extends EPackage {
 	int ITEM_CONTAINER__OWNER = APPLICATION_ELEMENT__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM_CONTAINER__ID = APPLICATION_ELEMENT__ID;
+
+	/**
 	 * The feature id for the '<em><b>Items</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1239,6 +1365,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MENU__OWNER = ITEM_CONTAINER__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__ID = ITEM_CONTAINER__ID;
 
 	/**
 	 * The feature id for the '<em><b>Items</b></em>' containment reference list.
@@ -1278,6 +1413,15 @@ public interface ApplicationPackage extends EPackage {
 	int TOOL_BAR__OWNER = ITEM_CONTAINER__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__ID = ITEM_CONTAINER__ID;
+
+	/**
 	 * The feature id for the '<em><b>Items</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1313,6 +1457,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int TRIM__OWNER = APPLICATION_ELEMENT__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM__ID = APPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Top Trim</b></em>' containment reference.
@@ -1379,6 +1532,33 @@ public interface ApplicationPackage extends EPackage {
 	int WINDOW__OWNER = ITEM_PART__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__ID = ITEM_PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__MENU = ITEM_PART__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__TOOL_BAR = ITEM_PART__TOOL_BAR;
+
+	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1413,24 +1593,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int WINDOW__HANDLERS = ITEM_PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__MENU = ITEM_PART__MENU;
-
-	/**
-	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__TOOL_BAR = ITEM_PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -1561,6 +1723,17 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getApplicationElement_Owner();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ApplicationElement#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ApplicationElement#getId()
+	 * @see #getApplicationElement()
+	 * @generated
+	 */
+	EAttribute getApplicationElement_Id();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Application <em>Application</em>}'.
@@ -2090,6 +2263,14 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute APPLICATION_ELEMENT__OWNER = eINSTANCE.getApplicationElement_Owner();
+
+		/**
+		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute APPLICATION_ELEMENT__ID = eINSTANCE.getApplicationElement_Id();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ApplicationImpl <em>Application</em>}' class.
