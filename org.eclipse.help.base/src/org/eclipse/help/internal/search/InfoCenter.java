@@ -241,6 +241,9 @@ public final class InfoCenter implements ISearchEngine {
 	}
 
 	private URL createURL(String query, Scope scope) {
+		if (scope.url == null) {
+			return null;
+		}
 		StringBuffer buf = new StringBuffer();
 		buf.append(scope.url);
 		if (!scope.url.endsWith("/")) //$NON-NLS-1$
