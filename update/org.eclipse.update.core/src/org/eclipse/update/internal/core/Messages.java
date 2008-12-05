@@ -158,7 +158,6 @@ public final class Messages extends NLS {
 	public static String UpdateManagerUtils_UnableToRemoveFile;
 	public static String UpdateManagerUtils_FileAlreadyExists;
 	public static String SiteLocal_UnableToCreateURLFor;
-	public static String SiteLocal_UnableToResolve;
 	public static String SiteLocal_UnableToDetermineFeatureStatusSiteNull;
 	public static String SiteLocal_TwoVersionSamePlugin1;
 	public static String SiteLocal_TwoVersionSamePlugin2;
