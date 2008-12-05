@@ -18,6 +18,8 @@
         upperBound="-1" containment="true">
       <eGenericType eTypeParameter="#//Application/W"/>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
+        upperBound="-1" eType="#//Command" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//ApplicationElement">
     <eTypeParameters name="P">
@@ -88,14 +90,17 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="object" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         transient="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Handler" eSuperTypes="#//Contribution"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Handler" eSuperTypes="#//Contribution">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
+        eType="#//Command"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Item" abstract="true" eSuperTypes="#//ApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="iconURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="HandledItem" eSuperTypes="#//Item">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="handler" eType="#//Handler"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//Command"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="menu" eType="#//Menu" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//HandledItem">
@@ -167,5 +172,8 @@
     <eGenericSuperTypes eClassifier="#//ItemPart">
       <eTypeArguments eTypeParameter="#//Window/P"/>
     </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Command" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>

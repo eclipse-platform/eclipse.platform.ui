@@ -24,29 +24,31 @@
         <weights>70</weights>
       </children>
       <toolBar>
-        <items xsi:type="application:ToolBarItem" name="Create Album" handler="//@windows.0/@handlers.1"/>
+        <items xsi:type="application:ToolBarItem" name="Create Album" command="//@command.0"/>
       </toolBar>
     </children>
-    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
-    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler"/>
+    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="//@command.1"/>
+    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="//@command.0"/>
     <menu>
       <items xsi:type="application:MenuItem" name="File">
         <menu>
-          <items xsi:type="application:MenuItem" name="Create Album" handler="//@windows.0/@handlers.1"/>
+          <items xsi:type="application:MenuItem" name="Create Album" command="//@command.0"/>
           <items xsi:type="application:MenuItem" iconURI="" name="---" separator="true"/>
-          <items xsi:type="application:MenuItem" iconURI="" name="Exit" handler="//@windows.0/@handlers.0"/>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" command="//@command.1"/>
         </menu>
       </items>
       <items xsi:type="application:MenuItem" name="Edit">
         <menu>
-          <items xsi:type="application:MenuItem" iconURI="" name="Exit" handler="//@windows.0/@handlers.0"/>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" command="//@command.1"/>
         </menu>
       </items>
       <items xsi:type="application:MenuItem" name="Help">
         <menu>
-          <items xsi:type="application:MenuItem" iconURI="" name="Exit" handler="//@windows.0/@handlers.0"/>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" command="//@command.1"/>
         </menu>
       </items>
     </menu>
   </windows>
+  <command id="e4photo.newProject"/>
+  <command id="e4photo.exit"/>
 </application:Application>
