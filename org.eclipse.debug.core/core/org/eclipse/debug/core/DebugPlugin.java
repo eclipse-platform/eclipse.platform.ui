@@ -493,7 +493,7 @@ public class DebugPlugin extends Plugin {
 	 * @return the breakpoint manager
 	 * @see IBreakpointManager
 	 */
-	public IBreakpointManager getBreakpointManager() {
+	public synchronized IBreakpointManager getBreakpointManager() {
 		if (fBreakpointManager == null) {
 			fBreakpointManager = new BreakpointManager();
 		}
@@ -519,7 +519,7 @@ public class DebugPlugin extends Plugin {
 	 * @see IMemoryBlockManager
 	 * @since 3.1
 	 */
-	public IMemoryBlockManager getMemoryBlockManager(){
+	public synchronized IMemoryBlockManager getMemoryBlockManager(){
 		if (fMemoryBlockManager == null) {
 			fMemoryBlockManager = new MemoryBlockManager();
 		}
@@ -562,7 +562,7 @@ public class DebugPlugin extends Plugin {
 	 * @see IExpressionManager
 	 * @since 2.0
 	 */
-	public IExpressionManager getExpressionManager() {
+	public synchronized IExpressionManager getExpressionManager() {
 		if (fExpressionManager == null) {
 			fExpressionManager = new ExpressionManager();
 		}
