@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -20,6 +19,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.eclipse.ui.internal.TrimUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -146,7 +152,7 @@ public class ProgressRegion implements IWindowTrim {
         if (isHorizontal(side)) {
         	gd = new GridData(GridData.FILL_VERTICAL);
             gd.widthHint = widthPreference;
-        } else { 
+        } else {
         	gd = new GridData(GridData.FILL_HORIZONTAL);
             gd.heightHint = widthPreference;
         }
@@ -171,6 +177,18 @@ public class ProgressRegion implements IWindowTrim {
         viewer.setInput(provider);
         viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));
         viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
+        viewer.addFilter(new ViewerFilter() {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (element instanceof JobInfo) {
+                    JobInfo info= (JobInfo)element;
+                    if (info.isBlocked() || info.getJob().getState() == Job.WAITING) {
+                    	return false;
+                    }
+                }
+                return true;
+            }
+        	
+		});
         return region;
     }
 
