@@ -12,7 +12,6 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
@@ -115,20 +114,18 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		if (node instanceof AntTargetNode) {
 			AntTargetNode targetNode= (AntTargetNode) node;
 			if (targetNode.isDefaultTarget()) {
-				selectedTargetName= ""; //$NON-NLS-1$
+				selectedTargetName= DEFAULT_TARGET;
 			} else {
-				selectedTargetName= targetNode.getTarget().getName();
+				// append a comma to be consistent with ant targets tab
+				selectedTargetName= targetNode.getTarget().getName() + ',';
 			}
 		} else if (node instanceof AntProjectNode) {
-			selectedTargetName = ""; //$NON-NLS-1$
+			selectedTargetName = DEFAULT_TARGET;
 		} else if (node instanceof AntTaskNode) {
 		    AntTaskNode taskNode= (AntTaskNode) node;
 		    selectedTargetName= taskNode.getTask().getOwningTarget().getName();
 		}
 	
-		if (selectedTargetName == null) {
-			return;
-		}
 		IFile file = node.getBuildFileResource();
 		if (file != null) {
 			launch(file.getFullPath(), file.getProject(), mode, selectedTargetName);
@@ -160,41 +157,27 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	}
 
 	/**
-	 * Returns a listing of <code>ILaunchConfiguration</code>s that correspond to the specified target name.
-	 * Passing in the empty string will produce a listing of <code>ILaunchConfiguration</code>s matching the default target.
+	 * Returns a listing of <code>ILaunchConfiguration</code>s that correspond to the specified build file.
 	 * 
 	 * @param filepath the path to the buildfile to launch
-	 * @param targetname the name of the target to launch the build on
-	 * @return the list of <code>ILaunchConfiguration</code>s that correspond to the specified target name.
+	 * @return the list of <code>ILaunchConfiguration</code>s that correspond to the specified build file.
 	 * 
 	 * @since 3.4
 	 */
-	protected List collectConfigurations(IPath filepath, String targetname) {
+	protected List collectConfigurations(IPath filepath) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		if(type != null) {
 			try {
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 				ArrayList list = new ArrayList();
-				String targetattr = null;
-				String[] targets = null;
 				IPath location = null;
 				for(int i = 0; i < configs.length; i++) {
 					if(configs[i].exists()) {
 						try {
 							location = ExternalToolsUtil.getLocation(configs[i]);
 							if(location != null && location.equals(filepath)) {
-								targetattr = configs[i].getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""); //$NON-NLS-1$
-								targets = AntUtil.parseString(targetattr, ","); //$NON-NLS-1$
-								if(targets.length == 0) {
-									if(targetattr.equals(targetname) || targetname == null) {
-										list.add(configs[i]);
-									}
-								} else {
-									if(Arrays.asList(targets).contains((targetname == null ? DEFAULT_TARGET : targetname))) {
-										list.add(configs[i]);
-									}
-								}
+								list.add(configs[i]);
 							}
 						}
 						catch(CoreException ce) {}
@@ -249,7 +232,9 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * @param filePath the path to the build file to launch
 	 * @param project the project for the path
 	 * @param mode the mode in which the build file should be executed
-	 * @param targetAttribute the targets to launch, in the form of the launch
+	 * @param targetAttribute the targets to launch or <code>null</code> to use targets on existing configuration,
+	 *  or <code>DEFAULT</code> for default target explicitly.
+	 *  
 	 * configuration targets attribute.
 	 */
 	public void launch(IPath filePath, IProject project, String mode, String targetAttribute) {
@@ -259,24 +244,11 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			//need to get the full location of a workspace file to compare against the resolved config location attribute
 			backingfile = project.getFile(filePath.removeFirstSegments(1));
 		}
-		List configs = collectConfigurations((backingfile != null && backingfile.exists() ? backingfile.getLocation() : filePath), targetAttribute);
+		List configs = collectConfigurations((backingfile != null && backingfile.exists() ? backingfile.getLocation() : filePath));
 		if (configs.isEmpty()) {
 			configuration = createDefaultLaunchConfiguration(filePath, (project != null && project.exists() ? project : null));
-			try {
-				if (targetAttribute != null && ! targetAttribute.equals(configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""))) { //$NON-NLS-1$
-					String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
-					String newName = getNewLaunchConfigurationName(filePath, projectName, targetAttribute);	
-					ILaunchConfigurationWorkingCopy copy = configuration.getWorkingCopy();
-					copy.rename(newName);
-					copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targetAttribute);
-					configuration = copy.doSave();
-				}
-			} catch (CoreException exception) {
-				reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_Exception_launching, new String[] {filePath.toFile().getName()}), exception);
-				return;
-			}
 		} else if (configs.size() == 1) {
-				configuration= (ILaunchConfiguration)configs.get(0);
+			configuration= (ILaunchConfiguration)configs.get(0);
 		} else {
 			configuration = chooseConfig(configs);
 			if(configuration == null) {
@@ -284,10 +256,25 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				return;
 			}
 		}
+		
+		// set the target to run, if applicable
 		if (configuration != null) {
+			try {
+				if (targetAttribute != null && !targetAttribute.equals(configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, DEFAULT_TARGET))) {
+					ILaunchConfigurationWorkingCopy copy = configuration.getWorkingCopy();
+					String attrValue = null;
+					if (!DEFAULT_TARGET.equals(targetAttribute)) {
+						attrValue = targetAttribute;
+					}
+					copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, attrValue);
+					configuration = copy.doSave();
+				}
+			} catch (CoreException exception) {
+				reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_Exception_launching, new String[] {filePath.toFile().getName()}), exception);
+				return;
+			}
 			launch(mode, configuration);
-		}
-		else {
+		} else {
 			antFileNotFound();
 		}
 	}
