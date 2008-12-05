@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import com.ibm.icu.text.DateFormat;
@@ -43,25 +44,67 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 		return new FileRevisionEditorInput(revision, storage);
 	}
 	
-	private static IStorage wrapStorage(final IStorage storage, final String charset) {
+	private static IStorage wrapStorage(final IStorage storage,
+			final String charset) {
 		if (charset == null)
 			return storage;
+		if (storage instanceof IFileState) {
+			return new IFileState() {
+				public Object getAdapter(Class adapter) {
+					return storage.getAdapter(adapter);
+				}
+
+				public boolean isReadOnly() {
+					return storage.isReadOnly();
+				}
+
+				public String getName() {
+					return storage.getName();
+				}
+
+				public IPath getFullPath() {
+					return storage.getFullPath();
+				}
+
+				public InputStream getContents() throws CoreException {
+					return storage.getContents();
+				}
+
+				public String getCharset() throws CoreException {
+					return charset;
+				}
+
+				public boolean exists() {
+					return ((IFileState) storage).exists();
+				}
+
+				public long getModificationTime() {
+					return ((IFileState) storage).getModificationTime();
+				}
+			};
+		}
+
 		return new IEncodedStorage() {
 			public Object getAdapter(Class adapter) {
 				return storage.getAdapter(adapter);
 			}
+
 			public boolean isReadOnly() {
 				return storage.isReadOnly();
 			}
+
 			public String getName() {
 				return storage.getName();
 			}
+
 			public IPath getFullPath() {
 				return storage.getFullPath();
 			}
+
 			public InputStream getContents() throws CoreException {
 				return storage.getContents();
 			}
+
 			public String getCharset() throws CoreException {
 				return charset;
 			}
