@@ -8,11 +8,12 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: HandledItemImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id: HandledItemImpl.java,v 1.2 2008/11/19 22:51:52 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.Command;
 import org.eclipse.e4.ui.model.application.HandledItem;
 import org.eclipse.e4.ui.model.application.Handler;
 
@@ -32,7 +33,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.internal.application.HandledItemImpl#getHandler <em>Handler</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.HandledItemImpl#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.HandledItemImpl#getMenu <em>Menu</em>}</li>
  * </ul>
  * </p>
@@ -41,14 +42,14 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class HandledItemImpl extends ItemImpl implements HandledItem {
 	/**
-	 * The cached value of the '{@link #getHandler() <em>Handler</em>}' reference.
+	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getHandler()
+	 * @see #getCommand()
 	 * @generated
 	 * @ordered
 	 */
-	protected Handler handler;
+	protected Command command;
 
 	/**
 	 * The cached value of the '{@link #getMenu() <em>Menu</em>}' containment reference.
@@ -84,16 +85,16 @@ public class HandledItemImpl extends ItemImpl implements HandledItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Handler getHandler() {
-		if (handler != null && handler.eIsProxy()) {
-			InternalEObject oldHandler = (InternalEObject)handler;
-			handler = (Handler)eResolveProxy(oldHandler);
-			if (handler != oldHandler) {
+	public Command getCommand() {
+		if (command != null && command.eIsProxy()) {
+			InternalEObject oldCommand = (InternalEObject)command;
+			command = (Command)eResolveProxy(oldCommand);
+			if (command != oldCommand) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ApplicationPackage.HANDLED_ITEM__HANDLER, oldHandler, handler));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ApplicationPackage.HANDLED_ITEM__COMMAND, oldCommand, command));
 			}
 		}
-		return handler;
+		return command;
 	}
 
 	/**
@@ -101,8 +102,8 @@ public class HandledItemImpl extends ItemImpl implements HandledItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Handler basicGetHandler() {
-		return handler;
+	public Command basicGetCommand() {
+		return command;
 	}
 
 	/**
@@ -110,11 +111,11 @@ public class HandledItemImpl extends ItemImpl implements HandledItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setHandler(Handler newHandler) {
-		Handler oldHandler = handler;
-		handler = newHandler;
+	public void setCommand(Command newCommand) {
+		Command oldCommand = command;
+		command = newCommand;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.HANDLED_ITEM__HANDLER, oldHandler, handler));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.HANDLED_ITEM__COMMAND, oldCommand, command));
 	}
 
 	/**
@@ -182,9 +183,9 @@ public class HandledItemImpl extends ItemImpl implements HandledItem {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ApplicationPackage.HANDLED_ITEM__HANDLER:
-				if (resolve) return getHandler();
-				return basicGetHandler();
+			case ApplicationPackage.HANDLED_ITEM__COMMAND:
+				if (resolve) return getCommand();
+				return basicGetCommand();
 			case ApplicationPackage.HANDLED_ITEM__MENU:
 				return getMenu();
 		}
@@ -199,8 +200,8 @@ public class HandledItemImpl extends ItemImpl implements HandledItem {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ApplicationPackage.HANDLED_ITEM__HANDLER:
-				setHandler((Handler)newValue);
+			case ApplicationPackage.HANDLED_ITEM__COMMAND:
+				setCommand((Command)newValue);
 				return;
 			case ApplicationPackage.HANDLED_ITEM__MENU:
 				setMenu((Menu)newValue);
@@ -217,8 +218,8 @@ public class HandledItemImpl extends ItemImpl implements HandledItem {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ApplicationPackage.HANDLED_ITEM__HANDLER:
-				setHandler((Handler)null);
+			case ApplicationPackage.HANDLED_ITEM__COMMAND:
+				setCommand((Command)null);
 				return;
 			case ApplicationPackage.HANDLED_ITEM__MENU:
 				setMenu((Menu)null);
@@ -235,8 +236,8 @@ public class HandledItemImpl extends ItemImpl implements HandledItem {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ApplicationPackage.HANDLED_ITEM__HANDLER:
-				return handler != null;
+			case ApplicationPackage.HANDLED_ITEM__COMMAND:
+				return command != null;
 			case ApplicationPackage.HANDLED_ITEM__MENU:
 				return menu != null;
 		}

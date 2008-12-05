@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: HandledItem.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
+ * $Id: HandledItem.java,v 1.2 2008/11/19 22:51:52 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -21,7 +21,7 @@ package org.eclipse.e4.ui.model.application;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.HandledItem#getHandler <em>Handler</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.HandledItem#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.HandledItem#getMenu <em>Menu</em>}</li>
  * </ul>
  * </p>
@@ -32,30 +32,30 @@ package org.eclipse.e4.ui.model.application;
  */
 public interface HandledItem extends Item {
 	/**
-	 * Returns the value of the '<em><b>Handler</b></em>' reference.
+	 * Returns the value of the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Handler</em>' reference isn't clear,
+	 * If the meaning of the '<em>Command</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Handler</em>' reference.
-	 * @see #setHandler(Handler)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getHandledItem_Handler()
+	 * @return the value of the '<em>Command</em>' reference.
+	 * @see #setCommand(Command)
+	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getHandledItem_Command()
 	 * @model
 	 * @generated
 	 */
-	Handler getHandler();
+	Command getCommand();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.HandledItem#getHandler <em>Handler</em>}' reference.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.HandledItem#getCommand <em>Command</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Handler</em>' reference.
-	 * @see #getHandler()
+	 * @param value the new value of the '<em>Command</em>' reference.
+	 * @see #getCommand()
 	 * @generated
 	 */
-	void setHandler(Handler value);
+	void setCommand(Command value);
 
 	/**
 	 * Returns the value of the '<em><b>Menu</b></em>' containment reference.

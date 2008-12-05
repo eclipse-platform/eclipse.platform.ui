@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.2 2008/11/19 22:51:52 bbokowski Exp $
+ * $Id: ApplicationPackage.java,v 1.3 2008/12/04 20:52:58 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -148,13 +148,22 @@ public interface ApplicationPackage extends EPackage {
 	int APPLICATION__WINDOWS = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Command</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__COMMAND = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Application</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int APPLICATION_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.PartImpl <em>Part</em>}' class.
@@ -974,13 +983,22 @@ public interface ApplicationPackage extends EPackage {
 	int HANDLER__OBJECT = CONTRIBUTION__OBJECT;
 
 	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__COMMAND = CONTRIBUTION_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Handler</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLER_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 0;
+	int HANDLER_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ItemImpl <em>Item</em>}' class.
@@ -1102,13 +1120,13 @@ public interface ApplicationPackage extends EPackage {
 	int HANDLED_ITEM__TOOLTIP = ITEM__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Handler</b></em>' reference.
+	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__HANDLER = ITEM_FEATURE_COUNT + 0;
+	int HANDLED_ITEM__COMMAND = ITEM_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -1184,13 +1202,13 @@ public interface ApplicationPackage extends EPackage {
 	int MENU_ITEM__TOOLTIP = HANDLED_ITEM__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Handler</b></em>' reference.
+	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__HANDLER = HANDLED_ITEM__HANDLER;
+	int MENU_ITEM__COMMAND = HANDLED_ITEM__COMMAND;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -1275,13 +1293,13 @@ public interface ApplicationPackage extends EPackage {
 	int TOOL_BAR_ITEM__TOOLTIP = HANDLED_ITEM__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Handler</b></em>' reference.
+	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__HANDLER = HANDLED_ITEM__HANDLER;
+	int TOOL_BAR_ITEM__COMMAND = HANDLED_ITEM__COMMAND;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -1704,6 +1722,53 @@ public interface ApplicationPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.CommandImpl <em>Command</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.internal.application.CommandImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getCommand()
+	 * @generated
+	 */
+	int COMMAND = 18;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND__OWNER = APPLICATION_ELEMENT__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND__ID = APPLICATION_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Command</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ApplicationElement <em>Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1755,6 +1820,17 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getApplication_Windows();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.Application#getCommand <em>Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.Application#getCommand()
+	 * @see #getApplication()
+	 * @generated
+	 */
+	EReference getApplication_Command();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Part <em>Part</em>}'.
@@ -1960,6 +2036,17 @@ public interface ApplicationPackage extends EPackage {
 	EClass getHandler();
 
 	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.Handler#getCommand <em>Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.Handler#getCommand()
+	 * @see #getHandler()
+	 * @generated
+	 */
+	EReference getHandler_Command();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Item <em>Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2013,15 +2100,15 @@ public interface ApplicationPackage extends EPackage {
 	EClass getHandledItem();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.HandledItem#getHandler <em>Handler</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.HandledItem#getCommand <em>Command</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Handler</em>'.
-	 * @see org.eclipse.e4.ui.model.application.HandledItem#getHandler()
+	 * @return the meta object for the reference '<em>Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.HandledItem#getCommand()
 	 * @see #getHandledItem()
 	 * @generated
 	 */
-	EReference getHandledItem_Handler();
+	EReference getHandledItem_Command();
 
 	/**
 	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.HandledItem#getMenu <em>Menu</em>}'.
@@ -2225,6 +2312,27 @@ public interface ApplicationPackage extends EPackage {
 	EAttribute getWindow_Height();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Command <em>Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.Command
+	 * @generated
+	 */
+	EClass getCommand();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Command#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.eclipse.e4.ui.model.application.Command#getName()
+	 * @see #getCommand()
+	 * @generated
+	 */
+	EAttribute getCommand_Name();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2289,6 +2397,14 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EReference APPLICATION__WINDOWS = eINSTANCE.getApplication_Windows();
+
+		/**
+		 * The meta object literal for the '<em><b>Command</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference APPLICATION__COMMAND = eINSTANCE.getApplication_Command();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.PartImpl <em>Part</em>}' class.
@@ -2455,6 +2571,14 @@ public interface ApplicationPackage extends EPackage {
 		EClass HANDLER = eINSTANCE.getHandler();
 
 		/**
+		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference HANDLER__COMMAND = eINSTANCE.getHandler_Command();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ItemImpl <em>Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2499,12 +2623,12 @@ public interface ApplicationPackage extends EPackage {
 		EClass HANDLED_ITEM = eINSTANCE.getHandledItem();
 
 		/**
-		 * The meta object literal for the '<em><b>Handler</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference HANDLED_ITEM__HANDLER = eINSTANCE.getHandledItem_Handler();
+		EReference HANDLED_ITEM__COMMAND = eINSTANCE.getHandledItem_Command();
 
 		/**
 		 * The meta object literal for the '<em><b>Menu</b></em>' containment reference feature.
@@ -2673,6 +2797,24 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute WINDOW__HEIGHT = eINSTANCE.getWindow_Height();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.CommandImpl <em>Command</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.internal.application.CommandImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getCommand()
+		 * @generated
+		 */
+		EClass COMMAND = eINSTANCE.getCommand();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMMAND__NAME = eINSTANCE.getCommand_Name();
 
 	}
 

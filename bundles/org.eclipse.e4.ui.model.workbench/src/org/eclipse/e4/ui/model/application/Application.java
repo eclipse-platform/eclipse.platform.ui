@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: Application.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -23,6 +23,7 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.Application#getWindows <em>Windows</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.Application#getCommand <em>Command</em>}</li>
  * </ul>
  * </p>
  *
@@ -46,5 +47,21 @@ public interface Application<W extends Window<?>> extends ApplicationElement {
 	 * @generated
 	 */
 	EList<W> getWindows();
+
+	/**
+	 * Returns the value of the '<em><b>Command</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.Command}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Command</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Command</em>' containment reference list.
+	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getApplication_Command()
+	 * @model containment="true" required="true"
+	 * @generated
+	 */
+	EList<Command> getCommand();
 
 } // Application

@@ -8,6 +8,7 @@ import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.ContributedPart;
 import org.eclipse.e4.ui.model.application.Part;
 import org.eclipse.e4.ui.services.ISelectionService;
+import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -26,7 +27,7 @@ public class ContributedPartFactory extends SWTPartFactory {
 		this.contributionFactory = contributionFactory;
 	}
 
-	public Object createWidget(Part part) {
+	public Object createWidget(final Part part) {
 		Widget parentWidget = getParentWidget(part);
 		Widget newWidget = null;
 
@@ -34,17 +35,24 @@ public class ContributedPartFactory extends SWTPartFactory {
 			final Composite newComposite = new Composite((Composite) parentWidget, SWT.NONE);
 			newWidget = newComposite;
 			ContributedPart contributedPart = (ContributedPart) part;
+			final IHandlerService hs = new PartHandlerService(part);
 			Object newPart = contributionFactory.create(contributedPart.getURI(), new IServiceLocator() {
 
 				public Object getService(Class api) {
 					if (api == Composite.class) {
+						newComposite.setData("MODEL", part);
+						newComposite.setData("LOCATOR", this);
 						return newComposite;
+					} else if (api == IHandlerService.class) {
+						return hs;
 					}
 					return serviceLocator.getService(api);
 				}
 
 				public boolean hasService(Class api) {
 					if (api == Composite.class) {
+						return true;
+					} else if (api == IHandlerService.class) {
 						return true;
 					}
 					return serviceLocator.hasService(api);

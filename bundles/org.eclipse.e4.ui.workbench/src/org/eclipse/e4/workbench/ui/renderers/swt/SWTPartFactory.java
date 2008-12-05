@@ -1,14 +1,18 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.IServiceLocator;
+import org.eclipse.e4.ui.model.application.Command;
 import org.eclipse.e4.ui.model.application.HandledItem;
+import org.eclipse.e4.ui.model.application.Handler;
 import org.eclipse.e4.ui.model.application.Menu;
 import org.eclipse.e4.ui.model.application.ToolBarItem;
 import org.eclipse.e4.ui.services.ISelectionService;
+import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
@@ -57,6 +61,27 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 	}
 
+	private static Handler getHandler(Display display, HandledItem item) {
+		Handler h = null;
+		Command command = item.getCommand();
+		if (command == null) {
+			return h;
+		}
+		Control control = display.getFocusControl();
+		while (control != null && h == null) {
+			IServiceLocator l = (IServiceLocator) control.getData("LOCATOR");
+			if (l != null) {
+				IHandlerService hs = (IHandlerService) l
+						.getService(IHandlerService.class);
+				if (hs != null) {
+					h = hs.getHandler(command);
+				}
+			}
+			control = control.getParent();
+		}
+		return h;
+	}
+
 	private void createToolBarItem(ToolBar swtMenu,
 			final org.eclipse.e4.ui.model.application.ToolBarItem toolBarItem) {
 		int style = SWT.PUSH;
@@ -64,16 +89,16 @@ public abstract class SWTPartFactory extends PartFactory {
 		newToolItem.setText(toolBarItem.getName());
 		newToolItem.setToolTipText(toolBarItem.getTooltip());
 		newToolItem.setImage(getImage(toolBarItem));
-		if (toolBarItem.getHandler() != null) {
+		if (toolBarItem.getCommand() != null) {
 			final ISelectionService selectionService = (ISelectionService) serviceLocator
 					.getService(ISelectionService.class);
 			newToolItem.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					Object result = canExecuteItem(serviceLocator, toolBarItem,
-							selectionService);
+					Object result = canExecuteItem(serviceLocator, newToolItem
+							.getDisplay(), toolBarItem, selectionService);
 					if (Boolean.TRUE.equals(result)) {
-						executeItem(serviceLocator, toolBarItem,
-								selectionService);
+						executeItem(serviceLocator, newToolItem.getDisplay(),
+								toolBarItem, selectionService);
 					}
 				}
 			});
@@ -82,8 +107,8 @@ public abstract class SWTPartFactory extends PartFactory {
 					if (newToolItem.isDisposed()) {
 						return;
 					}
-					Object result = canExecuteItem(serviceLocator, toolBarItem,
-							selectionService);
+					Object result = canExecuteItem(serviceLocator, newToolItem
+							.getDisplay(), toolBarItem, selectionService);
 					((ToolItem) newToolItem).setEnabled(Boolean.TRUE
 							.equals(result));
 					newToolItem.getDisplay().timerExec(250, this);
@@ -93,10 +118,14 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	protected Object canExecuteItem(final IServiceLocator serviceLocator,
-			final HandledItem item, final ISelectionService selectionService) {
-		Object result = contributionFactory.call(item.getHandler().getObject(),
-				item.getHandler().getURI(), "canExecute",
-				new IServiceLocator() {
+			Display display, final HandledItem item,
+			final ISelectionService selectionService) {
+		Handler h = getHandler(display, item);
+		if (h==null) {
+			return Boolean.TRUE;
+		}
+		Object result = contributionFactory.call(h.getObject(), h.getURI(),
+				"canExecute", new IServiceLocator() {
 					public Object getService(Class<?> api) {
 						Object result = selectionService.getSelection(api);
 						if (result != null) {
@@ -118,26 +147,31 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	protected void executeItem(final IServiceLocator serviceLocator,
-			final HandledItem item, final ISelectionService selectionService) {
-		contributionFactory.call(item.getHandler().getObject(), item
-				.getHandler().getURI(), "execute", new IServiceLocator() {
-			public Object getService(Class<?> api) {
-				Object result = selectionService.getSelection(api);
-				if (result != null) {
-					return result;
-				}
-				return serviceLocator.getService(api);
-			}
+			Display display, final HandledItem item,
+			final ISelectionService selectionService) {
+		Handler h = getHandler(display, item);
+		if (h==null) {
+			return;
+		}
+		contributionFactory.call(h.getObject(), h.getURI(), "execute",
+				new IServiceLocator() {
+					public Object getService(Class<?> api) {
+						Object result = selectionService.getSelection(api);
+						if (result != null) {
+							return result;
+						}
+						return serviceLocator.getService(api);
+					}
 
-			public boolean hasService(Class<?> api) {
-				Object result = selectionService.getSelection(api);
-				if (result != null) {
-					return true;
-				}
-				return serviceLocator.hasService(api);
-			}
+					public boolean hasService(Class<?> api) {
+						Object result = selectionService.getSelection(api);
+						if (result != null) {
+							return true;
+						}
+						return serviceLocator.hasService(api);
+					}
 
-		}, null);
+				}, null);
 	}
 
 	private void createMenuItem(final org.eclipse.swt.widgets.Menu parentMenu,
@@ -164,16 +198,16 @@ public abstract class SWTPartFactory extends PartFactory {
 			createMenu(newMenuItem, handledItem.getMenu());
 		}
 
-		if (handledItem.getHandler() != null) {
+		if (handledItem.getCommand() != null) {
 			final ISelectionService selectionService = (ISelectionService) serviceLocator
 					.getService(ISelectionService.class);
 			newMenuItem.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					Object result = canExecuteItem(serviceLocator, handledItem,
-							selectionService);
+					Object result = canExecuteItem(serviceLocator, newMenuItem
+							.getDisplay(), handledItem, selectionService);
 					if (Boolean.TRUE.equals(result)) {
-						executeItem(serviceLocator, handledItem,
-								selectionService);
+						executeItem(serviceLocator, newMenuItem.getDisplay(),
+								handledItem, selectionService);
 					}
 				}
 			});
@@ -183,8 +217,8 @@ public abstract class SWTPartFactory extends PartFactory {
 					if (newMenuItem.isDisposed()) {
 						return;
 					}
-					Object result = canExecuteItem(serviceLocator, handledItem,
-							selectionService);
+					Object result = canExecuteItem(serviceLocator, newMenuItem
+							.getDisplay(), handledItem, selectionService);
 
 					((MenuItem) newMenuItem).setEnabled(Boolean.TRUE
 							.equals(result));

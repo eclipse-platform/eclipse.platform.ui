@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -16,6 +16,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.Application;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.Command;
 import org.eclipse.e4.ui.model.application.Window;
 
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -36,6 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.ApplicationImpl#getWindows <em>Windows</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.ApplicationImpl#getCommand <em>Command</em>}</li>
  * </ul>
  * </p>
  *
@@ -51,6 +53,16 @@ public class ApplicationImpl<W extends Window<?>> extends ApplicationElementImpl
 	 * @ordered
 	 */
 	protected EList<W> windows;
+
+	/**
+	 * The cached value of the '{@link #getCommand() <em>Command</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCommand()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Command> command;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -88,11 +100,25 @@ public class ApplicationImpl<W extends Window<?>> extends ApplicationElementImpl
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Command> getCommand() {
+		if (command == null) {
+			command = new EObjectContainmentEList<Command>(Command.class, this, ApplicationPackage.APPLICATION__COMMAND);
+		}
+		return command;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ApplicationPackage.APPLICATION__WINDOWS:
 				return ((InternalEList<?>)getWindows()).basicRemove(otherEnd, msgs);
+			case ApplicationPackage.APPLICATION__COMMAND:
+				return ((InternalEList<?>)getCommand()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -107,6 +133,8 @@ public class ApplicationImpl<W extends Window<?>> extends ApplicationElementImpl
 		switch (featureID) {
 			case ApplicationPackage.APPLICATION__WINDOWS:
 				return getWindows();
+			case ApplicationPackage.APPLICATION__COMMAND:
+				return getCommand();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -124,6 +152,10 @@ public class ApplicationImpl<W extends Window<?>> extends ApplicationElementImpl
 				getWindows().clear();
 				getWindows().addAll((Collection<? extends W>)newValue);
 				return;
+			case ApplicationPackage.APPLICATION__COMMAND:
+				getCommand().clear();
+				getCommand().addAll((Collection<? extends Command>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -139,6 +171,9 @@ public class ApplicationImpl<W extends Window<?>> extends ApplicationElementImpl
 			case ApplicationPackage.APPLICATION__WINDOWS:
 				getWindows().clear();
 				return;
+			case ApplicationPackage.APPLICATION__COMMAND:
+				getCommand().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -153,6 +188,8 @@ public class ApplicationImpl<W extends Window<?>> extends ApplicationElementImpl
 		switch (featureID) {
 			case ApplicationPackage.APPLICATION__WINDOWS:
 				return windows != null && !windows.isEmpty();
+			case ApplicationPackage.APPLICATION__COMMAND:
+				return command != null && !command.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

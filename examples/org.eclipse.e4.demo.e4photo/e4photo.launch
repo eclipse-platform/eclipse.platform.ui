@@ -11,7 +11,7 @@
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/e4photo"/>
 <booleanAttribute key="default" value="false"/>
 <stringAttribute key="deselected_workspace_plugins" value="org.eclipse.e4.ui.model.workbench,org.eclipse.e4.ui.services,org.eclipse.nebula.widgets.gallery,org.eclipse.e4.core.services,org.eclipse.e4.ui.workbench"/>
-<booleanAttribute key="includeOptional" value="false"/>
+<booleanAttribute key="includeOptional" value="true"/>
 <stringAttribute key="location" value="${workspace_loc}/../runtime-e4photo"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>

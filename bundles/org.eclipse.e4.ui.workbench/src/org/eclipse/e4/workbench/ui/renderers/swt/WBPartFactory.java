@@ -1,10 +1,12 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.Part;
 import org.eclipse.e4.ui.model.workbench.Perspective;
 import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
+import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -33,6 +35,23 @@ public class WBPartFactory extends SWTPartFactory {
 				wbwShell.setText(((WorkbenchWindow) part).getName());
 	
 			newWidget = wbwShell;
+			final IHandlerService hs = new PartHandlerService(part);
+			IServiceLocator locator = new IServiceLocator () {
+
+				public Object getService(Class<?> api) {
+					if (api == IHandlerService.class) {
+						return hs;
+					}
+					return serviceLocator.getService(api);
+				}
+
+				public boolean hasService(Class<?> api) {
+					if (api == IHandlerService.class) {
+						return true;
+					}
+					return serviceLocator.hasService(api);
+				} };
+			wbwShell.setData("LOCATOR", locator);
 		} else {
 			newWidget = null;
 		}

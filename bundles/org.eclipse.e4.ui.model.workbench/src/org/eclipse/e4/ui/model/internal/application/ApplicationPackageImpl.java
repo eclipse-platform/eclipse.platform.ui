@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.2 2008/11/19 22:51:52 bbokowski Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.3 2008/12/04 20:52:58 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.Application;
 import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.Command;
 import org.eclipse.e4.ui.model.application.ContributedPart;
 import org.eclipse.e4.ui.model.application.Contribution;
 import org.eclipse.e4.ui.model.application.HandledItem;
@@ -180,6 +181,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	private EClass windowEClass = null;
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass commandEClass = null;
+
+	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
@@ -295,6 +303,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 */
 	public EReference getApplication_Windows() {
 		return (EReference)applicationEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getApplication_Command() {
+		return (EReference)applicationEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -473,6 +490,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getHandler_Command() {
+		return (EReference)handlerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getItem() {
 		return itemEClass;
 	}
@@ -518,7 +544,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getHandledItem_Handler() {
+	public EReference getHandledItem_Command() {
 		return (EReference)handledItemEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -698,6 +724,24 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getCommand() {
+		return commandEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCommand_Name() {
+		return (EAttribute)commandEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ApplicationFactory getApplicationFactory() {
 		return (ApplicationFactory)getEFactoryInstance();
 	}
@@ -727,6 +771,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		applicationEClass = createEClass(APPLICATION);
 		createEReference(applicationEClass, APPLICATION__WINDOWS);
+		createEReference(applicationEClass, APPLICATION__COMMAND);
 
 		partEClass = createEClass(PART);
 		createEReference(partEClass, PART__MENU);
@@ -752,6 +797,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		createEAttribute(contributionEClass, CONTRIBUTION__OBJECT);
 
 		handlerEClass = createEClass(HANDLER);
+		createEReference(handlerEClass, HANDLER__COMMAND);
 
 		itemEClass = createEClass(ITEM);
 		createEAttribute(itemEClass, ITEM__ICON_URI);
@@ -759,7 +805,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		createEAttribute(itemEClass, ITEM__TOOLTIP);
 
 		handledItemEClass = createEClass(HANDLED_ITEM);
-		createEReference(handledItemEClass, HANDLED_ITEM__HANDLER);
+		createEReference(handledItemEClass, HANDLED_ITEM__COMMAND);
 		createEReference(handledItemEClass, HANDLED_ITEM__MENU);
 
 		menuItemEClass = createEClass(MENU_ITEM);
@@ -787,6 +833,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		createEAttribute(windowEClass, WINDOW__Y);
 		createEAttribute(windowEClass, WINDOW__WIDTH);
 		createEAttribute(windowEClass, WINDOW__HEIGHT);
+
+		commandEClass = createEClass(COMMAND);
+		createEAttribute(commandEClass, COMMAND__NAME);
 	}
 
 	/**
@@ -894,6 +943,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		g2 = createEGenericType(windowEClass_P);
 		g1.getETypeArguments().add(g2);
 		windowEClass.getEGenericSuperTypes().add(g1);
+		commandEClass.getESuperTypes().add(this.getApplicationElement());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(applicationElementEClass, ApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -903,6 +953,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEClass(applicationEClass, Application.class, "Application", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		g1 = createEGenericType(applicationEClass_W);
 		initEReference(getApplication_Windows(), g1, null, "windows", null, 1, -1, Application.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getApplication_Command(), this.getCommand(), null, "command", null, 1, -1, Application.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(partEClass, Part.class, "Part", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPart_Menu(), this.getMenu(), null, "menu", null, 0, 1, Part.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -933,6 +984,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEAttribute(getContribution_Object(), ecorePackage.getEJavaObject(), "object", null, 0, 1, Contribution.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(handlerEClass, Handler.class, "Handler", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getHandler_Command(), this.getCommand(), null, "command", null, 1, 1, Handler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(itemEClass, Item.class, "Item", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getItem_IconURI(), ecorePackage.getEString(), "iconURI", null, 0, 1, Item.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -940,7 +992,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEAttribute(getItem_Tooltip(), ecorePackage.getEString(), "tooltip", null, 0, 1, Item.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(handledItemEClass, HandledItem.class, "HandledItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getHandledItem_Handler(), this.getHandler(), null, "handler", null, 0, 1, HandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getHandledItem_Command(), this.getCommand(), null, "command", null, 0, 1, HandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getHandledItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, HandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(menuItemEClass, MenuItem.class, "MenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -981,6 +1033,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEAttribute(getWindow_Y(), ecorePackage.getEInt(), "y", null, 0, 1, Window.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getWindow_Width(), ecorePackage.getEInt(), "width", null, 0, 1, Window.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getWindow_Height(), ecorePackage.getEInt(), "height", null, 0, 1, Window.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(commandEClass, Command.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getCommand_Name(), ecorePackage.getEString(), "name", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Create resource
 		createResource(eNS_URI);

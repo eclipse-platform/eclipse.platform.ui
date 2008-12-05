@@ -8,49 +8,59 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: HandlerImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.internal.application;
 
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.Command;
-import org.eclipse.e4.ui.model.application.Handler;
 
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Handler</b></em>'.
+ * An implementation of the model object '<em><b>Command</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.internal.application.HandlerImpl#getCommand <em>Command</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.CommandImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class HandlerImpl extends ContributionImpl implements Handler {
+public class CommandImpl extends ApplicationElementImpl implements Command {
 	/**
-	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
+	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCommand()
+	 * @see #getName()
 	 * @generated
 	 * @ordered
 	 */
-	protected Command command;
+	protected static final String NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String name = NAME_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected HandlerImpl() {
+	protected CommandImpl() {
 		super();
 	}
 
@@ -61,7 +71,7 @@ public class HandlerImpl extends ContributionImpl implements Handler {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return ApplicationPackage.Literals.HANDLER;
+		return ApplicationPackage.Literals.COMMAND;
 	}
 
 	/**
@@ -69,16 +79,8 @@ public class HandlerImpl extends ContributionImpl implements Handler {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Command getCommand() {
-		if (command != null && command.eIsProxy()) {
-			InternalEObject oldCommand = (InternalEObject)command;
-			command = (Command)eResolveProxy(oldCommand);
-			if (command != oldCommand) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ApplicationPackage.HANDLER__COMMAND, oldCommand, command));
-			}
-		}
-		return command;
+	public String getName() {
+		return name;
 	}
 
 	/**
@@ -86,20 +88,11 @@ public class HandlerImpl extends ContributionImpl implements Handler {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Command basicGetCommand() {
-		return command;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setCommand(Command newCommand) {
-		Command oldCommand = command;
-		command = newCommand;
+	public void setName(String newName) {
+		String oldName = name;
+		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.HANDLER__COMMAND, oldCommand, command));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.COMMAND__NAME, oldName, name));
 	}
 
 	/**
@@ -110,9 +103,8 @@ public class HandlerImpl extends ContributionImpl implements Handler {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ApplicationPackage.HANDLER__COMMAND:
-				if (resolve) return getCommand();
-				return basicGetCommand();
+			case ApplicationPackage.COMMAND__NAME:
+				return getName();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -125,8 +117,8 @@ public class HandlerImpl extends ContributionImpl implements Handler {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ApplicationPackage.HANDLER__COMMAND:
-				setCommand((Command)newValue);
+			case ApplicationPackage.COMMAND__NAME:
+				setName((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -140,8 +132,8 @@ public class HandlerImpl extends ContributionImpl implements Handler {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ApplicationPackage.HANDLER__COMMAND:
-				setCommand((Command)null);
+			case ApplicationPackage.COMMAND__NAME:
+				setName(NAME_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -155,10 +147,26 @@ public class HandlerImpl extends ContributionImpl implements Handler {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ApplicationPackage.HANDLER__COMMAND:
-				return command != null;
+			case ApplicationPackage.COMMAND__NAME:
+				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 		}
 		return super.eIsSet(featureID);
 	}
 
-} //HandlerImpl
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (name: "); //$NON-NLS-1$
+		result.append(name);
+		result.append(')');
+		return result.toString();
+	}
+
+} //CommandImpl

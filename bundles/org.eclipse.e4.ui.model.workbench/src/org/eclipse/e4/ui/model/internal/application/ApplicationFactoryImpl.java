@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationFactoryImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -80,6 +80,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 			case ApplicationPackage.TRIM: return createTrim();
 			case ApplicationPackage.ITEM_PART: return createItemPart();
 			case ApplicationPackage.WINDOW: return createWindow();
+			case ApplicationPackage.COMMAND: return createCommand();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -223,6 +224,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	public <P extends Part<?>> Window<P> createWindow() {
 		WindowImpl<P> window = new WindowImpl<P>();
 		return window;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Command createCommand() {
+		CommandImpl command = new CommandImpl();
+		return command;
 	}
 
 	/**

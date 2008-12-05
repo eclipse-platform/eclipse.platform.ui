@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationFactory.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -156,6 +156,15 @@ public interface ApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	<P extends Part<?>> Window<P> createWindow();
+
+	/**
+	 * Returns a new object of class '<em>Command</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Command</em>'.
+	 * @generated
+	 */
+	Command createCommand();
 
 	/**
 	 * Returns the package supported by this factory.
