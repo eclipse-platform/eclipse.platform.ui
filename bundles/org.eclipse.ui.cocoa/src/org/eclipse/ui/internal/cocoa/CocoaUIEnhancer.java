@@ -287,7 +287,17 @@ public class CocoaUIEnhancer implements IStartup {
         	IMenuManager manager = ((WorkbenchWindow)window).getActionBars().getMenuManager();
         	IAction action = findAction(actionId, manager);
         	if (action != null && action.isEnabled()) {
-        		action.run();
+        		NSMenu mainMenu = NSApplication.sharedApplication().mainMenu();
+        		NSMenu appMenu = mainMenu.itemAtIndex(0).submenu();
+        		try {
+        			appMenu.itemAtIndex(kPreferencesMenuItem).setEnabled(false);
+        	    	appMenu.itemAtIndex(kAboutMenuItem).setEnabled(false);
+        	    	action.run();
+        		}
+        		finally {
+        			appMenu.itemAtIndex(kPreferencesMenuItem).setEnabled(true);
+        	    	appMenu.itemAtIndex(kAboutMenuItem).setEnabled(true);
+        		}
         	}
         }
        
