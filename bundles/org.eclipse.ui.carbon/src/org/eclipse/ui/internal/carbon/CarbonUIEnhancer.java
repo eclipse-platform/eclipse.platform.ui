@@ -129,6 +129,7 @@ public class CarbonUIEnhancer implements IStartup {
     private String fAboutActionName;
     private String fQuitActionName;
     private String fHideActionName;
+	private int applicationMenuHandle;
 
     /**
      * Default constructor
@@ -299,14 +300,14 @@ public class CarbonUIEnhancer implements IStartup {
         short[] outIndex = new short[1];
         if (OS.GetIndMenuItemWithCommandID(0, kHICommandPreferences, 1, outMenu, outIndex) == OS.noErr
                 && outMenu[0] != 0) {
-            int menu = outMenu[0];
+            applicationMenuHandle = outMenu[0];
 
             // add the about action
             int l = fAboutActionName.length();
             char buffer[] = new char[l];
             fAboutActionName.getChars(0, l, buffer, 0);
             int str = OS.CFStringCreateWithCharacters(OS.kCFAllocatorDefault, buffer, l);
-            OS.InsertMenuItemTextWithCFString(menu, str, (short) 0, 0, kHICommandAbout);
+            OS.InsertMenuItemTextWithCFString(applicationMenuHandle, str, (short) 0, 0, kHICommandAbout);
             OS.CFRelease(str);
 
             // rename the hide action if we have an override string
@@ -320,13 +321,13 @@ public class CarbonUIEnhancer implements IStartup {
 			}
             
             // add separator between About & Preferences
-            OS.InsertMenuItemTextWithCFString(menu, 0, (short) 1, OS.kMenuItemAttrSeparator, 0);
+            OS.InsertMenuItemTextWithCFString(applicationMenuHandle, 0, (short) 1, OS.kMenuItemAttrSeparator, 0);
 
             // enable pref menu
-            OS.EnableMenuCommand(menu, kHICommandPreferences);
+            OS.EnableMenuCommand(applicationMenuHandle, kHICommandPreferences);
 
             // disable services menu
-            OS.DisableMenuCommand(menu, kHICommandServices);
+            OS.DisableMenuCommand(applicationMenuHandle, kHICommandServices);
         }
 
         // schedule disposal of callback object
@@ -378,7 +379,17 @@ public class CarbonUIEnhancer implements IStartup {
         	IMenuManager manager = ((WorkbenchWindow)window).getActionBars().getMenuManager();
         	IAction action = findAction(actionId, manager);
         	if (action != null && action.isEnabled()) {
-        		action.run();
+        		try {
+        			 // disable About and Pref actions;
+                    OS.DisableMenuCommand(applicationMenuHandle, kHICommandPreferences);
+                    OS.DisableMenuCommand(applicationMenuHandle, kHICommandAbout);
+                    action.run();
+        		}
+        		finally {
+        			 // re-enable About and Pref actions;
+        			 OS.EnableMenuCommand(applicationMenuHandle, kHICommandPreferences);
+                     OS.EnableMenuCommand(applicationMenuHandle, kHICommandAbout);
+        		}
         		return OS.noErr;
         	}
         }
