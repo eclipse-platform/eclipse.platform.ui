@@ -723,7 +723,7 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 
 			container.addListener(SWT.Dispose, new Listener() {
 				public void handleEvent(Event event) {
-					// dispose event
+					destroyImages();
 				}
 			});
 
@@ -818,6 +818,11 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 			gc.dispose();
 
 			backgroundHot.dispose();
+		}
+		
+		private void destroyImages() {
+			if (normal != null) normal.dispose();
+			if (hover != null) hover.dispose();
 		}
 
 		/**
