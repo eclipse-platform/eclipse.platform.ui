@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -102,7 +103,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		 */
 		PreferenceFilteredTree(Composite parent, int treeStyle,
 				PatternFilter filter) {
-			super(parent, treeStyle, filter);
+			super(parent, treeStyle, filter, true);
 		}
 
 		/**

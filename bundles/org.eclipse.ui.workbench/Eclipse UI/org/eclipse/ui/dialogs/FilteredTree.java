@@ -11,17 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -54,6 +45,21 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.TreeViewer;
+
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -80,7 +86,9 @@ public class FilteredTree extends Composite {
 	 * The control representing the clear button for the filter text entry. This
 	 * value may be <code>null</code> if no such button exists, or if the
 	 * controls have not yet been created.
-	 * @deprecated Not used anymore. Use {@link #clearButtonControl} instead.
+	 * <p>
+	 * <strong>Note:</strong> As of 3.5, this is not used if the new look is chosen.
+	 * </p>
 	 */
 	protected ToolBarManager filterToolBar;
 
@@ -88,6 +96,9 @@ public class FilteredTree extends Composite {
 	 * The control representing the clear button for the filter text entry. This
 	 * value may be <code>null</code> if no such button exists, or if the
 	 * controls have not yet been created.
+	 * <p>
+	 * <strong>Note:</strong> This is only used if the new look is chosen.
+	 * </p>
 	 * 
 	 * @since 3.5
 	 */
@@ -145,6 +156,13 @@ public class FilteredTree extends Composite {
 	protected Composite treeComposite;
 
 	/**
+	 * Tells whether to use the pre 3.5 or the new look.
+	 * 
+	 * @since 3.5
+	 */
+	private boolean useNewLook = false;
+
+	/**
 	 * Image descriptor for enabled clear button.
 	 */
 	private static final String CLEAR_ICON = "org.eclipse.ui.internal.dialogs.CLEAR_ICON"; //$NON-NLS-1$
@@ -193,6 +211,26 @@ public class FilteredTree extends Composite {
 		this.parent = parent;
 		init(treeStyle, filter);
 	}
+	
+	/**
+	 * Create a new instance of the receiver.
+	 * 
+	 * @param parent
+	 *            the parent <code>Composite</code>
+	 * @param treeStyle
+	 *            the style bits for the <code>Tree</code>
+	 * @param filter
+	 *            the filter to be used
+	 * @param useNewLook
+	 *            <code>true</code> if the new 3.5 look should be used
+	 * @since 3.5
+	 */
+	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook) {
+		super(parent, SWT.NONE);
+		this.parent = parent;
+		this.useNewLook = useNewLook;
+		init(treeStyle, filter);
+	}
 
 	/**
 	 * Create a new instance of the receiver. Subclasses that wish to override
@@ -209,6 +247,26 @@ public class FilteredTree extends Composite {
 	protected FilteredTree(Composite parent) {
 		super(parent, SWT.NONE);
 		this.parent = parent;
+	}
+	
+	/**
+	 * Create a new instance of the receiver. Subclasses that wish to override
+	 * the default creation behavior may use this constructor, but must ensure
+	 * that the <code>init(composite, int, PatternFilter)</code> method is
+	 * called in the overriding constructor.
+	 * 
+	 * @param parent
+	 *            the parent <code>Composite</code>
+	 * @param useNewLook
+	 *            <code>true</code> if the new 3.5 look should be used
+	 * @see #init(int, PatternFilter)
+	 * 
+	 * @since 3.5
+	 */
+	protected FilteredTree(Composite parent, boolean useNewLook) {
+		super(parent, SWT.NONE);
+		this.parent = parent;
+		this.useNewLook = useNewLook;
 	}
 
 	/**
@@ -245,15 +303,15 @@ public class FilteredTree extends Composite {
 		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		if (showFilterControls) {
-			if (useNativeSearchField(parent)) {
-				filterComposite = new Composite(this, SWT.NONE);
+			if (!useNewLook || useNativeSearchField(parent)) {
+				filterComposite= new Composite(this, SWT.NONE);
 			} else {
 				filterComposite= new Composite(this, SWT.BORDER);
 				filterComposite.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 			}
-			GridLayout filterLayout = new GridLayout(2, false);
-			filterLayout.marginHeight = 0;
-			filterLayout.marginWidth = 0;
+			GridLayout filterLayout= new GridLayout(2, false);
+			filterLayout.marginHeight= 0;
+			filterLayout.marginWidth= 0;
 			filterComposite.setLayout(filterLayout);
 			filterComposite.setFont(parent.getFont());
 
@@ -303,10 +361,18 @@ public class FilteredTree extends Composite {
 	 */
 	protected Composite createFilterControls(Composite parent) {
 		createFilterText(parent);
-		createClearText(parent);
+		if (useNewLook)
+			createClearTextNew(parent);
+		else
+			createClearTextOld(parent);
 		if (clearButtonControl != null) {
 			// initially there is no text to clear
 			clearButtonControl.setVisible(false);
+		}
+		if (filterToolBar != null) {
+			filterToolBar.update(false);
+			// initially there is no text to clear
+			filterToolBar.getControl().setVisible(false);
 		}
 		return parent;
 	}
@@ -528,6 +594,9 @@ public class FilteredTree extends Composite {
 		if (clearButtonControl != null) {
 			clearButtonControl.setVisible(visible);
 		}
+		if (filterToolBar != null) {
+			filterToolBar.getControl().setVisible(visible);
+		}
 	}
 
 	/**
@@ -693,7 +762,7 @@ public class FilteredTree extends Composite {
 			});
 		}
 
-		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData gridData= new GridData(SWT.FILL, useNewLook ? SWT.CENTER : SWT.BEGINNING, true, false);
 		// if the text widget supported cancel then it will have it's own
 		// integrated button. We can take all of the space.
 		if ((filterText.getStyle() & SWT.CANCEL) != 0)
@@ -712,7 +781,7 @@ public class FilteredTree extends Composite {
 	 * @since 3.3
 	 */
 	protected Text doCreateFilterText(Composite parent) {
-		if (useNativeSearchField(parent)) {
+		if (!useNewLook || useNativeSearchField(parent)) {
 			return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH
 					| SWT.CANCEL);
 		}
@@ -755,8 +824,11 @@ public class FilteredTree extends Composite {
 	 */
 	public void setBackground(Color background) {
 		super.setBackground(background);
-		if (filterComposite != null && useNativeSearchField(filterComposite)) {
+		if (filterComposite != null && (!useNewLook || useNativeSearchField(filterComposite))) {
 			filterComposite.setBackground(background);
+		}
+		if (filterToolBar != null && filterToolBar.getControl() != null) {
+			filterToolBar.getControl().setBackground(background);
 		}
 	}
 
@@ -766,7 +838,41 @@ public class FilteredTree extends Composite {
 	 * @param parent
 	 *            parent <code>Composite</code> of toolbar button
 	 */
-	private void createClearText(Composite parent) {
+	private void createClearTextOld(Composite parent) {
+		// only create the button if the text widget doesn't support one
+		// natively
+		if ((filterText.getStyle() & SWT.CANCEL) == 0) {
+			filterToolBar= new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL);
+			filterToolBar.createControl(parent);
+
+			IAction clearTextAction= new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.action.Action#run()
+				 */
+				public void run() {
+					clearText();
+				}
+			};
+
+			clearTextAction
+					.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
+			clearTextAction.setImageDescriptor(JFaceResources
+					.getImageRegistry().getDescriptor(CLEAR_ICON));
+			clearTextAction.setDisabledImageDescriptor(JFaceResources
+					.getImageRegistry().getDescriptor(DCLEAR_ICON));
+
+			filterToolBar.add(clearTextAction);
+		}
+	}
+
+	/**
+	 * Create the button that clears the text.
+	 * 
+	 * @param parent parent <code>Composite</code> of toolbar button
+	 */
+	private void createClearTextNew(Composite parent) {
 		// only create the button if the text widget doesn't support one
 		// natively
 		if ((filterText.getStyle() & SWT.CANCEL) == 0) {
@@ -787,7 +893,7 @@ public class FilteredTree extends Composite {
 				}
 
 				public void mouseUp(MouseEvent e) {
-				}			
+				}
 			});
 			clearButton.addMouseTrackListener(new MouseTrackListener() {
 				public void mouseEnter(MouseEvent e) {
