@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -26,6 +25,11 @@ import org.w3c.dom.css.CSSStyleSheet;
 public class CSSStyleRuleImpl extends AbstractCSSNode implements CSSStyleRule,
 ExtendedCSSRule, Serializable {
 	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public CSSStyleRuleImpl(CSSStyleSheet parentStyleSheet, Object object,
+			SelectorList selectors) {
+		// TODO Auto-generated constructor stub
+	}
 
 	public String getSelectorText() {
 		// TODO Auto-generated method stub
@@ -75,5 +79,10 @@ ExtendedCSSRule, Serializable {
 	public SelectorList getSelectorList() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void setStyle(CSSStyleDeclarationImpl decl) {
+		// TODO Auto-generated method stub
+		
 	}
 }

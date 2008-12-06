@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -23,6 +22,11 @@ public class CSSUnknownRuleImpl extends AbstractCSSNode implements
 CSSUnknownRule, Serializable {
 
 	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public CSSUnknownRuleImpl(CSSStyleSheet parentStyleSheet, Object object,
+			String atRule) {
+		// TODO Auto-generated constructor stub
+	}
 
 	public String getCssText() {
 		// TODO Auto-generated method stub

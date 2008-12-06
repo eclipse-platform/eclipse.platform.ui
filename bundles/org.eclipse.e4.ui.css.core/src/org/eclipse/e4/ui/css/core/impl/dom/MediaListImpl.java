@@ -7,18 +7,22 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
+import org.w3c.css.sac.SACMediaList;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.stylesheets.MediaList;
 
 public class MediaListImpl implements MediaList, Serializable {
 	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public MediaListImpl(SACMediaList media) {
+		// TODO Auto-generated constructor stub
+	}
 
 	public void appendMedium(String arg0) throws DOMException {
 		// TODO Auto-generated method stub

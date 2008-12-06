@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
+import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -75,6 +75,11 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements
 
 	public void setProperty(String arg0, String arg1, String arg2)
 			throws DOMException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addProperty(CSSProperty property) {
 		// TODO Auto-generated method stub
 		
 	}	

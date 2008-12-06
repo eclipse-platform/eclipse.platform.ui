@@ -9,7 +9,6 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -26,6 +25,11 @@ public class CSSImportRuleImpl extends AbstractCSSNode implements
 CSSImportRule, Serializable {
 
 	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public CSSImportRuleImpl(CSSStyleSheet parentStyleSheet, Object object,
+			String uri, MediaListImpl mediaListImpl) {
+		// TODO Auto-generated constructor stub
+	}
 
 	public String getHref() {
 		// TODO Auto-generated method stub

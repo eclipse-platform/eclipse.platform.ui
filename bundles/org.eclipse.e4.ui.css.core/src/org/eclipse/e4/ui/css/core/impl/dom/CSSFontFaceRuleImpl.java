@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -24,6 +23,10 @@ public class CSSFontFaceRuleImpl extends AbstractCSSNode implements
 CSSFontFaceRule, Serializable {
 
 	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public CSSFontFaceRuleImpl(CSSStyleSheet parentStyleSheet, Object object) {
+		// TODO Auto-generated constructor stub
+	}
 
 	public CSSStyleDeclaration getStyle() {
 		// TODO Auto-generated method stub
@@ -51,6 +54,11 @@ CSSFontFaceRule, Serializable {
 	}
 
 	public void setCssText(String arg0) throws DOMException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setStyle(CSSStyleDeclarationImpl decl) {
 		// TODO Auto-generated method stub
 		
 	}

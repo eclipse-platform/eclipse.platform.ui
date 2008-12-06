@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -29,6 +28,36 @@ public class CSSRuleListImpl implements CSSRuleList, Serializable {
 	public CSSRule item(int arg0) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void add(CSSUnknownRuleImpl ir) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void add(CSSMediaRuleImpl mr) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void add(CSSPageRuleImpl pageRule) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void add(CSSFontFaceRuleImpl fontFaceRule) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void add(CSSImportRuleImpl ir) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void add(CSSStyleRuleImpl rule) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

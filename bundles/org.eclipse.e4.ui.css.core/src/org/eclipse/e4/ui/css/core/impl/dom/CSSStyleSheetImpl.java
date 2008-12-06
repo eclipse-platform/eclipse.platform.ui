@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -83,6 +82,11 @@ CSSStyleSheet, Serializable {
 	}
 
 	public void setDisabled(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setRuleList(CSSRuleListImpl rules) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -24,6 +23,11 @@ import org.w3c.dom.stylesheets.MediaList;
 public class CSSMediaRuleImpl implements CSSMediaRule, Serializable {
 
 	PLACEHOLDER; // this class is a stub, needs to be written
+
+	public CSSMediaRuleImpl(CSSStyleSheet parentStyleSheet, Object object,
+			MediaListImpl mediaListImpl) {
+		// TODO Auto-generated constructor stub
+	}
 
 	public void deleteRule(int arg0) throws DOMException {
 		// TODO Auto-generated method stub
@@ -66,6 +70,11 @@ public class CSSMediaRuleImpl implements CSSMediaRule, Serializable {
 	}
 
 	public void setCssText(String arg0) throws DOMException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setRuleList(CSSRuleListImpl rules) {
 		// TODO Auto-generated method stub
 		
 	}
