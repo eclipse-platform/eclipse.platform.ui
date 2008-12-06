@@ -16,6 +16,8 @@
 
  */
 
+/* This class copied from org.apache.batik.css.engine.sac */
+
 package org.eclipse.e4.ui.css.core.impl.sac;
 
 import org.w3c.css.sac.AttributeCondition;
