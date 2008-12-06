@@ -18,31 +18,36 @@ import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyImpl implements CSSProperty, Serializable {
-	PLACEHOLDER; // this class is a stub, needs to be written
+
+	private String name;
+	private CSSValue value;
+	private boolean important;
+
+	/** Creates new Property */
+	public CSSPropertyImpl(String name, CSSValue value, boolean important) {
+		this.name = name;
+		this.value = value;
+		this.important = important;
+	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 	public CSSValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return value;
 	}
 
 	public boolean isImportant() {
-		// TODO Auto-generated method stub
-		return false;
+		return important;
 	}
 
 	public void setImportant(boolean important) {
-		// TODO Auto-generated method stub
-		
+		this.important = important;
 	}
 
 	public void setValue(CSSValue value) {
-		// TODO Auto-generated method stub
-		
+		this.value = value;		
 	}
 
 }
