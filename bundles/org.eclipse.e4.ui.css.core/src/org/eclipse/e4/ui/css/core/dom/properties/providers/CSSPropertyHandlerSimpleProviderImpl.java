@@ -32,10 +32,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  * CSS property handler with static strategy. {@link ICSSPropertyHandler} are
  * retrieved afetre the CSS Engine register the handler with
  * registerCSSPropertyHandler method.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSPropertyHandlerSimpleProviderImpl extends
 		AbstractCSSPropertyHandlerProvider {

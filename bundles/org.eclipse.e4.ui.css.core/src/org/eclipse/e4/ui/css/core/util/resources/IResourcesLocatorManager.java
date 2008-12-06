@@ -12,10 +12,6 @@ package org.eclipse.e4.ui.css.core.util.resources;
 
 /**
  * Resources locator manage to register/unregister {@link IResourceLocator}.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface IResourcesLocatorManager extends IResourceLocator {
 

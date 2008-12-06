@@ -29,10 +29,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 /**
  * CSS property handler with lazy strategy. {@link ICSSPropertyHandler} are
  * retrieved with name into packages registered with registerPackage method.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSPropertyHandlerLazyProviderImpl extends
 		AbstractCSSPropertyHandlerProvider {

@@ -12,10 +12,6 @@ package org.eclipse.e4.ui.css.core.util.resources;
 
 /**
  * Interface URI resolver to resolve URI.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface IURIResolver {
 

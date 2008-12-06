@@ -14,10 +14,6 @@ import org.w3c.css.sac.Parser;
 
 /**
  * SAC parser factory interface to get instance of SAC {@link Parser}.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface ISACParserFactory {
 

@@ -16,10 +16,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**
  * CSS stylable element interface to wrap native widget.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface CSSStylableElement extends Element {
 

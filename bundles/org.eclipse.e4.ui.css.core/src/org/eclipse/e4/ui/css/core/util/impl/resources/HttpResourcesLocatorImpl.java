@@ -19,10 +19,6 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 
 /**
  * Http resources locator implementation.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class HttpResourcesLocatorImpl implements IResourceLocator {
 

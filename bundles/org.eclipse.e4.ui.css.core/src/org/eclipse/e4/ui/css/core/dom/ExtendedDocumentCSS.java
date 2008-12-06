@@ -19,10 +19,6 @@ import org.w3c.dom.stylesheets.StyleSheet;
 
 /**
  * Extend {@link DocumentCSS} to add methods like add/remove style sheet.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface ExtendedDocumentCSS extends DocumentCSS {
 

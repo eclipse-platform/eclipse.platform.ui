@@ -14,10 +14,6 @@ import org.eclipse.e4.ui.css.core.impl.sac.DocumentHandlerFactoryImpl;
 
 /**
  * Factory to get instance of {@link DocumentHandlerFactory}.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public abstract class DocumentHandlerFactory implements IDocumentHandlerFactory {
 

@@ -16,10 +16,6 @@ import java.util.StringTokenizer;
 
 /**
  * Helper for String.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class StringUtils {
 

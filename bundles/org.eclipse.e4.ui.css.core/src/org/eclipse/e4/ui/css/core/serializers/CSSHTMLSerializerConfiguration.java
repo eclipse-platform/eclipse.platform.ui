@@ -13,10 +13,6 @@ package org.eclipse.e4.ui.css.core.serializers;
 /**
  * CSS HTML Serializer configuration used by {@link CSSSerializer} to filter the
  * attribute type of the HTML widget like input[type='text'].
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSHTMLSerializerConfiguration extends CSSSerializerConfiguration {
 

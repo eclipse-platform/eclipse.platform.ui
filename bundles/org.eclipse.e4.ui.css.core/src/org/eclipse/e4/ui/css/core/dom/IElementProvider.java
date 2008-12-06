@@ -16,10 +16,6 @@ import org.w3c.dom.Element;
 /**
  * Element provider to retrieve w3c {@link Element} which wrap the native widget
  * (SWT Control, Swing JComponent...).
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface IElementProvider {
 

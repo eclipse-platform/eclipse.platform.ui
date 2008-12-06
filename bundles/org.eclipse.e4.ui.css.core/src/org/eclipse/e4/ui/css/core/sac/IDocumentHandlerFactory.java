@@ -12,10 +12,6 @@ package org.eclipse.e4.ui.css.core.sac;
 
 /**
  * Factory interface to get instance of {@link ExtendedDocumentHandler}.
- *  
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface IDocumentHandlerFactory {
 

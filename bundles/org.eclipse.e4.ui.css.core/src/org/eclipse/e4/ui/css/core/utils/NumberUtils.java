@@ -12,10 +12,6 @@ package org.eclipse.e4.ui.css.core.utils;
 
 /**
  * Helper for Number.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class NumberUtils {
 

@@ -16,10 +16,6 @@ import org.w3c.dom.css.CSSRule;
 
 /**
  * Extend {@link CSSRule} to get selector and property list.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface ExtendedCSSRule extends CSSRule {
 

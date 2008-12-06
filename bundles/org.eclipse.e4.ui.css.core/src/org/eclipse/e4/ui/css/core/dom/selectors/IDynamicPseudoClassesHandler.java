@@ -15,10 +15,6 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 /**
  * Interface to manage dynamic pseudo classes handler like (...:focus,
  * ...:hover).
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface IDynamicPseudoClassesHandler {
 

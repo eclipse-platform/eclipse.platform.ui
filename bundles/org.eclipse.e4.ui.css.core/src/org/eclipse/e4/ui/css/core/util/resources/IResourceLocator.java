@@ -15,10 +15,6 @@ import java.io.Reader;
 
 /**
  * Resources locator to get {@link InputStream} or {@link Reader} from an URI.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface IResourceLocator extends IURIResolver {
 

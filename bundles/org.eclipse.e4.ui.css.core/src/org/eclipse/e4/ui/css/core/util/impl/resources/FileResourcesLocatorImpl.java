@@ -20,10 +20,6 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 
 /**
  * Basic File resources locator implementation.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class FileResourcesLocatorImpl implements IResourceLocator {
 

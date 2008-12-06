@@ -21,10 +21,6 @@ import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyTextXMLHandler;
 
 /**
  * {@link CSSEngine} implementation to apply style sheet to XML DOM.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSXMLEngineImpl extends CSSEngineImpl {
 

@@ -16,10 +16,6 @@ import java.util.List;
 /**
  * CSS Serializer configuration used by {@link CSSSerializer} to filter the
  * attribute of the widget like Text[style='SWT.MULTI'].
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSSerializerConfiguration {
 

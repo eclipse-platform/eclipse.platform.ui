@@ -18,10 +18,6 @@ import org.w3c.dom.Element;
  * Swing Component...).
  * 
  * This context can be used to store any data.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public interface CSSElementContext {
 
