@@ -14,6 +14,8 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 import java.io.Serializable;
 
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
+import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
+import org.w3c.css.sac.Selector;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -82,5 +84,15 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements
 	public void addProperty(CSSProperty property) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public CSSPropertyList getCSSPropertyList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Selector getSelector() {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 }
