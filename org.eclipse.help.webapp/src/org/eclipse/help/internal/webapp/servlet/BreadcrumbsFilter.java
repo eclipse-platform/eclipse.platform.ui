@@ -11,7 +11,6 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,11 +57,7 @@ public class BreadcrumbsFilter implements IFilter {
 		}
 		boolean showBreadcrumbs = Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_SHOW_BREADCRUMBS, false, null);
 		if (!showBreadcrumbs) { 
-			try {
-				return new FilterHTMLHeadOutputStream(out, HEAD_CONTENT.getBytes("ASCII")); //$NON-NLS-1$
-			}
-			catch (UnsupportedEncodingException e) {
-			}
+			return out;
 		}
 		// Use pathInfo to get the topic path because the uri could have escaped spaces
 		// or other characters, Bug 75360
