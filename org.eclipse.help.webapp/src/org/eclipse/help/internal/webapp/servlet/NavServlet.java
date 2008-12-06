@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class NavServlet extends HttpServlet {
 
 	private static final String XHTML_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n<title>"; //$NON-NLS-1$
 	private static final String XHTML_2 = "</title>\n</head>\n<body>\n"; //$NON-NLS-1$
+	private static final String XHTML_2_RTL = "</title>\n</head>\n<body dir = \"rtl\">\n"; //$NON-NLS-1$
 	private static final String XHTML_3 = "</body>\n</html>"; //$NON-NLS-1$
 
 	private static final IFilter filters[] = new IFilter[]{
@@ -58,7 +59,7 @@ public class NavServlet extends HttpServlet {
 		}
 
 		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
-		writeContent(topic, path, locale, writer);
+		writeContent(topic, path, locale, writer, UrlUtil.isRTL(req, resp));
 		writer.close();
 	}
 	
@@ -90,10 +91,14 @@ public class NavServlet extends HttpServlet {
 		return topic;
 	}
 	
-	private void writeContent(ITopic topic, String path, Locale locale, PrintWriter writer) {
+	private void writeContent(ITopic topic, String path, Locale locale, PrintWriter writer, boolean isRTL) {
 		writer.write(XHTML_1);
 		writer.write(topic.getLabel());
-		writer.write(XHTML_2);
+		if (isRTL) {
+			writer.write(XHTML_2_RTL);
+		} else {
+			writer.write(XHTML_2);
+		}
 		writer.write("<h1 class=\"NavTitle\">" + topic.getLabel() + "</h1>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.write("<h3 class=\"NavListTitle\">" + WebappResources.getString("TocHeading", locale) + "</h3>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.write("<ul class=\"NavList\">\n"); //$NON-NLS-1$
