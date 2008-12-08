@@ -23,8 +23,10 @@ import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.util.Tracing;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -208,7 +210,7 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		 */
 		protected CategoryFilterTree(Composite parent, int treeStyle,
 				CategoryPatternFilter filter) {
-			super(parent, treeStyle, filter);
+			super(parent, treeStyle, filter, true);
 			this.filter = filter;
 		}
 
