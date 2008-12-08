@@ -127,4 +127,14 @@ class MarkerMap {
 	public MarkerEntry[] toArray() {
 		return markers;
 	}
+
+	/**
+	 * Clear the caches for the markers.
+	 */
+	void clearAttributeCaches() {
+		for (int i = 0; i < markers.length; i++) {
+			markers[i].clearCaches();
+		}
+		
+	}
 }

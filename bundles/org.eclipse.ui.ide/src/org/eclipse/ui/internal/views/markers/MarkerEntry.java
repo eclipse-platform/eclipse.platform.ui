@@ -40,7 +40,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	private static final Object LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
 	Map attributeCache = new HashMap(0);
 	private MarkerCategory category;
-	Map collationKeys = new HashMap(0);
+	Map collationKeys = null;
 	private String folder;
 	IMarker marker;
 
@@ -158,13 +158,15 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @return CollationKey
 	 */
 	CollationKey getCollationKey(String attribute, String defaultValue) {
-		if (collationKeys.containsKey(attribute))
+		if (collationKeys != null && collationKeys.containsKey(attribute))
 			return (CollationKey) collationKeys.get(attribute);
 		String attributeValue = getAttributeValue(attribute, defaultValue);
 		if (attributeValue.length() == 0)
 			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 		CollationKey key = Collator.getInstance().getCollationKey(
 				attributeValue);
+		if (collationKeys == null)
+			collationKeys = new HashMap(2);
 		collationKeys.put(attribute, key);
 		return key;
 	}
@@ -347,6 +349,14 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	void setMarker(IMarker marker) {
 		this.marker = marker;
+		attributeCache.clear();
+	}
+
+	/**
+	 * Clear the cached values for performance reasons.
+	 */
+	void clearCaches() {
+		collationKeys = null;
 		attributeCache.clear();
 	}
 }
