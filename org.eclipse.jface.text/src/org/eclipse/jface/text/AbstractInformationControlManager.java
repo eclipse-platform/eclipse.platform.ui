@@ -1239,7 +1239,10 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected void showInformationControl(Rectangle subjectArea) {
 		fInformationControl.setVisible(true);
-
+		
+		if (fInformationControl == null)
+			return; // could already be disposed if setVisible(..) runs the display loop 
+		
 		if (fTakesFocusWhenVisible)
 			fInformationControl.setFocus();
 
