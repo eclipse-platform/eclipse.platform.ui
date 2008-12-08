@@ -11,15 +11,12 @@
 package org.eclipse.help.ui.internal.preferences;
 
 import org.eclipse.help.ui.internal.IHelpUIConstants;
-import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.PlatformUI;
 
 public class InfocenterDisplay implements IHelpContentBlockContainer {
@@ -66,17 +63,6 @@ public class InfocenterDisplay implements IHelpContentBlockContainer {
 		button.setText(buttonText);
 		fPreferencePage.setButtonLayoutData(button);
 		return button;
-	}
-
-	/**
-	 * Creates the tab item that contains this sub-page.
-	 */
-	protected TabItem createTabItem(TabFolder folder) {
-		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(Messages.HelpContentPage_title);
-		item.setData(this);
-		item.setControl(createContents(folder));
-		return item;
 	}
 
 	public void setErrorMessage(String message) {

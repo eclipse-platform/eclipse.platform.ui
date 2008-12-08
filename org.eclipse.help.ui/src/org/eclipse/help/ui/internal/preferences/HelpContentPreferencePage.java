@@ -28,8 +28,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -43,6 +43,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	private InfocenterDisplay remoteICPage;
 
 	private Button checkbox;
+	private Label descLabel;
 
 	/**
 	 * Creates the preference page
@@ -71,19 +72,17 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		initializeDialogUnits(parent);
 
 		createCheckbox(parent);
-
-		TabFolder folder = new TabFolder(parent, SWT.NONE);
-		folder.setLayout(new TabFolderLayout());
-		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-		folder.setFont(parent.getFont());
-
-		remoteICPage = new InfocenterDisplay(this);
-
-		remoteICPage.createTabItem(folder);
 		
-		initializeTableEnablement(checkbox.getSelection());
+		descLabel = new Label(parent, SWT.NONE);
+		descLabel.setText(Messages.HelpContentPage_title);
+		
+		remoteICPage = new InfocenterDisplay(this);
+		remoteICPage.createContents(parent);
+		
 
-		return folder;
+		initializeTableEnablement(checkbox.getSelection());
+		
+		return parent;
 	}
 
 	/*
