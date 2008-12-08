@@ -487,6 +487,32 @@
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.spelling"
+            label="%spelling.label"
+            symbolicIcon="warning"
+            quickFixIcon="$nl$/icons/full/obj16/quick_fix_warning_obj.gif"
+            presentationLayer="5"
+            contributesToHeader="true"
+            colorPreferenceKey="spellingIndicationColor"
+            colorPreferenceValue="255,128,64"
+            textPreferenceKey="spellingIndication"
+            textPreferenceValue="true"
+            overviewRulerPreferenceKey="spellingIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="false"
+            verticalRulerPreferenceKey="spellingIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            isGoToPreviousNavigationTargetKey="isSpellingGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false"
+            isGoToNextNavigationTargetKey="isSpellingGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            showInNextPrevDropdownToolbarActionKey="showSpellingInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            highlightPreferenceKey="spellingIndicationHighlighting"
+            highlightPreferenceValue="false"
+            textStylePreferenceKey="spellingTextStyle"
+            textStylePreferenceValue="PROBLEM_UNDERLINE">
+      </specification>
+      <specification
             annotationType="org.eclipse.ui.workbench.texteditor.error"
             textPreferenceKey="errorIndication"
             textPreferenceValue="true"
@@ -699,33 +725,6 @@
             includeOnPreferencePage="false">
       </specification>
 
-      <specification
-      		annotationType="org.eclipse.ui.workbench.texteditor.spelling"
-            label="%spelling.label"
-            symbolicIcon="warning"
-            quickFixIcon="$nl$/icons/full/obj16/quick_fix_warning_obj.gif"
-            presentationLayer="5"
-            contributesToHeader="true"
-            colorPreferenceKey="spellingIndicationColor"
-            colorPreferenceValue="255,128,64"
-            textPreferenceKey="spellingIndication"
-            textPreferenceValue="true"
-            overviewRulerPreferenceKey="spellingIndicationInOverviewRuler"
-            overviewRulerPreferenceValue="false"
-            verticalRulerPreferenceKey="spellingIndicationInVerticalRuler"
-            verticalRulerPreferenceValue="false"
-            isGoToPreviousNavigationTargetKey="isSpellingGoToPreviousNavigationTarget"
-            isGoToPreviousNavigationTarget="false"
-            isGoToNextNavigationTargetKey="isSpellingGoToNextNavigationTarget"
-            isGoToNextNavigationTarget="false"
-            showInNextPrevDropdownToolbarActionKey="showSpellingInNextPrevDropdownToolbarAction"
-            showInNextPrevDropdownToolbarAction="true"
-            highlightPreferenceKey="spellingIndicationHighlighting"
-            highlightPreferenceValue="false"
-            textStylePreferenceKey="spellingTextStyle"
-            textStylePreferenceValue="PROBLEM_UNDERLINE">
-      </specification>
-      
       <!-- revision annotations -->
       <specification
             annotationType="org.eclipse.ui.workbench.texteditor.revisionAnnotation"
