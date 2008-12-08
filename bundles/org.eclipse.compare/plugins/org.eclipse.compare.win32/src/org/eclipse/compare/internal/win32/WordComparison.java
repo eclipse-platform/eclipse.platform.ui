@@ -161,6 +161,9 @@ public class WordComparison {
 				} finally {
 					try {
 						closeDocument(activeDocument);
+					} catch (SWTException e) {
+						// We don't want to throw the exception as we may mask another exception
+						Activator.log(e);
 					} finally {
 						activeDocument.dispose();
 					}
@@ -168,6 +171,9 @@ public class WordComparison {
 			} finally {
 				try {
 					closeDocument(document);
+				} catch (SWTException e) {
+					// We don't want to throw the exception as we may mask another exception
+					Activator.log(e);
 				} finally {
 					document.dispose();
 				}
