@@ -797,7 +797,10 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		}
 
 		activateSite();
-		firePageChanged(new PageChangedEvent(this, getSelectedPage()));
+		Object selectedPage = getSelectedPage();
+		if (selectedPage != null) {
+			firePageChanged(new PageChangedEvent(this, selectedPage));
+		}
 	}
 	
 	/**
