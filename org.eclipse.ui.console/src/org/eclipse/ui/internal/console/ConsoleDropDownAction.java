@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,14 @@ package org.eclipse.ui.internal.console;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -25,6 +28,7 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -130,12 +134,15 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
 	 */
 	public void consolesAdded(IConsole[] consoles) {
-		Display display = ConsolePlugin.getStandardDisplay();
-		display.asyncExec(new Runnable() {
-			public void run() {
+		UIJob job = new UIJob("") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				update();
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.setSystem(true);
+		job.setPriority(Job.INTERACTIVE);
+		job.schedule();
 	}
 
 	/* (non-Javadoc)
@@ -146,14 +153,17 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
 	 */
 	public void consolesRemoved(IConsole[] consoles) {
-		Display display = ConsolePlugin.getStandardDisplay();
-		display.asyncExec(new Runnable() {
-			public void run() {
+		UIJob job = new UIJob("") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (fMenu != null) {
 					fMenu.dispose();
 				}
 				update();
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		job.setSystem(true);
+		job.setPriority(Job.INTERACTIVE);
+		job.schedule();
 	}
 }
