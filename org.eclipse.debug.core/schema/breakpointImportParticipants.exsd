@@ -3,12 +3,13 @@
 <schema targetNamespace="org.eclipse.debug.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="breakpointImportParticipant" name="Breakpoint Import Participant"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="breakpointImportParticipants" name="Breakpoint Import Participants"/>
       </appinfo>
       <documentation>
          This extension point allows contributors to explicitly define how breakpoints should be compared when being imported into the workspace, and how they should be updated if a similar breakpoint already exists in the workspace.
       </documentation>
    </annotation>
+
    <element name="extension">
       <annotation>
          <appinfo>
@@ -22,18 +23,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
+                  
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -42,6 +46,7 @@
          </attribute>
       </complexType>
    </element>
+
    <element name="importParticipant">
       <annotation>
          <documentation>
@@ -71,6 +76,7 @@
          </attribute>
       </complexType>
    </element>
+
    <annotation>
       <appinfo>
          <meta.section type="since"/>
@@ -79,19 +85,20 @@
          3.5
       </documentation>
    </annotation>
+
    <annotation>
       <appinfo>
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         The following is an example of the breakpoint participant extension point:
+         The following is an example of the breakpoint participant extension:
 &lt;p&gt;
 &lt;pre&gt;
-&lt;extension point=&quot;org.eclipse.debug.core.breakpointImportParticipant&quot;&gt;
- &lt;ImportParticipant
+&lt;extension point=&quot;org.eclipse.debug.core.breakpointImportParticipants&quot;&gt;
+ &lt;importParticipant
      participant=&quot;x.y.z.BreakpointImportParticipant&quot;
-        type=&quot;org.eclipse.jdt.debug.javaLineBreakpointMarker&quot;&gt;
-    &lt;/ImportParticipant&gt;
+     type=&quot;org.eclipse.jdt.debug.javaLineBreakpointMarker&quot;&gt;
+ &lt;/importParticipant&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -99,6 +106,7 @@ In the above example the participant cares about Java line breakpoints: where &l
 is a breakpoint type defined using the &lt;code&gt;org.eclipse.debug.core.breakpoints&lt;/code&gt; extension point in &lt;code&gt;org.eclipse.jdt.debug&lt;/code&gt;
       </documentation>
    </annotation>
+
    <annotation>
       <appinfo>
          <meta.section type="apiinfo"/>
@@ -108,6 +116,7 @@ is a breakpoint type defined using the &lt;code&gt;org.eclipse.debug.core.breakp
 The &lt;code&gt;participant&lt;/code&gt; attribute must specify a Java class that implements the &lt;code&gt;org.eclipse.debug.core.model.IBreakpointImportParticipant&lt;/code&gt; interface.
       </documentation>
    </annotation>
+
    <annotation>
       <appinfo>
          <meta.section type="implementation"/>
@@ -116,6 +125,7 @@ The &lt;code&gt;participant&lt;/code&gt; attribute must specify a Java class tha
          Platform Debug supplies a default implemementation for breakpoints in general which compares breakpoints the way they were compared prior to the participant support: based on breakpoint type and line number information.
       </documentation>
    </annotation>
+
    <annotation>
       <appinfo>
          <meta.section type="copyright"/>
@@ -128,4 +138,5 @@ accompanies this distribution, and is available at
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
+
 </schema>

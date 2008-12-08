@@ -17,10 +17,26 @@ import org.eclipse.debug.core.IBreakpointManager;
 
 /**
  * This interface defines a breakpoint import participant.
- * 
+ * <p>
  * Participants are used during a breakpoint import operation
  * to specify how breakpoints of the associated marker type should be compared
  * and how the breakpoint should be validated once it is decided it will be imported.
+ * </p>
+ * <p>
+ * A breakpoint import participant it contributed via the
+ * <code>org.eclipse.debug.core.breakpointImportParticipants</code> extension point.
+ * </p>
+ * <p>
+ * Following is an example of a breakpoint participant extension:
+ * </p>
+ * <pre>
+ * <extension point="org.eclipse.debug.core.breakpointImportParticipants">
+ *  <importParticipant
+ *      participant="x.y.z.BreakpointImportParticipant"
+ *      type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+ *  </importParticipant>
+ * </extension>
+ * </pre>
  * <p>
  * Clients may implement this interface.
  * </p>
