@@ -18,8 +18,10 @@ import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;;
  */
 public class AbstractCSSNode {
 
+	protected CSSParser parser;
+	
 	public CSSParser getCSSParser() {
-		return null;
+		return parser;
 	}
 
 }

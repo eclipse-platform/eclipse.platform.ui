@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
+import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.css.CSSRule;
@@ -21,74 +22,80 @@ import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.stylesheets.MediaList;
 import org.w3c.dom.stylesheets.StyleSheet;
 
-public class CSSStyleSheetImpl extends AbstractCSSNode implements
-CSSStyleSheet, Serializable {
+public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet, Serializable {
 
-	PLACEHOLDER; // this class is a stub, needs to be written
-
-	public void deleteRule(int arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		
+	private CSSRuleList rules = null;
+	
+	// CSSStyleSheet API methods
+	
+	/**
+	 * @see org.w3c.dom.css.CSSStyleSheet.deleteRule(int)
+	 */
+	public void deleteRule(int position) throws DOMException {
+		try {
+			((CSSRuleListImpl) rules).remove(position);			
+		} catch (IndexOutOfBoundsException ex) {
+			throw new DOMExceptionImpl(DOMException.INDEX_SIZE_ERR, DOMExceptionImpl.ARRAY_OUT_OF_BOUNDS, ex.getMessage());
+		}
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSStyleSheet.getCssRules()
+	 */
 	public CSSRuleList getCssRules() {
-		// TODO Auto-generated method stub
-		return null;
+		return rules;
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSStyleSheet.getOwnerRule()
+	 */
 	public CSSRule getOwnerRule() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSStyleSheet.insertRule(String, int)
+	 */
 	public int insertRule(String arg0, int arg1) throws DOMException {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
+	// Additional
+	
 	public boolean getDisabled() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
 	public String getHref() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
 	public MediaList getMedia() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
 	public Node getOwnerNode() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
 	public StyleSheet getParentStyleSheet() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
 	public void setDisabled(boolean arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");				
 	}
 
-	public void setRuleList(CSSRuleListImpl rules) {
-		// TODO Auto-generated method stub
-		
+	public void setRuleList(CSSRuleList rules) {
+		this.rules = rules;
 	}
 
 }

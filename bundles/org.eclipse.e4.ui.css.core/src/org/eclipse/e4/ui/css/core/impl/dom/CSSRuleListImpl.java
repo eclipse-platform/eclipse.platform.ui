@@ -12,52 +12,77 @@
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.xerces.dom.NotationImpl;
+import org.w3c.dom.css.CSSFontFaceRule;
+import org.w3c.dom.css.CSSImportRule;
+import org.w3c.dom.css.CSSMediaRule;
+import org.w3c.dom.css.CSSPageRule;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
+import org.w3c.dom.css.CSSStyleRule;
+import org.w3c.dom.css.CSSUnknownRule;
 
 public class CSSRuleListImpl implements CSSRuleList, Serializable {
 
-	PLACEHOLDER; // this class is a stub, needs to be written
+//	PLACEHOLDER; // this class is a stub, needs to be written
 
+	private List<CSSRule> ruleList;
+	
+	public CSSRuleListImpl() {
+		super();
+		this.ruleList = new ArrayList<CSSRule>();
+	}
+	
+	// CSSRuleList API methods
+	
+	/**
+	 * @see org.w3c.dom.css.CSSRuleList.getLength()
+	 */
 	public int getLength() {
-		// TODO Auto-generated method stub
-		return 0;
+		return ruleList.size();
 	}
 
-	public CSSRule item(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * @see org.w3c.dom.css.CSSRuleList.item(int)
+	 */
+	public CSSRule item(int position) {
+		return ruleList.get(position);
 	}
 
-	public void add(CSSUnknownRuleImpl ir) {
-		// TODO Auto-generated method stub
-		
+	//Additional
+	
+	/**
+	 * @throws IndexOutOfBoundsException
+	 */
+	public void remove(int position) {
+		ruleList.remove(position);
+	}
+	
+	public void add(CSSUnknownRule ir) {
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
-	public void add(CSSMediaRuleImpl mr) {
-		// TODO Auto-generated method stub
-		
+	public void add(CSSMediaRule mr) {
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
-	public void add(CSSPageRuleImpl pageRule) {
-		// TODO Auto-generated method stub
-		
+	public void add(CSSPageRule pageRule) {
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
-	public void add(CSSFontFaceRuleImpl fontFaceRule) {
-		// TODO Auto-generated method stub
-		
+	public void add(CSSFontFaceRule fontFaceRule) {
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
-	public void add(CSSImportRuleImpl ir) {
-		// TODO Auto-generated method stub
-		
+	public void add(CSSImportRule ir) {
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
-	public void add(CSSStyleRuleImpl rule) {
-		// TODO Auto-generated method stub
-		
+	public void add(CSSStyleRule rule) {
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
 
