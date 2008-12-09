@@ -38,7 +38,7 @@ public class SACParserFactoryImpl extends SACParserFactory {
 
 	public SACParserFactoryImpl() {
 		// Flute parser is the default SAC Parser to use.
-		super.setPreferredParserName(SACConstants.SACPARSER_FLUTE_CSS3);
+		super.setPreferredParserName(SACConstants.SACPARSER_BATIK);
 	}
 
 	/*
