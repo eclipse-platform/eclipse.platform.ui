@@ -850,7 +850,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			this.showKeyBindings = showKeyBindings;
 			this.filter = filter;
 			this.setHideOnMouseDown(false);
-			this.setShift(new Point(-5, -5));
+			this.setShift(new Point(-1, -1));
 		}
 
 		protected void addContent(Composite destination, Object modelElement) {
