@@ -77,7 +77,7 @@ public class HelpData {
 				    }
 				}
 			}
-			if (helpDataFile != null && pluginId != null) {
+			if (helpDataFile.length() > 0 && pluginId != null) {
 				Bundle bundle = Platform.getBundle(pluginId);
 				if (bundle != null) {
 				    URL helpDataUrl = bundle.getEntry(helpDataFile);
