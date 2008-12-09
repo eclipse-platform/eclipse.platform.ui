@@ -53,6 +53,11 @@ table {
 	text-align: right;
 }
 
+.intro-header span {
+    margin-right : 45px;
+    padding-right : 45px;
+}
+
 div div#rss-news {  
    position:static;
    margin-left:0px;
