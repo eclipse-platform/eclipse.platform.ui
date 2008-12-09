@@ -36,7 +36,7 @@ public class SubMonitorTest extends TestCase {
 	public static final int PROGRESS_SIZE = SubProgressTest.PROGRESS_SIZE;
 	/**
 	 * <p>Depth of the chain chain of progress monitors. In all of the tests, we create
-	 * a nested chain of progress monitors rathar than a single monitor, to test its
+	 * a nested chain of progress monitors rather than a single monitor, to test its
 	 * scalability under recursion. We pick a number representing a moderately deep
 	 * recursion, but is still small enough that it could correspond to a real call stack
 	 * without causing overflow.</p>
@@ -809,8 +809,8 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	static public void reportPerformance(String className, String methodName, long startTime, long endTime) {
-		if (false) // enable to see performance results for the progress monitors
-			System.out.println(className + "#" + methodName + " elapsed time: " + (endTime - startTime) / 1000.0d + "s");
+		// enable to see performance results for the progress monitors
+		//			System.out.println(className + "#" + methodName + " elapsed time: " + (endTime - startTime) / 1000.0d + "s");
 	}
 
 }
