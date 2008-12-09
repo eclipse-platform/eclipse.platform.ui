@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -31,9 +30,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 public class EditICDialog extends StatusDialog implements IShellProvider {
-
-	private Group group;
-
+	
 	private Label nameLabel;
 
 	private Text nameText;
@@ -107,13 +104,18 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 		layout.numColumns = 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
+		layout.makeColumnsEqualWidth = false;
 		topGroup.setLayout(layout);
 		topGroup.setFont(topComposite.getFont());
 		topGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		// add controls to composite as necessary
 
-		//Creates group to add Remote IC
-		createGroup(parent);
+
+
+		// add controls to composite as necessary
+		createNameSection(topGroup);
+		createHostSection(topGroup);
+		createPathSection(topGroup);
+		createPortSection(topGroup);
 	
 		//Initialize validator and setup for User Input
 		updateValidity();
@@ -126,25 +128,9 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 		shellLocation = getInitialLocation(shellSize);
 
 		this.getShell().setBounds(shellLocation.x, shellLocation.y,
-				shellSize.x + 150, shellSize.y-80);
+				shellSize.x + 150, shellSize.y - 10);
 		//Use exiting name implementation here
 		this.getShell().setText(NLS.bind(Messages.EditICDialog_7, infoCenterName));
-	}
-
-	/*
-	 * Create the "Location" group.
-	 */
-	private void createGroup(Composite parent) {
-		group = new Group(parent, SWT.NONE);
-		group.setText(Messages.EditICDialog_9);
-		group.setLayout(new GridLayout(1, false));
-		group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-		
-		createNameSection(group);
-		createHostSection(group);
-		createPathSection(group);
-		createPortSection(group);
 	}
 	
 	/*

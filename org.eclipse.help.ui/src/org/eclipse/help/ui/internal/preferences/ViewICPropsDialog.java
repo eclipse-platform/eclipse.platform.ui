@@ -11,27 +11,22 @@
 package org.eclipse.help.ui.internal.preferences;
 
 import org.eclipse.help.ui.internal.Messages;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-public class ViewICPropsDialog extends Dialog implements IShellProvider {
 
-	private Group group;
+public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 
 	private Label nameLabel;
 
@@ -57,8 +52,6 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 
 	private Label enabledValue;
 	
-	private Label connectedLabel;
-
 	Point shellSize;
 
 	Point shellLocation;
@@ -74,8 +67,6 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 	private String selectedPath = ""; //$NON-NLS-1$
 
 	private boolean selectedEnabled;
-	
-	Color connectedColor;
 
 	public ViewICPropsDialog(Shell parentShell, String infoCenterName) {
 
@@ -83,36 +74,49 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 		this.infoCenterName = infoCenterName;
 	}
 
-	protected Control createContents(Composite parent) {
+	protected Control createDialogArea(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				"org.eclipse.help.ui.prefPageHelpContent"); //$NON-NLS-1$
 
-		Composite composite = (Composite) super.createDialogArea(parent);
+
+
+		Composite topComposite= (Composite) super.createDialogArea(parent);
+		topComposite.setSize(topComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+		Composite topGroup = new Composite(topComposite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.makeColumnsEqualWidth = false;
+		topGroup.setLayout(layout);
+		topGroup.setFont(topComposite.getFont());
+		topGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+
+		
 		// add controls to composite as necessary
-
-		createGroup(parent);
-
-		createConnectedSection(parent);
-		// Create Button Bar
-		this.buttonBar=this.createButtonBar(parent);
+		createNameSection(topGroup);
+		createHostSection(topGroup);
+		createPathSection(topGroup);
+		createPortSection(topGroup);
+		createURLValidateSection(topGroup);
+		createEnabledSection(topGroup);
 		
 		
-		//Manipulate Button Bar to add custom buttons
-		shellSize = getInitialSize();
-				
-		Button okButton=this.getButton(IDialogConstants.OK_ID); //Get OK Button
-		okButton.setVisible(true);
-		okButton.setSize(shellSize.x+100,shellSize.y);
-		okButton.setText(Messages.ViewICPropsDialog_6); 
-		this.setButtonLayoutData(okButton);
-		//
-		Button cancelButton=this.getButton(IDialogConstants.CANCEL_ID); //Get Cancel button
-		cancelButton.setText(Messages.ViewICPropsDialog_7);
-		cancelButton.setSize(shellSize.x-50,shellSize.y);
-		this.setButtonLayoutData(cancelButton);
-		
-		return composite;
+		return topComposite;
 
+	}
+	
+	/*
+	 * Override createButtonsForButtonBar to allow for:
+	 * TestConnection (was OK)
+	 * Close (was Cancel)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButton(
+				parent,IDialogConstants.OK_ID,Messages.ViewICPropsDialog_6,true);
+		super.createButton(
+				parent,IDialogConstants.CANCEL_ID,Messages.ViewICPropsDialog_7,false);
 	}
 
 	public void initializeBounds() {
@@ -120,25 +124,8 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 		shellLocation = getInitialLocation(shellSize);
 
 		this.getShell().setBounds(shellLocation.x, shellLocation.y,
-				shellSize.x + 180, shellSize.y - 40);
+				shellSize.x +150, shellSize.y);
 		this.getShell().setText(NLS.bind(Messages.ViewICPropsDialog_8 ,infoCenterName));
-	}
-
-	/*
-	 * Create the Infocenter properties group.
-	 */
-	private void createGroup(Composite parent) {
-		group = new Group(parent, SWT.NONE);
-		group.setText(Messages.ViewICPropsDialog_9);
-		group.setLayout(new GridLayout(2, false));
-		group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-		createNameSection(group);
-		createHostSection(group);
-		createPathSection(group);
-		createPortSection(group);
-		createURLValidateSection(group);
-		createEnabledSection(group);
 	}
 
 	/*
@@ -147,7 +134,7 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 	private void createNameSection(Composite parent) {
 		nameLabel = new Label(parent, SWT.NONE);
 		nameLabel.setText(Messages.ViewICPropsDialog_10);
-		nameText = new Label(parent, SWT.BORDER);
+		nameText = new Label(parent, SWT.NONE);
 		nameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		nameText.setText(selectedName);
 	}
@@ -158,7 +145,7 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 	private void createHostSection(Composite parent) {
 		hostLabel = new Label(parent, SWT.NONE);
 		hostLabel.setText(Messages.ViewICPropsDialog_11);
-		hostText = new Label(parent, SWT.BORDER);
+		hostText = new Label(parent, SWT.NONE);
 		hostText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		hostText.setText(selectedHost);
 	}
@@ -169,7 +156,7 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 	private void createPathSection(Composite parent) {
 		pathLabel = new Label(parent, SWT.NONE);
 		pathLabel.setText(Messages.ViewICPropsDialog_12);
-		pathText = new Label(parent, SWT.BORDER);
+		pathText = new Label(parent, SWT.NONE);
 		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		pathText.setText(selectedPath);
 
@@ -212,15 +199,6 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 		}
 
 	}
-	
-	private void createConnectedSection(Composite parent) {
-		connectedLabel = new Label(parent, SWT.NONE);
-		connectedLabel.setText(""); //$NON-NLS-1$
-		connectedLabel.setVisible(false);	
-		
-		connectedLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
-	}
 
 	public void setTextValues(String icName, String host, String port,
 			String path, boolean isEnabled) {
@@ -236,26 +214,17 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 	
 	public void okPressed() {
 		
-		boolean isConnection=TestConnectionUtility.testConnection(selectedHost,selectedPort, selectedPath);
-		// Logic here for setting port values
-		if(isConnection)
-		{
-			connectedLabel.setText(Messages.ViewICPropsDialog_23);
-			
-			Display thisDisplay=this.getShell().getDisplay();
-			connectedColor=thisDisplay.getSystemColor(SWT.COLOR_DARK_GREEN);	
-			connectedLabel.setForeground(connectedColor);
-			
-		}
-		else 
-		{
-			connectedLabel.setText(Messages.ViewICPropsDialog_24);
-			Display thisDisplay=this.getShell().getDisplay();
-			connectedColor=thisDisplay.getSystemColor(SWT.COLOR_RED);
-			connectedLabel.setForeground(connectedColor);
-		}
+		StatusInfo status = new StatusInfo(); 
 		
-		connectedLabel.setVisible(true);
+		// Check to see if connection is valid
+		boolean isConnection=TestConnectionUtility.testConnection(selectedHost,selectedPort, selectedPath);
+		
+		if(isConnection)
+			status.setInfo(Messages.ViewICPropsDialog_23);
+		else
+			status.setError(Messages.ViewICPropsDialog_24);
+
+		updateStatus(status);
 	}
 	
 	public void cancelPressed() {
@@ -263,17 +232,8 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 		//Cancel is now OK button since right button is set to OK
 		
 		this.setReturnCode(OK);
-		
-		//Dispose the Color
-		if(connectedColor!=null)
-		{
-			connectedColor.dispose();
-		}
+
 		//Close window
 		this.close();
-		
-
 	}
-	
-	
 }

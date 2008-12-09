@@ -180,8 +180,6 @@ public final class Messages extends NLS {
 
 	public static String AddICDialog_2;
 
-    public static String AddICDialog_3;
-
 	public static String AddICDialog_4;
 
 	public static String AddICDialog_5;
@@ -202,7 +200,6 @@ public final class Messages extends NLS {
 
 	public static String EditICDialog_7;
 
-	public static String EditICDialog_9;
 
 	public static String HelpContentBlock_3;
 	public static String HelpContentBlock_4;
@@ -213,6 +210,9 @@ public final class Messages extends NLS {
 	public static String HelpContentBlock_removeICTitle;
 	public static String HelpContentBlock_viewICTitle;
 	public static String HelpContentBlock_testConnectionTitle;
+	public static String HelpContentBlock_rmvTitle;
+	public static String HelpContentBlock_rmvLabel;
+	
 
 	public static String RemoteICLabelProvider_4;
 
@@ -221,25 +221,12 @@ public final class Messages extends NLS {
 	public static String RemoteICViewer_Enabled;
 	public static String RemoteICViewer_Name;
 	public static String RemoteICViewer_URL;
-	public static String RemoveICDialog_2;
-
-	public static String RemoveICDialog_4;
-
-	public static String RemoveICDialog_5;
-
-	public static String RestoreDefaultsDialog_1;
-
-	public static String RestoreDefaultsDialog_2;
-
-	public static String RestoreDefaultsDialog_3;
 
 	public static String TestConnectionDialog_12;
 
 	public static String TestConnectionDialog_13;
 
 	public static String TestConnectionDialog_4;
-
-	public static String TestConnectionDialog_5;
 
 	public static String TestConnectionDialog_6;
 
@@ -267,6 +254,5 @@ public final class Messages extends NLS {
 
 	public static String ViewICPropsDialog_8;
 
-	public static String ViewICPropsDialog_9;
 	
 }

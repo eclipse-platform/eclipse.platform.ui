@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.preferences;
 
-import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
@@ -23,17 +22,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
-public class TestConnectionDialog extends Dialog implements IShellProvider {
+public class TestConnectionDialog extends StatusDialog implements IShellProvider {
 
-	private Group group;
 	private Label testConnectionLabel;
 	private Label urlLabel;
-	private Label connectStatusLabel;
 	
 	Point shellSize;
 	Point shellLocation;
@@ -49,44 +44,49 @@ public class TestConnectionDialog extends Dialog implements IShellProvider {
 		// TODO Auto-generated constructor stub
 	}
 
-	protected Control createContents(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IHelpUIConstants.PREF_PAGE_HELP_CONTENT);
-
-		Composite composite = (Composite) super.createDialogArea(parent);
-		//add controls to composite as necessary
-
-		createGroup(parent);
-
-		//Create Button Barthis.createButton(parent, OK, "OK", true);
-		this.createButtonBar(parent);
+	protected Control createDialogArea(Composite parent) {
+		//PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+		//		IHelpUIConstants.PREF_PAGE_HELP_CONTENT);
 		
-		return composite;
+		setHelpAvailable(false);
 
+		Composite topComposite= (Composite) super.createDialogArea(parent);
+		topComposite.setSize(topComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+		Composite topGroup = new Composite(topComposite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.makeColumnsEqualWidth = false;
+		topGroup.setLayout(layout);
+		topGroup.setFont(topComposite.getFont());
+		topGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+
+
+		createTestLabelSection(topGroup);
+		createURLSection(topGroup);
+
+		return topGroup;
 	}
 
+
+	/*
+	 * Override createButtonsForButtonBar to have only one button (OK)
+	 */
+
+	protected void createButtonsForButtonBar(Composite parent) {
+		// create OK button only by default
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+	}
+	
 	public void initializeBounds() {
 		shellSize = getInitialSize();
 		shellLocation = getInitialLocation(shellSize);
 		this.getShell().setBounds(shellLocation.x, shellLocation.y,
-				shellSize.x + 150, shellSize.y - 40);
+				shellSize.x + 150, shellSize.y);
 		this.getShell().setText(
 				Messages.TestConnectionDialog_4);
-	}
-
-	/*
-	 * Create the "Location" group.
-	 */
-	private void createGroup(Composite parent) {
-		group = new Group(parent, SWT.NONE);
-		group.setText(Messages.TestConnectionDialog_5);
-		group.setLayout(new GridLayout(1, false));
-		group.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
-
-		createTestLabelSection(group);
-		createURLSection(group);
-		createStatusSection(group);
-		
 	}
 
 	/*
@@ -114,27 +114,8 @@ public class TestConnectionDialog extends Dialog implements IShellProvider {
 
 		}
 		urlLabel.setText(urlString+"\n"); //$NON-NLS-1$
-	}
-
-	/*
-	 * Create the "Status" label and text field.
-	 */
-	private void createStatusSection(Composite parent) {
-		String connectStatus="\n"; //$NON-NLS-1$
-		
-		connectStatusLabel = new Label(parent, SWT.NONE);
+	}	
 	
-		if (successfullConnection == true) {
-			connectStatus=connectStatus+Messages.TestConnectionDialog_12;
-			
-		} else if (successfullConnection == false) {
-			connectStatus=connectStatus+ Messages.TestConnectionDialog_13;
-
-		}
-		
-		connectStatusLabel.setText(connectStatus);
-	}
-
 	//Override cancel button so it acts as OK.  Then set OK button not visible, because we only need one button
 	public void cancelPressed()
 	{
@@ -152,13 +133,24 @@ public class TestConnectionDialog extends Dialog implements IShellProvider {
 		infoCenterPath = icPath;
 		infoCenterPort = icPort;
 	}
+	
+	
+
+	public void create() {
+		// TODO Auto-generated method stub
+		super.create();
+		setConnectionStatus(successfullConnection);
+	}
 
 	public void setConnectionStatus(boolean testStatus) {
 		successfullConnection = testStatus;
-	}
+		StatusInfo status = new StatusInfo();
+		
+		if(successfullConnection)
+			status.setInfo(Messages.TestConnectionDialog_12);
+		else
+			status.setError(Messages.TestConnectionDialog_13);
 
-	protected void createButtonsForButtonBar(Composite parent) {
-		// create OK button only by default
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		updateStatus(status);
 	}
 }

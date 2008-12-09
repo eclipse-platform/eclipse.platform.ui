@@ -12,11 +12,13 @@ package org.eclipse.help.ui.internal.preferences;
 
 import org.eclipse.help.internal.base.remote.RemoteIC;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -119,14 +121,15 @@ public class HelpContentBlock {
 		RemoteIC remoteic = (RemoteIC) ((IStructuredSelection) remoteICviewer
 				.getSelection()).getFirstElement();
 
-		if (remoteic != null) {
-			RemoveICDialog dialog = new RemoveICDialog(remoteICviewer
-					.getControl().getShell(), remoteic.getName());
+		boolean shouldRemove =
+	          MessageDialog.openQuestion(
+	        	remoteICviewer.getControl().getShell(),
+	            NLS.bind(Messages.HelpContentBlock_rmvTitle , remoteic.getName()),
+	            NLS.bind(Messages.HelpContentBlock_rmvLabel , remoteic.getName()));	
 
-			if (dialog.open() == Window.OK)
-				remoteICviewer.getRemoteICList().removeRemoteIC(remoteic);
-
-		}
+		if (shouldRemove)
+			remoteICviewer.getRemoteICList().removeRemoteIC(remoteic);
+		
 
 	}
 
@@ -150,8 +153,16 @@ public class HelpContentBlock {
 				 * Reset the values in the current RemoteIC object to the user
 				 * set values and update the model
 				 */
+				
+				// Check hostname for http or https, and remove
+				String host = dialog.getEnteredHost();
+				if (host.toLowerCase().indexOf("https://")==0) //$NON-NLS-1$
+					host = host.substring(8);
+				else if (host.toLowerCase().indexOf("http://")==0) //$NON-NLS-1$
+					host = host.substring(7);
+				
 				remoteic.setName(dialog.getEnteredName());
-				remoteic.setHost(dialog.getEnteredHost());
+				remoteic.setHost(host);
 				remoteic.setPath(dialog.getEnteredPath());
 				remoteic.setPort(dialog.getEnteredPort());
 
@@ -169,8 +180,17 @@ public class HelpContentBlock {
 		int rowCount;
 
 		if (dialog.open() == Window.OK) {
+			
+			// For now, remove http or https if user
+			// puts it in the hostname field
+			String host = dialog.getEnteredHost();
+			if (host.toLowerCase().indexOf("https://")==0) //$NON-NLS-1$
+				host = host.substring(8);
+			else if (host.toLowerCase().indexOf("http://")==0) //$NON-NLS-1$
+				host = host.substring(7);
+			
 			RemoteIC remoteic = new RemoteIC(true, dialog.getEnteredName(),
-					dialog.getEnteredHost(), dialog.getEnteredPath(), dialog
+					host, dialog.getEnteredPath(), dialog
 							.getEnteredPort());
 			remoteICviewer.getRemoteICList().addRemoteIC(remoteic);
 			rowCount = remoteICviewer.getTable().getItemCount();

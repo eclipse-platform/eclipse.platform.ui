@@ -21,7 +21,6 @@ import org.eclipse.help.internal.base.remote.RemoteIC;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -93,17 +92,10 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		super.performDefaults();
 
-		
-		RestoreDefaultsDialog dialog = new RestoreDefaultsDialog((this.getControl().getShell()));
-		  
-		 if (dialog.open() == Window.OK) { // Restore Defaults functionality here
-		
-				HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();
-				currentBlock.getRemoteICviewer().getRemoteICList().removeAllRemoteICs(currentBlock.getRemoteICList());
-				currentBlock.restoreDefaultButtons();
-
-		 }
-
+		// Restore Defaults functionality here		
+		HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();
+		currentBlock.getRemoteICviewer().getRemoteICList().removeAllRemoteICs(currentBlock.getRemoteICList());
+		currentBlock.restoreDefaultButtons();
 	}
 
 	/*
