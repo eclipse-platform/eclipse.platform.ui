@@ -85,6 +85,13 @@ FORM {
 
 #buttonArea {
     height:4em; 
+<%
+if (data.isMozilla()) {
+%>
+    padding-bottom:5px;
+<%
+}
+%>
 }
 
 </style>

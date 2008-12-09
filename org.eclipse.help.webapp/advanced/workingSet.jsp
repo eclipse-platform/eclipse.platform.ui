@@ -81,6 +81,13 @@ if (data.isIE()) {
 
 #buttonBar {
     height:3em; 
+<%
+if (data.isMozilla()) {
+%>
+    padding-bottom:5px;
+<%
+}
+%>
 }
 
 .book {
