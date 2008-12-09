@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,6 @@ public class RenameDialog extends SelectionStatusDialog {
 	}
 	public void setOldName(String oldName) {
 		this.oldName = oldName;
-		//addOldName(oldName);
 		if (text!=null) 
 			text.setText(oldName);
 		this.newName = oldName;
@@ -92,7 +91,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		text = new Text(container, SWT.SINGLE|SWT.BORDER);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				textChanged(text.getText());
+				textChanged(text.getText(), true);
 			}
 		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -105,43 +104,43 @@ public class RenameDialog extends SelectionStatusDialog {
 	public int open() {
 		text.setText(oldName);
 		text.selectAll();
-		Button okButton = getButton(IDialogConstants.OK_ID);
-		
-		status = new Status(
-				IStatus.OK,
-				HelpUIPlugin.PLUGIN_ID,
-				IStatus.OK,
-				"", //$NON-NLS-1$
-				null);
-		updateStatus(status);
-		okButton.setEnabled(false);
+        setOkStatus();
+        textChanged(oldName, false);
 		return super.open();
 	}
 	
-	private void textChanged(String text) {
+	private void textChanged(String text, boolean setStatus) {
 		Button okButton = getButton(IDialogConstants.OK_ID);
 		for (int i=0; i<oldNames.size(); i++){
 			if((isCaseSensitive && text.equals(oldNames.get(i))) ||
 					(!isCaseSensitive && text.equalsIgnoreCase(oldNames.get(i).toString()))){
-				status =  new Status(
+				if (setStatus) {
+				    status =  new Status(
 						IStatus.ERROR,
 						HelpUIPlugin.PLUGIN_ID,
 						IStatus.ERROR,
 						Messages.RenameDialog_validationError, 
 						null);
-				updateStatus(status);
+				    updateStatus(status);
+				}
 				okButton.setEnabled(false);
-				break;
+				return;
 			}
-			okButton.setEnabled(true);
-			status = new Status(
-				IStatus.OK,
-				HelpUIPlugin.PLUGIN_ID,
-				IStatus.OK,
-				"", //$NON-NLS-1$
-				null);
-			updateStatus(status);
 		}
+		okButton.setEnabled(true);
+		if (setStatus) {
+		    setOkStatus();
+		}
+	}
+
+	private void setOkStatus() {
+		status = new Status(
+			IStatus.OK,
+			HelpUIPlugin.PLUGIN_ID,
+			IStatus.OK,
+			"", //$NON-NLS-1$
+			null);
+		updateStatus(status);
 	}
 	
 	public String getNewName() {
