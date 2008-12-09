@@ -86,6 +86,8 @@ public class Snippet049StyledCellLabelProvider {
 		
 		final TableViewer tableViewer= new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
+		// Multi-font support only works in JFace 3.5 and above (specifically, 3.5 M4 and above).
+		// With JFace 3.4, the font information (bold in this example) will be ignored.
 		FontData[] boldFontData= getModifiedFontData(tableViewer.getTable().getFont().getFontData(), SWT.BOLD);
 
 		Font boldFont = new Font(Display.getCurrent(), boldFontData);
@@ -133,6 +135,8 @@ public class Snippet049StyledCellLabelProvider {
 			if (element instanceof File) {
 				File file= (File) element;
 				
+				// Multi-font support only works in JFace 3.5 and above (specifically, 3.5 M4 and above).
+				// With JFace 3.4, the font information (bold in this example) will be ignored.
 				Styler style= file.isDirectory() ? fBoldStyler: null;
 				StyledString styledString= new StyledString(file.getName(), style);
 				String decoration = MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
