@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,14 +59,8 @@ import org.eclipse.update.internal.core.UpdateManagerUtils;
  * @see org.eclipse.update.core.IFeatureContentProvider
  * @since 2.0
  */
-public abstract class FeatureContentProvider
-	implements IFeatureContentProvider {
+public abstract class FeatureContentProvider implements IFeatureContentProvider {
 
-	private static final boolean SWITCH_COPY_LOCAL = true;
-	//public static long timer = 0; 
-	
-	//public static long first = 0; 
-	
 	/**
 	 *  
 	 */
@@ -378,8 +372,6 @@ public abstract class FeatureContentProvider
 	 */
 	public File asLocalFile(ContentReference ref, InstallMonitor monitor) throws IOException, CoreException {
 		File file = ref.asFile();
-		if (file != null && !SWITCH_COPY_LOCAL)
-			return file;
 		ContentReference localRef = asLocalReference(ref, monitor);
 		file = localRef.asFile();
 		return file;
@@ -530,7 +522,7 @@ public abstract class FeatureContentProvider
 	 *            the identifier
 	 * @param permissions
 	 *            list of rules
-	 * @return Object the value of the matcing rule or <code>null</code>
+	 * @return Object the value of the matching rule or <code>null</code>
 	 */
 	private Object matchesOneRule(String id, Map permissions) {
 
