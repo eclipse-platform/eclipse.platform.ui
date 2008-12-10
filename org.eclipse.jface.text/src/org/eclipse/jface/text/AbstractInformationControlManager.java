@@ -1124,6 +1124,9 @@ abstract public class AbstractInformationControlManager {
 	 * Presents the information in the information control or hides the information
 	 * control if no information should be presented. The information has previously
 	 * been set using <code>setInformation</code>.
+	 * <p>
+	 * This method should only be called from overriding methods or from <code>setInformation</code>.
+	 * </p>
 	 */
 	protected void presentInformation() {
 		boolean hasContents= false;
@@ -1229,6 +1232,8 @@ abstract public class AbstractInformationControlManager {
 			if (fInformationControlCloser != null)
 				fInformationControlCloser.stop();
 		}
+		fSubjectArea= null;
+		fInformation= null; // allow garbage collection of potentially large object
 	}
 
 	/**
