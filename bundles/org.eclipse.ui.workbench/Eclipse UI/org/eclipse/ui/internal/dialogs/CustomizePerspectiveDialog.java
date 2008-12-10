@@ -70,6 +70,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
@@ -669,8 +670,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @since 3.5
 	 */
 	private abstract class NameAndDescriptionToolTip extends ToolTip {
-		public NameAndDescriptionToolTip(Control control) {
-			super(control);
+		public NameAndDescriptionToolTip(Control control, int style) {
+			super(control, style, false);
 		}
 
 		protected abstract Object getModelElement(Event event);
@@ -812,7 +813,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private Table table;
 
 		public TableToolTip(Table table) {
-			super(table);
+			super(table, RECREATE);
 			this.table = table;
 		}
 
@@ -837,22 +838,39 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private boolean showActionSet;
 		private boolean showKeyBindings;
 		private ViewerFilter filter;
+		private TreeViewer v;
 		
 		/**
 		 * @param tree
 		 *            The tree for the tooltip to hover over
 		 */
-		private ItemDetailToolTip(Tree tree, boolean showActionSet,
+		private ItemDetailToolTip(TreeViewer v, Tree tree, boolean showActionSet,
 				boolean showKeyBindings, ViewerFilter filter) {
-			super(tree);
+			super(tree,NO_RECREATE);
 			this.tree = tree;
+			this.v = v;
 			this.showActionSet = showActionSet;
 			this.showKeyBindings = showKeyBindings;
 			this.filter = filter;
 			this.setHideOnMouseDown(false);
-			this.setShift(new Point(-1, -1));
+		}
+		
+		public Point getLocation(Point tipSize, Event event) {
+			// try to position the tooltip at the bottom of the cell
+			ViewerCell cell = v.getCell(new Point(event.x, event.y));
+			
+			if( cell != null ) {
+				return tree.toDisplay(event.x,cell.getBounds().y+cell.getBounds().height);	
+			}
+			
+			return super.getLocation(tipSize, event);
 		}
 
+		protected Object getToolTipArea(Event event) {
+			// Ensure that the tooltip is hidden when the cell is left
+			return v.getCell(new Point(event.x, event.y));
+		}
+		
 		protected void addContent(Composite destination, Object modelElement) {
 			final DisplayItem item = (DisplayItem) modelElement;
 
@@ -1790,7 +1808,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		actionSetMenuViewer.setInput(menuItems);
 
 		Tree tree = actionSetMenuViewer.getTree();
-		new ItemDetailToolTip(tree, false, true, setFilter);
+		new ItemDetailToolTip(actionSetMenuViewer, tree, false, true, setFilter);
 
 		Composite toolbarGroup = new Composite(actionGroup, SWT.NONE);
 		layout = new GridLayout();
@@ -1816,7 +1834,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		actionSetToolbarViewer.setInput(toolBarItems);
 
 		tree = actionSetToolbarViewer.getTree();
-		new ItemDetailToolTip(tree, false, true, setFilter);
+		new ItemDetailToolTip(actionSetToolbarViewer, tree, false, true, setFilter);
 
 		// Updates the menu item and toolbar items tree viewers when the
 		// selection changes
@@ -2176,7 +2194,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				ctv, checkStateListener));
 		ctv.setLabelProvider(new GrayOutUnavailableLabelProvider(parent
 				.getDisplay(), filter));
-		new ItemDetailToolTip(ctv.getTree(), true, true, filter);
+		new ItemDetailToolTip(ctv, ctv.getTree(), true, true, filter);
 		return ctv;
 	}
 
