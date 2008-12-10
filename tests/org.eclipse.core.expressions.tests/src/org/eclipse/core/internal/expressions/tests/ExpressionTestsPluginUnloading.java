@@ -19,19 +19,17 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.internal.expressions.ExpressionPlugin;
-import org.eclipse.core.internal.expressions.Expressions;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.packageadmin.PackageAdmin;
+
+import org.eclipse.core.internal.expressions.ExpressionPlugin;
+import org.eclipse.core.internal.expressions.Expressions;
 
 
 /**
  * Tests for cache used in {@link Expressions#isInstanceOf(Object, String)}.
  * <p>
- * <b>WARNING:</b> These tests start, stop, uninstall, and re-install the
+ * <b>WARNING:</b> These tests start, stop, and re-start the
  * <code>com.ibm.icu</code>, <code>org.junit</code>, and <code>org.junit4</code> bundles.
  * Don't include these in another test suite. 
  */
@@ -75,31 +73,7 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 		doTestInstanceofICUDecimalFormat(bundle);
 	}
 
-	public void test02PluginUnloading() throws Exception {
-		Bundle bundle= getBundle("com.ibm.icu");
-
-		assertEquals(Bundle.ACTIVE, bundle.getState()); // activated in testPluginStopping
-
-		doTestInstanceofICUDecimalFormat(bundle);
-		assertEquals(Bundle.ACTIVE, bundle.getState());
-
-		String location= bundle.getLocation();
-		bundle.uninstall();
-		assertEquals(Bundle.UNINSTALLED, bundle.getState());
-
-		BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
-		ServiceReference serviceReference= bundleContext.getServiceReference("org.osgi.service.packageadmin.PackageAdmin");
-		PackageAdmin packageAdmin= (PackageAdmin) bundleContext.getService(serviceReference);
-		packageAdmin.refreshPackages(new Bundle[] { bundle });
-
-		Bundle bundle2= bundleContext.installBundle(location);
-		assertEquals(Bundle.INSTALLED, bundle2.getState());
-
-		doTestInstanceofICUDecimalFormat(bundle2);
-		assertEquals(Bundle.ACTIVE, bundle2.getState());
-	}
-	
-	public void test03MultipleClassloaders() throws Exception {
+	public void test02MultipleClassloaders() throws Exception {
 		String vmVersion= System.getProperty("java.vm.version");
 		if (vmVersion == null || vmVersion.compareTo("1.5") < 0)
 			return;
