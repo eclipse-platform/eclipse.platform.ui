@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,10 +70,10 @@ public class ShowViewDialog extends Dialog implements
     private static final int LIST_WIDTH = 250;
 
     private static final String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME
-            + ".STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$    
+            + ".STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 
     private static final String STORE_SELECTED_VIEW_ID = DIALOG_SETTING_SECTION_NAME
-            + ".STORE_SELECTED_VIEW_ID"; //$NON-NLS-1$    
+            + ".STORE_SELECTED_VIEW_ID"; //$NON-NLS-1$
 
     private FilteredTree filteredTree;
 
@@ -210,7 +210,7 @@ public class ShowViewDialog extends Dialog implements
     private void createFilteredTreeViewer(Composite parent) {
 		PatternFilter filter = new ViewPatternFilter();
 		int styleBits = SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
-		filteredTree = new FilteredTree(parent, styleBits, filter);
+		filteredTree = new FilteredTree(parent, styleBits, filter, true);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 		
@@ -473,7 +473,7 @@ public class ShowViewDialog extends Dialog implements
 				return label;
 			}
 		}.open();
-	}  
+	}
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#isResizable()

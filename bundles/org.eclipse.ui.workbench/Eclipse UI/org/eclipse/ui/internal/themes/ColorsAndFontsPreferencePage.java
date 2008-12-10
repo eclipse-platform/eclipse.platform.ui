@@ -845,7 +845,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 				}
                 return false;
             }
-        });
+		}, true);
 
         GridData data = new GridData(GridData.FILL_HORIZONTAL
                 | GridData.VERTICAL_ALIGN_FILL);
