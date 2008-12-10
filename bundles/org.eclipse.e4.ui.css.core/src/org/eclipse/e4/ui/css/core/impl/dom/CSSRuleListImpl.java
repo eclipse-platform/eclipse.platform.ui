@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -15,7 +16,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.xerces.dom.NotationImpl;
 import org.w3c.dom.css.CSSFontFaceRule;
 import org.w3c.dom.css.CSSImportRule;
 import org.w3c.dom.css.CSSMediaRule;
@@ -27,8 +27,6 @@ import org.w3c.dom.css.CSSUnknownRule;
 
 public class CSSRuleListImpl implements CSSRuleList, Serializable {
 
-//	PLACEHOLDER; // this class is a stub, needs to be written
-
 	private List<CSSRule> ruleList;
 	
 	public CSSRuleListImpl() {
@@ -36,7 +34,7 @@ public class CSSRuleListImpl implements CSSRuleList, Serializable {
 		this.ruleList = new ArrayList<CSSRule>();
 	}
 	
-	// CSSRuleList API methods
+	// W3C CSSRuleList API methods
 	
 	/**
 	 * @see org.w3c.dom.css.CSSRuleList.getLength()

@@ -7,21 +7,25 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
-import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;;
+import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 
 /**
  * Abstract CSS Node.
  */
 public class AbstractCSSNode {
-
-	protected CSSParser parser;
 	
+	public AbstractCSSNode() {
+		super();
+	}
+
 	public CSSParser getCSSParser() {
-		return parser;
+		//TODO not sure why this always returns null
+		return null;
 	}
 
 }

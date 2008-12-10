@@ -22,77 +22,90 @@ import org.w3c.dom.css.Counter;
 import org.w3c.dom.css.RGBColor;
 import org.w3c.dom.css.Rect;
 
-public class CSSValueImpl extends AbstractCSSNode implements CSSPrimitiveValue,
-CSSValueList, Serializable {
-	PLACEHOLDER; // this class is a stub, needs to be written
+public class CSSValueImpl extends AbstractCSSNode implements CSSPrimitiveValue, CSSValueList, Serializable {
 
 	public CSSValueImpl(LexicalUnit parsePropertyValue) {
-		// TODO Auto-generated constructor stub
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
+	// W3C CSSValue API methods
+	
+	/**
+	 * @see org.w3c.dom.css.CSSValue.getCssText()
+	 */
+	public String getCssText() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	}
+
+	/**
+	 * @see org.w3c.dom.css.CSSValue.getCssValueType()
+	 */
+	public short getCssValueType() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	}
+
+	/**
+	 * @see org.w3c.dom.css.CSSValue.setCssText(String)
+	 */
+	public void setCssText(String cssText) throws DOMException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	}
+
+
+	// Additional methods
+	
 	public Counter getCounterValue() throws DOMException {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public float getFloatValue(short arg0) throws DOMException {
 		// TODO Auto-generated method stub
-		return 0;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public short getPrimitiveType() {
 		// TODO Auto-generated method stub
-		return 0;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public RGBColor getRGBColorValue() throws DOMException {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public Rect getRectValue() throws DOMException {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public String getStringValue() throws DOMException {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public void setFloatValue(short arg0, float arg1) throws DOMException {
 		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public void setStringValue(short arg0, String arg1) throws DOMException {
 		// TODO Auto-generated method stub
-		
-	}
-
-	public String getCssText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public short getCssValueType() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void setCssText(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public int getLength() {
 		// TODO Auto-generated method stub
-		return 0;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public CSSValue item(int arg0) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 }
