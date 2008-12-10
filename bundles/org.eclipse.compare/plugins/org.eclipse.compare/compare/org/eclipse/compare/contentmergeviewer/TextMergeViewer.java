@@ -1717,16 +1717,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		disconnect(fRightContributor);
 		disconnect(fAncestorContributor);
 		
-		if (fColors != null) {
-			Iterator i= fColors.values().iterator();
-			while (i.hasNext()) {
-				Color color= (Color) i.next();
-				if (!color.isDisposed())
-					color.dispose();
-			}
-			fColors= null;
-		}
-		
 		if (fBirdsEyeCursor != null) {
 			fBirdsEyeCursor.dispose();
 			fBirdsEyeCursor= null;
@@ -1748,6 +1738,16 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fSourceViewerDecorationSupport = null;
 		}
 
+		if (fColors != null) {
+			Iterator i= fColors.values().iterator();
+			while (i.hasNext()) {
+				Color color= (Color) i.next();
+				if (!color.isDisposed())
+					color.dispose();
+			}
+			fColors= null;
+		}
+		
 		super.handleDispose(event);
   	}
   	  	  				 		
