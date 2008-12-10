@@ -536,6 +536,16 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  If this optional attribute is specified the provided class will be instantiated and used to provide menu contributions at this location.  If provided, all child elements will be ignored.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.ExtensionContributionFactory:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
