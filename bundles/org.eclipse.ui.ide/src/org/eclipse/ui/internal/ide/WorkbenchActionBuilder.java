@@ -491,10 +491,17 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		// looking for it when Cmd-Q is invoked (or Quit is chosen from the
 		// application menu.
 		ActionContributionItem quitItem = new ActionContributionItem(quitAction);
-		quitItem.setVisible(!Util.isMac());
+		quitItem.setVisible(!isMac_RemoveInM5());
 		menu.add(quitItem);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
 		return menu;
+    }
+    
+    /**
+     * See bug 258113.
+     */
+    private boolean isMac_RemoveInM5() {
+    	return Util.isMac() && !(Platform.getOSArch().equals("x86_64")); //$NON-NLS-1$
     }
 
     /**
@@ -620,12 +627,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new Separator());
         addKeyboardShortcuts(menu);
         Separator sep = new Separator(IWorkbenchActionConstants.MB_ADDITIONS);
-		sep.setVisible(!Util.isMac());
+		sep.setVisible(!isMac_RemoveInM5());
 		menu.add(sep);
         
         // See the comment for quit in createFileMenu
         ActionContributionItem openPreferencesItem = new ActionContributionItem(openPreferencesAction);
-        openPreferencesItem.setVisible(!Util.isMac());
+        openPreferencesItem.setVisible(!isMac_RemoveInM5());
         menu.add(openPreferencesItem);
 
         menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
@@ -731,7 +738,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		menu.add(new Separator("group.about")); //$NON-NLS-1$
 		
 		ActionContributionItem aboutItem = new ActionContributionItem(aboutAction);
-		aboutItem.setVisible(!Util.isMac());
+		aboutItem.setVisible(!isMac_RemoveInM5());
         menu.add(aboutItem);
 		menu.add(new GroupMarker("group.about.ext")); //$NON-NLS-1$
         return menu;

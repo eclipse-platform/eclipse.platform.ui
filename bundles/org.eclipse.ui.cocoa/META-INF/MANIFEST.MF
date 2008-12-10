@@ -6,6 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.ui;bundle-version="[3.5.0,4.0.0)"
 Bundle-Localization: fragment-cocoa
-Eclipse-PlatformFilter: (osgi.ws=cocoa)
+Eclipse-PlatformFilter:  (& (osgi.ws=cocoa) (|(osgi.arch=x86)( osgi.arch=ppc)))
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.ui.internal.cocoa
