@@ -205,8 +205,10 @@ public class FilteredTree extends Composite {
 	 *            the style bits for the <code>Tree</code>
 	 * @param filter
 	 *            the filter to be used
-	 *
-	 * @deprecated As of 3.5, replaced by {@link #FilteredTree(Composite, int, PatternFilter, boolean)}
+	 * 
+	 * @deprecated As of 3.5, replaced by
+	 *             {@link #FilteredTree(Composite, int, PatternFilter, boolean)} where using the new
+	 *             look is encouraged
 	 */
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
 		super(parent, SWT.NONE);
@@ -245,7 +247,8 @@ public class FilteredTree extends Composite {
 	 * @see #init(int, PatternFilter)
 	 * 
 	 * @since 3.3
-	 * @deprecated As of 3.5, replaced by {@link #FilteredTree(Composite, boolean)}
+	 * @deprecated As of 3.5, replaced by {@link #FilteredTree(Composite, boolean)} where using the
+	 *             look is encouraged
 	 */
 	protected FilteredTree(Composite parent) {
 		super(parent, SWT.NONE);
