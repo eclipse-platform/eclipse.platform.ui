@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.exceptions;
 
@@ -14,10 +15,6 @@ import java.util.ListResourceBundle;
 
 /**
  * DOM Exception resource.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class ExceptionResource extends ListResourceBundle {
 
@@ -44,6 +41,8 @@ public class ExceptionResource extends ListResourceBundle {
         {"s15", "A charset rule must be the first rule"},
         {"s16", "A charset rule already exists"},
         {"s17", "An import rule must preceed all other rules"},
-        {"s18", "The specified type was not found"}
+        {"s18", "The specified type was not found"},
+        {"s19", "Not implemented"},
+        {"s20", "Attempt to change a readonly object"}
     };
 }

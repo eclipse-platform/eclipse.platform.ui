@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation\
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.exceptions;
 
@@ -17,10 +18,6 @@ import org.w3c.dom.DOMException;
 
 /**
  * DOM exception implementation.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class DOMExceptionImpl extends DOMException {
 
@@ -44,7 +41,8 @@ public class DOMExceptionImpl extends DOMException {
 	public static final int IMPORT_NOT_FIRST = 17;
 	public static final int NOT_FOUND = 18;
 	public static final int NOT_IMPLEMENTED = 19;
-
+	public static final int NO_MODIFICATION_ALLOWED_ERROR = 20;
+	
 	private static ResourceBundle exceptionResource = ResourceBundle.getBundle(
 			ExceptionResource.class.getName(), Locale.getDefault());
 
