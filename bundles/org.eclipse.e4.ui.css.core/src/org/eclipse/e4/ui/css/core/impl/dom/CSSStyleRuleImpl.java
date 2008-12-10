@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -22,67 +23,63 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleRule;
 import org.w3c.dom.css.CSSStyleSheet;
 
-public class CSSStyleRuleImpl extends AbstractCSSNode implements CSSStyleRule,
-ExtendedCSSRule, Serializable {
-	PLACEHOLDER; // this class is a stub, needs to be written
+public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, ExtendedCSSRule, Serializable {
 
-	public CSSStyleRuleImpl(CSSStyleSheet parentStyleSheet, Object object,
+	private SelectorList selectors;
+	private CSSStyleDeclarationImpl styleDeclaration;
+	
+	public CSSStyleRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			SelectorList selectors) {
-		// TODO Auto-generated constructor stub
+		super(parentStyleSheet, parentRule);
+		this.selectors = selectors;
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSRule.getType()
+	 */
+	public short getType() {
+		return CSSRule.STYLE_RULE;
+	}
+	
+	// W3C CSSStyleRule API methods
+	
+	/**
+	 * @see org.w3c.dom.css.CSSStyleRule.getSelectorText()
+	 */
 	public String getSelectorText() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSStyleRule.getStyle()
+	 */
 	public CSSStyleDeclaration getStyle() {
-		// TODO Auto-generated method stub
-		return null;
+		return styleDeclaration;
 	}
 
-	public void setSelectorText(String arg0) throws DOMException {
+	/**
+	 * @see org.w3c.dom.css.CSSStyleRule.setSelectorText(String)
+	 */
+	public void setSelectorText(String selectorText) throws DOMException {
 		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	public String getCssText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public CSSRule getParentRule() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public CSSStyleSheet getParentStyleSheet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public short getType() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void setCssText(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
+	// Additional methods
+	
 	public CSSPropertyList getCSSPropertyList() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public SelectorList getSelectorList() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	public void setStyle(CSSStyleDeclarationImpl decl) {
-		// TODO Auto-generated method stub
-		
+	public void setStyle(CSSStyleDeclarationImpl styleDeclaration) {
+		this.styleDeclaration = styleDeclaration;
 	}
 }

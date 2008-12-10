@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -19,56 +20,51 @@ import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 
-public class CSSPageRuleImpl extends AbstractCSSNode implements CSSPageRule, Serializable {
-	PLACEHOLDER; // this class is a stub, needs to be written
+public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule, Serializable {
 
-	public CSSPageRuleImpl(CSSStyleSheet parentStyleSheet, Object object,
+	public CSSPageRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			String name, String pseudo_page) {
+		super(parentStyleSheet, parentRule);
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSRule.getType()
+	 */
+	public short getType() {
+		return CSSRule.PAGE_RULE;
+	}
+	
+	// W3C CSSPageRule API methods
+	
+	/**
+	 * @see org.w3c.dom.css.CSSPageRule.getSelectorText()
+	 */
 	public String getSelectorText() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSPageRule.getStyle()
+	 */
 	public CSSStyleDeclaration getStyle() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSPageRule.setSelectorText(String)
+	 */
 	public void setSelectorText(String arg0) throws DOMException {
 		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	public String getCssText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public CSSRule getParentRule() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public CSSStyleSheet getParentStyleSheet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public short getType() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void setCssText(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		
-	}
+	// Additional methods
 
 	public void setStyle(CSSStyleDeclarationImpl decl) {
 		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 }

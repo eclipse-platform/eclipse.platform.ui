@@ -7,60 +7,48 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
-import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSFontFaceRule;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 
-public class CSSFontFaceRuleImpl extends AbstractCSSNode implements
-CSSFontFaceRule, Serializable {
+public class CSSFontFaceRuleImpl extends CSSRuleImpl implements CSSFontFaceRule, Serializable {
 
-	PLACEHOLDER; // this class is a stub, needs to be written
-
-	public CSSFontFaceRuleImpl(CSSStyleSheet parentStyleSheet, Object object) {
-		// TODO Auto-generated constructor stub
+	public CSSFontFaceRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule) {
+		super(parentStyleSheet, parentRule);
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
+	/**
+	 * @see org.w3c.dom.css.CSSRule.getType()
+	 */
+	public short getType() {
+		return CSSRule.FONT_FACE_RULE;
+	}
+	
+	// W3C CSSFontFaceRule API methods
+	
+	/**
+	 * @see org.w3c.dom.css.CSSFontFaceRule.getStyle()
+	 */
 	public CSSStyleDeclaration getStyle() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	public String getCssText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public CSSRule getParentRule() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public CSSStyleSheet getParentStyleSheet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public short getType() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void setCssText(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		
-	}
-
+	// Additional methods
+	
 	public void setStyle(CSSStyleDeclarationImpl decl) {
 		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 }

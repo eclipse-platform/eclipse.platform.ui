@@ -7,50 +7,29 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
-import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSUnknownRule;
 
-public class CSSUnknownRuleImpl extends AbstractCSSNode implements
-CSSUnknownRule, Serializable {
+public class CSSUnknownRuleImpl extends CSSRuleImpl implements CSSUnknownRule, Serializable {
 
-	PLACEHOLDER; // this class is a stub, needs to be written
-
-	public CSSUnknownRuleImpl(CSSStyleSheet parentStyleSheet, Object object,
+	public CSSUnknownRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			String atRule) {
+		super(parentStyleSheet, parentRule);
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getCssText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public CSSRule getParentRule() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public CSSStyleSheet getParentStyleSheet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/**
+	 * @see org.w3c.dom.css.CSSRule.getType()
+	 */
 	public short getType() {
-		// TODO Auto-generated method stub
-		return 0;
+		return CSSRule.UNKNOWN_RULE;
 	}
-
-	public void setCssText(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
