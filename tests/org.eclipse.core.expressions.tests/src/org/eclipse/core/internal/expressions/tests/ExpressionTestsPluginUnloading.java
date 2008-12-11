@@ -30,8 +30,8 @@ import org.eclipse.core.internal.expressions.Expressions;
  * Tests for cache used in {@link Expressions#isInstanceOf(Object, String)}.
  * <p>
  * <b>WARNING:</b> These tests start, stop, and re-start the
- * <code>com.ibm.icu</code>, <code>org.junit</code>, and <code>org.junit4</code> bundles.
- * Don't include these in another test suite. 
+ * <code>com.ibm.icu</code> bundle and start the <code>org.junit</code> and
+ * <code>org.junit4</code> bundles. Don't include these in another test suite.
  */
 public class ExpressionTestsPluginUnloading extends TestCase {
 
