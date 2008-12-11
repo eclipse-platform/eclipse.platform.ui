@@ -156,6 +156,9 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	}
 
 	private boolean isCharsetValid(String charset) {
+		if (charset.length() == 0)
+			return false;
+
 		char c = charset.charAt(0);
 		if (!(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z'))
 			return false;

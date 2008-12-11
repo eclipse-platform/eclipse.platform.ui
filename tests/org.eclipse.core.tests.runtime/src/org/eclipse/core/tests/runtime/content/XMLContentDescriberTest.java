@@ -27,6 +27,7 @@ public class XMLContentDescriberTest extends RuntimeTest {
 	private final static String ENCODING_UTF8 = "UTF-8";
 	private final static String ENCODING_NOTSUPPORTED = "ENCODING_NOTSUPPORTED";
 	private final static String ENCODING_INCORRECT = "<?ENCODING?>";
+	private final static String ENCODING_EMPTY = "";
 
 	public XMLContentDescriberTest() {
 		super();
@@ -69,6 +70,17 @@ public class XMLContentDescriberTest extends RuntimeTest {
 			assertNull("2.0", description);
 
 			description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_INCORRECT, flags[i][0], flags[i][1]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			assertNull("3.0", description);
+		}
+
+		for (int i = 0; i < flags.length; i++) {
+			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_EMPTY, ENCODING_UTF8, flags[i][0], flags[i][1]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			assertNull("1.0", description);
+
+			description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_EMPTY, ENCODING_UTF16, flags[i][0], flags[i][1]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+			assertNull("2.0", description);
+
+			description = Platform.getContentTypeManager().getDescriptionFor(getReader(ENCODING_EMPTY, flags[i][0], flags[i][1]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 			assertNull("3.0", description);
 		}
 	}
