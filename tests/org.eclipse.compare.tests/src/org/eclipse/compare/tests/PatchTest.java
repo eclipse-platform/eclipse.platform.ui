@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -605,8 +606,11 @@ public class PatchTest extends TestCase {
 			List expectedLines= expectedContents.readLines();
 			
 			Object[] expected= expectedLines.toArray();
-			Object[] result= inLines.toArray();
-			
+
+			String resultString = LineReader.createString(patcher.isPreserveLineDelimeters(), inLines);
+			LineReader resultReader = new LineReader(new BufferedReader(new StringReader(resultString)));
+			Object[] result = resultReader.readLines().toArray();
+
 			Assert.assertEquals(msg, expected.length, result.length);
 			
 			for (int j= 0; j < expected.length; j++)

@@ -379,7 +379,7 @@ public class Patcher implements IHunkFilter {
 	}
 
 	public boolean isPreserveLineDelimeters() {
-		return false;
+		return true;
 	}
 
 	public static String getRejected(List failedHunks) {
