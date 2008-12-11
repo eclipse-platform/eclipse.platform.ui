@@ -85,6 +85,14 @@ public class XMLContentDescriberTest extends RuntimeTest {
 		}
 	}
 
+	public void testBug258208() throws Exception {
+		IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_EMPTY, ENCODING_UTF8, false, true), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		assertNull("1.0", description);
+
+		// empty charset should not disable the xml content type
+		checkEncodedContents(ENCODING_UTF16, ENCODING_UTF16, ENCODING_UTF16);
+	}
+
 	private void checkEncodedContents(String expectedEncoding, String encodingInContent, String encoding) throws Exception {
 		boolean[][] flags = { {true, true}, {true, false}, {false, true}, {false, false}};
 
