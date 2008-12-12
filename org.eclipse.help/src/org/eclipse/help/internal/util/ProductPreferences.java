@@ -19,12 +19,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -199,7 +197,7 @@ public class ProductPreferences {
 	 */
 	public static List getOrderedList(List items, List primary, List[] secondary, Map nameIdMap) {
 		List result = new ArrayList();
-		Set set = new LinkedHashSet(items);
+		List set = new ArrayList(items);
 		if (orderResolver == null) {
 			orderResolver = new SequenceResolver();
 		}
