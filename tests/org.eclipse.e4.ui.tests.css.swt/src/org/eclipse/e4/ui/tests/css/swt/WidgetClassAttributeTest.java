@@ -3,33 +3,27 @@ package org.eclipse.e4.ui.tests.css.swt;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.eclipse.e4.ui.css.core.SACConstants;
-import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
+import junit.framework.TestCase;
+
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.sac.ISACParserFactory;
-import org.eclipse.e4.ui.css.core.sac.SACParserFactory;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.w3c.css.sac.Parser;
-
-import junit.framework.TestCase;
 
 public class WidgetClassAttributeTest extends TestCase {
 
-	private static final Color COLOR_RED = Display.getCurrent().getSystemColor(
-			SWT.COLOR_RED);
+	private static final RGB COLOR_RED = new RGB(255, 0, 0);
 	
-	protected String styleSheet = "Label {color:red}";
+	protected String styleSheet = "Label {background-color: #FF0000}";
 
 	protected Label createTestLabel() {
 
-		Display display = Display.getCurrent();
+		Display display = Display.getDefault();
 
 		CSSEngine engine = new CSSSWTEngineImpl(display);
 		
