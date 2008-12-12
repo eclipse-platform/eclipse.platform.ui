@@ -13,6 +13,9 @@
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
@@ -25,83 +28,102 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyleDeclaration, Serializable {
 
-	protected boolean readOnly;
+	private boolean readOnly;
+	private CSSRule parentRule;
+	private List<CSSProperty> properties = new ArrayList<CSSProperty>(); 
 
-	public CSSStyleDeclarationImpl(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+	public CSSStyleDeclarationImpl(CSSRule parentRule) {
+		this.parentRule = parentRule;
 	}
 
 	// W3C CSSStyleDeclaration API methods
 	
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.getCSSText()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#getCSSText()
 	 */
 	public String getCssText() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.getLength()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#getLength()
 	 */
 	public int getLength() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		return properties.size();
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.getParentRule()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#getParentRule()
 	 */
 	public CSSRule getParentRule() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		return parentRule;
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.getPropertyCSSValue(String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#getPropertyCSSValue(String)
 	 */
 	public CSSValue getPropertyCSSValue(String propertyName) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		CSSProperty property = findCSSProperty(propertyName);
+		return (property == null)
+			? null
+			: property.getValue();
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.getPropertyPriority(String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#getPropertyPriority(String)
 	 */
 	public String getPropertyPriority(String propertyName) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		CSSProperty property = findCSSProperty(propertyName);
+		return (property != null && property.isImportant())
+			? CSSPropertyImpl.IMPORTANT_IDENTIFIER
+			: "";			
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.getPropertyValue(String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#getPropertyValue(String)
 	 */
 	public String getPropertyValue(String propertyName) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		CSSProperty property = findCSSProperty(propertyName);
+		return (property == null)
+			? ""
+			: property.getValue().toString();
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.item(int)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#item(int)
 	 */
 	public String item(int index) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		return properties.get(index).getName();
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.removeProperty(String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#removeProperty(String)
 	 */
 	public String removeProperty(String propertyName) throws DOMException {
 		if(readOnly)
 			throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR, DOMExceptionImpl.NO_MODIFICATION_ALLOWED_ERROR);
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		for (int i = 0; i < properties.size(); i++) {
+			CSSProperty property = properties.get(i);
+			if(CSSPropertyImpl.sameName(property, propertyName)) {
+				properties.remove(i);
+				return property.getValue().toString();
+			}
+		}
+		return "";
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleDeclaration.setCssText(String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleDeclaration#setCssText(String)
 	 */
 	public void setCssText(String cssText) throws DOMException {
 		if(readOnly)
@@ -111,7 +133,8 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSStyleDeclaration.setProperty(String, String, String)
 	 */
 	public void setProperty(String propertyName, String value, String priority) throws DOMException {
@@ -125,9 +148,8 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 	
 	// Additional
 	
-	public void addProperty(CSSProperty property) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	public void addProperty(CSSProperty  property) {
+		properties.add(property);
 	}
 
 	public CSSPropertyList getCSSPropertyList() {
@@ -145,4 +167,11 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 		this.readOnly = readOnly;
 	}
 
+	private CSSProperty findCSSProperty(String propertyName) {
+		for (CSSProperty property : properties) {
+			if(CSSPropertyImpl.sameName(property, propertyName))
+				return property;
+		}
+		return null;
+	}
 }

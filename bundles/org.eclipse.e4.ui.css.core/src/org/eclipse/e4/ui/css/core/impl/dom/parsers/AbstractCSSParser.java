@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.dom.parsers;
 
@@ -33,10 +34,6 @@ import org.w3c.dom.css.CSSValue;
 
 /**
  * Abstract {@link CSSParser} implementation.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class AbstractCSSParser implements CSSParser {
 
@@ -111,7 +108,7 @@ public class AbstractCSSParser implements CSSParser {
 		ExtendedDocumentHandler documentHandler = getDocumentHandlerFactory()
 				.makeDocumentHandler();
 		parser.setDocumentHandler(documentHandler);
-		return new CSSValueImpl(parser.parsePropertyValue(source));
+		return CSSValueImpl.newInstance(parser.parsePropertyValue(source));
 	}
 
 	/*

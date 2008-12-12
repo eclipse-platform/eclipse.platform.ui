@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -17,21 +18,19 @@ import org.w3c.dom.css.Counter;
 
 public class CounterImpl implements Counter, Serializable {
 
-	PLACEHOLDER; // this class is a stub, needs to be written
-
 	public String getIdentifier() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public String getListStyle() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public String getSeparator() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 }

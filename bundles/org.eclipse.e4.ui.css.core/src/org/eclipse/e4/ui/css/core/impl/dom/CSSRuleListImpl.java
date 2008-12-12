@@ -16,14 +16,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.css.CSSFontFaceRule;
-import org.w3c.dom.css.CSSImportRule;
-import org.w3c.dom.css.CSSMediaRule;
-import org.w3c.dom.css.CSSPageRule;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
-import org.w3c.dom.css.CSSStyleRule;
-import org.w3c.dom.css.CSSUnknownRule;
 
 public class CSSRuleListImpl implements CSSRuleList, Serializable {
 
@@ -36,15 +30,17 @@ public class CSSRuleListImpl implements CSSRuleList, Serializable {
 	
 	// W3C CSSRuleList API methods
 	
-	/**
-	 * @see org.w3c.dom.css.CSSRuleList.getLength()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRuleList#getLength()
 	 */
 	public int getLength() {
 		return ruleList.size();
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSRuleList.item(int)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRuleList#item(int)
 	 */
 	public CSSRule item(int position) {
 		return ruleList.get(position);
@@ -54,34 +50,15 @@ public class CSSRuleListImpl implements CSSRuleList, Serializable {
 	
 	/**
 	 * @throws IndexOutOfBoundsException
-	 */
+	 */	
+	public void add(CSSRule rule) {
+		ruleList.add(rule);
+	}
+
+	/**
+	 * @throws IndexOutOfBoundsException
+	 */	
 	public void remove(int position) {
 		ruleList.remove(position);
 	}
-	
-	public void add(CSSUnknownRule ir) {
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
-	}
-
-	public void add(CSSMediaRule mr) {
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
-	}
-
-	public void add(CSSPageRule pageRule) {
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
-	}
-
-	public void add(CSSFontFaceRule fontFaceRule) {
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
-	}
-
-	public void add(CSSImportRule ir) {
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
-	}
-
-	public void add(CSSStyleRule rule) {
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
-	}
-
-
 }

@@ -218,7 +218,7 @@ public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 
 	protected CSSProperty getCSSProperty(CSSStyleDeclaration styleDeclaration,
 			String name, LexicalUnit value, boolean important) {
-		return new CSSPropertyImpl(name, new CSSValueImpl(value), important);
+		return new CSSPropertyImpl(name, CSSValueImpl.newInstance(value), important);
 	}
 
 	public Object getNodeRoot() {

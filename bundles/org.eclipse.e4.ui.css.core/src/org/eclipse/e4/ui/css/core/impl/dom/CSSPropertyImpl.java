@@ -19,13 +19,23 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyImpl implements CSSProperty, Serializable {
 
+	/*
+	 * The string used to signify a property's priority as "important"
+	 * e.g. @see org.w3c.dom.css.CSSStyleDeclaration#getPropertyPriority(String)
+	 */
+	protected static String IMPORTANT_IDENTIFIER = "important"; 
+
 	private String name;
 	private CSSValue value;
 	private boolean important;
 
+	public static boolean sameName(CSSProperty property, String testName) {
+		return property.getName().equalsIgnoreCase(testName);
+	}
+	
 	/** Creates new Property */
 	public CSSPropertyImpl(String name, CSSValue value, boolean important) {
-		this.name = name;
+		this.name = name; 
 		this.value = value;
 		this.important = important;
 	}

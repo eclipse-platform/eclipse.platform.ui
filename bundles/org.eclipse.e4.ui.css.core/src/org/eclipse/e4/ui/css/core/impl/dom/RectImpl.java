@@ -18,26 +18,24 @@ import org.w3c.dom.css.Rect;
 
 public class RectImpl implements Rect, Serializable {
 
-	PLACEHOLDER; // this class is a stub, needs to be written
-
 	public CSSPrimitiveValue getBottom() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public CSSPrimitiveValue getLeft() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public CSSPrimitiveValue getRight() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 	public CSSPrimitiveValue getTop() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
 }

@@ -7,31 +7,71 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 
+import org.w3c.css.sac.LexicalUnit;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.RGBColor;
 
-public class RGBColorImpl implements RGBColor, Serializable {
-	PLACEHOLDER; // this class is a stub, needs to be written
+public class RGBColorImpl extends CSSValueImpl implements RGBColor, Serializable {
 
-	public CSSPrimitiveValue getBlue() {
-		// TODO Auto-generated method stub
-		return null;
+	private CSSPrimitiveValue red;
+	private CSSPrimitiveValue green;
+	private CSSPrimitiveValue blue;
+	
+	public RGBColorImpl(LexicalUnit lexicalUnit) {
+		LexicalUnit nextUnit = lexicalUnit.getParameters();
+		red = new Measure(nextUnit);
+		nextUnit = nextUnit.getNextLexicalUnit().getNextLexicalUnit();
+		green = new Measure(nextUnit);
+		nextUnit = nextUnit.getNextLexicalUnit().getNextLexicalUnit();
+		blue = new Measure(nextUnit);
 	}
 
-	public CSSPrimitiveValue getGreen() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.RGBColor#getRed()
+	 */
 	public CSSPrimitiveValue getRed() {
-		// TODO Auto-generated method stub
-		return null;
+		return red;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.RGBColor#getGreen()
+	 */
+	public CSSPrimitiveValue getGreen() {
+		return green;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.RGBColor#getBlue()
+	 */
+	public CSSPrimitiveValue getBlue() {
+		return blue;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSValue#getRGBColorValue()
+	 */
+	public RGBColor getRGBColorValue() throws DOMException {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSValue#getPrimitiveType()
+	 */
+	public short getPrimitiveType() {
+		return CSS_RGBCOLOR;
 	}
 
 }
