@@ -13,8 +13,9 @@ package org.eclipse.e4.ui.css.core.impl.sac;
 
 import java.util.Stack;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSFontFaceRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSMediaRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSPageRuleImpl;
@@ -27,8 +28,6 @@ import org.eclipse.e4.ui.css.core.impl.dom.CSSUnknownRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSValueImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.MediaListImpl;
 import org.eclipse.e4.ui.css.core.sac.ExtendedDocumentHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.css.sac.CSSException;
 import org.w3c.css.sac.InputSource;
 import org.w3c.css.sac.LexicalUnit;
@@ -49,6 +48,8 @@ public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 	private Object nodeRoot = null;
 
 	private CSSStyleSheet parentStyleSheet;
+
+	private boolean ignore;
 
 	public CSSDocumentHandlerImpl() {
 	}
@@ -119,25 +120,27 @@ public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 
 	public void startMedia(SACMediaList media) throws CSSException {
 
-		// Create the media rule and add it to the rule list
-		CSSMediaRuleImpl mr = new CSSMediaRuleImpl(parentStyleSheet, null,
-				new MediaListImpl(media));
-		if (!getNodeStack().empty()) {
-			((CSSRuleListImpl) getNodeStack().peek()).add(mr);
-		}
-
-		// Create the rule list
-		CSSRuleListImpl rules = new CSSRuleListImpl();
-		mr.setRuleList(rules);
-		getNodeStack().push(mr);
-		getNodeStack().push(rules);
+		ignore = true;
+//		// Create the media rule and add it to the rule list
+//		CSSMediaRuleImpl mr = new CSSMediaRuleImpl(parentStyleSheet, null,
+//				new MediaListImpl(media));
+//		if (!getNodeStack().empty()) {
+//			((CSSRuleListImpl) getNodeStack().peek()).add(mr);
+//		}
+//
+//		// Create the rule list
+//		CSSRuleListImpl rules = new CSSRuleListImpl();
+//		mr.setRuleList(rules);
+//		getNodeStack().push(mr);
+//		getNodeStack().push(rules);
 	}
 
 	public void endMedia(SACMediaList media) throws CSSException {
 
-		// Pop the rule list and media rule nodes
-		getNodeStack().pop();
-		nodeRoot = getNodeStack().pop();
+		ignore = false;
+//		// Pop the rule list and media rule nodes
+//		getNodeStack().pop();
+//		nodeRoot = getNodeStack().pop();
 	}
 
 	public void startPage(String name, String pseudo_page) throws CSSException {
@@ -164,26 +167,26 @@ public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 	}
 
 	public void startFontFace() throws CSSException {
-
-		// Create the font face rule and add it to the rule list
-		CSSFontFaceRuleImpl fontFaceRule = new CSSFontFaceRuleImpl(
-				parentStyleSheet, null);
-		if (!getNodeStack().empty()) {
-			((CSSRuleListImpl) getNodeStack().peek()).add(fontFaceRule);
-		}
-
-		// Create the style declaration
-		CSSStyleDeclarationImpl decl = new CSSStyleDeclarationImpl(fontFaceRule);
-		fontFaceRule.setStyle(decl);
-		getNodeStack().push(fontFaceRule);
-		getNodeStack().push(decl);
+		ignore = true;
+//		// Create the font face rule and add it to the rule list
+//		CSSFontFaceRuleImpl fontFaceRule = new CSSFontFaceRuleImpl(
+//				parentStyleSheet, null);
+//		if (!getNodeStack().empty()) {
+//			((CSSRuleListImpl) getNodeStack().peek()).add(fontFaceRule);
+//		}
+//
+//		// Create the style declaration
+//		CSSStyleDeclarationImpl decl = new CSSStyleDeclarationImpl(fontFaceRule);
+//		fontFaceRule.setStyle(decl);
+//		getNodeStack().push(fontFaceRule);
+//		getNodeStack().push(decl);
 	}
 
 	public void endFontFace() throws CSSException {
-
-		// Pop both the style declaration and the font face rule nodes
-		getNodeStack().pop();
-		nodeRoot = getNodeStack().pop();
+		ignore = false;
+//		// Pop both the style declaration and the font face rule nodes
+//		getNodeStack().pop();
+//		nodeRoot = getNodeStack().pop();
 	}
 
 	public void startSelector(SelectorList selectors) throws CSSException {
@@ -211,9 +214,11 @@ public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 
 	public void property(String name, LexicalUnit value, boolean important)
 			throws CSSException {
-		CSSStyleDeclarationImpl decl = (CSSStyleDeclarationImpl) getNodeStack()
-				.peek();
-		decl.addProperty(getCSSProperty(decl, name, value, important));
+		if (!ignore) {
+			CSSStyleDeclarationImpl decl = (CSSStyleDeclarationImpl) getNodeStack()
+			.peek();
+			decl.addProperty(getCSSProperty(decl, name, value, important));
+		}
 	}
 
 	protected CSSProperty getCSSProperty(CSSStyleDeclaration styleDeclaration,
