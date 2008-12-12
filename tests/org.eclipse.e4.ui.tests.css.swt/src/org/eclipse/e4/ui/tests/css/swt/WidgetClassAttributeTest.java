@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Shell;
 
 public class WidgetClassAttributeTest extends TestCase {
 
-	private static final RGB COLOR_RED = new RGB(255, 0, 0);
+	static final RGB LABEL_BACKGROUND_COLOR = new RGB(255, 0, 0);
 	
-	protected String styleSheet = "Label {background-color: #FF0000}";
+	static final String STYLE_SHEET = "Label {background-color: #FF0000}";
 
 	protected Label createTestLabel() {
 
@@ -28,7 +28,7 @@ public class WidgetClassAttributeTest extends TestCase {
 		CSSEngine engine = new CSSSWTEngineImpl(display);
 		
 		try {
-			engine.parseStyleSheet(new StringReader(styleSheet));
+			engine.parseStyleSheet(new StringReader(STYLE_SHEET));
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -54,6 +54,6 @@ public class WidgetClassAttributeTest extends TestCase {
 	
 	public void testLabelColor() throws Exception {
 		Label label = createTestLabel();
-		assertEquals(label.getBackground().getRGB(), COLOR_RED);
+		assertEquals(LABEL_BACKGROUND_COLOR, label.getBackground().getRGB());
 	}
 }
