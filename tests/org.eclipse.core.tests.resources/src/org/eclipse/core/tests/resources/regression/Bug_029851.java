@@ -26,6 +26,8 @@ import org.eclipse.core.tests.resources.ResourceTest;
  */
 public class Bug_029851 extends ResourceTest {
 
+	private boolean DISABLED = true;
+
 	public static Test suite() {
 		return new TestSuite(Bug_029851.class);
 	}
@@ -60,7 +62,7 @@ public class Bug_029851 extends ResourceTest {
 
 	public void test() {
 		// disable for now.
-		if (true)
+		if (DISABLED )
 			return;
 		createHierarchy();
 		final QualifiedName key = new QualifiedName("local", getUniqueString());

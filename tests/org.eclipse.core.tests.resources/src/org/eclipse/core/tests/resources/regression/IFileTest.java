@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class IFileTest extends ResourceTest {
+	private boolean DISABLED = true;
+
 	/**
 	 * Constructor for IFileTest.
 	 */
@@ -47,7 +49,7 @@ public class IFileTest extends ResourceTest {
 		// This test is no longer valid since the error code is dependent on whether 
 		// or not the parent folder is marked as read-only. We need to write a different
 		// test to make the file.create fail.	
-		if (true)
+		if (DISABLED )
 			return;
 
 		// We need to know whether or not we can unset the read-only flag

@@ -437,10 +437,10 @@ public class IResourceTest extends ResourceTest {
 	 * OS and file system.
 	 */
 	public void testDelete_1GD3ZUZ() {
-		// This test cannot be done automatically because we don't know in that
+		// This test cannot be done automatically on Windows because we don't know in that
 		// file system we are running. Will leave test here in case it needs
 		// to be run it in a special environment.
-		if (true)
+		if (isWindows())
 			return;
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");

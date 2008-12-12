@@ -198,47 +198,6 @@ public class IProjectTest extends AbstractBuilderTest {
 	}
 
 	/**
-	 * 1G5FYZM: ITPCORE:WIN - Project.deleteWithoutForce does not look for out of sync children
-	 */
-	public void testDelete_1G5FYZM() {
-		//FIXME: invalid test now? if delete_contents is true then force flag is ignored.
-		if (true)
-			return;
-		IProject project = getWorkspace().getRoot().getProject("MyProject");
-		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
-		} catch (CoreException e) {
-			fail("0.0", e);
-		}
-
-		try {
-			project.close(getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-
-		IFile file = project.getFile("MyFile");
-		ensureExistsInFileSystem(file);
-
-		try {
-			project.delete(true, false, getMonitor());
-			fail("3.0");
-		} catch (CoreException e) {
-			assertEquals("3.1", 1, e.getStatus().getChildren().length);
-		}
-
-		assertExistsInFileSystem("4.0", file);
-
-		// clean up
-		try {
-			project.delete(true, true, getMonitor());
-		} catch (CoreException e) {
-			fail("5.0", e);
-		}
-	}
-
-	/**
 	 * 1GDW1RX: ITPCORE:ALL - IResource.delete() without force not working correctly
 	 */
 	public void testDelete_1GDW1RX() {
