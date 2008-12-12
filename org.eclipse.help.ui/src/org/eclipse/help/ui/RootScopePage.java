@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Clients that contribute search scope root page to the search engine
@@ -79,6 +80,8 @@ public abstract class RootScopePage extends PreferencePage implements
 	 */
 	protected final Control createContents(Composite parent) {
 		initializeDefaults(getPreferenceStore());
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+	     "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		//if (ed.isUserDefined())

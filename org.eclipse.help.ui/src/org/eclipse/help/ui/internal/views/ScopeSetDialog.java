@@ -21,6 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListDialog;
 
 /**
@@ -157,6 +158,8 @@ public class ScopeSetDialog extends ListDialog {
 	
     protected Control createDialogArea(Composite container) {
     	Composite listContainer = (Composite)super.createDialogArea(container);
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(listContainer,
+		     "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
     	createEditingButtons(listContainer);
     	getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

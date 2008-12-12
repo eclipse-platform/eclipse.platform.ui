@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class EngineTypeWizardPage extends WizardPage {
 	private TableViewer tableViewer;
@@ -63,6 +64,8 @@ public class EngineTypeWizardPage extends WizardPage {
 
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+	     "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);

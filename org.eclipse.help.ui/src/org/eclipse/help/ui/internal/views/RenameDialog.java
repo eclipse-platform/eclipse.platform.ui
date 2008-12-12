@@ -62,6 +62,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	public void initialize(){
 		oldNames = new ArrayList();
 		setStatusLineAboveButtons(true);
+		this.setHelpAvailable(false);
 	}
 	public void addOldName(String oldName){
 		if (!oldNames.contains(oldName))
