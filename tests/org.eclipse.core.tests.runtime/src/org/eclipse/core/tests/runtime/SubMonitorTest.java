@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Stefan Xenos - bug 174539 - add a 1-argument convert(...) method     
  *     Stefan Xenos - bug 174040 - SubMonitor#convert doesn't always set task name
  *     Stefan Xenos - bug 206942 - Regression test for infinite progress reporting rate
+ *     IBM Corporation - bug 252446 - SubMonitor.newChild passes zero ticks to child
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
@@ -793,9 +794,38 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	/**
+	 * Tests reporting of progress by sub-monitors created via newChild() 
+	 */
+	public void testBug252446() {
+		int children = 12;
+		int cyclesPerChild = 17;
+
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		SubMonitor progress = SubMonitor.convert(monitor, children * cyclesPerChild);
+
+		// At this time monitor.getExpectedWork() == SubMonitor.MINIMUM_RESOLUTION == 1000
+		double expectedTicksPerIteration = (double) monitor.getExpectedWork() / children / cyclesPerChild;
+
+		for (int i = 0; i < children; i++) {
+			IProgressMonitor mon = progress.newChild(cyclesPerChild);
+			for (int j = 1; j <= cyclesPerChild; j++) {
+				mon.worked(1);
+				double expectedTopMonitorWork = expectedTicksPerIteration * (i * cyclesPerChild + j);
+				// Progress is passed to the parent monitor as integer leading to rounding 
+				// errors. The parent's progress has to follow child's progress "close enough"
+				// and then it will catch up when next child is created. Hence, a relatively large delta 
+				// value in this check:
+				assertEquals(expectedTopMonitorWork, monitor.getTotalWork(), 2.0d);
+			}
+		}
+		monitor.done();
+		monitor.assertOptimal();
+	}
+
+	/**
 	 * Creates and destroys the given number of child progress monitors under the given parent.
 	 * 
-	 * @param monitor monitor to create children under. The caller must call done on this monitor
+	 * @param parent monitor to create children under. The caller must call done on this monitor
 	 * if necessary. 
 	 * @param progressSize total number of children to create.
 	 */
