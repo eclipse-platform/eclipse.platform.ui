@@ -50,9 +50,10 @@ public class ChangeValidationTest extends ResourceTest {
 				boolean found = false;
 				for (int i = 0; i < expectedMessages.length; i++) {
 					String expected = expectedMessages[i];
-					if (actual.equals(expected))
+					if (actual.equals(expected)) {
 						found = true;
-					break;
+						break;
+					}
 				}
 				if (!found)
 					fail("Unexpected message returned: " + actual);
