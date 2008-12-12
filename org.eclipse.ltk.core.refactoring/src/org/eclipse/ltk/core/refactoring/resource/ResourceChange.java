@@ -144,7 +144,7 @@ public abstract class ResourceChange extends Change {
 					return result;
 			}
 			if ((fValidationMethod & SAVE_IF_DIRTY) != 0) {
-				state.checkDirty(result, fModificationStamp, new SubProgressMonitor(pm, 1));
+				state.saveIfDirty(result, fModificationStamp, new SubProgressMonitor(pm, 1));
 			}
 			if ((fValidationMethod & VALIDATE_NOT_DIRTY) != 0) {
 				state.checkDirty(result);
@@ -250,7 +250,7 @@ public abstract class ResourceChange extends Change {
 			}
 		}
 
-		public void checkDirty(RefactoringStatus status, long stampToMatch, IProgressMonitor pm) throws CoreException {
+		public void saveIfDirty(RefactoringStatus status, long stampToMatch, IProgressMonitor pm) throws CoreException {
 			if (fDirty) {
 				if (fKind == DOCUMENT && fTextFileBuffer != null && stampToMatch == fModificationStamp) {
 					fTextFileBuffer.commit(pm, false);
