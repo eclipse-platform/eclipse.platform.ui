@@ -1,5 +1,9 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
+import org.eclipse.e4.ui.tests.css.swt.parser.FontFaceRulesTest;
+import org.eclipse.e4.ui.tests.css.swt.parser.MediaRulesTest;
+import org.eclipse.e4.ui.tests.css.swt.parser.StyleRuleTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -16,5 +20,8 @@ public class CssSwtTestSuite extends TestSuite {
 	 */
 	public CssSwtTestSuite() {
 		addTest(new TestSuite(WidgetClassAttributeTest.class));
+		addTestSuite(FontFaceRulesTest.class);
+		addTestSuite(MediaRulesTest.class);
+		addTestSuite(StyleRuleTest.class);
 	}
 }
