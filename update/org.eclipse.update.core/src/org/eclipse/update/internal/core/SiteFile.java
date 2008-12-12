@@ -162,8 +162,6 @@ public class SiteFile extends Site {
 			// start log
 			recoveryLog.open(ErrorRecoveryLog.START_REMOVE_LOG);
 
-			aboutToRemove(feature);
-
 			// log files have been downloaded
 			recoveryLog.append(ErrorRecoveryLog.END_ABOUT_REMOVE);
 
@@ -421,56 +419,6 @@ public class SiteFile extends Site {
 		}
 		pluginEntries.remove(pluginEntry);
 		InstallRegistry.unregisterPlugin(pluginEntry);
-	}
-
-	/*
-	 * 
-	 */
-	private void aboutToRemove(IFeature feature) throws CoreException {
-
-		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
-		// if the recovery is not turned on
-		if (!ErrorRecoveryLog.RECOVERY_ON)
-			return;
-
-		//logFeature
-		if (feature != null) {
-					
-			// log feature URL
-			ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(null);
-			for (int i = 0; i < references.length; i++) {
-				try {
-					recoveryLog.appendPath(ErrorRecoveryLog.FEATURE_ENTRY, references[i].asFile().getAbsolutePath());
-				} catch (IOException e) {
-					String id = UpdateCore.getPlugin().getBundle().getSymbolicName();
-					throw Utilities.newCoreException(NLS.bind(Messages.SiteFile_CannotRemoveFeature, (new String[] { feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm() })), e);
-				}
-			}
-			// log pluginEntry URL
-			IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
-			for (int i = 0; i < pluginsToRemove.length; i++) {
-				references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginsToRemove[i], null);
-				for (int j = 0; j < references.length; j++) {
-					try {
-						recoveryLog.appendPath(ErrorRecoveryLog.BUNDLE_JAR_ENTRY, references[j].asFile().getAbsolutePath());
-					} catch (IOException e) {
-						throw Utilities.newCoreException(NLS.bind(Messages.SiteFile_CannotRemovePlugin, (new String[] { pluginsToRemove[i].getVersionedIdentifier().toString(), getURL().toExternalForm() })), e);
-					}
-				}
-			}
-		}
-
-		// call recursively for each children	 
-		IFeatureReference[] childrenRef = feature.getIncludedFeatureReferences();
-		IFeature childFeature = null;
-		for (int i = 0; i < childrenRef.length; i++) {
-			try {
-				childFeature = childrenRef[i].getFeature(null);
-			} catch (CoreException e) {
-				UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]); //$NON-NLS-1$
-			}
-			aboutToRemove(childFeature);
-		}
 	}
 
 }
