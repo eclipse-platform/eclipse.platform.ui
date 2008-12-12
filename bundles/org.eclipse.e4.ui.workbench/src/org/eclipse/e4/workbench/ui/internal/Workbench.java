@@ -782,4 +782,8 @@ public class Workbench implements IWorkbench, IServiceLocator,
 		//needs proper closing protocol
 		((Shell)workbenchWindow.getWidget()).close();
 	}
+
+	public Shell getShell() {
+		return appWindow;
+	}
 }
