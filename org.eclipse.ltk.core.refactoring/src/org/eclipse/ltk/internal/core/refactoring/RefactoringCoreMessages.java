@@ -106,6 +106,8 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String DeleteResourcesProcessor_warning_out_of_sync_file;
 
+	public static String DeleteResourcesProcessor_warning_unsaved_file;
+
 	public static String FileDescription_NewFileProgress;
 
 	public static String FileDescription_ContentsCouldNotBeRestored;

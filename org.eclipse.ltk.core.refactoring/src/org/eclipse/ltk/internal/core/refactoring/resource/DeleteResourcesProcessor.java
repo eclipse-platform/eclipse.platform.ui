@@ -22,7 +22,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -97,6 +102,19 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		// allow only projects or only non-projects to be selected;
+		// note that the selection may contain multiple types of resource
+		if (!(Resources.containsOnlyProjects(fResources) || Resources.containsOnlyNonProjects(fResources))) {
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_mixed_types);
+		}
+	
+		return new RefactoringStatus();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
 	 */
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
@@ -115,6 +133,8 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 				}
 			}
 
+			checkDirtyResources(result);
+			
 			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			for (int i= 0; i < fResources.length; i++) {
@@ -132,17 +152,32 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		// allow only projects or only non-projects to be selected;
-		// note that the selection may contain multiple types of resource
-		if (!(Resources.containsOnlyProjects(fResources) || Resources.containsOnlyNonProjects(fResources))) {
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_mixed_types);
+	private void checkDirtyResources(final RefactoringStatus result) throws CoreException {
+		for (int i= 0; i < fResources.length; i++) {
+			IResource resource= fResources[i];
+			resource.accept(new IResourceVisitor() {
+				public boolean visit(IResource visitedResource) throws CoreException {
+					if (visitedResource instanceof IFile) {
+						checkDirtyFile(result, (IFile)visitedResource);
+					}
+					return true;
+				}
+			}, IResource.DEPTH_INFINITE, false);
 		}
+	}
 
-		return new RefactoringStatus();
+	private void checkDirtyFile(RefactoringStatus result, IFile file) {
+		if (!file.exists())
+			return;
+		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+		if (buffer != null && buffer.isDirty()) {
+			String message= RefactoringCoreMessages.DeleteResourcesProcessor_warning_unsaved_file;
+			if (buffer.isStateValidated() && buffer.isSynchronized()) {
+				result.addWarning(Messages.format(message, BasicElementLabels.getPathLabel(file.getFullPath(), false)));
+			} else {
+				result.addFatalError(Messages.format(message, BasicElementLabels.getPathLabel(file.getFullPath(), false)));
+			}
+		}
 	}
 
 	/* (non-Javadoc)

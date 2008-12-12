@@ -71,7 +71,7 @@ public class DeleteResourceChange extends ResourceChange {
 		fResourcePath= resourcePath;
 		fForceOutOfSync= forceOutOfSync;
 		fDeleteContent= deleteContent;
-		setValidationMethod(VALIDATE_NOT_DIRTY);
+		setValidationMethod(SAVE_IF_DIRTY);
 	}
 
 	/* (non-Javadoc)
