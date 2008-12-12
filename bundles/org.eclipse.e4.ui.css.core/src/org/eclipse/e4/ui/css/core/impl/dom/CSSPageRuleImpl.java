@@ -28,8 +28,9 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule, Seriali
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSRule.getType()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#getType()
 	 */
 	public short getType() {
 		return CSSRule.PAGE_RULE;
@@ -37,24 +38,27 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule, Seriali
 	
 	// W3C CSSPageRule API methods
 	
-	/**
-	 * @see org.w3c.dom.css.CSSPageRule.getSelectorText()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSPageRule#getSelectorText()
 	 */
 	public String getSelectorText() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSPageRule.getStyle()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSPageRule#getStyle()
 	 */
 	public CSSStyleDeclaration getStyle() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSPageRule.setSelectorText(String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSPageRule#setSelectorText(String)
 	 */
 	public void setSelectorText(String arg0) throws DOMException {
 		// TODO Auto-generated method stub

@@ -27,8 +27,9 @@ public class CSSImportRuleImpl extends CSSRuleImpl implements CSSImportRule, Ser
 		// TODO Auto-generated constructor stub
 	}
 	
-	/**
-	 * @see org.w3c.dom.css.CSSRule.getType()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#getType()
 	 */
 	public short getType() {
 		return CSSRule.IMPORT_RULE;
@@ -36,15 +37,17 @@ public class CSSImportRuleImpl extends CSSRuleImpl implements CSSImportRule, Ser
 	
 	// W3C CSSImportRule API methods
 
-	/**
-	 * @see org.w3c.dom.css.CSSImportRule.getHref()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSImportRule#getHref()
 	 */
 	public String getHref() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.w3c.dom.css.CSSImportRule#getMedia()
 	 */
 	public MediaList getMedia() {
@@ -52,14 +55,12 @@ public class CSSImportRuleImpl extends CSSRuleImpl implements CSSImportRule, Ser
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSImportRule.getStyleSheet()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSImportRule#getStyleSheet()
 	 */
 	public CSSStyleSheet getStyleSheet() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
-
-	// Additional methods
-
 }

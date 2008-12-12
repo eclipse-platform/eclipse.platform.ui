@@ -26,8 +26,9 @@ public class CSSUnknownRuleImpl extends CSSRuleImpl implements CSSUnknownRule, S
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSRule.getType()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#getType()
 	 */
 	public short getType() {
 		return CSSRule.UNKNOWN_RULE;

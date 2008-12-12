@@ -32,35 +32,40 @@ public abstract class CSSRuleImpl extends AbstractCSSNode implements CSSRule {
 
 	// W3C CSSRule API methods
 	
-	/**
-	 * @see org.w3c.dom.css.CSSRule.getCssText()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#getCssText()
 	 */
 	public String getCssText() {
 		// TODO Auto-generated constructor stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSRule.getParentStyleSheet()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#getParentStyleSheet()
 	 */
 	public CSSStyleSheet getParentStyleSheet() {
 		return parentStyleSheet;
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSRule.getParentRule()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#getParentRule()
 	 */
 	public CSSRule getParentRule() {
 		return parentRule;
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSRule.getType()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#getType()
 	 */
 	abstract public short getType();
 
-	/**
-	 * @see org.w3c.dom.css.CSSRule.setCssText()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#setCssText(java.lang.String)
 	 */
 	public void setCssText(String cssText) throws DOMException {
 		if(readOnly)
@@ -71,6 +76,4 @@ public abstract class CSSRuleImpl extends AbstractCSSNode implements CSSRule {
 		// TODO throws HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at this point in the style sheet.
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
 	}
-
-
 }

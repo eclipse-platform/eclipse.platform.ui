@@ -14,7 +14,6 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;

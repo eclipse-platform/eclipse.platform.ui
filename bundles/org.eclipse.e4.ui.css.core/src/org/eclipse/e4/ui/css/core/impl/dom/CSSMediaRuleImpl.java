@@ -29,8 +29,9 @@ public class CSSMediaRuleImpl extends CSSRuleImpl implements CSSMediaRule, Seria
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSRule.getType()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSRule#getType()
 	 */
 	public short getType() {
 		return CSSRule.MEDIA_RULE;

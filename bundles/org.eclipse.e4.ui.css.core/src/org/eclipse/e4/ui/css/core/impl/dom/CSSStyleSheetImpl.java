@@ -32,8 +32,9 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet,
 
 	// W3C CSSStyleSheet API methods
 		
-	/**
-	 * @see org.w3c.dom.css.CSSStyleSheet.deleteRule(int)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleSheet#deleteRule(int)
 	 */
 	public void deleteRule(int position) throws DOMException {
 		try {
@@ -43,23 +44,26 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet,
 		}
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleSheet.getCssRules()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleSheet#getCssRules()
 	 */
 	public CSSRuleList getCssRules() {
 		return rules;
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleSheet.getOwnerRule()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleSheet#getOwnerRule()
 	 */
 	public CSSRule getOwnerRule() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.css.CSSStyleSheet.insertRule(String, int)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSStyleSheet#insertRule(String, int)
 	 */
 	public int insertRule(String arg0, int arg1) throws DOMException {
 		// TODO Auto-generated method stub
@@ -69,64 +73,72 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet,
 	
 	// org.w3c.dom.stylesheet.StyleSheet API methods
 	
-	/**
-	 * @see org.w3c.dom.stylesheet.StyleSheet.getDisabled()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.stylesheet.StyleSheet#getDisabled()
 	 */
 	public boolean getDisabled() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.stylesheet.StyleSheet.getHref() 
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.stylesheet.StyleSheet#getHref() 
 	 */
 	public String getHref() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.stylesheet.StyleSheet.getMedia()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.stylesheet.StyleSheet#getMedia()
 	 */
 	public MediaList getMedia() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.stylesheet.StyleSheet.getOwnerNode()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.stylesheet.StyleSheet#getOwnerNode()
 	 */
 	public Node getOwnerNode() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.stylesheet.StyleSheet.getParentStyleSheet()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.stylesheet.StyleSheet#getParentStyleSheet()
 	 */
 	public StyleSheet getParentStyleSheet() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");	
 	}
 	
-	/**
-	 * @see org.w3c.dom.stylesheet.StyleSheet.getTitle()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.stylesheet.StyleSheet#getTitle()
 	 */
 	public String getTitle() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.stylesheet.StyleSheet.getType()
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.stylesheet.StyleSheet#getType()
 	 */
 	public String getType() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/**
-	 * @see org.w3c.dom.stylesheet.StyleSheet.setDisabled(boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.stylesheet.StyleSheet#setDisabled(boolean)
 	 */
 	public void setDisabled(boolean disabled) {
 		// TODO Auto-generated method stub
