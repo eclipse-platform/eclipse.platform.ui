@@ -155,6 +155,8 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	private void checkDirtyResources(final RefactoringStatus result) throws CoreException {
 		for (int i= 0; i < fResources.length; i++) {
 			IResource resource= fResources[i];
+			if (resource instanceof IProject && !((IProject) resource).isOpen())
+				continue;
 			resource.accept(new IResourceVisitor() {
 				public boolean visit(IResource visitedResource) throws CoreException {
 					if (visitedResource instanceof IFile) {
