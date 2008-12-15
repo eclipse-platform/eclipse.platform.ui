@@ -11,21 +11,47 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cocoa;
 
-import java.text.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import org.eclipse.core.commands.*;
-import org.eclipse.core.commands.common.*;
-import org.eclipse.core.runtime.*;
+import javax.swing.text.WrappedPlainView;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.internal.*;
-import org.eclipse.swt.internal.cocoa.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.handlers.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.internal.C;
+import org.eclipse.swt.internal.Callback;
+import org.eclipse.swt.internal.cocoa.NSApplication;
+import org.eclipse.swt.internal.cocoa.NSButton;
+import org.eclipse.swt.internal.cocoa.NSControl;
+import org.eclipse.swt.internal.cocoa.NSMenu;
+import org.eclipse.swt.internal.cocoa.NSMenuItem;
+import org.eclipse.swt.internal.cocoa.NSString;
+import org.eclipse.swt.internal.cocoa.NSToolbar;
+import org.eclipse.swt.internal.cocoa.NSWindow;
+import org.eclipse.swt.internal.cocoa.OS;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IStartup;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * The CocoaUIEnhancer provides the standard "About" and "Preference" menu items
@@ -47,10 +73,11 @@ public class CocoaUIEnhancer implements IStartup {
 	private static final int kQuitMenuItem = 10;
 	
 	static Callback proc3Args;
+	static final Class PTR_CLASS =  C.PTR_SIZEOF == 8 ? long.class : int.class;
 	static final String SWT_OBJECT = "SWT_OBJECT"; //$NON-NLS-1$
-	static final int /*long*/ sel_toolbarButtonClicked_ = OS.sel_registerName("toolbarButtonClicked:"); //$NON-NLS-1$
-	static final int /*long*/ sel_preferencesMenuItemSelected_ = OS.sel_registerName("preferencesMenuItemSelected:"); //$NON-NLS-1$
-	static final int /*long*/ sel_aboutMenuItemSelected_ = OS.sel_registerName("aboutMenuItemSelected:"); //$NON-NLS-1$
+	static final long sel_toolbarButtonClicked_ = OS.sel_registerName("toolbarButtonClicked:"); //$NON-NLS-1$
+	static final long sel_preferencesMenuItemSelected_ = OS.sel_registerName("preferencesMenuItemSelected:"); //$NON-NLS-1$
+	static final long sel_aboutMenuItemSelected_ = OS.sel_registerName("aboutMenuItemSelected:"); //$NON-NLS-1$
 
 	static {
 		String className = "SWTCocoaEnhancerDelegate"; //$NON-NLS-1$
@@ -62,22 +89,37 @@ public class CocoaUIEnhancer implements IStartup {
 		Class clazz = CocoaUIEnhancer.class;
 
 		proc3Args = new Callback(clazz, "actionProc", 3); //$NON-NLS-1$
-		int /*long*/ proc3 = proc3Args.getAddress();
+		long proc3 = proc3Args.getAddress();
 		if (proc3 == 0) SWT.error (SWT.ERROR_NO_MORE_CALLBACKS);
 
-		int /*long*/ cls = OS.objc_allocateClassPair(OS.class_NSObject, className, 0);
-		OS.class_addIvar(cls, SWT_OBJECT, size, (byte)align, types);
+		long cls = OS.objc_allocateClassPair(OS.class_NSObject, className, 0);
+		try {
+			invokeMethod(OS.class, "class_addIvar", new Object[] {
+					wrapPointer(cls), SWT_OBJECT, wrapPointer(size),
+					new Byte((byte) align), types });
 
-		// Add the action callback
-		OS.class_addMethod(cls, sel_toolbarButtonClicked_, proc3, "@:@"); //$NON-NLS-1$
-		OS.class_addMethod(cls, sel_preferencesMenuItemSelected_, proc3, "@:@"); //$NON-NLS-1$
-		OS.class_addMethod(cls, sel_aboutMenuItemSelected_, proc3, "@:@"); //$NON-NLS-1$
+			// Add the action callback
+			invokeMethod(
+					OS.class,
+					"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_toolbarButtonClicked_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
+			invokeMethod(OS.class, "class_addMethod", new Object[] {
+					wrapPointer(cls),
+					wrapPointer(sel_preferencesMenuItemSelected_),
+					wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
+			invokeMethod(
+					OS.class,
+					"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_aboutMenuItemSelected_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
 
-		OS.objc_registerClassPair(cls);
+			invokeMethod(OS.class, "objc_registerClassPair",
+					new Object[] { wrapPointer(cls) });
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}	
 
 	SWTCocoaEnhancerDelegate delegate;
-	private int /*long*/ delegateJniRef;
+	private long delegateJniRef;
 
 	/**
 	 * Class that is able to intercept and handle OS events from the toolbar and menu.
@@ -150,30 +192,44 @@ public class CocoaUIEnhancer implements IStartup {
         		delegate.alloc().init();
         		delegateJniRef = OS.NewGlobalRef(CocoaUIEnhancer.this);
         		if (delegateJniRef == 0) SWT.error(SWT.ERROR_NO_HANDLES);
-        		OS.object_setInstanceVariable(delegate.id, SWT_OBJECT, delegateJniRef);		
+				try {
+					invokeMethod(OS.class, "object_setInstanceVariable",
+							new Object[] { wrapPointer(delegate.id),
+									SWT_OBJECT, wrapPointer(delegateJniRef) });
 
-        		hookApplicationMenu();
-				hookWorkbenchListener();
-				
-		        // schedule disposal of callback object
-		        display.disposeExec(new Runnable() {
-		            public void run() {
-		            	if (delegateJniRef != 0) OS.DeleteGlobalRef(delegateJniRef);
-		            	delegateJniRef = 0;
-		            	
-		            	if (delegate != null) delegate.release();
-		            	delegate = null;
-		                
-		            	if (proc3Args != null) proc3Args.dispose();
-		                proc3Args = null;
-		            }
-		        });
+					hookApplicationMenu();
+					hookWorkbenchListener();
 
-				// modify all shells opened on startup
-				IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-						.getWorkbenchWindows();
-				for (int i = 0; i < windows.length; i++) {
-					modifyWindowShell(windows[i]);
+					// schedule disposal of callback object
+					display.disposeExec(new Runnable() {
+						public void run() {
+							if (delegateJniRef != 0) {
+								try {
+									invokeMethod(OS.class, "DeleteGlobalRef", new Object[] {wrapPointer(delegateJniRef)});
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+							delegateJniRef = 0;
+
+							if (delegate != null)
+								delegate.release();
+							delegate = null;
+
+							if (proc3Args != null)
+								proc3Args.dispose();
+							proc3Args = null;
+						}
+					});
+
+					// modify all shells opened on startup
+					IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+							.getWorkbenchWindows();
+					for (int i = 0; i < windows.length; i++) {
+						modifyWindowShell(windows[i]);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
         });
@@ -201,7 +257,11 @@ public class CocoaUIEnhancer implements IStartup {
 			}
 
 			public void windowOpened(IWorkbenchWindow window) {
-				modifyWindowShell(window);
+				try {
+					modifyWindowShell(window);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}});
 	}
 
@@ -213,7 +273,7 @@ public class CocoaUIEnhancer implements IStartup {
 	 *            the window to modify
 	 * @since 3.2
 	 */
-	protected void modifyWindowShell(IWorkbenchWindow window) {
+	protected void modifyWindowShell(IWorkbenchWindow window) throws Exception {
 		// only add the button when either the coolbar or perspectivebar
 		// is initially visible. This is so that RCP apps can choose to use
 		// this fragment without fear that their explicitly invisble bars
@@ -239,12 +299,14 @@ public class CocoaUIEnhancer implements IStartup {
 			
 			// Override the target and action of the toolbar button so we can control it.
 			NSButton toolbarButton = nsWindow.standardWindowButton(OS.NSWindowToolbarButton);
+			
 			toolbarButton.setTarget(delegate);
-			toolbarButton.setAction(sel_toolbarButtonClicked_);
+			invokeMethod(NSControl.class, toolbarButton, "setAction",
+					new Object[] { wrapPointer(sel_toolbarButtonClicked_) });
 		}
 	}
 	
-    private void hookApplicationMenu() {
+    private void hookApplicationMenu()  throws Exception {
         // create About Eclipse menu command
     	NSMenu mainMenu = NSApplication.sharedApplication().mainMenu();
     	NSMenu appMenu = mainMenu.itemAtIndex(0).submenu();
@@ -273,12 +335,12 @@ public class CocoaUIEnhancer implements IStartup {
 
     	// Register as a target on the prefs and quit items.
     	appMenu.itemAtIndex(kPreferencesMenuItem).setTarget(delegate);
-    	appMenu.itemAtIndex(kPreferencesMenuItem).setAction(sel_preferencesMenuItemSelected_);
+    	invokeMethod(NSMenuItem.class, appMenu.itemAtIndex(kPreferencesMenuItem), "setAction", new Object[] {wrapPointer(sel_preferencesMenuItemSelected_)});
     	appMenu.itemAtIndex(kAboutMenuItem).setTarget(delegate);
-    	appMenu.itemAtIndex(kAboutMenuItem).setAction(sel_aboutMenuItemSelected_);
+    	invokeMethod(NSMenuItem.class, appMenu.itemAtIndex(kAboutMenuItem), "setAction", new Object[] {wrapPointer(sel_aboutMenuItemSelected_)});
     }
 
-    /**
+	/**
      * Locate an action with the given id in the current menubar and run it.
      */
     private void runAction(String actionId) {
@@ -384,16 +446,19 @@ public class CocoaUIEnhancer implements IStartup {
 		runAction("about"); //$NON-NLS-1$
 	}
 
+	static int actionProc(int id, int sel, int arg0) throws Exception {
+		return (int) actionProc((long)id, (long)sel, (long)arg0);
+	}
 
-	static int /*long*/ actionProc(int /*long*/ id, int /*long*/ sel, int /*long*/ arg0) {
-		int /*long*/ [] jniRef = new int /*long*/ [1];
-		OS.object_getInstanceVariable(id, SWT_OBJECT, jniRef);
+	static long actionProc(long id, long sel, long arg0) throws Exception {
+		long [] jniRef = OS_object_getInstanceVariable(id, SWT_OBJECT);
 		if (jniRef[0] == 0) return 0;
 		
-		CocoaUIEnhancer delegate = (CocoaUIEnhancer) OS.JNIGetObject(jniRef[0]); 
+		CocoaUIEnhancer delegate = (CocoaUIEnhancer) invokeMethod(OS.class,
+				"JNIGetObject", new Object[] { wrapPointer(jniRef[0]) });
 		
 		if (sel == sel_toolbarButtonClicked_) {
-			NSControl source = new NSControl(arg0);
+			NSControl source = new_NSControl(arg0);
 			delegate.toolbarButtonClicked(source);
 		} else if (sel == sel_preferencesMenuItemSelected_) {
 			delegate.preferencesMenuItemSelected();
@@ -403,5 +468,80 @@ public class CocoaUIEnhancer implements IStartup {
 		
 		return 0;
 	}
+	
+	
 
+	// The following methods reflectively call corresponding methods in the OS
+	// class, using ints or longs as required based on platform.
+
+	private static NSControl new_NSControl(long arg0)
+			throws NoSuchMethodException, InstantiationException,
+			IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
+		Class clazz = NSControl.class;
+		Constructor constructor = clazz
+				.getConstructor(new Class[] { PTR_CLASS });
+		return (NSControl) constructor.newInstance(new Object[] { wrapPointer(arg0) });
+	}
+	
+	/**
+	 * Specialized method.  It's behaviour is isolated and different enough from the usual invocation that custom code is warranted.
+	 */
+	private static long[] OS_object_getInstanceVariable(long delegateId,
+			String name) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException,
+			SecurityException, NoSuchMethodException {
+		Class clazz = OS.class;
+		Method method = null;
+		if (PTR_CLASS == long.class) {
+			method = clazz.getMethod("object_getInstanceVariable", new Class[] {
+					long.class, String.class, long[].class });
+			long[] resultPtr = new long[1];
+			method.invoke(null, new Object[] { new Long(delegateId), name,
+					resultPtr });
+			return resultPtr;
+		} 
+		else {
+			method = clazz.getMethod("object_getInstanceVariable", new Class[] {
+					int.class, String.class, int[].class });
+			int[] resultPtr = new int[1];
+			method.invoke(null, new Object[] { new Integer((int) delegateId),
+					name, resultPtr });
+			return new long[] { resultPtr[0] };
+		}
+	}
+	
+	private static Object invokeMethod(Class clazz, String methodName,
+			Object[] args) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException,
+			SecurityException, NoSuchMethodException {
+		return invokeMethod(clazz, null, methodName, args);
+	}
+
+	private static Object invokeMethod(Class clazz, Object target,
+			String methodName, Object[] args) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException,
+			SecurityException, NoSuchMethodException {
+		Class[] signature = new Class[args.length];
+		for (int i = 0; i < args.length; i++) {
+			Class thisClass = args[i].getClass();
+			if (thisClass == Integer.class)
+				signature[i] = int.class;
+			else if (thisClass == Long.class)
+				signature[i] = long.class;
+			else if (thisClass == Byte.class)
+				signature[i] = byte.class;
+			else
+				signature[i] = thisClass;
+		}
+		Method method = clazz.getMethod(methodName, signature);
+		return method.invoke(target, args);
+	}
+	
+	private static Object wrapPointer(long value) {
+		if (PTR_CLASS == long.class)
+			return new Long(value);
+		else 
+			return new Integer((int)value);
+	}
 }
