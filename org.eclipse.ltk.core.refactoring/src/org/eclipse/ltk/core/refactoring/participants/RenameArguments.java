@@ -16,12 +16,11 @@ import org.eclipse.core.runtime.Assert;
  * Rename arguments describe the data that a processor
  * provides to its rename participants.
  * <p>
- * This class is not intended to be subclassed by clients.
+ * This class may be subclassed by refactoring processors wishing to provide special
+ * rename arguments for special participants.
  * </p>
- *
+ * 
  * @since 3.0
- *
- * @noextend This class is not intended to be subclassed by clients.
  */
 public class RenameArguments extends RefactoringArguments {
 
