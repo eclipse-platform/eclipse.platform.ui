@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class IResourceTest extends ResourceTest {
+
+	private boolean DISABLED = true;
 
 	public static Test suite() {
 		return new TestSuite(IResourceTest.class);
@@ -437,10 +439,10 @@ public class IResourceTest extends ResourceTest {
 	 * OS and file system.
 	 */
 	public void testDelete_1GD3ZUZ() {
-		// This test cannot be done automatically on Windows because we don't know in that
+		// This test cannot be done automatically because we don't know in that
 		// file system we are running. Will leave test here in case it needs
 		// to be run it in a special environment.
-		if (isWindows())
+		if (DISABLED)
 			return;
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
