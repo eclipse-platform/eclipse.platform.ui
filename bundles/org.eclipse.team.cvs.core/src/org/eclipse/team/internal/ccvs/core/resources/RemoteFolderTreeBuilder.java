@@ -317,12 +317,16 @@ public class RemoteFolderTreeBuilder {
 				if (d.getRevision() == DELETED) {
 					return null;
 				}
+				CVSTag newTag = tagForRemoteFolder(remoteRoot, tag);
+				if (newTag == null && file.getSyncInfo() != null) {
+					newTag = file.getSyncInfo().getTag();
+				}
 				remoteFile = new RemoteFile(remoteRoot, 
 					d.getSyncState(), 
 					file.getName(), 
 					null, /* the revision will be retrieved from the server */
 					getKeywordMode(file), /* use the same keyword mode as the local file */
-					file.getSyncInfo() != null ? file.getSyncInfo().getTag() : null /* use a tag for the file if available */);
+					newTag);
 			}
 			// Add the resource to its parent
 			remoteRoot.setChildren(new ICVSRemoteResource[] {remoteFile});

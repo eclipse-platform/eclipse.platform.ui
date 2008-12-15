@@ -381,6 +381,34 @@ public class RemoteResourceTest extends EclipseTest {
 		assertEquals(branch, file2.getSyncInfo().getTag());
 		assertEquals("1.2.2.1", file2.getSyncInfo().getRevision());
 	}
+	
+	public void testBug244425_compare() throws CVSException, CoreException,
+	IOException {
+		IProject projectHead = createProject("test", new String[] { "a/",
+				"a/file1.txt", "a/file2.txt" });
+		appendText(projectHead.getFile("a/file1.txt"), "dummy", true);
+		appendText(projectHead.getFile("a/file2.txt"), "dummy", true);
+		// tag files
+		CVSTag tag = new CVSTag("testtag", CVSTag.VERSION);
+		tagProject(projectHead, tag, false);
+		
+		// modify files
+		appendText(projectHead.getFile("a/file2.txt"), "dummy2", true);
+		commitProject(projectHead);
+		
+		// revert to tagged version
+		replace(new IResource[] { projectHead.getFile("a/file2.txt") }, tag,
+				true);
+		assertEquals("1.1", CVSWorkspaceRoot.getCVSFileFor(
+				projectHead.getFile("a/file2.txt")).getSyncInfo().getRevision());
+
+		// compare with head
+		// this is the crucial part of this test. It is necessary that
+		// getRemoteTree ignores existing tag when comparing with f.e. HEAD.
+		ICVSRemoteResource remoteFile = getRemoteTree(projectHead
+				.getFile("a/file2.txt"), new CVSTag() /* HEAD */, DEFAULT_MONITOR);
+		assertEquals("1.2", remoteFile.getSyncInfo().getRevision());
+	}
 
 	private ICVSRemoteFolder checkoutRemote(ICVSRemoteFolder remote) throws CVSException, InvocationTargetException, InterruptedException {
 		return CheckoutToRemoteFolderOperation.checkoutRemoteFolder(null, remote, DEFAULT_MONITOR);
