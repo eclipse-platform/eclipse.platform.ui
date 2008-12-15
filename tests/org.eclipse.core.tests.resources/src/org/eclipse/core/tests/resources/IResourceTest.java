@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.tests.harness.CancelingProgressMonitor;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 public class IResourceTest extends ResourceTest {
-	private boolean DISABLED = true;
 	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
 	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
@@ -1131,8 +1130,6 @@ public class IResourceTest extends ResourceTest {
 	/**
 	 * Performs black box testing of the following method: IPath getLocation() */
 	public void testGetLocation() {
-		if (DISABLED)
-			return;
 		noSideEffects = true;
 		Object[][] inputs = new Object[][] {interestingResources};
 		new TestPerformer("IResourceTest.testGetLocation") {
@@ -1158,7 +1155,7 @@ public class IResourceTest extends ResourceTest {
 						return resultPath == null;
 					return resultPath != null;
 				}
-				if (!resource.isAccessible())
+				if (!resource.getProject().exists())
 					return resultPath == null;
 				return resultPath != null;
 			}
