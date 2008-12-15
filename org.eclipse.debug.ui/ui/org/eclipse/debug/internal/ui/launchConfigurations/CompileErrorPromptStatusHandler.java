@@ -48,9 +48,16 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 				return Boolean.TRUE;
 			}
 		}
-
-		MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, title, null, message, MessageDialog.WARNING,
-				new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 1, null, false);
+		MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+				shell, 
+				title, 
+				null, 
+				message, 
+				MessageDialog.WARNING,
+				new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
+				1, 
+				LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1, 
+				false);
 		dialog.setPrefKey(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		dialog.setPrefStore(store);
 		dialog.open();
