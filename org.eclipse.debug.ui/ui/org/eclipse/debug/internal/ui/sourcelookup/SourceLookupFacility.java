@@ -239,6 +239,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				}
 				if (textEditor != null) {
 					positionEditor(textEditor, frame);
+					InstructionPointerManager.getDefault().removeAnnotations(textEditor); 
 					Annotation annotation = fPresentation.getInstructionPointerAnnotation(textEditor, frame);
 					InstructionPointerManager.getDefault().addAnnotation(textEditor, frame, annotation);
 				}
