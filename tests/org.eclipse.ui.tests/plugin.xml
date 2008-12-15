@@ -3860,6 +3860,16 @@
             id="org.eclipse.ui.tests.commandEnabledVisibility"
             name="Command Enabled Visibility">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.tests.simplyGo"
+            name="Test Window Action Delegate">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.tests.simplyStay"
+            name="Test Editor Action Delegate">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -3874,6 +3884,35 @@
                menubarPath="additions">
          </action>
       </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution 
+            id="org.eclipse.ui.tests.editorContribution"
+            targetID="org.eclipse.ui.DefaultTextEditor">
+         <action
+               class="org.eclipse.ui.tests.commands.EditorActionDelegate"
+               definitionId="org.eclipse.ui.tests.simplyStay"
+               id="org.eclipse.ui.tests.action.simplyStay"
+               label="Stay"
+               menubarPath="window/additions">
+         </action>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.ui.tests.delegateActionSet"
+            label="actionSet for delegates">
+         <action
+               class="org.eclipse.ui.tests.commands.SimplyGoActionDelegate"
+               definitionId="org.eclipse.ui.tests.simplyGo"
+               id="org.eclipse.ui.tests.action1"
+               label="Simply Go"
+               menubarPath="window/additions"
+               style="push">
+         </action>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.commandImages">
