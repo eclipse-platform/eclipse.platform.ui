@@ -142,7 +142,7 @@ public class StatusDialogUtil {
 	
 	public static Table getTable(){
 		Composite c = getListAreaComposite();
-		if(c.getChildren().length == 0){
+		if(c == null || c.getChildren().length == 0){
 			return null;
 		}
 		return (Table) c.getChildren()[0];
