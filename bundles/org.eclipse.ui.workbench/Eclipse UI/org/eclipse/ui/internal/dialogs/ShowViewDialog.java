@@ -444,7 +444,7 @@ public class ShowViewDialog extends Dialog implements
 
 	private void popUp(final String description) {
 		new PopupDialog(filteredTree.getShell(), PopupDialog.HOVER_SHELLSTYLE,
-				true, false, false, false, null, null) {
+				true, false, false, false, false, null, null) {
 			private static final int CURSOR_SIZE = 15;
 
 			protected Point getInitialLocation(Point initialSize) {
