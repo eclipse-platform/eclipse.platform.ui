@@ -101,6 +101,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	
 	private IContextService fContextService;
 	
+	private IDebugContextService fDebugContextService;
+	
 	// base debug context
 	public static final String DEBUG_CONTEXT= "org.eclipse.debug.ui.debugging"; //$NON-NLS-1$
 	
@@ -572,7 +574,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     }
     
     private IDebugContextService getDebugContextService() {
-    	return DebugUITools.getDebugContextManager().getContextService(fWindow);
+    	return fDebugContextService;
     }
 	
 	/**
@@ -583,6 +585,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	ViewContextService(IWorkbenchWindow window) {
 		fWindow = window;
 		fContextService = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
+        fDebugContextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
 		loadContextToViewExtensions();
         applyUserViewBindings();
 		loadPerspectives();

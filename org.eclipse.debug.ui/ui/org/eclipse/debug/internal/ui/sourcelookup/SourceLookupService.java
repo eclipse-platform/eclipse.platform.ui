@@ -16,6 +16,7 @@ import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,14 +32,16 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class SourceLookupService implements IDebugContextListener, ISourceDisplay {
 	
 	private IWorkbenchWindow fWindow;
+	private IDebugContextService fDebugContextService;
 	
 	public SourceLookupService(IWorkbenchWindow window) {
 		fWindow = window;
-		DebugUITools.getDebugContextManager().getContextService(window).addDebugContextListener(this);
+		fDebugContextService = DebugUITools.getDebugContextManager().getContextService(window); 
+		fDebugContextService.addDebugContextListener(this);
 	}
 	
 	public void dispose() {
-		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(this);
+		fDebugContextService.removeDebugContextListener(this);
 	}
 
 	public synchronized void debugContextChanged(DebugContextEvent event) {
