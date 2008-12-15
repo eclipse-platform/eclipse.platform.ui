@@ -23,6 +23,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.handlers.RegistryRadioState;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -272,5 +273,22 @@ public class StateTest extends UITestCase {
 		nstate.load(preferenceStore, COMMAND_ID
 				+ "." + TEXT_STATE_ID);
 		assertEquals(TEXT_HELLO, nstate.getValue());
+	}
+	
+	public final void testRadioState() {
+		RegistryRadioState state1 = new RegistryRadioState();
+		state1.setInitializationData(null, "class", COMMAND_ID);
+		assertEquals(Boolean.FALSE, state1.getValue());
+		RegistryRadioState state2 = new RegistryRadioState();
+		state2.setInitializationData(null, "class", COMMAND_ID);
+		assertEquals(Boolean.FALSE, state2.getValue());
+
+		state1.setValue(Boolean.TRUE);
+		assertEquals(Boolean.TRUE, state1.getValue());
+		assertEquals(Boolean.FALSE, state2.getValue());
+
+		state2.setValue(Boolean.TRUE);
+		assertEquals(Boolean.FALSE, state1.getValue());
+		assertEquals(Boolean.TRUE, state2.getValue());
 	}
 }
