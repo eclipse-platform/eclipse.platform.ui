@@ -66,6 +66,8 @@ public abstract class SelectAllAction extends AbstractRemoveAllActionDelegate {
 			Tree tree= ((TreeViewer) viewer).getTree();
 			collectExpandedAndVisible(tree.getItems(), allVisible);
 			tree.setSelection((TreeItem[]) allVisible.toArray(new TreeItem[allVisible.size()]));
+			// force viewer selection change
+			viewer.setSelection(viewer.getSelection());
 		}
 	}
 	
