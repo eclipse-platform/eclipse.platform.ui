@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ObjectContributorManager;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
@@ -58,7 +60,12 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 		public void handleException(Throwable exception) {
 			IStatus status = StatusUtil.newStatus(IStatus.ERROR, exception
 					.getMessage(), exception);
-			WorkbenchPlugin.log("Exception in Decorator", status); //$NON-NLS-1$
+			String message = WorkbenchMessages.DecoratorError;
+			if (decorator != null) {
+				message += " " + NLS.bind(WorkbenchMessages.DecoratorWillBeDisabled, //$NON-NLS-1$
+										decorator.getName());
+			}
+			WorkbenchPlugin.log(message, status);
 			if (decorator != null) {
 				decorator.crashDisable();
 			}

@@ -526,6 +526,8 @@ public class WorkbenchMessages extends NLS {
 	public static String DecoratorsPreferencePage_description;
 	public static String DecoratorsPreferencePage_decoratorsLabel;
 	public static String DecoratorsPreferencePage_explanation;
+	public static String DecoratorError;
+	public static String DecoratorWillBeDisabled;
 
 	// --- Startup preferences ---
 	public static String StartupPreferencePage_label;
