@@ -16,11 +16,5 @@
                 <message_argument value="ITextEditorHelpContextIds"/>
             </message_arguments>
         </filter>
-        <filter id="574619656">
-            <message_arguments>
-                <message_argument value="IAbstractTextEditorHelpContextIds"/>
-                <message_argument value="ITextEditorHelpContextIds"/>
-            </message_arguments>
-        </filter>
     </resource>
 </component>
