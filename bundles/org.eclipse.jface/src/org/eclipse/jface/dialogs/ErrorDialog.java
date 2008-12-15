@@ -41,6 +41,15 @@ import org.eclipse.swt.widgets.Shell;
  * information then a Details button is automatically supplied, which shows or
  * hides an error details viewer when pressed by the user.
  * 
+ * <p>
+ * This dialog should be considered being a "local" way of error handling. It
+ * cannot be changed or replaced by "global" error handling facility (
+ * <code>org.eclipse.ui.statushandler.StatusManager</code>). If product defines
+ * its own way of handling errors, this error dialog may cause UI inconsistency,
+ * so until it is absolutely necessary, <code>StatusManager</code> should be
+ * used.
+ * </p>
+ * 
  * @see org.eclipse.core.runtime.IStatus
  */
 public class ErrorDialog extends IconAndMessageDialog {
