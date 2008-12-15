@@ -1096,5 +1096,8 @@ public class WorkbenchMessages extends NLS {
 	// Util
 	public static String Util_List;
 	public static String Util_listNull;
+
+
+	public static String ErrorLogUtil_ShowErrorLog;
 	
 }
