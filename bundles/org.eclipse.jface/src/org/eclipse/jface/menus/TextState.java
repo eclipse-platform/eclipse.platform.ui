@@ -51,7 +51,7 @@ public class TextState extends PersistentState {
 	}
 
 	public void setValue(final Object value) {
-		if (!(value instanceof String)) {
+		if (!(value instanceof String) && value != null) {
 			throw new IllegalArgumentException(
 					"TextState takes a String as a value"); //$NON-NLS-1$
 		}
