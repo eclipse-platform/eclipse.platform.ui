@@ -160,11 +160,7 @@ public class UpdateCommand extends ScriptedCommand {
 					operations);
 			try {
 				installOperation.execute(new SubProgressMonitor(monitor,3), this);
-				System.out.println(
-						Messages.Standalone_feature
-						+ featureId
-						+ " " //$NON-NLS-1$
-						+ Messages.Standalone_updated); 
+				System.out.println(NLS.bind(Messages.Standalone_updated, featureId));
 				return true;
 			} catch (Exception e) {
 				StandaloneUpdateApplication.exceptionLogged();

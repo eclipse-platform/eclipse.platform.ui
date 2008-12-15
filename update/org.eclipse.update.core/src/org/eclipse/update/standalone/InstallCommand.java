@@ -145,13 +145,7 @@ public class InstallCommand extends ScriptedCommand {
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
 				throw Utilities.newCoreException(
-					Messages.Standalone_feature
-						+ featureId
-						+ " " //$NON-NLS-1$
-						+ version
-						+ Messages.Standalone_notFound
-						+ remoteSiteURL
-						+ Messages.Standalone_newerInstalled, 
+					NLS.bind(Messages.Standalone_notFoundOrNewer, featureId + ' ' + version, remoteSiteURL),
 					null);
 			}
 
@@ -183,12 +177,7 @@ public class InstallCommand extends ScriptedCommand {
 					operations);
 			try {
 				installOperation.execute(new SubProgressMonitor(monitor,3), this);
-				System.out.println(
-					Messages.Standalone_feature
-						+ featureId
-						+ " " //$NON-NLS-1$
-						+ version
-						+ Messages.Standalone_installed); 
+				System.out.println(NLS.bind(Messages.Standalone_installed, featureId + ' ' + version));
 				return true;
 			} catch (Exception e) {
 				throw Utilities.newCoreException(

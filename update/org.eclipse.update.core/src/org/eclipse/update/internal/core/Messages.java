@@ -257,9 +257,7 @@ public final class Messages extends NLS {
 	public static String Standalone_noSite3;
 	public static String Standalone_noConfiguredSite;
 	public static String Standalone_installing;
-	public static String Standalone_feature;
-	public static String Standalone_notFound;
-	public static String Standalone_newerInstalled;
+	public static String Standalone_notFoundOrNewer;
 	public static String Standalone_duplicate;
 	public static String Standalone_installed;
 	public static String Standalone_cannotInstall;
