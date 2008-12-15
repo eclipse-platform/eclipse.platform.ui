@@ -183,6 +183,7 @@ public class RadioState extends ToggleState {
 				radioGroup = (RadioGroup) currentValue;
 			} else {
 				radioGroup = new RadioGroup();
+				radioStatesById.put(identifier, radioGroup);
 			}
 			radioGroup.addMember(state);
 		}
