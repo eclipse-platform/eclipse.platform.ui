@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,9 +62,9 @@ public class LRUCache implements Cloneable {
 		/**
 		 * Creates a new instance of the receiver with the provided values
 		 * for key, value, and space.
-		 * @param key
-		 * @param value
-		 * @param space
+		 * @param key key
+		 * @param value value
+		 * @param space space
 		 */
 		public LRUCacheEntry (Object key, Object value, int space) {
 			_fKey = key;
@@ -192,7 +192,7 @@ public class LRUCache implements Cloneable {
 	 * If the value is not in the cache, returns null
 	 *
 	 * @param key Hash table key of object to retrieve
-	 * @return Retreived object, or null if object does not exist
+	 * @return Retrieved object, or null if object does not exist
 	 */
 	public Object get(Object key) {
 
@@ -281,9 +281,9 @@ public class LRUCache implements Cloneable {
 	}
 	/**
 	 * Adds an entry for the given key/value/space.
-	 * @param key
-	 * @param value
-	 * @param space
+	 * @param key key
+	 * @param value value
+	 * @param space space
 	 */
 	protected void privateAdd (Object key, Object value, int space) {
 
@@ -294,7 +294,7 @@ public class LRUCache implements Cloneable {
 	}
 	/**
 	 * Adds the given entry from the receiver.
-	 * @param entry
+	 * @param entry the entry to add
 	 * @param shuffle Indicates whether we are just shuffling the queue
 	 * (in which case, the entry table is not modified).
 	 */
@@ -322,14 +322,14 @@ public class LRUCache implements Cloneable {
 	 * An entry has been removed from the cache, for example because it has
 	 * fallen off the bottom of the LRU queue.
 	 * Subclasses could over-ride this to implement a persistent cache below the LRU cache.
-	 * @param entry
+	 * @param entry the entry
 	 */
 	protected void privateNotifyDeletionFromCache(LRUCacheEntry entry) {
 		// Default is NOP.
 	}
 	/**
 	 * Removes the entry from the entry queue.
-	 * @param entry
+	 * @param entry the entry to remove
 	 * @param shuffle indicates whether we are just shuffling the queue
 	 * (in which case, the entry table is not modified).
 	 */
@@ -430,7 +430,7 @@ public class LRUCache implements Cloneable {
 	}
 	/**
 	 * Returns the space taken by the given value.
-	 * @param value
+	 * @param value the value
 	 * @return an int
 	 */
 	protected int spaceFor (Object value) {
@@ -490,7 +490,7 @@ public class LRUCache implements Cloneable {
 	/**
 	 * Updates the timestamp for the given entry, ensuring that the queue is
 	 * kept in correct order.  The entry must exist
-	 * @param entry
+	 * @param entry the entry
 	 */
 	protected void updateTimestamp (LRUCacheEntry entry) {
 

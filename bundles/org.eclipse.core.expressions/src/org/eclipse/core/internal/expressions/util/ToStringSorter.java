@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,8 @@ public class ToStringSorter {
 	/**
 	 * Returns true if stringTwo is 'greater than' stringOne This is the
 	 * 'ordering' method of the sort operation.
-	 * @param stringOne
-	 * @param stringTwo
+	 * @param stringOne string
+	 * @param stringTwo string
 	 * @return a boolean
 	 */
 	public boolean compare(String stringOne, String stringTwo) {
@@ -35,9 +35,9 @@ public class ToStringSorter {
 	}
 
 	/**
-	 * Sort the objects in sorted collection and return that collection.
-	 * @param left
-	 * @param right
+	 * Sort the objects in sorted collections.
+	 * @param left left index
+	 * @param right right index
 	 */
 	private void quickSort(int left, int right) {
 		int originalLeft= left;
@@ -71,8 +71,8 @@ public class ToStringSorter {
 	/**
 	 * Return a new sorted collection from this unsorted collection. Sort using
 	 * quick sort.
-	 * @param unSortedObjects
-	 * @param unsortedStrings
+	 * @param unSortedObjects objects to sort
+	 * @param unsortedStrings strings to sort
 	 */
 	public void sort(Object[] unSortedObjects, String[] unsortedStrings) {
 		int size= unSortedObjects.length;
