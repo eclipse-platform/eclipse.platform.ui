@@ -63,6 +63,33 @@ public class ObjectContributionClasses implements IAdapterFactory {
 	public static class D extends Common implements IA {
 	}
 	
+	public static class E implements IAdaptable {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			if (adapter == IF.class)
+				return new F();
+			return null;
+		}	
+	}
+	
+	public static interface IF extends IAdaptable {
+	}
+	
+	public static class F implements IF {
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			return null;
+		}
+	}
+	
+	public static class E1 extends E {
+	};
+	
 	public static class C implements ICommon {
 
 		/* (non-Javadoc)

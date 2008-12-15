@@ -64,6 +64,7 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(ISelectionServiceTest.class));
         addTest(new TestSuite(IWorkingSetTest.class));
         addTest(new TestSuite(IWorkingSetManagerTest.class));
+        addTest(new TestSuite(IWorkingSetElementAdapterTests.class));
         addTest(new TestSuite(MockWorkingSetTest.class));
         addTest(new TestSuite(Bug42616Test.class));
         addTest(new TestSuite(StickyViewTest.class));

@@ -2807,6 +2807,11 @@
        </factory>
        <factory
              class="org.eclipse.ui.tests.menus.ObjectContributionClasses"
+             adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$E1">
+          <adapter type="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon"/>
+       </factory>
+       <factory
+             class="org.eclipse.ui.tests.menus.ObjectContributionClasses"
              adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$IModelElement">
           <adapter type="org.eclipse.core.resources.IResource"/>
        </factory>
