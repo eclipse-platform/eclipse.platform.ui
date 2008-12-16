@@ -90,7 +90,7 @@ public class ActionDelegateProxyTest extends UITestCase {
 	
 	private static final String contents = "one\ntwo\nthree\n";
 	
-	public void testEditorActionDelegate() throws Exception {
+	public void XXtestEditorActionDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().closeAllEditors(false);
 		IHandlerService service = (IHandlerService) window.getService(IHandlerService.class);
