@@ -14,7 +14,7 @@
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647
- *                    254524, 246103
+ *                    254524, 246103, 249992
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -65,6 +65,7 @@ import org.eclipse.core.tests.databinding.observable.value.AbstractObservableVal
 import org.eclipse.core.tests.databinding.observable.value.AbstractVetoableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.ComputedValueTest;
 import org.eclipse.core.tests.databinding.observable.value.DecoratingObservableValueTest;
+import org.eclipse.core.tests.databinding.observable.value.SelectObservableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.core.tests.databinding.util.PolicyTest;
 import org.eclipse.core.tests.databinding.validation.MultiValidatorTest;
@@ -258,6 +259,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(ComputedValueTest.class);
 		addTest(DecoratingObservableValueTest.suite());
+		addTest(SelectObservableValueTest.suite());
 		addTest(WritableValueTest.suite());
 		
 		//org.eclipse.core.tests.databinding.validation
