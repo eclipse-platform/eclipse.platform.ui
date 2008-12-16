@@ -235,15 +235,18 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		boolean previewPage= isPreviewPageActive();
 		boolean ok= fWizard.canFinish();
 		boolean canFlip= fCurrentPage.canFlipToNextPage();
-		Button previewButton= getButton(PREVIEW_ID);
+		
 		Button defaultButton= null;
+		
+		Button previewButton= getButton(PREVIEW_ID);
 		if (previewButton != null && !previewButton.isDisposed()) {
-			previewButton.setEnabled(!previewPage);
-			if (!previewPage)
-				previewButton.setEnabled(canFlip);
-			if (previewButton.isEnabled())
-				defaultButton= previewButton;
+			String previewLabel= previewPage ? IDialogConstants.BACK_LABEL : RefactoringUIMessages.RefactoringWizardDialog2_buttons_preview_label;
+			previewButton.setText(previewLabel);
+			setButtonLayoutData(previewButton);
+			getShell().layout(new Control[] { previewButton });
+			defaultButton= previewButton;
 		}
+		
 		Button nextButton= getButton(IDialogConstants.NEXT_ID);
 		if (nextButton != null && !nextButton.isDisposed()) {
 			nextButton.setEnabled(!previewPage);
@@ -252,15 +255,18 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			if (nextButton.isEnabled())
 				defaultButton= nextButton;
 		}
+		
 		Button backButton= getButton(IDialogConstants.BACK_ID);
 		if (backButton != null && !backButton.isDisposed())
 			backButton.setEnabled(!isFirstPage());
+		
 		Button okButton= getButton(IDialogConstants.OK_ID);
 		if (okButton != null && !okButton.isDisposed()) {
 			okButton.setEnabled(ok);
 			if (ok)
 				defaultButton= okButton;
 		}
+		
 		if (defaultButton != null) {
 			defaultButton.getShell().setDefaultButton(defaultButton);
 		}
@@ -490,6 +496,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 				return;
 			}
 		}
+		fCurrentPage.setPreviousPage(current);
 
 		showCurrentPage();
 	}
@@ -670,7 +677,11 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			preview.addSelectionListener(new SelectionAdapter() {
 
 				public void widgetSelected(SelectionEvent e) {
-					nextOrPreviewPressed();
+					if (isPreviewPageActive()) {
+						backPressed();
+					} else {
+						nextOrPreviewPressed();
+					}
 				}
 			});
 		}
