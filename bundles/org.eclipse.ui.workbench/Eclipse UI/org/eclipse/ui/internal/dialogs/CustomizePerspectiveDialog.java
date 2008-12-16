@@ -876,90 +876,82 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 			// Show any relevant action set info
 			if (showActionSet) {
-				if(item.getActionSet() != null) {
-					// Which action set, with link
-					final String actionSetName = item.getActionSet().descriptor
-							.getLabel();
-	
-					String text;
-					Image image = null;
-	
-					// If the action set is not available, explain why the
-					// visibility of the ContributionItem cannot be changed.
-					if (isAvailable(item)) {
+				String text = null;
+				Image image = null;
+				
+				if(isEffectivelyAvailable(item, filter)) {
+					if(item.actionSet != null) {
+						//give information on which command group the item is in
+						
+						final String actionSetName = item.getActionSet().descriptor
+								.getLabel();
+						
 						text = NLS.bind(
 								WorkbenchMessages.HideItems_itemInActionSet,
 								actionSetName);
-					} else {
-						image = warningImageDescriptor.createImage();
-						text = NLS
-								.bind(
-										WorkbenchMessages.HideItems_itemInUnavailableActionSet,
-										actionSetName);
 					}
-	
-					Link actionSetLink = createEntryWithLink(destination, image,
-							text);
-					actionSetLink.addSelectionListener(new SelectionListener() {
-						public void widgetDefaultSelected(SelectionEvent e) {
-							widgetSelected(e);
-						}
-	
-						public void widgetSelected(SelectionEvent e) {
-							hide();
-							viewActionSet(item);
-						}
-					});
-				} else if (!isEffectivelyAvailable(item, filter)) {
-					// If this item is unavailable, but not because it is in an
-					// unavailable action set, but rather because its children are.
-					Image image = warningImageDescriptor.createImage();
-	
-					Set actionGroup = new LinkedHashSet();
-					collectDescendantCommandGroups(actionGroup, item);
-	
-					Link link;
-	
-					// Just one child
-					if (actionGroup.size() == 1) {
-						ActionSet actionSet = (ActionSet) actionGroup.iterator()
-								.next();
-						String s = NLS
-								.bind(
-										WorkbenchMessages.HideItems_unavailableChildCommandGroup,
-										actionSet.descriptor.getId(),
-										actionSet.descriptor.getLabel());
-						link = createEntryWithLink(destination, image, s);
+				} else {
+					//give feedback on why item is unavailable
+					
+					image = warningImageDescriptor.createImage();
+					
+					if(item.getChildren().isEmpty()) {
+						//i.e. is a leaf
+						
+						final String actionSetName = item.getActionSet().
+								descriptor.getLabel();
+						
+						text = NLS.bind(
+								WorkbenchMessages.HideItems_itemInUnavailableActionSet,
+								actionSetName);
+						
 					} else {
-						// Multiple children
-						String commandGroupList = null;
-	
-						for (Iterator i = actionGroup.iterator(); i.hasNext();) {
-							ActionSet actionSet = (ActionSet) i.next();
-	
-							// For each action set, make a link for it, set the href
-							// to its id
-							String commandGroupLink = MessageFormat.format(
-									"<a href=\"{0}\">{1}</a>", //$NON-NLS-1$
-									new Object[] { actionSet.descriptor.getId(),
-											actionSet.descriptor.getLabel() });
-	
-							if (commandGroupList == null)
-								commandGroupList = commandGroupLink;
-							else
-								commandGroupList = Util.createList(
-										commandGroupList, commandGroupLink);
+						//i.e. has children
+
+						Set actionGroup = new LinkedHashSet();
+						collectDescendantCommandGroups(actionGroup, item, 
+								filter);
+						
+						if (actionGroup.size() == 1) {
+							//i.e. only one child
+							ActionSet actionSet = (ActionSet) actionGroup.
+									iterator().next();
+							text = NLS.bind(
+									WorkbenchMessages.HideItems_unavailableChildCommandGroup,
+									actionSet.descriptor.getId(),
+									actionSet.descriptor.getLabel());
+						} else {
+							//i.e. multiple children
+							String commandGroupList = null;
+		
+							for (Iterator i = actionGroup.iterator(); i.hasNext();) {
+								ActionSet actionSet = (ActionSet) i.next();
+		
+								// For each action set, make a link for it, set
+								// the href to its id
+								String commandGroupLink = MessageFormat.format(
+										"<a href=\"{0}\">{1}</a>", //$NON-NLS-1$
+										new Object[] { actionSet.descriptor.getId(),
+												actionSet.descriptor.getLabel() });
+		
+								if (commandGroupList == null)
+									commandGroupList = commandGroupLink;
+								else
+									commandGroupList = Util.createList(
+											commandGroupList, commandGroupLink);
+							}
+							
+							commandGroupList = NLS.bind(
+									"{0}{1}", new Object[] { NEW_LINE, commandGroupList }); //$NON-NLS-1$
+							text = NLS.bind(
+									WorkbenchMessages.HideItems_unavailableChildCommandGroups,
+									commandGroupList);
 						}
-						commandGroupList = NLS
-								.bind(
-										"{0}{1}", new Object[] { NEW_LINE, commandGroupList }); //$NON-NLS-1$
-						String s = NLS
-								.bind(
-										WorkbenchMessages.HideItems_unavailableChildCommandGroups,
-										commandGroupList);
-						link = createEntryWithLink(destination, image, s);
 					}
-	
+				}
+				
+				if(text != null) {
+					Link link = createEntryWithLink(destination, image, text);
 					link.addSelectionListener(new SelectionListener() {
 						public void widgetDefaultSelected(SelectionEvent e) {
 							widgetSelected(e);
@@ -968,7 +960,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 						public void widgetSelected(SelectionEvent e) {
 							ActionSet actionSet = (ActionSet) idToActionSet
 									.get(e.text);
-							if (actionSet != null) {
+							if (actionSet == null) {
+								hide();
+								viewActionSet(item);
+							} else {
 								hide();
 								viewActionSet(actionSet);
 							}
@@ -2353,17 +2348,20 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 *            a collection, into which all command groups (action sets)
 	 *            which contribute <code>item</code> or its descendants will be
 	 *            placed
+	 * @param item	the item to collect descendants of
+	 * @param filter the filter currently being used
 	 * @param item
 	 */
 	private static void collectDescendantCommandGroups(Collection collection,
-			DisplayItem item) {
+			DisplayItem item, ViewerFilter filter) {
 		List children = item.getChildren();
 		for (Iterator i = children.iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
-			if (child.getActionSet() != null) {
+			if ((filter == null || filter.select(null, null, child))
+					&& child.getActionSet() != null) {
 				collection.add(child.getActionSet());
 			}
-			collectDescendantCommandGroups(collection, child);
+			collectDescendantCommandGroups(collection, child, filter);
 		}
 	}
 
@@ -2935,6 +2933,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		DynamicContributionItem dynamicEntry = null;
 
 		if (trackDynamics && menu.getParentItem() != null) {
+			//Search for any dynamic menu entries which will be handled later
 			Object data = menu.getParentItem().getData();
 			if (data instanceof IContributionManager) {
 				IContributionManager manager = (IContributionManager) data;
@@ -2945,6 +2944,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					}
 				}
 
+				//If there is an item with no preceeding item, set it up to be
+				//added first.
 				if (findDynamics.containsKey(null)) {
 					IContributionItem item = (IContributionItem) findDynamics
 							.get(null);
@@ -2956,11 +2957,14 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		for (int i = 0; i < menuItems.length; i++) {
 			if (!menuItems[i].getText().equals("")) { //$NON-NLS-1$
-				IContributionItem contributionItem = (IContributionItem) menuItems[i]
-						.getData();
+				IContributionItem contributionItem = 
+						(IContributionItem) menuItems[i].getData();
 				if (dynamicEntry != null
 						&& contributionItem.equals(dynamicEntry
 								.getIContributionItem())) {
+					//If the last item added is the item meant to go before the
+					//given dynamic entry, add the dynamic entry so it is in the
+					//correct order.
 					dynamicEntry.addCurrentItem(menuItems[i]);
 				} else {
 					DisplayItem menuEntry = new DisplayItem(
@@ -2976,22 +2980,16 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 									.getId())) {
 						initializeNewWizardsMenu(menuEntry);
 						wizards = menuEntry;
-						createMenuEntries(menuItems[i].getMenu(), menuEntry,
-								false);
 					} else if (SHORTCUT_CONTRIBUTION_ITEM_ID_OPEN_PERSPECTIVE
 							.equals(((IContributionItem) menuItems[i].getData())
 									.getId())) {
 						initializePerspectivesMenu(menuEntry);
 						perspectives = menuEntry;
-						createMenuEntries(menuItems[i].getMenu(), menuEntry,
-								false);
 					} else if (SHORTCUT_CONTRIBUTION_ITEM_ID_SHOW_VIEW
 							.equals(((IContributionItem) menuItems[i].getData())
 									.getId())) {
 						initializeViewsMenu(menuEntry);
 						views = menuEntry;
-						createMenuEntries(menuItems[i].getMenu(), menuEntry,
-								false);
 					} else {
 						createMenuEntries(menuItems[i].getMenu(), menuEntry,
 								trackDynamics);
@@ -3150,7 +3148,17 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (item instanceof ShortcutItem)
 			return;
 
-		if (item.getChildren().size() > 0) {
+		if (item == wizards || item == perspectives || item == views) {
+			//Shortcuts (i.e. wizards, perspectives, views) need special 
+			//handling. Shortcuts themselves are not involved in calculating 
+			//whether menus are visible, therefore we must record whether the 
+			//menu containing them is visible, and omit reading the shortcuts 
+			//themselves in this part of the logic.
+			if (!item.getState()) {
+				String id = getCommandID(item);
+				collection.add(id);
+			}
+		} else if (item.getChildren().size() > 0) {
 			for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
 				collectInvisibleIDs((DisplayItem) i.next(), collection);
 			}
