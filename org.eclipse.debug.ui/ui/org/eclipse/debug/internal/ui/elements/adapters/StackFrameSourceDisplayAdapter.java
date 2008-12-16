@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,8 +79,6 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		});
 	}
 	
-	
-	private SourceLookupJob fSourceLookupJob = new SourceLookupJob();
 	/**
 	 * A job to perform source lookup on the currently selected stack frame.
 	 */
@@ -93,18 +91,15 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		/**
 		 * Constructs a new source lookup job.
 		 */
-		public SourceLookupJob() {
+		public SourceLookupJob(IStackFrame frame, ISourceLocator locator, IWorkbenchPage page) {
 			super("Debug Source Lookup");  //$NON-NLS-1$
 			setPriority(Job.INTERACTIVE);
 			setSystem(true);	
-		}
-		
-		public void setLookupInfo(IStackFrame frame, ISourceLocator locator, IWorkbenchPage page) {
 			fTarget = frame;
 			fLocator = locator;
 			fPage = page;
 		}
-
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
@@ -121,36 +116,35 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 						fPrevFrame = lookupFrame;
 					}
 					if (!monitor.isCanceled() && fPage != null && !lookupFrame.isTerminated()) {
-						fSourceDisplayJob.setDisplayInfo(result, fPage);
-						fSourceDisplayJob.schedule();
+						new SourceDisplayJob(result, fPage).schedule();
 					}
 				}
-				setLookupInfo(null, null, null);
 			}
 			return Status.OK_STATUS;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+		 */
+		public boolean belongsTo(Object family) {
+			return getClass().equals(family);
+		}
+		
 	}
 	
-	private SourceDisplayJob fSourceDisplayJob = new SourceDisplayJob();
 	class SourceDisplayJob extends UIJob {
 		
 		private ISourceLookupResult fResult;
 		private IWorkbenchPage fPage;
 
-		public SourceDisplayJob() {
+		public SourceDisplayJob(ISourceLookupResult result, IWorkbenchPage page) {
 			super("Debug Source Display");  //$NON-NLS-1$
 			setSystem(true);
 			setPriority(Job.INTERACTIVE);
-		}
-		
-		/**
-		 * Constructs a new source display job
-		 */
-		public synchronized void setDisplayInfo(ISourceLookupResult result, IWorkbenchPage page) {
 			fResult = result;
 			fPage = page;
 		}
+		
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
@@ -161,7 +155,6 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 			synchronized (this) {
 				result = fResult;
 				page = fPage;
-				setDisplayInfo(null, null);
 			}
 			if (!monitor.isCanceled() && result != null && page != null) {
 				DebugUITools.displaySource(result, page);
@@ -186,11 +179,9 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		IStackFrame frame = (IStackFrame)context;
 		if (!force && frame.equals(fPrevFrame)) {
 			fPrevResult.updateArtifact(context);
-			fSourceDisplayJob.setDisplayInfo(fPrevResult, page);
-			fSourceDisplayJob.schedule();
+			new SourceDisplayJob(fPrevResult, page).schedule();
 		} else {
-			fSourceLookupJob.setLookupInfo(frame, frame.getLaunch().getSourceLocator(), page);
-			fSourceLookupJob.schedule();
+			new SourceLookupJob(frame, frame.getLaunch().getSourceLocator(), page).schedule();
 		}
 	}
 	
@@ -226,7 +217,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 			if (fPrevFrame.getDebugTarget().equals(target)) {
 				fPrevFrame = null;
 				fPrevResult = null;
-				fSourceDisplayJob.cancel();
+				Job.getJobManager().cancel(SourceLookupJob.class);
 			}
 		}
 	}

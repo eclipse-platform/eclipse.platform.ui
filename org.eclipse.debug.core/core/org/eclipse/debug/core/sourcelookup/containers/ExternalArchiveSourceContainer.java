@@ -23,6 +23,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
@@ -77,6 +79,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	public Object[] findSourceElements(String name) throws CoreException {
 		name = name.replace('\\', '/');
 		ZipFile file = getArchive();
+		// NOTE: archive can be closed between get (above) and synchronized block (below)
 		synchronized (file) {
 			boolean isQualfied = name.indexOf('/') > 0;
 			if (fDetectRoots && isQualfied) {
@@ -86,7 +89,14 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 				}
 			} else {
 				// try exact match
-				ZipEntry entry = file.getEntry(name);
+				ZipEntry entry = null;
+				try {
+					entry = file.getEntry(name);
+				} catch (IllegalStateException e) {
+					// archive was closed between retrieving and locking
+					throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+							e.getMessage(), e));
+				}
 				if (entry != null) {
 					// can't be any duplicates if there is an exact match
 					return new Object[]{new ZipEntryStorage(file, entry)};
@@ -127,28 +137,34 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * @param name file name
 	 * @exception CoreException if an exception occurs while detecting the root
 	 */
-	private ZipEntry searchRoots(ZipFile file, String name) {
+	private ZipEntry searchRoots(ZipFile file, String name) throws CoreException {
 		if (fPotentialRoots == null) {
 			fPotentialRoots = new HashSet();
 			fPotentialRoots.add(""); //$NON-NLS-1$
 			// all potential roots are the directories
-			Enumeration entries = file.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) entries.nextElement();
-				if (entry.isDirectory()) {
-					fPotentialRoots.add(entry.getName());
-				} else {
-					String entryName = entry.getName();
-					int index = entryName.lastIndexOf("/"); //$NON-NLS-1$
-					while (index > 0) {
-						if (fPotentialRoots.add(entryName.substring(0, index + 1))) {
-							entryName = entryName.substring(0, index);
-							index = entryName.lastIndexOf("/"); //$NON-NLS-1$
-						} else {
-							break;
+			try {
+				Enumeration entries = file.entries();
+				while (entries.hasMoreElements()) {
+					ZipEntry entry = (ZipEntry) entries.nextElement();
+					if (entry.isDirectory()) {
+						fPotentialRoots.add(entry.getName());
+					} else {
+						String entryName = entry.getName();
+						int index = entryName.lastIndexOf("/"); //$NON-NLS-1$
+						while (index > 0) {
+							if (fPotentialRoots.add(entryName.substring(0, index + 1))) {
+								entryName = entryName.substring(0, index);
+								index = entryName.lastIndexOf("/"); //$NON-NLS-1$
+							} else {
+								break;
+							}
 						}
 					}
 				}
+			} catch (IllegalStateException e) {
+				// archive was closed between retrieving and locking
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+					e.getMessage(), e));
 			}
 		}
 		int i = 0;
