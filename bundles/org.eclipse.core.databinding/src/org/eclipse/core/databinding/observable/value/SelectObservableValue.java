@@ -130,7 +130,7 @@ public class SelectObservableValue extends AbstractObservableValue {
 
 	/**
 	 * Adds an option to this SelectObservableValue. If the observable contains
-	 * Boolean.TRUE
+	 * Boolean.TRUE then the selection changes immediately to the given value.
 	 * 
 	 * @param value
 	 *            The value associated with the provided observable
