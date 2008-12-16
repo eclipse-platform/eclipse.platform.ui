@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringDescriptorPr
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorDiff;
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 
 /**
@@ -138,7 +137,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 
 			for (final Iterator iterator= result.iterator(); iterator.hasNext();) {
 				final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) iterator.next();
-				if (!isVisible(new RefactoringDescriptorDiff(proxy, IDiff.CHANGE, proxy.getDirection())))
+				if (!includeDirection(proxy.getDirection()))
 					result.remove(proxy);
 			}
 
