@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.utils.ClassUtils;
 import org.eclipse.e4.ui.css.core.utils.NumberUtils;
+import org.eclipse.e4.ui.css.swt.CSSSWT;
 import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpers;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Button;
@@ -179,7 +180,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 
 	public String getCSSId() {
 		Widget widget = getWidget();
-		Object id = widget.getData("id");
+		Object id = CSSSWT.getID(widget);
 		if (id != null)
 			return id.toString();
 		return null;
@@ -192,7 +193,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 */
 	public String getCSSClass() {
 		Widget widget = getWidget();
-		Object id = widget.getData("class");
+		Object id = CSSSWT.getCSSClass(widget);
 		if (id != null)
 			return id.toString();
 		return null;
@@ -205,6 +206,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 */
 	public String getCSSStyle() {
 		Widget widget = getWidget();
+		//TODO should have key in CSSSWT
 		Object id = widget.getData("style");
 		if (id != null)
 			return id.toString();
