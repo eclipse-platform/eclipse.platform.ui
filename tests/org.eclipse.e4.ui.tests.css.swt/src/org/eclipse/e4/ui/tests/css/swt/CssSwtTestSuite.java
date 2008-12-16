@@ -19,7 +19,8 @@ public class CssSwtTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public CssSwtTestSuite() {
-		addTest(new TestSuite(WidgetClassAttributeTest.class));
+		addTestSuite(LabelTest.class);
+		addTestSuite(IdClassLabelColorTest.class);
 		addTestSuite(FontFaceRulesTest.class);
 		addTestSuite(MediaRulesTest.class);
 		addTestSuite(StyleRuleTest.class);

@@ -15,20 +15,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-public class WidgetClassAttributeTest extends TestCase {
+public class LabelTest extends TestCase {
 
-	static final RGB LABEL_BACKGROUND_COLOR = new RGB(255, 0, 0);
-	
-	static final String STYLE_SHEET = "Label {background-color: #FF0000}";
-
-	protected Label createTestLabel() {
-
+	static final RGB RED = new RGB(255, 0, 0);
+	static final RGB GREEN = new RGB(0, 255, 0);
+	static final RGB BLUE = new RGB(0, 0, 255);
+		
+	protected Label createTestLabel(String styleSheet) {
 		Display display = Display.getDefault();
-
 		CSSEngine engine = new CSSSWTEngineImpl(display);
 		
 		try {
-			engine.parseStyleSheet(new StringReader(STYLE_SHEET));
+			engine.parseStyleSheet(new StringReader(styleSheet));
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -38,10 +36,10 @@ public class WidgetClassAttributeTest extends TestCase {
 		FillLayout layout = new FillLayout();
 		shell.setLayout(layout);
 
-		Composite panel1 = new Composite(shell, SWT.NONE);
-		panel1.setLayout(new FillLayout());
+		Composite panel = new Composite(shell, SWT.NONE);
+		panel.setLayout(new FillLayout());
 
-		Label label = new Label(panel1, SWT.NONE);
+		Label label = new Label(panel, SWT.NONE);
 		label.setText("Label");
 
 		// Apply styles
@@ -52,8 +50,9 @@ public class WidgetClassAttributeTest extends TestCase {
 		return label;
 	}
 	
-	public void testLabelColor() throws Exception {
-		Label label = createTestLabel();
-		assertEquals(LABEL_BACKGROUND_COLOR, label.getBackground().getRGB());
+	public void testWidgetClass() throws Exception {
+		Label label = createTestLabel("Label { background-color: #FF0000 }");
+		assertEquals(RED, label.getBackground().getRGB());
 	}
+
 }
