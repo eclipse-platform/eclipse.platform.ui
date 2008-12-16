@@ -99,7 +99,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	}
 
 	public static String[] convertPropertyStringToHosts(String property) {
-		String hosts[] = property.split("\\|"); //$NON-NLS-1$
+		String hosts[] = StringUtil.split(property, new String[] { "|" }); //$NON-NLS-1$
 		ArrayList ret = new ArrayList();
 		for (int i = 0; i < hosts.length; i++) {
 			if (hosts[i].length() != 0) {

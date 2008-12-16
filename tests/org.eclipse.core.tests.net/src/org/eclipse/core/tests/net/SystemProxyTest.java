@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.net;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -188,6 +190,29 @@ public class SystemProxyTest extends TestCase {
 	public void testProxySelector_WindowsIEManualSettings() {
 		initializeTestProxyData("WINDOWS_IE");
 		checkProxySelector();
+	}
+
+	/**
+	 * This test needs Windows IE settings manually set. See
+	 * {@link #initializeTestProxyData()} for values. Additionally set
+	 * <code>"eclipse.*;nonexisting.com;"</code> as proxy bypass in the IE
+	 * settings.
+	 * 
+	 * @throws URISyntaxException
+	 */
+	public void testNonProxiedHosts_WindowsIEManualSettings()
+			throws URISyntaxException {
+		IProxyData[] proxiesData = getProxyManager().select(
+				new URI("http://eclipse"));
+		assertEquals(1, proxiesData.length);
+
+		proxiesData = getProxyManager().select(
+				new URI("http://eclipse.org/bugs"));
+		assertEquals(0, proxiesData.length);
+
+		proxiesData = getProxyManager().select(
+				new URI("http://nonexisting.com"));
+		assertEquals(0, proxiesData.length);
 	}
 
 	private void initializeTestProxyData(String proxyDataSource) {

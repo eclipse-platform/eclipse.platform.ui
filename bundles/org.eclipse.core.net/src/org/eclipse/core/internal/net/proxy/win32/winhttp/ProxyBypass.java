@@ -12,7 +12,8 @@
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
 import java.net.URI;
-import java.util.regex.Pattern;
+
+import org.eclipse.core.internal.net.StringUtil;
 
 /**
  * Encapsulates the windows specific proxy bypass list. It transforms the native
@@ -24,7 +25,7 @@ public class ProxyBypass {
 
 	private final String proxyBypass;
 
-	private final Pattern proxyBypassPattern;
+	private final String proxyBypassEntries[];
 
 	private final static String BYPASS_LOCAL_ADDESSES_TOKEN = "<local>"; //$NON-NLS-1$
 
@@ -37,12 +38,10 @@ public class ProxyBypass {
 		this.proxyBypass = proxyBypass != null ? proxyBypass : ""; //$NON-NLS-1$
 
 		if (proxyBypass != null) {
-			String regExp = ProxyProviderUtil.replace(proxyBypass, ";", "|"); //$NON-NLS-1$ //$NON-NLS-2$
-			regExp = ProxyProviderUtil.replace(regExp, ".", "\\."); //$NON-NLS-1$ //$NON-NLS-2$
-			regExp = ProxyProviderUtil.replace(regExp, "*", ".*"); //$NON-NLS-1$ //$NON-NLS-2$
-			this.proxyBypassPattern = Pattern.compile(regExp);
+			proxyBypassEntries = StringUtil.split(proxyBypass, new String[] {
+					";", "|" }); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			this.proxyBypassPattern = Pattern.compile(""); //$NON-NLS-1$
+			proxyBypassEntries = new String[0];
 		}
 	}
 
@@ -66,7 +65,18 @@ public class ProxyBypass {
 	 * @return
 	 */
 	private boolean isInBypassList(String host) {
-		return proxyBypassPattern.matcher(host).matches();
+		for (int i = 0; i < proxyBypassEntries.length; i++) {
+			String entry = proxyBypassEntries[i];
+			if (entry.endsWith("*")) { //$NON-NLS-1$
+				if (host.toLowerCase().startsWith(
+						entry.substring(0, entry.length() - 1).toLowerCase())) {
+					return true;
+				}
+			} else if (host.equalsIgnoreCase(entry)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -86,8 +96,8 @@ public class ProxyBypass {
 	}
 
 	public String[] getNonProxiedHosts() {
-		String ret = ProxyProviderUtil.replace(proxyBypass, "|", ";"); //$NON-NLS-1$ //$NON-NLS-2$
-		return ret.split(";"); //$NON-NLS-1$
+		String ret = StringUtil.replace(proxyBypass, "|", ";"); //$NON-NLS-1$ //$NON-NLS-2$
+		return StringUtil.split(ret, new String[] { ";" }); //$NON-NLS-1$
 	}
 
 }

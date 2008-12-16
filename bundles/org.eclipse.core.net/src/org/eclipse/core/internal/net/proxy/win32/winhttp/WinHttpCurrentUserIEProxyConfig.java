@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
+import org.eclipse.core.internal.net.StringUtil;
+
 /**
  * Wrapper for Win32 WINHTTP_CURRENT_USER_IE_PROXY_CONFIG structure.<br>
  * Plus a few helper methods that enrich the plain C structure.
@@ -96,7 +98,7 @@ public class WinHttpCurrentUserIEProxyConfig {
 			WinHttpCurrentUserIEProxyConfig proxyConfig) {
 		if (proxyConfig == null)
 			return true;
-		return !ProxyProviderUtil.equals(autoConfigUrl,
+		return !StringUtil.equals(autoConfigUrl,
 				proxyConfig.autoConfigUrl);
 	}
 
@@ -111,7 +113,7 @@ public class WinHttpCurrentUserIEProxyConfig {
 			WinHttpCurrentUserIEProxyConfig proxyConfig) {
 		if (proxyConfig == null)
 			return true;
-		return !(ProxyProviderUtil.equals(proxy, proxyConfig.proxy) && ProxyProviderUtil
+		return !(StringUtil.equals(proxy, proxyConfig.proxy) && StringUtil
 				.equals(proxyBypass, proxyConfig.proxyBypass));
 	}
 

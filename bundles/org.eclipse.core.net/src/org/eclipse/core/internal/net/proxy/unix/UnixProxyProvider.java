@@ -21,6 +21,7 @@ import org.eclipse.core.internal.net.AbstractProxyProvider;
 import org.eclipse.core.internal.net.Activator;
 import org.eclipse.core.internal.net.Policy;
 import org.eclipse.core.internal.net.ProxyData;
+import org.eclipse.core.internal.net.StringUtil;
 import org.eclipse.core.net.proxy.IProxyData;
 
 public class UnixProxyProvider extends AbstractProxyProvider {
@@ -82,7 +83,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		// First try the environment variable which is a URL
 		String npEnv = getEnv("no_proxy"); //$NON-NLS-1$
 		if (npEnv != null) {
-			npHosts = npEnv.split(","); //$NON-NLS-1$
+			npHosts = StringUtil.split(npEnv, new String[] { "," }); //$NON-NLS-1$
 			for (int i = 0; i < npHosts.length; i++)
 				npHosts[i] = npHosts[i].trim();
 			if (Policy.DEBUG_SYSTEM_PROVIDERS) {
