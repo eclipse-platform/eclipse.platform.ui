@@ -41,10 +41,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
@@ -76,7 +72,7 @@ import com.ibm.icu.text.MessageFormat;
  * A viewer that displays tabs for a launch configuration, with apply and revert
  * buttons.
  */
-public class LaunchConfigurationTabGroupViewer extends Viewer {
+public class LaunchConfigurationTabGroupViewer {
 
 	/**
 	 * Containing launch dialog
@@ -432,14 +428,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	protected Button getRevertButton() {
 		return fRevertButton;
 	}	
-	
-	/**
-	 * Sets the tab folder
-	 */
-	protected CTabFolder getTabFolder() {
-		return fTabFolder;
-	}
-	
+
 	/**
 	 * Sets the current name
 	 */
@@ -465,22 +454,18 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * Returns the shell this viewer is contained in.
 	 */
-	protected Shell getShell() {
+	private Shell getShell() {
 		return getControl().getShell();
 	}
 
 	/**
-	 * @see org.eclipse.jface.viewers.IInputProvider#getInput()
+	 * Returns the current input to the viewer. Input will 
+	 * be one of {@link ILaunchConfiguration} or {@link ILaunchConfigurationType}
+	 * 
+	 * @return returns the current input 
 	 */
 	public Object getInput() {
 		return fInput;
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-	 */
-	public ISelection getSelection() {
-		return new StructuredSelection(fWorkingCopy);
 	}
 
 	/* (non-Javadoc)
@@ -908,30 +893,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Otherwise return the tab group
 		return (ILaunchConfigurationTabGroup)finalArray[0];
 	}	
-
-	/**
-	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
-	 */
-	public void setSelection(ISelection selection, boolean reveal) {
-		if (getWorkingCopy() != null) {
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection structuredSelection = (IStructuredSelection)selection;
-				Object object = structuredSelection.getFirstElement();
-				if (object instanceof ILaunchConfigurationTab) {
-					ILaunchConfigurationTab[] tabs = getTabs();
-					for (int i = 0; i < tabs.length; i++) {
-						if (tabs[i].equals(object)) {
-							fCurrentTabIndex = i;
-							fTabFolder.setSelection(i);
-						}
-						return;
-					}
-				}
-			}
-		}
-			
-	}
-
+	
 	/**
 	 * Returns the tabs currently being displayed, or
 	 * <code>null</code> if none.

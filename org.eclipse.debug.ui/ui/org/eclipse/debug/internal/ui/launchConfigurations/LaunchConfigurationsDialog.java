@@ -19,9 +19,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -46,17 +44,13 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -91,7 +85,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * The dialog used to edit and launch launch configurations.
  */
-public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaunchConfigurationDialog, IPageChangeProvider,  IPropertyChangeListener {
+public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaunchConfigurationDialog, IPropertyChangeListener {
 
 	/**
 	 * Keep track of the currently visible dialog instance
@@ -207,11 +201,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * The status to open the dialog on, or <code>null</code> if none.
 	 */
 	private IStatus fInitialStatus;
-
-	/**
-	 * Listener for a list
-	 */
-	private ListenerList changeListeners = new ListenerList();
 	
 	/**
 	 * The number of 'long-running' operations currently taking place in this dialog
@@ -293,13 +282,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		dialogComp.layout(true);
 		applyDialogFont(dialogComp);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#addPageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
-	 */
-	public void addPageChangedListener(IPageChangedListener listener) {
-		changeListeners.add(listener);
 	}
 	
 	/**
@@ -467,11 +449,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */ 
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
 		setTabViewer(new LaunchConfigurationTabGroupViewer(parent, this));
-		fTabViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleTabSelectionChanged();
-			}
-		});
 		return (Composite)fTabViewer.getControl();
 	}
     
@@ -607,27 +584,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fLaunchConfigurationView.getViewer().setSelection(fInitialSelection);
 	}	
 	
-	/**
-     * Notifies any selection changed listeners that the selected page
-     * has changed.
-     * Only listeners registered at the time this method is called are notified.
-     *
-     * @param event a selection changed event
-     *
-     * @see IPageChangedListener#pageChanged
-     */
-    protected void firePageChanged(final PageChangedEvent event) {
-        Object[] listeners = changeListeners.getListeners();
-        for (int i = 0; i < listeners.length; ++i) {
-            final IPageChangedListener l = (IPageChangedListener) listeners[i];
-            SafeRunner.run(new SafeRunnable() {
-                public void run() {
-                    l.pageChanged(event);
-                }
-            });
-        }
-    }
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#generateName(java.lang.String)
 	 */
@@ -744,7 +700,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (shell != null) {
 			return shell.getDisplay();
 		} 
-		return Display.getDefault();
+		return DebugUIPlugin.getStandardDisplay();
 	}
   	
   	/**
@@ -1014,15 +970,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		ErrorDialog.openError(getShell(), title, null, status);
 	}
-	
-	/**
-	 * Notification that tab selection has changed.
-	 *
-	 */
-	protected void handleTabSelectionChanged() {
-		refreshStatus();
-		firePageChanged(new PageChangedEvent(this, getSelectedPage()));
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#initializeBounds()
@@ -1211,13 +1158,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void refreshStatus() {
 		updateMessage();
 		updateButtons();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#removePageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
-	 */
-	public void removePageChangedListener(IPageChangedListener listener) {
-		changeListeners.remove(listener);
 	}
 
 	/**
