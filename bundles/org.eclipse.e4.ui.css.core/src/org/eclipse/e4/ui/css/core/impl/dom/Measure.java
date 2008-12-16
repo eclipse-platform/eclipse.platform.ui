@@ -47,4 +47,14 @@ public class Measure extends CSSValueImpl {
 		return value.getIntegerValue();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSPrimitiveValue#getStringValue()
+	 */
+	public String getStringValue() throws DOMException {
+		if((value.getLexicalUnitType() == LexicalUnit.SAC_IDENT))
+			return value.getStringValue();
+		// TODO There are more cases to catch of getLexicalUnitType()
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	}
 }
