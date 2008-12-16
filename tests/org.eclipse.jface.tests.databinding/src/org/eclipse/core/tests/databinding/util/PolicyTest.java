@@ -36,9 +36,6 @@ public class PolicyTest extends TestCase {
 			ps.flush();
 			String message = new String(os.toByteArray());
 			System.out.println("testDummyLog message: " + message);
-			if (true) {
-				return;
-			}
 			assertTrue("expecting severity", message.indexOf(IStatus.CANCEL
 					+ "") != -1);
 			assertTrue("expecting plugin id",
