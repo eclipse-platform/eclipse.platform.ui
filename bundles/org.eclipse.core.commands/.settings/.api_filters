@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.commands" version="2">
+    <resource path="src/org/eclipse/core/commands/AbstractHandler.java" type="org.eclipse.core.commands.AbstractHandler">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.commands.AbstractHandler"/>
+                <message_argument value="org.eclipse.core.commands_3.5.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
