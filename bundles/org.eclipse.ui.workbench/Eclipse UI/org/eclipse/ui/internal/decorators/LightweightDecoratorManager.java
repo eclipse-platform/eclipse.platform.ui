@@ -60,10 +60,12 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 		public void handleException(Throwable exception) {
 			IStatus status = StatusUtil.newStatus(IStatus.ERROR, exception
 					.getMessage(), exception);
-			String message = WorkbenchMessages.DecoratorError;
-			if (decorator != null) {
-				message += " " + NLS.bind(WorkbenchMessages.DecoratorWillBeDisabled, //$NON-NLS-1$
-										decorator.getName());
+			String message;
+			if (decorator == null) {
+				message = WorkbenchMessages.DecoratorError;
+			} else {
+				message = NLS.bind(WorkbenchMessages.DecoratorWillBeDisabled,
+						decorator.getName());
 			}
 			WorkbenchPlugin.log(message, status);
 			if (decorator != null) {

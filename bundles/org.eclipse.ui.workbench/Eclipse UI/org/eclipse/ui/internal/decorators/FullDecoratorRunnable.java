@@ -43,10 +43,8 @@ abstract class FullDecoratorRunnable implements ISafeRunnable {
     public void handleException(Throwable exception) {
         IStatus status = StatusUtil.newStatus(IStatus.ERROR, exception
                 .getMessage(), exception);
-		String message = WorkbenchMessages.DecoratorError
-				+ " " //$NON-NLS-1$
-				+ NLS.bind(WorkbenchMessages.DecoratorWillBeDisabled, decorator
-						.getName());
+		String message = NLS.bind(WorkbenchMessages.DecoratorWillBeDisabled,
+				decorator.getName());
         WorkbenchPlugin.log(message, status);
         decorator.crashDisable();
     }
