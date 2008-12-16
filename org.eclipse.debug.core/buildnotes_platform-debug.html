@@ -82,6 +82,16 @@ value is no longer reliable.</p>
 </p>
 <p><strong>Description:</strong>The command framework allows menu and toolbar items to be controlled using powerful standard expressions.  However many debugger related commands require access to the current debug context in order to properly evaluate their enabled or visible state.  This addition allows command handlers and their expressions to use the <code>debugContext</code> variable to access the current debug context applicable to the given handler.</p>
 <p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
+
+<h3>Detail pane selection provider</h3>
+<p><strong>What is affected:</strong> 
+<ul>
+  <li>Interface addition: <code>IDetailPane2</code> </li>
+  <li>Interface addition: <code>IDetailPaneContainer2</code> </li>
+</ul>
+</p>
+<p><strong>Description:</strong>The original detail pane design does not allow a detail pane implementation to properly supply a selection provider for a view (see <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=254442">bug 254442</a>).  These addition allows a detail pane to overcome this limitation.</p>
+<p><strong>Action required:</strong>This is a backwards compatible change, so no action is required.  However, detail pane implementations which need to drive the active view selection, should implement the new <code>IDetailPane2</code> interface.</p>
 <p>&nbsp;  </p>
 
 <h2>December 16, 2008</h2>
@@ -90,6 +100,7 @@ value is no longer reliable.</p>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=258058">Bug 258058</a>: Buttons not greyed out in Organize Favorites dialog<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=255153">Bug 255153</a>: Select All does not fire selection change event<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=49730">Bug 49730</a>: [source lookup] Call stack editor annotation ambiguous<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=254442">Bug 254442</a>: "Create Watch Expression" action does not appear consistently<br>
 
 <h2>Milestone 4 - December 12, 2008</h2>
 <h3>Problem Reports Fixed</h3>

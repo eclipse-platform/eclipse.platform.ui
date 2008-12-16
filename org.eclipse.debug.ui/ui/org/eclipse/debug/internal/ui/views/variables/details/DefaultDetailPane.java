@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
+ *     Wind River - Anton Leherbauer - Fix selection provider (Bug 254442)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables.details;
 
@@ -41,6 +42,7 @@ import org.eclipse.debug.internal.ui.views.variables.IndexedValuePartition;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.debug.ui.IDetailPane2;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -67,6 +69,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -109,7 +112,7 @@ import com.ibm.icu.text.MessageFormat;
  * @since 3.3
  *
  */
-public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable, IPropertyChangeListener{
+public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane2, IAdaptable, IPropertyChangeListener{
 
 	/**
 	 * These are the IDs for the actions in the context menu
@@ -401,8 +404,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		// Add a focus listener to update actions when details area gains focus
 		fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
-				getViewSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
-				
 				setGlobalAction(IDebugView.SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
 				setGlobalAction(IDebugView.CUT_ACTION, getAction(DETAIL_CUT_ACTION));
 				setGlobalAction(IDebugView.COPY_ACTION, getAction(DETAIL_COPY_ACTION));
@@ -420,8 +421,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			}
 			
 			public void focusLost(FocusEvent e) {
-				getViewSite().setSelectionProvider(null);
-				
 				setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
 				setGlobalAction(IDebugView.CUT_ACTION, null);
 				setGlobalAction(IDebugView.COPY_ACTION, null);
@@ -975,5 +974,10 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		}
 	}
 	
+	/*
+	 * @see org.eclipse.debug.ui.IDetailPane2#getSelectionProvider()
+	 */
+	public ISelectionProvider getSelectionProvider() {
+		return fSourceViewer.getSelectionProvider();
+	}
 }
-

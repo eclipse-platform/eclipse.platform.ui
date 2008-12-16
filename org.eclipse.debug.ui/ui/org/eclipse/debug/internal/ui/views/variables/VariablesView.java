@@ -12,6 +12,7 @@
  * 	   Wind River - Pawel Piech - Busy status while updates in progress (Bug 206822)
  * 	   Wind River - Pawel Piech - NPE when closing the Variables view (Bug 213719)
  *     Wind River - Pawel Piech - Fix viewer input race condition (Bug 234908)
+ *     Wind River - Anton Leherbauer - Fix selection provider (Bug 254442)
 ******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
@@ -23,6 +24,7 @@ import java.io.OutputStreamWriter;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
@@ -54,7 +56,7 @@ import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
 import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneProxy;
-import org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer;
+import org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer2;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -76,8 +78,10 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -116,7 +120,86 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 public class VariablesView extends AbstractDebugView implements IDebugContextListener,
 	IPropertyChangeListener, IDebugExceptionHandler,
 	IPerspectiveListener, IModelChangedListener,
-	IViewerUpdateListener, IDetailPaneContainer {
+	IViewerUpdateListener, IDetailPaneContainer2 {
+	
+	/**
+	 * Selection provider wrapping an exchangeable active selection provider.
+	 * Sends out a selection changed event when the active selection provider changes.
+	 * Forwards all selection changed events of the active selection provider.
+	 */
+	private static class SelectionProviderWrapper implements ISelectionProvider {
+		private final ListenerList fListenerList = new ListenerList(ListenerList.IDENTITY);
+		private final ISelectionChangedListener fListener = new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				fireSelectionChanged(event);
+			}
+		};
+		private ISelectionProvider fActiveProvider;
+		
+		private SelectionProviderWrapper(ISelectionProvider provider) {
+			setActiveProvider(provider);
+		}
+
+		private void setActiveProvider(ISelectionProvider provider) {
+			if (fActiveProvider == provider || this == provider) {
+				return;
+			}
+			if (fActiveProvider != null) {
+				fActiveProvider.removeSelectionChangedListener(fListener);
+			}
+			if (provider != null) {
+				provider.addSelectionChangedListener(fListener);
+			}
+			fActiveProvider = provider;
+			fireSelectionChanged(new SelectionChangedEvent(this, getSelection()));
+		}
+
+		private void dispose() {
+			fListenerList.clear();
+			setActiveProvider(null);
+		}
+
+		private void fireSelectionChanged(SelectionChangedEvent event) {
+			Object[] listeners = fListenerList.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				ISelectionChangedListener listener = (ISelectionChangedListener) listeners[i];
+				listener.selectionChanged(event);
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			fListenerList.add(listener);			
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+		 */
+		public ISelection getSelection() {
+			if (fActiveProvider != null) {
+				return fActiveProvider.getSelection();
+			}
+			return StructuredSelection.EMPTY;
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			fListenerList.remove(listener);
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
+		 */
+		public void setSelection(ISelection selection) {
+			if (fActiveProvider != null) {
+				fActiveProvider.setSelection(selection);
+			}
+		}
+	}
 	
 	/**
 	 * The model presentation used as the label provider for the tree viewer,
@@ -268,6 +351,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			return Status.OK_STATUS;
 		}
 	};
+
+	/**
+	 * Selection provider registered with the view site.
+	 */
+	private SelectionProviderWrapper fSelectionProvider;
     
 	/**
 	 * Remove myself as a selection listener
@@ -288,6 +376,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		}
 		if (fDetailPane != null) fDetailPane.dispose();
         fInputService.dispose();
+        fSelectionProvider.dispose();
 		super.dispose();
 	}
 
@@ -358,8 +447,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fInputService = new ViewerInputService(variablesViewer, fRequester);
 			
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
-			
-		fDetailPane = new DetailPaneProxy(this);	
+
+		fSelectionProvider = new SelectionProviderWrapper(variablesViewer);
+		getSite().setSelectionProvider(fSelectionProvider);
+
+		fDetailPane = new DetailPaneProxy(this);
 		fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
 		
 		createOrientationActions(variablesViewer);
@@ -495,7 +587,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
 				fTreeHasFocus = true;
-				getSite().setSelectionProvider(variablesViewer);
+				fSelectionProvider.setActiveProvider(variablesViewer);
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
 				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
 				setAction(FIND_ACTION, getAction(VARIABLES_FIND_ELEMENT_ACTION));
@@ -503,7 +595,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			}
 			
 			public void focusLost(FocusEvent e){
-				getSite().setSelectionProvider(null);
+				fSelectionProvider.setActiveProvider(null);
 				setAction(SELECT_ALL_ACTION, null);
 				setAction(COPY_ACTION,null);
 				setAction(FIND_ACTION, null);
@@ -522,7 +614,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 					}
 				});
 		
-		getSite().setSelectionProvider(variablesViewer);
 		variablesViewer.addPostSelectionChangedListener(getTreeSelectionChangedListener());
 		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
 		return variablesViewer;
@@ -1113,5 +1204,16 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				return fToggleDetailPaneActions[i];
 		
 		return null;
+	}
+
+	/*
+	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer2#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
+	 */
+	public void setSelectionProvider(ISelectionProvider provider) {
+		// Workaround for legacy detail pane implementations (bug 254442)
+		// set selection provider wrapper again in case it got overridden by detail pane
+		getSite().setSelectionProvider(fSelectionProvider);
+		// change active provider
+		fSelectionProvider.setActiveProvider(provider);
 	}
 }

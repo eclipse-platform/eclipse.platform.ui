@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River - Anton Leherbauer - Fix selection provider (Bug 254442)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables.details;
 
@@ -16,11 +17,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDetailPane;
+import org.eclipse.debug.ui.IDetailPane2;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -60,8 +66,8 @@ public class DetailPaneProxy {
 	 * 
 	 * @param parent the detail pane container that is holding this detail pane
 	 */
-	public DetailPaneProxy(IDetailPaneContainer parent){
-		fParentContainer = parent;		
+	public DetailPaneProxy(IDetailPaneContainer parent) {
+		fParentContainer = parent;
 	}
 
 	/**
@@ -154,11 +160,22 @@ public class DetailPaneProxy {
 		if (paneID != null){
 			fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
 			if (fCurrentPane != null){
-				fCurrentPane.init(fParentContainer.getWorkbenchPartSite());
+				final IWorkbenchPartSite workbenchPartSite = fParentContainer.getWorkbenchPartSite();
+				fCurrentPane.init(workbenchPartSite);
 				fCurrentControl = fCurrentPane.createControl(fParentContainer.getParentComposite());
 				if (fCurrentControl != null){
 					fParentContainer.getParentComposite().layout(true);
 					fCurrentPane.display(selection);
+					if (fParentContainer instanceof IDetailPaneContainer2) {
+						fCurrentControl.addFocusListener(new FocusAdapter() {
+							public void focusGained(FocusEvent e) {
+								updateSelectionProvider(true);
+							}
+							public void focusLost(FocusEvent e) {
+								updateSelectionProvider(false);
+							}
+						});
+					}					
 				} else{
 					createErrorLabel(DetailMessages.DetailPaneProxy_0);
 					DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_2, new String[]{fCurrentPane.getID()})))); 
@@ -169,6 +186,28 @@ public class DetailPaneProxy {
 			}
 		} else {
 			createErrorLabel(DetailMessages.DetailPaneProxy_1);
+		}
+	}
+
+	/**
+	 * Update the selection provider of the current detail pane in the container.
+	 * 
+	 * @param hasFocus  whether the detail pane control has the focus
+	 */
+	protected void updateSelectionProvider(boolean hasFocus) {
+		if (fParentContainer instanceof IDetailPaneContainer2) {
+			final IDetailPaneContainer2 container2 = (IDetailPaneContainer2) fParentContainer;
+			if (fCurrentPane instanceof IDetailPane2) {
+				final ISelectionProvider provider= hasFocus ? ((IDetailPane2) fCurrentPane).getSelectionProvider() : null;
+				container2.setSelectionProvider(provider);
+			} else {
+				// Workaround for legacy detail pane implementations (bug 254442)
+				// Forward the site's selection provider to container
+				IWorkbenchPartSite site = container2.getWorkbenchPartSite();
+				if (site != null) {
+					container2.setSelectionProvider(site.getSelectionProvider());
+				}
+			}
 		}
 	}
 

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River - Anton Leherbauer - Fix selection provider (Bug 254442)
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -21,9 +22,10 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * <code>org.eclipse.debug.ui.detailFactories</code> extension point to contribute a detail pane
  * factory.
  * <p>
- * Clients may implement this interface.
+ * Implementors should implement {@link IDetailPane2} in favor of this interface.
  * </p>
  * @see IDetailPaneFactory
+ * @see IDetailPane2
  * @since 3.3 
  */
 public interface IDetailPane {
