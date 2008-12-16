@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.internal.net.ProxySelector;
+import org.eclipse.core.internal.net.StringUtil;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -253,7 +254,7 @@ public class NonProxyHostsComposite extends Composite {
 		int result = dialog.open();
 		if (result != Window.CANCEL) {
 			String value = dialog.getValue();
-			String hosts[] = value.split("\\;| "); //$NON-NLS-1$
+			String hosts[] = StringUtil.split(value, new String[] { ";", "|" }); //$NON-NLS-1$ //$NON-NLS-2$
 			ArrayList filtered = new ArrayList();
 			for (int i = 0; i < hosts.length; i++) {
 				if (hosts[i].length() != 0) {
