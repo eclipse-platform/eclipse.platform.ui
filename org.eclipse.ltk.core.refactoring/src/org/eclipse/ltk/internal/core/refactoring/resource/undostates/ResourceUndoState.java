@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public abstract class ResourceUndoState {
 	 * @param monitor
 	 *            the progress monitor to use
 	 * @return a resource that has the attributes of this resource state
-	 * @throws CoreException
+	 * @throws CoreException if creation failed
 	 */
 	public abstract IResource createResource(IProgressMonitor monitor) throws CoreException;
 
@@ -86,7 +86,7 @@ public abstract class ResourceUndoState {
 	 *            the resource handle
 	 * @param monitor
 	 *            the progress monitor to be used when creating the resource
-	 * @throws CoreException
+	 * @throws CoreException if creation failed
 	 */
 	public abstract void createExistentResourceFromHandle(IResource resource, IProgressMonitor monitor) throws CoreException;
 
@@ -107,7 +107,7 @@ public abstract class ResourceUndoState {
 	 *            the resource whose state is to be recorded.
 	 * @param monitor
 	 *            the progress monitor to be used
-	 * @throws CoreException
+	 * @throws CoreException if history could not be read
 	 */
 	public abstract void recordStateFromHistory(IResource resource, IProgressMonitor monitor) throws CoreException;
 

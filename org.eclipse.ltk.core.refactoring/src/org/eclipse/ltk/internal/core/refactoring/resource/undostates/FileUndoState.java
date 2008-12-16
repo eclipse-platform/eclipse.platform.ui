@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -196,7 +196,7 @@ public class FileUndoState extends AbstractResourceUndoState {
 	 * Get the file state that matches this file description. The local time
 	 * stamp is used to try to find a matching file state. If none can be found,
 	 * the most recent copy of the file state is used.
-	 * @param states
+	 * @param states file states
 	 * @return  best guess state
 	 */
 	private IFileState getMatchingFileState(IFileState[] states) {

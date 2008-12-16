@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class MarkerUndoState {
 	 *
 	 * @param marker
 	 *            the marker to be described
-	 * @throws CoreException
+	 * @throws CoreException if the marker is invalid
 	 */
 	public MarkerUndoState(IMarker marker) throws CoreException {
 		this.type = marker.getType();
@@ -70,7 +70,7 @@ public class MarkerUndoState {
 	 * Create a marker from the marker description.
 	 *
 	 * @return the created marker
-	 * @throws CoreException
+	 * @throws CoreException if the marker could not be created
 	 */
 	public IMarker createMarker() throws CoreException {
 		IMarker marker = resource.createMarker(type);
@@ -83,7 +83,7 @@ public class MarkerUndoState {
 	 *
 	 * @param marker
 	 *            the marker to be updated
-	 * @throws CoreException
+	 * @throws CoreException if the marker could not be updated
 	 */
 	public void updateMarker(IMarker marker) throws CoreException {
 		marker.setAttributes(attributes);

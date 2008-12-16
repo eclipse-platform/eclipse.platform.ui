@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,7 +155,7 @@ public abstract class ContainerUndoState extends AbstractResourceUndoState {
 	 *            the progress monitor to be used
 	 * @param ticks
 	 *            the number of ticks allocated for creating children
-	 * @throws CoreException
+	 * @throws CoreException if creation failed
 	 */
 	protected void createChildResources(IContainer parentHandle,
 			IProgressMonitor monitor, int ticks) throws CoreException {
