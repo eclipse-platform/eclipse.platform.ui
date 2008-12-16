@@ -20,12 +20,8 @@ import org.eclipse.jface.text.Position;
  * Position updater that considers any change in
  * <code>[p.offset,&nbsp;p.offset&nbsp;+&nbsp;p.length]</code> of a {@link Position}
  * <code>p</code> as belonging to the position.
- * <p>
- * Internal class. Do not use. Public for testing purposes only.
- * </p>
  *
  * @since 3.0
- * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class InclusivePositionUpdater implements IPositionUpdater {
