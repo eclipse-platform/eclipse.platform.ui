@@ -41,7 +41,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
-import org.apache.batik.css.engine.sac.ExtendedSelector;
+import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
 import org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.w3c.css.sac.AttributeCondition;
