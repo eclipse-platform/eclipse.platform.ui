@@ -1,13 +1,7 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
-import java.io.IOException;
-import java.io.StringReader;
-
-import junit.framework.TestCase;
-
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.SWTElement;
-import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -20,7 +14,7 @@ import org.eclipse.swt.widgets.Shell;
  * Tests the CSS class and Id rules
  */
 
-public class IdClassLabelColorTest extends TestCase {
+public class IdClassLabelColorTest extends CSSTestCase {
 
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
@@ -31,13 +25,7 @@ public class IdClassLabelColorTest extends TestCase {
 	
 	protected Label createTestLabel(String styleSheet) {
 		Display display = Display.getDefault();
-		CSSEngine engine = new CSSSWTEngineImpl(display);
-		
-		try {
-			engine.parseStyleSheet(new StringReader(styleSheet));
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
+		CSSEngine engine = createEngine(styleSheet, display);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);

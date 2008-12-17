@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -16,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-public class LabelTest extends TestCase {
+public class LabelTest extends CSSTestCase {
 
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
@@ -24,14 +25,8 @@ public class LabelTest extends TestCase {
 		
 	protected Label createTestLabel(String styleSheet) {
 		Display display = Display.getDefault();
-		CSSEngine engine = new CSSSWTEngineImpl(display);
+		CSSEngine engine = createEngine(styleSheet, display);
 		
-		try {
-			engine.parseStyleSheet(new StringReader(styleSheet));
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
 		FillLayout layout = new FillLayout();
@@ -52,9 +47,10 @@ public class LabelTest extends TestCase {
 	}
 	
 	
-	public void testBackgroundColor() throws Exception {
-		Label labelToTest = createTestLabel("Label { background-color: #FF0000 }");
+	public void testColor() throws Exception {
+		Label labelToTest = createTestLabel("Label { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, labelToTest.getBackground().getRGB());
+		assertEquals(BLUE, labelToTest.getForeground().getRGB());
 		labelToTest.getShell().close();
 	}
 

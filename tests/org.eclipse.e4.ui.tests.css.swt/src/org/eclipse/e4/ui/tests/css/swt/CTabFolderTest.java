@@ -48,11 +48,11 @@ public class CTabFolderTest extends CSSTestCase {
 		folderToTest.getShell().close();
 	}
 
-	public void testGradientColor() throws Exception {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { background-color: #FF0000  #0000FF }");
-		assertEquals(BLUE, folderToTest.getSelectionBackground());
-		folderToTest.getShell().close();
-	}
+//	public void testGradientColor() throws Exception {
+//		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { background-color: #FF0000  #0000FF }");
+//		assertEquals(BLUE, folderToTest.getSelectionBackground());
+//		folderToTest.getShell().close();
+//	}
 
 	//test for :selected
 }
