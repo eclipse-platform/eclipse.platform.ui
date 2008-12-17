@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -345,7 +346,12 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	protected void switchToPerspective(IWorkbenchWindow window, String id) {
 		try {
+			// don't loose the focus dialog if there is one
+			Shell dialog = getModalDialogOpen(window.getShell());
 			window.getWorkbench().showPerspective(id, window);
+			if (dialog != null) {
+				dialog.setFocus();
+			}
 		} catch (WorkbenchException e) {
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
 			LaunchConfigurationsMessages.PerspectiveManager_Error_1,  
@@ -441,10 +447,17 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 						Shell shell= window.getShell();
 						if (shell != null) {
 							if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
+								Shell dialog = getModalDialogOpen(shell);
 								if (shell.getMinimized()) {
 									shell.setMinimized(false);
+									if (dialog != null) {
+										dialog.setFocus();
+									}
 								}
-								shell.forceActive();
+								// If a model dialog is open on the shell, don't activate it
+								if (dialog == null) {
+									shell.forceActive();
+								}
 							}
 						}
 	
@@ -490,6 +503,23 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			}
 		};
 		async(r);
+	}
+	
+	/**
+	 * Returns a modal dialog currently open on the given shell or <code>null</code> if none.
+	 * 
+	 * @param shell shell to check
+	 * @return a modal dialog currently open on the given shell or <code>null</code> if none
+	 */
+	private Shell getModalDialogOpen(Shell shell) {
+		Shell[] shells = shell.getShells();
+		for (int i = 0; i < shells.length; i++) {
+			Shell dialog = shells[i];
+			if ((dialog.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0) {
+				return dialog;
+			}
+		}	
+		return null;
 	}
 	
 	/**
@@ -584,11 +614,17 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		}
 		fPrompting= true;
 		// Activate the shell if necessary so the prompt is visible
+		Shell modal = getModalDialogOpen(shell);
 		if (shell.getMinimized()) {
 			shell.setMinimized(false);
+			if (modal != null) {
+				modal.setFocus();
+			}
 		}
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
-			shell.forceActive();
+			if (modal == null) {
+				shell.forceActive();
+			}
 		}
 		String message = IInternalDebugCoreConstants.EMPTY_STRING;
 		if(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND.equals(preferenceKey)) {
