@@ -67,10 +67,14 @@ public class TableViewerFocusCellManager extends SWTFocusCellManager {
 	ViewerCell getInitialFocusCell() {
 		Table table = (Table) getViewer().getControl();
 
-		if (! table.isDisposed() && table.getItemCount() > 0 && ! table.getItem(0).isDisposed()) {
-			return getViewer().getViewerRowFromItem(table.getItem(0))
-					.getCell(0);
-		}
+		if (!table.isDisposed() && table.getItemCount() > 0
+				&& !table.getItem(0).isDisposed()) {
+			final ViewerRow aViewerRow = getViewer().getViewerRowFromItem(
+					table.getItem(0));
+			for (int i = 0; i < table.getColumnCount(); i++) {
+				if (aViewerRow.getWidth(i) > 0)
+					return aViewerRow.getCell(i);
+			}}
 
 		return null;
 	}
