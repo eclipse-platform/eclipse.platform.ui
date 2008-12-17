@@ -12,7 +12,10 @@ import org.eclipse.swt.widgets.Shell;
 
 public class CTabFolderTest extends CSSTestCase {
 
+	static final RGB RED = new RGB(255, 0, 0);
+	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
+	static final RGB WHITE = new RGB(255, 255, 255);
 
 	protected CTabFolder createTestCTabFolder(String styleSheet) {
 		Display display = Display.getDefault();
@@ -54,5 +57,14 @@ public class CTabFolderTest extends CSSTestCase {
 //		folderToTest.getShell().close();
 //	}
 
-	//test for :selected
+	public void testSelectedPseudo() throws Exception {
+		CTabFolder folderToTest = createTestCTabFolder(
+				"CTabFolder { color: #FFFFFF; background-color: #0000FF }\n" +
+				"CTabFolder:selected { color: #FF0000;  background-color: #00FF00 }");
+		assertEquals(WHITE, folderToTest.getForeground().getRGB());
+		assertEquals(BLUE, folderToTest.getBackground().getRGB());
+		assertEquals(RED, folderToTest.getSelectionForeground().getRGB());
+		assertEquals(GREEN, folderToTest.getSelectionBackground().getRGB());
+		folderToTest.getShell().close();
+	}
 }

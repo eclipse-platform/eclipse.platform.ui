@@ -18,8 +18,10 @@ import java.util.List;
 
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.eclipse.e4.ui.css.core.dom.CSSPropertyList;
+import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
 import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.w3c.css.sac.Selector;
+import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -152,13 +154,29 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 	}
 
 	public CSSPropertyList getCSSPropertyList() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		CSSPropertyListImpl propertyList = new CSSPropertyListImpl();
+		for (CSSProperty property: properties) {
+			propertyList.add(property);
+		}
+		return propertyList;
 	}
 
+	/**
+	 * Return the selector for this style declaration
+	 */
 	public Selector getSelector() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		if(parentRule == null)
+			return null;
+		if(parentRule instanceof ExtendedCSSRule) {
+			ExtendedCSSRule extendedRule = (ExtendedCSSRule) parentRule;
+			SelectorList selectors = extendedRule.getSelectorList();
+			//we assume there's only the one
+			if(selectors.getLength() != 1)
+				return null;
+			//TODO not sure right way to handle case of more than one selector
+			return selectors.item(0);
+		}
+		return null;
 	}	
 	
 	protected void setReadOnly(boolean readOnly) {
