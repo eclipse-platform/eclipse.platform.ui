@@ -1,14 +1,7 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
-import java.io.IOException;
-import java.io.StringReader;
-
-import junit.framework.TestCase;
-
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
