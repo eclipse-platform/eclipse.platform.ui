@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
+ *     John J Barton 2008, Bug 248516 – [Browser] Update Window > Pref > General >Web Browsers UI
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
@@ -21,6 +22,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -56,12 +58,14 @@ public class BrowserDescriptorDialog extends Dialog {
 		super(parentShell);
 		this.browser = browser;
 		isEdit = true;
+		setShellStyle( getShellStyle() | SWT.RESIZE );
 	}
 
 	public BrowserDescriptorDialog(Shell parentShell) {
 		super(parentShell);
 		browser = BrowserManager.getInstance().createExternalWebBrowser();
 		isEdit = false;
+		setShellStyle( getShellStyle() | SWT.RESIZE );
 	}
 
 	protected void configureShell(Shell shell) {
@@ -73,12 +77,28 @@ public class BrowserDescriptorDialog extends Dialog {
 			shell.setText(Messages.createBrowser);
 	}
 
-	protected Text createText(Composite comp, String txt, final StringModifyListener listener) {
-		final Text text = new Text(comp, SWT.BORDER);
+	protected Text createText(Composite comp, String txt, final StringModifyListener listener, boolean multiLine) {
+		int style = SWT.BORDER;
+		if (multiLine) style = SWT.BORDER | SWT.V_SCROLL |  SWT.MULTI | SWT.WRAP;  
+		final Text text = new Text(comp, style);
 		if (txt != null)
 			text.setText(txt);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
-		data.widthHint = 250;
+
+		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		data.widthHint = 450;
+		
+		if (multiLine) { // then expand this control as the dialog resizes
+			data.verticalAlignment= SWT.FILL; 
+			data.grabExcessVerticalSpace = true;
+		}
+		
+		GC gc = new GC (text);
+		org.eclipse.swt.graphics.FontMetrics fm = gc.getFontMetrics ();
+		int hHint = 8*fm.getHeight ();
+		gc.dispose ();
+
+		text.setSize(text.computeSize(SWT.DEFAULT , hHint));
+
 		text.setLayoutData(data);
 		if (listener != null)
 			text.addModifyListener(new ModifyListener() {
@@ -106,7 +126,7 @@ public class BrowserDescriptorDialog extends Dialog {
 				browser.setName(s);
 				validateFields();
 			}
-		});
+		}, false);
 		browserNameTextfield.setFont(font);
 		
 		new Label(composite, SWT.NONE);
@@ -117,7 +137,7 @@ public class BrowserDescriptorDialog extends Dialog {
 				browser.setLocation(s);
 				validateFields();
 			}
-		});
+		}, false);
 		browserLocationTextfield.setFont(font);
 		
 		browseButton = SWTUtil.createButton(composite, Messages.browse);
@@ -142,7 +162,7 @@ public class BrowserDescriptorDialog extends Dialog {
 			public void valueChanged(String s) {
 				browser.setParameters(s);
 			}
-		});
+		}, true);
 		browserParametersTextfield.setFont(font);
 
 		new Label(composite, SWT.NONE);
