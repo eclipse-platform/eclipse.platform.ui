@@ -8,7 +8,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -56,13 +55,34 @@ public class LabelTest extends TestCase {
 	public void testBackgroundColor() throws Exception {
 		Label labelToTest = createTestLabel("Label { background-color: #FF0000 }");
 		assertEquals(RED, labelToTest.getBackground().getRGB());
+		labelToTest.getShell().close();
 	}
 
-	public void testFont() throws Exception {
-		Label labelToTest = createTestLabel("Label { font: Verdana 8px }");
+	public void testFontRegular() throws Exception {
+		Label labelToTest = createTestLabel("Label { font: Verdana 16px }");
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
 		assertEquals("Verdana", fontData.getName());
+		assertEquals(16, fontData.getHeight());
+		assertEquals(SWT.NORMAL, fontData.getStyle());		
+		labelToTest.getShell().close();
 	}
 
+	public void testFontBold() throws Exception {
+		Label labelToTest = createTestLabel("Label { font: Arial 12px; font-weight: bold }");
+		assertEquals(1, labelToTest.getFont().getFontData().length);
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals("Arial", fontData.getName());
+		assertEquals(12, fontData.getHeight());
+		assertEquals(SWT.BOLD, fontData.getStyle());		
+		labelToTest.getShell().close();
+	}
+
+	public void testFontItalic() throws Exception {
+		Label labelToTest = createTestLabel("Label { font-style: italic }");
+		assertEquals(1, labelToTest.getFont().getFontData().length);
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals(SWT.ITALIC, fontData.getStyle());		
+		labelToTest.getShell().close();
+	}
 }

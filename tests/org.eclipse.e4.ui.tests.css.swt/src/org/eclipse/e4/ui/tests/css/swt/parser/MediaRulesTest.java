@@ -17,6 +17,8 @@ public class MediaRulesTest extends TestCase {
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
 		CSSRuleList rules = styleSheet.getCssRules();
+		
+		//THIS TEST KNOW TO FAIL Dec 16/08
 		assertEquals(1, rules.getLength());
 	}
 }
