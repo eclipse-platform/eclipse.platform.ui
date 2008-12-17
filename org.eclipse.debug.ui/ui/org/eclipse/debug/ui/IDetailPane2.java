@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 /**
  * An extension to the detail pane interface which allows implementors to
  * provide a selection provider instead of setting the selection provider of the
- * view's {@link IWorkbenchPartSite site} directly.
+ * view's {@link org.eclipse.ui.IWorkbenchPartSite site} directly.
  * <p>
  * Clients may implement this interface.
  * </p>
