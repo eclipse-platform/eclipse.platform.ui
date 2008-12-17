@@ -162,7 +162,7 @@ public abstract class ViewerRow implements Cloneable {
 	 * Get the ViewerCell at point.
 	 * 
 	 * @param point
-	 * @return {@link ViewerCell}
+	 * @return @return {@link ViewerCell} or <code>null</code> if the point is not in the bounds of a cell
 	 */
 	public ViewerCell getCell(Point point) {
 		int index = getColumnIndex(point);
