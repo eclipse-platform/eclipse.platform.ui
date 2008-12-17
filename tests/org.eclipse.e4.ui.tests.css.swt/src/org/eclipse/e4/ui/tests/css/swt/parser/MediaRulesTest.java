@@ -18,7 +18,7 @@ public class MediaRulesTest extends TestCase {
 		assertNotNull(styleSheet);
 		CSSRuleList rules = styleSheet.getCssRules();
 		
-		//THIS TEST KNOW TO FAIL Dec 16/08
+		//THIS TEST KNOWN TO FAIL Dec 16/08
 		assertEquals(1, rules.getLength());
 	}
 }
