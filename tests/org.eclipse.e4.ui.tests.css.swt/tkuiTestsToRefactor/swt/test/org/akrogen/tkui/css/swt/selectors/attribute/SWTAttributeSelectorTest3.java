@@ -1,0 +1,74 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Angelo Zerr and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *******************************************************************************/
+package org.akrogen.tkui.css.swt.selectors.attribute;
+
+import java.io.StringReader;
+
+import org.akrogen.tkui.css.core.engine.CSSEngine;
+import org.akrogen.tkui.css.swt.engine.CSSSWTEngineImpl;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+
+/**
+ * 
+ * Selector=E[foo~="bar"] an E element whose "foo" attribute value is a list of
+ * space-separated values, one of which is exactly equal to "bar"
+ * 
+ */
+public class SWTAttributeSelectorTest3 {
+
+	public static void main(String[] args) {
+		try {
+			Display display = new Display();
+			CSSEngine engine = new CSSSWTEngineImpl(display);
+			engine.parseStyleSheet(new StringReader(
+					"Label[foo~=\"bar\"] {color:red} Label {color:green}"));
+
+			/*---   UI SWT ---*/
+			Shell shell = new Shell(display, SWT.SHELL_TRIM);
+			FillLayout layout = new FillLayout();
+			shell.setLayout(layout);
+
+			Composite panel1 = new Composite(shell, SWT.NONE);
+			panel1.setLayout(new FillLayout());
+
+			// Label
+			Label label1 = new Label(panel1, SWT.NONE);
+			label1.setText("Label foo");
+			label1.setData("foo", "it's bar");
+
+			// Label
+			Label label2 = new Label(panel1, SWT.NONE);
+			label2.setText("Label ");
+
+			/*---   End UI SWT  ---*/
+			// Apply Styles
+			engine.applyStyles(shell, true);
+
+			shell.pack();
+			shell.open();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
+			}
+
+			display.dispose();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

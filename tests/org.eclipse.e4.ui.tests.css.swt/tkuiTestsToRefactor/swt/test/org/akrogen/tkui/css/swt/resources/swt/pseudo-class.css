@@ -1,0 +1,19 @@
+Text:disabled {
+	background-color:blue;
+}
+
+Text:focus {
+	background-color:red;
+}
+
+Button[type="checkbox"][visible="true"] {
+	background-color:green;
+}
+
+Button[type="radio"] {
+	background-color:yellow;
+}
+
+Button[type="button"] {
+	background: url(./images/icons/type/class.gif);
+}

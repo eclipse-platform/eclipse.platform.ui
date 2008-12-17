@@ -1,0 +1,24 @@
+Composite Composite Label {
+	font-weight:normal;	
+	font-style: italic;
+	color:green;	
+} 
+
+Label {
+	font-weight:bold;
+	font-family: "Arial";
+	color:red;	
+	font-size: 20;
+}
+
+Label#MyId {
+	color:blue;		
+}
+
+Label#MyId2 {
+	color:yellow;		
+}
+
+Text {
+	background-color:#6495ED;
+}

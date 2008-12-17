@@ -1,0 +1,50 @@
+Shell, Tree, Button, Label {
+	font-family: Roman;
+	font-size: 10;
+	background-color: rgb(233,234,238);
+	color: rgb(70,70,70);
+}
+SashForm {
+	background-color: black;
+}
+Text {
+	font-family: Calibri;
+	font-size: 10;
+}
+ToolBar {
+	background-color: gradient,
+		white,
+		white,
+		rgb(214,222,223),
+		rgb(219,226,228),
+		rgb(210,217,219),
+		rgb(224,229,231),
+		white,
+		white,
+		5%, 5%, 45%, 45%, 98%, 98%, 100%;
+	color: white;
+}
+
+CLabel {
+	font-family: Calibri;
+	font-size: 10;
+	background-color: gradient, 
+		rgb(67,71,82), 
+		rgb(59,62,70), 
+		rgb(47,48,48), 
+		rgb(76,76,76), 
+		40%, 40%, 100%;
+	color: white;
+}
+
+CTabFolder:selected {
+	background: url(./images/vista_tab2.jpg);
+	color: white;
+}
+
+CTabFolder {
+	font-family: Calibri;
+	font-size: 10;
+	background-color: rgb(233,234,238);
+	color: rgb(70,70,70);
+}
