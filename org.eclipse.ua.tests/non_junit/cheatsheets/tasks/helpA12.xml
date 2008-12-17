@@ -11,7 +11,7 @@
       </description>
       <subitem label="Open Help -&gt; Help Contents" skip="false">
       </subitem>
-      <subitem label="Verify that there’s a new index tab at the bottom left. Click on it to open the index." skip="false">
+      <subitem label="Verify that there’s an index tab at the bottom left. Click on it to open the index." skip="false">
       </subitem>
       <subitem label="Verify that there is a text box with a DISPLAY button to the right and that there is a list of keywords." skip="false">
       </subitem>
@@ -23,6 +23,9 @@
       <subitem label="Verify that +keyword, -keyword, =keyword and _keyword appear at the front of the index, before any keywords that start with letters." skip="false">
       </subitem>
       <subitem label="Verify that xaa, Xyx and xyz appear in that order." skip="false">
+      </subitem>
+      <subitem
+            label="Verify that action, ámbito and assistance appear in that order.">
       </subitem>
    </item>
    <item title="Typein" dialog="true" skip="false">
@@ -45,7 +48,7 @@
       </description>
       <subitem label="Help-&gt;Dynamic Help" skip="false">
       </subitem>
-      <subitem label="Verify that there’s a new index tab at the bottom left. Click on it to open the index." skip="false">
+      <subitem label="Verify that there’s an index tab at the bottom left. Click on it to open the index." skip="false">
       </subitem>
       <subitem label="Verify that there is a text box with a DISPLAY button to the right and that there is a list of keywords." skip="false">
       </subitem>
@@ -57,6 +60,9 @@
       <subitem label="Verify that +keyword, -keyword, =keyword and _keyword appear at the front of the index, before any keywords that start with letters." skip="false">
       </subitem>
       <subitem label="Verify that xaa, Xyx and xyz appear in that order." skip="false">
+      </subitem>
+      <subitem
+            label="Verify that action, ámbito and assistance appear in that order.">
       </subitem>
    </item>
    <item title="Help view Typein" dialog="true" skip="false">

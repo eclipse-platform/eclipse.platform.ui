@@ -17,7 +17,8 @@
 <br/>Key Assist
 <br/>Tips and Tricks
 <br/>Cheat Sheets
-<br/>Software Updates
+<br/>Install new software
+<br/>Installation information
 <br/>About Eclipse SDK
       </description>
    </item>
@@ -64,12 +65,6 @@
 <br/>Eclipse Java Development Tools
 <br/>Eclipse Platform
 <br/>PDE
-      </description>
-   </item>
-   <item
-         title="Software Updates">
-      <description>
-         Help/Software Updates. Verify that the Software Updates dialog opens.
       </description>
    </item>
    <item
