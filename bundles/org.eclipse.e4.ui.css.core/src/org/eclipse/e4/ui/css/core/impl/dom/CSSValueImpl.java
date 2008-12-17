@@ -24,17 +24,6 @@ import org.w3c.dom.css.Rect;
 
 public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimitiveValue, CSSValue, Serializable {
 
-	public static CSSValueImpl newInstance(LexicalUnit value) {
-		if (value.getLexicalUnitType() == LexicalUnit.SAC_RGBCOLOR) {
-			// RGBColor
-			return new RGBColorImpl(value);
-		} else {
-			return new Measure(value);
-		}
-		//TODO add cases for Rect, Counter
-		//TODO also check for list case and return CSSValueListImpl?
-	}
-
 	// W3C CSSValue API methods
 	
 	/*

@@ -8,6 +8,8 @@ import junit.framework.TestCase;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -39,20 +41,28 @@ public class LabelTest extends TestCase {
 		Composite panel = new Composite(shell, SWT.NONE);
 		panel.setLayout(new FillLayout());
 
-		Label label = new Label(panel, SWT.NONE);
-		label.setText("Label");
+		Label labelToTest = new Label(panel, SWT.NONE);
+		labelToTest.setText("Some label text");
 
 		// Apply styles
 		engine.applyStyles(shell, true);
 
 		shell.pack();
 		shell.open();
-		return label;
+		return labelToTest;
 	}
 	
-	public void testWidgetClass() throws Exception {
-		Label label = createTestLabel("Label { background-color: #FF0000 }");
-		assertEquals(RED, label.getBackground().getRGB());
+	
+	public void testBackgroundColor() throws Exception {
+		Label labelToTest = createTestLabel("Label { background-color: #FF0000 }");
+		assertEquals(RED, labelToTest.getBackground().getRGB());
+	}
+
+	public void testFont() throws Exception {
+		Label labelToTest = createTestLabel("Label { font: Verdana 8px }");
+		assertEquals(1, labelToTest.getFont().getFontData().length);
+		FontData fontData = labelToTest.getFont().getFontData()[0];
+		assertEquals("Verdana", fontData.getName());
 	}
 
 }

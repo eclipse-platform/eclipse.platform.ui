@@ -6,7 +6,7 @@ import java.io.StringReader;
 import junit.framework.TestCase;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.CSSSWT;
+import org.eclipse.e4.ui.css.swt.dom.SWTElement;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -47,17 +47,17 @@ public class IdClassLabelColorTest extends TestCase {
 		Composite panel = new Composite(shell, SWT.NONE);
 		panel.setLayout(new FillLayout());
 
-		Label label = new Label(panel, SWT.NONE);
-		label.setText("Label");
-		CSSSWT.setCSSClass(label, CSS_CLASS_NAME);
-		CSSSWT.setID(label, CSS_ID);
-
+		Label labelToTest = new Label(panel, SWT.NONE);
+		labelToTest.setText("Some label text");
+		SWTElement.setCSSClass(labelToTest, CSS_CLASS_NAME);
+		SWTElement.setID(labelToTest, CSS_ID);
+		
 		// Apply styles
 		engine.applyStyles(shell, true);
 
 		shell.pack();
 		shell.open();
-		return label;
+		return labelToTest;
 	}
 	
 	//For completeness, test that the html type rule works
@@ -68,21 +68,21 @@ public class IdClassLabelColorTest extends TestCase {
 	
 	//Test the CSS class rule
 	public void testCssClass() throws Exception {
-		Label label = createTestLabel("." + CSS_CLASS_NAME + " { background-color: #00FF00 }");
+		Label labelToTest = createTestLabel("." + CSS_CLASS_NAME + " { background-color: #00FF00 }");
 
 		//Ensure the widget actually thinks it has this CSS class
-		assertEquals(CSSSWT.getCSSClass(label), CSS_CLASS_NAME);
+		assertEquals(SWTElement.getCSSClass(labelToTest), CSS_CLASS_NAME);
 
-		assertEquals(GREEN, label.getBackground().getRGB());
+		assertEquals(GREEN, labelToTest.getBackground().getRGB());
 	}
 
 	//Test the id rule
 	public void testWidgetId() throws Exception {
-		Label label = createTestLabel("#" + CSS_ID + " { background-color: #0000FF }");
+		Label labelToTest = createTestLabel("#" + CSS_ID + " { background-color: #0000FF }");
 		
 		//Ensure the widget actually thinks it has this ID
-		assertEquals(CSSSWT.getID(label), CSS_ID);
+		assertEquals(SWTElement.getID(labelToTest), CSS_ID);
 
-		assertEquals(BLUE, label.getBackground().getRGB());
+		assertEquals(BLUE, labelToTest.getBackground().getRGB());
 	}
 }

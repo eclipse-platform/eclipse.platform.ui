@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.css.sac.LexicalUnit;
@@ -20,11 +21,16 @@ import org.w3c.dom.css.CSSValueList;
 
 public class CSSValueListImpl extends AbstractCSSNode implements CSSValueList {
 
-	List<CSSValueImpl> values;
+	List<CSSValue> values;
 	
 	public CSSValueListImpl(LexicalUnit parsePropertyValue) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		values = new ArrayList<CSSValue>();
+		
+		LexicalUnit unit = parsePropertyValue;
+		while(unit != null) {
+			values.add(CSSValueFactory.newPrimitiveValue(unit));
+			unit = unit.getNextLexicalUnit();
+		}
 	}
 
 	/*

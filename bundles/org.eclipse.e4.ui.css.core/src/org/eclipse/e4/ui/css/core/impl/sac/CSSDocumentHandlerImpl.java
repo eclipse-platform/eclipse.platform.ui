@@ -17,7 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSMediaRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSPageRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSPropertyImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSRuleListImpl;
@@ -25,7 +24,7 @@ import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleDeclarationImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSUnknownRuleImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSValueImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSValueFactory;
 import org.eclipse.e4.ui.css.core.impl.dom.MediaListImpl;
 import org.eclipse.e4.ui.css.core.sac.ExtendedDocumentHandler;
 import org.w3c.css.sac.CSSException;
@@ -223,7 +222,7 @@ public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 
 	protected CSSProperty getCSSProperty(CSSStyleDeclaration styleDeclaration,
 			String name, LexicalUnit value, boolean important) {
-		return new CSSPropertyImpl(name, CSSValueImpl.newInstance(value), important);
+		return new CSSPropertyImpl(name, CSSValueFactory.newValue(value), important);
 	}
 
 	public Object getNodeRoot() {

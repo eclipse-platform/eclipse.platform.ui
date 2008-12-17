@@ -57,4 +57,19 @@ public class Measure extends CSSValueImpl {
 		// TODO There are more cases to catch of getLexicalUnitType()
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSPrimitiveValue#getPrimitiveType()
+	 */
+	public short getPrimitiveType() {
+		switch (value.getLexicalUnitType()) {
+		case LexicalUnit.SAC_IDENT:
+			return CSS_IDENT;
+		case LexicalUnit.SAC_PIXEL:
+			return CSS_PX;
+		}
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	}
 }

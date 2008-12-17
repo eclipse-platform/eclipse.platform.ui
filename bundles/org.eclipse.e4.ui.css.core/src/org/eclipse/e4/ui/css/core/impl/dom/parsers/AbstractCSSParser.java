@@ -16,7 +16,7 @@ import java.util.Stack;
 
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleDeclarationImpl;
-import org.eclipse.e4.ui.css.core.impl.dom.CSSValueImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSValueFactory;
 import org.eclipse.e4.ui.css.core.sac.DocumentHandlerFactory;
 import org.eclipse.e4.ui.css.core.sac.ExtendedDocumentHandler;
 import org.eclipse.e4.ui.css.core.sac.ISACParserFactory;
@@ -108,7 +108,7 @@ public class AbstractCSSParser implements CSSParser {
 		ExtendedDocumentHandler documentHandler = getDocumentHandlerFactory()
 				.makeDocumentHandler();
 		parser.setDocumentHandler(documentHandler);
-		return CSSValueImpl.newInstance(parser.parsePropertyValue(source));
+		return CSSValueFactory.newValue(parser.parsePropertyValue(source));
 	}
 
 	/*

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
@@ -15,7 +16,7 @@ import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.utils.ClassUtils;
 import org.eclipse.e4.ui.css.core.utils.NumberUtils;
-import org.eclipse.e4.ui.css.swt.CSSSWT;
+import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpers;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Button;
@@ -29,12 +30,44 @@ import org.w3c.dom.NodeList;
 
 /**
  * w3c Element which wrap SWT widget.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class SWTElement extends ElementAdapter implements NodeList {
+
+	/**
+	 * Convenience method for getting the CSS class of a widget.
+	 * @param widget SWT widget with associated CSS class name
+	 * @return CSS class name
+	 */
+	public static String getCSSClass(Widget widget) {
+		return (String) widget.getData(CSSSWTConstants.CSS_CLASS_NAME_KEY);
+	}
+
+	/**
+	 * Convenience method for getting the CSS ID of a widget.
+	 * @param widget SWT widget with associated CSS id
+	 * @return CSS ID
+	 */
+	public static String getID(Widget widget) {
+		return (String) widget.getData(CSSSWTConstants.CSS_ID_KEY);
+	}
+
+	/**
+	 * Convenience method for setting the CSS class of a widget.
+	 * @param widget SWT widget with associated CSS class name
+	 * @param className class name to set
+	 */
+	public static void setCSSClass(Widget widget, String className) {
+		widget.setData(CSSSWTConstants.CSS_CLASS_NAME_KEY, className);
+	}
+
+	/**
+	 * Convenience method for setting the CSS ID of a widget.
+	 * @param widget SWT widget with associated CSS id
+	 * @param id CSS id to set
+	 */
+	public static void setID(Widget widget, String id) {
+		widget.setData(CSSSWTConstants.CSS_ID_KEY, id);
+	}
 
 	protected String localName;
 
@@ -180,7 +213,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 
 	public String getCSSId() {
 		Widget widget = getWidget();
-		Object id = CSSSWT.getID(widget);
+		Object id = getID(widget);
 		if (id != null)
 			return id.toString();
 		return null;
@@ -193,7 +226,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 */
 	public String getCSSClass() {
 		Widget widget = getWidget();
-		Object id = CSSSWT.getCSSClass(widget);
+		Object id = getCSSClass(widget);
 		if (id != null)
 			return id.toString();
 		return null;

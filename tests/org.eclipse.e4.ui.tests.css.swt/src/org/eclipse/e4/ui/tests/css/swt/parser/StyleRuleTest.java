@@ -54,4 +54,17 @@ public class StyleRuleTest extends TestCase {
 		String colorString = ((CSSPrimitiveValue) value).getStringValue();
 		assertEquals("green", colorString);
 	}
+
+	public void testFont() throws Exception {
+		String css = "Label { font: Verdana }";
+		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSRuleList rules = styleSheet.getCssRules();
+		CSSRule rule = rules.item(0);
+		assertEquals(CSSRule.STYLE_RULE, rule.getType());
+		CSSStyleDeclaration style = ((CSSStyleRule) rule).getStyle();
+		CSSValue value = style.getPropertyCSSValue("font");
+		assertTrue(value instanceof CSSPrimitiveValue);
+		String colorString = ((CSSPrimitiveValue) value).getStringValue();
+		assertEquals("Verdana", colorString);
+	}
 }
