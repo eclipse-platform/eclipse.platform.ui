@@ -52,7 +52,9 @@ public class Measure extends CSSValueImpl {
 	 * @see org.w3c.dom.css.CSSPrimitiveValue#getStringValue()
 	 */
 	public String getStringValue() throws DOMException {
-		if((value.getLexicalUnitType() == LexicalUnit.SAC_IDENT))
+		if((value.getLexicalUnitType() == LexicalUnit.SAC_IDENT)
+				|| (value.getLexicalUnitType() == LexicalUnit.SAC_STRING_VALUE)
+				|| (value.getLexicalUnitType() == LexicalUnit.SAC_URI))
 			return value.getStringValue();
 		// TODO There are more cases to catch of getLexicalUnitType()
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
@@ -68,8 +70,23 @@ public class Measure extends CSSValueImpl {
 			return CSS_IDENT;
 		case LexicalUnit.SAC_PIXEL:
 			return CSS_PX;
+		case LexicalUnit.SAC_INTEGER:
+		case LexicalUnit.SAC_REAL:
+			return CSS_NUMBER;
+		case LexicalUnit.SAC_URI:
+			return CSS_URI;
 		}
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.w3c.dom.css.CSSValue#getCssText()
+	 */
+	public String getCssText() {
+		if(getPrimitiveType() == CSS_NUMBER)
+			return String.valueOf(value.getIntegerValue());
+		return value.getStringValue();
 	}
 }
