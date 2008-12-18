@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,17 +19,16 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 
 /**
- * A shared document adapter that tracks whether the element is
- * connected to a shared document and whether the contents have been
- * flushed from a compare viewer. When contents are flushed, this
- * adapter will connect to the document provider to ensure that
- * the changes are not lost (see {@link #hasBufferedContents()}. 
- * In order to avoid a leak, the buffer must
- * either be saved (see {@link #saveDocument(IEditorInput, boolean, IProgressMonitor)}
- * or released (see {@link #releaseBuffer()}.
+ * A shared document adapter that tracks whether the element is connected to a
+ * shared document and whether the contents have been flushed from a compare
+ * viewer. When contents are flushed, this adapter will connect to the document
+ * provider to ensure that the changes are not lost (see
+ * {@link #hasBufferedContents()}). In order to avoid a leak, the buffer must
+ * either be saved (see
+ * {@link #saveDocument(IEditorInput, boolean, IProgressMonitor)}) or released
+ * (see {@link #releaseBuffer()}).
  * <p>
- * This adapter must have a one-to-one correspondence to 
- * a typed element.
+ * This adapter must have a one-to-one correspondence to a typed element.
  */
 public class EditableSharedDocumentAdapter extends
 		SharedDocumentAdapter implements IElementStateListener {

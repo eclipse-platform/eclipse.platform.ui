@@ -22,14 +22,17 @@ import org.eclipse.ui.IEditorInput;
 /**
  * A buffered resource node with the following characteristics:
  * <ul>
- * <li>Supports the use of file buffers (see {@link ISharedDocumentAdapter}.
- * <li>Does not support file systems hierarchies (i.e. should not be used to represent a folder).
- * <li>Does not allow editing when the file does not exist (see {@link #isEditable()}
- * <li>Tracks whether the file has been changed on disk since it was loaded through the element
- * (see {@link #isSynchronized()}).
- * <li>Any buffered contents must either be saved or discarded when the element is no longer needed
- * (see {@link #commit(IProgressMonitor)}, {@link #saveDocument(boolean, IProgressMonitor)} 
- * and {@link #discardBuffer()})
+ * <li>Supports the use of file buffers (see {@link ISharedDocumentAdapter}).
+ * <li>Does not support file systems hierarchies (i.e. should not be used to
+ * represent a folder).
+ * <li>Does not allow editing when the file does not exist (see
+ * {@link #isEditable()}).
+ * <li>Tracks whether the file has been changed on disk since it was loaded
+ * through the element (see {@link #isSynchronized()}).
+ * <li>Any buffered contents must either be saved or discarded when the element
+ * is no longer needed (see {@link #commit(IProgressMonitor)},
+ * {@link #saveDocument(boolean, IProgressMonitor)} and {@link #discardBuffer()}
+ * ).
  * </ul>
  * <p>
  * This class may be instantiated.

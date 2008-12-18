@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
- * An <code>ISharedDocumentAdapter</code> is used to map an {@link ITypedElement} to
- * a shared document for the purposes of editing.
- * <p>
- * Clients are not expected to implement this interface but instead should subclass 
- * {@link SharedDocumentAdapter} or {@link SharedDocumentAdapterWrapper}.
- * </p>
+ * An <code>ISharedDocumentAdapter</code> is used to map an
+ * {@link ITypedElement} to a shared document for the purposes of editing.
+ * 
+ * @noimplement Clients are not expected to implement this interface but instead
+ *              should subclass {@link SharedDocumentAdapter} or
+ *              {@link SharedDocumentAdapterWrapper}.
  * @since 3.3
  */
 public interface ISharedDocumentAdapter {

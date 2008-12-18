@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.compare" version="2">
+    <resource path="compare/org/eclipse/compare/ISharedDocumentAdapter.java" type="org.eclipse.compare.ISharedDocumentAdapter">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.compare.ISharedDocumentAdapter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
