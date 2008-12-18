@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
- *     IBM Corporation 2008 - Bug 248079 – [Help][Index] unicode sort issue in index view
+ *     IBM Corporation 2008 - Bug 248079 [Help][Index] unicode sort issue in index view
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
