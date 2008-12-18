@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
+
+import org.eclipse.core.runtime.CoreException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -146,52 +148,59 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		assertNull("0.8", description);
 
 		try {
-			text.addFileSpec(unrelatedFile.getName(), IContentType.FILE_NAME_SPEC);
-		} catch (CoreException e) {
-			fail("0.99", e);
-		}
+			try {
+				text.addFileSpec(unrelatedFile.getName(), IContentType.FILE_NAME_SPEC);
+			} catch (CoreException e) {
+				fail("0.99", e);
+			}
 
-		description = getDescription("1.0", unrelatedFile);
-		assertNotNull("1.1", description);
-		assertEquals("1.2", text, description.getContentType());
+			description = getDescription("1.0", unrelatedFile);
+			assertNotNull("1.1", description);
+			assertEquals("1.2", text, description.getContentType());
 
-		final ProjectScope projectScope = new ProjectScope(project);
-		Preferences contentTypePrefs = projectScope.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE);
-		// enable project-specific settings for this project
-		contentTypePrefs.putBoolean("enabled", true);
-		try {
-			contentTypePrefs.flush();
-		} catch (BackingStoreException e) {
-			fail("1.99", e);
-		}
-		// global settings should not matter anymore
-		description = getDescription("2.0", unrelatedFile);
-		assertNull("2.1", description);
+			final ProjectScope projectScope = new ProjectScope(project);
+			Preferences contentTypePrefs = projectScope.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE);
+			// enable project-specific settings for this project
+			contentTypePrefs.putBoolean("enabled", true);
+			try {
+				contentTypePrefs.flush();
+			} catch (BackingStoreException e) {
+				fail("1.99", e);
+			}
+			// global settings should not matter anymore
+			description = getDescription("2.0", unrelatedFile);
+			assertNull("2.1", description);
 
-		IContentTypeSettings settings = null;
-		try {
-			settings = text.getSettings(projectScope);
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-		assertNotNull("3.1", settings);
-		assertNotSame("3.2", text, settings);
-		assertTrue("3.3", settings instanceof ContentTypeSettings);
+			IContentTypeSettings settings = null;
+			try {
+				settings = text.getSettings(projectScope);
+			} catch (CoreException e) {
+				fail("3.0", e);
+			}
+			assertNotNull("3.1", settings);
+			assertNotSame("3.2", text, settings);
+			assertTrue("3.3", settings instanceof ContentTypeSettings);
 
-		try {
-			settings.addFileSpec(unrelatedFile.getFullPath().getFileExtension(), IContentType.FILE_EXTENSION_SPEC);
-		} catch (CoreException e) {
-			fail("4.0", e);
+			try {
+				settings.addFileSpec(unrelatedFile.getFullPath().getFileExtension(), IContentType.FILE_EXTENSION_SPEC);
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+			try {
+				contentTypePrefs.flush();
+			} catch (BackingStoreException e) {
+				fail("4.1", e);
+			}
+			description = getDescription("5.0", unrelatedFile);
+			assertNotNull("5.1", description);
+			assertEquals("5.2", text, description.getContentType());
+		} finally {
+			try {
+				text.removeFileSpec(unrelatedFile.getName(), IContentType.FILE_NAME_SPEC);
+			} catch (CoreException e) {
+				fail("6.0", e);
+			}
 		}
-		try {
-			contentTypePrefs.flush();
-		} catch (BackingStoreException e) {
-			fail("4.1", e);
-		}
-		description = getDescription("5.0", unrelatedFile);
-		assertNotNull("5.1", description);
-		assertEquals("5.2", text, description.getContentType());
-
 	}
 
 	/**

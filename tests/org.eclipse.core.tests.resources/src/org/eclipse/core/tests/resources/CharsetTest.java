@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -525,7 +525,7 @@ public class CharsetTest extends ResourceTest {
 		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
 		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType myType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.myContent");
+		IContentType myType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.myContent2");
 		assertNotNull("0.1", myType);
 		assertEquals("0.2", PROVIDER_SETTING, myType.getDefaultCharset());
 		IProject project = getWorkspace().getRoot().getProject("project1");
