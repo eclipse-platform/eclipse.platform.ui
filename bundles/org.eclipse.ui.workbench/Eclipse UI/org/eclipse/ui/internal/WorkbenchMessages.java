@@ -884,6 +884,9 @@ public class WorkbenchMessages extends NLS {
 	public static String PerspectiveBar_saveAs;
 	public static String PerspectiveBar_reset;
 
+
+	public static String Perspective_couldNotBeFound;
+
 	public static String PerspectiveSwitcher_dockOn;
 	public static String PerspectiveSwitcher_topRight;
 	public static String PerspectiveSwitcher_topLeft;

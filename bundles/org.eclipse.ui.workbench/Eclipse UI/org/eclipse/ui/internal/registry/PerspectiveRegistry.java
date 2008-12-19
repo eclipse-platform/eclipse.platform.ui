@@ -39,6 +39,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -435,6 +436,15 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 				String xmlString = store.getString(perspectivesList[i] + PERSP);
 				if (xmlString != null && xmlString.length() != 0) {
 					reader = new StringReader(xmlString);
+				} else {
+					throw new WorkbenchException(
+							new Status(
+									IStatus.ERROR,
+									WorkbenchPlugin.PI_WORKBENCH,
+									NLS
+											.bind(
+													WorkbenchMessages.Perspective_couldNotBeFound,
+													perspectivesList[i])));
 				}
 
 				// Restore the layout state.
@@ -514,10 +524,12 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 		String msg = WorkbenchMessages.Perspective_errorLoadingState;
 		if (status == null) {
 			IStatus errStatus = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, msg); 
-	    	StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
+			StatusManager.getManager().handle(errStatus,
+					StatusManager.SHOW | StatusManager.LOG);
 		} else {
-			IStatus errStatus = StatusUtil.newStatus(status, msg); 
-	    	StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
+			IStatus errStatus = StatusUtil.newStatus(status, msg);
+			StatusManager.getManager().handle(errStatus,
+					StatusManager.SHOW | StatusManager.LOG);
 		}
 	}
 
@@ -564,6 +576,15 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 		String xmlString = store.getString(id + PERSP);
 		if (xmlString != null && xmlString.length() != 0) { // defined in store
 			reader = new StringReader(xmlString);
+		} else {
+			throw new WorkbenchException(
+					new Status(
+							IStatus.ERROR,
+							WorkbenchPlugin.PI_WORKBENCH,
+							NLS
+									.bind(
+											WorkbenchMessages.Perspective_couldNotBeFound,
+											id)));
 		}
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		reader.close();

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IProject;
@@ -157,6 +159,18 @@ public class UIDialogs extends TestCase {
                         .getPerspective().getId());
         dialog.setInitialSelection(description);
         DialogCheck.assertDialog(dialog, this);
+    }
+    
+    // see bug 211350
+    public void testLoadNotExistingPerspective() throws IOException{
+    	final String fakePerspectivID = "fakeperspetive";
+		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin
+				.getDefault().getPerspectiveRegistry();
+		try {
+			reg.getCustomPersp(fakePerspectivID);
+		} catch (WorkbenchException e) {
+			assertTrue(e.getStatus().getMessage().indexOf(fakePerspectivID) != -1);
+		}
     }
 
     public void testSelectPerspective() {
