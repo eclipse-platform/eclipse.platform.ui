@@ -49,32 +49,32 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	// XXX this is copied from CharsetDeltaJob in the resources plug-in
 	private static final String FAMILY_CHARSET_DELTA = "org.eclipse.core.resources.charsetJobFamily";
 
-	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>";
 	private final static String SAMPLE_BIN1_OFFSET = "12345";
 	private final static byte[] SAMPLE_BIN1_SIGNATURE = {0x10, (byte) 0xAB, (byte) 0xCD, (byte) 0xFF};
 	private final static String SAMPLE_BIN2_OFFSET = "";
 	private final static byte[] SAMPLE_BIN2_SIGNATURE = {0x10, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF};
-	private final static String XML_DTD_EXTERNAL_ENTITY = "<?xml version=\"1.0\"?><!DOCTYPE project  SYSTEM \"org.eclipse.core.runtime.tests.some.dtd\"  [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE sometype SYSTEM \"org.eclipse.core.runtime.tests.some.dtd\"><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_ISO_8859_1_SINGLE_QUOTES = "<?xml version='1.0' encoding='ISO-8859-1'?><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY = "<?xml version=\"1.0\"?><!DOCTYPE project   [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root-element/>";
-	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY2 = "<?xml version=\"1.0\"?><!DOCTYPE org.eclipse.core.runtime.tests.root-element PUBLIC \"org.eclipse.core.runtime.tests.root-elementId\" \"org.eclipse.core.runtime.tests.root-element.dtd\" ><org.eclipse.core.runtime.tests.root-element/>";
-	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
-	private final static String XML_ROOT_ELEMENT_NO_DECL = "<org.eclipse.core.runtime.tests.root-element/>";
-	private final static String XML_US_ASCII_INVALID = "<?xml version='1.0' encoding='us-ascii'?><!-- Non-ASCII chars: αινσϊ --><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_UTF_16 = "<?xml version=\"1.0\" encoding=\"UTF-16\"?><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_DTD_EXTERNAL_ENTITY = "<?xml version=\"1.0\"?><!DOCTYPE project  SYSTEM \"org.eclipse.core.resources.tests.some.dtd\"  [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.resources.tests.root/>";
+	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE sometype SYSTEM \"org.eclipse.core.resources.tests.some.dtd\"><org.eclipse.core.resources.tests.root/>";
+	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
+	private final static String XML_ISO_8859_1_SINGLE_QUOTES = "<?xml version='1.0' encoding='ISO-8859-1'?><org.eclipse.core.resources.tests.root/>";
+	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY = "<?xml version=\"1.0\"?><!DOCTYPE project   [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.resources.tests.root-element/>";
+	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY2 = "<?xml version=\"1.0\"?><!DOCTYPE org.eclipse.core.resources.tests.root-element PUBLIC \"org.eclipse.core.resources.tests.root-elementId\" \"org.eclipse.core.resources.tests.root-element.dtd\" ><org.eclipse.core.resources.tests.root-element/>";
+	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root-element/>";
+	private final static String XML_ROOT_ELEMENT_NO_DECL = "<org.eclipse.core.resources.tests.root-element/>";
+	private final static String XML_US_ASCII_INVALID = "<?xml version='1.0' encoding='us-ascii'?><!-- Non-ASCII chars: αινσϊ --><org.eclipse.core.resources.tests.root/>";
+	private final static String XML_UTF_16 = "<?xml version=\"1.0\" encoding=\"UTF-16\"?><org.eclipse.core.resources.tests.root/>";
+	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.resources.tests.root/>";
+	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.resources.tests.root/>";
+	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String XML_ROOT_ELEMENT_NS_MATCH1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><prefix:rootElement1 xmlns:prefix='urn:eclipse.core.runtime.ns1'/>";
-	private static final String XML_ROOT_ELEMENT_NS_MATCH2 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE rootElement2 SYSTEM \"org.eclipse.core.runtime.tests.nothing\"><rootElement2 xmlns='urn:eclipse.core.runtime.ns2'/>";
+	private static final String XML_ROOT_ELEMENT_NS_MATCH2 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE rootElement2 SYSTEM \"org.eclipse.core.resources.tests.nothing\"><rootElement2 xmlns='urn:eclipse.core.runtime.ns2'/>";
 	private static final String XML_ROOT_ELEMENT_NS_WRONG_ELEM = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><rootElement3 xmlns='urn:eclipse.core.runtime.ns2'/>";
 	private static final String XML_ROOT_ELEMENT_NS_WRONG_NS = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><prefix:rootElement1 xmlns='http://example.com/'/>";
 	private static final String XML_ROOT_ELEMENT_NS_MIXUP = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><rootElement2 xmlns='urn:eclipse.core.runtime.ns1'/>";
 	private static final String XML_ROOT_ELEMENT_NS_WILDCARD = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><weCouldPutAnythingHere xmlns='urn:eclipse.core.runtime.nsWild'/>";
-	private final static String XML_ROOT_ELEMENT_NS_WILDCARD2 = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.runtime.tests.some.dtd3\"><Joker/>";
-	private final static String XML_ROOT_ELEMENT_EMPTY_NS = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.runtime.tests.some.dtd3\"><rootElement>";
+	private final static String XML_ROOT_ELEMENT_NS_WILDCARD2 = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.resources.tests.some.dtd3\"><Joker/>";
+	private final static String XML_ROOT_ELEMENT_EMPTY_NS = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.resources.tests.some.dtd3\"><rootElement>";
 
 	public static Test suite() {
 		//		return new IContentTypeManagerTest("testRootElementAndDTDDescriber");
