@@ -78,6 +78,10 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
 			Object object = structuredSelection.getFirstElement();
 			if (object instanceof IAdaptable) {
+				if (object instanceof AntElementNode) {
+					launch((AntElementNode) object, mode);
+					return;
+				}
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
 					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
@@ -91,10 +95,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 						launch(file.getFullPath(), file.getProject(), mode, null);
 						return;
 					}
-				} else if (object instanceof AntElementNode) {
-					launch((AntElementNode) object, mode);
-					return;
-				}
+				} 
 			}
 		}
 		antFileNotFound();
