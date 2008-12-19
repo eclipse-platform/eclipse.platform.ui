@@ -22,7 +22,6 @@ import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -41,7 +40,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -64,7 +63,7 @@ import com.ibm.icu.text.MessageFormat;
  * This class provides the Run/Debug As -> Ant Build launch shortcut.
  * 
  */
-public class AntLaunchShortcut implements ILaunchShortcut {
+public class AntLaunchShortcut implements ILaunchShortcut2 {
 
 	private boolean fShowDialog= false;
 	private static final int MAX_TARGET_APPEND_LENGTH = 30;
@@ -95,7 +94,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 						launch(file.getFullPath(), file.getProject(), mode, null);
 						return;
 					}
-				} 
+				}
 			}
 		}
 		antFileNotFound();
@@ -506,5 +505,93 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	public void setShowDialog(boolean showDialog) {
 		fShowDialog = showDialog;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+			Object object = structuredSelection.getFirstElement();
+			if (object instanceof IAdaptable) {
+				if (object instanceof AntElementNode) {
+					// return an empty list so that the shortcut is delegated to and we can prompt
+					// the user for which config to run and specify the correct target
+					return new ILaunchConfiguration[0];
+				}
+				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
+				if (resource != null) {
+					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
+						if (resource.getType() == IResource.FILE) {
+							resource = resource.getParent();
+						}
+						resource = findBuildFile((IContainer)resource);
+					} 
+					if (resource != null) {
+						IPath location = ((IFile) resource).getLocation();
+						if (location != null) {
+							List list = collectConfigurations(location);
+							return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editor) {
+		IEditorInput input = editor.getEditorInput();
+		IFile file = (IFile)input.getAdapter(IFile.class);
+		IPath filepath = null;
+		if (file != null) {
+			filepath = file.getLocation();
+		}
+		if(filepath == null) {
+		    ILocationProvider locationProvider= (ILocationProvider)input.getAdapter(ILocationProvider.class);
+		    if (locationProvider != null) {
+				filepath = locationProvider.getPath(input);
+			}
+		}
+		if(filepath != null && "xml".equals(filepath.getFileExtension())) { //$NON-NLS-1$
+			List list = collectConfigurations(filepath);
+			return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
+	 */
+	public IResource getLaunchableResource(ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+			Object object = structuredSelection.getFirstElement();
+			if (object instanceof IAdaptable) {
+				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
+				if (resource != null) {
+					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
+						if (resource.getType() == IResource.FILE) {
+							resource = resource.getParent();
+						}
+						resource = findBuildFile((IContainer)resource);
+					} 
+					return resource;
+				}
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.ui.IEditorPart)
+	 */
+	public IResource getLaunchableResource(IEditorPart editor) {
+		IEditorInput input = editor.getEditorInput();
+		return (IFile)input.getAdapter(IFile.class);
 	}
 }
