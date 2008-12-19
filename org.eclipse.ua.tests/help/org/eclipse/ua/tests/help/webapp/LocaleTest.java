@@ -11,6 +11,13 @@
 
 package org.eclipse.ua.tests.help.webapp;
 
+import java.util.Locale;
+
+import javax.servlet.http.Cookie;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 import junit.framework.TestCase;
@@ -19,6 +26,16 @@ import junit.framework.TestCase;
  * Tests for locale related code in UrlUtil
  */
 public class LocaleTest extends TestCase {
+	
+	private int mode;
+
+	protected void tearDown() throws Exception {
+		BaseHelpSystem.setMode(mode);
+	}
+	
+	protected void setUp() throws Exception {
+		mode = BaseHelpSystem.getMode();
+	}
 
 	public void testFixLocaleNull() {
 		assertNull(UrlUtil.cleanLocale(null));
@@ -26,6 +43,109 @@ public class LocaleTest extends TestCase {
 	
 	public void testFixLocaleWithIllegalChars() {
 		assertEquals("ab-cd______ef", UrlUtil.cleanLocale("ab-cd\n\r_\"\'_ef"));
+	}
+
+	public void testForced_Locale() {
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		MockServletRequest req = new MockServletRequest();
+		req.setLocale(new Locale("de"));
+		req.getParameterMap().put("lang", "es");
+		String locale = UrlUtil.getLocale(req, null);
+		assertEquals("es", locale);
+	}
+
+	public void testForcedLangOverridesCookies() {
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		MockServletRequest req = new MockServletRequest();
+		req.setLocale(new Locale("de"));
+		req.setCookies(new Cookie[] {new Cookie("lang", "it")});
+		req.getParameterMap().put("lang", "es");
+		String locale = UrlUtil.getLocale(req, null);
+		assertEquals("es", locale);
+	}
+	
+	public void testForcedUsingCookies() {
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		MockServletRequest req = new MockServletRequest();
+		req.setLocale(new Locale("de"));
+		req.setCookies(new Cookie[] {new Cookie("lang", "it")});
+		String locale = UrlUtil.getLocale(req, null);
+		assertEquals("it", locale);
+	}
+
+	public void testGetLocale_De_Standalone() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_STANDALONE);
+		req.setLocale(new Locale("de"));
+		String locale = UrlUtil.getLocale(req, null);
+		assertEquals(Platform.getNL(), locale);
+	}
+	
+	public void testGetLocale_De_Workbench() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
+		req.setLocale(new Locale("de"));
+		String locale = UrlUtil.getLocale(req, null);
+		assertEquals(Platform.getNL(), locale);
+	}
+	
+	public void testGetLocale_De_Infocenter() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		req.setLocale(new Locale("de"));
+		String locale = UrlUtil.getLocale(req, null);
+		assertEquals("de", locale);
+	}
+
+	public void testGetLocale_Pt_Br_Infocenter() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		req.setLocale(new Locale("pt", "br"));
+		String locale = UrlUtil.getLocale(req, null);
+		assertEquals("pt_br", locale.toLowerCase());
+	}
+	
+	public void testGetLocale_Fr_Ca_To_Infocenter() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		req.setLocale(new Locale("fr", "CA", "to"));
+		String locale = UrlUtil.getLocale(req, null);
+		assertEquals("fr_CA_to", locale);
+	}
+	
+	public void testIsRTLWorkbench() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
+		req.setLocale(new Locale("de"));
+		assertEquals(ProductPreferences.isRTL(), UrlUtil.isRTL(req, null));
+	}	
+
+	public void testIsRTLInfocenter_ar() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		req.setLocale(new Locale("ar_SA"));
+		assertTrue(UrlUtil.isRTL(req, null));
+	}
+
+	public void testIsRTLInfocenter_he() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		req.setLocale(new Locale("he"));
+		assertTrue(UrlUtil.isRTL(req, null));
+	}
+
+	public void testIsRTLInfocenter_de() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		req.setLocale(new Locale("de"));
+		assertFalse(UrlUtil.isRTL(req, null));
+	}
+	
+	public void testIsRTLInfocenter_en_us() {
+		MockServletRequest req = new MockServletRequest();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		req.setLocale(new Locale("en_US"));
+		assertFalse(UrlUtil.isRTL(req, null));
 	}
 	
 }
