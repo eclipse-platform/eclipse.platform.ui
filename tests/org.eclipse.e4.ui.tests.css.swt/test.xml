@@ -3,7 +3,7 @@
 <project name="testsuite" default="run" basedir=".">
   <!-- The property ${eclipse-home} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
-  <property name="eclipse-home" value="${basedir}\..\.."/>
+  <property name="eclipse-home" value="${basedir}/../.."/>
 
   <!-- sets the properties eclipse-home, and library-file -->
   <property name="plugin-name" value="org.eclipse.e4.ui.tests.css.swt"/>
@@ -25,11 +25,11 @@
     <property name="sniff-folder"
               value="${eclipse-home}/databinding_sniff_folder"/>
     <delete dir="${sniff-folder}" quiet="true"/>
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${sniff-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname"
-                value="org.eclipse.e4.ui.tests.css.swt.CSS_SWT_TestSuite"/>
+                value="org.eclipse.e4.ui.tests.css.swt.CssSwtTestSuite"/>
     </ant>
   </target>
 
