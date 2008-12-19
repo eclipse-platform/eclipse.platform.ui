@@ -3517,16 +3517,19 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Selects from the given map the one which is registered under
-	 * the content type of the partition in which the given offset is located.
-	 *
+	 * Selects from the given map the one which is registered under the content type of the
+	 * partition in which the given offset is located.
+	 * 
 	 * @param plugins the map from which to choose
 	 * @param offset the offset for which to find the plug-in
-	 * @return the plug-in registered under the offset's content type
+	 * @return the plug-in registered under the offset's content type or <code>null</code> if none
 	 */
 	protected Object selectContentTypePlugin(int offset, Map plugins) {
+		final IDocument document= getDocument();
+		if (document == null)
+			return null;
 		try {
-			return selectContentTypePlugin(TextUtilities.getContentType(getDocument(), getDocumentPartitioning(), offset, true), plugins);
+			return selectContentTypePlugin(TextUtilities.getContentType(document, getDocumentPartitioning(), offset, true), plugins);
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.selectContentTypePlugin")); //$NON-NLS-1$
