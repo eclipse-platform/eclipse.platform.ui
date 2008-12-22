@@ -1231,7 +1231,8 @@ public abstract class PartSashContainer extends LayoutPart implements
     		IViewReference vRef = vp.getViewReference();
     		LayoutPart fpp = pres.findPart(vRef.getId(), vRef.getSecondaryId());
     		
-    		if (fpp != null) {
+    		// 'findPart' won't find fast views that don't exist in the main presentation
+    		if (fpp != null || persp.isFastView(vRef)) {
     	        // Remove the part from old container.
     	        derefPart(newPart);
     		}
