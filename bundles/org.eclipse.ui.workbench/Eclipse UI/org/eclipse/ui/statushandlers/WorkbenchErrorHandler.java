@@ -29,17 +29,6 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 
 	private WorkbenchStatusDialogManager statusDialogManager;
 
-	/**
-	 * For testing purposes only. This method must not be used by any other
-	 * clients.
-	 * 
-	 * @param manager
-	 *            a new WorkbenchStatusDialog to be set.
-	 */
-	void setStatusDialog(WorkbenchStatusDialogManager manager) {
-		statusDialogManager = manager;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
