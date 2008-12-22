@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /**
  * Helper class for reading cookie values
@@ -35,8 +38,7 @@ public class CookiesData extends RequestData {
         			}
         		}
 		}
-		// default off
-		return false;
-	}
+		return Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, "advanced.syncDefault", false, null); //$NON-NLS-1$
+    }
 
 }
