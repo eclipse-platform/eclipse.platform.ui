@@ -1588,29 +1588,6 @@
               </visibleWhen>
            </command>
            <command
-                 commandId="org.eclipse.ui.edit.delete"
-                 style="push">
-              <visibleWhen
-                    checkEnabled="false">
-                 <or>
-                    <with
-                          variable="activePart">
-                       <test
-                             args="org.eclipse.ui.ide.tasksGenerator"
-                             property="org.eclipse.ui.ide.contentGenerator">
-                       </test>
-                    </with>
-                    <with
-                          variable="activePart">
-                       <test
-                             args="org.eclipse.ui.ide.bookmarksGenerator"
-                             property="org.eclipse.ui.ide.contentGenerator">
-                       </test>
-                    </with>
-                 </or>
-              </visibleWhen>
-           </command>
-           <command
                  commandId="org.eclipse.ui.ide.deleteCompleted"
                  mnemonic="%command.deleteCompleted.name"
                  style="push">
