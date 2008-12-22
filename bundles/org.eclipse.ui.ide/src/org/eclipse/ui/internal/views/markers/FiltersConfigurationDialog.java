@@ -82,6 +82,8 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	private Button removeButton;
 
+	private Button cloneButton;
+
 	/**
 	 * Create a new instance of the receiver on builder.
 	 * 
@@ -326,42 +328,19 @@ public class FiltersConfigurationDialog extends Dialog {
 		addNew.setText(MarkerMessages.MarkerFilter_addFilterName);
 		addNew.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				InputDialog newDialog = new InputDialog(getShell(),
-						MarkerMessages.MarkerFilterDialog_title,
-						MarkerMessages.MarkerFilterDialog_message,
-						MarkerMessages.MarkerFilter_newFilterName,
-						new IInputValidator() {
-							/*
-							 * (non-Javadoc)
-							 * 
-							 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
-							 */
-							public String isValid(String newText) {
-								if (newText.length() == 0)
-									return MarkerMessages.MarkerFilterDialog_emptyMessage;
-								Iterator filterIterator = filterGroups
-										.iterator();
-								while (filterIterator.hasNext()) {
-									if (((MarkerFieldFilterGroup) filterIterator
-											.next()).getName().equals(newText))
-										return NLS
-												.bind(
-														MarkerMessages.filtersDialog_conflictingName,
-														newText);
-								}
-
-								return null;
-							}
-						});
-				if (Window.OK == newDialog.open()) {
-					String newName = newDialog.getValue();
-					if (newName != null) {
-						createNewFilter(newName);
-					}
-				}
-			}
+				addNewFilter(false);
+			}			
 		});
 		setButtonLayoutData(addNew);
+		
+		cloneButton= new Button(buttons, SWT.PUSH);
+		cloneButton.setText(MarkerMessages.MarkerFilter_cloneFilterName);
+		cloneButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				addNewFilter(true);
+			}
+		});
+		setButtonLayoutData(cloneButton);
 
 		removeButton = new Button(buttons, SWT.PUSH);
 		removeButton.setText(MarkerMessages.MarkerFilter_deleteSelectedName);
@@ -411,12 +390,51 @@ public class FiltersConfigurationDialog extends Dialog {
 	}
 
 	/**
-	 * Create a new filter called newName
-	 * 
-	 * @param newName
+	 * Opens Input Dialog for name,creates a 
+	 * new filterGroup, and adds it to the filterGroups 
+	 * @param cloneSelected true clones the selected filterGroup
+	 * 				
 	 */
-	private void createNewFilter(String newName) {
+	private void addNewFilter(boolean cloneSelected) {
+		InputDialog newDialog = new InputDialog(getShell(),
+				MarkerMessages.MarkerFilterDialog_title,
+				MarkerMessages.MarkerFilterDialog_message,
+				MarkerMessages.MarkerFilter_newFilterName,
+				new IInputValidator() {
+					public String isValid(String newText) {
+						if (newText.length() == 0)
+							return MarkerMessages.MarkerFilterDialog_emptyMessage;
+						Iterator filterIterator = filterGroups
+								.iterator();
+						while (filterIterator.hasNext()) {
+							if (((MarkerFieldFilterGroup) filterIterator
+									.next()).getName().equals(newText))
+								return NLS
+										.bind(
+												MarkerMessages.filtersDialog_conflictingName,
+												newText);
+						}
+
+						return null;
+					}
+				});
+		if (Window.OK == newDialog.open()) {
+			String newName = newDialog.getValue();
+			if (newName != null) {
+				createNewFilter(newName,cloneSelected);
+			}
+		}
+	}
+	/**
+	 * Create a new filterGroup, and adds it to the filterGroups 
+	 * @param cloneSelected true clones the selected filterGroup
+	 * @param newName name of new filterGroup
+	 */
+	private void createNewFilter(String newName,boolean cloneSelected) {
 		MarkerFieldFilterGroup group = new MarkerFieldFilterGroup(null, builder);
+		if(cloneSelected&&selectedFilterGroup!=null){
+			captureStateInto(group); //copy current values from UI
+		}
 		group.setName(newName);
 		filterGroups.add(group);
 		filtersList.refresh();
@@ -519,9 +537,22 @@ public class FiltersConfigurationDialog extends Dialog {
 					.next();
 			group.setEnabled(filtersList.getChecked(group));
 		}
-		if (selectedFilterGroup != null) {
+		captureStateInto(selectedFilterGroup);
 
-			scopeArea.applyToGroup(selectedFilterGroup);
+		super.okPressed();
+
+	}
+
+	/**
+	 * 
+	 * Updates the filterGroup with the values showing in the dialog's GUI.
+	 * @param filterGroup 
+	 * 
+	 */
+	private void captureStateInto(MarkerFieldFilterGroup filterGroup) {
+		if (filterGroup != null) {
+
+			scopeArea.applyToGroup(filterGroup);
 			Iterator areas = filterAreas.iterator();
 			while (areas.hasNext()) {
 				FilterConfigurationArea area = (FilterConfigurationArea) areas
@@ -530,13 +561,10 @@ public class FiltersConfigurationDialog extends Dialog {
 				// Handle the internal special cases
 				if (area instanceof GroupFilterConfigurationArea)
 					((GroupFilterConfigurationArea) area)
-							.applyToGroup(selectedFilterGroup);
-				area.apply(selectedFilterGroup.getFilter(area.getField()));
+							.applyToGroup(filterGroup);
+				area.apply(filterGroup.getFilter(area.getField()));
 			}
 		}
-
-		super.okPressed();
-
 	}
 
 	/**
@@ -609,7 +637,8 @@ public class FiltersConfigurationDialog extends Dialog {
 		removeButton
 				.setEnabled(!(markerFieldFilterGroup == null || markerFieldFilterGroup
 						.isSystem()));
-
+		cloneButton.setEnabled(markerFieldFilterGroup != null);
+		
 		MarkerFieldFilterGroup old = selectedFilterGroup;
 		selectedFilterGroup = markerFieldFilterGroup;
 		if (old != null)
