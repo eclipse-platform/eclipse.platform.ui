@@ -3660,8 +3660,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // switched. Turn off redraw to help with this.
         ICoolBarManager2 mgr = (ICoolBarManager2) window.getCoolBarManager2();
         try {
-            mgr.getControl2().setRedraw(false);
+        	if (mgr != null)
+	            mgr.getControl2().setRedraw(false);
             getClientComposite().setRedraw(false);
+        	
             // Run op in busy cursor.
             BusyIndicator.showWhile(null, new Runnable() {
                 public void run() {
@@ -3670,7 +3672,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             });
         } finally {
             getClientComposite().setRedraw(true);
-            mgr.getControl2().setRedraw(true);
+            if (mgr != null)
+            	mgr.getControl2().setRedraw(true);
             IWorkbenchPart part = getActivePart();
             if (part != null) {
 				part.setFocus();
