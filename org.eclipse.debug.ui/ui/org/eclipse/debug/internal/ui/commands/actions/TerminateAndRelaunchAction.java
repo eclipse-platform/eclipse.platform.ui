@@ -30,11 +30,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class TerminateAndRelaunchAction extends DebugCommandAction {
 	
-	class Particiapnt implements ICommandParticipant {
+	class Participant implements ICommandParticipant {
 		
 		private Object[] fTargets;
 
-		public Particiapnt(Object[] targets) {
+		public Participant(Object[] targets) {
 			fTargets = targets;
 		}
 
@@ -59,7 +59,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 	}
 
 	protected ICommandParticipant getCommandParticipant(Object[] targets) {
-		return new Particiapnt(targets);
+		return new Participant(targets);
 	}
 
 	protected Class getCommandType() {
