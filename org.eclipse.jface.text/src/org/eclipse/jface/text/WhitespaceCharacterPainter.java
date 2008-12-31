@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc., IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	/** The viewer's widget. */
 	private StyledText fTextWidget;
 	/** Tells whether the advanced graphics sub system is available. */
-	private boolean fIsAdvancedGraphicsPresent;
+	private final boolean fIsAdvancedGraphicsPresent;
 
 	/**
 	 * Creates a new painter for the given text viewer.
