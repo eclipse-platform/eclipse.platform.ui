@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,8 +42,10 @@ public class UpdateActionsRequest extends DebugCommandRequest implements IEnable
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	public synchronized void done() {
-		for (int i = 0; i < fActions.length; i++) {
-			fActions[i].setEnabled(fEnabled);
+		if (!isCanceled()) {
+			for (int i = 0; i < fActions.length; i++) {
+				fActions[i].setEnabled(fEnabled);
+			}
 		}
 	}
 

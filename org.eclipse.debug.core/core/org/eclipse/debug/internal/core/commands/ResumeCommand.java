@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,13 @@ public class ResumeCommand extends SuspendCommand implements IResumeHandler {
 
 	protected boolean isExecutable(Object target) {
 		return ((ISuspendResume)target).canResume();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.commands.SuspendCommand#getUpdateJobFamily()
+	 */
+	protected Object getUpdateJobFamily() {
+		return IResumeHandler.class;
 	}
 
 }

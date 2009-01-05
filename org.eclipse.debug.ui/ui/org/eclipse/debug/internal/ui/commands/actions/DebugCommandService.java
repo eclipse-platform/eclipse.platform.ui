@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.commands.IDebugCommandHandler;
 import org.eclipse.debug.ui.DebugUITools;
@@ -112,6 +113,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 */
 	public void postUpdateCommand(Class commandType, Action action) {
 		synchronized (fCommandUpdates) {
+			Job.getJobManager().cancel(commandType);
 			List actions = (List) fCommandUpdates.get(commandType);
 			if (actions == null) {
 				actions = new ArrayList();

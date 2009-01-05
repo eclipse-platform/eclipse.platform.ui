@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -32,6 +34,123 @@ import org.eclipse.debug.internal.core.DebugOptions;
  *
  */
 public abstract class DebugCommand implements IDebugCommandHandler {
+	
+	/**
+	 * Job to update enabled state of action.
+	 */
+	class UpdateJob extends Job implements IJobChangeListener {
+		
+		/**
+		 * The request to update
+		 */
+		private IEnabledStateRequest request;
+		
+		/**
+		 * Whether this job has been run
+		 */
+		private boolean run = false;
+		
+		/**
+		 * Creates a new job to update the specified request
+		 * 
+		 * @param stateRequest
+		 */
+		UpdateJob(IEnabledStateRequest stateRequest) {
+			super(getEnablementTaskName());
+			request = stateRequest;
+			setSystem(true);
+			setRule(createUpdateSchedulingRule(request));
+			getJobManager().addJobChangeListener(this);
+		}
+		
+		protected IStatus run(IProgressMonitor monitor) {
+			run = true;
+			if (DebugOptions.DEBUG_COMMANDS) {
+				System.out.print("can execute command: " + DebugCommand.this); //$NON-NLS-1$
+			}
+			if (monitor.isCanceled()) {
+				if (DebugOptions.DEBUG_COMMANDS) {
+					System.out.println(" >> *CANCELED* <<"); //$NON-NLS-1$
+				}
+				request.cancel();
+			}
+			Object[] elements = request.getElements();
+			Object[] targets = new Object[elements.length];
+			if (!request.isCanceled()) {
+				for (int i = 0; i < elements.length; i++) {
+					targets[i] = getTarget(elements[i]);
+					if (targets[i] == null) {
+						request.setEnabled(false);
+						request.cancel();
+						if (DebugOptions.DEBUG_COMMANDS) {
+							System.out.println(" >> false (no adapter)"); //$NON-NLS-1$
+						}
+					}
+				}
+				if (monitor.isCanceled()) {
+					request.cancel();
+				}
+			}
+			if (!request.isCanceled()) {
+				targets = coalesce(targets);
+				monitor.beginTask(getEnablementTaskName(), targets.length);
+				try {
+					boolean executable = isExecutable(targets, monitor, request);
+					if (DebugOptions.DEBUG_COMMANDS) {
+						System.out.println(" >> " + executable); //$NON-NLS-1$
+					}
+					request.setEnabled(executable);
+				} catch (CoreException e) {
+					request.setStatus(e.getStatus());
+					request.setEnabled(false);
+					if (DebugOptions.DEBUG_COMMANDS) {
+						System.out.println(" >> ABORTED"); //$NON-NLS-1$
+						System.out.println("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
+					}
+				}
+			}
+			monitor.setCanceled(request.isCanceled());
+			request.done();
+			monitor.done();
+			return Status.OK_STATUS;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+		 */
+		public boolean belongsTo(Object family) {
+			return getUpdateJobFamily().equals(family);
+		}
+
+		public void aboutToRun(IJobChangeEvent event) {
+		}
+
+		public void awake(IJobChangeEvent event) {
+		}
+
+		public void done(IJobChangeEvent event) {
+			if (event.getJob() == this) {
+				if (!run) {
+					request.cancel();
+					request.done();
+					if (DebugOptions.DEBUG_COMMANDS) {
+						System.out.println(" >> *CANCELED* <<" + DebugCommand.this); //$NON-NLS-1$
+					}
+				}
+				getJobManager().removeJobChangeListener(this);
+			}
+		}
+
+		public void running(IJobChangeEvent event) {
+		}
+
+		public void scheduled(IJobChangeEvent event) {
+		}
+
+		public void sleeping(IJobChangeEvent event) {
+		}
+				
+	}
 	
 	/**
 	 * Scheduling rule to serialize commands on an object
@@ -110,51 +229,8 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 	}
 	
 	public void canExecute(final IEnabledStateRequest request) {
-		Job job = new Job(getEnablementTaskName()) {
-			protected IStatus run(IProgressMonitor monitor) {
-				if (DebugOptions.DEBUG_COMMANDS) {
-					System.out.print("can execute command: " + DebugCommand.this); //$NON-NLS-1$
-				}
-				Object[] elements = request.getElements();
-				Object[] targets = new Object[elements.length];
-				for (int i = 0; i < elements.length; i++) {
-					targets[i] = getTarget(elements[i]);
-					if (targets[i] == null) {
-						request.setEnabled(false);
-						request.cancel();
-						if (DebugOptions.DEBUG_COMMANDS) {
-							System.out.println(" >> false (no adapter)"); //$NON-NLS-1$
-						}
-					}
-				}
-				if (!request.isCanceled()) {
-					targets = coalesce(targets);
-					monitor.beginTask(getEnablementTaskName(), targets.length);
-					try {
-						boolean executable = isExecutable(targets, monitor, request);
-						if (DebugOptions.DEBUG_COMMANDS) {
-							System.out.println(" >> " + executable); //$NON-NLS-1$
-						}
-						request.setEnabled(executable);
-					} catch (CoreException e) {
-						request.setStatus(e.getStatus());
-						request.setEnabled(false);
-						if (DebugOptions.DEBUG_COMMANDS) {
-							System.out.println(" >> ABORTED"); //$NON-NLS-1$
-							System.out.println("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
-						}
-					}
-				}
-				monitor.setCanceled(request.isCanceled());
-				request.done();
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.setRule(createUpdateSchedulingRule(request));
+		Job job = new UpdateJob(request);
 		job.schedule();
-		
 	}
 	
 	/**
@@ -237,4 +313,12 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 			return set.toArray();
 		}
 	}
+	
+	/**
+	 * Returns the job family for this command's "can execute" job.
+	 * 
+	 * @return the job family for this command's "can execute" job
+	 */
+	protected abstract Object getUpdateJobFamily();
+	
 }
