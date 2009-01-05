@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IOConsole;
@@ -458,11 +459,24 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
                 }
 			}
             
-            if (fBuffer > 160000) { 
-                try {
-                    pendingPartitions.wait();
-                } catch (InterruptedException e) {
-                }
+            if (fBuffer > 160000) {
+            	if(Display.getCurrent() == null){
+					try {
+						pendingPartitions.wait();
+					} catch (InterruptedException e) {
+					}
+            	} else {
+					/*
+					 * if we are in UI thread we cannot lock it, so spin event
+					 * loop. The caller will see this as locking but UI will
+					 * stay responsive.
+					 */
+            		while(fBuffer != 0){
+            			if(!Display.getDefault().readAndDispatch()){
+            				Display.getDefault().sleep();
+            			}
+            		}
+            	}
             }
 		}
 	}
