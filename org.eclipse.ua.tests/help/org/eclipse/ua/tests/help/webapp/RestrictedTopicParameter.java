@@ -11,6 +11,9 @@
 
 package org.eclipse.ua.tests.help.webapp;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
@@ -28,7 +31,9 @@ public class RestrictedTopicParameter extends TestCase {
 	private int helpMode;
 	
 	protected void setUp() throws Exception {
-		restrictTopic = HelpBasePlugin.getDefault().getPluginPreferences().getBoolean(RESTRICT_TOPIC);
+		restrictTopic = Platform.getPreferencesService().getBoolean
+	     (HelpBasePlugin.PLUGIN_ID, RESTRICT_TOPIC,
+			      false, null);
 		helpMode = BaseHelpSystem.getMode();
 	}
 	
@@ -38,7 +43,9 @@ public class RestrictedTopicParameter extends TestCase {
 	}
 
 	private void setRestrictTopic(boolean isRestrict) {
-		HelpBasePlugin.getDefault().getPluginPreferences().setValue(RESTRICT_TOPIC, isRestrict);
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences pref = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		pref.putBoolean(RESTRICT_TOPIC, isRestrict);		
 	}
 
 	public void testWorkbenchMode() {

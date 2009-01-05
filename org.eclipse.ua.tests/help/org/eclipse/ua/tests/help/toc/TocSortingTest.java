@@ -12,8 +12,12 @@ package org.eclipse.ua.tests.help.toc;
 
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
@@ -22,8 +26,6 @@ import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.toc.TocSorter;
 import org.eclipse.help.internal.util.ProductPreferences;
-
-import junit.framework.TestCase;
 
 public class TocSortingTest extends TestCase {
 	
@@ -117,9 +119,10 @@ public class TocSortingTest extends TestCase {
 	}
 	
 	protected void setUp() throws Exception {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		helpDataPreference = prefs.getString(HelpPlugin.HELP_DATA_KEY);
-		baseTocsPreference = prefs.getString(BASE_TOCS);
+		helpDataPreference = Platform.getPreferencesService().getString
+	       (HelpPlugin.HELP_DATA_KEY, HelpPlugin.HELP_DATA_KEY, "", null);
+		baseTocsPreference = Platform.getPreferencesService().getString
+	       (HelpPlugin.HELP_DATA_KEY, BASE_TOCS, "", null);
 		HelpData.clearProductHelpData();
 		ProductPreferences.resetPrimaryTocOrdering();
 		setHelpData(EMPTY_XML);
@@ -134,13 +137,15 @@ public class TocSortingTest extends TestCase {
 	}
 
 	private void setHelpData(String value) {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(HelpPlugin.HELP_DATA_KEY, value);
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences prefs = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+		prefs.put(HelpPlugin.HELP_DATA_KEY, value);
 	}
 	
 	private void setBaseTocs(String value) {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(BASE_TOCS, value);
+		InstanceScope instanceScope = new InstanceScope();
+	    IEclipsePreferences prefs = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+	    prefs.put(BASE_TOCS, value);
 	}
 	
 	private String toString(ITocContribution[] tocs) {

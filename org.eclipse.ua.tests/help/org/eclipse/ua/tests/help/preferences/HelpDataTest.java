@@ -21,7 +21,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
@@ -50,10 +52,12 @@ public class HelpDataTest extends TestCase {
 	
 
 	protected void setUp() throws Exception {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		baseTocsPreference = prefs.getString(HelpPlugin.BASE_TOCS_KEY);
-		ignoredTocsPreference = prefs.getString(HelpPlugin.IGNORED_TOCS_KEY);
-		ignoredIndexesPreference = prefs.getString(HelpPlugin.IGNORED_INDEXES_KEY);
+		baseTocsPreference = Platform.getPreferencesService().getString
+	        (HelpPlugin.PLUGIN_ID, HelpPlugin.BASE_TOCS_KEY, "", null);
+		ignoredTocsPreference = Platform.getPreferencesService().getString
+            (HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_TOCS_KEY, "", null);
+		ignoredIndexesPreference = Platform.getPreferencesService().getString
+            (HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, "", null);
 		setBaseTocs("");
 		setIgnoredTocs("");
 		setIgnoredIndexes("");
@@ -66,18 +70,21 @@ public class HelpDataTest extends TestCase {
 	}
 
 	private void setBaseTocs(String value) {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(HelpPlugin.BASE_TOCS_KEY, value);
+		InstanceScope instanceScope = new InstanceScope();
+	    IEclipsePreferences pref = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+	    pref.put(HelpPlugin.BASE_TOCS_KEY, value);
 	}
 	
 	private void setIgnoredTocs(String value) {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(HelpPlugin.IGNORED_TOCS_KEY, value);
+		InstanceScope instanceScope = new InstanceScope();
+	    IEclipsePreferences pref = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+	    pref.put(HelpPlugin.IGNORED_TOCS_KEY, value);
 	}
 	
 	private void setIgnoredIndexes(String value) {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(HelpPlugin.IGNORED_INDEXES_KEY, value);
+		InstanceScope instanceScope = new InstanceScope();
+	    IEclipsePreferences pref = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+	    pref.put(HelpPlugin.IGNORED_INDEXES_KEY, value);
 	}
 
 	public void testHelpData() {
