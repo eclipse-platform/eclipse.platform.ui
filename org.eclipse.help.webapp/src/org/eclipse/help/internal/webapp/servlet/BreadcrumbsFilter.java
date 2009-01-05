@@ -22,6 +22,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
+import org.eclipse.help.webapp.IFilter;
 
 /**
  * Injects breadcrumbs at the top of help documents, e.g.

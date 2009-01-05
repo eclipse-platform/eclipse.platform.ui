@@ -36,6 +36,7 @@ import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.data.ServletResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
+import org.eclipse.help.webapp.IFilter;
 
 /**
  * Performs transfer of data from eclipse to a jsp/servlet
@@ -47,11 +48,14 @@ public class EclipseConnector {
 			+ "</head>\n" //$NON-NLS-1$
 			+ "<body><p>\n"; //$NON-NLS-1$
 	private static final String errorPageEnd = "</p></body></html>"; //$NON-NLS-1$
-	private static final IFilter allFilters[] = new IFilter[]{
-		new HighlightFilter(), new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter(), new BreadcrumbsFilter(),
-		new ShowInTocFilter()};
-	private static final IFilter errorPageFilters[] = new IFilter[]{
-		new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter() };
+	private static final IFilter allFilters[] = new IFilter[] {
+			new HighlightFilter(), new FramesetFilter(), new InjectionFilter(),
+			new DynamicXHTMLFilter(), new BreadcrumbsFilter(),
+			new ShowInTocFilter(), new ExtraFilters() };
+
+	private static final IFilter errorPageFilters[] = new IFilter[] {
+			new FramesetFilter(), new InjectionFilter(),
+			new DynamicXHTMLFilter() };
 
 	private ServletContext context;
 	 

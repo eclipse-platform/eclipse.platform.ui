@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
+import org.eclipse.help.webapp.IFilter;
 
 /*
  * A filter that performs any required XHTML processing, if the content is

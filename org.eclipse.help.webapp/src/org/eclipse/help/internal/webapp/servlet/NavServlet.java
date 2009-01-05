@@ -27,6 +27,7 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
+import org.eclipse.help.webapp.IFilter;
 
 /*
  * Generates navigation pages where topics are not present in the table

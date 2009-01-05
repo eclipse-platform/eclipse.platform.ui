@@ -16,6 +16,7 @@ import java.io.*;
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.webapp.data.*;
+import org.eclipse.help.webapp.IFilter;
 
 /**
  * This class inserts a script for showing the page inside the table of contents
