@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,34 +9,35 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
-
  
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.IEncodedStreamContentAccessor;
-import org.eclipse.compare.ITypedElement;
+
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * A class for comparing ICVSRemoteResource objects
  */
-public class ResourceEditionNode implements IStructureComparator, ITypedElement, IEncodedStreamContentAccessor {
+public class ResourceEditionNode implements IStructureComparator, ITypedElement, IEncodedStreamContentAccessor, IAdaptable {
 	private ICVSRemoteResource resource;
 	private ResourceEditionNode[] children;
-	
+	private ISharedDocumentAdapter sharedDocumentAdapter;
+
 	/**
 	 * Creates a new ResourceEditionNode on the given resource edition.
 	 */
@@ -180,5 +181,39 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 			// Shouldn't happen. Ignore
 		}
 		return holder[0];
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (adapter == ISharedDocumentAdapter.class) {
+			synchronized (this) {
+				if (sharedDocumentAdapter == null)
+					sharedDocumentAdapter = new SharedDocumentAdapter() {
+						public IEditorInput getDocumentKey(Object element) {
+							return ResourceEditionNode.this
+									.getDocumentKey(element);
+						}
+
+						public void flushDocument(IDocumentProvider provider,
+								IEditorInput documentKey, IDocument document,
+								boolean overwrite) throws CoreException {
+							// The document is read-only
+						}
+					};
+				return sharedDocumentAdapter;
+			}
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
+	private IEditorInput getDocumentKey(Object element) {
+		try {
+			if (element == this && getStorage() != null) {
+				return new FileRevisionEditorInput(resource
+						.getAdapter(IFileRevision.class), getStorage());
+			}
+		} catch (TeamException e) {
+			TeamUIPlugin.log(e);
+		}
+		return null;
 	}
 }
