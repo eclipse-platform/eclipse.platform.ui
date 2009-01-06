@@ -1,0 +1,10 @@
+Native Build Info:
+------------------
+
+platform:         iMac
+built by:         szymon.brandys@pl.ibm.com
+build date:       06-Jan-2009
+OS Name:          Mac OS X
+OS Version:       10.5.4
+Compiler version: gcc version 4.0.1
+Java version:     Standard Edition (build 1.5.0_13-119)
