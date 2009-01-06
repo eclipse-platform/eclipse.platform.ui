@@ -17,11 +17,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -57,7 +55,7 @@ public class NavigationHistory implements INavigationHistory {
 
     private ArrayList editors = new ArrayList(CAPACITY);
 
-    private WorkbenchPage page;
+    private IWorkbenchPage page;
 
     private int activeEntry = 0;
 
@@ -66,7 +64,7 @@ public class NavigationHistory implements INavigationHistory {
 	 * 
 	 * @param page the workbench page
 	 */
-    public NavigationHistory(final WorkbenchPage page) {
+    public NavigationHistory(final IWorkbenchPage page) {
         this.page = page;
         page.addPartListener(new IPartListener2() {
             public void partActivated(IWorkbenchPartReference partRef) {

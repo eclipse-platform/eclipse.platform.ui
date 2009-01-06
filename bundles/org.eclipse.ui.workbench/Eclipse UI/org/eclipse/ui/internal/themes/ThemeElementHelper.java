@@ -22,7 +22,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -106,11 +106,10 @@ public final class ThemeElementHelper {
 			defaultFont = definition.getValue();
 		} else if (definition.getDefaultsTo() != null) {
 			defaultFont = registry.filterData(registry
-                    .getFontData(definition.getDefaultsTo()), Workbench
-                    .getInstance().getDisplay());
+                    .getFontData(definition.getDefaultsTo()), PlatformUI.getWorkbench().getDisplay());
 		} else {
             // values pushed in from jface property files.  Very ugly.
-			Display display = Workbench.getInstance().getDisplay();
+			Display display = PlatformUI.getWorkbench().getDisplay();
 			
 			//If in high contrast, ignore the defaults in jface and use the default (system) font.
 			//This is a hack to address bug #205474. See bug #228207 for a future fix.
