@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,30 +115,30 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	String getDefaultEncoding();
 
 	/**
-	 * Creates a new empty document. The document is set up in the same way as
-	 * it would be used in a text file buffer for a file at the given location.
+	 * Creates a new empty document. The document is set up in the same way as it would be used in a
+	 * text file buffer for a file at the given location.
 	 * <p>
-	 * The provided location is either a full path of a workspace resource or
-	 * an absolute path in the local file system. The file buffer manager does
-	 * not resolve the location of workspace resources in the case of linked
-	 * resources.
+	 * The provided location is either a full path of a workspace resource or an absolute path in
+	 * the local file system. The file buffer manager does not resolve the location of workspace
+	 * resources in the case of linked resources.
 	 * </p>
-	 *
-	 * @param location the location used to set up the newly created document
+	 * 
+	 * @param location the location used to set up the newly created document or <code>null</code>
+	 *            if unknown
 	 * @return a new empty document
 	 * @deprecated As of 3.3, replaced by {@link #createEmptyDocument(IPath, LocationKind)}
 	 */
 	IDocument createEmptyDocument(IPath location);
 
 	/**
-	 * Creates a new empty document. The document is set up in the same way as
-	 * it would be used in a text file buffer for a file at the given location.
+	 * Creates a new empty document. The document is set up in the same way as it would be used in a
+	 * text file buffer for a file at the given location.
 	 * <p>
-	 * The type of the provided location is specified by the given
-	 * <code>locationKind</code>.
+	 * The type of the provided location is specified by the given <code>locationKind</code>.
 	 * </p>
-	 *
-	 * @param location the location used to set up the newly created document
+	 * 
+	 * @param location the location used to set up the newly created document or <code>null</code>
+	 *            if unknown
 	 * @param locationKind the kind of the given location
 	 * @return a new empty document
 	 * @since 3.3
