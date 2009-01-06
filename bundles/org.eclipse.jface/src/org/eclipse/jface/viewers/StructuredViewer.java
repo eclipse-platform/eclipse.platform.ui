@@ -1885,13 +1885,14 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * <p>
 	 * If the viewer has a sorter which is affected by a change to one of the
 	 * properties, the elements' positions are updated to maintain the sort
-	 * order. Note that resorting does not happen if <code>properties</code>
+	 * order. Note that resorting may not happen if <code>properties</code>
 	 * is <code>null</code>.
 	 * </p>
 	 * <p>
 	 * If the viewer has a filter which is affected by a change to one of the
 	 * properties, elements may appear or disappear if the change affects
-	 * whether or not they are filtered out.
+	 * whether or not they are filtered out. Note that resorting may not happen
+	 * if <code>properties</code> is <code>null</code>.
 	 * </p>
 	 * 
 	 * @param elements
@@ -1939,13 +1940,14 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * <p>
 	 * If the viewer has a sorter which is affected by a change to one of the
 	 * properties, the element's position is updated to maintain the sort order.
-	 * Note that resorting does not happen if <code>properties</code> is
+	 * Note that resorting may not happen if <code>properties</code> is
 	 * <code>null</code>.
 	 * </p>
 	 * <p>
 	 * If the viewer has a filter which is affected by a change to one of the
 	 * properties, the element may appear or disappear if the change affects
-	 * whether or not the element is filtered out.
+	 * whether or not the element is filtered out. Note that filtering may not
+	 * happen if <code>properties</code> is <code>null</code>.
 	 * </p>
 	 * 
 	 * @param element
