@@ -433,7 +433,7 @@ public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 
 		// Create Apply Style Button.
 		applyStyleToShellCheckbox = new Button(group, SWT.CHECK);
-		applyStyleToShellCheckbox.setText("Apply sytle to fully Shell?");
+		applyStyleToShellCheckbox.setText("Apply style to Shell?");
 		applyStyleToShellCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (applyStyleToShellCheckbox.getSelection()) {
