@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Oakland Software Incorporated and others
+ * Copyright (c) 2008, 2009 Oakland Software Incorporated and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,17 +180,22 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		return null;
 	}
 
-	private String getEnv(String env) {
+	private synchronized String getEnv(String env) {
 		String cmd[] = { "/bin/sh", //$NON-NLS-1$
 				"-c", //$NON-NLS-1$
 				"env | grep -i proxy" }; //$NON-NLS-1$
 		Properties props = new Properties();
 		try {
-			props.load(Runtime.getRuntime().exec(cmd).getInputStream());
+			Process proc = Runtime.getRuntime().exec(cmd);
+			props.load(proc.getInputStream());
+			proc.waitFor();
 		} catch (IOException e) {
 			Activator.logError(
 					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
+			Activator.logError(
+					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
+		} catch (InterruptedException e) {
 			Activator.logError(
 					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
 		}
