@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,9 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,6 +38,7 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -170,7 +172,7 @@ public class FilteredTree extends Composite {
 	/**
 	 * Image descriptor for disabled clear button.
 	 */
-	private static final String DCLEAR_ICON = "org.eclipse.ui.internal.dialogs.DCLEAR_ICON"; //$NON-NLS-1$
+	private static final String DISABLED_CLEAR_ICON= "org.eclipse.ui.internal.dialogs.DCLEAR_ICON"; //$NON-NLS-1$
 
 	/**
 	 * Maximum time spent expanding the tree after the filter text has been
@@ -192,7 +194,7 @@ public class FilteredTree extends Composite {
 		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
 				PlatformUI.PLUGIN_ID, "$nl$/icons/full/dtool16/clear_co.gif"); //$NON-NLS-1$
 		if (descriptor != null) {
-			JFaceResources.getImageRegistry().put(DCLEAR_ICON, descriptor);
+			JFaceResources.getImageRegistry().put(DISABLED_CLEAR_ICON, descriptor);
 		}
 	}
 
@@ -867,7 +869,7 @@ public class FilteredTree extends Composite {
 			clearTextAction.setImageDescriptor(JFaceResources
 					.getImageRegistry().getDescriptor(CLEAR_ICON));
 			clearTextAction.setDisabledImageDescriptor(JFaceResources
-					.getImageRegistry().getDescriptor(DCLEAR_ICON));
+.getImageRegistry().getDescriptor(DISABLED_CLEAR_ICON));
 
 			filterToolBar.add(clearTextAction);
 		}
@@ -882,23 +884,48 @@ public class FilteredTree extends Composite {
 		// only create the button if the text widget doesn't support one
 		// natively
 		if ((filterText.getStyle() & SWT.CANCEL) == 0) {
-			final Image inactiveImage= JFaceResources.getImageRegistry().getDescriptor(DCLEAR_ICON).createImage();
+			final Image inactiveImage= JFaceResources.getImageRegistry().getDescriptor(DISABLED_CLEAR_ICON).createImage();
 			final Image activeImage= JFaceResources.getImageRegistry().getDescriptor(CLEAR_ICON).createImage();
+			final Image pressedImage= new Image(getDisplay(), activeImage, SWT.IMAGE_GRAY);
 			
 			final Label clearButton= new Label(parent, SWT.NONE);
 			clearButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 			clearButton.setImage(inactiveImage);
 			clearButton.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 			clearButton.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
-			clearButton.addMouseListener(new MouseListener() {
-				public void mouseDoubleClick(MouseEvent e) {
-				}
+			clearButton.addMouseListener(new MouseAdapter() {
+				private MouseMoveListener fMoveListener;
 
 				public void mouseDown(MouseEvent e) {
-					clearText();
+					clearButton.setImage(pressedImage);
+					fMoveListener= new MouseMoveListener() {
+						private boolean fMouseInButton= true;
+
+						public void mouseMove(MouseEvent e) {
+							boolean mouseInButton= isMouseInButton(e);
+							if (mouseInButton != fMouseInButton) {
+								fMouseInButton= mouseInButton;
+								clearButton.setImage(mouseInButton ? pressedImage : inactiveImage);
+							}
+						}
+					};
+					clearButton.addMouseMoveListener(fMoveListener);
 				}
 
 				public void mouseUp(MouseEvent e) {
+					if (fMoveListener != null) {
+						clearButton.removeMouseMoveListener(fMoveListener);
+						fMoveListener= null;
+						boolean mouseInButton= isMouseInButton(e);
+						clearButton.setImage(mouseInButton ? activeImage : inactiveImage);
+						if (mouseInButton)
+							clearText();
+					}
+				}
+				
+				private boolean isMouseInButton(MouseEvent e) {
+					Point buttonSize = clearButton.getSize();
+					return 0 <= e.x && e.x < buttonSize.x && 0 <= e.y && e.y < buttonSize.y;
 				}
 			});
 			clearButton.addMouseTrackListener(new MouseTrackListener() {
