@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,8 +46,8 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 			MergeSourceViewer[] viewers = getViewers();
 			for (int i = 0; i < viewers.length; i++) {
 				MergeSourceViewer viewer = viewers[i];
-				WhitespaceCharacterPainter painter= new WhitespaceCharacterPainter(viewer);
-				viewer.addPainter(painter);
+				WhitespaceCharacterPainter painter= new WhitespaceCharacterPainter(viewer.getSourceViewer());
+				viewer.getSourceViewer().addPainter(painter);
 				painters.put(viewer, painter);
 			}
 		} finally {
@@ -61,7 +61,7 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 			MergeSourceViewer viewer = (MergeSourceViewer) iterator.next();
 			WhitespaceCharacterPainter painter = (WhitespaceCharacterPainter)painters.get(viewer);
 			if (painter != null) {
-				viewer.removePainter(painter);
+				viewer.getSourceViewer().removePainter(painter);
 				painter.deactivate(true);	
 			}
 		}

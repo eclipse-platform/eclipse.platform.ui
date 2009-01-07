@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +24,9 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -37,6 +40,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -83,11 +87,13 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+
 /**
- * Extends the JFace SourceViewer with some convenience methods.
+ * Wraps a JFace SourceViewer and add some convenience methods.
  */
-public class MergeSourceViewer extends SourceViewer
-						implements ISelectionChangedListener, ITextListener, IMenuListener, IOperationHistoryListener {
+public class MergeSourceViewer implements ISelectionChangedListener,
+		ITextListener, IMenuListener, IOperationHistoryListener, IAdaptable {
 								
 	public static final String UNDO_ID= "undo"; //$NON-NLS-1$
 	public static final String REDO_ID= "redo"; //$NON-NLS-1$
@@ -119,18 +125,23 @@ public class MergeSourceViewer extends SourceViewer
 
 		public void run() {
 			if (isEnabled())
-				doOperation(fOperationCode);
+				getSourceViewer().doOperation(fOperationCode);
 		}
 
 		public boolean isEnabled() {
-			return fOperationCode != -1 && canDoOperation(fOperationCode);
+			return fOperationCode != -1 && getSourceViewer().canDoOperation(fOperationCode);
 		}
 		
 		public void update() {
 			this.setEnabled(isEnabled());
 		}
 	}
-	
+
+	/**
+	 * TODO: The only purpose of this class is to provide "Go to Line" action in
+	 * TextMergeViewer. The adapter should be removed as soon as we implement
+	 * embedded TextEditor in a similar way JDT has it done for Java compare.
+	 */
 	class TextEditorAdapter implements ITextEditor {
 		
 		public void close(boolean save) {
@@ -181,7 +192,7 @@ public class MergeSourceViewer extends SourceViewer
 				}
 
 				public IDocument getDocument(Object element) {
-					return MergeSourceViewer.this.getDocument();
+					return MergeSourceViewer.this.getSourceViewer().getDocument();
 				}
 
 				public long getModificationStamp(Object element) {
@@ -226,7 +237,7 @@ public class MergeSourceViewer extends SourceViewer
 		}
 
 		public ISelectionProvider getSelectionProvider() {
-			return MergeSourceViewer.this.getSelectionProvider();
+			return MergeSourceViewer.this.getSourceViewer().getSelectionProvider();
 		}
 
 		public boolean isEditable() {
@@ -258,13 +269,13 @@ public class MergeSourceViewer extends SourceViewer
 					markInNavigationHistory();
 			}
 
-			StyledText widget= MergeSourceViewer.this.getTextWidget();
+			StyledText widget= MergeSourceViewer.this.getSourceViewer().getTextWidget();
 			widget.setRedraw(false);
 			{
 				adjustHighlightRange(revealStart, revealLength);
-				MergeSourceViewer.this.revealRange(revealStart, revealLength);
+				MergeSourceViewer.this.getSourceViewer().revealRange(revealStart, revealLength);
 
-				MergeSourceViewer.this.setSelectedRange(selectionStart, selectionLength);
+				MergeSourceViewer.this.getSourceViewer().setSelectedRange(selectionStart, selectionLength);
 
 				 markInNavigationHistory();
 			}
@@ -273,7 +284,7 @@ public class MergeSourceViewer extends SourceViewer
 
 		/*
 		 * @see org.eclipse.ui.texteditor.AbstractTextEditor#markInNavigationHistory()
-		 */		
+		 */
 		private void markInNavigationHistory() {
 			getSite().getPage().getNavigationHistory().markLocation(this);
 		}
@@ -286,8 +297,8 @@ public class MergeSourceViewer extends SourceViewer
 			if (MergeSourceViewer.this instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5) MergeSourceViewer.this;
 				extension.exposeModelRange(new Region(offset, length));
-			} else if (!isVisible(MergeSourceViewer.this, offset, length)) {
-				MergeSourceViewer.this.resetVisibleRegion();
+			} else if (!isVisible(MergeSourceViewer.this.getSourceViewer(), offset, length)) {
+				MergeSourceViewer.this.getSourceViewer().resetVisibleRegion();
 			}
 		}
 
@@ -378,7 +389,7 @@ public class MergeSourceViewer extends SourceViewer
 		}
 
 		public void setFocus() {
-			// nothing here			
+			// defining interface method
 		}
 
 		public Object getAdapter(Class adapter) {
@@ -412,6 +423,7 @@ public class MergeSourceViewer extends SourceViewer
 
 	private ResourceBundle fResourceBundle;
 	private ICompareContainer fContainer;
+	private SourceViewer fSourceViewer;
 	private Position fRegion;
 	private boolean fEnabled= true;
 	private HashMap fActions= new HashMap();
@@ -426,20 +438,18 @@ public class MergeSourceViewer extends SourceViewer
 	private LineNumberRulerColumn fLineNumberColumn;
 	private List textActions = new ArrayList();
 
-	private TextEditorAdapter fTexEditorAdapter;
-	
-	public MergeSourceViewer(Composite parent, int style, ResourceBundle bundle, ICompareContainer container) {
-		super(parent, new CompositeRuler(), style | SWT.H_SCROLL | SWT.V_SCROLL);
-		
+	public MergeSourceViewer(SourceViewer sourceViewer,	ResourceBundle bundle, ICompareContainer container) {
+		Assert.isNotNull(sourceViewer);
+		fSourceViewer= sourceViewer;
 		fResourceBundle= bundle;
 		fContainer = container;
 		
 		MenuManager menu= new MenuManager();
 		menu.setRemoveAllWhenShown(true);
 		menu.addMenuListener(this);
-		StyledText te= getTextWidget();
+		StyledText te= getSourceViewer().getTextWidget();
 		te.setMenu(menu.createContextMenu(te));
-		fContainer.registerContextMenu(menu, this);
+		fContainer.registerContextMenu(menu, getSourceViewer());
 		
 		// for listening to editor show/hide line number preference value
 		fPreferenceChangeListener= new IPropertyChangeListener() {
@@ -454,7 +464,7 @@ public class MergeSourceViewer extends SourceViewer
 		}
 		
 		IOperationHistory history = getHistory();
-		if (history != null) 
+		if (history != null)
 			history.addOperationHistoryListener(this);
 	}
 	
@@ -474,7 +484,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	public void setFont(Font font) {
-		StyledText te= getTextWidget();
+		StyledText te= getSourceViewer().getTextWidget();
 		if (te != null)
 			te.setFont(font);
 		if (fLineNumberColumn != null) {
@@ -484,7 +494,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	public void setBackgroundColor(Color color) {
-		StyledText te= getTextWidget();
+		StyledText te= getSourceViewer().getTextWidget();
 		if (te != null)
 			te.setBackground(color);
 		if (fLineNumberColumn != null)
@@ -492,7 +502,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	public void setForegroundColor(Color color) {
-		StyledText te= getTextWidget();
+		StyledText te= getSourceViewer().getTextWidget();
 		if (te != null)
 			te.setForeground(color);
 	}
@@ -500,7 +510,7 @@ public class MergeSourceViewer extends SourceViewer
 	public void setEnabled(boolean enabled) {
 		if (enabled != fEnabled) {
 			fEnabled= enabled;
-			StyledText c= getTextWidget();
+			StyledText c= getSourceViewer().getTextWidget();
 			if (c != null) {
 				c.setEnabled(enabled);
 				Display d= c.getDisplay();
@@ -522,17 +532,17 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	public boolean isControlOkToUse() {
-		StyledText t= getTextWidget();
+		StyledText t= getSourceViewer().getTextWidget();
 		return t != null && !t.isDisposed();
 	}
 				
 	public void setSelection(Position position) {
 		if (position != null)
-			setSelectedRange(position.getOffset(), position.getLength());
+			getSourceViewer().setSelectedRange(position.getOffset(), position.getLength());
 	}
 	
 	public void setLineBackground(Position position, Color c) {
-		StyledText t= getTextWidget();
+		StyledText t= getSourceViewer().getTextWidget();
 		if (t != null && !t.isDisposed()) {
 			Point region= new Point(0, 0);
 			getLineRange(position, region);
@@ -548,7 +558,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	public void resetLineBackground() {
-		StyledText t= getTextWidget();
+		StyledText t= getSourceViewer().getTextWidget();
 		if (t != null && !t.isDisposed()) {
 			int lines= getLineCount();
 			t.setLineBackground(0, lines, null);
@@ -559,13 +569,13 @@ public class MergeSourceViewer extends SourceViewer
 	 * Returns number of lines in document region.
 	 */
 	public int getLineCount() {
-		IRegion region= getVisibleRegion();
+		IRegion region= getSourceViewer().getVisibleRegion();
 
 		int length= region.getLength();
 		if (length == 0)
 			return 0;
 		
-		IDocument doc= getDocument();
+		IDocument doc= getSourceViewer().getDocument();
 		int startLine= 0;
 		int endLine= 0;
 
@@ -585,7 +595,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	public int getViewportLines() {
-		StyledText te= getTextWidget();
+		StyledText te= getSourceViewer().getTextWidget();
 		Rectangle clArea= te.getClientArea();
 		if (!clArea.isEmpty())
 			return clArea.height / te.getLineHeight();
@@ -593,7 +603,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 
 	public int getViewportHeight() {
-		StyledText te= getTextWidget();
+		StyledText te= getSourceViewer().getTextWidget();
 		Rectangle clArea= te.getClientArea();
 		if (!clArea.isEmpty())
 			return clArea.height;
@@ -604,8 +614,8 @@ public class MergeSourceViewer extends SourceViewer
 	 * Returns lines
 	 */
 	public int getDocumentRegionOffset() {
-		int start= getVisibleRegion().getOffset();
-		IDocument doc= getDocument();
+		int start= getSourceViewer().getVisibleRegion().getOffset();
+		IDocument doc= getSourceViewer().getDocument();
 		if (doc != null) {
 			try {
 				return doc.getLineOfOffset(start);
@@ -617,9 +627,9 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	public int getVerticalScrollOffset() {
-		StyledText st= getTextWidget();
+		StyledText st= getSourceViewer().getTextWidget();
 		int lineHeight= st.getLineHeight();
-		return getTopInset() - ((getDocumentRegionOffset()*lineHeight) + st.getTopPixel());
+		return getSourceViewer().getTopInset() - ((getDocumentRegionOffset()*lineHeight) + st.getTopPixel());
 	}
 
 	/*
@@ -628,7 +638,7 @@ public class MergeSourceViewer extends SourceViewer
 	 */
 	public Point getLineRange(Position p, Point region) {
 		
-		IDocument doc= getDocument();
+		IDocument doc= getSourceViewer().getDocument();
 		
 		if (p == null || doc == null) {
 			region.x= 0;
@@ -686,9 +696,9 @@ public class MergeSourceViewer extends SourceViewer
 			if (line < 0)
 				line= 0;
 
-			int cp= getTopIndex();
+			int cp= getSourceViewer().getTopIndex();
 			if (cp != line)
-				setTopIndex(line + getDocumentRegionOffset());
+				getSourceViewer().setTopIndex(line + getDocumentRegionOffset());
 		}
 	}
 	
@@ -705,9 +715,9 @@ public class MergeSourceViewer extends SourceViewer
 			if (action instanceof MergeViewerAction) {
 				MergeViewerAction mva = (MergeViewerAction) action;
 				if (mva.isContentDependent())
-					addTextListener(this);
+					getSourceViewer().addTextListener(this);
 				if (mva.isSelectionDependent())
-					addSelectionChangedListener(this);
+					getSourceViewer().addSelectionChangedListener(this);
 				
 				Utilities.initAction(action, fResourceBundle, "action." + actionId + ".");			 //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -716,7 +726,7 @@ public class MergeSourceViewer extends SourceViewer
 		}
 		if (action instanceof MergeViewerAction) {
 			MergeViewerAction mva = (MergeViewerAction) action;
-			if (mva.isEditableDependent() && !isEditable())
+			if (mva.isEditableDependent() && !getSourceViewer().isEditable())
 				return null;
 		}
 		return action;
@@ -724,19 +734,19 @@ public class MergeSourceViewer extends SourceViewer
 	
 	protected IAction createAction(String actionId) {
 		if (UNDO_ID.equals(actionId))
-			return new TextOperationAction(UNDO, "org.eclipse.ui.edit.undo", true, false, true); //$NON-NLS-1$
+			return new TextOperationAction(ITextOperationTarget.UNDO, IWorkbenchActionDefinitionIds.UNDO, true, false, true);
 		if (REDO_ID.equals(actionId))
-			return new TextOperationAction(REDO, "org.eclipse.ui.edit.redo", true, false, true); //$NON-NLS-1$
+			return new TextOperationAction(ITextOperationTarget.REDO, IWorkbenchActionDefinitionIds.REDO, true, false, true);
 		if (CUT_ID.equals(actionId))
-			return new TextOperationAction(CUT, "org.eclipse.ui.edit.cut", true, true, false); //$NON-NLS-1$
+			return new TextOperationAction(ITextOperationTarget.CUT, IWorkbenchActionDefinitionIds.CUT, true, true, false);
 		if (COPY_ID.equals(actionId))
-			return new TextOperationAction(COPY, "org.eclipse.ui.edit.copy", false, true, false); //$NON-NLS-1$
+			return new TextOperationAction(ITextOperationTarget.COPY, IWorkbenchActionDefinitionIds.COPY, false, true, false);
 		if (PASTE_ID.equals(actionId))
-			return new TextOperationAction(PASTE, "org.eclipse.ui.edit.paste", true, false, false); //$NON-NLS-1$
+			return new TextOperationAction(ITextOperationTarget.PASTE, IWorkbenchActionDefinitionIds.PASTE, true, false, false);
 		if (DELETE_ID.equals(actionId))
-			return new TextOperationAction(DELETE, "org.eclipse.ui.edit.delete", true, false, false); //$NON-NLS-1$
+			return new TextOperationAction(ITextOperationTarget.DELETE, IWorkbenchActionDefinitionIds.DELETE, true, false, false);
 		if (SELECT_ALL_ID.equals(actionId))
-			return new TextOperationAction(SELECT_ALL, "org.eclipse.ui.edit.selectAll", false, false, false); //$NON-NLS-1$
+			return new TextOperationAction(ITextOperationTarget.SELECT_ALL, IWorkbenchActionDefinitionIds.SELECT_ALL, false, false, false);
 		return null;
 	}
 	
@@ -812,18 +822,21 @@ public class MergeSourceViewer extends SourceViewer
 		if (action != null)
 			menu.add(action);
 	}
-		
-	protected void handleDispose() {
-		
-		removeTextListener(this);
-		removeSelectionChangedListener(this);
+
+	/**
+	 * The viewer is no longer part of the UI, it's a wrapper only. The disposal
+	 * doesn't take place while releasing the editor pane's children. The method
+	 * have to be called it manually. The wrapped viewer is disposed as a
+	 * regular viewer, while disposing the UI.
+	 */
+	public void dispose() {
+		getSourceViewer().removeTextListener(this);
+		getSourceViewer().removeSelectionChangedListener(this);
 		EditorsUI.getPreferenceStore().removePropertyChangeListener(fPreferenceChangeListener);
 		
 		IOperationHistory history = getHistory();
-		if (history != null) 
+		if (history != null)
 			history.removeOperationHistoryListener(this);
-		
-		super.handleDispose();
 	}
 	
 	/**
@@ -837,7 +850,7 @@ public class MergeSourceViewer extends SourceViewer
 			if (next instanceof MergeViewerAction) {
 				MergeViewerAction action = (MergeViewerAction) next;
 				action.update();
-			} if (next instanceof FindReplaceAction) {
+			} else if (next instanceof FindReplaceAction) {
 				FindReplaceAction action = (FindReplaceAction) next;
 				action.update();
 			}
@@ -846,9 +859,9 @@ public class MergeSourceViewer extends SourceViewer
 	
 	public void configure(SourceViewerConfiguration configuration) {
 		if (isConfigured )
-			unconfigure();
+			getSourceViewer().unconfigure();
 		isConfigured = true;
-		super.configure(configuration);
+		getSourceViewer().configure(configuration);
 	}
 	
 	/**
@@ -859,10 +872,10 @@ public class MergeSourceViewer extends SourceViewer
 	 * @param height
 	 */
 	public void setBounds (int x, int y, int width, int height) {
-		if(getControl() instanceof Composite){
-			((Composite)getControl()).setBounds(x, y, width, height);
+		if(getSourceViewer().getControl() instanceof Composite){
+			((Composite)getSourceViewer().getControl()).setBounds(x, y, width, height);
 		} else {
-			getTextWidget().setBounds(x, y, width, height);			
+			getSourceViewer().getTextWidget().setBounds(x, y, width, height);
 		}
 	}
 	
@@ -877,7 +890,7 @@ public class MergeSourceViewer extends SourceViewer
 		if(key.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)){
 			boolean b= EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
 			if (b != fShowLineNumber){
-				toggleLineNumberRuler();	
+				toggleLineNumberRuler();
 			}
 		} else if (key.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR)) {
 			updateLineNumberColumnPresentation(true);
@@ -887,9 +900,9 @@ public class MergeSourceViewer extends SourceViewer
 	/**
 	 * Hides or shows line number ruler column based of preference setting
 	 */
-	private void updateLineNumberRuler() 
+	private void updateLineNumberRuler()
 	{
-		IVerticalRuler v= getVerticalRuler();
+		IVerticalRuler v= getVerticalRuler(getSourceViewer());
 		if (v!=null && v instanceof CompositeRuler) {
 			CompositeRuler c= (CompositeRuler) v;
 
@@ -907,6 +920,24 @@ public class MergeSourceViewer extends SourceViewer
 		}
 	}
 
+	/**
+	 * Calls the <code>getVerticalRuler</code> method of the given viewer.
+	 * 
+	 * TODO: don't use reflection
+	 * 
+	 * @param viewer the viewer to call <code>getVerticalRuler</code> on
+	 */
+	private IVerticalRuler getVerticalRuler(SourceViewer viewer) {
+		try {
+			Method method= SourceViewer.class.getDeclaredMethod("getVerticalRuler", new Class[] {}); //$NON-NLS-1$
+			method.setAccessible(true);
+			return (IVerticalRuler) method.invoke(viewer, new Object[] {});
+		} catch (Throwable e) {
+			CompareUIPlugin.log(e);
+		}
+		return null;
+	}
+	
 	private void updateLineNumberColumnPresentation(boolean refresh) {
 		if (fLineNumberColumn == null)
 			return;
@@ -921,7 +952,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	private void layoutViewer() {
-		Control parent= getControl();
+		Control parent= getSourceViewer().getControl();
 		if (parent instanceof Composite && !parent.isDisposed())
 			((Composite) parent).layout(true);
 	}
@@ -944,8 +975,8 @@ public class MergeSourceViewer extends SourceViewer
 	/**
 	 * Toggles line number ruler column.
 	 */
-	private void toggleLineNumberRuler() 
-	{	
+	private void toggleLineNumberRuler()
+	{
 		fShowLineNumber=!fShowLineNumber;
 		
 		updateLineNumberRuler();
@@ -981,16 +1012,23 @@ public class MergeSourceViewer extends SourceViewer
 	}
 
 	private IUndoContext getUndoContext() {
-		IUndoManager undoManager = getUndoManager();
+		IUndoManager undoManager = getSourceViewer().getUndoManager();
 		if (undoManager instanceof IUndoManagerExtension)
 			return ((IUndoManagerExtension)undoManager).getUndoContext();
 		return null;
 	}
 	
-	public ITextEditor getTextEditorAdapter() {
-		if (fTexEditorAdapter == null)
-			fTexEditorAdapter = new TextEditorAdapter();
-		return fTexEditorAdapter;
-
+	/**
+	 * @return the wrapped viewer
+	 */
+	public SourceViewer getSourceViewer() {
+		return fSourceViewer;
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == ITextEditor.class) {
+			return new TextEditorAdapter();
+		}
+		return null;
 	}
 }
