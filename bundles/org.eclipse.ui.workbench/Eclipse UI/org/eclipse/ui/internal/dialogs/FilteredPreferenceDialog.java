@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,25 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.osgi.service.prefs.BackingStoreException;
+
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -36,21 +55,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -68,7 +73,6 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Baseclass for preference dialogs that will show two tabs of preferences -
@@ -115,7 +119,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		protected void addFilter(ViewerFilter filter) {
 			viewerFilter = filter;
 			getViewer().addFilter(filter);
-			setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
 
 			if (filterText != null) {
 				setFilterText(WorkbenchMessages.FilteredTree_FilterMessage);
