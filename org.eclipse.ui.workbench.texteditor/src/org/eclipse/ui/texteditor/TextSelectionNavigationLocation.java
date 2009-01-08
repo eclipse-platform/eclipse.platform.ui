@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,8 +66,6 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 				return;
 
 			ITextSelection selection= (ITextSelection) s;
-			if(selection.getOffset() == 0 && selection.getLength() == 0)
-				return;
 
 			IDocument document= getDocument(part);
 			Position position= new Position(selection.getOffset(), selection.getLength());
