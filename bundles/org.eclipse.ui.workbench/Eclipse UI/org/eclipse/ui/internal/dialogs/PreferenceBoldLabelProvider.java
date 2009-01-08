@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.swt.graphics.Font;
+
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.swt.graphics.Font;
+
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 
@@ -24,10 +26,12 @@ public class PreferenceBoldLabelProvider extends PreferenceLabelProvider
 		implements IFontProvider {
 
 	private FilteredTree filterTree;
-	private PatternFilter filterForBoldElements = new PreferencePatternFilter();
+
+	private PatternFilter filterForBoldElements;
 	
 	PreferenceBoldLabelProvider(FilteredTree filterTree) {
 		this.filterTree = filterTree;
+		this.filterForBoldElements= filterTree.getPatternFilter();
 	}
 
 	public Font getFont(Object element) {
