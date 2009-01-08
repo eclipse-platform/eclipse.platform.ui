@@ -31,6 +31,8 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -671,6 +673,9 @@ public class FilteredTree extends Composite {
 					}
 				});
 
+		// Don't use a field in order to keep it local to this method
+		final Color[] filterTextForeground= new Color[1];
+
 		filterText.addFocusListener(new FocusAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -678,23 +683,98 @@ public class FilteredTree extends Composite {
 			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 			 */
 			public void focusGained(FocusEvent e) {
-				/*
-				 * Running in an asyncExec because the selectAll() does not
-				 * appear to work when using mouse to give focus to text.
-				 */
-				Display display = filterText.getDisplay();
-				display.asyncExec(new Runnable() {
-					public void run() {
-						if (!filterText.isDisposed()) {
-							if (getInitialText().equals(
-									filterText.getText().trim())) {
-								filterText.selectAll();
+				if (!useNewLook) {
+					/*
+					 * Running in an asyncExec because the selectAll() does not appear to work when
+					 * using mouse to give focus to text.
+					 */
+					Display display= filterText.getDisplay();
+					display.asyncExec(new Runnable() {
+						public void run() {
+							if (!filterText.isDisposed()) {
+								if (getInitialText().equals(
+										filterText.getText().trim())) {
+									filterText.selectAll();
+								}
 							}
 						}
-					}
-				});
+					});
+					return;
+				}
+
+				if (filterText.getText().equals(initialText) && filterText.getSelectionCount() == 0) {
+					filterText.setText(""); //$NON-NLS-1$
+				}
+				filterText.setForeground(filterTextForeground[0]);
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
+			 */
+			public void focusLost(FocusEvent e) {
+				if (!useNewLook) {
+					return;
+				}
+				
+				if (filterText.getCharCount() == 0 && initialText != null) {
+					filterText.setText(initialText);
+				}
+				if (filterText.getText().equals(initialText)) {
+					filterTextForeground[0]= filterText.getForeground();
+					filterText.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+					filterText.setSelection(0);
+				}
 			}
 		});
+
+		if (useNewLook) {
+			filterText.addMouseListener(new MouseAdapter() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see
+				 * org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
+				 */
+				public void mouseDown(MouseEvent e) {
+					if (filterText.getText().equals(initialText)) {
+						filterText.setText(""); //$NON-NLS-1$
+					}
+				}
+			});
+
+			final PaintListener[] paintListener= new PaintListener[1];
+			paintListener[0]= new PaintListener() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see
+				 * org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent
+				 * )
+				 */
+				public void paintControl(PaintEvent e) {
+					filterTextForeground[0]= filterText.getForeground();
+					if (!filterText.isFocusControl() && filterText.getText().equals(initialText)) {
+						filterText.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+
+						// Previous focus check might not be 100% accurate
+						Display display= filterText.getDisplay();
+						display.asyncExec(new Runnable() {
+							public void run() {
+								if (!filterText.isDisposed() && !filterText.isFocusControl()) {
+									filterText.setSelection(0);
+								}
+							}
+						});
+
+					}
+					filterText.removePaintListener(paintListener[0]);
+				}
+
+			};
+			filterText.addPaintListener(paintListener[0]);
+		}
 
 		filterText.addKeyListener(new KeyAdapter() {
 			/*
@@ -707,8 +787,10 @@ public class FilteredTree extends Composite {
 				boolean hasItems = getViewer().getTree().getItemCount() > 0;
 				if (hasItems && e.keyCode == SWT.ARROW_DOWN) {
 					treeViewer.getTree().setFocus();
-				} else if (e.character == SWT.CR) {
 					return;
+				}
+				if (useNewLook && filterText.getSelectionText().equals(initialText)) {
+					filterText.setText(""); //$NON-NLS-1$
 				}
 			}
 		});
@@ -918,8 +1000,10 @@ public class FilteredTree extends Composite {
 						fMoveListener= null;
 						boolean mouseInButton= isMouseInButton(e);
 						clearButton.setImage(mouseInButton ? activeImage : inactiveImage);
-						if (mouseInButton)
+						if (mouseInButton) {
 							clearText();
+							filterText.setFocus();
+						}
 					}
 				}
 				
