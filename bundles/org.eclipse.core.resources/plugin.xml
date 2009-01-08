@@ -16,7 +16,7 @@
 		<initializer class="org.eclipse.core.internal.resources.PreferenceInitializer"/>
 	</extension>
 	
-	<extension point="org.eclipse.core.runtime.contentTypes">
+	<extension point="org.eclipse.core.contenttype.contentTypes">
 		<file-association content-type="org.eclipse.core.runtime.xml" file-names=".project"/>
 		<content-type
 			file-extensions="prefs"
