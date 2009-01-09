@@ -12,13 +12,12 @@
 package org.eclipse.ui.internal.cocoa;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import javax.swing.text.WrappedPlainView;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
@@ -52,6 +51,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * The CocoaUIEnhancer provides the standard "About" and "Preference" menu items
@@ -72,16 +73,14 @@ public class CocoaUIEnhancer implements IStartup {
 	private static final int kHideApplicationMenuItem = 6;
 	private static final int kQuitMenuItem = 10;
 	
-	static Callback proc3Args;
-	static final Class PTR_CLASS =  C.PTR_SIZEOF == 8 ? long.class : int.class;
+	static long sel_toolbarButtonClicked_;
+	static long sel_preferencesMenuItemSelected_;
+	static long sel_aboutMenuItemSelected_;
+
+	Callback proc3Args;
 	static final String SWT_OBJECT = "SWT_OBJECT"; //$NON-NLS-1$
-	static final long sel_toolbarButtonClicked_ = OS.sel_registerName("toolbarButtonClicked:"); //$NON-NLS-1$
-	static final long sel_preferencesMenuItemSelected_ = OS.sel_registerName("preferencesMenuItemSelected:"); //$NON-NLS-1$
-	static final long sel_aboutMenuItemSelected_ = OS.sel_registerName("aboutMenuItemSelected:"); //$NON-NLS-1$
 
-	static {
-		String className = "SWTCocoaEnhancerDelegate"; //$NON-NLS-1$
-
+	private void init() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		// TODO: These should either move out of Display or be accessible to this class.
 		String types = "*"; //$NON-NLS-1$
 		int size = C.PTR_SIZEOF, align = C.PTR_SIZEOF == 4 ? 2 : 3;
@@ -89,33 +88,36 @@ public class CocoaUIEnhancer implements IStartup {
 		Class clazz = CocoaUIEnhancer.class;
 
 		proc3Args = new Callback(clazz, "actionProc", 3); //$NON-NLS-1$
-		long proc3 = proc3Args.getAddress();
+		//call getAddress
+		Method getAddress = Callback.class.getMethod("getAddress", new Class[0]);
+		Object object = getAddress.invoke(proc3Args, null);
+		long proc3 = convertToLong(object);
 		if (proc3 == 0) SWT.error (SWT.ERROR_NO_MORE_CALLBACKS);
 
-		long cls = OS.objc_allocateClassPair(OS.class_NSObject, className, 0);
-		try {
-			invokeMethod(OS.class, "class_addIvar", new Object[] {
-					wrapPointer(cls), SWT_OBJECT, wrapPointer(size),
-					new Byte((byte) align), types });
+		//call objc_allocateClassPair
+		Field field = OS.class.getField("class_NSObject");
+		Object fieldObj = field.get(OS.class);
+		object = invokeMethod(OS.class, "objc_allocateClassPair", new Object[] { fieldObj, "SWTCocoaEnhancerDelegate", wrapPointer(0) });
+		long cls = convertToLong(object);
+		
+		invokeMethod(OS.class, "class_addIvar", new Object[] {
+				wrapPointer(cls), SWT_OBJECT, wrapPointer(size),
+				new Byte((byte) align), types });
 
-			// Add the action callback
-			invokeMethod(
-					OS.class,
-					"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_toolbarButtonClicked_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
-			invokeMethod(OS.class, "class_addMethod", new Object[] {
-					wrapPointer(cls),
-					wrapPointer(sel_preferencesMenuItemSelected_),
-					wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
-			invokeMethod(
-					OS.class,
-					"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_aboutMenuItemSelected_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
+		// Add the action callback
+		invokeMethod(
+				OS.class,
+				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_toolbarButtonClicked_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
+		invokeMethod(OS.class, "class_addMethod", new Object[] {
+				wrapPointer(cls),
+				wrapPointer(sel_preferencesMenuItemSelected_),
+				wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
+		invokeMethod(
+				OS.class,
+				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_aboutMenuItemSelected_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
 
-			invokeMethod(OS.class, "objc_registerClassPair",
-					new Object[] { wrapPointer(cls) });
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		invokeMethod(OS.class, "objc_registerClassPair",
+				new Object[] { wrapPointer(cls) });			
 	}	
 
 	SWTCocoaEnhancerDelegate delegate;
@@ -179,8 +181,25 @@ public class CocoaUIEnhancer implements IStartup {
 			}
 		}
 		
+		try {
+			sel_toolbarButtonClicked_ = registerName("toolbarButtonClicked:"); //$NON-NLS-1$
+			sel_preferencesMenuItemSelected_ = registerName("preferencesMenuItemSelected:"); //$NON-NLS-1$
+			sel_aboutMenuItemSelected_ = registerName("aboutMenuItemSelected:"); //$NON-NLS-1$
+			init();
+		} catch (Exception e) {
+			// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+			// not expected to happen at all.
+			log(e);
+		}
     }
 
+    
+    private long registerName(String name) throws IllegalArgumentException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    	Class clazz = OS.class;
+    	Object object = invokeMethod(clazz, "sel_registerName", new Object[] {name});
+    	return convertToLong(object);
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.IStartup#earlyStartup()
      */
@@ -188,13 +207,24 @@ public class CocoaUIEnhancer implements IStartup {
         final Display display = Display.getDefault();
         display.syncExec(new Runnable() {
             public void run() {
-        		delegate = new SWTCocoaEnhancerDelegate();
-        		delegate.alloc().init();
-        		delegateJniRef = OS.NewGlobalRef(CocoaUIEnhancer.this);
+            	try {
+            		delegate = new SWTCocoaEnhancerDelegate();
+            		delegate.alloc().init();
+            		//call OS.NewGlobalRef
+					Method method = OS.class.getMethod("NewGlobalRef", new Class[] { Object.class });
+					Object object = method.invoke(OS.class, new Object[] {CocoaUIEnhancer.this});
+					delegateJniRef = convertToLong(object);
+            	} catch (Exception e) {
+					// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+					// not expected to happen at all.
+					log(e);
+				}
         		if (delegateJniRef == 0) SWT.error(SWT.ERROR_NO_HANDLES);
 				try {
+					Field idField = SWTCocoaEnhancerDelegate.class.getField("id");
+					Object idValue = idField.get(delegate);
 					invokeMethod(OS.class, "object_setInstanceVariable",
-							new Object[] { wrapPointer(delegate.id),
+							new Object[] { idValue,
 									SWT_OBJECT, wrapPointer(delegateJniRef) });
 
 					hookApplicationMenu();
@@ -207,7 +237,9 @@ public class CocoaUIEnhancer implements IStartup {
 								try {
 									invokeMethod(OS.class, "DeleteGlobalRef", new Object[] {wrapPointer(delegateJniRef)});
 								} catch (Exception e) {
-									e.printStackTrace();
+									// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+									// not expected to happen at all.
+									log(e);
 								}
 							}
 							delegateJniRef = 0;
@@ -229,13 +261,20 @@ public class CocoaUIEnhancer implements IStartup {
 						modifyWindowShell(windows[i]);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+					// not expected to happen at all.
+					log(e);
 				}
 			}
+
         });
     }
 
-    /**
+	void log(Exception e) {
+		StatusUtil.handleStatus(e, StatusManager.LOG);
+	}
+
+	/**
 	 * Hooks a listener that tweaks newly opened workbench window shells with
 	 * the proper OS flags.
 	 * 
@@ -257,11 +296,7 @@ public class CocoaUIEnhancer implements IStartup {
 			}
 
 			public void windowOpened(IWorkbenchWindow window) {
-				try {
-					modifyWindowShell(window);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				modifyWindowShell(window);
 			}});
 	}
 
@@ -273,7 +308,7 @@ public class CocoaUIEnhancer implements IStartup {
 	 *            the window to modify
 	 * @since 3.2
 	 */
-	protected void modifyWindowShell(IWorkbenchWindow window) throws Exception {
+	protected void modifyWindowShell(IWorkbenchWindow window) {
 		// only add the button when either the coolbar or perspectivebar
 		// is initially visible. This is so that RCP apps can choose to use
 		// this fragment without fear that their explicitly invisble bars
@@ -298,46 +333,63 @@ public class CocoaUIEnhancer implements IStartup {
 			nsWindow.setShowsToolbarButton(true);
 			
 			// Override the target and action of the toolbar button so we can control it.
-			NSButton toolbarButton = nsWindow.standardWindowButton(OS.NSWindowToolbarButton);
-			
-			toolbarButton.setTarget(delegate);
-			invokeMethod(NSControl.class, toolbarButton, "setAction",
-					new Object[] { wrapPointer(sel_toolbarButtonClicked_) });
+			try {
+				Field field = OS.class.getField("NSWindowToolbarButton");
+				Object fieldValue = field.get(OS.class);
+				NSButton toolbarButton = (NSButton) invokeMethod(NSWindow.class, nsWindow, "standardWindowButton", new Object[] {fieldValue});
+
+				toolbarButton.setTarget(delegate);
+				invokeMethod(NSControl.class, toolbarButton, "setAction",
+						new Object[] { wrapPointer(sel_toolbarButtonClicked_) });
+			} catch (Exception e) {
+				// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+				// not expected to happen at all.
+				log(e);
+			}
 		}
 	}
 	
-    private void hookApplicationMenu()  throws Exception {
-        // create About Eclipse menu command
-    	NSMenu mainMenu = NSApplication.sharedApplication().mainMenu();
-    	NSMenu appMenu = mainMenu.itemAtIndex(0).submenu();
-    	
-        // add the about action
-    	NSMenuItem aboutMenuItem = appMenu.itemAtIndex(kAboutMenuItem);
-    	aboutMenuItem.setTitle(NSString.stringWith(fAboutActionName));
+    private void hookApplicationMenu() {
+    	try {
+    		// create About Eclipse menu command
+    		NSMenu mainMenu = NSApplication.sharedApplication().mainMenu();
+    		NSMenuItem mainMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, mainMenu, "itemAtIndex", new Object[] {wrapPointer(0)});
+    		NSMenu appMenu = mainMenuItem.submenu();
 
-    	// rename the hide action if we have an override string
-    	if (fHideActionName != null) {
-        	NSMenuItem hideMenuItem = appMenu.itemAtIndex(kHideApplicationMenuItem);
-        	hideMenuItem.setTitle(NSString.stringWith(fHideActionName));
-    	}
-    	
-    	// rename the quit action if we have an override string
-    	if (fQuitActionName != null) {
-        	NSMenuItem quitMenuItem = appMenu.itemAtIndex(kQuitMenuItem);
-        	quitMenuItem.setTitle(NSString.stringWith(fQuitActionName));
-    	}
+    		// add the about action
+    		NSMenuItem aboutMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kAboutMenuItem)});
+    		aboutMenuItem.setTitle(NSString.stringWith(fAboutActionName));
 
-    	// enable pref menu
-    	appMenu.itemAtIndex(kPreferencesMenuItem).setEnabled(true);
+    		// rename the hide action if we have an override string
+    		if (fHideActionName != null) {
+    			NSMenuItem hideMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kHideApplicationMenuItem)});
+    			hideMenuItem.setTitle(NSString.stringWith(fHideActionName));
+    		}
 
-    	// disable services menu
-    	appMenu.itemAtIndex(kServicesMenuItem).setEnabled(false);
+    		// rename the quit action if we have an override string
+    		if (fQuitActionName != null) {
+    			NSMenuItem quitMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kQuitMenuItem)});
+    			quitMenuItem.setTitle(NSString.stringWith(fQuitActionName));
+    		}
 
-    	// Register as a target on the prefs and quit items.
-    	appMenu.itemAtIndex(kPreferencesMenuItem).setTarget(delegate);
-    	invokeMethod(NSMenuItem.class, appMenu.itemAtIndex(kPreferencesMenuItem), "setAction", new Object[] {wrapPointer(sel_preferencesMenuItemSelected_)});
-    	appMenu.itemAtIndex(kAboutMenuItem).setTarget(delegate);
-    	invokeMethod(NSMenuItem.class, appMenu.itemAtIndex(kAboutMenuItem), "setAction", new Object[] {wrapPointer(sel_aboutMenuItemSelected_)});
+    		// enable pref menu
+    		NSMenuItem prefMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kPreferencesMenuItem)});
+    		prefMenuItem.setEnabled(true);
+
+    		// disable services menu
+    		NSMenuItem servicesMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kServicesMenuItem)});
+    		servicesMenuItem.setEnabled(false);
+
+    		// Register as a target on the prefs and quit items.
+    		prefMenuItem.setTarget(delegate);
+    		invokeMethod(NSMenuItem.class, prefMenuItem, "setAction", new Object[] {wrapPointer(sel_preferencesMenuItemSelected_)});
+    		aboutMenuItem.setTarget(delegate);
+    		invokeMethod(NSMenuItem.class, aboutMenuItem, "setAction", new Object[] {wrapPointer(sel_aboutMenuItemSelected_)});
+    	} catch (Exception e) {
+			// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+			// not expected to happen at all.
+			log(e);
+		}
     }
 
 	/**
@@ -349,17 +401,26 @@ public class CocoaUIEnhancer implements IStartup {
         	IMenuManager manager = ((WorkbenchWindow)window).getActionBars().getMenuManager();
         	IAction action = findAction(actionId, manager);
         	if (action != null && action.isEnabled()) {
-        		NSMenu mainMenu = NSApplication.sharedApplication().mainMenu();
-        		NSMenu appMenu = mainMenu.itemAtIndex(0).submenu();
         		try {
-        			appMenu.itemAtIndex(kPreferencesMenuItem).setEnabled(false);
-        	    	appMenu.itemAtIndex(kAboutMenuItem).setEnabled(false);
-        	    	action.run();
-        		}
-        		finally {
-        			appMenu.itemAtIndex(kPreferencesMenuItem).setEnabled(true);
-        	    	appMenu.itemAtIndex(kAboutMenuItem).setEnabled(true);
-        		}
+        			NSMenu mainMenu = NSApplication.sharedApplication().mainMenu();
+        			NSMenuItem mainMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, mainMenu, "itemAtIndex", new Object[] {wrapPointer(0)});
+        			NSMenu appMenu = mainMenuItem.submenu();
+        			NSMenuItem aboutMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kAboutMenuItem)});
+        			NSMenuItem prefMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kPreferencesMenuItem)});
+        			try {
+        				prefMenuItem.setEnabled(false);
+        				aboutMenuItem.setEnabled(false);
+        				action.run();
+        			}
+        			finally {
+        				prefMenuItem.setEnabled(true);
+        				aboutMenuItem.setEnabled(true);
+        			}
+        		} catch (Exception e) {
+					// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+					// not expected to happen at all.
+					log(e);
+				}
         	}
         }
        
@@ -422,19 +483,29 @@ public class CocoaUIEnhancer implements IStartup {
 	 * Action implementations for the toolbar button and preferences and about menu items
 	 */
 	void toolbarButtonClicked (NSControl source) {
-		NSWindow window = source.window();
-		Widget widget = Display.getCurrent().findWidget(window.id);
-		
-		if (!(widget instanceof Shell)) {
-			return;
-		}
-		Shell shell = (Shell) widget;
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-		.getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			if (windows[i].getShell() == shell) {
-				runCommand("org.eclipse.ui.ToggleCoolbarAction"); //$NON-NLS-1$
+		try {
+			NSWindow window = source.window();
+			Field idField = NSWindow.class.getField("id");
+			Object idValue = idField.get(window);
+			
+			Display display = Display.getCurrent();
+			Widget widget = (Widget) invokeMethod(Display.class, "findWidget", new Object[] { idValue });
+
+			if (!(widget instanceof Shell)) {
+				return;
 			}
+			Shell shell = (Shell) widget;
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+			.getWorkbenchWindows();
+			for (int i = 0; i < windows.length; i++) {
+				if (windows[i].getShell() == shell) {
+					runCommand("org.eclipse.ui.ToggleCoolbarAction"); //$NON-NLS-1$
+				}
+			}
+		} catch (Exception e) {
+			// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+			// not expected to happen at all.
+			log(e);
 		}
 	}
 	
@@ -479,6 +550,7 @@ public class CocoaUIEnhancer implements IStartup {
 			IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException {
 		Class clazz = NSControl.class;
+		Class PTR_CLASS =  C.PTR_SIZEOF == 8 ? long.class : int.class;
 		Constructor constructor = clazz
 				.getConstructor(new Class[] { PTR_CLASS });
 		return (NSControl) constructor.newInstance(new Object[] { wrapPointer(arg0) });
@@ -493,6 +565,7 @@ public class CocoaUIEnhancer implements IStartup {
 			SecurityException, NoSuchMethodException {
 		Class clazz = OS.class;
 		Method method = null;
+		Class PTR_CLASS =  C.PTR_SIZEOF == 8 ? long.class : int.class;
 		if (PTR_CLASS == long.class) {
 			method = clazz.getMethod("object_getInstanceVariable", new Class[] {
 					long.class, String.class, long[].class });
@@ -509,6 +582,18 @@ public class CocoaUIEnhancer implements IStartup {
 					name, resultPtr });
 			return new long[] { resultPtr[0] };
 		}
+	}
+	
+	private long convertToLong(Object object) {
+		if (object instanceof Integer) {
+			Integer i = (Integer) object;
+			return i.longValue();
+		}
+		if (object instanceof Long) {
+			Long l = (Long) object;
+			return l.longValue();
+		}
+		return 0;
 	}
 	
 	private static Object invokeMethod(Class clazz, String methodName,
@@ -539,6 +624,7 @@ public class CocoaUIEnhancer implements IStartup {
 	}
 	
 	private static Object wrapPointer(long value) {
+		Class PTR_CLASS =  C.PTR_SIZEOF == 8 ? long.class : int.class;
 		if (PTR_CLASS == long.class)
 			return new Long(value);
 		else 

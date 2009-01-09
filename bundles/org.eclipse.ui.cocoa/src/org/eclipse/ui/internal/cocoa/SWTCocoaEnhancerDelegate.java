@@ -16,7 +16,7 @@ import org.eclipse.swt.internal.cocoa.*;
 public class SWTCocoaEnhancerDelegate extends NSObject {
 
 	public SWTCocoaEnhancerDelegate() {
-		super(0);
+		super();
 	}
 		
 	public SWTCocoaEnhancerDelegate(int id) {
