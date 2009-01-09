@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,8 +108,6 @@ public class TabbedPropertySheetPage
 	private IWorkbenchWindow cachedWorkbenchWindow;
 
 	private boolean hasTitleBar;
-	
-	private boolean registerPartActivationListener = true;
 
 	/**
 	 * a listener that is interested in part activation events.
@@ -380,11 +378,9 @@ public class TabbedPropertySheetPage
 		/**
 		 * Add a part activation listener.
 		 */
-		if (registerPartActivationListener) {
-			cachedWorkbenchWindow = getSite().getWorkbenchWindow();
-			cachedWorkbenchWindow.getPartService().addPartListener(
-					partActivationListener);
-		}
+		cachedWorkbenchWindow = getSite().getWorkbenchWindow();
+		cachedWorkbenchWindow.getPartService().addPartListener(
+				partActivationListener);
 
 		/**
 		 * Add a label provider change listener.
@@ -1028,43 +1024,32 @@ public class TabbedPropertySheetPage
 	}
 	
 	/**
-	 * Sets the value indicating if the part activation listener should be registered. Default is true.
-	 * 
-	 * @param registerPartActivationListener true if the part activation listener should be registered
-	 * @since 3.5
-	 */
-	protected void setRegisterPartActivationListener(
-			boolean registerPartActivationListener) {
-		this.registerPartActivationListener = registerPartActivationListener;
-	}
-	
-	/**
-	 * Returns the value indicating if the part activation listener should be registered.
-	 * 
-	 * @return the value indicating if the part activation listener should be registered.
-	 * @since 3.5
-	 */ 
-	protected boolean registerPartActivationListener() {
-		return registerPartActivationListener;
-	}	
-
-	/**
-     * Returns text of the properties title.
-     *  
+     * Returns text of the properties title for given selection. If selection is null,
+     * then currentSelection is used
+     * 
+	 * @param selection Selection whose properties title text is to be returned 
      * @return String representing title text.
 	 * @since 3.5
      */	
-    public String getTitleText() {
-    	return registry.getLabelProvider().getText(currentSelection);
+    public String getTitleText(ISelection selection) {
+    	if (selection == null) {
+    		selection = currentSelection;
+    	}
+    	return registry.getLabelProvider().getText(selection);
     }
     
     /**
-     * Returns the copy of the title image.
+     * Returns the title image for given selection. If selection is null,
+     * then currentSelection is used. 
      * 
+     * @param selection Selection whose properties title image is to be returned
      * @return Image that is used as a title image.
      * @since 3.5
      */
-    public Image getTitleImage() {
-		return registry.getLabelProvider().getImage(currentSelection);
+    public Image getTitleImage(ISelection selection) {
+    	if (selection == null) {
+    		selection = currentSelection;
+    	}
+		return registry.getLabelProvider().getImage(selection);
     }
 }
