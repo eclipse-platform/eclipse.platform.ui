@@ -71,9 +71,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -139,6 +141,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -152,14 +155,25 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.IEncodingSupport;
+import org.eclipse.ui.editors.text.IStorageDocumentProvider;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+import org.eclipse.ui.texteditor.ChangeEncodingAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.GotoLineAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -497,7 +511,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 	}
 
-	class ContributorInfo implements IElementStateListener, VerifyListener, IDocumentListener {
+	class ContributorInfo implements IElementStateListener, VerifyListener, IDocumentListener, IEncodingSupport {
 		private final TextMergeViewer fViewer;
 		private final Object fElement;
 		private char fLeg;
@@ -521,11 +535,54 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				}
 			}
 		}
-		
+
+		public void setEncoding(String encoding) {
+			if (fDocumentKey == null || fDocumentProvider == null) {
+				return;
+			}
+			if (fDocumentProvider instanceof IStorageDocumentProvider) {
+				IStorageDocumentProvider provider = (IStorageDocumentProvider) fDocumentProvider;
+				String current = provider.getEncoding(fDocumentKey);
+				boolean dirty = fDocumentProvider.canSaveDocument(fDocumentKey);
+				if (!dirty) {
+					String internal = encoding == null ? "" : encoding; //$NON-NLS-1$
+					if (!internal.equals(current)) {
+						provider.setEncoding(fDocumentKey, encoding);
+						try {
+							fDocumentProvider.resetDocument(fDocumentKey);
+						} catch (CoreException e) {
+							CompareUIPlugin.log(e);
+						} finally {
+							update(true);
+						}
+					}
+				}
+			}
+		}
+
 		public String getEncoding() {
-			if (fEncoding == null)
-				return ResourcesPlugin.getEncoding();
-			return fEncoding;
+			if (fDocumentProvider != null && fDocumentKey != null
+					&& fDocumentProvider instanceof IStorageDocumentProvider) {
+				IStorageDocumentProvider provider = (IStorageDocumentProvider) fDocumentProvider;
+				return provider.getEncoding(fDocumentKey);
+			}
+			return null;
+		}
+
+		public String getDefaultEncoding() {
+			if (fDocumentProvider != null && fDocumentKey != null
+					&& fDocumentProvider instanceof IStorageDocumentProvider) {
+				IStorageDocumentProvider provider = (IStorageDocumentProvider) fDocumentProvider;
+				return provider.getDefaultEncoding();
+			}
+			return null;
+		}
+
+		private String internalGetEncoding() {
+			if (fEncoding != null) {
+				return fEncoding;
+			}
+			return ResourcesPlugin.getEncoding();
 		}
 
 		public void setEncodingIfAbsent(ContributorInfo otherContributor) {
@@ -716,7 +773,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				String s= null;
 
 				try {
-					String encoding = getEncoding();
+					String encoding = internalGetEncoding();
 					s = Utilities.readString(sca, encoding);
 				} catch (CoreException ex) {
 					this.fViewer.setError(fLeg, ex.getMessage());
@@ -979,6 +1036,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			if (oldContributor != null) {
 				fSelection = oldContributor.fSelection;
 				fTopIndex = oldContributor.fTopIndex;
+				fEncoding = oldContributor.fEncoding;
 			}
 				
 		}
@@ -2391,6 +2449,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 		contributeGotoLineAction(viewer);
 
+		contributeChangeEncodingAction(viewer);
+
 		getSourceViewerDecorationSupport(viewer.getSourceViewer()).install(fPreferenceStore);
 
 		return viewer;
@@ -2428,6 +2488,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		IAction action = new GotoLineAction((ITextEditor) viewer.getAdapter(ITextEditor.class));
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		viewer.addAction(MergeSourceViewer.GOTO_LINE_ID, action);
+	}
+
+	private void contributeChangeEncodingAction(MergeSourceViewer viewer) {
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedTextEditorMessages"); //$NON-NLS-1$
+		IAction action = new ChangeEncodingAction(bundle, "Editor.ChangeEncodingAction.", getTextEditorAdapter()); //$NON-NLS-1$
+		viewer.addAction(MergeSourceViewer.CHANGE_ENCODING_ID, action);
 	}
 
 	private void connectGlobalActions(final MergeSourceViewer part) {
@@ -2812,10 +2878,26 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		} else if (doc == fRight.getSourceViewer().getDocument()) {
 			setRightDirty(dirty);
 		}
-
-		updateLines(doc);
-	}
 		
+		if (needsDiffRecalculation(e)) {
+			new UIJob(CompareMessages.DocumentMerger_0) {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					// do diff and update controls
+					update(true);
+					return Status.OK_STATUS;
+				}
+			}.schedule();
+		} else {
+			updateLines(doc);
+		}
+	}
+	
+	private boolean needsDiffRecalculation(DocumentEvent e) {
+		IDocument doc = e.getDocument();
+		// the doc has been replaced completely
+		return e.fOffset == 0 && doc.get().length() == e.fText.length();
+	}
+	
 	/*
 	 * This method is called if a range of text on one side is copied into an empty sub-document
 	 * on the other side. The method returns the position where the sub-document is placed into the base document.
@@ -2938,7 +3020,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				if (contents != null) {
 					byte[] bytes;
 					try {
-						bytes= contents.getBytes(left ? fLeftContributor.getEncoding() : fRightContributor.getEncoding());
+						bytes= contents.getBytes(left ? fLeftContributor.internalGetEncoding() : fRightContributor.internalGetEncoding());
 					} catch(UnsupportedEncodingException ex) {
 						// use default encoding
 						bytes= contents.getBytes();
@@ -4897,5 +4979,210 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		else if (fCurrentDiff != null && fCurrentDiff.isToken())
 			return true;
 		return false;
+	}
+
+	private ITextEditor getTextEditorAdapter() {
+		return new ITextEditor () {
+			public void close(boolean save) {
+				// Implementing interface method
+			}
+			public void doRevertToSaved() {
+				// Implementing interface method
+			}
+			public IAction getAction(String actionId) {
+				// Implementing interface method
+				return null;
+			}
+			public IDocumentProvider getDocumentProvider() {
+				// Implementing interface method
+				return null;
+			}
+			public IRegion getHighlightRange() {
+				// Implementing interface method
+				return null;
+			}
+			public ISelectionProvider getSelectionProvider() {
+				// Implementing interface method
+				return null;
+			}
+			public boolean isEditable() {
+				// Implementing interface method
+				return false;
+			}
+			public void removeActionActivationCode(String actionId) {
+				// Implementing interface method
+			}
+			public void resetHighlightRange() {
+				// Implementing interface method
+			}
+			public void selectAndReveal(int offset, int length) {
+				// Implementing interface method
+			}
+			public void setAction(String actionId, IAction action) {
+				// Implementing interface method
+			}
+			public void setActionActivationCode(String actionId,
+					char activationCharacter, int activationKeyCode,
+					int activationStateMask) {
+				// Implementing interface method
+			}
+			public void setHighlightRange(int offset, int length,
+					boolean moveCursor) {
+				// Implementing interface method
+			}
+			public void showHighlightRangeOnly(boolean showHighlightRangeOnly) {
+				// Implementing interface method
+			}
+			public boolean showsHighlightRangeOnly() {
+				// Implementing interface method
+				return false;
+			}
+			public IEditorInput getEditorInput() {
+				if (fFocusPart == fAncestor && fAncestorContributor != null) {
+					return fAncestorContributor.getDocumentKey();
+				} else if (fFocusPart == fLeft && fLeftContributor != null) {
+					return fLeftContributor.getDocumentKey();
+				} else if (fFocusPart == fRight && fRightContributor != null) {
+					return fRightContributor.getDocumentKey();
+				} else {
+					return null;
+				}
+			}
+			public IEditorSite getEditorSite() {
+				// Implementing interface method
+				return null;
+			}
+			public void init(IEditorSite site, IEditorInput input)
+					throws PartInitException {
+				// Implementing interface method
+			}
+			public void addPropertyListener(IPropertyListener listener) {
+				// Implementing interface method
+			}
+			public void createPartControl(Composite parent) {
+				// Implementing interface method
+			}
+			public void dispose() {
+				// Implementing interface method
+			}
+			public IWorkbenchPartSite getSite() {
+				// Implementing interface method
+				return new IWorkbenchPartSite() {
+					public String getId() {
+						// Implementing interface method
+						return null;
+					}
+					public IKeyBindingService getKeyBindingService() {
+						// Implementing interface method
+						return null;
+					}
+					public IWorkbenchPart getPart() {
+						// Implementing interface method
+						return null;
+					}
+					public String getPluginId() {
+						// Implementing interface method
+						return null;
+					}
+					public String getRegisteredName() {
+						// Implementing interface method
+						return null;
+					}
+					public void registerContextMenu(MenuManager menuManager,
+							ISelectionProvider selectionProvider) {
+						// Implementing interface method
+					}
+					public void registerContextMenu(String menuId,
+							MenuManager menuManager,
+							ISelectionProvider selectionProvider) {
+						// Implementing interface method
+					}
+					public IWorkbenchPage getPage() {
+						// Implementing interface method
+						return null;
+					}
+					public ISelectionProvider getSelectionProvider() {
+						// Implementing interface method
+						return null;
+					}
+					public Shell getShell() {
+						return fComposite.getShell();
+					}
+					public IWorkbenchWindow getWorkbenchWindow() {
+						// Implementing interface method
+						return null;
+					}
+					public void setSelectionProvider(ISelectionProvider provider) {
+						// Implementing interface method
+					}
+					public Object getAdapter(Class adapter) {
+						// Implementing interface method
+						return null;
+					}
+					public Object getService(Class api) {
+						// Implementing interface method
+						return null;
+					}
+					public boolean hasService(Class api) {
+						// Implementing interface method
+						return false;
+					}
+				};
+			}
+			public String getTitle() {
+				// Implementing interface method
+				return null;
+			}
+			public Image getTitleImage() {
+				// Implementing interface method
+				return null;
+			}
+			public String getTitleToolTip() {
+				// Implementing interface method
+				return null;
+			}
+			public void removePropertyListener(IPropertyListener listener) {
+				// Implementing interface method
+			}
+			public void setFocus() {
+				// Implementing interface method
+			}
+			public Object getAdapter(Class adapter) {
+				if (adapter == IEncodingSupport.class) {
+					if (fFocusPart == fAncestor) {
+						return fAncestorContributor;
+					} else if (fFocusPart == fLeft) {
+						return fLeftContributor;
+					} else if (fFocusPart == fRight) {
+						return fRightContributor;
+					} else {
+						return null;
+					}
+				}
+				return null;
+			}
+			public void doSave(IProgressMonitor monitor) {
+				// Implementing interface method
+			}
+			public void doSaveAs() {
+				// Implementing interface method
+			}
+			public boolean isDirty() {
+				if (fFocusPart == fLeft) {
+					return isLeftDirty();
+				} else if (fFocusPart == fRight) {
+					return isRightDirty();
+				} 
+				return false;
+			}
+			public boolean isSaveAsAllowed() {
+				// Implementing interface method
+				return false;
+			}
+			public boolean isSaveOnCloseNeeded() {
+				// Implementing interface method
+				return false;
+			}
+		};
 	}
 }

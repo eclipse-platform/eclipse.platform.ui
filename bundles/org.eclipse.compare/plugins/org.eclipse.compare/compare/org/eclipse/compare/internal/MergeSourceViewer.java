@@ -83,6 +83,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.ChangeEncodingAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
@@ -105,6 +106,7 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 	public static final String SAVE_ID= "save"; //$NON-NLS-1$
 	public static final String FIND_ID= "find"; //$NON-NLS-1$
 	public static final String GOTO_LINE_ID= "gotoLine"; //$NON-NLS-1$
+	public static final String CHANGE_ENCODING_ID= "changeEncoding"; //$NON-NLS-1$
 
 	class TextOperationAction extends MergeViewerAction {
 		
@@ -799,6 +801,7 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 		addMenu(menu, SELECT_ALL_ID);
 
 		menu.add(new Separator("edit")); //$NON-NLS-1$
+		addMenu(menu, CHANGE_ENCODING_ID);
 		menu.add(new Separator("find")); //$NON-NLS-1$
 		addMenu(menu, FIND_ID);
 		
@@ -852,6 +855,9 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 				action.update();
 			} else if (next instanceof FindReplaceAction) {
 				FindReplaceAction action = (FindReplaceAction) next;
+				action.update();
+			} else if (next instanceof ChangeEncodingAction) {
+				ChangeEncodingAction action = (ChangeEncodingAction) next;
 				action.update();
 			}
 		}
