@@ -104,18 +104,14 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			if (!monitor.isCanceled()) {
-				IStackFrame lookupFrame = fTarget;
-				ISourceLocator lookupLocator = fLocator;
-				
-				if (lookupFrame != null && lookupLocator != null && !lookupFrame.isTerminated()) {
-					ISourceLookupResult result = null;
-					result = DebugUITools.lookupSource(lookupFrame, lookupLocator);
+			if (!monitor.isCanceled()) {				
+				if (!fTarget.isTerminated()) {
+					ISourceLookupResult result = DebugUITools.lookupSource(fTarget, fLocator);
 					synchronized (StackFrameSourceDisplayAdapter.this) {
 						fPrevResult = (SourceLookupResult)result;
-						fPrevFrame = lookupFrame;
+						fPrevFrame = fTarget;
 					}
-					if (!monitor.isCanceled() && fPage != null && !lookupFrame.isTerminated()) {
+					if (!monitor.isCanceled() && !fTarget.isTerminated()) {
 						new SourceDisplayJob(result, fPage).schedule();
 					}
 				}
@@ -127,7 +123,12 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 		 */
 		public boolean belongsTo(Object family) {
-			return getClass().equals(family);
+			// source lookup jobs are a family per workbench page
+			if (family instanceof SourceLookupJob) {
+				SourceLookupJob slj = (SourceLookupJob) family;
+				return slj.fPage.equals(fPage);
+			}
+			return false;
 		}
 		
 	}
@@ -150,17 +151,11 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-			ISourceLookupResult result = null;
-			IWorkbenchPage page = null;
-			synchronized (this) {
-				result = fResult;
-				page = fPage;
-			}
-			if (!monitor.isCanceled() && result != null && page != null) {
-				DebugUITools.displaySource(result, page);
+			if (!monitor.isCanceled() && fResult != null) {
+				DebugUITools.displaySource(fResult, fPage);
 				// termination may have occurred while displaying source
 				if (monitor.isCanceled()) {
-					Object artifact = result.getArtifact();
+					Object artifact = fResult.getArtifact();
 					if (artifact instanceof IStackFrame) {
 						clearSourceSelection(((IStackFrame)artifact).getThread());
 					}
@@ -168,6 +163,18 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 			}
 			
 			return Status.OK_STATUS;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+		 */
+		public boolean belongsTo(Object family) {
+			// source display jobs are a family per workbench page
+			if (family instanceof SourceDisplayJob) {
+				SourceDisplayJob sdj = (SourceDisplayJob) family;
+				return sdj.fPage.equals(fPage);
+			}
+			return false;
 		}
 		
 	}	
@@ -179,9 +186,15 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		IStackFrame frame = (IStackFrame)context;
 		if (!force && frame.equals(fPrevFrame)) {
 			fPrevResult.updateArtifact(context);
-			new SourceDisplayJob(fPrevResult, page).schedule();
+			SourceDisplayJob sdj = new SourceDisplayJob(fPrevResult, page);
+			// cancel any existing source display jobs for this page
+			Job.getJobManager().cancel(sdj);
+			sdj.schedule();
 		} else {
-			new SourceLookupJob(frame, frame.getLaunch().getSourceLocator(), page).schedule();
+			SourceLookupJob slj = new SourceLookupJob(frame, frame.getLaunch().getSourceLocator(), page);
+			// cancel any existing source lookup jobs for this page
+			Job.getJobManager().cancel(slj);
+			slj.schedule();
 		}
 	}
 	
@@ -217,7 +230,6 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 			if (fPrevFrame.getDebugTarget().equals(target)) {
 				fPrevFrame = null;
 				fPrevResult = null;
-				Job.getJobManager().cancel(SourceLookupJob.class);
 			}
 		}
 	}
