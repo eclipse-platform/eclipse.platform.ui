@@ -438,7 +438,7 @@ public class DefaultTabFolder extends AbstractTabFolder {
      * 
      * @since 3.1
      */
-    private void updateColors() {
+    public void updateColors() {
         DefaultTabFolderColors currentColors = shellActive ? 
                 activeShellColors[getActive()] 
                 : inactiveShellColors[getActive()];
