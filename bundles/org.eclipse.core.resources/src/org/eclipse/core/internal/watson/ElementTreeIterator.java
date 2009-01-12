@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,10 +29,11 @@ import org.eclipse.core.runtime.Path;
  <code><pre>
  // printing a crude representation of the poster child
  IElementContentVisitor visitor=
- new IElementContentVisitor() {
- public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
- System.out.println(requestor.requestPath() + " -> " + elementContent);
- }
+     new IElementContentVisitor() {
+   public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+     System.out.println(requestor.requestPath() + " -> " + elementContents);
+     return true;
+   }
  });
  ElementTreeIterator iterator = new ElementTreeIterator(tree, Path.ROOT);
  iterator.iterate(visitor);
