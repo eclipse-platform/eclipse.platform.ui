@@ -65,7 +65,8 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 	protected void handleText(String text, IParsedXMLContent data) {
 		String stackPath = getElementStackPath();
 		IPath path = new Path(stackPath);
-		if (path.segment(1).equalsIgnoreCase("body")) { //$NON-NLS-1$
+		if (path.segment(1).equalsIgnoreCase("body") &&  //$NON-NLS-1$
+			!isSkipped(path.segment(path.segmentCount() -1))) {
 			data.addText(text);
 			if (!hasDescriptionMetaTag) {
 				data.addToSummary(text);
@@ -82,6 +83,10 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 		}
 	}
 	
+	private boolean isSkipped(String tag) {
+		return tag.equals("script"); //$NON-NLS-1$
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.search.XMLSearchParticipant#preprocess(java.io.InputStream, java.lang.String, java.lang.String)
 	 */
