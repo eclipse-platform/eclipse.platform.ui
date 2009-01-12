@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,13 +59,23 @@ public class ChangeEncodingAction extends TextEditorAction {
 	private static final String ENCODING_PREF_KEY= "encoding"; //$NON-NLS-1$
 
 	/**
-	 * Creates a new action for the given text editor. The action configures its
-	 * visual representation from the given resource bundle.
-	 *
+	 * Creates a new action for the given text editor.
+	 * 
+	 * @param editor the text editor
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
+	 * @since 3.5
+	 */
+	public ChangeEncodingAction(ITextEditor editor) {
+		this(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction.", editor); //$NON-NLS-1$
+	}
+
+	/**
+	 * Creates a new action for the given text editor. The action configures its visual
+	 * representation from the given resource bundle.
+	 * 
 	 * @param bundle the resource bundle
-	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or
-	 *   <code>null</code> if none
+	 * @param prefix a prefix to be prepended to the various resource keys (described in
+	 *            <code>ResourceAction</code> constructor), or <code>null</code> if none
 	 * @param editor the text editor
 	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 */
