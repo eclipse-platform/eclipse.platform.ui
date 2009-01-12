@@ -1003,6 +1003,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			IEditorInput input = getDocumentKey();
 			if (input != null && input.equals(element)) {
 				this.fViewer.updateDirtyState(input, getDocumentProvider(), fLeg);
+				
+				// recalculate diffs and update controls
+				new UIJob(CompareMessages.DocumentMerger_0) {
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						update(true);
+						return Status.OK_STATUS;
+					}
+				}.schedule();
 			}
 		}
 		public void elementContentAboutToBeReplaced(Object element) {
@@ -2491,8 +2499,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 
 	private void contributeChangeEncodingAction(MergeSourceViewer viewer) {
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedTextEditorMessages"); //$NON-NLS-1$
-		IAction action = new ChangeEncodingAction(bundle, "Editor.ChangeEncodingAction.", getTextEditorAdapter()); //$NON-NLS-1$
+		IAction action = new ChangeEncodingAction(getTextEditorAdapter());
 		viewer.addAction(MergeSourceViewer.CHANGE_ENCODING_ID, action);
 	}
 
@@ -2879,23 +2886,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			setRightDirty(dirty);
 		}
 		
-		if (needsDiffRecalculation(e)) {
-			new UIJob(CompareMessages.DocumentMerger_0) {
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					// do diff and update controls
-					update(true);
-					return Status.OK_STATUS;
-				}
-			}.schedule();
-		} else {
-			updateLines(doc);
-		}
-	}
-	
-	private boolean needsDiffRecalculation(DocumentEvent e) {
-		IDocument doc = e.getDocument();
-		// the doc has been replaced completely
-		return e.fOffset == 0 && doc.get().length() == e.fText.length();
+		updateLines(doc);
 	}
 	
 	/*
