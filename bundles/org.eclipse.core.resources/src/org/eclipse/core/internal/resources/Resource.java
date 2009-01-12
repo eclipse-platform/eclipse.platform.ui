@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -699,6 +699,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					return;
 				workspace.beginOperation(true);
 				broadcastPreDeleteEvent();
+				
+				// when a project is being deleted, flush the build order in case there is a problem
+				if (this.getType() == IResource.PROJECT)
+					workspace.flushBuildOrder();
+
 				final IFileStore originalStore = getStore();
 				boolean wasLinked = isLinked();
 				message = Messages.resources_deleteProblem;
