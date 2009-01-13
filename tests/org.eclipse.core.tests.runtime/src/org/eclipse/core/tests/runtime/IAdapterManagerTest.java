@@ -22,6 +22,34 @@ import org.osgi.framework.BundleException;
  * Tests API on the IAdapterManager class.
  */
 public class IAdapterManagerTest extends TestCase {
+	//following classes are for testComputeClassOrder
+	static interface C {
+	}
+
+	static interface D {
+	}
+
+	static interface M {
+	}
+
+	static interface N {
+	}
+
+	static interface O {
+	}
+
+	interface A extends M, N {
+	}
+
+	interface B extends O {
+	}
+
+	class Y implements C, D {
+	}
+
+	class X extends Y implements A, B {
+	}
+
 	private static final String NON_EXISTING = "com.does.not.Exist";
 	private static final String TEST_ADAPTER = "org.eclipse.core.tests.runtime.TestAdapter";
 	private static final String TEST_ADAPTER_CL = "testAdapter.testUnknown";
@@ -181,6 +209,18 @@ public class IAdapterManagerTest extends TestCase {
 		} finally {
 			if (bundle != null)
 				bundle.uninstall();
+		}
+	}
+
+	/**
+	 * Tests for {@link IAdapterManager#computeClassOrder(Class)}.
+	 */
+	public void testComputeClassOrder() {
+		Class[] expected = new Class[] {X.class, Y.class, Object.class, A.class, B.class, M.class, N.class, O.class, C.class, D.class};
+		Class[] actual = manager.computeClassOrder(X.class);
+		assertEquals("1.0", expected.length, actual.length);
+		for (int i = 0; i < actual.length; i++) {
+			assertEquals("1.1." + i, expected[i], actual[i]);
 		}
 	}
 }
