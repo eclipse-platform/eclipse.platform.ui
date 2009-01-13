@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import java.net.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
 
 /**
@@ -30,9 +31,10 @@ public class URIUtilTest extends RuntimeTest {
 	}
 
 	/**
-	 * Tests for {@link URLUtil#toFile(URL)}.
+	 * Tests for {@link URIUtil#toFile(URL)}.
+	 * @throws URISyntaxException 
 	 */
-	public void testToFile() {
+	public void testToFile() throws URISyntaxException {
 		File base = new File(System.getProperty("java.io.tmpdir"));
 		for (int i = 0; i < testPaths.length; i++) {
 			File original = new File(base, testPaths[i]);
@@ -40,6 +42,15 @@ public class URIUtilTest extends RuntimeTest {
 			File result = URIUtil.toFile(uri);
 			assertEquals("1." + i, original, result);
 		}
+
+		//UNC paths
+		URI path = new URI("file://HOST/some/path");
+		File result = URIUtil.toFile(path);
+		if (File.pathSeparatorChar == '/')
+			assertTrue("2.0", result.getAbsolutePath().startsWith("//"));
+		else
+			assertTrue("2.1", result.getAbsolutePath().startsWith("\\\\"));
+		assertTrue("2.2", new Path(result.toString()).isUNC());
 	}
 
 	/**
@@ -99,7 +110,27 @@ public class URIUtilTest extends RuntimeTest {
 		assertEquals("1.2", new URI("http://foo.bar/a#b%20c"), URIUtil.toURI(new URL("http://foo.bar/a#b c")));
 
 		//% characters
-		assertEquals("1.1", new URI("http://foo.bar/a%25b"), URIUtil.toURI(new URL("http://foo.bar/a%b")));
+		assertEquals("2.1", new URI("http://foo.bar/a%25b"), URIUtil.toURI(new URL("http://foo.bar/a%b")));
+
+		//UNC paths
+		assertEquals("3.1", new URI("file:////SERVER/some/path"), URIUtil.toURI(new URL("file://SERVER/some/path")));
+		assertEquals("3.2", new URI("file:////SERVER/some/path"), URIUtil.toURI(new URL("file:////SERVER/some/path")));
+	}
+
+	/**
+	 * Tests for {@link URIUtil#toURL(java.net.URI)}.
+	 */
+	public void testURItoURL() throws MalformedURLException, URISyntaxException {
+		//spaces
+		assertEquals("1.1", new URL("http://foo.bar/a%20b"), URIUtil.toURL(new URI("http://foo.bar/a%20b")));
+		assertEquals("1.2", new URL("http://foo.bar/a#b%20c"), URIUtil.toURL(new URI("http://foo.bar/a#b%20c")));
+
+		//% characters
+		assertEquals("2.1", new URL("http://foo.bar/a%25b"), URIUtil.toURL(new URI("http://foo.bar/a%25b")));
+
+		//UNC paths
+		assertEquals("3.1", new URL("file:////SERVER/some/path"), URIUtil.toURL(new URI("file:////SERVER/some/path")));
+		assertEquals("3.2", new URL("file://SERVER/some/path"), URIUtil.toURL(new URI("file://SERVER/some/path")));
 	}
 
 	/**
@@ -147,6 +178,24 @@ public class URIUtilTest extends RuntimeTest {
 			fileURI = URIUtil.fromString(fileURL.toString());
 		}
 		assertEquals("1.2", correctURI, fileURI);
+	}
+
+	/**
+	 * Tests for {@link URIUtil#append(URI, String)} when dealing with UNC paths.
+	 */
+	public void testAppendUNC() throws URISyntaxException {
+		//UNC paths
+		URI base = new URI("file:////SERVER/some/path/");
+		URI relative = new URI("plugins/javax.servlet_2.4.0.v200806031604.jar");
+		URI expectedResolved = new URI("file:////SERVER/some/path/plugins/javax.servlet_2.4.0.v200806031604.jar");
+		URI resolved = URIUtil.append(base, relative.toString());
+		assertEquals("1.0", expectedResolved, resolved);
+
+		//an absolute URI should not be resolved
+		URI absolute = new URI("file:////ANOTHERSERVER/another/path");
+		resolved = URIUtil.append(base, absolute.toString());
+		assertEquals("1.1", absolute, resolved);
+
 	}
 
 	/**
@@ -276,6 +325,16 @@ public class URIUtilTest extends RuntimeTest {
 			URI actual = URIUtil.makeAbsolute(location, root);
 			assertEquals("2." + Integer.toString(i), expected, actual);
 		}
+	}
+
+	/**
+	 * Tests for {@link URIUtil#makeAbsolute(URI, URI)} involving UNC paths.
+	 */
+	public void testMakeAbsoluteUNC() throws URISyntaxException {
+		URI base = new URI("file:////SERVER/some/path/");
+		URI relative = new URI("plugins/javax.servlet_2.4.0.v200806031604.jar");
+		URI result = URIUtil.makeAbsolute(relative, base);
+		assertEquals("1.0", new URI("file:////SERVER/some/path/plugins/javax.servlet_2.4.0.v200806031604.jar"), result);
 	}
 
 	public void testMakeRelative() throws URISyntaxException {
