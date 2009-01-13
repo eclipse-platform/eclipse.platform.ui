@@ -21,10 +21,6 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Add SWT filter to the {@link Display} to apply styles when SWT widget is
  * resized or showed.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSSWTApplyStylesListener {
 

@@ -15,10 +15,6 @@ import org.eclipse.swt.widgets.Display;
 /**
  * CSS SWT Engine implementation which configure CSSEngineImpl to apply styles
  * to SWT widgets with lazy handler strategy.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSSWTLazyHandlerEngineImpl extends AbstractCSSSWTEngineImpl {
 
