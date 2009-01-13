@@ -120,4 +120,16 @@ public abstract class FilterConfigurationArea {
 		return field;
 	}
 
+	/**
+	 * Returns whether the configuration area should grab remaining vertical space.
+	 * 
+	 * The default implementation returns <code>false</code>. Subclasses can override.
+	 * 
+	 * @return <code>true</code> iff the configuration area should grab remaining vertical space
+	 * @since 3.5
+	 */
+	public boolean grabExcessVerticalSpace() {
+		return false;
+	}
+
 }

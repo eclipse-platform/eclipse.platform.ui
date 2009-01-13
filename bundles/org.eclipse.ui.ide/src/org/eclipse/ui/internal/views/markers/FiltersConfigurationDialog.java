@@ -190,7 +190,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		expandable.setText(area.getTitle());
 		expandable.setBackground(form.getBackground());
 		expandable.setLayout(new GridLayout());
-		expandable.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+		expandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, area.grabExcessVerticalSpace()));
 		expandable.addExpansionListener(new IExpansionListener() {
 			/*
 			 * (non-Javadoc)

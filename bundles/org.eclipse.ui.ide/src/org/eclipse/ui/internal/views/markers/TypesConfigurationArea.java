@@ -421,6 +421,13 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 				typesContentProvider, false));
 		setButtonLayoutData(deselectAllButton);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean grabExcessVerticalSpace() {
+		return true;
+	}
 
 	/**
 	 * Get the listener for select all and deselect all.
