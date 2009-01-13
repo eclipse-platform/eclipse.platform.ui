@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -15,6 +16,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.jface.internal.text.SelectionProcessor;
 
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.LineRange;
@@ -351,6 +354,35 @@ public final class JFaceTextUtil {
 		int increment= gc.getFontMetrics().getAverageCharWidth();
 		gc.dispose();
 		return increment;
+	}
+
+	/**
+	 * Returns <code>true</code> if the text covered by <code>selection</code> does not contain any
+	 * characters in the given viewer. Note the difference to {@link ITextSelection#isEmpty()},
+	 * which returns <code>true</code> only for invalid selections.
+	 * 
+	 * @param viewer the viewer
+	 * @param selection the selection
+	 * @return <code>true</code> if <code>selection</code> does not contain any text,
+	 *         <code>false</code> otherwise
+	 * @throws BadLocationException if accessing the document failed
+	 * @since 3.5
+	 */
+	public static boolean isEmpty(ITextViewer viewer, ITextSelection selection) throws BadLocationException {
+		return new SelectionProcessor(viewer).isEmpty(selection);
+	}
+
+	/**
+	 * Returns the text regions covered by the given selection in the given viewer.
+	 * 
+	 * @param viewer the viewer
+	 * @param selection the selection
+	 * @return the text regions corresponding to <code>selection</code>
+	 * @throws BadLocationException if accessing the document failed
+	 * @since 3.5
+	 */
+	public static IRegion[] getCoveredRanges(ITextViewer viewer, ITextSelection selection) throws BadLocationException {
+		return new SelectionProcessor(viewer).getRanges(selection);
 	}
 
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -34,10 +35,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.TextSelection;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
@@ -255,32 +258,28 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 	}
 
 	/**
-	 * Returns the document's delete region specified by position and type.
+	 * Returns the document's delete region according to <code>selection</code> and <code>type</code>.
 	 *
 	 * @param document the document
-	 * @param offset the offset
-	 * @param length the length
+	 * @param selection the selection
 	 * @param type the line deletion type, must be one of <code>WHOLE_LINE</code>,
 	 *            <code>TO_BEGINNING</code> or <code>TO_END</code>
 	 * @return the document's delete region
 	 * @throws BadLocationException if the document is accessed with invalid offset or line
 	 */
-	private IRegion getDeleteRegion(IDocument document, int offset, int length, int type) throws BadLocationException {
+	private IRegion getDeleteRegion(IDocument document, ITextSelection selection, int type) throws BadLocationException {
 
-		int line= document.getLineOfOffset(offset);
+		int offset= selection.getOffset();
+		int line= selection.getStartLine();
 		int resultOffset= 0;
 		int resultLength= 0;
 
 		switch  (type) {
-		case DeleteLineAction.WHOLE:
-			resultOffset= document.getLineOffset(line);
-			int endOffset= offset + length;
-			IRegion endLineInfo= document.getLineInformationOfOffset(endOffset);
-			int endLine= document.getLineOfOffset(endLineInfo.getOffset());
-			if (endLineInfo.getOffset() == endOffset && endLine > 0 && length > 0)
-				endLine= endLine - 1;
-			resultLength= document.getLineOffset(endLine) + document.getLineLength(endLine) - resultOffset;
-			break;
+			case DeleteLineAction.WHOLE:
+				resultOffset= document.getLineOffset(line);
+				int endLine= selection.getEndLine();
+				resultLength= document.getLineOffset(endLine) + document.getLineLength(endLine) - resultOffset;
+				break;
 
 		case DeleteLineAction.TO_BEGINNING:
 			resultOffset= document.getLineOffset(line);
@@ -338,8 +337,22 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 	 * @since 3.4
 	 */
 	public void deleteLine(IDocument document, int offset, int length, int type, boolean copyToClipboard) throws BadLocationException {
+		deleteLine(document, new TextSelection(offset, length), type, copyToClipboard);
+	}
 
-		IRegion deleteRegion= getDeleteRegion(document, offset, length, type);
+	/**
+	 * Deletes the lines that intersect with the given <code>selection</code>.
+	 *
+	 * @param document the document
+	 * @param selection the selection to use to determine the document range to delete
+	 * @param type the line deletion type, must be one of
+	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 * @param copyToClipboard <code>true</code> if the deleted line should be copied to the clipboard
+	 * @throws BadLocationException if position is not valid in the given document
+	 * @since 3.5
+	 */
+	public void deleteLine(IDocument document, ITextSelection selection, int type, boolean copyToClipboard) throws BadLocationException {
+		IRegion deleteRegion= getDeleteRegion(document, selection, type);
 		int deleteOffset= deleteRegion.getOffset();
 		int deleteLength= deleteRegion.getLength();
 

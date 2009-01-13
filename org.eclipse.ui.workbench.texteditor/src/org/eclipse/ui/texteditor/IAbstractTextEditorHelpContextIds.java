@@ -10,6 +10,7 @@
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *     Dakshinamurthy Karra (Jalian Systems) - Templates View - https://bugs.eclipse.org/bugs/show_bug.cgi?id=69581
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -387,4 +388,11 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 3.4
 	 */
 	String TEMPLATES_VIEW= PREFIX + "templates_view_context";//$NON-NLS-1$
+
+	/**
+	 * Help context id for the column mode toggle action.
+	 * Value: <code>"column_mode_context_action_context"</code>
+	 * @since 3.5
+	 */
+	String COLUMN_MODE_ACTION=PREFIX + "column_mode" + ACTION_POSTFIX; //$NON-NLS-1$
 }

@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 
 import org.eclipse.core.runtime.Assert;
@@ -291,11 +291,9 @@ public class MoveLinesAction extends TextEditorAction {
 			return;
 
 		// get selection
-		Point p= fTextViewer.getSelectedRange();
-		if (p == null)
+		ITextSelection sel= (ITextSelection) fTextViewer.getSelectionProvider().getSelection();
+		if (sel.isEmpty())
 			return;
-
-		ITextSelection sel= new TextSelection(document, p.x, p.y);
 
 		ITextSelection skippedLine= getSkippedLine(document, sel);
 		if (skippedLine == null)

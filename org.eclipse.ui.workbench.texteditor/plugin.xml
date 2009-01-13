@@ -399,6 +399,12 @@
 	        categoryId="org.eclipse.ui.category.window"
 	        id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly">
 	  </command>
+	  <command
+	        name="%toggleColumnMode.label"
+	        description="%toggleColumnMode.description"
+	        categoryId="org.eclipse.ui.category.window"
+	        id="org.eclipse.ui.edit.text.toggleColumnMode">
+	  </command>
       <command
             name="%command.toggleInsertMode.name"
             description="%command.toggleInsertMode.description"
@@ -763,6 +769,11 @@
             commandId="org.eclipse.ui.edit.text.showInformation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
+            commandId="org.eclipse.ui.edit.text.toggleColumnMode"
+            contextId="org.eclipse.ui.textEditorScope"
+            sequence="M3+C"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.hippieCompletion"
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M3+/"
@@ -1100,6 +1111,46 @@
                toolbarPath="Normal/Presentation"
                tooltip="%showWhitespaceCharacters.tooltip">
         </action>
+         <action
+               allowLabelUpdate="true"
+               definitionId="org.eclipse.ui.edit.text.toggleColumnMode"
+               disabledIcon="$nl$/icons/full/dtool16/column_mode.gif"
+               helpContextId="column_mode_action_context"
+               icon="$nl$/icons/full/etool16/column_mode.gif"
+               id="org.eclipse.ui.edit.text.toggleColumnMode"
+               label="%toggleColumnMode.label"
+               retarget="true"
+               style="toggle"
+               toolbarPath="Normal/Presentation"
+               tooltip="%toggleColumnMode.tooltip">
+        </action>
       </actionSet>
+   </extension>
+   <extension
+      point="org.eclipse.ui.themes">
+      <fontDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.texteditor.columnModeFont"
+            isEditable="true"
+            label="%columnModeFont.label"
+            value="Courier New-regular-10">
+         <description>
+            %columnModeFont.description
+         </description>
+         <fontValue
+               os="linux"
+               value="Monospace-regular-10"
+               ws="gtk">
+         </fontValue>
+         <fontValue
+               os="win32"
+               value="Courier New-regular-10"
+               >
+         </fontValue>
+         <fontValue
+               os="macosx"
+               value="Monaco-regular-11">
+         </fontValue>
+      </fontDefinition>
    </extension>
 </plugin>

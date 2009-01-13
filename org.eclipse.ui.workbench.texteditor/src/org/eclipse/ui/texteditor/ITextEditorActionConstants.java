@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -664,4 +665,11 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.3
 	 */
 	String SHOW_INFORMATION= "ShowInformation"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action for toggling block selection mode.
+	 * Value: <code>"ColumnMode"</code>
+	 * @since 3.5
+	 */
+	String BLOCK_MODE = "ColumnMode"; //$NON-NLS-1$
 }

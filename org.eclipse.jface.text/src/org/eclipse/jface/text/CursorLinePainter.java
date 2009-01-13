@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 
 package org.eclipse.jface.text;
@@ -77,7 +78,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 			int caret= textWidget.getCaretOffset();
 			int length= event.lineText.length();
 
-			if (event.lineOffset <= caret && caret <= event.lineOffset + length)
+			if (event.lineOffset <= caret && caret <= event.lineOffset + length && !hasMultiLineSelection(textWidget))
 				event.lineBackground= fHighlightColor;
 			else
 				event.lineBackground= textWidget.getBackground();
@@ -223,10 +224,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		StyledText textWidget= fViewer.getTextWidget();
 
 		// check selection
-		Point selection= textWidget.getSelection();
-		int startLine= textWidget.getLineAtOffset(selection.x);
-		int endLine= textWidget.getLineAtOffset(selection.y);
-		if (startLine != endLine) {
+		if (hasMultiLineSelection(textWidget)) {
 			deactivate(true);
 			return;
 		}
@@ -245,6 +243,22 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 			// draw new line
 			drawHighlightLine(fCurrentLine);
 		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the widget has a selection spanning multiple lines,
+	 * <code>false</code> otherwise.
+	 * 
+	 * @param textWidget the text widget to check
+	 * @return <code>true</code> if <code>textWidget</code> has a multiline selection,
+	 *         <code>false</code> otherwise
+	 * @since 3.5
+	 */
+	private boolean hasMultiLineSelection(StyledText textWidget) {
+		Point selection= textWidget.getSelection();
+		int startLine= textWidget.getLineAtOffset(selection.x);
+		int endLine= textWidget.getLineAtOffset(selection.y);
+		return startLine != endLine;
 	}
 
 	/*

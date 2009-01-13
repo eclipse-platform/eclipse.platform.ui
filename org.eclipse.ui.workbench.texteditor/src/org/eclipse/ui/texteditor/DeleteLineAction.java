@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -189,7 +190,10 @@ public class DeleteLineAction extends TextEditorAction {
 			return;
 
 		try {
-			fTarget.deleteLine(document, selection.getOffset(), selection.getLength(), fType, fCopyToClipboard);
+			if (fTarget instanceof TextViewerDeleteLineTarget)
+				((TextViewerDeleteLineTarget) fTarget).deleteLine(document, selection, fType, fCopyToClipboard);
+			else
+				fTarget.deleteLine(document, selection.getOffset(), selection.getLength(), fType, fCopyToClipboard);
 		} catch (BadLocationException e) {
 			// should not happen
 		}

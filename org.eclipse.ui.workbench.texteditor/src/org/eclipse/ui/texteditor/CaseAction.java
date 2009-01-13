@@ -8,16 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - bug 145326 [typing] toUpperCase incorrect selection
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IBlockTextSelection;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
@@ -71,45 +76,38 @@ public class CaseAction extends TextEditorAction {
 		if (st == null)
 			return;
 
-		Point sel= viewer.getSelectedRange();
-		if (sel == null)
-			return;
+		ITextSelection selection= (ITextSelection) viewer.getSelectionProvider().getSelection();
 
+		int adjustment= 0;
 		try {
-			// if the selection is empty, we select the word / string using the viewer's
-			// double-click strategy
-			if (sel.y == 0)  {
-
-				// TODO find a better way to do this although there are multiple partitionings on a single document
-
-//				String partition= getContentType(viewer, document, sel.x);
-//				SourceViewerConfiguration svc= fEditor.getSourceViewerConfiguration(); // never null when viewer instantiated
-//				ITextDoubleClickStrategy dcs= svc.getDoubleClickStrategy(viewer, partition);
-//				if (dcs != null) {
-//					dcs.doubleClicked(viewer);
-//					sel= viewer.getSelectedRange();
-//				}
-
-				if (sel.y == 0)
-					return;	// if the selection is still empty, we're done
+			if (JFaceTextUtil.isEmpty(viewer, selection))
+				return;
+			
+			IRegion[] ranges= JFaceTextUtil.getCoveredRanges(viewer, selection);
+			if (ranges.length > 1 && viewer instanceof ITextViewerExtension)
+				((ITextViewerExtension) viewer).getRewriteTarget().beginCompoundChange();
+			for (int i= 0; i < ranges.length; i++) {
+				IRegion region= ranges[i];
+				String target= document.get(region.getOffset(), region.getLength());
+				String replacement= (fToUpper ? target.toUpperCase() : target.toLowerCase());
+				if (!target.equals(replacement)) {
+					document.replace(region.getOffset(), region.getLength(), replacement);
+					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=145326: replacement might be larger than the original
+					adjustment= replacement.length() - target.length();
+				}
 			}
-
-			String target= document.get(sel.x, sel.y);
-			String replacement= (fToUpper ? target.toUpperCase() : target.toLowerCase());
-			if (!target.equals(replacement)) {
-				document.replace(sel.x, target.length(), replacement);
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=145326: replacement might be larger than the original
-				int adjustment= replacement.length() - target.length();
-				if (adjustment > 0)
-					sel.y += adjustment;
- 			}
+			if (ranges.length > 1 && viewer instanceof ITextViewerExtension)
+				((ITextViewerExtension) viewer).getRewriteTarget().endCompoundChange();
 		} catch (BadLocationException x) {
 			// ignore and return
 			return;
 		}
 
 		// reinstall selection and move it into view
-		viewer.setSelectedRange(sel.x, sel.y);
+		if (!(selection instanceof IBlockTextSelection))
+			viewer.setSelectedRange(selection.getOffset(), selection.getLength() + adjustment);
+		else
+			viewer.getSelectionProvider().setSelection(selection);
 		// don't use the viewer's reveal feature in order to avoid jumping around
 		st.showSelection();
 	}

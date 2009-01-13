@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -27,8 +28,10 @@ import org.eclipse.jface.internal.text.StickyHoverManager;
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.BlockTextSelection;
 import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
+import org.eclipse.jface.text.IBlockTextSelection;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IPositionUpdater;
@@ -36,6 +39,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ISlaveDocumentManager;
 import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
@@ -715,6 +719,20 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 
 	/**
+	 * Position storing block selection information in order to maintain a column selection.
+	 * 
+	 * @since 3.5
+	 */
+	private static final class ColumnPosition extends Position {
+		int fStartColumn, fEndColumn;
+		ColumnPosition(int offset, int length, int startColumn, int endColumn) {
+			super(offset, length);
+			fStartColumn= startColumn;
+			fEndColumn= endColumn;
+		}
+	}
+
+	/**
 	 * Remembers and returns the current selection. The saved selection can be restored
 	 * by calling <code>restoreSelection()</code>.
 	 *
@@ -724,7 +742,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	protected Point rememberSelection() {
 
-		final Point selection= getSelectedRange();
+		final ITextSelection selection= (ITextSelection) getSelection();
 		final IDocument document= getDocument();
 
 		if (fSelections.isEmpty()) {
@@ -735,8 +753,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		}
 
 		try {
-
-			final Position position= new Position(selection.x, selection.y);
+			final Position position;
+			if (selection instanceof IBlockTextSelection)
+				position= new ColumnPosition(selection.getOffset(), selection.getLength(), ((IBlockTextSelection) selection).getStartColumn(), ((IBlockTextSelection) selection).getEndColumn());
+			else
+				position= new Position(selection.getOffset(), selection.getLength());
 			document.addPosition(fSelectionCategory, position);
 			fSelections.push(position);
 
@@ -746,7 +767,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			// Should not happen
 		}
 
-		return selection;
+		return new Point(selection.getOffset(), selection.getLength());
 	}
 
 	/**
@@ -766,12 +787,19 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			try {
 				document.removePosition(fSelectionCategory, position);
 				Point currentSelection= getSelectedRange();
-				if (currentSelection == null || currentSelection.x != position.getOffset() || currentSelection.y != position.getLength())
-					setSelectedRange(position.getOffset(), position.getLength());
+				if (currentSelection == null || currentSelection.x != position.getOffset() || currentSelection.y != position.getLength()) {
+					if (position instanceof ColumnPosition && getTextWidget().getBlockSelection()) {
+						setSelection(new BlockTextSelection(document, document.getLineOfOffset(position.getOffset()), ((ColumnPosition) position).fStartColumn, document.getLineOfOffset(position.getOffset() + position.getLength()), ((ColumnPosition) position).fEndColumn, getTextWidget().getTabs()));
+					} else {
+						setSelectedRange(position.getOffset(), position.getLength());
+					}
+				}
 
 				if (fSelections.isEmpty())
 					clearRememberedSelection();
 			} catch (BadPositionCategoryException exception) {
+				// Should not happen
+			} catch (BadLocationException x) {
 				// Should not happen
 			}
 		}

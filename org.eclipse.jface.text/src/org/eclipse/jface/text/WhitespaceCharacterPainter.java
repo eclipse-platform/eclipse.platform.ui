@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=22712
  *     Anton Leherbauer (Wind River Systems) - [painting] Long lines take too long to display when "Show Whitespace Characters" is enabled - https://bugs.eclipse.org/bugs/show_bug.cgi?id=196116
  *     Anton Leherbauer (Wind River Systems) - [painting] Whitespace characters not drawn when scrolling to right slowly - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206633
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -229,7 +230,6 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		String text= content.getTextRange(startOffset, length);
 		StyleRange styleRange= null;
 		Color fg= null;
-		Point selection= fTextWidget.getSelection();
 		StringBuffer visibleChar= new StringBuffer(10);
 		for (int textOffset= 0; textOffset <= length; ++textOffset) {
 			int delta= 0;
@@ -270,7 +270,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			if (visibleChar.length() > 0) {
 				int widgetOffset= startOffset + textOffset - visibleChar.length() + delta;
 				if (!eol || !isFoldedLine(content.getLineAtOffset(widgetOffset))) {
-					if (widgetOffset >= selection.x && widgetOffset < selection.y) {
+					if (isOffsetSelected(fTextWidget, widgetOffset)) {
 						fg= fTextWidget.getSelectionForeground();
 					} else if (styleRange == null || styleRange.start + styleRange.length <= widgetOffset) {
 						styleRange= fTextWidget.getStyleRangeAtOffset(widgetOffset);
@@ -285,6 +285,23 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 				visibleChar.delete(0, visibleChar.length());
 			}
 		}
+	}
+	
+	/**
+	 * Returns <code>true</code> if <code>offset</code> is selection in <code>widget</code>,
+	 * <code>false</code> otherwise.
+	 * 
+	 * @param widget the widget
+	 * @param offset the offset
+	 * @return <code>true</code> if <code>offset</code> is selection, <code>false</code> otherwise
+	 * @since 3.5
+	 */
+	private static final boolean isOffsetSelected(StyledText widget, int offset) {
+		int[] ranges= widget.getSelectionRanges();
+		for (int i= 0; i < ranges.length; i+= 2)
+			if (ranges[i] <= offset && offset <= ranges[i + 1])
+				return true;
+		return false;
 	}
 
 	/**

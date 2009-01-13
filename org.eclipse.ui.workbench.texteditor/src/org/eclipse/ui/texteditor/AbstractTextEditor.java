@@ -12,6 +12,7 @@
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *     Stephan Wahlbrink <stephan.wahlbrink@walware.de> - Wrong operations mode/feedback for text drag over/drop in text editors - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206043
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -96,6 +97,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -248,7 +250,7 @@ import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
  * {@link #COMMON_RULER_CONTEXT_MENU_ID}.
  * </p>
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, INavigationLocationProvider, ISaveablesSource, IPersistableEditor {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, ITextEditorExtension5, INavigationLocationProvider, ISaveablesSource, IPersistableEditor {
 
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
@@ -284,6 +286,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	private static final int SINGLE_CARET_WIDTH= 1;
+
+	/**
+	 * The symbolic name of the column mode font.
+	 * @since 3.3
+	 */
+	protected static final String COLUMN_MODE_FONT= "org.eclipse.ui.workbench.texteditor.columnModeFont"; //$NON-NLS-1$
 
 	/**
 	 * The text input listener.
@@ -686,7 +694,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			String property= event.getProperty();
 
-			if (getFontPropertyPreferenceKey().equals(property)) {
+			if (isBlockSelectionEnabled()) {
+				if (COLUMN_MODE_FONT.equals(property)) {
+					Font columnFont= JFaceResources.getFont(COLUMN_MODE_FONT);
+					disposeFont();
+					setFont(fSourceViewer, columnFont);
+				}
+			} else if (getFontPropertyPreferenceKey().equals(property)) {
 				initializeViewerFont(fSourceViewer);
 				updateCaret();
 			}
@@ -2021,6 +2035,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 
+	/**
+	 * Block selection mode enablement. Per default, block selection is enabled, but subclasses may
+	 * disable.
+	 * 
+	 * @since 3.5
+	 */
+	private boolean fEnableBlockSelectionMode= true;
 
 	/**
 	 * Key used to look up font preference.
@@ -3462,11 +3483,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fTextDragAndDropToken= null;
 				try {
 					fSelection= st.getSelection();
-					int offset= st.getOffsetAtLocation(new Point(event.x, event.y));
-					Point p= st.getLocationAtOffset(offset);
-					if (p.x > event.x)
-						offset--;
-					event.doit= offset >= fSelection.x && offset < fSelection.y;
+					event.doit= isLocationSelected(st, new Point(event.x, event.y));
 
 					ISelection selection= selectionProvider.getSelection();
 					if (selection instanceof ITextSelection)
@@ -3476,6 +3493,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				} catch (IllegalArgumentException ex) {
 					event.doit= false;
 				}
+			}
+			
+			private boolean isLocationSelected(StyledText widget, Point point) {
+				Point selection= widget.getSelection();
+				Point upperLeft= widget.getLocationAtOffset(selection.x);
+				Point lowerRight= widget.getLocationAtOffset(selection.y);
+				lowerRight.y += widget.getLineHeight(selection.y);
+				return Geometry.createRectangle(upperLeft, Geometry.subtract(lowerRight, upperLeft)).contains(point);
 			}
 
 			public void dragSetData(DragSourceEvent event) {
@@ -3564,14 +3589,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					}
 
 					String text= (String)event.data;
-					Point newSelection= st.getSelection();
-					try {
-						int modelOffset= widgetOffset2ModelOffset(viewer, newSelection.x);
-						viewer.getDocument().replace(modelOffset, 0, text);
-					} catch (BadLocationException e) {
-						return;
+					if (isBlockSelectionEnabled()) {
+						// FIXME fix block selection and DND
+//						if (fTextDNDColumnSelection != null && fTextDragAndDropToken != null && event.detail == DND.DROP_MOVE) {
+//							// DND_MOVE within same editor - remove origin before inserting
+//							Rectangle newSelection= st.getColumnSelection();
+//							st.replaceColumnSelection(fTextDNDColumnSelection, ""); //$NON-NLS-1$
+//							st.replaceColumnSelection(newSelection, text);
+//							st.setColumnSelection(newSelection.x, newSelection.y, newSelection.x + fTextDNDColumnSelection.width - fTextDNDColumnSelection.x, newSelection.y + fTextDNDColumnSelection.height - fTextDNDColumnSelection.y);
+//						} else {
+//							Point newSelection= st.getSelection();
+//							st.insert(text);
+//							IDocument document= getDocumentProvider().getDocument(getEditorInput());
+//							int startLine= st.getLineAtOffset(newSelection.x);
+//							int startColumn= newSelection.x - st.getOffsetAtLine(startLine);
+//							int endLine= startLine + document.computeNumberOfLines(text);
+//							int endColumn= startColumn + TextUtilities.indexOf(document.getLegalLineDelimiters(), text, 0)[0];
+//							st.setColumnSelection(startColumn, startLine, endColumn, endLine);
+//						}
+					} else {
+						Point newSelection= st.getSelection();
+						try {
+							int modelOffset= widgetOffset2ModelOffset(viewer, newSelection.x);
+							viewer.getDocument().replace(modelOffset, 0, text);
+						} catch (BadLocationException e) {
+							return;
+						}
+						st.setSelectionRange(newSelection.x, text.length());
 					}
-					st.setSelectionRange(newSelection.x, text.length());
 				} finally {
 					fTextDragAndDropToken= null;
 				}
@@ -3660,15 +3705,27 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (font == null)
 			font= JFaceResources.getTextFont();
 
-		setFont(viewer, font);
+		if (!font.equals(fSourceViewer.getTextWidget().getFont())) {
+			setFont(viewer, font);
 
+			disposeFont();
+			if (!isSharedFont)
+				fFont= font;
+		} else if (!isSharedFont) {
+			font.dispose();
+		}
+	}
+
+	/**
+	 * Disposes of the non-shared font.
+	 * 
+	 * @since 3.5
+	 */
+	private void disposeFont() {
 		if (fFont != null) {
 			fFont.dispose();
 			fFont= null;
 		}
-
-		if (!isSharedFont)
-			fFont= font;
 	}
 
 	/**
@@ -3681,7 +3738,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private void setFont(ISourceViewer sourceViewer, Font font) {
 		if (sourceViewer.getDocument() != null) {
 
-			Point selection= sourceViewer.getSelectedRange();
+			ISelectionProvider provider= sourceViewer.getSelectionProvider();
+			ISelection selection= provider.getSelection();
 			int topIndex= sourceViewer.getTopIndex();
 
 			StyledText styledText= sourceViewer.getTextWidget();
@@ -3700,7 +3758,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				e.setFont(font);
 			}
 
-			sourceViewer.setSelectedRange(selection.x , selection.y);
+			provider.setSelection(selection);
 			sourceViewer.setTopIndex(topIndex);
 
 			if (parent instanceof Composite) {
@@ -4160,10 +4218,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fTitleImage= null;
 		}
 
-		if (fFont != null) {
-			fFont.dispose();
-			fFont= null;
-		}
+		disposeFont();
 
 		disposeNonDefaultCaret();
 		fInitialCaret= null;
@@ -4365,8 +4420,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/**
-	 * Returns the property preference key for the editor font. Subclasses may
-	 * replace this method.
+	 * Returns the property preference key for the editor font.
 	 *
 	 * @return a String with the key
 	 * @since 2.1
@@ -5707,6 +5761,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 		setAction(ITextEditorActionConstants.SHOW_INFORMATION, action);
 
+		action= new BlockModeToggleAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleColumnMode.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COLUMN_MODE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.BLOCK_MODE);
+		setAction(ITextEditorActionConstants.BLOCK_MODE, action);
 
 		PropertyDialogAction openProperties= new PropertyDialogAction(
 				new IShellProvider() {
@@ -7070,4 +7128,91 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 
+	/**
+	 * Returns <code>true</code> if block selection switching is supported, <code>false</code>
+	 * otherwise. Note that the default setting is to support block selection switching, i.e.
+	 * clients may turn block selection mode on and off using the public
+	 * {@link #setBlockSelectionMode(boolean)} API. However, subclasses may override this behavior
+	 * by disabling block selection support via {@link #setEnableBlockSelectionMode(boolean)}.
+	 * 
+	 * @return <code>true</code> if block selection switching is supported, <code>false</code>
+	 *         otherwise
+	 */
+	protected final boolean isBlockSelectionSupported() {
+		return fEnableBlockSelectionMode;
+	}
+
+	/**
+	 * Enables or disables support for block selection switching. Block selection switching is
+	 * enabled by default, but subclasses may disable it. Use
+	 * {@link #setBlockSelectionMode(boolean)} to switch on or off block selection.
+	 * 
+	 * @param enableBlockSelectionMode <code>true</code> to enable selection switching,
+	 *            <code>false</code> to disable
+	 */
+	protected final void setEnableBlockSelectionMode(boolean enableBlockSelectionMode) {
+		fEnableBlockSelectionMode= enableBlockSelectionMode;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension5#isColumnMode()
+	 * @since 3.5
+	 */
+	public final boolean isBlockSelectionEnabled() {
+		ISourceViewer viewer= getSourceViewer();
+		if (viewer != null) {
+			StyledText styledText= viewer.getTextWidget();
+			if (styledText != null)
+				return styledText.getBlockSelection();
+		}
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension5#setColumnMode(boolean)
+	 * @since 3.5
+	 */
+	public void setBlockSelectionMode(boolean enable) {
+		if (!fEnableBlockSelectionMode)
+			return;
+		ISourceViewer viewer= getSourceViewer();
+		if (viewer != null) {
+			StyledText styledText= viewer.getTextWidget();
+			if (styledText != null) {
+				/*
+				 * Font switching. Column mode needs a monospace font. We try to adapt the
+				 * column font size to the current (normal) font size.
+				 *  - set the font _before enabling_ column mode in order to maintain the
+				 * selection
+				 * - revert the font _after disabling_ column mode in order to maintain the
+				 * selection
+				 */
+				if (enable) {
+					Font columnFont= JFaceResources.getFont(COLUMN_MODE_FONT);
+					Font normalFont= styledText.getFont();
+					if (!columnFont.equals(normalFont) && !normalFont.getFontData()[0].equals(columnFont.getFontData()[0])) {
+						int size= normalFont.getFontData()[0].getHeight();
+						FontData[] fontData= columnFont.getFontData();
+						boolean created= false;
+						if (fontData[0].getHeight() != size) {
+							for (int i= 0; i < fontData.length; i++) {
+								fontData[i].setHeight(size);
+							}
+							columnFont= new Font(columnFont.getDevice(), fontData);
+							created= true;
+						}
+						setFont(viewer, columnFont);
+						disposeFont();
+						if (created)
+							fFont= columnFont;
+					}
+				}
+
+				styledText.setBlockSelection(enable);
+				
+				if (!enable)
+					initializeViewerFont(viewer);
+			}
+		}
+	}
 }

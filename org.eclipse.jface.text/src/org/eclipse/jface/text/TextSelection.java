@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -17,7 +18,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * Standard implementation of {@link org.eclipse.jface.text.ITextSelection}.
  * <p>
- * Makes advantage of the weak contract of correctness of its interface. If
+ * Takes advantage of the weak contract of correctness of its interface. If
  * generated from a selection provider, it only remembers its offset and length
  * and computes the remaining information on request.</p>
  */
@@ -42,8 +43,8 @@ public class TextSelection implements ITextSelection {
 		return NULL;
 	}
 
-	/** Document which delivers the data of the selection */
-	private IDocument fDocument;
+	/** Document which delivers the data of the selection, possibly <code>null</code>. */
+	private final IDocument fDocument;
 	/** Offset of the selection */
 	private int fOffset;
 	/** Length of the selection */
@@ -56,6 +57,7 @@ public class TextSelection implements ITextSelection {
 	private TextSelection() {
 		fOffset= -1;
 		fLength= -1;
+		fDocument= null;
 	}
 
 	/**
@@ -197,6 +199,16 @@ public class TextSelection implements ITextSelection {
 	public int hashCode() {
 	 	int low= fDocument != null ? fDocument.hashCode() : 0;
 	 	return (fOffset << 24) | (fLength << 16) | low;
+	}
+
+	/**
+	 * Returns the document underlying the receiver, possibly <code>null</code>.
+	 * 
+	 * @return the document underlying the receiver, possibly <code>null</code>
+	 * @since 3.5
+	 */
+	protected IDocument getDocument() {
+		return fDocument;
 	}
 }
 

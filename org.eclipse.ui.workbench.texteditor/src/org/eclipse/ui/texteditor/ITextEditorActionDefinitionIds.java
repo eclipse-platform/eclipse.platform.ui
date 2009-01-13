@@ -10,6 +10,7 @@
  *     Chris.Dennis@invidi.com - http://bugs.eclipse.org/bugs/show_bug.cgi?id=29027
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -569,4 +570,10 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 */
 	String SHOW_INFORMATION= "org.eclipse.ui.edit.text.showInformation"; //$NON-NLS-1$
 
+	/**
+	 * Command ID of the command to toggle block selection mode.
+	 * Value: <code>"org.eclipse.ui.edit.text.toggleColumnMode"</code>).
+	 * @since 3.5
+	 */
+	String BLOCK_MODE = "org.eclipse.ui.edit.text.toggleColumnMode"; //$NON-NLS-1$
 }

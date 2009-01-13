@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -2415,6 +2416,16 @@ public class TextViewer extends Viewer implements
 	 * @see Viewer#setSelection(ISelection)
 	 */
 	public void setSelection(ISelection selection, boolean reveal) {
+//		// FIXME ViewerState should also support column selections
+//		if (selection instanceof IColumnTextSelection && getTextWidget().getBlockSelection()) {
+//			IColumnTextSelection s= (IColumnTextSelection) selection;
+//			StyledText styledText= getTextWidget();
+//			int startLine= modelLine2WidgetLine(s.getStartLine());
+//			int endLine= modelLine2WidgetLine(s.getEndLine());
+//			styledText.setBlColumnSelection(s.getStartColumn(), startLine, s.getEndColumn(), endLine);
+//			if (reveal)
+//				revealRange(s.getOffset(), s.getLength());
+//		} else if (selection instanceof ITextSelection) {
 		if (selection instanceof ITextSelection) {
 			ITextSelection s= (ITextSelection) selection;
 			setSelectedRange(s.getOffset(), s.getLength());
@@ -2427,6 +2438,28 @@ public class TextViewer extends Viewer implements
 	 * @see Viewer#getSelection()
 	 */
 	public ISelection getSelection() {
+		if (redraws() && fTextWidget != null && fTextWidget.getBlockSelection()) {
+			int[] ranges= fTextWidget.getSelectionRanges();
+			int startOffset= ranges[0];
+			int endOffset= ranges[ranges.length - 2] + ranges[ranges.length - 1];
+			
+			IDocument document= getDocument();
+			startOffset= widgetOffset2ModelOffset(startOffset);
+			endOffset= widgetOffset2ModelOffset(endOffset);
+			try {
+				int startLine= document.getLineOfOffset(startOffset);
+				int endLine= document.getLineOfOffset(endOffset);
+				
+				int startColumn= startOffset - document.getLineOffset(startLine);
+				int endColumn= endOffset - document.getLineOffset(endLine);
+				if (startLine == -1 || endLine == -1)
+					return TextSelection.emptySelection();
+				return new BlockTextSelection(document, startLine, startColumn, endLine, endColumn, fTextWidget.getTabs());
+			} catch (BadLocationException e) {
+				return TextSelection.emptySelection();
+			}
+		}
+		
 		Point p= getSelectedRange();
 		if (p.x == -1 || p.y == -1)
 			return TextSelection.emptySelection();
@@ -3965,13 +3998,15 @@ public class TextViewer extends Viewer implements
 	 * @return the region describing the text block comprising the given selection
 	 * @since 2.0
 	 */
-	private IRegion getTextBlockFromSelection(Point selection) {
+	private IRegion getTextBlockFromSelection(ITextSelection selection) {
 
 		try {
 			IDocument document= getDocument();
-			IRegion line= document.getLineInformationOfOffset(selection.x);
-			int length= selection.y == 0 ? line.getLength() : selection.y + (selection.x - line.getOffset());
-			return new Region(line.getOffset(), length);
+			int start= document.getLineOffset(selection.getStartLine());
+			int endLine= selection.getEndLine();
+			IRegion endLineInfo= document.getLineInformation(endLine);
+			int end= endLineInfo.getOffset() + endLineInfo.getLength();
+			return new Region(start, end - start);
 
 		} catch (BadLocationException x) {
 		}
@@ -4010,7 +4045,7 @@ public class TextViewer extends Viewer implements
 		Map partitioners= null;
 		DocumentRewriteSession rewriteSession= null;
 		try {
-			Point selection= getSelectedRange();
+			ITextSelection selection= (ITextSelection) getSelection();
 			IRegion block= getTextBlockFromSelection(selection);
 			ITypedRegion[] regions= TextUtilities.computePartitioning(d, getDocumentPartitioning(), block.getOffset(), block.getLength(), false);
 

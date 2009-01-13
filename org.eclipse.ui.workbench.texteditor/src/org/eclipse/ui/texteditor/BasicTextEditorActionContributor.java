@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -212,6 +213,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		for (int i= 0; i < ACTIONS.length; i++)
 			actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, getAction(editor, ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS));
+		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.BLOCK_MODE, getAction(editor, ITextEditorActionConstants.BLOCK_MODE));
 
 		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));
 		fFindPrevious.setAction(getAction(editor, ITextEditorActionConstants.FIND_PREVIOUS));

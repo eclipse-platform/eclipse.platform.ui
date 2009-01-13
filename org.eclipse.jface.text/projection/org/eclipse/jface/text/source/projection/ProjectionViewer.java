@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
 package org.eclipse.jface.text.source.projection;
 
@@ -28,6 +29,8 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.internal.text.SelectionProcessor;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -36,9 +39,11 @@ import org.eclipse.jface.text.IDocumentInformationMappingExtension;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISlaveDocumentManager;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.projection.ProjectionDocument;
 import org.eclipse.jface.text.projection.ProjectionDocumentEvent;
@@ -1443,34 +1448,31 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (textWidget == null)
 			return;
 
-		Point selection= null;
+		ITextSelection selection= null;
 		switch (operation) {
 
 			case CUT:
 
 				if (redraws()) {
-					selection= getSelectedRange();
-					if (exposeModelRange(new Region(selection.x, selection.y)))
-						return;
-
-					if (selection.y == 0)
+					selection= (ITextSelection) getSelection();
+					if (selection.getLength() == 0)
 						copyMarkedRegion(true);
 					else
-						copyToClipboard(selection.x, selection.y, true, textWidget);
+						copyToClipboard(selection, true, textWidget);
 
-					selection= textWidget.getSelectionRange();
-					fireSelectionChanged(selection.x, selection.y);
+					Point range= textWidget.getSelectionRange();
+					fireSelectionChanged(range.x, range.y);
 				}
 				break;
 
 			case COPY:
 
 				if (redraws()) {
-					selection= getSelectedRange();
-					if (selection.y == 0)
+					selection= (ITextSelection) getSelection();
+					if (selection.getLength() == 0)
 						copyMarkedRegion(false);
 					else
-						copyToClipboard(selection.x, selection.y, false, textWidget);
+						copyToClipboard(selection, false, textWidget);
 				}
 				break;
 
@@ -1478,15 +1480,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 				if (redraws()) {
 					try {
-						selection= getSelectedRange();
+						selection= (ITextSelection) getSelection();
 						Point widgetSelection= textWidget.getSelectionRange();
-						if (selection.y == 0 || selection.y == widgetSelection.y)
+						if (selection.getLength() == widgetSelection.y)
 							getTextWidget().invokeAction(ST.DELETE_NEXT);
 						else
-							deleteTextRange(selection.x, selection.y, textWidget);
+							deleteSelection(selection, textWidget);
 
-						selection= textWidget.getSelectionRange();
-						fireSelectionChanged(selection.x, selection.y);
+						Point range= textWidget.getSelectionRange();
+						fireSelectionChanged(range.x, range.y);
 
 					} catch (BadLocationException x) {
 						// ignore
@@ -1567,21 +1569,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	protected void copyMarkedRegion(boolean delete) {
 		IRegion markedRegion= getMarkedRegion();
 		if (markedRegion != null)
-			copyToClipboard(markedRegion.getOffset(), markedRegion.getLength(), delete, getTextWidget());
+			copyToClipboard(new TextSelection(getDocument(), markedRegion.getOffset(), markedRegion.getLength()), delete, getTextWidget());
 	}
 
-	private void copyToClipboard(int offset, int length, boolean delete, StyledText textWidget) {
+	private void copyToClipboard(ITextSelection selection, boolean delete, StyledText textWidget) {
 
-		String copyText= null;
-
-		try {
-			IDocument document= getDocument();
-			copyText= document.get(offset, length);
-		} catch (BadLocationException ex) {
-			// XXX: should log here, but JFace Text has no Log
-			// As a fallback solution let the widget handle this
+		String copyText= selection.getText();
+		if (copyText == null) // selection.getText failed - backup using widget
 			textWidget.copy();
-		}
 
 		if (copyText != null && copyText.equals(textWidget.getSelectionText())) {
 			/*
@@ -1616,18 +1611,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		if (delete) {
 			try {
-				deleteTextRange(offset, length, textWidget);
+				deleteSelection(selection, textWidget);
 			} catch (BadLocationException x) {
 				// XXX: should log here, but JFace Text has no Log
 			}
 		}
 	}
 
-	private void deleteTextRange(int offset, int length, StyledText textWidget) throws BadLocationException {
-		getDocument().replace(offset, length, ""); //$NON-NLS-1$
-		int widgetCaret= modelOffset2WidgetOffset(offset);
-		if (widgetCaret > -1)
-			textWidget.setSelection(widgetCaret);
+	/**
+	 * Deletes the selection and sets the caret before the deleted range.
+	 * 
+	 * @param selection the selection to delete
+	 * @param textWidget the widget
+	 * @throws BadLocationException on document access failure
+	 * @since 3.5
+	 */
+	private void deleteSelection(ITextSelection selection, StyledText textWidget) throws BadLocationException {
+		new SelectionProcessor(this).doDelete(selection);
 	}
 
 	/**
