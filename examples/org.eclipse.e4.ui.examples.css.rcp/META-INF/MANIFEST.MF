@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CSS RCP Example
+Bundle-SymbolicName: org.eclipse.e4.ui.examples.css.rcp;singleton:=true
+Bundle-Version: 0.9
+Bundle-Activator: org.eclipse.e4.ui.examples.css.rcp.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.e4.ui.css.core,
+ org.eclipse.e4.ui.css.swt,
+ org.w3c.css.sac;bundle-version="1.3.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
