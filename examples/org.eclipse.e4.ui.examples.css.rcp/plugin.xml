@@ -49,10 +49,10 @@
             id="org.eclipse.e4.ui.examples.css.rcp.open">
       </command>
       <command
-            name="Open Message Dialog"
-            description="Open a message dialog"
+            name="Mark as Read"
+            description="Mark the message as having been read"
             categoryId="org.eclipse.e4.ui.examples.css.rcp.category"
-            id="org.eclipse.e4.ui.examples.css.rcp.openMessage">
+            id="org.eclipse.e4.ui.examples.css.rcp.markAsRead">
       </command>
    </extension>
    <extension
@@ -63,7 +63,7 @@
             sequence="CTRL+2">
       </key>
       <key
-            commandId="org.eclipse.e4.ui.examples.css.rcp.openMessage"
+            commandId="org.eclipse.e4.ui.examples.css.rcp.markAsRead"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+3">
       </key>

@@ -12,18 +12,35 @@ Text {
 	font-family: "Comic Sans MS";
 	font-size: 11;
 	color: #666666;
-	background-color: #f4f4f4;
+	background-color: #f8f8f8;
 }
 
 Tree {
 	font-family: "Times New Roman";
 	font-size: 8;
 	color: #666666;
-	background-color: #f4f4f4;
+	background-color: #f8f8f8;
+}
+
+.banner {
+    background-color: #f0f0f0;
 }
 
 .title {
     font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+#messageSubject {
+    background-color: #f0f0f0;
+}
+
+#messageSender {
+    background-color: #f0f0f0;
+}
+
+#messageDate {
+    background-color: #f0f0f0;
 }
 
 .messageDateUnRead {
@@ -34,6 +51,7 @@ Tree {
     font-style: normal;
 }
 
+
 CTabFolder {
     font-family: "Verdana";
     font-weight: normal;
@@ -43,9 +61,6 @@ CTabFolder {
 }
 
 CTabFolder:selected {
-    font-family: "Verdana";
-    font-weight: bold;
-    font-size: 10;
-    color: #ff5500;
-    background-color: #F0F0F0;
+    color: #AA4400;
+    background-color: #f0f0f0;
 }

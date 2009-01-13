@@ -1,18 +1,6 @@
 package org.eclipse.e4.ui.examples.css.rcp;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
-import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
