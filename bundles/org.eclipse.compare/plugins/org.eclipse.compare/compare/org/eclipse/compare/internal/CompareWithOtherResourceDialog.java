@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Aleksandra Wozniak and others.
+ * Copyright (c) 2008, 2009 Aleksandra Wozniak and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *    Aleksandra Wozniak (aleksandra.k.wozniak@gmail.com) - initial implementation
- *    IBM Corporation - Bug 73923 (major refactoring and adjustments) 
+ *    IBM Corporation - Bug 73923 (major refactoring and adjustments)
+ *    IBM Corporation - Bug 241649 - [Dialogs] Resizing of the "compare with other" dialog
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -46,6 +48,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -68,8 +71,8 @@ import org.eclipse.ui.part.ResourceTransfer;
  */
 public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 	
-	private int MIN_WIDTH = 300;
-	private int MIN_HEIGHT = 175;
+	private int MIN_WIDTH = 320;
+	private int MIN_HEIGHT = 240;
 	
 	private class FileTextDragListener implements DragSourceListener {
 
@@ -497,7 +500,9 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 			expandable.addExpansionListener(new ExpansionAdapter() {
 				public void expansionStateChanged(ExpansionEvent e) {
 					p.layout();
-					getShell().pack();
+					Point size = getShell().getSize(); 
+					size.y = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
+					getShell().setSize(size);
 				}
 			});
 		}
@@ -700,13 +705,12 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 
 		Composite mainPanel = new Composite(parent, SWT.NULL);
-		mainPanel.setLayout(new GridLayout(2, true));
+		mainPanel.setLayout(new GridLayout(1, true));
 		mainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		ancestorPanel = new InternalExpandable(mainPanel);
 		ancestorPanel.setText(CompareMessages.CompareWithOther_ancestor);
 		GridData ancestorGD = new GridData(SWT.FILL, SWT.FILL, true, false);
-		ancestorGD.horizontalSpan = 2;
 		ancestorPanel.setLayoutData(ancestorGD);
 
 		leftPanel = new InternalGroup(mainPanel);
@@ -819,4 +823,18 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 					rightResource };
 		return resources;
 	}
+
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 */
+	protected IDialogSettings getDialogBoundsSettings() {
+		String sectionName = getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
+		IDialogSettings settings = CompareUIPlugin.getDefault()
+				.getDialogSettings();
+		IDialogSettings section = settings.getSection(sectionName);
+		if (section == null)
+			section = settings.addNewSection(sectionName);
+		return section;
+	}
+
 }
