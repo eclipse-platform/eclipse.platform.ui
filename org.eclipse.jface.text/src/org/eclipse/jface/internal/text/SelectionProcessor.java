@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Avaloq Evolution AG and others.
+ * Copyright (c) 2009 Avaloq Evolution AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ public final class SelectionProcessor {
 
 		/**
 		 * Returns the text regions covered by the given selection.
-		 *  
+		 * 
 		 * @param selection the selection
 		 * @return the text regions corresponding to <code>selection</code>
 		 * @throws BadLocationException if accessing the document failed
@@ -563,7 +563,7 @@ public final class SelectionProcessor {
 	
 	/**
 	 * Returns the text regions covered by the given selection.
-	 *  
+	 * 
 	 * @param selection the selection
 	 * @return the text regions corresponding to <code>selection</code>
 	 * @throws BadLocationException if accessing the document failed
