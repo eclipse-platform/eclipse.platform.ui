@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Avaloq Evolution AG and others.
+ * Copyright (c) 2009 Avaloq Evolution AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,18 +26,18 @@ package org.eclipse.ui.texteditor;
  */
 public interface ITextEditorExtension5 {
 	/**
-	 * Returns <code>true</code> if the receiver is in block (aka rectangular or column) selection
-	 * mode, <code>false</code> otherwise.
+	 * Returns <code>true</code> if the receiver is in block (aka column) selection mode,
+	 * <code>false</code> otherwise.
 	 * 
 	 * @return the receiver's block selection state
 	 */
-	boolean isBlockSelectionEnabled();
+	boolean isBlockSelectionModeEnabled();
 
 	/**
-	 * Sets the block selection mode state of the receiver to <code>enable</code>. Nothing happens
+	 * Sets the block selection mode state of the receiver to <code>state</code>. Nothing happens
 	 * if the receiver already is in the requested state.
 	 * 
-	 * @param enable the new block selection state
+	 * @param state the new block selection state
 	 */
-	void setBlockSelectionMode(boolean enable);
+	void setBlockSelectionMode(boolean state);
 }

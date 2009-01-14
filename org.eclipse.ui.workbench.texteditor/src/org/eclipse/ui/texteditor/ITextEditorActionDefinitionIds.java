@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -571,9 +571,10 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	String SHOW_INFORMATION= "org.eclipse.ui.edit.text.showInformation"; //$NON-NLS-1$
 
 	/**
-	 * Command ID of the command to toggle block selection mode.
-	 * Value: <code>"org.eclipse.ui.edit.text.toggleColumnMode"</code>).
+	 * Command ID of the command to toggle block selection mode. Value:
+	 * <code>"org.eclipse.ui.edit.text.toggleBlockSelectionMode"</code>).
+	 * 
 	 * @since 3.5
 	 */
-	String BLOCK_MODE = "org.eclipse.ui.edit.text.toggleColumnMode"; //$NON-NLS-1$
+	String BLOCK_SELECTION_MODE= "org.eclipse.ui.edit.text.toggleBlockSelectionMode"; //$NON-NLS-1$
 }

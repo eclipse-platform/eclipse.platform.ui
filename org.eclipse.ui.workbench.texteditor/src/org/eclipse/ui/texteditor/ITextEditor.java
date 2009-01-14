@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
-
-
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -22,43 +20,42 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * Interface to a text editor. This interface defines functional extensions to
- * <code>IEditorPart</code> as well as the configuration capabilities of a
- * text editor.
+ * <code>IEditorPart</code> as well as the configuration capabilities of a text editor.
  * <p>
- * Text editors are configured with an <code>IDocumentProvider</code> which
- * delivers a textual presentation (<code>IDocument</code>) of the editor's
- * input. The editor works on the document and forwards all input element
- * related calls, such as <code>save</code>, to the document provider. The
- * provider also delivers the input's annotation model which is used by the
- * editor's vertical ruler.
+ * Text editors are configured with an <code>IDocumentProvider</code> which delivers a textual
+ * presentation (<code>IDocument</code>) of the editor's input. The editor works on the document and
+ * forwards all input element related calls, such as <code>save</code>, to the document provider.
+ * The provider also delivers the input's annotation model which is used by the editor's vertical
+ * ruler.
  * </p>
  * <p>
- * Clients may implement this interface from scratch, but the recommended way is
- * to subclass the abstract base class <code>AbstractTextEditor</code>.
+ * Clients may implement this interface from scratch, but the recommended way is to subclass the
+ * abstract base class <code>AbstractTextEditor</code>.
  * </p>
  * <p>
- * In order to provided backward compatibility for clients of
- * <code>ITextEditor</code>, extension interfaces are used to provide a means
- * of evolution. The following extension interfaces exist:
+ * In order to provided backward compatibility for clients of <code>ITextEditor</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension} since version 2.0
- * 		introducing status fields, read-only state and ruler context menu
- * 		listeners.</li>
- * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension2} since version 2.1
- * 		introducing modifiable state for the editor input and validate state
- * 		handling.</li>
- * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension3} since version 3.0
- * 		adding input state and change information control.</li>
- * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension4} since version 3.2
- * 		adding annotation navigation and revision information display.</li>
+ * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension} since version 2.0 introducing status
+ * fields, read-only state and ruler context menu listeners.</li>
+ * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension2} since version 2.1 introducing
+ * modifiable state for the editor input and validate state handling.</li>
+ * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension3} since version 3.0 adding input state
+ * and change information control.</li>
+ * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension4} since version 3.2 adding annotation
+ * navigation and revision information display.</li>
+ * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension5} since version 3.5 adding block
+ * selection mode.</li>
  * </ul>
  * </p>
- *
+ * 
  * @see org.eclipse.ui.texteditor.IDocumentProvider
  * @see org.eclipse.jface.text.source.IAnnotationModel
  * @see org.eclipse.ui.texteditor.ITextEditorExtension
  * @see org.eclipse.ui.texteditor.ITextEditorExtension2
  * @see org.eclipse.ui.texteditor.ITextEditorExtension3
+ * @see org.eclipse.ui.texteditor.ITextEditorExtension4
+ * @see org.eclipse.ui.texteditor.ITextEditorExtension5
  */
 public interface ITextEditor extends IEditorPart {
 
