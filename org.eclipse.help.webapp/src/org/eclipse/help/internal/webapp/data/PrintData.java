@@ -125,7 +125,7 @@ public class PrintData extends RequestData {
 			// get the topic content
 			href = removeAnchor(href);
 			String pathHref = href.substring(0, href.lastIndexOf('/') + 1);
-			String baseHref = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/topic" + pathHref;   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			String baseHref = "../topic" + pathHref;   //$NON-NLS-1$
 			String content;
 			if (!generated.contains(href)) {
 				generated.add(href);
