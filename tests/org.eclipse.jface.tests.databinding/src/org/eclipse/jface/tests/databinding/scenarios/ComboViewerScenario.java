@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 160000
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -93,8 +94,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
 		IObservableValue selection = ViewersObservables
 				.observeSingleSelection(comboViewer);
 		getDbc().bindValue(selection,
-				BeansObservables.observeValue(adventure, "defaultLodging"),
-				null, null);
+				BeansObservables.observeValue(adventure, "defaultLodging"));
 
 		// Verify that the combo selection is the default lodging
 		assertEquals(((IStructuredSelection) comboViewer.getSelection())

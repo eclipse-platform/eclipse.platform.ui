@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.snippets;
 
@@ -231,15 +232,14 @@ public class Snippet020TreeViewerWithSetFactory {
 		IObservableValue textTextObserveWidget = SWTObservables.observeText(
 				beanText, SWT.Modify);
 		IObservableValue treeViewerValueObserveDetailValue = BeansObservables
-				.observeDetailValue(Realm.getDefault(),
-						treeViewerSelectionObserveSelection, "text",
-						java.lang.String.class);
+				.observeDetailValue(treeViewerSelectionObserveSelection, "text",
+						String.class);
 		//
 		//
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
 		bindingContext.bindValue(textTextObserveWidget,
-				treeViewerValueObserveDetailValue, null, null);
+				treeViewerValueObserveDetailValue);
 		//
 		return bindingContext;
 	}
@@ -261,18 +261,18 @@ public class Snippet020TreeViewerWithSetFactory {
 			}
 		};
 		dbc.bindValue(SWTObservables.observeEnabled(addChildBeanButton),
-				beanSelected, null, null);
+				beanSelected);
 		dbc.bindValue(SWTObservables.observeEnabled(removeBeanButton),
-				beanSelected, null, null);
+				beanSelected);
 
 		clipboard = new WritableValue();
 		dbc.bindValue(SWTObservables.observeEnabled(copyButton),
-				beanSelected, null, null);
+				beanSelected);
 		dbc.bindValue(SWTObservables.observeEnabled(pasteButton), new ComputedValue(Boolean.TYPE) {
 			protected Object calculate() {
 				return Boolean.valueOf(clipboard.getValue() != null);
 			}
-		}, null, null);
+		});
 
 		ObservableSetTreeContentProvider contentProvider = new ObservableSetTreeContentProvider(
 				BeansObservables.setFactory(Realm.getDefault(), "set",

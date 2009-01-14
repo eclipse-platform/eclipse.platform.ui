@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -52,7 +53,7 @@ public class CustomScenarios extends ScenariosTestCase {
         AggregateObservableValue customObservable_comma = new AggregateObservableValue(new IObservableValue[] {
                 descriptionObservable, nameObservable }, ",");
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), customObservable_comma, null, null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), customObservable_comma);
         // spinEventLoop(1);
         // Make sure that the description on the model match the widget
         assertEquals(adventure.getDescription() + "," + adventure.getName(), text.getText());

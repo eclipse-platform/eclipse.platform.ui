@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.scenarios;
@@ -42,8 +43,7 @@ public class NPETestScenario extends ScenariosTestCase {
 
         System.out.println("Expecting message about not being able to attach a listener");
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(person, "name"),
-                null, null);
+                BeansObservables.observeValue(person, "name"));
 
         text.setText("Brad");
         text.notifyListeners(SWT.FocusOut, null);

@@ -9,6 +9,7 @@
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Benjamin Cabe - bug 252219
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -109,8 +110,7 @@ public class Snippet000HelloWorld {
 			Person person = viewModel.getPerson();
 
 			bindingContext.bindValue(SWTObservables.observeText(name,
-					SWT.Modify), PojoObservables.observeValue(person, "name"),
-					null, null);
+					SWT.Modify), PojoObservables.observeValue(person, "name"));
 
 			// Open and return the Shell
 			shell.pack();

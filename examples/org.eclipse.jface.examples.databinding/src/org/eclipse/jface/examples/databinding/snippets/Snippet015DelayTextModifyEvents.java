@@ -6,6 +6,7 @@
  * Contributors:
  * 		Matthew Hall - initial API and implementation (bug 180746)
  * 		Boris Bokowski, IBM - initial API and implementation
+ *     Matthew Hall - bug 260329
  ***********************************************************************************************************/
 package org.eclipse.jface.examples.databinding.snippets;
 
@@ -82,7 +83,7 @@ public class Snippet015DelayTextModifyEvents {
 
 		DataBindingContext dbc = new DataBindingContext();
 
-		dbc.bindValue(delayed1, delayed2, null, null);
+		dbc.bindValue(delayed1, delayed2);
 	}
 
 	private static Label createLabel(Composite parent, int style, String text) {

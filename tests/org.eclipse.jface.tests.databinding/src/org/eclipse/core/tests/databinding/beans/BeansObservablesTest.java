@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164268, 171616
+ *     Brad Reynolds - bugs 164268, 171616
  *     Mike Evans - bug 217558
- *     Matthew Hall - bugs 221351, 246625
+ *     Matthew Hall - bugs 221351, 246625, 260329
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.beans;
@@ -75,8 +75,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	public void testObserveDetailListElementType() throws Exception {
 		WritableValue parent = WritableValue.withValueType(Bean.class);
 		parent.setValue(model);
-		IObservableList list = BeansObservables.observeDetailList(Realm
-				.getDefault(), parent, "list", elementType);
+		IObservableList list = BeansObservables.observeDetailList(
+				parent, "list", elementType);
 
 		assertEquals("element type", elementType, list.getElementType());
 		assertTrue("elements of list", Arrays.equals(elements, list
@@ -89,7 +89,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		parent.setValue(bean);
 
 		IObservableValue detailValue = BeansObservables.observeDetailValue(
-				Realm.getDefault(), parent, "value", String.class);
+				parent, "value", String.class);
 		assertTrue(detailValue instanceof IBeanObservable);
 
 		BeanObservableValueDecorator beanObservable = (BeanObservableValueDecorator) detailValue;
@@ -104,7 +104,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		WritableValue parent = new WritableValue(new Bean(), null);
 
 		IObservableValue detailValue = BeansObservables.observeDetailValue(
-				Realm.getDefault(), parent, "value", String.class);
+				parent, "value", String.class);
 		
 		assertNull("property descriptor", ((IBeanObservable) detailValue)
 				.getPropertyDescriptor());
@@ -115,8 +115,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		Bean bean = new Bean();
 		parent.setValue(bean);
 
-		IObservableList detailList = BeansObservables.observeDetailList(Realm
-				.getDefault(), parent, "list", Bean.class);
+		IObservableList detailList = BeansObservables.observeDetailList(
+				parent, "list", Bean.class);
 		assertTrue("detail is not an IBeanObservable",
 				detailList instanceof IBeanObservable);
 
@@ -135,8 +135,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	public void testObservableDetailListNullOuterElementType() throws Exception {
 		WritableValue parent = new WritableValue(new Bean(), null);
 
-		IObservableList detailList = BeansObservables.observeDetailList(Realm
-				.getDefault(), parent, "list", Bean.class);
+		IObservableList detailList = BeansObservables.observeDetailList(
+				parent, "list", Bean.class);
 
 		assertNull("property descriptor", ((IBeanObservable) detailList)
 				.getPropertyDescriptor());
@@ -147,8 +147,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		Bean bean = new Bean();
 		parent.setValue(bean);
 
-		IObservableSet detailSet = BeansObservables.observeDetailSet(Realm
-				.getDefault(), parent, "set", Bean.class);
+		IObservableSet detailSet = BeansObservables.observeDetailSet(
+				parent, "set", Bean.class);
 		assertTrue("detail is not an IBeanObservable",
 				detailSet instanceof IBeanObservable);
 
@@ -168,8 +168,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	public void testObservableDetailSetNullOuterElementType() throws Exception {
 		WritableValue parent = new WritableValue(new Bean(), null);
 
-		IObservableSet detailSet = BeansObservables.observeDetailSet(Realm
-				.getDefault(), parent, "set", Bean.class);
+		IObservableSet detailSet = BeansObservables.observeDetailSet(
+				parent, "set", Bean.class);
 
 		assertNull("property descriptor", ((IBeanObservable) detailSet)
 				.getPropertyDescriptor());
@@ -202,11 +202,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		DataBindingContext context = new DataBindingContext( Realm.getDefault() );
 		try {
 			// bind two beans and check the binding works
-			context.bindList(
-					targetObservable, 
-					modelObservable, 
-					null, 
-					null );
+			context.bindList(targetObservable, modelObservable);
 			assertTrue( Arrays.equals( elements, targetBean.getArray() ) );
 			
 			// set source direct - target databinding still works...

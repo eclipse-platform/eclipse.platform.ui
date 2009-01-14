@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -46,8 +47,7 @@ public class SpinnerControlScenario extends ScenariosTestCase {
         // Change the model and verify the UI changes
         Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
         getDbc().bindValue(SWTObservables.observeSelection(spinner),
-                BeansObservables.observeValue(adventure, "maxNumberOfPeople"),
-                null, null);
+                BeansObservables.observeValue(adventure, "maxNumberOfPeople"));
 
         assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());
         // Verify the model is updated when the GUI is changed

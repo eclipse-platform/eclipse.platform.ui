@@ -8,6 +8,7 @@
  * Contributors:
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -163,8 +164,8 @@ public class Snippet002UpdateComboRetainSelection {
             IObservableList list = MasterDetailObservables.detailList(BeansObservables.observeValue(viewModel, "choices"),
                     getListDetailFactory(),
                     String.class);
-            dbc.bindList(SWTObservables.observeItems(combo), list, null, null); 
-            dbc.bindValue(SWTObservables.observeText(combo), BeansObservables.observeValue(viewModel, "text"), null, null);
+            dbc.bindList(SWTObservables.observeItems(combo), list); 
+            dbc.bindValue(SWTObservables.observeText(combo), BeansObservables.observeValue(viewModel, "text"));
             
             // Open and return the Shell
             shell.pack();

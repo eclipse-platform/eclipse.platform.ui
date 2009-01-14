@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.nestedselection;
@@ -263,7 +264,7 @@ public class TestMasterDetail {
 			}
 		};
 		Binding b = dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
-				BeansObservables.observeDetailValue(realm, selectedPerson,
+				BeansObservables.observeDetailValue(selectedPerson,
 						"name", String.class), new CustomUpdateValueStrategy()
 						.setConverter(upperCaseConverter).setAfterGetValidator(
 								vowelValidator), null);
@@ -274,16 +275,16 @@ public class TestMasterDetail {
 				b.getValidationStatus(), null, new UpdateValueStrategy().setConverter(new ObjectToStringConverter()));
 		
 		dbc.bindValue(SWTObservables.observeText(address, SWT.Modify),
-				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"address", String.class), null, null);
+				BeansObservables.observeDetailValue(selectedPerson,
+						"address", String.class));
 
 		dbc.bindValue(SWTObservables.observeText(city, SWT.Modify),
-				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"city", String.class), null, null);
+				BeansObservables.observeDetailValue(selectedPerson,
+						"city", String.class));
 
 		dbc.bindValue(SWTObservables.observeText(state, SWT.Modify),
-				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"state", String.class), null, null);
+				BeansObservables.observeDetailValue(selectedPerson,
+						"state", String.class));
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
 		ObservableListContentProvider ordersViewerContent = new ObservableListContentProvider();
@@ -293,7 +294,7 @@ public class TestMasterDetail {
 						.getKnownElements(), SimpleOrder.class, new String[] {
 						"orderNumber", "date" })));
 
-		IObservableList orders = BeansObservables.observeDetailList(realm,
+		IObservableList orders = BeansObservables.observeDetailList(
 				selectedPerson, "orders", SimpleOrder.class);
 		ordersViewer.setInput(orders);
 	}

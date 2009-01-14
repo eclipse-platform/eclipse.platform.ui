@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.scenarios;
@@ -103,7 +104,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	
 	private static final String NEXT = "Next";
 	public void testBindText() throws Exception {
-        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, "text"), null, null);
+        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, "text"));
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
 		comboEditable.setText(NEXT);
@@ -117,13 +118,13 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		}
 		text = "Apple";
         
-        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null, null);
+        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT));
         
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
         
         IObservableList list = new WritableList(getChoices(), null);
-        getDbc().bindList(SWTObservables.observeItems(comboEditable), list, null, null);
+        getDbc().bindList(SWTObservables.observeItems(comboEditable), list);
 
 		spinEventLoop(0);
 		int position = 0;
@@ -168,14 +169,14 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 			return;
 		}
         
-        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null, null);
+        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT));
 
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
         
         IObservableList list = new WritableList(new ArrayList(), String.class);
         list.addAll(getChoices());
-        getDbc().bindList(SWTObservables.observeItems(comboEditable), list, null, null);
+        getDbc().bindList(SWTObservables.observeItems(comboEditable), list);
         
 		spinEventLoop(0);
 		int position = 0;

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Bob Smith - initial API and implementation (bug 198880)
- *     Matthew Hall - bug 146397
+ *     Matthew Hall - bugs 146397, 260329
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding;
@@ -57,7 +57,7 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 		FlagOnDisposeObservableValue targetOv = new FlagOnDisposeObservableValue();
 		FlagOnDisposeObservableValue modelOv = new FlagOnDisposeObservableValue();
-		dbc.bindValue(targetOv, modelOv, null, null);
+		dbc.bindValue(targetOv, modelOv);
 
 		ObservablesManager observablesManager = new ObservablesManager();
 
@@ -72,7 +72,7 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 		FlagOnDisposeObservableValue targetOv = new FlagOnDisposeObservableValue();
 		FlagOnDisposeObservableValue modelOv = new FlagOnDisposeObservableValue();
-		dbc.bindValue(targetOv, modelOv, null, null);
+		dbc.bindValue(targetOv, modelOv);
 
 		ObservablesManager observablesManager = new ObservablesManager();
 
@@ -87,7 +87,7 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 		FlagOnDisposeObservableValue targetOv = new FlagOnDisposeObservableValue();
 		FlagOnDisposeObservableValue modelOv = new FlagOnDisposeObservableValue();
-		dbc.bindValue(targetOv, modelOv, null, null);
+		dbc.bindValue(targetOv, modelOv);
 
 		ObservablesManager observablesManager = new ObservablesManager();
 

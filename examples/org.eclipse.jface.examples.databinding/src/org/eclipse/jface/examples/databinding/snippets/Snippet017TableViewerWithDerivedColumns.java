@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Coconut Palm Software, Inc. - Initial API and implementation
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -283,9 +284,8 @@ public class Snippet017TableViewerWithDerivedColumns {
 			bindingContext
 					.bindValue(
 							SWTObservables.observeText(nameText, SWT.Modify),
-							BeansObservables.observeDetailValue(Realm
-									.getDefault(), selection, "name",
-									String.class), null, null);
+							BeansObservables.observeDetailValue(
+									selection, "name", String.class));
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
 			ObservableListContentProvider motherComboContentProvider = new ObservableListContentProvider();
@@ -296,8 +296,8 @@ public class Snippet017TableViewerWithDerivedColumns {
 			mothercomboViewer.setInput(viewModel.getPeople());
 			bindingContext.bindValue(ViewersObservables
 					.observeSingleSelection(mothercomboViewer),
-					BeansObservables.observeDetailValue(Realm.getDefault(),
-							selection, "mother", Person.class), null, null);
+					BeansObservables.observeDetailValue(
+							selection, "mother", Person.class));
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
 			ObservableListContentProvider fatherComboContentProvider = new ObservableListContentProvider();
@@ -309,8 +309,8 @@ public class Snippet017TableViewerWithDerivedColumns {
 			fatherComboViewer.setInput(viewModel.getPeople());
 			bindingContext.bindValue(ViewersObservables
 					.observeSingleSelection(fatherComboViewer),
-					BeansObservables.observeDetailValue(Realm.getDefault(),
-							selection, "father", Person.class), null, null);
+					BeansObservables.observeDetailValue(
+							selection, "father", Person.class));
 		}
 	}
 

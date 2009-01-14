@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -55,15 +56,13 @@ public class CustomConverterScenarios extends ScenariosTestCase {
         PriceModelObject priceModel = new PriceModelObject();
 
         dbc.bindValue(BeansObservables.observeValue(priceModel, "price"), BeansObservables.observeValue(skiTrip,
-                "price"), null, null);
+                "price"));
 
         dbc.bindValue(SWTObservables.observeSelection(spinner_dollars),
-                BeansObservables.observeValue(priceModel, "dollars"),
-                null, null);
+                BeansObservables.observeValue(priceModel, "dollars"));
 
         dbc.bindValue(SWTObservables.observeSelection(spinner_cents),
-                BeansObservables.observeValue(priceModel, "cents"),
-                null, null);
+                BeansObservables.observeValue(priceModel, "cents"));
 
         // spinEventLoop(1);
         // Make sure that the selection on the spinner_dollars matches the

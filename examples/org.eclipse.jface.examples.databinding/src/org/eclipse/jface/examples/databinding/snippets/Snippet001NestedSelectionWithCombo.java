@@ -8,6 +8,7 @@
  * Contributors:
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -192,8 +193,8 @@ public class Snippet001NestedSelectionWithCombo {
 			IObservableValue selectedPerson = ViewersObservables
 					.observeSingleSelection(peopleListViewer);
 			dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
-					BeansObservables.observeDetailValue(realm, selectedPerson,
-							"name", String.class), null, null);
+					BeansObservables.observeDetailValue(selectedPerson,
+							"name", String.class));
 
 			ComboViewer cityViewer = new ComboViewer(city);
 			cityViewer.setContentProvider(new ArrayContentProvider());
@@ -202,7 +203,7 @@ public class Snippet001NestedSelectionWithCombo {
 			IObservableValue citySelection = ViewersObservables
 					.observeSingleSelection(cityViewer);
 			dbc.bindValue(citySelection, BeansObservables.observeDetailValue(
-					realm, selectedPerson, "city", String.class), null, null);
+					selectedPerson, "city", String.class));
 
 			GridLayoutFactory.swtDefaults().applyTo(shell);
 			// Open and return the Shell

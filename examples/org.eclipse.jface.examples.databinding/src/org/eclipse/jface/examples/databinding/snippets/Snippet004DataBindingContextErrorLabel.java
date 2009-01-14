@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920, 159768
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -68,8 +69,7 @@ public class Snippet004DataBindingContextErrorLabel {
 				// Bind the error label to the validation error on the dbc.
 				dbc.bindValue(SWTObservables.observeText(errorLabel),
 						new AggregateValidationStatus(dbc.getBindings(),
-								AggregateValidationStatus.MAX_SEVERITY), null,
-						null);
+								AggregateValidationStatus.MAX_SEVERITY));
 
 				shell.pack();
 				shell.open();

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920, 159768
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding;
@@ -83,21 +84,17 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	}
 	
 	public void testGetTarget() throws Exception {
-		Binding binding = dbc.bindList(target, model,
-				null,
-				null);
+		Binding binding = dbc.bindList(target, model);
 		assertEquals(target, binding.getTarget());
 	}
 	
 	public void testGetModel() throws Exception {
-		Binding binding = dbc.bindList(target, model,
-				null,
-				null);
+		Binding binding = dbc.bindList(target, model);
 		assertEquals(model, binding.getModel());
 	}
 	
 	public void testStatusIsInstanceOfBindingStatus() throws Exception {
-		Binding binding = dbc.bindList(target, model, null, null);
+		Binding binding = dbc.bindList(target, model);
 		assertTrue(binding.getValidationStatus().getValue() instanceof BindingStatus);
 	}
 	
@@ -168,7 +165,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	}
 	
 	public void testAddOKValidationStatus() throws Exception {
-		Binding binding = dbc.bindList(target, model, null, null);
+		Binding binding = dbc.bindList(target, model);
 		target.add("1");
 		
 		IStatus status = (IStatus) binding.getValidationStatus().getValue();
@@ -178,7 +175,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	
 	public void testRemoveOKValidationStatus() throws Exception {
 		model.add("1");
-		Binding binding = dbc.bindList(target, model, null, null);
+		Binding binding = dbc.bindList(target, model);
 		
 		target.remove("1");
 		IStatus status = (IStatus) binding.getValidationStatus().getValue();

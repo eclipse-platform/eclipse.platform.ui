@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Boris Bokowski, IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -98,9 +99,7 @@ public class Snippet014WizardDialog {
 			
 			dbc.bindValue(
 							SWTObservables.observeText(text, SWT.Modify),
-							((SampleWizard) getWizard()).getModel().dateValue,
-							null,
-							null);
+							((SampleWizard) getWizard()).getModel().dateValue);
 
 			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
 					composite);

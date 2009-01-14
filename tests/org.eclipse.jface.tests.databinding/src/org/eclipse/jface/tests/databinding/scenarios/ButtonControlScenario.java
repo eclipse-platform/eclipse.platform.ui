@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -46,8 +47,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
     public void testScenario01() {
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.observeSelection(button),
-                BeansObservables.observeValue(adventure, "petsAllowed"),
-                null, null);
+                BeansObservables.observeValue(adventure, "petsAllowed"));
 
         // Check the model and GUI are in the same state
         assertEquals(button.getSelection(), adventure.isPetsAllowed());
@@ -75,8 +75,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
         button = new Button(getComposite(), SWT.TOGGLE);
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.observeSelection(button),
-                BeansObservables.observeValue(adventure, "petsAllowed"),
-                null, null);
+                BeansObservables.observeValue(adventure, "petsAllowed"));
 
         // Check the model and GUI are in the same state
         assertEquals(button.getSelection(), adventure.isPetsAllowed());
@@ -99,8 +98,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
 
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.observeSelection(button),
-                BeansObservables.observeValue(adventure, "petsAllowed"),
-                null, null);
+                BeansObservables.observeValue(adventure, "petsAllowed"));
 
         // Check the model and GUI are in the same state
         assertEquals(button.getSelection(), adventure.isPetsAllowed());

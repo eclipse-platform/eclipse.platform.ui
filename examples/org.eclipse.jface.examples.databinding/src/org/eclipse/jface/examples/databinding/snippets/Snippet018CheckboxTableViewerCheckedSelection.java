@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 124684)
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -347,13 +348,13 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 				}
 			};
 			dbc.bindValue(SWTObservables.observeEnabled(removePersonButton),
-					personSelected, null, null);
+					personSelected);
 			dbc.bindValue(SWTObservables.observeEnabled(friendsViewer
-					.getTable()), personSelected, null, null);
+					.getTable()), personSelected);
 
 			dbc.bindValue(SWTObservables.observeText(personName, SWT.Modify),
-					BeansObservables.observeDetailValue(Realm.getDefault(),
-							selectedPerson, "name", String.class), null, null);
+					BeansObservables.observeDetailValue(
+							selectedPerson, "name", String.class));
 
 			ObservableListContentProvider friendsContentProvider = new ObservableListContentProvider();
 			friendsViewer.setContentProvider(friendsContentProvider);
@@ -364,8 +365,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 			dbc.bindSet(ViewersObservables.observeCheckedElements(
 					friendsViewer, Person.class), BeansObservables
-					.observeDetailSet(Realm.getDefault(), selectedPerson,
-							"friends", Person.class), null, null);
+					.observeDetailSet(selectedPerson, "friends", Person.class));
 		}
 	}
 }

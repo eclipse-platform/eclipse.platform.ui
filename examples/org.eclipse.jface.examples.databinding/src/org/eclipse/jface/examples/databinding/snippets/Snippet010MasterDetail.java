@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -57,8 +58,7 @@ public class Snippet010MasterDetail {
 
 				// 2. Observe the name property of the current selection.
 				IObservableValue detailObservable = BeansObservables
-						.observeDetailValue(Realm.getDefault(), selection,
-								"name", String.class);
+						.observeDetailValue(selection, "name", String.class);
 
 				// 3. Bind the Text widget to the name detail (selection's
 				// name).

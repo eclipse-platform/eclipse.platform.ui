@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -52,9 +53,9 @@ public class Snippet008ComputedValue {
 				// Bind the UI to the Data.
 				DataBindingContext dbc = new DataBindingContext();
 				dbc.bindValue(SWTObservables.observeText(ui.firstName,
-						SWT.Modify), data.firstName, null, null);
+						SWT.Modify), data.firstName);
 				dbc.bindValue(SWTObservables.observeText(ui.lastName,
-						SWT.Modify), data.lastName, null, null);
+						SWT.Modify), data.lastName);
 
 				// Construct the formatted name observable.
 				FormattedName formattedName = new FormattedName(data.firstName,

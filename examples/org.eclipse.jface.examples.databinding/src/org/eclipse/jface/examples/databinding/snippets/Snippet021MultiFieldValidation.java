@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -206,13 +207,13 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 				field1Target, SWT.Modify);
 		final IObservableValue middleField1 = new WritableValue(null,
 				Integer.TYPE);
-		dbc.bindValue(targetField1, middleField1, null, null);
+		dbc.bindValue(targetField1, middleField1);
 
 		IObservableValue targetField2 = SWTObservables.observeText(
 				field2Target, SWT.Modify);
 		final IObservableValue middleField2 = new WritableValue(null,
 				Integer.TYPE);
-		dbc.bindValue(targetField2, middleField2, null, null);
+		dbc.bindValue(targetField2, middleField2);
 
 		MultiValidator validator = new MultiValidator() {
 			protected IStatus validate() {
@@ -232,21 +233,21 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		IObservableValue modelField2 = new WritableValue(new Integer(4),
 				Integer.TYPE);
 		dbc.bindValue(validator.observeValidatedValue(middleField1),
-				modelField1, null, null);
+				modelField1);
 		dbc.bindValue(validator.observeValidatedValue(middleField2),
-				modelField2, null, null);
+				modelField2);
 
 		dbc.bindValue(SWTObservables.observeText(field1ModelValue, SWT.Modify),
-				modelField1, null, null);
+				modelField1);
 		dbc.bindValue(SWTObservables.observeText(field2ModelValue, SWT.Modify),
-				modelField2, null, null);
+				modelField2);
 	}
 
 	private void bindSumAndAddendsGroup(DataBindingContext dbc) {
 		IObservableValue targetSum = SWTObservables.observeText(sumTarget,
 				SWT.Modify);
 		final IObservableValue middleSum = new WritableValue(null, Integer.TYPE);
-		dbc.bindValue(targetSum, middleSum, null, null);
+		dbc.bindValue(targetSum, middleSum);
 
 		final IObservableList targetAddends = new WritableList(new ArrayList(),
 				Integer.TYPE);
@@ -287,7 +288,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		IObservableValue modelSum = new WritableValue(new Integer(5),
 				Integer.TYPE);
 		dbc.bindValue(SWTObservables.observeText(sumModelValue, SWT.Modify),
-				modelSum, null, null);
+				modelSum);
 
 		IObservableList modelAddends = new WritableList(new ArrayList(),
 				Integer.TYPE);
@@ -312,10 +313,9 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 				.setContentProvider(new ObservableListContentProvider());
 		addendsModelValue.setInput(modelAddends);
 
-		dbc.bindValue(validator.observeValidatedValue(middleSum), modelSum,
-				null, null);
+		dbc.bindValue(validator.observeValidatedValue(middleSum), modelSum);
 		dbc.bindList(validator.observeValidatedList(targetAddends),
-				modelAddends, null, null);
+				modelAddends);
 	}
 
 	static class MultiFieldValidationWizard extends Wizard {

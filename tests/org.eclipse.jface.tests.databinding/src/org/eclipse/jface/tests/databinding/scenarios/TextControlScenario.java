@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -62,8 +63,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Change the UI and verify the model changes
         // Change the model and verify the UI changes
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(adventure, "name"),
-                null, null);
+                BeansObservables.observeValue(adventure, "name"));
 
         assertEquals(adventure.getName(), text.getText());
         text.setText("England");
@@ -84,8 +84,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Change the UI and verify the model changes
         // Change the model and verify the UI changes
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(transportation, "price"),
-                null, null);
+                BeansObservables.observeValue(transportation, "price"));
 
         NumberFormat numberFormat = NumberFormat.getInstance();
         
@@ -276,7 +275,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Verify direct binding between a Text and Label following bugzilla
         // 118696        
         Label label = new Label(getComposite(), SWT.NONE);
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label), null, null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label));
 
         // Change the text
         text.setText("Frog");
@@ -292,7 +291,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Verify direct binding between a Text and Label following bugzilla
         // 118696 with TIME_EARLY
         Label label = new Label(getComposite(), SWT.NONE);
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), SWTObservables.observeText(label), null, null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), SWTObservables.observeText(label));
 
         // Change the text
         String newTextValue = "Frog";

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 249992)
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -92,7 +93,7 @@ public class Snippet024SelectObservableValue {
 		}
 
 		DataBindingContext dbc = new DataBindingContext();
-		dbc.bindValue(radioGroup, listViewerSelection, null, null);
+		dbc.bindValue(radioGroup, listViewerSelection);
 	}
 
 	public static class Color {

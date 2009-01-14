@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Brad Reynolds - bug 116920
- *     Brad Reynolds - bug 164653, 159768
+ *     Brad Reynolds - bugs 116920, 164653, 159768
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding;
@@ -72,25 +72,25 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		model.setValue(initialValue);
 
 		assertFalse(model.getValue().equals(target.getValue()));
-		dbc.bindValue(target, model, null, null);
+		dbc.bindValue(target, model);
 
 		assertEquals(target.getValue(), model.getValue());
 	}
 
 	public void testGetTarget() throws Exception {
-		Binding binding = dbc.bindValue(target, model, null, null);
+		Binding binding = dbc.bindValue(target, model);
 
 		assertEquals(target, binding.getTarget());
 	}
 
 	public void testGetModel() throws Exception {
-		Binding binding = dbc.bindValue(target, model, null, null);
+		Binding binding = dbc.bindValue(target, model);
 
 		assertEquals(model, binding.getModel());
 	}
 
 	public void testOKStatusInValidationUpdatesModel() throws Exception {
-		Binding binding = dbc.bindValue(target, model, null, null);
+		Binding binding = dbc.bindValue(target, model);
 
 		String value = "value";
 		assertFalse(value.equals(model.getValue()));
@@ -195,7 +195,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testStatusIsInstanceOfBindingStatus() throws Exception {
-		Binding binding = dbc.bindValue(target, model, null, null);
+		Binding binding = dbc.bindValue(target, model);
 		assertTrue(binding.getValidationStatus().getValue() instanceof BindingStatus);
 	}
 	

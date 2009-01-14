@@ -8,6 +8,7 @@
  * Contributors:
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Tom Schindl - cell editing
+ *     Matthew Hall - bug 260329
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -239,8 +240,7 @@ public class Snippet013TableViewerEditing {
 					.observeSingleSelection(peopleViewer);
 			bindingContext.bindValue(SWTObservables
 					.observeText(selectedCommitter), BeansObservables
-					.observeDetailValue(Realm.getDefault(), selection, "name",
-							String.class), null, null);
+					.observeDetailValue(selection, "name", String.class));
 		}
 	}
 

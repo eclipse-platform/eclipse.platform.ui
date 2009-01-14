@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -49,7 +50,7 @@ public class LabelControlScenario extends ScenariosTestCase {
         // Bind the adventure "name" property to a label control
         // Change the UI and verify the model and UI are the same value
         // Change the model and verify the UI changes
-        getDbc().bindValue(SWTObservables.observeText(label), BeansObservables.observeValue(adventure, "name"), null, null);
+        getDbc().bindValue(SWTObservables.observeText(label), BeansObservables.observeValue(adventure, "name"));
 
         assertEquals(adventure.getName(), label.getText());
         adventure.setName("France");

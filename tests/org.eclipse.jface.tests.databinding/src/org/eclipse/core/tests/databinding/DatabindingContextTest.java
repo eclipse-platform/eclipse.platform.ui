@@ -7,11 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 159539
- *     Brad Reynolds - bug 140644
- *     Brad Reynolds - bug 159940
- *     Brad Reynolds - bug 116920, 159768
- *     Matthew Hall - bug 213145
+ *     Brad Reynolds - bugs 159539, 140644, 159940, 116920, 159768
+ *     Matthew Hall - bugs 213145, 260329
  *******************************************************************************/
 package org.eclipse.core.tests.databinding;
 
@@ -74,7 +71,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		IObservableValue target = WritableValue.withValueType(String.class);
 		IObservableValue model = WritableValue.withValueType(String.class);
 
-		Binding binding = dbc.bindValue(target, model, null, null);
+		Binding binding = dbc.bindValue(target, model);
 		assertTrue("binding is of the incorrect type",
 				binding.getClass().getName().endsWith("ValueBinding"));
 	}
@@ -83,7 +80,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		IObservableList target = WritableList.withElementType(Object.class);
 		IObservableList model = WritableList.withElementType(Object.class);
 
-		Binding binding = dbc.bindList(target, model, null, null);
+		Binding binding = dbc.bindList(target, model);
 		assertTrue("binding is of the incorrect type",
 				binding.getClass().getName().endsWith("ListBinding"));
 	}
@@ -132,7 +129,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Asserts that then
-	 * {@link DataBindingContext#bindValue(IObservableValue, IObservableValue, org.eclipse.jface.databinding.DefaultBindSpec, BindSpec)}
+	 * {@link DataBindingContext#bindValue(IObservableValue, IObservableValue, UpdateValueStrategy, UpdateValueStrategy)}
 	 * if invoked the created binding is added to the internal list of bindings.
 	 * 
 	 * @throws Exception
@@ -144,7 +141,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		assertNotNull(dbc.getBindings());
 		assertEquals(0, dbc.getBindings().size());
 
-		Binding binding = dbc.bindValue(targetValue, modelValue, null, null);
+		Binding binding = dbc.bindValue(targetValue, modelValue);
 		assertNotNull(binding);
 		assertNotNull(dbc.getBindings());
 		assertEquals(1, dbc.getBindings().size());
@@ -153,7 +150,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Asserts that when
-	 * {@link DataBindingContext#bindList(IObservableList, IObservableList, org.eclipse.jface.databinding.DefaultBindSpec, UpdateListStrategy)}
+	 * {@link DataBindingContext#bindList(IObservableList, IObservableList, UpdateListStrategy, UpdateListStrategy)}
 	 * is invoked the created binding is added to the intenal list of bindings.
 	 * 
 	 * @throws Exception
@@ -166,7 +163,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		assertNotNull(dbc.getBindings());
 		assertEquals(0, dbc.getBindings().size());
 
-		Binding binding = dbc.bindList(targetList, modelList, null, null);
+		Binding binding = dbc.bindList(targetList, modelList);
 		assertNotNull(binding);
 		assertNotNull(dbc.getBindings());
 		assertEquals(1, dbc.getBindings().size());

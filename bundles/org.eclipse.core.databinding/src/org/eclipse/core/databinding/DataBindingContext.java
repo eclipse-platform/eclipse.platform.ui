@@ -7,11 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 159539
- *     Brad Reynolds - bug 140644
- *     Brad Reynolds - bug 159940
- *     Brad Reynolds - bug 116920, 159768
- *     Matthew Hall - bugs 118516, 124684, 218269
+ *     Brad Reynolds - bugs 159539, 140644, 159940, 116920, 159768
+ *     Matthew Hall - bugs 118516, 124684, 218269, 260329
  *     Boris Bokowski - bug 218269
  *******************************************************************************/
 package org.eclipse.core.databinding;
@@ -108,6 +105,25 @@ public class DataBindingContext {
 
 	/**
 	 * Creates a {@link Binding} to synchronize the values of two
+	 * {@link IObservableValue observable values}. This method is an alias for
+	 * <code>bindValue(targetObservableValue, modelObservableValue, null,
+	 * null)</code>.
+	 * 
+	 * @param targetObservableValue
+	 *            target value, commonly a UI widget
+	 * @param modelObservableValue
+	 *            model value
+	 * @return created binding
+	 * @since 1.2
+	 */
+	public final Binding bindValue(IObservableValue targetObservableValue,
+			IObservableValue modelObservableValue) {
+		return bindValue(targetObservableValue, modelObservableValue, null,
+				null);
+	}
+
+	/**
+	 * Creates a {@link Binding} to synchronize the values of two
 	 * {@link IObservableValue observable values}. During synchronization
 	 * validation and conversion can be employed to customize the process. For
 	 * specifics on the customization of the process see
@@ -171,6 +187,26 @@ public class DataBindingContext {
 	
 	/**
 	 * Creates a {@link Binding} to synchronize the values of two
+	 * {@link IObservableList observable lists}. This method is an alias for
+	 * <code>bindList(targetObservableList, modelObservableList, null,
+	 * null)</code>.
+	 * 
+	 * @param targetObservableList
+	 *            target list, commonly a list representing a list in the UI
+	 * @param modelObservableList
+	 *            model list
+	 * @return created binding
+	 * 
+	 * @see UpdateListStrategy
+	 * @since 1.2
+	 */
+	public final Binding bindList(IObservableList targetObservableList,
+			IObservableList modelObservableList) {
+		return bindList(targetObservableList, modelObservableList, null, null);
+	}
+
+	/**
+	 * Creates a {@link Binding} to synchronize the values of two
 	 * {@link IObservableList observable lists}. During synchronization
 	 * validation and conversion can be employed to customize the process. For
 	 * specifics on the customization of the process see
@@ -230,6 +266,24 @@ public class DataBindingContext {
 			IObservableList targetObservableList,
 			IObservableList modelObservableList) {
 		return new UpdateListStrategy();
+	}
+
+	/**
+	 * Creates a {@link Binding} to synchronize the values of two
+	 * {@link IObservableSet observable sets}. This method is an alias for
+	 * <code>bindSet(targetObservableValue, modelObservableValue, null,
+	 * null)</code>.
+	 * 
+	 * @param targetObservableSet
+	 *            target set, commonly a set representing a set in the UI
+	 * @param modelObservableSet
+	 *            model set
+	 * @return created binding
+	 * @since 1.2
+	 */
+	public final Binding bindSet(IObservableSet targetObservableSet,
+			IObservableSet modelObservableSet) {
+		return bindSet(targetObservableSet, modelObservableSet, null, null);
 	}
 
 	/**

@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 116920
- *     Brad Reynolds - bug 160000
+ *     Brad Reynolds - bugs 116920, 160000
+ *     Matthew Hall - bug 260329
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -96,8 +96,7 @@ public class ListViewerScenario extends ScenariosTestCase {
 		IObservableValue selection = ViewersObservables
 				.observeSingleSelection(listViewer);
 		getDbc().bindValue(selection,
-				BeansObservables.observeValue(adventure, "defaultLodging"),
-				null, null);
+				BeansObservables.observeValue(adventure, "defaultLodging"));
 
 		// Verify that the list selection is the default lodging
 		assertEquals(((IStructuredSelection) listViewer.getSelection())
