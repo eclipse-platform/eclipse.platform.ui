@@ -1,6 +1,5 @@
 package org.eclipse.e4.core.services;
 
-import org.eclipse.emf.common.util.URI;
 
 
 public interface IContributionFactory {
