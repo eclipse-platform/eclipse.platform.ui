@@ -1,4 +1,4 @@
-package org.eclipse.e4.ui.tests.css.swt.parser;
+package org.eclipse.e4.ui.tests.css.core.parser;
 
 import junit.framework.TestCase;
 
