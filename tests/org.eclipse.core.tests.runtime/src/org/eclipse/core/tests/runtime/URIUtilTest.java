@@ -42,7 +42,15 @@ public class URIUtilTest extends RuntimeTest {
 			File result = URIUtil.toFile(uri);
 			assertEquals("1." + i, original, result);
 		}
+	}
 
+	/**
+	 * Tests for {@link URIUtil#toFile(URL)} involving UNC paths.
+	 * @throws URISyntaxException 
+	 */
+	public void testToFileUNC() throws URISyntaxException {
+		if (!WINDOWS)
+			return;
 		//UNC paths
 		URI path = new URI("file://HOST/some/path");
 		File result = URIUtil.toFile(path);
