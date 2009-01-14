@@ -297,11 +297,15 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @since 3.5
 	 */
 	private static final boolean isOffsetSelected(StyledText widget, int offset) {
-		int[] ranges= widget.getSelectionRanges();
-		for (int i= 0; i < ranges.length; i+= 2)
-			if (ranges[i] <= offset && offset <= ranges[i + 1])
-				return true;
-		return false;
+		Point selection= widget.getSelection();
+		return offset >= selection.x && offset < selection.y;
+
+		// FIXME, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=260998
+//		int[] ranges= widget.getSelectionRanges();
+//		for (int i= 0; i < ranges.length; i+= 2)
+//			if (ranges[i] <= offset && offset <= ranges[i + 1])
+//				return true;
+//		return false;
 	}
 
 	/**
