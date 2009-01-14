@@ -771,7 +771,7 @@
       <key
             commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
             contextId="org.eclipse.ui.textEditorScope"
-            sequence="M3+C"
+            sequence="M2+M3+A"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             commandId="org.eclipse.ui.edit.text.hippieCompletion"
@@ -1093,7 +1093,7 @@
                definitionId="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
                disabledIcon="$nl$/icons/full/dtool16/segment_edit.gif"
                icon="$nl$/icons/full/etool16/segment_edit.gif"
-               helpContextId="only_show_selected_element_action_context"
+               helpContextId="org.eclipse.ui.only_show_selected_element_action_context"
                label="%onlyShowSelectedElement.label"
                retarget="true"
                tooltip="%onlyShowSelectedElement.tooltip">
@@ -1102,7 +1102,7 @@
                allowLabelUpdate="true"
                definitionId="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
                disabledIcon="$nl$/icons/full/dtool16/show_whitespace_chars.gif"
-               helpContextId="show_whitespace_characters_action_context"
+               helpContextId="org.eclipse.ui.show_whitespace_characters_action_context"
                icon="$nl$/icons/full/etool16/show_whitespace_chars.gif"
                id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
                label="%showWhitespaceCharacters.label"
@@ -1115,7 +1115,7 @@
                allowLabelUpdate="true"
                definitionId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
                disabledIcon="$nl$/icons/full/dtool16/block_selection_mode.gif"
-               helpContextId="block_selection_mode_action_context"
+               helpContextId="org.eclipse.ui.block_selection_mode_action_context"
                icon="$nl$/icons/full/etool16/block_selection_mode.gif"
                id="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
                label="%toggleBlockSelectionMode.label"
