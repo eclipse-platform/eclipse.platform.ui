@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: e4 css core tests
+Bundle-SymbolicName: org.eclipse.e4.ui.tests.core
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Require-Bundle: org.junit,
+ org.eclipse.swt,
+ org.eclipse.e4.ui.css.core,
+ org.eclipse.e4.ui.css.swt,
+ org.w3c.css.sac
