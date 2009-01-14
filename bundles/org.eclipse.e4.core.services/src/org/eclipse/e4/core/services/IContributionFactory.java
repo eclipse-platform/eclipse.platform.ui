@@ -1,11 +1,9 @@
 package org.eclipse.e4.core.services;
 
-
-
 public interface IContributionFactory {
 
 	public Object call(Object object, String uri,
-			String methodName, IServiceLocator serviceLocator, Object defaultValue);
+			String methodName, Context context, Object defaultValue);
 
-	public Object create(String uri, IServiceLocator serviceLocator);
+	public Object create(String uri, Context context);
 }
