@@ -244,7 +244,13 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			previewButton.setText(previewLabel);
 			setButtonLayoutData(previewButton);
 			getShell().layout(new Control[] { previewButton });
-			defaultButton= previewButton;
+			
+			boolean enable= true;
+			if (!previewPage)
+				enable= canFlip;
+			previewButton.setEnabled(enable);
+			if (enable)
+				defaultButton= previewButton;
 		}
 		
 		Button nextButton= getButton(IDialogConstants.NEXT_ID);
