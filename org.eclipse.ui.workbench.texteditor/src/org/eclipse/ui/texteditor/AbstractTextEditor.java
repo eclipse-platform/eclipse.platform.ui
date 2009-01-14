@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -288,10 +288,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private static final int SINGLE_CARET_WIDTH= 1;
 
 	/**
-	 * The symbolic name of the column mode font.
-	 * @since 3.3
+	 * The symbolic name of the block seletion mode font.
+	 * 
+	 * @since 3.5
 	 */
-	protected static final String COLUMN_MODE_FONT= "org.eclipse.ui.workbench.texteditor.columnModeFont"; //$NON-NLS-1$
+	private static final String BLOCK_SELECTION_MODE_FONT= "org.eclipse.ui.workbench.texteditor.blockSelectionModeFont"; //$NON-NLS-1$
 
 	/**
 	 * The text input listener.
@@ -694,11 +695,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			String property= event.getProperty();
 
-			if (isBlockSelectionEnabled()) {
-				if (COLUMN_MODE_FONT.equals(property)) {
-					Font columnFont= JFaceResources.getFont(COLUMN_MODE_FONT);
+			if (isBlockSelectionModeEnabled()) {
+				if (BLOCK_SELECTION_MODE_FONT.equals(property)) {
+					Font blockFont= JFaceResources.getFont(BLOCK_SELECTION_MODE_FONT);
 					disposeFont();
-					setFont(fSourceViewer, columnFont);
+					setFont(fSourceViewer, blockFont);
 				}
 			} else if (getFontPropertyPreferenceKey().equals(property)) {
 				initializeViewerFont(fSourceViewer);
@@ -2034,14 +2035,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		}
 	}
-
-	/**
-	 * Block selection mode enablement. Per default, block selection is enabled, but subclasses may
-	 * disable.
-	 * 
-	 * @since 3.5
-	 */
-	private boolean fEnableBlockSelectionMode= true;
 
 	/**
 	 * Key used to look up font preference.
@@ -3589,7 +3582,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					}
 
 					String text= (String)event.data;
-					if (isBlockSelectionEnabled()) {
+					if (isBlockSelectionModeEnabled()) {
 						// FIXME fix block selection and DND
 //						if (fTextDNDColumnSelection != null && fTextDragAndDropToken != null && event.detail == DND.DROP_MOVE) {
 //							// DND_MOVE within same editor - remove origin before inserting
@@ -5761,10 +5754,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 		setAction(ITextEditorActionConstants.SHOW_INFORMATION, action);
 
-		action= new BlockModeToggleAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleColumnMode.", this); //$NON-NLS-1$
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COLUMN_MODE_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.BLOCK_MODE);
-		setAction(ITextEditorActionConstants.BLOCK_MODE, action);
+		action= new BlockSelectionModeToggleAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleBlockSelectionMode.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BLOCK_SELECTION_MODE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE);
+		setAction(ITextEditorActionConstants.BLOCK_SELECTION_MODE, action);
 
 		PropertyDialogAction openProperties= new PropertyDialogAction(
 				new IShellProvider() {
@@ -7129,36 +7122,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/**
-	 * Returns <code>true</code> if block selection switching is supported, <code>false</code>
-	 * otherwise. Note that the default setting is to support block selection switching, i.e.
-	 * clients may turn block selection mode on and off using the public
-	 * {@link #setBlockSelectionMode(boolean)} API. However, subclasses may override this behavior
-	 * by disabling block selection support via {@link #setEnableBlockSelectionMode(boolean)}.
+	 * Tells whether selection mode is supported.
+	 * <p>
+	 * By default block selection mode is supported. Subclasses may override this method to disable
+	 * it.
+	 * </p>
 	 * 
-	 * @return <code>true</code> if block selection switching is supported, <code>false</code>
-	 *         otherwise
+	 * @return <code>true</code> if block selection mode is supported, <code>false</code> otherwise
+	 * @since 3.5
 	 */
-	protected final boolean isBlockSelectionSupported() {
-		return fEnableBlockSelectionMode;
+	protected boolean isBlockSelectionModeSupported() {
+		return true;
 	}
 
 	/**
-	 * Enables or disables support for block selection switching. Block selection switching is
-	 * enabled by default, but subclasses may disable it. Use
-	 * {@link #setBlockSelectionMode(boolean)} to switch on or off block selection.
-	 * 
-	 * @param enableBlockSelectionMode <code>true</code> to enable selection switching,
-	 *            <code>false</code> to disable
-	 */
-	protected final void setEnableBlockSelectionMode(boolean enableBlockSelectionMode) {
-		fEnableBlockSelectionMode= enableBlockSelectionMode;
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.ITextEditorExtension5#isColumnMode()
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension5#isBlockSelectionModeEnabled()
 	 * @since 3.5
 	 */
-	public final boolean isBlockSelectionEnabled() {
+	public final boolean isBlockSelectionModeEnabled() {
 		ISourceViewer viewer= getSourceViewer();
 		if (viewer != null) {
 			StyledText styledText= viewer.getTextWidget();
@@ -7168,43 +7149,44 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.ITextEditorExtension5#setColumnMode(boolean)
+	/**
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension5#setBlockSelectionMode(boolean)
 	 * @since 3.5
 	 */
 	public void setBlockSelectionMode(boolean enable) {
-		if (!fEnableBlockSelectionMode)
+		if (!isBlockSelectionModeSupported())
 			return;
+
 		ISourceViewer viewer= getSourceViewer();
 		if (viewer != null) {
 			StyledText styledText= viewer.getTextWidget();
 			if (styledText != null) {
 				/*
-				 * Font switching. Column mode needs a monospace font. We try to adapt the
+				 * Font switching. block selection mode needs a monospace font. We try to adapt the
 				 * column font size to the current (normal) font size.
-				 *  - set the font _before enabling_ column mode in order to maintain the
+				 *  - set the font _before enabling_ block selection mode in order to maintain the
 				 * selection
-				 * - revert the font _after disabling_ column mode in order to maintain the
+				 * - revert the font _after disabling_ block selection mode in order to maintain the
 				 * selection
 				 */
 				if (enable) {
-					Font columnFont= JFaceResources.getFont(COLUMN_MODE_FONT);
+					Font blockFont= JFaceResources.getFont(BLOCK_SELECTION_MODE_FONT);
 					Font normalFont= styledText.getFont();
-					if (!columnFont.equals(normalFont) && !normalFont.getFontData()[0].equals(columnFont.getFontData()[0])) {
+					if (!blockFont.equals(normalFont) && !normalFont.getFontData()[0].equals(blockFont.getFontData()[0])) {
 						int size= normalFont.getFontData()[0].getHeight();
-						FontData[] fontData= columnFont.getFontData();
+						FontData[] fontData= blockFont.getFontData();
 						boolean created= false;
 						if (fontData[0].getHeight() != size) {
 							for (int i= 0; i < fontData.length; i++) {
 								fontData[i].setHeight(size);
 							}
-							columnFont= new Font(columnFont.getDevice(), fontData);
+							blockFont= new Font(blockFont.getDevice(), fontData);
 							created= true;
 						}
-						setFont(viewer, columnFont);
+						setFont(viewer, blockFont);
 						disposeFont();
 						if (created)
-							fFont= columnFont;
+							fFont= blockFont;
 					}
 				}
 
