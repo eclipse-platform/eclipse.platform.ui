@@ -29,6 +29,7 @@ public class PartSashFactory extends SWTPartFactory {
 					: SWT.VERTICAL;
 			SashForm newSash = new SashForm((Composite) parentWidget,
 					SWT.SMOOTH | orientation);
+			bindWidget(part, newSash);
 			// newSash.setSashWidth(1);
 			newSash.setVisible(true);
 			return newSash;

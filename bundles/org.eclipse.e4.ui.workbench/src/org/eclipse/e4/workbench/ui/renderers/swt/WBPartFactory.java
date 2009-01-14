@@ -35,6 +35,7 @@ public class WBPartFactory extends SWTPartFactory {
 				wbwShell.setText(((WorkbenchWindow) part).getName());
 	
 			newWidget = wbwShell;
+			bindWidget(part, newWidget);
 			final IHandlerService hs = new PartHandlerService(part);
 			IServiceLocator locator = new IServiceLocator () {
 

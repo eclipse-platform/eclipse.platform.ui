@@ -30,6 +30,7 @@ public class CompositePartFactory extends SWTPartFactory {
 				Composite composite = new Composite((Composite) parentWidget,
 						SWT.NONE);
 				newWidget = composite;
+				bindWidget(part, newWidget);
 			}
 		}
 		return newWidget;

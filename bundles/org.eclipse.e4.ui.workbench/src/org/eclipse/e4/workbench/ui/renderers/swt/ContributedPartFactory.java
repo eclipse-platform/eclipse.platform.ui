@@ -34,6 +34,7 @@ public class ContributedPartFactory extends SWTPartFactory {
 		if (part instanceof ContributedPart) {
 			final Composite newComposite = new Composite((Composite) parentWidget, SWT.NONE);
 			newWidget = newComposite;
+			bindWidget(part, newWidget);
 			ContributedPart contributedPart = (ContributedPart) part;
 			final IHandlerService hs = new PartHandlerService(part);
 			Object newPart = contributionFactory.create(contributedPart.getURI(), new IServiceLocator() {

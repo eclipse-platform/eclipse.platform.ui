@@ -39,6 +39,7 @@ public class StackModelFactory extends SWTPartFactory {
 		if (parentWidget instanceof Composite) {
 			CTabFolder ctf = new CTabFolder((Composite) parentWidget,
 					SWT.BORDER);
+			bindWidget(part, ctf);
 			ctf.setVisible(true);
 			ctf.setSimple(false);
 			ctf.setTabHeight(20);
