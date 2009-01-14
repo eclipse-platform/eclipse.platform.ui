@@ -225,6 +225,9 @@ class WorkerPool {
 						return null;
 					}
 				}
+				//if we didn't sleep but there was no job available, make sure we sleep to avoid a tight loop (bug 260724)
+				if (hint <= 0 && job == null)
+					sleep(50);
 			}
 			if (job != null) {
 				//if this job has a rule, then we are essentially acquiring a lock
