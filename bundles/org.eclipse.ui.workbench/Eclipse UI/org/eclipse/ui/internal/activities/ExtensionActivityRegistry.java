@@ -226,39 +226,39 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
         if (!activityRequirementBindingDefinitions
                 .equals(super.activityRequirementBindingDefinitions)) {
             super.activityRequirementBindingDefinitions = Collections
-                    .unmodifiableList(activityRequirementBindingDefinitions);
+                    .unmodifiableList(new ArrayList(activityRequirementBindingDefinitions));
             activityRegistryChanged = true;
         }
 
         if (!activityDefinitions.equals(super.activityDefinitions)) {
             super.activityDefinitions = Collections
-                    .unmodifiableList(activityDefinitions);
+                    .unmodifiableList(new ArrayList(activityDefinitions));
             activityRegistryChanged = true;
         }
 
         if (!activityPatternBindingDefinitions
                 .equals(super.activityPatternBindingDefinitions)) {
             super.activityPatternBindingDefinitions = Collections
-                    .unmodifiableList(activityPatternBindingDefinitions);
+                    .unmodifiableList(new ArrayList(activityPatternBindingDefinitions));
             activityRegistryChanged = true;
         }
 
         if (!categoryActivityBindingDefinitions
                 .equals(super.categoryActivityBindingDefinitions)) {
             super.categoryActivityBindingDefinitions = Collections
-                    .unmodifiableList(categoryActivityBindingDefinitions);
+                    .unmodifiableList(new ArrayList(categoryActivityBindingDefinitions));
             activityRegistryChanged = true;
         }
 
         if (!categoryDefinitions.equals(super.categoryDefinitions)) {
             super.categoryDefinitions = Collections
-                    .unmodifiableList(categoryDefinitions);
+                    .unmodifiableList(new ArrayList(categoryDefinitions));
             activityRegistryChanged = true;
         }
 
         if (!defaultEnabledActivities.equals(super.defaultEnabledActivities)) {
             super.defaultEnabledActivities = Collections
-                    .unmodifiableList(defaultEnabledActivities);
+                    .unmodifiableList(new ArrayList(defaultEnabledActivities));
             activityRegistryChanged = true;
         }
 
