@@ -427,6 +427,19 @@ public final class InternalPlatform {
 	}
 
 	/**
+	 * Unicode locale extensions are defined using command line parameter -nlExtensions,
+	 * or the system property "osgi.nl.extensions".
+	 */
+	public String getNLExtensions() {
+		String nlExtensions = PlatformActivator.getContext().getProperty("osgi.nl.extensions"); //$NON-NLS-1$
+		if (nlExtensions == null)
+			return ""; //$NON-NLS-1$
+		if (!nlExtensions.startsWith("@")) //$NON-NLS-1$
+			nlExtensions = '@' + nlExtensions;
+		return nlExtensions;
+	}
+
+	/**
 	 * @see Platform
 	 */
 	public String getOption(String option) {
@@ -581,7 +594,7 @@ public final class InternalPlatform {
 	}
 
 	/**
- 	 * XXX Investigate the usage of a service factory
+	 * XXX Investigate the usage of a service factory
 	 */
 	public IPath getStateLocation(Bundle bundle) {
 		return getStateLocation(bundle, true);

@@ -1137,6 +1137,20 @@ public final class Platform {
 	}
 
 	/**
+	 * Returns Unicode locale extensions for the Unicode locale identifier, if they are
+	 * defined. An empty string is returned if Unicode locale extensions are not defined.
+	 * <p>
+	 * For more information on Unicode locale extensions, see 
+	 * <a href="http://unicode.org/reports/tr35/">Unicode Technical Standard #35</a>.
+	 * 
+	 * @return The defined Unicode locale extensions, or an empty string.
+	 * @since 3.5
+	 */
+	public static String getNLExtensions() {
+		return InternalPlatform.getDefault().getNLExtensions();
+	}
+
+	/**
 	 * Returns the string name of the current operating system for use in finding
 	 * files whose path starts with <code>$os$</code>.  <code>OS_UNKNOWN</code> is
 	 * returned if the operating system cannot be determined.  
