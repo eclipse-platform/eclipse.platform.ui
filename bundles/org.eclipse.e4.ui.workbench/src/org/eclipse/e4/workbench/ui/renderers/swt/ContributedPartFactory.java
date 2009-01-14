@@ -3,13 +3,15 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.services.ComputedValue;
+import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.ContributedPart;
 import org.eclipse.e4.ui.model.application.Part;
 import org.eclipse.e4.ui.services.ISelectionService;
 import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
+import org.eclipse.e4.workbench.ui.internal.UIContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -37,31 +39,14 @@ public class ContributedPartFactory extends SWTPartFactory {
 			bindWidget(part, newWidget);
 			ContributedPart contributedPart = (ContributedPart) part;
 			final IHandlerService hs = new PartHandlerService(part);
-			Object newPart = contributionFactory.create(contributedPart.getURI(), new IServiceLocator() {
-
-				public Object getService(Class api) {
-					if (api == Composite.class) {
-						newComposite.setData("MODEL", part);
-						newComposite.setData("LOCATOR", this);
-						return newComposite;
-					} else if (api == IHandlerService.class) {
-						return hs;
-					}
-					return serviceLocator.getService(api);
-				}
-
-				public boolean hasService(Class api) {
-					if (api == Composite.class) {
-						return true;
-					} else if (api == IHandlerService.class) {
-						return true;
-					}
-					return serviceLocator.hasService(api);
-				}
-			});
+			UIContext localContext = new UIContext(context, "ContributedPart");
+			newComposite.setData("LOCATOR", localContext);
+			localContext.set(Composite.class.getName(), newComposite);
+			localContext.set(IHandlerService.class.getName(), hs);
+			Object newPart = contributionFactory.create(contributedPart.getURI(), localContext);
 			if (newPart instanceof IHasInput) {
 				final IHasInput hasInput = (IHasInput) newPart;
-				ISelectionService selectionService = (ISelectionService) serviceLocator.getService(ISelectionService.class);
+				ISelectionService selectionService = (ISelectionService) context.get(ISelectionService.class.getName());
 				selectionService.addValueChangeListener(new IValueChangeListener(){
 					public void handleValueChange(ValueChangeEvent event) {
 						Class adapterType = hasInput.getInputType();

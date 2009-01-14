@@ -1,12 +1,12 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.Part;
 import org.eclipse.e4.ui.model.workbench.Perspective;
 import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
 import org.eclipse.e4.workbench.ui.IHandlerService;
+import org.eclipse.e4.workbench.ui.internal.UIContext;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -37,22 +37,9 @@ public class WBPartFactory extends SWTPartFactory {
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
 			final IHandlerService hs = new PartHandlerService(part);
-			IServiceLocator locator = new IServiceLocator () {
-
-				public Object getService(Class<?> api) {
-					if (api == IHandlerService.class) {
-						return hs;
-					}
-					return serviceLocator.getService(api);
-				}
-
-				public boolean hasService(Class<?> api) {
-					if (api == IHandlerService.class) {
-						return true;
-					}
-					return serviceLocator.hasService(api);
-				} };
-			wbwShell.setData("LOCATOR", locator);
+			UIContext localContext = new UIContext(context, "WorkbenchWindow");
+			localContext.set(IHandlerService.class.getName(), hs);
+			wbwShell.setData("LOCATOR", localContext);
 		} else {
 			newWidget = null;
 		}

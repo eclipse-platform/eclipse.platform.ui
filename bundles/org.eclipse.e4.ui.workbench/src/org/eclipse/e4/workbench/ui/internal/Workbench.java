@@ -31,10 +31,10 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.core.services.AbstractServiceFactory;
+import org.eclipse.e4.core.services.ComputedValue;
+import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
-import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.Application;
 import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
@@ -68,7 +68,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-public class Workbench implements IWorkbench, IServiceLocator,
+public class Workbench implements IWorkbench,
 		IContributionFactory {
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow";
 	private Application<WorkbenchWindow> workbench;
@@ -80,10 +80,9 @@ public class Workbench implements IWorkbench, IServiceLocator,
 	private final PackageAdmin packageAdmin;
 	private ResourceSetImpl resourceSet;
 	private ModelService modelService;
-	private IServiceLocator serviceLocator;
 
-	public IServiceLocator getServiceLocator() {
-		return serviceLocator;
+	public Context getContext() {
+		return globalContext;
 	}
 
 	private ILegacyHook legacyHook;
@@ -93,6 +92,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 	private int rv;
 	private Map<String,Object> languages;
 	private ExceptionHandler exceptionHandler;
+	private Context globalContext;
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
 			PackageAdmin packageAdmin, URI workbenchXmiURI) {
@@ -125,7 +125,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 				WorkbenchPackage.eINSTANCE);
 
 		processLanguages();
-		serviceLocator = createServiceLocator();
+		globalContext = createContext();
 		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
 			createWorkbenchModel(workbenchData.getAbsolutePath(),
 					workbenchXmiURI);
@@ -134,72 +134,37 @@ public class Workbench implements IWorkbench, IServiceLocator,
 		}
 	}
 
-	private IServiceLocator createServiceLocator() {
-		final Map<Class<?>, AbstractServiceFactory> serviceFactories = new HashMap<Class<?>, AbstractServiceFactory>();
+	private Context createContext() {
+		// Initialize Services
+		modelService = new ModelService(Platform.getAdapterManager());
+
+		resourceUtility = new ResourceUtility(packageAdmin);
+
+		final UIContext mainContext = new UIContext(null, "globalContext");
+
 		IConfigurationElement[] contributions = registry
 				.getConfigurationElementsFor("org.eclipse.e4.services");
 		for (IConfigurationElement contribution : contributions) {
 			IContributor contributor = contribution.getContributor();
 			Bundle bundle = getBundleForName(contributor.getName());
 			try {
-				AbstractServiceFactory factory = (AbstractServiceFactory) contribution
-						.createExecutableExtension("class");
 				for (IConfigurationElement serviceElement : contribution
 						.getChildren("service")) {
+					ComputedValue factory = (ComputedValue) contribution
+							.createExecutableExtension("class");
 					String apiClassname = serviceElement.getAttribute("api");
-					Class<?> apiClass;
-					apiClass = bundle.loadClass(apiClassname);
-					serviceFactories.put(apiClass, factory);
+					mainContext.set(apiClassname, factory);
 				}
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		final IServiceLocator parentLocator = new IServiceLocator() {
-			public Object getService(Class<?> api) {
-				if (IWorkbench.class.equals(api)) {
-					return (IWorkbench) Workbench.this;
-				} else if (IExceptionHandler.class.equals(api)) {
-					return (IExceptionHandler) exceptionHandler;
-				} else if (ResourceUtility.class.equals(api)) {
-					return (ResourceUtility) resourceUtility;
-				}
-				return null;
-			}
+		mainContext.set(IWorkbench.class.getName(), this);
+		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
+		mainContext.set(ResourceUtility.class.getName(), resourceUtility);
 
-			public boolean hasService(Class<?> api) {
-				return IWorkbench.class.equals(api)
-						|| IExceptionHandler.class.equals(api)
-						|| ResourceUtility.class.equals(api);
-			}
-		};
-		return new IServiceLocator() {
-			Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
-
-			public Object getService(Class<?> api) {
-				Object result = services.get(api);
-				if (result == null) {
-					AbstractServiceFactory factory = serviceFactories.get(api);
-					if (factory != null) {
-						result = factory.create(api, parentLocator, this);
-						services.put(api, result);
-					}
-				}
-				if (result == null) {
-					result = parentLocator.getService(api);
-				}
-				return result;
-			}
-
-			public boolean hasService(Class<?> api) {
-				return serviceFactories.containsKey(api)
-						|| parentLocator.hasService(api);
-			}
-		};
+		return mainContext;
 	}
 
 	private Application<WorkbenchWindow> createWorkbenchModel(String restoreFile,
@@ -403,10 +368,6 @@ public class Workbench implements IWorkbench, IServiceLocator,
 		//
 		// });
 
-		// Initialize Services
-		modelService = new ModelService(Platform.getAdapterManager());
-
-		resourceUtility = new ResourceUtility(packageAdmin);
 
 		// HACK!! test the modelService and imported functionality
 		String[] propIds = modelService.getPropIds(workbench);
@@ -485,7 +446,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 	private void createGUI(WorkbenchWindow workbenchWindow) {
 		if (renderer == null) {
 			renderer = new PartRenderer((IContributionFactory) this,
-					serviceLocator);
+					globalContext);
 
 			// add the factories from the extension point, sort by dependency
 			// * Need to make the EP more declarative to avoid aggressive
@@ -515,7 +476,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 					e.printStackTrace();
 				}
 				if (factory != null) {
-					factory.init(renderer, serviceLocator,
+					factory.init(renderer, globalContext,
 							(IContributionFactory) this);
 					renderer.addPartFactory(factory);
 
@@ -554,7 +515,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 		return getBundleForName(platformURI.segment(1));
 	}
 
-	public Object createObject(Class<?> targetClass, IServiceLocator serviceLocator) {
+	public Object createObject(Class<?> targetClass, Context context) {
 
 		Constructor<?> targetConstructor = null;
 
@@ -595,7 +556,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 				for (int i = 0; i < params.length && satisfiable; i++) {
 					Class<?> clazz = params[i];
 
-					if (!serviceLocator.hasService(clazz)) {
+					if (!context.isSet(clazz.getName())) {
 						satisfiable = false;
 					}
 				}
@@ -616,7 +577,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 		try {
 			Object[] params = new Object[paramKeys.length];
 			for (int i = 0; i < params.length; i++) {
-				params[i] = serviceLocator.getService(paramKeys[i]);
+				params[i] = context.get(paramKeys[i].getName());
 			}
 
 			return targetConstructor.newInstance(params);
@@ -652,7 +613,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 	}
 
 	public Object create(String uriString,
-			IServiceLocator serviceLocator) {
+			Context context) {
 		URI uri = URI.createURI(uriString);
 		Bundle bundle = getBundle(uri);
 		if (bundle != null) {
@@ -665,11 +626,11 @@ public class Workbench implements IWorkbench, IServiceLocator,
 					resource.append('/');
 					resource.append(uri.segment(i));
 				}
-				return factory.create(bundle, resource.toString(), serviceLocator);
+				return factory.create(bundle, resource.toString(), context);
 			}
 			try {
 				Class targetClass = bundle.loadClass(uri.segment(2));
-				return createObject(targetClass, serviceLocator);
+				return createObject(targetClass, context);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -679,13 +640,13 @@ public class Workbench implements IWorkbench, IServiceLocator,
 	}
 
 	public Object call(Object object, String uriString, String methodName,
-			IServiceLocator serviceLocator, Object defaultValue) {
+			Context context, Object defaultValue) {
 		URI uri = URI.createURI(uriString);
 		if (uri.segmentCount() > 3) {
 			String prefix = uri.segment(2);
 			IContributionFactorySpi factory = (IContributionFactorySpi) languages
 				.get(prefix);
-			return factory.call(object, methodName, serviceLocator, defaultValue);
+			return factory.call(object, methodName, context, defaultValue);
 		}
 		String className = uri.segment(1);
 
@@ -740,7 +701,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 				for (int i = 0; i < params.length && satisfiable; i++) {
 					Class clazz = params[i];
 
-					if (!serviceLocator.hasService(clazz)) {
+					if (!context.isSet(clazz.getName())) {
 						satisfiable = false;
 					}
 				}
@@ -764,7 +725,7 @@ public class Workbench implements IWorkbench, IServiceLocator,
 		try {
 			Object[] params = new Object[paramKeys.length];
 			for (int i = 0; i < params.length; i++) {
-				params[i] = serviceLocator.getService(paramKeys[i]);
+				params[i] = context.get(paramKeys[i].getName());
 			}
 
 			return targetMethod.invoke(object, params);

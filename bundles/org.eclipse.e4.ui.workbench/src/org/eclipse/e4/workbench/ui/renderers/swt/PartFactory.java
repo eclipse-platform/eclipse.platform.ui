@@ -3,8 +3,8 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.Item;
 import org.eclipse.e4.ui.model.application.ItemPart;
@@ -29,17 +29,17 @@ public abstract class PartFactory {
 
 	protected PartRenderer renderer;
 	protected IContributionFactory contributionFactory;
-	protected IServiceLocator serviceLocator;
+	protected Context context;
 	protected EMFDataBindingContext dbc;
 	
 	public PartFactory() {		
 		dbc = new EMFDataBindingContext();
 	}
 	
-	public void init(PartRenderer renderer, IServiceLocator locator, IContributionFactory contributionFactory) {
+	public void init(PartRenderer renderer, Context context, IContributionFactory contributionFactory) {
 		this.renderer = renderer;
 		this.contributionFactory = contributionFactory;
-		this.serviceLocator = locator;
+		this.context = context;
 	}
 	
 	public abstract Object createWidget(Part<?> element);
@@ -118,18 +118,14 @@ public abstract class PartFactory {
 		if (element instanceof Item) {
 			String iconURI = ((Item) element).getIconURI();
 			if (iconURI != null && !iconURI.equals("null")) {
-				ResourceUtility resUtils = (ResourceUtility) serviceLocator
-						.getService(ResourceUtility.class);
+				ResourceUtility resUtils = (ResourceUtility) context
+						.get(ResourceUtility.class.getName());
 				ImageDescriptor desc = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
 				if (desc != null)
 					return desc.createImage();
 			}
 		}
 		return null;
-	}
-
-	public IServiceLocator getServiceLoctaor() {
-		return serviceLocator;
 	}
 
 	public void createMenu(Object widgetObject, Menu menu) {

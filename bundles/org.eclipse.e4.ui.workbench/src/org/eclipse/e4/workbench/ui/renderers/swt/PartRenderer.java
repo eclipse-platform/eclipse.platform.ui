@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.Handler;
 import org.eclipse.e4.ui.model.application.Part;
@@ -30,12 +30,12 @@ public class PartRenderer {
 	public static final String FACTORY = "partFactory";
 
 	private final IContributionFactory contributionFactory;
-	private final IServiceLocator serviceLocator;
+	private final Context context;
 	
 	public PartRenderer(IContributionFactory contributionFactory,
-			IServiceLocator serviceLocator) {
+			Context context) {
 		this.contributionFactory = contributionFactory;
-		this.serviceLocator = serviceLocator;
+		this.context = context;
 	}
 	
 	public void addPartFactory(PartFactory factory) {
@@ -102,7 +102,7 @@ public class PartRenderer {
 	protected void processHandlers(Part<?> element) {
 		for (Handler contributedHandler : element.getHandlers()) {
 			contributedHandler.setObject(contributionFactory.create(
-					contributedHandler.getURI(), serviceLocator));
+					contributedHandler.getURI(), context));
 		}
 	}
 	

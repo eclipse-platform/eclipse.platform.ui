@@ -25,13 +25,19 @@
    <extension
          point="org.eclipse.e4.services">
       <servicefactory
-            class="org.eclipse.e4.workbench.ui.ServiceFactory">
+            class="org.eclipse.e4.workbench.ui.SelectionServiceValue">
          <service
                api="org.eclipse.e4.ui.services.ISelectionService">
          </service>
+      </servicefactory>
+      <servicefactory
+            class="org.eclipse.e4.workbench.ui.BackgroundRunnerValue">
          <service
                api="org.eclipse.e4.core.services.IBackgroundRunner">
          </service>
+      </servicefactory>
+      <servicefactory
+            class="org.eclipse.e4.workbench.ui.ProgressMonitorValue">
          <service
                api="org.eclipse.core.runtime.IProgressMonitor">
          </service>
