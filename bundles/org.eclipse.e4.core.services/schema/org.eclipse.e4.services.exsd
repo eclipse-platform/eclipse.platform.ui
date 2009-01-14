@@ -58,7 +58,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.e4.core.services.AbstractServiceFactory:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.e4.core.services.ComputedValue:"/>
                </appinfo>
             </annotation>
          </attribute>
