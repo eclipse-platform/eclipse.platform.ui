@@ -400,10 +400,10 @@
 	        id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly">
 	  </command>
 	  <command
-	        name="%toggleColumnMode.label"
-	        description="%toggleColumnMode.description"
-	        categoryId="org.eclipse.ui.category.window"
-	        id="org.eclipse.ui.edit.text.toggleColumnMode">
+	        name="%toggleBlockSelectionMode.label"
+	        description="%toggleBlockSelectionMode.description"
+	        categoryId="org.eclipse.ui.category.edit"
+	        id="org.eclipse.ui.edit.text.toggleBlockSelectionMode">
 	  </command>
       <command
             name="%command.toggleInsertMode.name"
@@ -769,7 +769,7 @@
             commandId="org.eclipse.ui.edit.text.showInformation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            commandId="org.eclipse.ui.edit.text.toggleColumnMode"
+            commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M3+C"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
@@ -1113,16 +1113,16 @@
         </action>
          <action
                allowLabelUpdate="true"
-               definitionId="org.eclipse.ui.edit.text.toggleColumnMode"
-               disabledIcon="$nl$/icons/full/dtool16/column_mode.gif"
-               helpContextId="column_mode_action_context"
-               icon="$nl$/icons/full/etool16/column_mode.gif"
-               id="org.eclipse.ui.edit.text.toggleColumnMode"
-               label="%toggleColumnMode.label"
+               definitionId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
+               disabledIcon="$nl$/icons/full/dtool16/block_selection_mode.gif"
+               helpContextId="block_selection_mode_action_context"
+               icon="$nl$/icons/full/etool16/block_selection_mode.gif"
+               id="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
+               label="%toggleBlockSelectionMode.label"
                retarget="true"
                style="toggle"
                toolbarPath="Normal/Presentation"
-               tooltip="%toggleColumnMode.tooltip">
+               tooltip="%toggleBlockSelectionMode.tooltip">
         </action>
       </actionSet>
    </extension>
@@ -1130,12 +1130,12 @@
       point="org.eclipse.ui.themes">
       <fontDefinition
             categoryId="org.eclipse.ui.workbenchMisc"
-            id="org.eclipse.ui.workbench.texteditor.columnModeFont"
+            id="org.eclipse.ui.workbench.texteditor.blockSelectionModeFont"
             isEditable="true"
-            label="%columnModeFont.label"
+            label="%blockSelectionModeFont.label"
             value="Courier New-regular-10">
          <description>
-            %columnModeFont.description
+            %blockSelectionModeFont.description
          </description>
          <fontValue
                os="linux"
