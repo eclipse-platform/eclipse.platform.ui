@@ -440,7 +440,7 @@
                definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
                disabledIcon="$nl$/icons/full/dtool16/last_edit_pos.gif"
                icon="$nl$/icons/full/etool16/last_edit_pos.gif"
-               helpContextId="goto_last_edit_position_action_context"
+               helpContextId="org.eclipse.ui.goto_last_edit_position_action_context"
                label="%goToLastEditPosition.label"
                menubarPath="navigate/"
                tooltip="%goToLastEditPosition.tooltip">
