@@ -126,7 +126,7 @@ public abstract class Context {
 	public void set(String name, Object value) {
 		localValues.put(name, value);
 		Object old = localValueComputations.remove(name);
-		if (old instanceof ComputedValue) {
+		if (old instanceof ValueComputation) {
 			ValueComputation valueComputation = (ValueComputation) old;
 			valueComputation.clear();
 		}
