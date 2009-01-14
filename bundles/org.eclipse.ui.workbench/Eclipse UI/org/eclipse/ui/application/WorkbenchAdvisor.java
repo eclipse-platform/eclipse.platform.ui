@@ -524,12 +524,12 @@ public abstract class WorkbenchAdvisor {
 
 		if (getWorkbenchConfigurer().getWorkbench().getIntroManager()
 				.hasIntro()) {
-			getWorkbenchConfigurer().getWorkbench().getIntroManager()
-					.showIntro(configurer.getWindow(), false);
-
 			PrefUtil.getAPIPreferenceStore().setValue(
 					IWorkbenchPreferenceConstants.SHOW_INTRO, false);
 			PrefUtil.saveAPIPrefs();
+			
+			getWorkbenchConfigurer().getWorkbench().getIntroManager()
+					.showIntro(configurer.getWindow(), false);
 		}
 	}
 

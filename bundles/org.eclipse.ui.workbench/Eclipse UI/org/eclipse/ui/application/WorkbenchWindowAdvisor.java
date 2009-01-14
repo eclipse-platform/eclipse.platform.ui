@@ -169,12 +169,12 @@ public class WorkbenchWindowAdvisor {
         boolean isNewIntroContentAvailable = introManager.isNewContentAvailable();
         
 		if (hasIntro && (showIntro || isNewIntroContentAvailable)) {
+			PrefUtil.getAPIPreferenceStore().setValue(
+					IWorkbenchPreferenceConstants.SHOW_INTRO, false);
+			PrefUtil.saveAPIPrefs();
+			
             introManager
                     .showIntro(getWindowConfigurer().getWindow(), false);
-
-            PrefUtil.getAPIPreferenceStore().setValue(
-                    IWorkbenchPreferenceConstants.SHOW_INTRO, false);
-            PrefUtil.saveAPIPrefs();
         }
     }
 
