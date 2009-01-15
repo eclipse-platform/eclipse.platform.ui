@@ -428,7 +428,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * Return all of the label providers that are enabled for the given element.
 	 * A label provider is 'enabled' if its corresponding content provider
 	 * returned the element, or the element is described in the content
-	 * extension's <b>triggerPoints</b> expression.
+	 * extension's <b>possibleChild</b> expression.
 	 * 
 	 * @param anElement
 	 *            An element from the tree (any element contributed to the
@@ -504,13 +504,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	/**
 	 * Search for extensions that declare the given element in their
-	 * <b>possibleChildren</b> expression.
+	 * <b>triggerPoint</b> expression.
 	 * 
 	 * @param anElement
 	 *            The element to use in the query
 	 * @return The set of {@link INavigatorContentExtension}s that are
 	 *         <i>visible</i> and <i>active</i> for this content service and
-	 *         have a <b>possibleChildren</b> expression that is <i>enabled</i>
+	 *         have a <b>triggerPoint</b> expression that is <i>enabled</i>
 	 *         for the given element.
 	 */
 	public Set findOverrideableContentExtensionsByTriggerPoint(Object anElement) {
