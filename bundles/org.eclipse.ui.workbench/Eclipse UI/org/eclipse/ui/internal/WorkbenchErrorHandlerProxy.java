@@ -36,4 +36,13 @@ public class WorkbenchErrorHandlerProxy extends AbstractStatusHandler {
 		Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler().handle(
 				statusAdapter, style);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#supportsNotification(int)
+	 */
+	public boolean supportsNotification(int type) {
+		return Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler()
+				.supportsNotification(type);
+	}
+	
 }

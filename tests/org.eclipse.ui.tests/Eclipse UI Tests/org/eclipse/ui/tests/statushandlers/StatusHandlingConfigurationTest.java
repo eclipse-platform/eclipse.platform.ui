@@ -13,9 +13,11 @@ package org.eclipse.ui.tests.statushandlers;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
 
 import junit.framework.TestCase;
 
@@ -37,5 +39,24 @@ public class StatusHandlingConfigurationTest extends TestCase {
 		FreeStatusHandler.setTester(tester);
 		StatusManager.getManager().handle(adapter);
 		assertEquals(true, called[0]);
+	}
+	
+	public void testDefaultNotification(){
+		final StatusAdapter adapter = new StatusAdapter(new Status(IStatus.ERROR,"fakeplugin","testmessage"));
+		adapter.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
+		final StatusAdapter adapter2 = new StatusAdapter(new Status(IStatus.ERROR,"fakeplugin2","testmessage2"));
+		final boolean[] called = new boolean[]{false};
+		StatusManager.getManager().addListener(new StatusManager.INotificationListener(){
+					public void statusManagerNotified(int type,
+							StatusAdapter[] adapters) {
+						if (type == INotificationTypes.HANDLED)
+							called[0] = true;
+					}
+		});
+		StatusManager.getManager().handle(adapter, StatusManager.SHOW);
+		assertEquals(false, called[0]);
+		StatusManager.getManager().handle(adapter2, StatusManager.SHOW);
+		assertEquals(true, called[0]);
+		
 	}
 }

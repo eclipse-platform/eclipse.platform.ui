@@ -136,4 +136,20 @@ public abstract class AbstractStatusHandler {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	/**
+	 * This methods indicates if particular notification type is supported and
+	 * if {@link StatusManager#fireNotification(int, StatusAdapter[])} will be
+	 * called after the event occurs. Only known notification types should be
+	 * accepted, whereas unknown types should be always rejected.
+	 * 
+	 * @param type
+	 *            - a notification type that should be checked.
+	 * @return true if particular event notification is supported, false
+	 *         otherwise
+	 * @since 3.5
+	 */
+	public boolean supportsNotification(int type){
+		return false;
+	}
 }

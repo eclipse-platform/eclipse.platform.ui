@@ -67,6 +67,8 @@ import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.statushandlers.StatusManager.INotificationListener;
+import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -137,6 +139,12 @@ public class ProgressManager extends ProgressProvider implements
 	// table
 	private Hashtable imageKeyTable = new Hashtable();
 
+	/*
+	 * A listener that allows for removing error jobs & indicators when errors
+	 * are handled.
+	 */
+	private INotificationListener notificationListener;
+
 	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1$
 
 	/**
@@ -158,6 +166,8 @@ public class ProgressManager extends ProgressProvider implements
 		if (singleton == null) {
 			return;
 		}
+		StatusManager.getManager().removeListener(
+				singleton.notificationListener);
 		singleton.shutdown();
 	}
 
@@ -370,6 +380,17 @@ public class ProgressManager extends ProgressProvider implements
 		} catch (MalformedURLException e) {
 			ProgressManagerUtil.logException(e);
 		}
+		this.notificationListener = new StatusManager.INotificationListener(){
+
+			public void statusManagerNotified(int type, StatusAdapter[] adapters) {
+				if(type == INotificationTypes.HANDLED){
+					FinishedJobs.getInstance().removeErrorJobs();
+					StatusAdapterHelper.getInstance().clear();
+				}
+			}
+			
+		};
+		StatusManager.getManager().addListener(notificationListener);
 	}
 
 	/**

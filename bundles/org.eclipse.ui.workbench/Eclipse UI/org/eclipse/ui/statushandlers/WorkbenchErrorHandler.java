@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
 
 /**
  * This is a default workbench error handler.
@@ -26,6 +27,16 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.3
  */
 public class WorkbenchErrorHandler extends AbstractStatusHandler {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#supportsNotification(int)
+	 */
+	public boolean supportsNotification(int type) {
+		if (type == INotificationTypes.HANDLED) {
+			return true;
+		}
+		return super.supportsNotification(type);
+	}
 
 	private WorkbenchStatusDialogManager statusDialogManager;
 

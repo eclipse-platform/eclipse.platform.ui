@@ -95,6 +95,7 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.internal.statushandlers.DefaultDetailsArea;
 import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
 
 import com.ibm.icu.text.DateFormat;
 
@@ -1224,6 +1225,13 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 			// Delay prompting if the status adapter property is set
 			if (shouldPrompt(statusAdapter)
 					&& shouldDisplay(statusAdapter, displayMask)) {
+				// notify all interested parties that status adapters will be
+				// handled
+				StatusManager.getManager().fireNotification(
+						INotificationTypes.HANDLED,
+						(StatusAdapter[]) errors
+								.toArray(new StatusAdapter[] {}));
+				
 				if (dialog == null) {
 					dialog = new InternalDialog(getParentShell(),
 							WorkbenchStatusDialogManager.this, shouldBeModal());
@@ -1239,6 +1247,9 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 			}
 
 		} else {
+			StatusManager.getManager().fireNotification(
+					INotificationTypes.HANDLED,
+					new StatusAdapter[] { statusAdapter });
 			if (statusAdapter
 					.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != null) {
 				statusAdapter.setProperty(
