@@ -425,6 +425,7 @@
             id="org.eclipse.ui.tests.navigator.SampleExportWizard"
             name="Test CNF Export Wizard  (Does Nothing)"/>
    </extension>
+
 	<extension
 	      point="org.eclipse.ui.navigator.navigatorContent"> 
       <commonWizard
@@ -475,5 +476,16 @@
 			</or>         
          </enablement>            
       </commonWizard>
+      
+      <!-- bug 204837 commonWizard with no pages displays empty dialog --> 
+	  <commonWizard type="new"
+            associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
+            wizardId="org.eclipse.ui.editors.wizards.UntitledTextFileWizard">
+            menuGroupId="org.eclipse.ui.tests.navigator"
+         <enablement>
+            <adapt type="org.eclipse.core.resources.IResource" /> 
+         </enablement>
+      </commonWizard>
+
    </extension> 
 </plugin>

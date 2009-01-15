@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * meken@users.sourceforge.net - bug 204837 commonWizard with no pages displays empty dialog
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.wizards;
 
@@ -85,13 +86,17 @@ public class WizardShortcutAction extends Action implements IPluginContribution 
 		} else {
 			wizard.init(window.getWorkbench(), StructuredSelection.EMPTY);
 		}
-
-		Shell parent = window.getShell();
-		WizardDialog dialog = new WizardDialog(parent, wizard);
-		dialog.create();
-		// WorkbenchHelp.setHelp(dialog.getShell(),
-		// IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
-		dialog.open();
+		
+		if(descriptor.canFinishEarly() && !descriptor.hasPages()) {
+			wizard.performFinish();
+		} else {
+			Shell parent = window.getShell();
+			WizardDialog dialog = new WizardDialog(parent, wizard);
+			dialog.create();
+			// WorkbenchHelp.setHelp(dialog.getShell(),
+			// IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
+			dialog.open();
+		}
 	}
 
 	/*
