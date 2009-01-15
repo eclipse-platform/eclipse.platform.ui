@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 
@@ -77,22 +76,11 @@ public class RemoteHelp {
 	}
 	
 	/*
-	 * Returns whether or not the help system is allowed to be enabled in the
-	 * current mode.
-	 */
-	public static boolean isAllowed() {
-		return (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER);
-	}
-	
-	/*
 	 * Returns whether or not the help system is currently configured for remote
 	 * help content.
 	 */
 	public static boolean isEnabled() {
-		if (isAllowed()) {
-			return Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
-		}
-		return false;
+		return Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 	}
 	
 	/*

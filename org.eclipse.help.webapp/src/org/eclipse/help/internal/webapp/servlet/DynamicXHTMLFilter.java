@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.help.internal.base.remote.RemoteHelp;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
@@ -77,7 +77,8 @@ public class DynamicXHTMLFilter implements IFilter {
 				}
 				
 				try {
-					InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, RemoteHelp.isAllowed());
+					boolean filter = BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER;
+					InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, filter);
 					transferContent(in2, out);
 				}
 				catch (Throwable t) {

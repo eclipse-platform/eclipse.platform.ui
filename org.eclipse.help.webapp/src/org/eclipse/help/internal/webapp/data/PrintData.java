@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.remote.RemoteHelp;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.HTMLDocParser;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
@@ -188,7 +188,8 @@ public class PrintData extends RequestData {
 					charset = "UTF-8"; //$NON-NLS-1$
 				}
 				InputStream rawInput = HelpSystem.getHelpContent(href, locale);
-				in = DynamicXHTMLProcessor.process(href, rawInput, locale, RemoteHelp.isAllowed());
+				boolean filter = BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER;
+				in = DynamicXHTMLProcessor.process(href, rawInput, locale, filter);
 				Reader reader = new BufferedReader(new InputStreamReader(in, charset));
 				char[] cbuf = new char[4096];
 				int num;
