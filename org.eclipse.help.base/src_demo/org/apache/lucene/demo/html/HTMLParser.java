@@ -316,36 +316,33 @@ null)
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case ArgValue:
       t = jj_consume_token(ArgValue);
-                                              {if (true) return t;}
-      break;
+      return t;
     default:
       jj_la1[5] = jj_gen;
       if (jj_2_1(2)) {
         jj_consume_token(ArgQuote1);
         jj_consume_token(CloseQuote1);
-                                              {if (true) return t;}
+        return t;
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case ArgQuote1:
           jj_consume_token(ArgQuote1);
           t = jj_consume_token(Quote1Text);
           jj_consume_token(CloseQuote1);
-                                              {if (true) return t;}
-          break;
+          return t;
         default:
           jj_la1[6] = jj_gen;
           if (jj_2_2(2)) {
             jj_consume_token(ArgQuote2);
             jj_consume_token(CloseQuote2);
-                                              {if (true) return t;}
+            return t;
           } else {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
             case ArgQuote2:
               jj_consume_token(ArgQuote2);
               t = jj_consume_token(Quote2Text);
               jj_consume_token(CloseQuote2);
-                                              {if (true) return t;}
-              break;
+              return t;
             default:
               jj_la1[7] = jj_gen;
               jj_consume_token(-1);
@@ -355,7 +352,7 @@ null)
         }
       }
     }
-    throw new Error("Missing return statement in function"); //$NON-NLS-1$
+    //throw new Error("Missing return statement in function"); //$NON-NLS-1$
   }
 
   final public Token Decl() throws ParseException {
@@ -394,8 +391,8 @@ null)
       }
     }
     jj_consume_token(TagEnd);
-    {if (true) return t;}
-    throw new Error("Missing return statement in function"); //$NON-NLS-1$
+    return t;
+    //throw new Error("Missing return statement in function"); //$NON-NLS-1$
   }
 
   final public void CommentTag() throws ParseException {
