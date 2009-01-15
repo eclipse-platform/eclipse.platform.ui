@@ -931,9 +931,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void partOpened(IWorkbenchPart part) {
 			// Restore the saved state if any
-			if (part == AbstractTextEditor.this && fMementoToRestore != null && containsSavedState(fMementoToRestore))
+			if (part == AbstractTextEditor.this && fMementoToRestore != null && containsSavedState(fMementoToRestore)) {
 				doRestoreState(fMementoToRestore);
-			fMementoToRestore= null;
+				fMementoToRestore= null;
+			}
 		}
 
 		/**
