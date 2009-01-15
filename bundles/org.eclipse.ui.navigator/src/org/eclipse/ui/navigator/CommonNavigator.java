@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     anton.leherbauer@windriver.com - bug 220599 make CommonNavigator a ShowInSource
+ *     rob.stryker@jboss.com - bug 250198 Slight changes for easier subclassing
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
@@ -38,10 +39,8 @@ import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
-import org.eclipse.ui.internal.navigator.CommonNavigatorManager;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
-import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -104,10 +103,8 @@ import org.eclipse.ui.part.ViewPart;
  * as their target menu id.
  * 
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated or subclassed
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
- *  
  * @since 3.2
  */
 public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablePart, ISaveablesSource, IShowInTarget {
@@ -475,6 +472,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * 
 	 * @return The Common Navigator Manager class which handles menu population
 	 *         and ActionBars
+	 *         
+	 * @since 3.4        
 	 */
 	protected CommonNavigatorManager createCommonManager() {
 		return new CommonNavigatorManager(this, memento);
@@ -649,10 +648,20 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		return StructuredSelection.EMPTY;
 	}
 
-	private synchronized LinkHelperService getLinkHelperService() {
+	/**
+	 * @since 3.4
+	 */
+	protected synchronized LinkHelperService getLinkHelperService() {
 		if (linkService == null)
 			linkService = new LinkHelperService((NavigatorContentService)getCommonViewer().getNavigatorContentService());
 		return linkService;
+	}
+	
+	/**
+	 * @since 3.4
+	 */
+	protected IMemento getMemento() {
+		return memento;
 	}
  
 }

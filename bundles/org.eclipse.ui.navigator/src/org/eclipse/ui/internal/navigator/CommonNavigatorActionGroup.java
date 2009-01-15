@@ -20,11 +20,11 @@ import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.navigator.actions.CollapseAllAction;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
-import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
 import org.eclipse.ui.internal.navigator.filters.FilterActionGroup;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
+import org.eclipse.ui.navigator.LinkHelperService;
 
 /**
  * 

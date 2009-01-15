@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.navigator.extensions;
+package org.eclipse.ui.navigator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,11 +22,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.navigator.ILinkHelper;
+import org.eclipse.ui.internal.navigator.extensions.LinkHelperDescriptor;
+import org.eclipse.ui.internal.navigator.extensions.LinkHelperManager;
 
 /**
- * @since 3.2
+ * Manages the link helpers which are used to define the behavior of
+ * the link with editor function.
  * 
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @since 3.4
  */
 public class LinkHelperService {
 
@@ -40,7 +44,7 @@ public class LinkHelperService {
 	 * @param aContentService
 	 *            The associated content service for this link helper service.
 	 */
-	public LinkHelperService(NavigatorContentService aContentService) {
+	LinkHelperService(NavigatorContentService aContentService) {
 		contentService = aContentService;
 	}
 

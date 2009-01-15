@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.navigator;
+package org.eclipse.ui.navigator;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
@@ -38,14 +38,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.RetargetAction;
-import org.eclipse.ui.navigator.CommonNavigator;
-import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.CommonViewerSiteFactory;
-import org.eclipse.ui.navigator.ICommonActionConstants;
-import org.eclipse.ui.navigator.ICommonViewerSite;
-import org.eclipse.ui.navigator.IDescriptionProvider;
-import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.NavigatorActionService;
+import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -54,11 +48,9 @@ import org.eclipse.ui.progress.UIJob;
  * including the display and population of the context menu and the registration
  * of extensions for opening content.
  * </p>
- * <p>
- * This class is not intended to be instantiated or subclassed by clients
- * </p>
  * 
- * @since 3.2
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @since 3.4
  */
 public final class CommonNavigatorManager implements ISelectionChangedListener {
 
