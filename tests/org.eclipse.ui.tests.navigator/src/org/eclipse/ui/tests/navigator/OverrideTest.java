@@ -22,7 +22,7 @@ public class OverrideTest extends NavigatorTestBase {
 	}
 
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
-	public void NOTYETtestSimpleResFirst() throws Exception {
+	public void testSimpleResFirst() throws Exception {
 
 		if (!false) {
 			contentService.bindExtensions(new String[] { TEST_CONTENT1,
@@ -46,7 +46,7 @@ public class OverrideTest extends NavigatorTestBase {
 	}
 
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
-	public void NOTYETtestSimpleResLast() throws Exception {
+	public void testSimpleResLast() throws Exception {
 
 		if (!false) {
 			contentService.bindExtensions(new String[] { TEST_CONTENT2,
@@ -57,6 +57,8 @@ public class OverrideTest extends NavigatorTestBase {
 
 		viewer.refresh();
 		TreeItem[] rootItems = viewer.getTree().getItems();
+		if (!rootItems[0].getText().startsWith("Cyan"))
+			fail("Wrong text: " + rootItems[0].getText());
 		assertEquals(TestLabelProviderCyan.getTestColor(), rootItems[0]
 				.getBackground(0));
 	}

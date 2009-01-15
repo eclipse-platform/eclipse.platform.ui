@@ -45,17 +45,19 @@ public class TestExtensionTreeData {
 
 	public TestExtensionTreeData[] getChildren() {
 		Set updatedChildren = new HashSet();
-		String childrenString = model.getProperty(getName());
-		if (childrenString != null) {
-			String[] childrenElements = childrenString.split(",");
-			for (int i = 0; i < childrenElements.length; i++) {
-				if (children.containsKey(childrenElements[i])) {
-					updatedChildren.add(children.get(childrenElements[i]));
-				} else {
-					TestExtensionTreeData newChild = new TestExtensionTreeData(
-							this, childrenElements[i], model, container);
-					children.put(newChild.getName(), newChild);
-					updatedChildren.add(newChild);
+		if (model != null) {
+			String childrenString = model.getProperty(getName());
+			if (childrenString != null) {
+				String[] childrenElements = childrenString.split(",");
+				for (int i = 0; i < childrenElements.length; i++) {
+					if (children.containsKey(childrenElements[i])) {
+						updatedChildren.add(children.get(childrenElements[i]));
+					} else {
+						TestExtensionTreeData newChild = new TestExtensionTreeData(
+								this, childrenElements[i], model, container);
+						children.put(newChild.getName(), newChild);
+						updatedChildren.add(newChild);
+					}
 				}
 			}
 		}
