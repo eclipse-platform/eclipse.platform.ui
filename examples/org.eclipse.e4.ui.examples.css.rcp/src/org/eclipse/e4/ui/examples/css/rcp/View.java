@@ -28,7 +28,7 @@ public class View extends ViewPart {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		top.setLayout(layout);
-		setCSSClassName(top, "banner");
+		setCSSClassName(top, "messageBanner");
 		// top banner
 		Composite banner = new Composite(top, SWT.NONE);
 		banner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
@@ -37,7 +37,7 @@ public class View extends ViewPart {
 		layout.marginWidth = 10;
 		layout.numColumns = 2;
 		banner.setLayout(layout);
-		setCSSClassName(banner, "banner");
+		setCSSClassName(banner, "messageBanner");
 		
 		// setup bold font
 		// we'll do this in CSS now instead
@@ -46,20 +46,20 @@ public class View extends ViewPart {
 		Label l = new Label(banner, SWT.WRAP);
 		l.setText("Subject:");
 //		l.setFont(boldFont);
-		setCSSClassName(l, "title");
+		setCSSClassName(l, "messageBannerTitle");
 
 		l = new Label(banner, SWT.WRAP);
-		setCSSID(l, "messageSubject");
+		setCSSClassName(l, "messageBannerContent");
 		l.setText("This is a message about the cool Eclipse RCP!");
 		
 		l = new Label(banner, SWT.WRAP);
 		l.setText("From:");
 //		l.setFont(boldFont);
-		setCSSClassName(l, "title");
+		setCSSClassName(l, "messageBannerTitle");
     
 		final Link link = new Link(banner, SWT.NONE);
 		link.setText("<a>nicole@mail.org</a>");
-		setCSSID(link, "messageSender");
+		setCSSClassName(link, "messageBannerContent");
 		link.addSelectionListener(new SelectionAdapter() {    
 			public void widgetSelected(SelectionEvent e) {
 				MessageDialog.openInformation(getSite().getShell(), "Not Implemented", "Imagine the address book or a new message being created now.");
@@ -69,11 +69,12 @@ public class View extends ViewPart {
 		l = new Label(banner, SWT.WRAP);
 		l.setText("Date: ");
 //		l.setFont(boldFont);
-		setCSSClassName(l, "title");
+		setCSSClassName(l, "messageBannerTitle");
 		l = new Label(banner, SWT.WRAP);
 		dateWidget = l;		
 		l.setText("10:34 am "); // add space since we know it will be italic and that gets clipped due to SWT bug
 
+		setCSSClassName(l, "messageBannerContent");
 		setCSSID(l, "messageDate");
 		updateCSSForReadState();
 		

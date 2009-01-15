@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * This class controls all aspects of the application's execution
@@ -21,7 +20,7 @@ public class Application implements IApplication {
 	public Object start(IApplicationContext context) {
 		Display display = PlatformUI.createDisplay();
 		try {
-			PrefUtil.getAPIPreferenceStore().putValue(
+			Activator.getDefault().getPreferenceStore().putValue(
 					IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
 					CSSPresentationFactory.ID);
 			

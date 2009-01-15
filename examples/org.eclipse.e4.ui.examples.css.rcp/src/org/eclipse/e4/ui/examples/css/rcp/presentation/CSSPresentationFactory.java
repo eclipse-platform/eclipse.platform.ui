@@ -8,7 +8,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultMultiTabListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultSimpleTabListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultThemeListener;
-import org.eclipse.ui.internal.presentations.defaultpresentation.EmptyTabFolder;
 import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
 import org.eclipse.ui.internal.presentations.util.StandardEditorSystemMenu;
 import org.eclipse.ui.internal.presentations.util.StandardViewSystemMenu;

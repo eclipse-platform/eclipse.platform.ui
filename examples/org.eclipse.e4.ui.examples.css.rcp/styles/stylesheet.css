@@ -22,26 +22,17 @@ Tree {
 	background-color: #f8f8f8;
 }
 
-.banner {
+.messageBanner {
     background-color: #f0f0f0;
 }
 
-.title {
+.messageBannerTitle {
     font-weight: bold;
     background-color: #f0f0f0;
 }
 
-#messageSubject {
+.messageBannerContent {
     background-color: #f0f0f0;
-}
-
-#messageSender {
-    background-color: #f0f0f0;
-}
-
-#messageDate {
-    background-color: #f0f0f0;
-}
 
 .messageDateUnRead {
     font-style: italic;
