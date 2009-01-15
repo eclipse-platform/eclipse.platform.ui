@@ -382,20 +382,16 @@ public class WorkbenchStatusDialogManager {
 		 * @see org.eclipse.jface.window.Window#open()
 		 */
 		public int open() {
-			if (shouldDisplay(statusAdapter, displayMask)) {
-				int result = super.open();
-				if (modalitySwitch) {
-					if (detailsOpened) {
-						showDetailsArea();
-					}
-					if (trayOpened) {
-						openTray(supportTray);
-					}
+			int result = super.open();
+			if (modalitySwitch) {
+				if (detailsOpened) {
+					showDetailsArea();
 				}
-				return result;
+				if (trayOpened) {
+					openTray(supportTray);
+				}
 			}
-			setReturnCode(OK);
-			return OK;
+			return result;
 		}
 
 		/* (non-Javadoc)
@@ -1115,7 +1111,8 @@ public class WorkbenchStatusDialogManager {
 			errors.add(statusAdapter);
 			modals.put(statusAdapter, new Boolean(modal));
 			// Delay prompting if the status adapter property is set
-			if (shouldPrompt(statusAdapter)) {
+			if (shouldPrompt(statusAdapter)
+					&& shouldDisplay(statusAdapter, displayMask)) {
 				if (dialog == null) {
 					dialog = new InternalDialog(getParentShell(),
 							WorkbenchStatusDialogManager.this, shouldBeModal());
