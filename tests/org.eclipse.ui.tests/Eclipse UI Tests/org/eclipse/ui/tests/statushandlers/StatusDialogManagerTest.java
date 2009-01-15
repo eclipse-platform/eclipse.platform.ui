@@ -595,6 +595,18 @@ public class StatusDialogManagerTest extends TestCase {
 		assertEquals(MESSAGE_2, titleLabel.getText());
 		assertEquals(JOB_NAME, table.getItem(1).getText());
 	}
+	
+	public void testBug260937(){
+		WorkbenchStatusDialogManager wsdm = new WorkbenchStatusDialogManager(
+				IStatus.CANCEL, null);
+		StatusAdapter sa = createStatusAdapter(MESSAGE_1);
+		try {
+			wsdm.addStatusAdapter(sa, false);
+			assertTrue(true);
+		} catch (NullPointerException npe){
+			fail();
+		}
+	}
 
 	/**
 	 * Delivers custom support area.
