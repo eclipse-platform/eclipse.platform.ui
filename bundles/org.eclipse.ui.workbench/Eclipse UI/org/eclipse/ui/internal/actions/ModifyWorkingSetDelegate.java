@@ -271,10 +271,11 @@ public class ModifyWorkingSetDelegate extends
 				}
 				else if (adaptables.length > 0) {
 					for (int k = 0; k < adaptables.length; k++) {
-						if (existingElements.contains(adaptables[k]))
+						if (existingElements.contains(adaptables[k])){
 							visible = true; // show if any element
 											// is present in removal
-						break;
+							break;
+						}
 					}
 				}
 				
