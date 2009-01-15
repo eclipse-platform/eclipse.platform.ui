@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 208322, 221351, 208858, 146397
+ *     Matthew Hall - bugs 208322, 221351, 208858, 146397, 249526
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
@@ -57,6 +58,22 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		observable = getObservable();
+	}
+
+	public void testConstruction_CallsObservableCreated() {
+		final IObservable[] created = new IObservable[1];
+		IObservable[] collected = ObservableTracker.runAndCollect(new Runnable() {
+			public void run() {
+				created[0] = delegate.createObservable(new CurrentRealm(true));
+			}
+		});
+		assertTrue(collected.length > 0);
+		boolean wasCollected = false;
+		for (int i = 0; i < collected.length; i++) {
+			if (collected[i] == created[0])
+				wasCollected = true;
+		}
+		assertTrue(wasCollected);
 	}
 
 	public void testGetRealm_NotNull() throws Exception {

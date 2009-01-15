@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 182822
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bugs 218269, 146397
+ *     Matthew Hall - bugs 218269, 146397, 249526
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -109,6 +110,7 @@ public final class AggregateValidationStatus implements IObservableValue {
 	 */
 	public AggregateValidationStatus(final Realm realm,
 			final IObservableCollection validationStatusProviders, int strategy) {
+		ObservableTracker.observableCreated(this);
 		if (strategy == MERGED) {
 			implementation = new ComputedValue(realm, IStatus.class) {
 				protected Object calculate() {

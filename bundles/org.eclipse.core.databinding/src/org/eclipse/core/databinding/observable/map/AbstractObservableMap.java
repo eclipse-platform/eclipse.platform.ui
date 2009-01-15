@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bugs 118516, 146397, 226289, 246103
+ *     Matthew Hall - bugs 118516, 146397, 226289, 246103, 249526
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -21,6 +21,7 @@ import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.runtime.Assert;
@@ -84,6 +85,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	 */
 	public AbstractObservableMap(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
+		ObservableTracker.observableCreated(this);
 		changeSupport = new PrivateChangeSupport(realm);
 	}
 

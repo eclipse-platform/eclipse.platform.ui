@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223114, 226289, 247875, 246782
+ *     Matthew Hall - bug 223114, 226289, 247875, 246782, 249526
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -90,7 +90,7 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 	}
 
 	private void updateDetailMap() {
-		Object masterValue = master.getValue();
+		final Object masterValue = master.getValue();
 		if (detailMap != null) {
 			detailMap.removeMapChangeListener(detailChangeListener);
 			detailMap.dispose();
@@ -100,8 +100,12 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 			detailMap = null;
 			wrappedMap = Collections.EMPTY_MAP;
 		} else {
-			detailMap = (IObservableMap) detailFactory
-					.createObservable(masterValue);
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					detailMap = (IObservableMap) detailFactory
+							.createObservable(masterValue);
+				}
+			});
 			DetailObservableHelper.warnIfDifferentRealms(getRealm(),
 					detailMap.getRealm());
 			wrappedMap = detailMap;

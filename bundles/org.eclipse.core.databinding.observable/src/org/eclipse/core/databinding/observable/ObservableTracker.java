@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 210115, 146397
+ *     Matthew Hall - bugs 210115, 146397, 249526
  *******************************************************************************/
 package org.eclipse.core.databinding.observable;
 
@@ -68,7 +68,9 @@ public class ObservableTracker {
 
 	private static ThreadLocal currentStaleListener = new ThreadLocal();
 
-	private static ThreadLocal currentObservableSet = new ThreadLocal();
+	private static ThreadLocal currentGetterCalledSet = new ThreadLocal();
+
+	private static ThreadLocal currentObservableCreatedSet = new ThreadLocal();
 
 	/**
 	 * Invokes the given runnable, and returns the set of IObservables that were
@@ -88,7 +90,7 @@ public class ObservableTracker {
 	public static IObservable[] runAndMonitor(Runnable runnable,
 			IChangeListener changeListener, IStaleListener staleListener) {
 		// Remember the previous value in the listener stack
-		Set lastObservableSet = (Set) currentObservableSet.get();
+		Set lastObservableSet = (Set) currentGetterCalledSet.get();
 		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
 				.get();
 		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener
@@ -96,7 +98,7 @@ public class ObservableTracker {
 
 		Set observableSet = new HashSet();
 		// Push the new listeners to the top of the stack
-		currentObservableSet.set(observableSet);
+		currentGetterCalledSet.set(observableSet);
 		currentChangeListener.set(changeListener);
 		currentStaleListener.set(staleListener);
 		try {
@@ -104,7 +106,7 @@ public class ObservableTracker {
 		} finally {
 			// Pop the new listener off the top of the stack (by restoring the
 			// previous listener)
-			currentObservableSet.set(lastObservableSet);
+			currentGetterCalledSet.set(lastObservableSet);
 			currentChangeListener.set(lastChangeListener);
 			currentStaleListener.set(lastStaleListener);
 		}
@@ -120,6 +122,41 @@ public class ObservableTracker {
 	}
 	
 	/**
+	 * Invokes the given runnable, and returns the set of IObservables that were
+	 * created by the runnable. If the runnable calls this method recursively,
+	 * the result will not contain IObservables that were created within the
+	 * inner runnable.
+	 * 
+	 * @param runnable
+	 *            runnable to execute
+	 * @return an array of unique observable objects
+	 * @since 1.2
+	 */
+	public static IObservable[] runAndCollect(Runnable runnable) {
+		Set lastObservableCreatedSet = (Set) currentObservableCreatedSet.get();
+
+		Set observableSet = new HashSet();
+		// Push the new listeners to the top of the stack
+		currentObservableCreatedSet.set(observableSet);
+		try {
+			runnable.run();
+		} finally {
+			// Pop the new listener off the top of the stack (by restoring the
+			// previous listener)
+			currentObservableCreatedSet.set(lastObservableCreatedSet);
+		}
+
+		int i = 0;
+		IObservable[] result = new IObservable[observableSet.size()];
+		for (Iterator it = observableSet.iterator(); it.hasNext();) {
+			IdentityWrapper wrapper = (IdentityWrapper) it.next();
+			result[i++] = (IObservable) wrapper.unwrap();
+		}
+
+		return result;
+	}
+
+	/**
 	 * Runs the given runnable without tracking dependencies.
 	 * @param runnable
 	 * 
@@ -127,12 +164,14 @@ public class ObservableTracker {
 	 */
 	public static void runAndIgnore(Runnable runnable) {
 		// Remember the previous value in the listener stack
-		Set lastObservableSet = (Set) currentObservableSet.get();
+		Set lastGetterCalledSet = (Set) currentGetterCalledSet.get();
+		Set lastObservableCreatedSet = (Set) currentObservableCreatedSet.get();
 		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
 				.get();
 		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener
 				.get();
-		currentObservableSet.set(null);
+		currentGetterCalledSet.set(null);
+		currentObservableCreatedSet.set(null);
 		currentChangeListener.set(null);
 		currentStaleListener.set(null);
 		try {
@@ -140,7 +179,8 @@ public class ObservableTracker {
 		} finally {
 			// Pop the new listener off the top of the stack (by restoring the
 			// previous listener)
-			currentObservableSet.set(lastObservableSet);
+			currentGetterCalledSet.set(lastGetterCalledSet);
+			currentObservableCreatedSet.set(lastObservableCreatedSet);
 			currentChangeListener.set(lastChangeListener);
 			currentStaleListener.set(lastStaleListener);
 		}
@@ -175,8 +215,8 @@ public class ObservableTracker {
 			Assert.isTrue(false, "Getter called outside realm of observable " //$NON-NLS-1$
 					+ toString(observable));
 
-		Set lastObservableSet = (Set) currentObservableSet.get();
-		if (lastObservableSet == null) {
+		Set lastGetterCalledSet = (Set) currentGetterCalledSet.get();
+		if (lastGetterCalledSet == null) {
 			return;
 		}
 		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
@@ -185,8 +225,8 @@ public class ObservableTracker {
 				.get();
 
 		boolean added = false;
-		if (lastObservableSet != null) {
-			added = lastObservableSet.add(new IdentityWrapper(observable));
+		if (lastGetterCalledSet != null) {
+			added = lastGetterCalledSet.add(new IdentityWrapper(observable));
 		}
 
 		// If anyone is listening for observable usage...
@@ -195,6 +235,20 @@ public class ObservableTracker {
 		}
 		if (added && lastStaleListener != null) {
 			observable.addStaleListener(lastStaleListener);
+		}
+	}
+
+	/**
+	 * Notifies the ObservableTracker that an observable was created.
+	 * 
+	 * @param observable
+	 *            the observable that was created
+	 * @since 1.2
+	 */
+	public static void observableCreated(IObservable observable) {
+		Set lastObservableCreatedSet = (Set) currentObservableCreatedSet.get();
+		if (lastObservableCreatedSet != null) {
+			lastObservableCreatedSet.add(new IdentityWrapper(observable));
 		}
 	}
 }

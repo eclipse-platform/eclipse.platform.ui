@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matt Carter - initial API and implementation (bug 212518)
- *     Matthew Hall - bug 212518, 146397
+ *     Matthew Hall - bug 212518, 146397, 249526
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable;
 
@@ -58,6 +58,7 @@ public class ConstantObservableValue implements IObservableValue {
 		this.realm = realm;
 		this.value = value;
 		this.type = type;
+		ObservableTracker.observableCreated(this);
 	}
 
 	public Object getValueType() {

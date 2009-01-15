@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 210115)
+ *     Matthew Hall - bug 249526
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable;
 
 import org.eclipse.core.databinding.observable.*;
 import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
@@ -30,13 +32,24 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 
 	public void testGetterCalled_ObservableRealmNotCurrent() throws Exception {
 		try {
-			IObservable observable = new ObservableStub(new NotCurrentRealm());
+			IObservable observable = new ObservableStub(new CurrentRealm(false));
 
 			ObservableTracker.getterCalled(observable);
 
 			fail("expected AssertionFailedException");
 		} catch (AssertionFailedException expected) {
 		}
+	}
+
+	public void testRunAndCollect() throws Exception {
+		final IObservable[] created = new IObservable[1];
+		IObservable[] collected = ObservableTracker.runAndCollect(new Runnable() {
+			public void run() {
+				created[0] = new ObservableStub();
+			}
+		});
+		assertEquals(1, collected.length);
+		assertSame(created[0], collected[0]);
 	}
 
 	public static class ObservableStub extends AbstractObservable {
@@ -49,12 +62,6 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public boolean isStale() {
-			return false;
-		}
-	}
-
-	public static class NotCurrentRealm extends Realm {
-		public boolean isCurrent() {
 			return false;
 		}
 	}

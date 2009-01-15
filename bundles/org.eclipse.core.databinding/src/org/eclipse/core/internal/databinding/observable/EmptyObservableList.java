@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 208858, 208332, 146397
+ *     Matthew Hall - bugs 208858, 208332, 146397, 249526
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -21,6 +21,7 @@ import java.util.ListIterator;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -60,6 +61,7 @@ public class EmptyObservableList implements IObservableList {
 	public EmptyObservableList(Realm realm, Object elementType) {
 		this.realm = realm;
 		this.elementType = elementType;
+		ObservableTracker.observableCreated(this);
 	}
 
 	public void addListChangeListener(IListChangeListener listener) {

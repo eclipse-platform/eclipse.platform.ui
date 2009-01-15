@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Bob Smith - bug 198880
+ *     Bob Smith - bug 198880, 249526
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.internal.databinding.Pair;
 
 /**
@@ -82,6 +83,19 @@ public class ObservablesManager {
 			contexts.put(context, new Pair(new Boolean(trackTargets),
 					new Boolean(trackModels)));
 		}
+	}
+
+	/**
+	 * Executes the specified runnable and adds to this manager all observables
+	 * created while executing the runnable.
+	 * 
+	 * @param runnable
+	 *            the runnable to execute
+	 */
+	public void runAndCollect(Runnable runnable) {
+		IObservable[] collected = ObservableTracker.runAndCollect(runnable);
+		for (int i = 0; i < collected.length; i++)
+			addObservable(collected[i]);
 	}
 
 	/**

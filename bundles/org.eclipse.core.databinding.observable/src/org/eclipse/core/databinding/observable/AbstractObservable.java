@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bugs 118516, 146397
+ *     Matthew Hall - bugs 118516, 146397, 249526
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -27,6 +27,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	 */
 	public AbstractObservable(Realm realm) {
 		super(realm);
+		ObservableTracker.observableCreated(this);
 	}
 
 	public synchronized void addChangeListener(IChangeListener listener) {

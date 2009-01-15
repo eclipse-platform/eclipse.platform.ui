@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164653, 167204
- *     Matthew Hall - bugs 118516, 208858, 208332, 247367, 146397
+ *     Matthew Hall - bugs 118516, 208858, 208332, 247367, 146397, 249526
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -53,6 +53,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 */
 	public AbstractObservableList(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
+		ObservableTracker.observableCreated(this);
 		changeSupport = new ChangeSupport(realm){
 			protected void firstListenerAdded() {
 				AbstractObservableList.this.firstListenerAdded();

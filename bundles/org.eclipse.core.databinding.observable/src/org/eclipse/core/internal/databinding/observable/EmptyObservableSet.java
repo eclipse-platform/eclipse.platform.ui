@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 208332, 146397
+ *     Matthew Hall - bugs 208332, 146397, 249526
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -20,6 +20,7 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
@@ -59,6 +60,7 @@ public class EmptyObservableSet implements IObservableSet {
 	public EmptyObservableSet(Realm realm, Object elementType) {
 		this.realm = realm;
 		this.elementType = elementType;
+		ObservableTracker.observableCreated(this);
 	}
 
 	public void addSetChangeListener(ISetChangeListener listener) {
