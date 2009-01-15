@@ -20,7 +20,7 @@ public class Application implements IApplication {
 	public Object start(IApplicationContext context) {
 		Display display = PlatformUI.createDisplay();
 		try {
-			Activator.getDefault().getPreferenceStore().putValue(
+			PlatformUI.getPreferenceStore().setValue(
 					IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
 					CSSPresentationFactory.ID);
 			
