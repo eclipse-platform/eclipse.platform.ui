@@ -26,14 +26,18 @@ Tree {
     background-color: #f0f0f0;
 }
 
-.messageBannerTitle {
+.messageTitle {
     font-weight: bold;
     background-color: #f0f0f0;
 }
 
 .messageBannerContent {
     background-color: #f0f0f0;
+}
 
+#messageSubject {
+	font-size: 11;
+}
 .messageDateUnRead {
     font-style: italic;
 }

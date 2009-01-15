@@ -8,7 +8,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
-	private final Point INITIAL_SIZE = new Point(600, 400);
+	private final Point INITIAL_SIZE = new Point(650, 400);
 	
     public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
         super(configurer);

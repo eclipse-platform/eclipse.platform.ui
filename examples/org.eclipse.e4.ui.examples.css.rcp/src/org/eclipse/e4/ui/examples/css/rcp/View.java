@@ -46,16 +46,17 @@ public class View extends ViewPart {
 		Label l = new Label(banner, SWT.WRAP);
 		l.setText("Subject:");
 //		l.setFont(boldFont);
-		setCSSClassName(l, "messageBannerTitle");
+		setCSSClassName(l, "messageTitle");
 
 		l = new Label(banner, SWT.WRAP);
 		setCSSClassName(l, "messageBannerContent");
+		setCSSID(l, "messageSubject");
 		l.setText("This is a message about the cool Eclipse RCP!");
 		
 		l = new Label(banner, SWT.WRAP);
 		l.setText("From:");
 //		l.setFont(boldFont);
-		setCSSClassName(l, "messageBannerTitle");
+		setCSSClassName(l, "messageTitle");
     
 		final Link link = new Link(banner, SWT.NONE);
 		link.setText("<a>nicole@mail.org</a>");
@@ -69,7 +70,7 @@ public class View extends ViewPart {
 		l = new Label(banner, SWT.WRAP);
 		l.setText("Date: ");
 //		l.setFont(boldFont);
-		setCSSClassName(l, "messageBannerTitle");
+		setCSSClassName(l, "messageTitle");
 		l = new Label(banner, SWT.WRAP);
 		dateWidget = l;		
 		l.setText("10:34 am "); // add space since we know it will be italic and that gets clipped due to SWT bug
