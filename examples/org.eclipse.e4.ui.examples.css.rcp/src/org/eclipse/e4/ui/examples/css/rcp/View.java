@@ -18,6 +18,7 @@ import org.eclipse.ui.part.ViewPart;
 public class View extends ViewPart {
 
 	public static final String ID = "org.eclipse.e4.ui.examples.css.rcp.view";
+	public static View TOPMOST;
 
 	private boolean read = false;
 	private Label dateWidget;
@@ -90,9 +91,17 @@ public class View extends ViewPart {
 						"- use the default about dialog\n"+
 						"- create a product definition\n");
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		TOPMOST = this;
 	}
 
 	public void setFocus() {
+		TOPMOST = this;
+	}
+
+	//Not the recommended way to do this but it's because this examples uses views not editors
+	public boolean isTopMost() {
+		return TOPMOST == this;
 	}
 
 	public void markAsRead() {

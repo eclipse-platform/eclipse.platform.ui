@@ -1,6 +1,7 @@
 package org.eclipse.e4.ui.examples.css.rcp;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -22,10 +23,18 @@ public class MarkAsReadAction extends Action {
     public void run() {
         //Mark the message as read
     	
-		//Ideally this action would only be enabled if a message view was selected
-		IWorkbenchPart part = window.getActivePage().getActivePart();
-		if(part instanceof View) {
-			((View) part).markAsRead();				
+		IWorkbenchPart part = window.getActivePage().getActivePart();		
+		IViewReference[] viewRefs = window.getActivePage().getViewReferences();
+
+		for (int i = 0; i < viewRefs.length; i++) {		
+			IViewReference viewReference = viewRefs[i];
+			if(viewReference.getId().equals(View.ID)) {
+				View messageView = (View) viewReference.getPart(false);
+				if(messageView.isTopMost()) {
+					messageView.markAsRead();
+					return;
+				}
+			}
 		}
     }
 }
