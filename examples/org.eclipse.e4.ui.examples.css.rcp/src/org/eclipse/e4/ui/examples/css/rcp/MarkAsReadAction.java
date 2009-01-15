@@ -23,6 +23,7 @@ public class MarkAsReadAction extends Action {
     public void run() {
         //Mark the message as read
     	
+    	//TODO: Not the recommended way to do this but it's because this examples uses views not editors
 		IWorkbenchPart part = window.getActivePage().getActivePart();		
 		IViewReference[] viewRefs = window.getActivePage().getViewReferences();
 

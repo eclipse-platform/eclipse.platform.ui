@@ -99,7 +99,7 @@ public class View extends ViewPart {
 		TOPMOST = this;
 	}
 
-	//Not the recommended way to do this but it's because this examples uses views not editors
+	//TODO: the recommended way to do this but it's because this examples uses views not editors
 	public boolean isTopMost() {
 		return TOPMOST == this;
 	}
