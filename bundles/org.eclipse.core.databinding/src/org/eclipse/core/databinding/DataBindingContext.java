@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 159539, 140644, 159940, 116920, 159768
- *     Matthew Hall - bugs 118516, 124684, 218269, 260329
+ *     Matthew Hall - bugs 118516, 124684, 218269, 260329, 252732
  *     Boris Bokowski - bug 218269
  *******************************************************************************/
 package org.eclipse.core.databinding;
@@ -349,7 +349,8 @@ public class DataBindingContext {
 
 	/**
 	 * Disposes of this data binding context and all bindings and validation
-	 * status providers that were added to this context.
+	 * status providers that were added to this context. This method must be
+	 * called in the {@link #getValidationRealm() validation realm}.
 	 */
 	public final void dispose() {
 		Binding[] bindingArray = (Binding[]) bindings.toArray(new Binding[bindings.size()]);
