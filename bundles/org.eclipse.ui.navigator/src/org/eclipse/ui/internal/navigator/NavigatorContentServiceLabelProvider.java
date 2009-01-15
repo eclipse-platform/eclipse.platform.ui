@@ -33,7 +33,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
@@ -116,68 +115,39 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object anElement) {
-		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(anElement);
-		String text = null; 
-		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && text == null; ) { 
-			text = findText((NavigatorContentExtension) itr.next(), anElement);
+		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
+		String text = null;
+		for (int i = 0; i < labelProviders.length; i++) {
+			text = labelProviders[i].getText(anElement);
+			if (text != null)
+				return text;
 		}
-		// decorate the element
-		return text == null ? (NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement)) : text; 
+		return NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement);	
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
 	 */
 	public StyledString getStyledText(Object anElement) {
-		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(anElement);
-		StyledString text = null; 
-		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && text == null; ) { 
-			text = findStyledText((NavigatorContentExtension) itr.next(), anElement);
-		}
-		// decorate the element
-		return (text == null)? (new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement))) : text; 
-	}
-	
-	/**
-	 * Search for a styled text label and take overrides into account. 
-	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
-	 * 
-	 * @returns the styled text or <code>null</code> if no extension has been found that provides a label
-	 */
-	private StyledString findStyledText(NavigatorContentExtension foundExtension, Object anElement) { 
-		INavigatorContentDescriptor foundDescriptor;
-		ICommonLabelProvider labelProvider= foundExtension.getLabelProvider();
-		if (labelProvider instanceof IStyledLabelProvider) {
-			StyledString styledText= ((IStyledLabelProvider) labelProvider).getStyledText(anElement);
-			// paranoia check for null, although null is not a valid return value for IStyledLabelProvider.getStyledText
-			if (styledText != null && styledText.length() > 0) {
-				return styledText;
-			}
-		} else {
-			String text= labelProvider.getText(anElement);
-			if (text != null) {
-				return new StyledString(text);
+		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
+		String text = null;
+		for (int i = 0; i < labelProviders.length; i++) {
+			if (labelProviders[i] instanceof IStyledLabelProvider) {
+				StyledString styledText= ((IStyledLabelProvider) labelProviders[i]).getStyledText(anElement);
+				// paranoia check for null, although null is not a valid return value for IStyledLabelProvider.getStyledText
+				if (styledText != null && styledText.length() > 0) {
+					return styledText;
+				}
+			} else {
+				text= labelProviders[i].getText(anElement);
+				if (text != null) {
+					return new StyledString(text);
+				}
 			}
 		}
-		if ((foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
-			return findStyledText(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
-		}  
-		return null;
+		return new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement));	
 	}
 	
-	/**
-	 * Search for text label and take overrides into account. 
-	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
-	 */
-	private String findText(NavigatorContentExtension foundExtension, Object anElement) { 
-		String text = null; 
-		INavigatorContentDescriptor foundDescriptor;  
-		text = foundExtension.getLabelProvider().getText(anElement); 
-		if(text == null && (foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
-			return findText(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
-		}  
-		return text;
-	}
 	
 	/**
 	 * Search for image and take overrides into account. 
