@@ -1562,13 +1562,26 @@
                  style="push">
               <visibleWhen
                     checkEnabled="false">
-                 <with
-                       variable="activePart">
-                    <test
-                          args="org.eclipse.ui.ide.problemsGenerator"
-                          property="org.eclipse.ui.ide.contentGenerator">
-                    </test>
-                 </with>
+                 <and>
+                 	<or>
+                   		 <with variable="activePart">
+                        		<test args="org.eclipse.ui.ide.allMarkersGenerator"
+                          		property="org.eclipse.ui.ide.contentGenerator"/>
+                    	</with>
+                   		<with variable="activePart">
+                      			<test args="org.eclipse.ui.ide.problemsGenerator"
+                       	   			property="org.eclipse.ui.ide.contentGenerator"/>
+                    	</with>
+                 	</or>
+               		<with variable="selection">
+                          	<iterate ifEmpty="false" operator="and">
+                          		<adapt type="org.eclipse.core.resources.IMarker" >
+                            			<test value="org.eclipse.core.resources.problemmarker"
+                          				property="org.eclipse.ui.ide.marker.superType"/>
+                          		</adapt>	
+                          	</iterate>
+                    </with>
+                 </and>
               </visibleWhen>
          </command>
            <command
@@ -2032,13 +2045,26 @@
             class="org.eclipse.ui.internal.views.markers.QuickFixHandler"
             commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals">
          <activeWhen>
-             <with
-                       variable="activePart">
-                    <test
-                          args="org.eclipse.ui.ide.problemsGenerator"
-                          property="org.eclipse.ui.ide.contentGenerator">
-                    </test>
-            </with>
+             <and>
+                 	<or>
+                   		 <with variable="activePart">
+                        		<test args="org.eclipse.ui.ide.allMarkersGenerator"
+                          		property="org.eclipse.ui.ide.contentGenerator"/>
+                    		</with>
+                   		 <with variable="activePart">
+                      			<test args="org.eclipse.ui.ide.problemsGenerator"
+                       	   			property="org.eclipse.ui.ide.contentGenerator"/>
+                    		</with>
+                 	</or>
+               		<with variable="selection">
+                          	<iterate ifEmpty="false" operator="and">
+                          		<adapt type="org.eclipse.core.resources.IMarker" >
+                            			<test value="org.eclipse.core.resources.problemmarker"
+                          				property="org.eclipse.ui.ide.marker.superType"/>
+                          		</adapt>	
+                          	</iterate>
+                    </with>
+                 </and>
          </activeWhen>
          <enabledWhen>
             <and>
