@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorPluginDropAction;
 import org.eclipse.ui.part.PluginDropAdapter;
@@ -51,8 +52,6 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	private static final Transfer[] SUPPORTED_DROP_TRANSFERS = new Transfer[] {
 			LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance(),
 			PluginTransfer.getInstance() };
-
-	private static final boolean DEBUG = false;
 
 	private final INavigatorContentService contentService;
 
@@ -188,7 +187,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	public boolean validateDrop(Object aDropTarget, int theDropOperation,
 			TransferData theTransferData) {
 
-		if (DEBUG) {
+		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDropAdapter.validateDrop (begin)"); //$NON-NLS-1$
 		}
 
@@ -204,7 +203,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			CommonDropAdapterAssistant[] assistants = dndService
 					.findCommonDropAdapterAssistants(target,
 							theTransferData);
-			if (DEBUG) {
+			if (Policy.DEBUG_DND) {
 				System.out
 						.println("CommonDropAdapter.validateDrop found " + assistants.length + " drop assistants"); //$NON-NLS-1$//$NON-NLS-2$
 				for(int i=0; i<assistants.length; i++)
@@ -220,7 +219,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 				}
 				if (valid != null && valid.isOK()) {
 					result = true;
-					if (DEBUG) { 
+					if (Policy.DEBUG_DND) { 
 						System.out
 								.println("CommonDropAdapter.validateDrop found \""+assistants[i].getClass().getName()+"\" would handle drop."); //$NON-NLS-1$ //$NON-NLS-2$ 
 					}					
@@ -229,7 +228,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			}
 		}
 
-		if (DEBUG) {
+		if (Policy.DEBUG_DND) {
 			System.out
 					.println("CommonDropAdapter.validateDrop (returning " + (valid != null ? valid.getSeverity() + ": " + valid.getMessage() : "" + result) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
