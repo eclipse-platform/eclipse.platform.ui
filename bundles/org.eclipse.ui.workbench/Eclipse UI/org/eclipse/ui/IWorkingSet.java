@@ -17,9 +17,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * A working set holds a number of IAdaptable elements. 
  * A working set is intended to group elements for presentation to 
  * the user or for operations on a set of elements.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @since 2.0 initial version
  * @since 3.0 now extends {@link org.eclipse.ui.IPersistableElement}
