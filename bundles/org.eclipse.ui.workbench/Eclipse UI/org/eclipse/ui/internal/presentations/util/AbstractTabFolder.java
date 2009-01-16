@@ -82,8 +82,11 @@ public abstract class AbstractTabFolder {
 		
 		// If we double-click on the toolbar, maximize the presentation
 		public void mouseDoubleClick(MouseEvent e) {
+			// only react to the first button
+			if (e.button != 1)
+				return;
+			
 			Point p = ((Control)e.widget).toDisplay(e.x, e.y);
-
 			handleDoubleClick(p, e);						
 		}
 	};
