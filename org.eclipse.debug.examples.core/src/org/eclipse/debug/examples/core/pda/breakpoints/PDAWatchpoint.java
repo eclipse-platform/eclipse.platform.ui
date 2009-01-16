@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.breakpoints;
 
@@ -19,6 +20,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IWatchpoint;
 import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
+import org.eclipse.debug.examples.core.protocol.PDAEvent;
+import org.eclipse.debug.examples.core.protocol.PDARunControlEvent;
+import org.eclipse.debug.examples.core.protocol.PDASuspendedEvent;
+import org.eclipse.debug.examples.core.protocol.PDAVMSuspendedEvent;
+import org.eclipse.debug.examples.core.protocol.PDAWatchCommand;
 
 
 /**
@@ -177,23 +183,26 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
         if (isModification()) {
             flag = flag | 2;
         }		
-		target.sendRequest("watch " + getFunctionName() + "::" + getVariableName() + " " + flag);
+		target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), flag));
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint#clearRequest(org.eclipse.debug.examples.core.pda.model.PDADebugTarget)
 	 */
 	protected void clearRequest(PDADebugTarget target) throws CoreException {
-		 target.sendRequest("watch " + getFunctionName() + "::" + getVariableName() + " " + 0);
+	    target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), 0));
 	}
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
-	public void handleEvent(String event) {
-		if (event.startsWith("suspended watch")) {
-			handleHit(event);
-		}
+	public void handleEvent(PDAEvent event) {
+        if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
+            PDARunControlEvent rcEvent = (PDARunControlEvent)event;
+            if (rcEvent.fReason.equals("watch")) {
+                handleHit(rcEvent);
+            }
+        }
 	}
     
 	/**
@@ -201,8 +210,8 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
      * 
      * @param event breakpoint event
      */
-    private void handleHit(String event) {
-        String[] strings = event.split(" ");
+    private void handleHit(PDARunControlEvent event) {
+        String[] strings = event.fMessage.split(" ");
         if (strings.length == 4) {
             String fv = strings[3];
             int j = fv.indexOf("::");
@@ -212,7 +221,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 				try {
 					if (getVariableName().equals(var) && getFunctionName().equals(fcn)) {
 						setSuspendType(strings[2]);
-					    notifyThread();
+					    notifyThread(event.fThreadId);
 					}
 				} catch (CoreException e) {
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
 
@@ -17,6 +18,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.examples.core.protocol.PDAFrameData;
 
 /**
  * PDA stack frame.
@@ -37,7 +39,7 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	 * @param data frame data
 	 * @param id stack frame id (0 is the bottom of the stack)
 	 */
-	public PDAStackFrame(PDAThread thread, String data, int id) {
+	public PDAStackFrame(PDAThread thread, PDAFrameData data, int id) {
 		super(thread.getPDADebugTarget());
 		fId = id;
 		fThread = thread;
@@ -49,17 +51,13 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	 * 
 	 * @param data
 	 */
-	private void init(String data) {
-		String[] strings = data.split("\\|");
-		String fileName = strings[0];
-		fFileName = (new Path(fileName)).lastSegment();
-		String pc = strings[1];
-		fPC = Integer.parseInt(pc) + 1;
-		fName = strings[2];
-		int numVars = strings.length - 3;
-		IVariable[] vars = new IVariable[numVars];
-		for (int i = 0; i < numVars; i++) {
-			vars[i] = new PDAVariable(this, strings[i + 3]);
+	private void init(PDAFrameData data) {
+		fFileName = data.fFilePath.lastSegment();
+		fPC = data.fPC + 1;
+		fName = data.fFunction;
+		IVariable[] vars = new IVariable[data.fVariables.length];
+		for (int i = 0; i < data.fVariables.length; i++) {
+			vars[i] = new PDAVariable(this, data.fVariables[i]);
 		}
 		fThread.setVariables(this, vars);
 	}
@@ -247,5 +245,15 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 		return fId;
 	}
 	
+    /**
+     * Returns the stack frame's thread's unique identifier
+     * 
+     * @return this stack frame's thread's unique identifier
+     * 
+     * @since 3.5
+     */
+	protected int getThreadIdentifier() {
+	    return fThread.getIdentifier();
+	}
 	
 }

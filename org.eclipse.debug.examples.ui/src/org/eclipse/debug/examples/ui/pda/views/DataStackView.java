@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,37 +9,39 @@
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
  *     Wind River - Pawel Piech - replaced actions with handlers (bug 229219)
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
 ******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.views;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
-import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
+import org.eclipse.debug.examples.core.pda.model.PDAStackFrame;
+import org.eclipse.debug.examples.core.pda.model.PDAThread;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.progress.UIJob;
 
 
 /**
  * View of the PDA VM data stack 
  */
-public class DataStackView extends AbstractDebugView implements ISelectionListener {
+public class DataStackView extends AbstractDebugView implements IDebugContextListener {
     
-    private PDADebugTarget fTarget;
+    private PDAThread fThread;
 	
 	class StackViewContentProvider implements ITreeContentProvider {
 
@@ -47,9 +49,9 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof PDADebugTarget) {
+			if (parentElement instanceof PDAThread) {
 				try {
-					return ((PDADebugTarget)parentElement).getDataStack();
+					return ((PDAThread)parentElement).getDataStack();
 				} catch (DebugException e) {
 				}
 			}
@@ -60,10 +62,10 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
 		public Object getParent(Object element) {
-			if (element instanceof IDebugTarget) {
+			if (element instanceof PDAThread) {
 				return null;
 			} else {
-				return ((IDebugElement)element).getDebugTarget();
+				return fThread;
 			}
 		}
 
@@ -71,10 +73,7 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
 		public boolean hasChildren(Object element) {
-			if (element instanceof IDebugElement) {
-				return getChildren(element).length > 0;
-			}
-			return false;
+			return element instanceof PDAThread;
 		}
 
 		/* (non-Javadoc)
@@ -105,7 +104,7 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 		TreeViewer viewer = new TreeViewer(parent);
 		viewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		viewer.setContentProvider(new StackViewContentProvider());
-		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
 		getSite().setSelectionProvider(viewer);
 		return viewer;
 	}
@@ -135,33 +134,40 @@ public class DataStackView extends AbstractDebugView implements ISelectionListen
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+        DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		super.dispose();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		update();
+	
+	public void debugContextChanged(final DebugContextEvent event) {
+	    new UIJob(getSite().getShell().getDisplay(), "DataStackView update") {
+	        {
+	            setSystem(true);
+	        }
+	        
+	        public IStatus runInUIThread(IProgressMonitor monitor) {
+	            update(event.getContext());
+	            return Status.OK_STATUS;
+	        }
+	    }.schedule();
 	}
     
     /**
-     * Updates the view for the selected target (if suspended)
+     * Updates the view for the selected thread (if suspended)
      */
-    private synchronized void update() {
-		IAdaptable adaptable = DebugUITools.getDebugContext();
-		fTarget = null;
-		if (adaptable != null) {
-			IDebugElement element = (IDebugElement) adaptable.getAdapter(IDebugElement.class);
-			if (element != null) {
-				if (element.getModelIdentifier().equals(DebugCorePlugin.ID_PDA_DEBUG_MODEL)) {
-					fTarget = (PDADebugTarget) element.getDebugTarget();
-				}
-			}
-		}        
+    private void update(ISelection context) {
+        fThread = null;
+        
+        if (context instanceof IStructuredSelection) {
+            Object element = ((IStructuredSelection)context).getFirstElement();
+            if (element instanceof PDAThread) {
+                fThread = (PDAThread)element;
+            } else if (element instanceof PDAStackFrame) {
+                fThread = (PDAThread)((PDAStackFrame)element).getThread();
+            }
+        }
 		Object input = null;
-		if (fTarget != null && fTarget.isSuspended()) {
-		    input = fTarget;
+		if (fThread != null && fThread.isSuspended()) {
+		    input = fThread;
 		}
 		getViewer().setInput(input);
 		getViewer().refresh();

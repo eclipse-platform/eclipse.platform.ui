@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
  *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
 
@@ -16,6 +17,9 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.examples.core.protocol.PDACommandResult;
+import org.eclipse.debug.examples.core.protocol.PDASetVarCommand;
+import org.eclipse.debug.examples.core.protocol.PDAVarCommand;
 
 /**
  * A variable in a PDA stack frame
@@ -43,8 +47,9 @@ public class PDAVariable extends PDADebugElement implements IVariable {
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
 	public IValue getValue() throws DebugException {
-		String value = sendRequest("var " + getStackFrame().getIdentifier() + " " + getName());
-		return new PDAValue(this.getPDADebugTarget(), value);
+		PDACommandResult result = sendCommand(new PDAVarCommand(
+		    fFrame.getThreadIdentifier(), getStackFrame().getIdentifier(), getName()));
+		return new PDAValue(this, result.fResponseText);
 	}
 	
 	/* (non-Javadoc)
@@ -69,7 +74,8 @@ public class PDAVariable extends PDADebugElement implements IVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
 	public void setValue(String expression) throws DebugException {
-		sendRequest("setvar " + getStackFrame().getIdentifier() + " " + getName() + " " + expression);
+        sendCommand(new PDASetVarCommand(
+            fFrame.getThreadIdentifier(), getStackFrame().getIdentifier(), getName(), expression));
 		fireChangeEvent(DebugEvent.CONTENT);
 	}
 	/* (non-Javadoc)

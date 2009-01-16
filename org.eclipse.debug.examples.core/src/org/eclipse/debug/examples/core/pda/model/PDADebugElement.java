@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
 
@@ -17,6 +18,8 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.DebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
+import org.eclipse.debug.examples.core.protocol.PDACommand;
+import org.eclipse.debug.examples.core.protocol.PDACommandResult;
 
 
 /**
@@ -41,61 +44,50 @@ public class PDADebugElement extends DebugElement {
 	}
 	
 	/**
-	 * Sends a request to the PDA interpreter, waits for and returns the reply.
-	 * <p>
-	 * Interpreter commands and replies are as follows:
-	 * <ul>
-	 * <li><code>clear N</code> - clear the breakpoint on line <code>N</code>;
-	 * 		reply is <code>ok</code></li>
-	 * <li><code>data</code> - return the contents of the data stack; reply is the data
-	 * 		from oldest to newest as a single string <code>"value|value|value|...|value|"</code></li>
-	 * <li><code>drop</code> - pops the top stack frame off the call stack setting the 
-	 * 		instruction pointer to the calling statement in the calling frame</li>
-	 * <li><code>eventstop E B</code> - optionally stop the interpreter when an error event
-	 * 		<code>E</code> is encountered; <code>B</code> specifies stop (<code>1</code>) or
-	 * 		continue (<code>0</code>). The possible events are <code>unimpinstr</code> and
-	 * 		<code>nosuchlabel</code>. Reply is <code>ok</code>. When an event is encountered,
-	 * 		the interpreter sends the error event (for example <code>unimlpemented instruction foo</code>)
-	 * 		and corresponding suspend event (for example <code>suspended event unimpinstr</code>).</li>
-	 * <li><code>exit</code> - end the interpreter; reply is <code>ok</code></li>
-	 * <li><code>popdata</code> - pop the top value off the data stack; reply is the value</li>
-	 * <li><code>pushdata V</code> - push the value <code>V</code> onto the data stack; reply is
-	 * 		<code>ok</code></li>
-	 * <li><code>resume</code> - resume execution of the program; reply is <code>ok</code></li>
-	 * <li><code>set N</code> - set a line breakpoint on line <code>N</code> (lines are indexed
-	 * 		from 0); reply is <code>ok</code></li>
-	 * <li><code>setdata N V</code> - set the contents of data stack element <code>N</code> to
-	 * 		value <code>V</code> (the data stack is indexed from 0, 0 being the oldest); reply
-	 * 		is <code>ok</code></li>
-	 * <li><code>setvar N M V</code> - set the contents of variable <code>M</code> from the control
-	 * 		stack <code>N</code> to value <code>V</code> (the control stack is indexed from 0,
-	 * 		0 being the oldest); reply is <code>ok</code></li>
-	 * <li><code>stack</code> - return the contents of the control stack (program counters, function and
-	 * 		variable names); reply is control stack from oldest to newest as a single string
-	 * 		<code>frame#frame#frame...#frame</code> where each frame is a string
-	 * 		<code>"filename|pc|function name|variable name|variable name|...|variable name"</code></li>
-	 * <li><code>step</code> - single step forward; reply is <code>ok</code></li>
-	 * <li><code>stepreturn</code> - single step forward until the next <code>return</code> op code;
-	 * 		stop before executing the <code>return</code> ; reply is <code>ok</code></li>
-	 * <li><code>suspend</code> - suspend execution of the program and listen for debug commands;
-	 * 		reply is <code>ok</code></li>
-	 * <li><code>watch F::V M</code> - set a watchpoint on variable <code>V</code> in function
-	 * 		<code>F</code> to magic value <code>M</code>; the magic value is a bit flag corresponding
-	 * 		to read access (1), write access (2), or both (3); the magic value 0 clears the watchpoint;
-	 * 		reply is <code>ok</code></li>
-	 * <li><code>var N M</code> - return the contents of variable <code>M</code> in the control
-	 * 		stack frame <code>N</code> (stack frames are indexed from 0, 0 being the oldest);
-	 * 		reply is variable value</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param request command
-	 * @return reply
-	 * @throws DebugException if the request fails
-	 */	
-	public String sendRequest(String request) throws DebugException {
-		return getPDADebugTarget().sendRequest(request);
-	}
+     * Sends a request to the PDA interpreter, waits for and returns the reply.
+     * 
+     * @param request command
+     * @return reply
+     * @throws DebugException if the request fails
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDATerminateCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAVMSuspendCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAVMResumeCommand
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDASuspendCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAResumeCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAStepCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDADropFrameCommand
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDASetBreakpointCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAClearBreakpointCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAWatchCommand
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDADataCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDASetDataCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAPopDataCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAPushDataCommand
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDAEvalCommand
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDAEventStopCommand
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDAStackCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAStackDepthCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAFrameCommand
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDASetVarCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAVarCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDAChildrenCommand
+     * 
+     * @see org.eclipse.debug.examples.core.protocol.PDAGroupsCommand
+     * @see org.eclipse.debug.examples.core.protocol.PDARegistersCommand
+     * 
+     * @since 3.5
+     */ 
+	public PDACommandResult sendCommand(PDACommand command) throws DebugException {
+        return getPDADebugTarget().sendCommand(command);
+    }
 	
 	/**
 	 * Returns the debug target as a PDA target.

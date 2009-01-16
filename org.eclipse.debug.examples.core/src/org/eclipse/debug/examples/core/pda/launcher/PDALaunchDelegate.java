@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.launcher;
 
@@ -55,28 +56,23 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 		
 		List commandList = new ArrayList();
 		
-		// Perl executable
-		IValueVariable perl = VariablesPlugin.getDefault().getStringVariableManager().getValueVariable(DebugCorePlugin.VARIALBE_PERL_EXECUTABLE);
-		if (perl == null) {
-			abort("Perl executable location undefined. Check value of ${perlExecutable}.", null);
-		}
-		String path = perl.getValue();
-		if (path == null) {
-			abort("Perl executable location unspecified. Check value of ${perlExecutable}.", null);
-		}
-		File exe = new File(path);
-		if (!exe.exists()) {
-			abort(MessageFormat.format("Specified Perl executable {0} does not exist. Check value of $perlExecutable.", new String[]{path}), null);
-		}
-		commandList.add(path);
-		
-		// Add PDA VM
-		File vm = DebugCorePlugin.getFileInPlugin(new Path("pdavm/pda.pl"));
-		if (vm == null) {
-			abort("Missing PDA VM", null);
-		}
-		commandList.add(vm.getAbsolutePath());
-		
+        // Get Java VM path
+        String javaVMHome = System.getProperty("java.home");
+        String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java";
+        if (File.separatorChar == '\\') {
+            javaVMExec += ".exe";
+        }   
+        File exe = new File(javaVMExec);
+        if (!exe.exists()) {
+            abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null);
+        }
+        commandList.add(javaVMExec);
+
+        commandList.add("-cp");
+        commandList.add(File.pathSeparator + DebugCorePlugin.getFileInPlugin(new Path("bin")));
+        
+        commandList.add("org.eclipse.debug.examples.pdavm.PDAVirtualMachine");
+
 		// program name
 		String program = configuration.getAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, (String)null);
 		if (program == null) {
@@ -106,7 +102,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 		
 		String[] commandLine = (String[]) commandList.toArray(new String[commandList.size()]);
 		Process process = DebugPlugin.exec(commandLine, null);
-		IProcess p = DebugPlugin.newProcess(launch, process, path);
+		IProcess p = DebugPlugin.newProcess(launch, process, javaVMExec);
 		// if in debug mode, create a debug target 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			IDebugTarget target = new PDADebugTarget(launch, p, requestPort, eventPort);

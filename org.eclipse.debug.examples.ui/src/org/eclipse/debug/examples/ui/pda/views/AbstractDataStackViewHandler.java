@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,8 @@ package org.eclipse.debug.examples.ui.pda.views;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.examples.core.pda.model.PDADebugElement;
-import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
+import org.eclipse.debug.examples.core.pda.model.PDAStackFrame;
+import org.eclipse.debug.examples.core.pda.model.PDAThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,16 +33,20 @@ abstract public class AbstractDataStackViewHandler extends AbstractHandler {
             
             ISelection selection = DebugUITools.getDebugContextForEventChecked(event);
             if (selection instanceof IStructuredSelection) {
-                IStructuredSelection ss = (IStructuredSelection)selection;
-                if (ss.getFirstElement() instanceof IAdaptable) {
-                    PDADebugElement element = (PDADebugElement)
-                        ((IAdaptable)ss.getFirstElement()).getAdapter(PDADebugElement.class);
-                    if (element != null) {
-                        doExecute(
-                            view, 
-                            (PDADebugTarget)element.getDebugTarget(), 
-                            HandlerUtil.getCurrentSelectionChecked(event));
-                    }
+                Object element = ((IStructuredSelection)selection).getFirstElement();
+                
+                PDAThread thread = null;
+                if (element instanceof PDAThread) {
+                    thread = (PDAThread)element;
+                } else if (element instanceof PDAStackFrame) {
+                    thread = (PDAThread)((PDAStackFrame)element).getThread();
+                } 
+
+                if (element != null) {
+                    doExecute(
+                        view, 
+                        thread, 
+                        HandlerUtil.getCurrentSelectionChecked(event));
                 }
             }
         } else {
@@ -59,5 +62,5 @@ abstract public class AbstractDataStackViewHandler extends AbstractHandler {
      * @param target The current active debug target.
      * @param selection The current selection in view.
      */
-    abstract protected void doExecute(DataStackView view, PDADebugTarget target, ISelection selection) throws ExecutionException;
+    abstract protected void doExecute(DataStackView view, PDAThread target, ISelection selection) throws ExecutionException;
 }

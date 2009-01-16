@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
 
@@ -17,7 +18,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -29,6 +34,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
@@ -38,10 +44,22 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 import org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint;
 import org.eclipse.debug.examples.core.pda.breakpoints.PDARunToLineBreakpoint;
+import org.eclipse.debug.examples.core.protocol.PDACommand;
+import org.eclipse.debug.examples.core.protocol.PDACommandResult;
+import org.eclipse.debug.examples.core.protocol.PDAEvent;
+import org.eclipse.debug.examples.core.protocol.PDAEventStopCommand;
+import org.eclipse.debug.examples.core.protocol.PDAExitedEvent;
+import org.eclipse.debug.examples.core.protocol.PDAStartedEvent;
+import org.eclipse.debug.examples.core.protocol.PDATerminateCommand;
+import org.eclipse.debug.examples.core.protocol.PDAVMResumeCommand;
+import org.eclipse.debug.examples.core.protocol.PDAVMResumedEvent;
+import org.eclipse.debug.examples.core.protocol.PDAVMStartedEvent;
+import org.eclipse.debug.examples.core.protocol.PDAVMSuspendCommand;
+import org.eclipse.debug.examples.core.protocol.PDAVMSuspendedEvent;
+import org.eclipse.debug.examples.core.protocol.PDAVMTerminatedEvent;
 
 
 /**
@@ -62,17 +80,20 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	private Socket fEventSocket;
 	private BufferedReader fEventReader;
 	
+	// suspended state
+	private boolean fVMSuspended = false;
+	
 	// terminated state
 	private boolean fTerminated = false;
 	
 	// threads
-	private IThread[] fThreads;
-	private PDAThread fThread;
+	private Map fThreads = Collections.synchronizedMap(new LinkedHashMap());
 	
 	// event dispatch job
 	private EventDispatchJob fEventDispatch;
+	
 	// event listeners
-	private Vector fEventListeners = new Vector();
+	private List fEventListeners = Collections.synchronizedList(new ArrayList());
 	
 	/**
 	 * Listens to events from the PDA VM and fires corresponding 
@@ -89,18 +110,28 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			String event = "";
-			while (!isTerminated() && event != null) {
+			String message = "";
+			while (!isTerminated() && message != null) {
 				try {
-					event = fEventReader.readLine();
-					if (event != null) {
+					message = fEventReader.readLine();
+					System.out.println(message);
+					if (message != null) {
+					    PDAEvent event = null;
+					    try {
+					        event = PDAEvent.parseEvent(message);
+					    }
+					    catch (IllegalArgumentException e) {
+					        DebugCorePlugin.getDefault().getLog().log(
+					            new Status (IStatus.ERROR, "org.eclipse.debug.examples.core", "Error parsing PDA event", e));
+					        continue;
+					    }
 						Object[] listeners = fEventListeners.toArray();
 						for (int i = 0; i < listeners.length; i++) {
 							((IPDAEventListener)listeners[i]).handleEvent(event);	
 						}
 					}
 				} catch (IOException e) {
-					terminated();
+					vmTerminated();
 				}
 			}
 			return Status.OK_STATUS;
@@ -116,9 +147,11 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * @param listener event listener
 	 */
 	public void addEventListener(IPDAEventListener listener) {
-		if (!fEventListeners.contains(listener)) {
-			fEventListeners.add(listener);
-		}
+	    synchronized(fEventListeners) {
+    		if (!fEventListeners.contains(listener)) {
+    			fEventListeners.add(listener);
+    		}
+	    }
 	}
 	
 	/**
@@ -167,8 +200,6 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		} catch (IOException e) {
 			requestFailed("Unable to connect to PDA VM", e);
 		}
-		fThread = new PDAThread(this);
-		fThreads = new IThread[] {fThread};
 		fEventDispatch = new EventDispatchJob();
 		fEventDispatch.schedule();
 		IBreakpointManager breakpointManager = getBreakpointManager();
@@ -176,8 +207,8 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		breakpointManager.addBreakpointManagerListener(this);
 		// initialize error hanlding to suspend on 'unimplemented instructions'
 		// and 'no such label' errors
-		sendRequest("eventstop unimpinstr 1");
-		sendRequest("eventstop nosuchlabel 1");
+		sendCommand(new PDAEventStopCommand(PDAEventStopCommand.UNIMPINSTR, true));
+        sendCommand(new PDAEventStopCommand(PDAEventStopCommand.NOSUCHLABEL, true));
 	}
 
     /* (non-Javadoc)
@@ -190,13 +221,15 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * @see org.eclipse.debug.core.model.IDebugTarget#getThreads()
 	 */
 	public IThread[] getThreads() throws DebugException {
-		return fThreads;
+	    synchronized (fThreads) {
+	        return (IThread[])fThreads.values().toArray(new IThread[fThreads.size()]);
+	    }
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugTarget#hasThreads()
 	 */
 	public boolean hasThreads() throws DebugException {
-		return true;
+		return fThreads.size() > 0;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugTarget#getName()
@@ -253,14 +286,18 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
-	public boolean isTerminated() {
+	public synchronized boolean isTerminated() {
 		return fTerminated || getProcess().isTerminated();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		getThread().terminate();
+//#ifdef ex2
+//#     // TODO: Exercise 2 - send termination request to interpreter       
+//#else
+	    sendCommand(new PDATerminateCommand());
+//#endif
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
@@ -277,22 +314,24 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
-	public boolean isSuspended() {
-		return !isTerminated() && getThread().isSuspended();
+	public synchronized boolean isSuspended() {
+		return !isTerminated() && fVMSuspended;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
-		getThread().resume();
+	    sendCommand(new PDAVMResumeCommand());
 	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
-		getThread().suspend();
+        sendCommand(new PDAVMSuspendCommand());
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
@@ -368,7 +407,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * Notification we have connected to the VM and it has started.
 	 * Resume the VM.
 	 */
-	private void started() {
+	private void vmStarted(PDAVMStartedEvent event) {
 		fireCreationEvent();
 		installDeferredBreakpoints();
 		try {
@@ -391,10 +430,9 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	/**
 	 * Called when this debug target terminates.
 	 */
-	private synchronized void terminated() {
-		fTerminated = true;
-		fThread = null;
-		fThreads = new IThread[0];
+	private void vmTerminated() {
+		setTerminated(true);
+		fThreads.clear();
 		IBreakpointManager breakpointManager = getBreakpointManager();
         breakpointManager.removeBreakpointListener(this);
 		breakpointManager.removeBreakpointManagerListener(this);
@@ -402,29 +440,58 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		removeEventListener(this);
 	}
 	
-	/**
-	 * Returns the values on the data stack (top down)
-	 * 
-	 * @return the values on the data stack (top down)
-	 */
-	public IValue[] getDataStack() throws DebugException {
-		String dataStack = sendRequest("data");
-		if (dataStack != null && dataStack.length() > 0) {
-			String[] values = dataStack.split("\\|");
-			IValue[] theValues = new IValue[values.length];
-			for (int i = 0; i < values.length; i++) {
-				String value = values[values.length - i - 1];
-				theValues[i] = new PDAStackValue(this, value, i);
-			}
-			return theValues;
-		}
-		return new IValue[0];		
+	private void vmResumed(PDAVMResumedEvent event) {
+	   setVMSuspended(false);
+	   fireResumeEvent(calcDetail(event.fReason));
 	}
 	
+	private void vmSuspended(PDAVMSuspendedEvent event) {
+	    setVMSuspended(true);
+	    int detail = DebugEvent.UNSPECIFIED;
+	    fireSuspendEvent(calcDetail(event.fReason));
+	}
+	
+	private int calcDetail(String reason) {
+        if (reason.equals("breakpoint") || reason.equals("watch")) {
+            return DebugEvent.BREAKPOINT;
+        } else if (reason.equals("step")) {
+            return DebugEvent.STEP_OVER;
+        } else if (reason.equals("drop")) {
+            return DebugEvent.STEP_RETURN;
+        } else if (reason.equals("client")) {
+            return DebugEvent.CLIENT_REQUEST;
+        } else if (reason.equals("event")) {
+            return DebugEvent.BREAKPOINT;
+        } else {
+            return DebugEvent.UNSPECIFIED;
+        } 
+	}
+	
+	private void started(PDAStartedEvent event) {
+	    PDAThread newThread = new PDAThread(this, event.fThreadId);
+	    fThreads.put(new Integer(event.fThreadId), newThread);
+	    newThread.start();
+	}
+	
+	private void exited(PDAExitedEvent event) {
+        PDAThread thread = (PDAThread)fThreads.remove(new Integer(event.fThreadId));
+        if (thread != null) {
+            thread.exit();
+        }
+	}
+	
+	private synchronized void setVMSuspended(boolean suspended) {
+	    fVMSuspended = suspended;
+	}
+	
+    private synchronized void setTerminated(boolean terminated) {
+        fTerminated = terminated;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.model.PDADebugElement#sendRequest(java.lang.String)
 	 */
-	public String sendRequest(String request) throws DebugException {
+	private String sendRequest(String request) throws DebugException {
 		synchronized (fRequestSocket) {
 			fRequestWriter.println(request);
 			fRequestWriter.flush();
@@ -438,6 +505,11 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		return null;
 	}  
 	
+	public PDACommandResult sendCommand(PDACommand command) throws DebugException {
+	    String response = sendRequest(command.getRequest());
+	    return command.createResult(response);
+	}
+
 	/**
 	 * When the breakpoint manager disables, remove all registered breakpoints
 	 * requests from the VM. When it enables, reinstall them.
@@ -452,74 +524,45 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			}
         }
 	}	
-	
-	/**
-	 * Returns whether popping the data stack is currently permitted
-	 *  
-	 * @return whether popping the data stack is currently permitted
-	 */
-	public boolean canPop() {
-	    try {
-            return !isTerminated() && isSuspended() && getDataStack().length > 0;
-        } catch (DebugException e) {
-        }
-        return false;
-	}
-	
-	/**
-	 * Pops and returns the top of the data stack
-	 * 
-	 * @return the top value on the stack 
-	 * @throws DebugException if the stack is empty or the request fails
-	 */
-	public IValue pop() throws DebugException {
-	    IValue[] dataStack = getDataStack();
-	    if (dataStack.length > 0) {
-	        sendRequest("popdata");
-	        return dataStack[0];
-	    }
-	    requestFailed("Empty stack", null);
-	    return null;
-	}
-	
-	/**
-	 * Returns whether pushing a value is currently supported.
-	 * 
-	 * @return whether pushing a value is currently supported
-	 */
-	public boolean canPush() {
-	    return !isTerminated() && isSuspended();
-	}
-	
-	/**
-	 * Pushes a value onto the stack.
-	 * 
-	 * @param value value to push
-	 * @throws DebugException on failure
-	 */
-	public void push(String value) throws DebugException {
-	    sendRequest("pushdata " + value);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
-	public void handleEvent(String event) {
-		if (event.equals("started")) {
-			started();
-		} else if (event.equals("terminated")) {
-			terminated();
-		}
+	public void handleEvent(PDAEvent event) {
+		if (event instanceof PDAStartedEvent) {
+			started((PDAStartedEvent)event);
+		} else if (event instanceof PDAExitedEvent) {
+			exited((PDAExitedEvent)event);
+        } else if (event instanceof PDAVMStartedEvent) {
+            vmStarted((PDAVMStartedEvent)event);
+		} else if (event instanceof PDAVMTerminatedEvent) {
+            vmTerminated();
+        } else if (event instanceof PDAVMSuspendedEvent) {
+            vmSuspended((PDAVMSuspendedEvent)event);
+        } else if (event instanceof PDAVMResumedEvent) {
+            vmResumed((PDAVMResumedEvent)event);
+        } 
 	}
 	
 	/**
 	 * Returns this debug target's single thread, or <code>null</code>
 	 * if terminated.
 	 * 
+	 * @param threadId ID of the thread to return, or <code>0</code>
+	 * to return the first available thread
 	 * @return this debug target's single thread, or <code>null</code>
 	 * if terminated
 	 */
-	public synchronized PDAThread getThread() {
-		return fThread;
+	public PDAThread getThread(int threadId) {
+	    if (threadId > 0) {
+	        return (PDAThread)fThreads.get(new Integer(threadId));
+	    } else {
+    	    synchronized(fThreads) {
+    	        if (fThreads.size() > 0) {
+    	            return (PDAThread)fThreads.values().iterator().next();
+    	        }
+    	    }
+	    }
+		return null;
 	}
 }

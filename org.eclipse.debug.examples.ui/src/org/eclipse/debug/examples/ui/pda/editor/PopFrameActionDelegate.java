@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.editor;
 
@@ -41,7 +42,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 //#		// TODO: Exercise 5 - pop the top frame		
 		//#else
 		try {
-			fThread.pop();
+			fThread.popFrame();
 		} catch (DebugException e) {
 		}
 		//#endif
@@ -61,7 +62,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 				//#else
 				fThread = (PDAThread) frame.getThread();
 				try {
-					action.setEnabled(fThread.canPop() && fThread.getTopStackFrame().equals(frame));
+					action.setEnabled(fThread.canPopFrame() && fThread.getTopStackFrame().equals(frame));
 				} catch (DebugException e) {
 				}
 				return;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 
 /**
  * A value on the data stack
  */
-public class PDAStackValue extends PDAValue {
-    
-    private int fIndex;
+public class PDAStackValue extends PDADebugElement implements IValue {
+
+    final private PDAThread fThread;
+    final private String fValue;
+    final private int fIndex;
     
     /**
      * Constructs a value that appears on the data stack
@@ -25,17 +32,55 @@ public class PDAStackValue extends PDAValue {
      * @param value value on the stack
      * @param index index on the stack
      */
-	public PDAStackValue(PDADebugTarget target, String value, int index) {
-		super(target, value);
+	public PDAStackValue(PDAThread thread, String value, int index) {
+		super(thread.getDebugTarget());
+		fThread = thread;
+		fValue = value;
 		fIndex = index;
 	}
 	
+	public PDAThread getThread() {
+	    return fThread;
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IValue#getValueString()
+     */
+    public String getValueString() throws DebugException {
+        return fValue;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IValue#isAllocated()
+     */
+    public boolean isAllocated() throws DebugException {
+        return true;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IValue#getVariables()
+     */
+    public IVariable[] getVariables() throws DebugException {
+        return new IVariable[0];
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IValue#hasVariables()
+     */
+    public boolean hasVariables() throws DebugException {
+        return false;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
+     */
+    public String getReferenceTypeName() throws DebugException {
+        return null;
+    }
 	/*
 	 *  (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
     public boolean equals(Object obj) {
-        return super.equals(obj) && ((PDAStackValue)obj).fIndex == fIndex;
+        return obj instanceof PDAStackValue && 
+            ((PDAStackValue)obj).fValue.equals(fValue) && 
+            ((PDAStackValue)obj).fIndex == fIndex;
     }
     /*
      *  (non-Javadoc)

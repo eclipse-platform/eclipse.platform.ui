@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,8 @@ package org.eclipse.debug.examples.ui.pda.views;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.examples.core.pda.model.PDADebugElement;
-import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
+import org.eclipse.debug.examples.core.pda.model.PDAStackFrame;
+import org.eclipse.debug.examples.core.pda.model.PDAThread;
 
 /**
  * Property tester for use with standard expressions to determine whether 
@@ -28,9 +29,15 @@ public class CanPushTester extends PropertyTester {
             if (receiver instanceof IAdaptable) {
                 PDADebugElement element = (PDADebugElement) 
                     ((IAdaptable)receiver).getAdapter(PDADebugElement.class);
-                if (element != null) {
-                    PDADebugTarget target = (PDADebugTarget)element.getDebugTarget();
-                    return target.canPush();
+                PDAThread thread = null;
+                if (element instanceof PDAThread) {
+                    thread = (PDAThread)element;
+                } else if (element instanceof PDAStackFrame) {
+                    thread = (PDAThread)((PDAStackFrame)element).getThread();
+                } 
+                
+                if (thread != null) {
+                    return thread.canPushData();
                 }
             }
         }

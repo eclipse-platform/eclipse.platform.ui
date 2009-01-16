@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.breakpoints;
 
@@ -16,14 +17,18 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.LineBreakpoint;
 import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 import org.eclipse.debug.examples.core.pda.model.IPDAEventListener;
 import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
 import org.eclipse.debug.examples.core.pda.model.PDAThread;
+import org.eclipse.debug.examples.core.protocol.PDAClearBreakpointCommand;
+import org.eclipse.debug.examples.core.protocol.PDAEvent;
+import org.eclipse.debug.examples.core.protocol.PDARunControlEvent;
+import org.eclipse.debug.examples.core.protocol.PDASetBreakpointCommand;
+import org.eclipse.debug.examples.core.protocol.PDASuspendedEvent;
+import org.eclipse.debug.examples.core.protocol.PDAVMSuspendedEvent;
 
 
 /**
@@ -108,7 +113,7 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 		//#ifdef ex3
 //#		// TODO: Exercise 3 - create breakpoint request in interpreter 		
 		//#else
-    	target.sendRequest("set " + (getLineNumber() - 1));
+    	target.sendCommand(new PDASetBreakpointCommand((getLineNumber() - 1), false));
 		//#endif
     }
     
@@ -123,7 +128,7 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 		//#ifdef ex3
 //#		// TODO: Exercise 3 - clear breakpoint request in interpreter
 		//#else
-    	target.sendRequest("clear " + (getLineNumber() - 1));
+        target.sendCommand(new PDAClearBreakpointCommand((getLineNumber() - 1)));
 		//#endif
     }
     
@@ -154,16 +159,12 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
     /**
      * Notify's the PDA interprettor that this breakpoint has been hit.
      */
-    protected void notifyThread() {
+    protected void notifyThread(int threadId) {
     	if (fTarget != null) {
-			try {
-				IThread[] threads = fTarget.getThreads();
-				if (threads.length == 1) {
-	    			PDAThread thread = (PDAThread)threads[0];
-	    			thread.suspendedBy(this);
-	    		}
-			} catch (DebugException e) {
-			}    		
+			PDAThread thread = fTarget.getThread(threadId);
+			if (thread != null) {
+    			thread.suspendedBy(this);
+    		}
     	}
     }
 
@@ -173,9 +174,12 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	 * 
 	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
-	public void handleEvent(String event) {
-		if (event.startsWith("suspended breakpoint")) {
-			handleHit(event);
+	public void handleEvent(PDAEvent event) {
+		if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
+		    PDARunControlEvent rcEvent = (PDARunControlEvent)event;
+		    if (rcEvent.fReason.equals("breakpoint")) {
+		        handleHit(rcEvent);
+		    }
 		}
 	}
     
@@ -184,16 +188,16 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
      * 
      * @param event breakpoint event
      */
-    private void handleHit(String event) {
-    	int lastSpace = event.lastIndexOf(' ');
+    private void handleHit(PDARunControlEvent event) {
+    	int lastSpace = event.fMessage.lastIndexOf(' ');
     	if (lastSpace > 0) {
-    		String line = event.substring(lastSpace + 1);
+    		String line = event.fMessage.substring(lastSpace + 1);
     		int lineNumber = Integer.parseInt(line);
     		// breakpoints event line numbers are 0 based, model objects are 1 based
     		lineNumber++;
     		try {
 				if (getLineNumber() == lineNumber) {
-					notifyThread();
+					notifyThread(event.fThreadId);
 				}
     		} catch (CoreException e) {
     		}

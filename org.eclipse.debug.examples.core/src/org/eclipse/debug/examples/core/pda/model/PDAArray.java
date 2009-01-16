@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
 
@@ -23,7 +24,7 @@ public class PDAArray extends PDAValue {
 	 * @throws DebugException 
 	 */
 	public PDAArray(PDAValue value) throws DebugException {
-		super(value.getPDADebugTarget(), value.getValueString());
+		super(value.getVariable(), value.getValueString());
 	}
 
 	/* (non-Javadoc)
@@ -42,7 +43,7 @@ public class PDAArray extends PDAValue {
 		IVariable[] variables = new IVariable[words.length];
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
-			variables[i] = new PDAArrayEntry(getPDADebugTarget(), i, new PDAValue(getPDADebugTarget(), word));
+			variables[i] = new PDAArrayEntry(getPDADebugTarget(), i, new PDAValue(getVariable(), word));
 		}
 		return variables;
 	}
