@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * 
  * Provides context for extensions including a valid shell, a selection
- * provider, and a unique identifer corresponding to the abstract viewer behind
+ * provider, and a unique identifier corresponding to the abstract viewer behind
  * the viewer site.
  *  
  * <p>
