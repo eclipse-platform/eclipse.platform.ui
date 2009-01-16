@@ -37,6 +37,7 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 	private ICVSRemoteResource resource;
 	private ResourceEditionNode[] children;
 	private ISharedDocumentAdapter sharedDocumentAdapter;
+	private IEditorInput editorInput;
 
 	/**
 	 * Creates a new ResourceEditionNode on the given resource edition.
@@ -208,8 +209,11 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 	private IEditorInput getDocumentKey(Object element) {
 		try {
 			if (element == this && getStorage() != null) {
-				return new FileRevisionEditorInput(resource
-						.getAdapter(IFileRevision.class), getStorage());
+				if (editorInput == null) {
+				editorInput = new FileRevisionEditorInput(resource
+							.getAdapter(IFileRevision.class), getStorage());
+				}
+				return editorInput;
 			}
 		} catch (TeamException e) {
 			TeamUIPlugin.log(e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -631,8 +631,18 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 */
 	protected void propertyChange(PropertyChangeEvent event) {
 		String key= event.getProperty();
-		if (key.equals(CompareConfiguration.IGNORE_WHITESPACE))
+		if (key.equals(CompareConfiguration.IGNORE_WHITESPACE)) {
 			diff();
+		} else if (key.equals("ANCESTOR_ENCODING")) { //$NON-NLS-1$
+			fAncestorStructure.refresh(new NullProgressMonitor());
+			diff();
+		} else if (key.equals("LEFT_ENCODING")) { //$NON-NLS-1$
+			fLeftStructure.refresh(new NullProgressMonitor());
+			diff();
+		} else if (key.equals("RIGHT_ENCODING")) { //$NON-NLS-1$
+			fRightStructure.refresh(new NullProgressMonitor());
+			diff();
+		}
 		else
 			super.propertyChange(event);
 	}

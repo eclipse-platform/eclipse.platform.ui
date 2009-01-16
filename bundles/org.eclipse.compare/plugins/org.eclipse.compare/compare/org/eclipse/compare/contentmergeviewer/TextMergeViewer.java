@@ -536,6 +536,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.editors.text.IEncodingSupport#setEncoding(java.lang.String)
+		 */
 		public void setEncoding(String encoding) {
 			if (fDocumentKey == null || fDocumentProvider == null) {
 				return;
@@ -553,13 +556,16 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 						} catch (CoreException e) {
 							CompareUIPlugin.log(e);
 						} finally {
-							update(true);
+							encodingChanged(fLeg);
 						}
 					}
 				}
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.editors.text.IEncodingSupport#getEncoding()
+		 */
 		public String getEncoding() {
 			if (fDocumentProvider != null && fDocumentKey != null
 					&& fDocumentProvider instanceof IStorageDocumentProvider) {
@@ -569,6 +575,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			return null;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.editors.text.IEncodingSupport#getDefaultEncoding()
+		 */
 		public String getDefaultEncoding() {
 			if (fDocumentProvider != null && fDocumentKey != null
 					&& fDocumentProvider instanceof IStorageDocumentProvider) {
@@ -579,6 +588,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 
 		private String internalGetEncoding() {
+			if (fElement instanceof IEncodedStreamContentAccessor) {
+				try {
+					fEncoding = ((IEncodedStreamContentAccessor) fElement)
+							.getCharset();
+				} catch (CoreException e) {
+					// silently ignored
+				}
+			}
 			if (fEncoding != null) {
 				return fEncoding;
 			}
@@ -1007,7 +1024,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				// recalculate diffs and update controls
 				new UIJob(CompareMessages.DocumentMerger_0) {
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						update(true);
+						encodingChanged(fLeg);
 						return Status.OK_STATUS;
 					}
 				}.schedule();
@@ -4972,8 +4989,16 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return false;
 	}
 
+	/**
+	 * This method returns {@link ITextEditor} used in the
+	 * {@link ChangeEncodingAction}. It provides implementation of methods that
+	 * are used by the action by delegating them to {@link ContributorInfo} that
+	 * corresponds to the side that has focus.
+	 * 
+	 * @return the text editor adapter
+	 */
 	private ITextEditor getTextEditorAdapter() {
-		return new ITextEditor () {
+		return new ITextEditor() {
 			public void close(boolean save) {
 				// Implementing interface method
 			}
@@ -5176,4 +5201,22 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 		};
 	}
+
+	private void encodingChanged(char leg) {
+		update(true);
+		String key = null;
+		switch (leg) {
+		case ANCESTOR_CONTRIBUTOR:
+			key = "ANCESTOR_ENCODING"; //$NON-NLS-1$
+			break;
+		case LEFT_CONTRIBUTOR:
+			key = "LEFT_ENCODING"; //$NON-NLS-1$
+			break;
+		case RIGHT_CONTRIBUTOR:
+			key = "RIGHT_ENCODING"; //$NON-NLS-1$
+			break;
+		}
+		getCompareConfiguration().setProperty(key, null);
+	}
+
 }
