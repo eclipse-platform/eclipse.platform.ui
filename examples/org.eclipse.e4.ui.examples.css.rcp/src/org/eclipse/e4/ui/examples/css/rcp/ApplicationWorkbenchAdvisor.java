@@ -21,7 +21,6 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
  */
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	
-	private static final String PERSPECTIVE_ID = "org.eclipse.e4.ui.examples.css.rcp.perspective";
 	private final static String STYLE_SHEET_PATH = "styles/stylesheet.css";
 	public static ApplicationWorkbenchAdvisor INSTANCE;
 
@@ -37,7 +36,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     }
 
 	public String getInitialWindowPerspectiveId() {
-		return PERSPECTIVE_ID;
+		return Perspective.ID;
 	} 
 	
 	public void initialize(IWorkbenchConfigurer configurer) {
@@ -59,8 +58,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			InputStream stream = url.openStream();
 			engine.parseStyleSheet(stream);	
 			stream.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return engine;
