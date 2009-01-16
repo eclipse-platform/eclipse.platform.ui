@@ -108,7 +108,7 @@ public class View extends ViewPart {
 		updateCSSForReadState();		
 	}
 
-	private void setCSSClassName(Control widget, String name) {
+	private void setCSSClassName(Widget widget, String name) {
 		widget.setData(CSSSWTConstants.CSS_CLASS_NAME_KEY, name);
 		//Ideally just changing the widget's CSS class would trigger a re-styling,
 		//but until bug #260407 is fixed we must call this next line

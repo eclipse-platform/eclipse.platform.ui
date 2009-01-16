@@ -1,6 +1,5 @@
 package org.eclipse.e4.ui.examples.css.rcp;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
