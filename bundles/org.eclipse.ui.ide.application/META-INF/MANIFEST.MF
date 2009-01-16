@@ -11,8 +11,8 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.update.configurator;bundle-version="[3.1.100,4.0.0)",
  org.eclipse.ui;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.ui.navigator.resources;bundle-version="[3.2.100,4.0.0)",
- org.eclipse.core.net;bundle-version="[1.0.0,2.0.0)",
- com.ibm.icu;bundle-version="3.8.1"
+ org.eclipse.core.net;bundle-version="[1.0.0,2.0.0)"
 Export-Package: org.eclipse.ui.internal.ide.application;x-internal:=true,
  org.eclipse.ui.internal.ide.application.dialogs;x-internal:=true
+Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
