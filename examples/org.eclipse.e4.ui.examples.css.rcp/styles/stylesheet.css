@@ -15,7 +15,7 @@ Text {
 	background-color: #f8f8f8;
 }
 
-Tree {
+#navigation {
 	font-family: "Times New Roman";
 	font-size: 8;
 	color: #666666;
@@ -35,7 +35,7 @@ Tree {
     background-color: #f0f0f0;
 }
 
-#messageSubject {
+.messageSubject {
 	font-size: 11;
 }
 .messageDateUnRead {

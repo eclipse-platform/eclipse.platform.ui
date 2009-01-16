@@ -51,7 +51,7 @@ public class View extends ViewPart {
 
 		l = new Label(banner, SWT.WRAP);
 		setCSSClassName(l, "messageBannerContent");
-		setCSSID(l, "messageSubject");
+		setCSSClassName(l, "messageSubject");
 		l.setText("This is a message about the cool Eclipse RCP!");
 		
 		l = new Label(banner, SWT.WRAP);
@@ -77,7 +77,6 @@ public class View extends ViewPart {
 		l.setText("10:34 am "); // add space since we know it will be italic and that gets clipped due to SWT bug
 
 		setCSSClassName(l, "messageBannerContent");
-		setCSSID(l, "messageDate");
 		updateCSSForReadState();
 		
 		// message contents
@@ -112,13 +111,6 @@ public class View extends ViewPart {
 	private void setCSSClassName(Control widget, String name) {
 		widget.setData(CSSSWTConstants.CSS_CLASS_NAME_KEY, name);
 		//Ideally just changing the widget's CSS class would trigger a re-styling,
-		//but until bug #260407 is fixed we must call this next line
-		ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
-	}
-
-	private void setCSSID(Widget widget, String name) {
-		widget.setData(CSSSWTConstants.CSS_ID_KEY, name);
-		//Ideally just changing the widget's id would trigger a re-styling,
 		//but until bug #260407 is fixed we must call this next line
 		ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
 	}

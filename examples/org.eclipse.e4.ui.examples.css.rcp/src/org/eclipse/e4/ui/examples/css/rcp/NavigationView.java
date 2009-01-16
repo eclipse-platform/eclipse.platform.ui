@@ -2,6 +2,7 @@ package org.eclipse.e4.ui.examples.css.rcp;
 
 import java.util.ArrayList;
 
+import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -10,6 +11,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -137,6 +139,7 @@ public class NavigationView extends ViewPart {
      */
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		setCSSID(viewer.getControl(), "navigation");
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setInput(createDummyModel());
@@ -148,4 +151,12 @@ public class NavigationView extends ViewPart {
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
+	
+	private void setCSSID(Widget widget, String name) {
+		widget.setData(CSSSWTConstants.CSS_ID_KEY, name);
+		//Ideally just changing the widget's id would trigger a re-styling,
+		//but until bug #260407 is fixed we must call this next line
+		ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
+	}
+
 }
