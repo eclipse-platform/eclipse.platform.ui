@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.internal.AggregateWorkingSet;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
@@ -592,8 +593,12 @@ public class MarkerContentGenerator {
 		if (workingSet == null)
 			return new IResource[0];
 
-		if (workingSet.isEmpty())
-			return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
+		//Return workspace root for aggregates with no containing workingsets,ex. window working set
+		if (workingSet.isAggregateWorkingSet()&&workingSet.isEmpty()){
+			if(((AggregateWorkingSet) workingSet).getComponents().length==0)
+				return new IResource[] { ResourcesPlugin.getWorkspace().getRoot()};
+		}
+			
 
 		IAdaptable[] elements = workingSet.getElements();
 		List result = new ArrayList(elements.length);

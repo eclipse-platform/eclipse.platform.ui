@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -34,6 +33,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.AggregateWorkingSet;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -154,7 +154,6 @@ class MarkerFieldFilterGroup {
 	 */
 	private MarkerEntry testEntry = new MarkerEntry(null);
 	private IWorkingSet workingSet;
-	private Collection workingSetPaths;
 	private IResource[] wSetResources;
 
 	/**
@@ -177,31 +176,6 @@ class MarkerFieldFilterGroup {
 		if (MarkerSupportInternalUtilities.FALSE.equals(enablementString))
 			enabled = false;
 
-	}
-
-	/**
-	 * Add resources and thier children's paths to the working set paths.
-	 * 
-	 * @param resources
-	 */
-	private void addResourcesAndChildrenPaths(IResource[] resources) {
-		for (int idx = 0; idx < resources.length; idx++) {
-
-			IResource currentResource = resources[idx];
-
-			workingSetPaths.add(currentResource.getFullPath().toString());
-
-			if (currentResource instanceof IContainer) {
-				IContainer cont = (IContainer) currentResource;
-
-				try {
-					addResourcesAndChildrenPaths(cont.members());
-				} catch (CoreException e) {
-					Policy.handle(e);
-				}
-			}
-
-		}
 	}
 
 	/**
@@ -310,10 +284,12 @@ class MarkerFieldFilterGroup {
 			return new IResource[0];
 		}
 
-		if (workingSet.isEmpty()) {
-			return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
+		//Return workspace root for aggregates with no containing workingsets,ex. window working set
+		if (workingSet.isAggregateWorkingSet()&&workingSet.isEmpty()){
+			if(((AggregateWorkingSet) workingSet).getComponents().length==0)
+				return new IResource[] { ResourcesPlugin.getWorkspace().getRoot()};
 		}
-
+		
 		IAdaptable[] elements = workingSet.getElements();
 		List result = new ArrayList(elements.length);
 
@@ -378,28 +354,13 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
-	 * Return all of the paths in the working set
-	 * 
-	 * @return Collection
-	 */
-	private Collection getWorkingSetPaths() {
-
-		if (workingSetPaths == null) {
-			workingSetPaths = new HashSet();
-			addResourcesAndChildrenPaths(getResourcesInWorkingSet());
-		}
-		return workingSetPaths;
-
-	}
-	
-	/**
 	 * Gather the resource is in the working set
 	 */
 	private void computeWorkingSetResources() {
 		if(workingSet!=null){
 			 /* MarkerFieldFilterGroup will have to re-get the resources in 
 			 * a working set for every marker it filters using the select method
-			 * Or we may do this once before the markers are filtered.A IResourceChangeListener??		 
+			 * Or we may do this once before the markers are filtered.		 
 			 */
 			wSetResources=getResourcesInWorkingSet();
 		}
@@ -663,15 +624,24 @@ class MarkerFieldFilterGroup {
 	 * 
 	 * @param marker
 	 * @return <code>true</code> if it is being shown
-	 */
+	 */	
 	public boolean select(IMarker marker) {
 		MarkerFieldFilter[] filters = getFieldFilters();
 		testEntry.setMarker(marker);
-
-		if (scope == ON_WORKING_SET && workingSet != null
-				&& !workingSet.isEmpty()) {
-			if (!isInWorkingSet(marker.getResource()))
-				return false;
+		
+		
+		if (scope == ON_WORKING_SET && workingSet != null) {
+			if (!workingSet.isAggregateWorkingSet()){
+					if(!isInWorkingSet(marker.getResource())){
+						return false;
+					}
+			}
+			//skip this for aggregates with no containing workingsets, ex. window working set
+			else if(((AggregateWorkingSet) workingSet).getComponents().length!=0){
+					if(!isInWorkingSet(marker.getResource())){
+						return false;
+					}
+			}
 		}
 
 		for (int i = 0; i < filters.length; i++) {
@@ -718,15 +688,12 @@ class MarkerFieldFilterGroup {
 	 */
 	void setWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;
-		workingSetPaths = null;
 	}
 
 	/**
-	 * IResourceChangeListener, a better option??
-	 * 
+	 * Refresh the MarkerFieldFilterGroup .
 	 */	
 	void refresh() {
 		 computeWorkingSetResources();
-		 getWorkingSetPaths();
 	}
 }
