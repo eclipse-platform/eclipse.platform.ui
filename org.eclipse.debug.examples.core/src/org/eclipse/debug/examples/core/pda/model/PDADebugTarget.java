@@ -114,7 +114,6 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			while (!isTerminated() && message != null) {
 				try {
 					message = fEventReader.readLine();
-					System.out.println(message);
 					if (message != null) {
 					    PDAEvent event = null;
 					    try {
