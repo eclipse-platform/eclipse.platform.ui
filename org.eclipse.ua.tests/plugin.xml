@@ -462,5 +462,17 @@
          <property name="preferenceCustomization" value="data/intro/performance/plugin_customization.ini"/>
       </product> 
    </extension> 
+   
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/loadtest"
+            class="org.eclipse.ua.tests.help.util.LoadTestServlet"
+            httpcontextId="org.eclipse.help.webapp.help">
+      </servlet>
+      <serviceSelector
+            filter="(other.info=org.eclipse.help)">
+      </serviceSelector>
+   </extension>
 
 </plugin>

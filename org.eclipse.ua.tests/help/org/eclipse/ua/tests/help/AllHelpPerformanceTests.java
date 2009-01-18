@@ -12,7 +12,7 @@ package org.eclipse.ua.tests.help;
 
 import org.eclipse.ua.tests.help.performance.BuildHtmlSearchIndex;
 import org.eclipse.ua.tests.help.performance.IndexAssemblePerformanceTest;
-import org.eclipse.ua.tests.help.performance.StartServer;
+import org.eclipse.ua.tests.help.performance.HelpServerTest;
 import org.eclipse.ua.tests.help.performance.TocAssemblePerformanceTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -43,6 +43,6 @@ public class AllHelpPerformanceTests extends TestSuite {
 		addTest(TocAssemblePerformanceTest.suite());
 		addTest(IndexAssemblePerformanceTest.suite());
 		addTest(BuildHtmlSearchIndex.suite());
-		addTest(StartServer.suite());
+		addTest(HelpServerTest.suite());
 	}
 }
