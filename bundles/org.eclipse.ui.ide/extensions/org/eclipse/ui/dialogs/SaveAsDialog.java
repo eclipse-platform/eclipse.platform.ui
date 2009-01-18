@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -104,9 +105,12 @@ public class SaveAsDialog extends TitleAreaDialog {
         validatePage();
         resourceGroup.setFocus();
         setTitle(IDEWorkbenchMessages.SaveAsDialog_title);
-        dlgTitleImage = IDEInternalWorkbenchImages.getImageDescriptor(
-                IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG).createImage();
-        setTitleImage(dlgTitleImage);
+        ImageDescriptor descriptor = IDEInternalWorkbenchImages.getImageDescriptor(
+                IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG);
+        if(descriptor != null) {
+        	dlgTitleImage = descriptor.createImage();
+        	setTitleImage(dlgTitleImage);
+        }
         setMessage(IDEWorkbenchMessages.SaveAsDialog_message);
 
         return contents;
