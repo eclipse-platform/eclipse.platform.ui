@@ -270,7 +270,11 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			if (visibleChar.length() > 0) {
 				int widgetOffset= startOffset + textOffset - visibleChar.length() + delta;
 				if (!eol || !isFoldedLine(content.getLineAtOffset(widgetOffset))) {
-					if (isOffsetSelected(fTextWidget, widgetOffset)) {
+					/* 
+					 * Block selection is drawn using alpha and no selection-inverting
+					 * takes place, we always draw as 'unselected' in block selection mode.
+					 */
+					if (!fTextWidget.getBlockSelection() && isOffsetSelected(fTextWidget, widgetOffset)) {
 						fg= fTextWidget.getSelectionForeground();
 					} else if (styleRange == null || styleRange.start + styleRange.length <= widgetOffset) {
 						styleRange= fTextWidget.getStyleRangeAtOffset(widgetOffset);
@@ -299,13 +303,6 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	private static final boolean isOffsetSelected(StyledText widget, int offset) {
 		Point selection= widget.getSelection();
 		return offset >= selection.x && offset < selection.y;
-
-		// FIXME, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=260998
-//		int[] ranges= widget.getSelectionRanges();
-//		for (int i= 0; i < ranges.length; i+= 2)
-//			if (ranges[i] <= offset && offset <= ranges[i + 1])
-//				return true;
-//		return false;
 	}
 
 	/**
