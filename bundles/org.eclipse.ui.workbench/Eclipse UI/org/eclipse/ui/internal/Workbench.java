@@ -197,6 +197,8 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.SynchronousBundleListener;
 
+import com.ibm.icu.util.ULocale;
+
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
  * primary responsability is the management of workbench windows, dialogs,
@@ -489,6 +491,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		final int[] returnCode = new int[1];
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
+				ULocale.setDefault(new ULocale(Platform.getNL()
+						+ Platform.getNLExtensions()));
 				// create the workbench instance
 				Workbench workbench = new Workbench(display, advisor);
 				// run the workbench event loop
