@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bob Smith - bug 198880, 249526
+ *     Matthew Hall - bug 249526, 261513
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -91,6 +92,7 @@ public class ObservablesManager {
 	 * 
 	 * @param runnable
 	 *            the runnable to execute
+	 * @since 1.2
 	 */
 	public void runAndCollect(Runnable runnable) {
 		IObservable[] collected = ObservableTracker.runAndCollect(runnable);
