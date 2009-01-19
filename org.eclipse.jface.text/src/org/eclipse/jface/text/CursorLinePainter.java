@@ -80,8 +80,6 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 
 			if (event.lineOffset <= caret && caret <= event.lineOffset + length && !hasMultiLineSelection(textWidget))
 				event.lineBackground= fHighlightColor;
-			else
-				event.lineBackground= textWidget.getBackground();
 		}
 	}
 
