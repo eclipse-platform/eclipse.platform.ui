@@ -330,6 +330,14 @@ public abstract class ActionFactory {
 
     /**
      * Workbench action (id "intro"): Activate the introduction extension.
+     * This action should not be instantiated if no intro is provided.  Use
+     * code like:
+     * <pre>
+     * if (window.getWorkbench().getIntroManager().hasIntro()) {
+     *     introAction = ActionFactory.INTRO.create(window);
+     *     register(introAction);
+     * }
+     * </pre>
      */
     public static final ActionFactory INTRO = new ActionFactory("intro") {//$NON-NLS-1$
         /* (non-Javadoc)
