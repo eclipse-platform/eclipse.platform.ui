@@ -120,6 +120,7 @@ package org.eclipse.ui;
  *   and should be deprecated and moved to a constant pool at the IDE layer
  *   (e.g. IIDEActionConstants).
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IWorkbenchActionConstants {
 
