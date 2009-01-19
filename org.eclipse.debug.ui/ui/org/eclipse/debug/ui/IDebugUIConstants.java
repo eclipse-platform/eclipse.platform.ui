@@ -1109,6 +1109,8 @@ public interface IDebugUIConstants {
 	
 	/**
 	 * Identifier for breakpoint working set type.
+	 * <br>
+	 * Value is: <code>org.eclipse.debug.ui.breakpointWorkingSet</code> 
 	 * 
 	 * @since 3.2
 	 */

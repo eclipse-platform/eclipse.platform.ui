@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer;
 import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -51,7 +51,7 @@ public class ToggleDefaultGroupAction extends AbstractBreakpointsViewAction {
 	                BreakpointContainer container = (BreakpointContainer) firstElement;
 	                if (container.getCategory() instanceof WorkingSetCategory) {
 	                    WorkingSetCategory category = (WorkingSetCategory)container.getCategory();
-	                    if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(category.getWorkingSet().getId())) {
+	                    if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(category.getWorkingSet().getId())) {
 	                        IWorkingSet set = category.getWorkingSet();
 	                        action.setEnabled(true);
 	                        boolean isDefault = set == BreakpointSetOrganizer.getDefaultWorkingSet();

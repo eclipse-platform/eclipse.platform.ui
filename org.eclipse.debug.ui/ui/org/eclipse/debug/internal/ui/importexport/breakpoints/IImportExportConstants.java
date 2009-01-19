@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,16 +44,6 @@ public interface IImportExportConstants {
 	 * @see WizardImportBreakpointsPage
 	 */
 	public static final String IE_NODE_BREAKPOINT = "breakpoint"; //$NON-NLS-1$
-	
-	/**
-	 * The ID for the classname node for exporting breakpoints from the wizards.
-	 * This ID is searchable from the listing of XMLMementos gathered from the BreakPointManager.
-	 * 
-	 * @see WizardExportBreakpointsPage
-	 * @see WizardImportBreakpointsPage
-	 * @see XMLMemento->getChild(String)
-	 */
-	public static final String IE_NODE_CLASSNAME = "classname"; //$NON-NLS-1$
 	
 	/**
 	 * <p>
@@ -139,7 +129,7 @@ public interface IImportExportConstants {
 	public static final String IE_BP_REGISTERED = "registered"; //$NON-NLS-1$
 	
 	/**
-	 * The name of the persistant attribute for breakpoint information
+	 * The name of the persistent attribute for breakpoint information
 	 */
 	public static final String IE_BP_PERSISTANT = "persistant"; //$NON-NLS-1$
 	
@@ -154,22 +144,7 @@ public interface IImportExportConstants {
 	public static final String CHARSTART = "charStart"; //$NON-NLS-1$
 	
 	/**
-	 * the name of the workingsets node
-	 */
-	public static final String IE_NODE_WORKINGSETS = "workingsets";  //$NON-NLS-1$
-	
-	/**
-	 * The name of the workingset node
-	 */
-	public static final String IE_NODE_WORKINGSET = "workingset"; //$NON-NLS-1$
-	
-	/**
-	 * The name of the id attribute, reusable for a general attribute called id
-	 */
-	public static final String IE_NODE_ID = "id"; //$NON-NLS-1$
-	
-	/**
 	 * The delimiter for the listing of working sets that a marker belongs to
 	 */
 	public static final String DELIMITER = "<;#>"; //$NON-NLS-1$
-}//end interface
+}

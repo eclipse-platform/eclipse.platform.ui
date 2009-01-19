@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConstants;
 import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -81,7 +82,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
 		for (int i = 0; i < workingSets.length; i++) {
 			IWorkingSet set = workingSets[i];
-			if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
+			if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId())) {
 				IAdaptable[] elements = set.getElements();
 				for (int j = 0; j < elements.length; j++) {
 					IAdaptable adaptable = elements[j];
@@ -122,6 +123,9 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		else if (event.getOldValue() instanceof IWorkingSet) {
 			set = (IWorkingSet) event.getOldValue();
 		}
+		if(set == null) {
+			return;
+		}
 		String property = event.getProperty();
 		//fix for bug 103731
 		if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
@@ -144,7 +148,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 				}
 			}
 		}
-		if (set != null	&& IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
+		if (set != null	&& IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId())) {
 			fireCategoryChanged(new WorkingSetCategory(set));
 		}
 		if (property.equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {
@@ -239,7 +243,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		IWorkingSet set = null;
 		for (int i = 0; i < workingSets.length; i++) {
 			set = workingSets[i];
-			if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
+			if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId())) {
 				clean(set);
 			}
 		}
@@ -312,7 +316,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		String name = IInternalDebugCoreConstants.EMPTY_STRING;
 		if (set != null) {
 			// only consider breakpoint working sets
-			if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
+			if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId())) {
 				name = set.getName();
 			}
 		}
@@ -329,7 +333,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
 		if (category instanceof WorkingSetCategory) {
 			WorkingSetCategory wsc = (WorkingSetCategory) category;
-			return IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(wsc.getWorkingSet().getId());
+			return IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(wsc.getWorkingSet().getId());
 		}
 		return super.canRemove(breakpoint, category);
 	}
@@ -343,7 +347,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
 		if (category instanceof WorkingSetCategory) {
 			WorkingSetCategory wsc = (WorkingSetCategory) category;
-			return IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(wsc.getWorkingSet().getId());
+			return IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(wsc.getWorkingSet().getId());
 		}
 		return super.canAdd(breakpoint, category);
 	}
@@ -411,7 +415,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		List all = new ArrayList();
 		for (int i = 0; i < workingSets.length; i++) {
 			IWorkingSet set = workingSets[i];
-			if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set
+			if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set
 					.getId())) {
 				all.add(new WorkingSetCategory(set));
 			}

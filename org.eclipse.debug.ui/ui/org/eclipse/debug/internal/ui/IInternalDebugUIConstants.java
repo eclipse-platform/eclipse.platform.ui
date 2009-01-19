@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -361,6 +361,8 @@ public interface IInternalDebugUIConstants {
      * Breakpoint working set identifier.
      * 
      * @since 3.1
+     * @deprecated There is an API equivalent constant that should be used, see
+     * {@link IDebugUIConstants#BREAKPOINT_WORKINGSET_ID}
      */
     public static final String ID_BREAKPOINT_WORKINGSET = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$
     

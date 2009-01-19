@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,26 +13,27 @@ package org.eclipse.debug.ui.actions;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IBreakpointImportParticipant;
@@ -117,64 +118,71 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(final IProgressMonitor monitor) throws InvocationTargetException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor wmonitor) throws CoreException {
-				try {
-					Reader reader = null;
-					if (fBuffer == null) {
-						reader = new InputStreamReader(new FileInputStream(fFileName), "UTF-8"); //$NON-NLS-1$
-					} else {
-						reader = new StringReader(fBuffer.toString());
-					}
-					XMLMemento memento = XMLMemento.createReadRoot(reader);
-					IMemento[] nodes = memento.getChildren(IImportExportConstants.IE_NODE_BREAKPOINT);
-					IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
-					monitor.beginTask(ImportExportMessages.ImportOperation_0, nodes.length);
-					Map attributes = null;
-					IBreakpointImportParticipant[] participants = null;
-					for(int i = 0; i < nodes.length; i++) {
-						if(monitor.isCanceled()) {
-							return;
-						}
-						attributes = collectBreakpointProperties(nodes[i]);
-						IResource resource = workspace.findMember((String) attributes.get(IImportExportConstants.IE_NODE_PATH));
-						// filter resource breakpoints that do not exist in this workspace
-						if(resource != null) {	
-							try {
-								participants = fManager.getImportParticipants((String) attributes.get(IImportExportConstants.IE_NODE_TYPE)); 
-							}
-							catch(CoreException ce) {}
-							IMarker marker = findExistingMarker(attributes, participants);
-							if(marker == null) {
-								marker = resource.createMarker((String) attributes.get(IImportExportConstants.IE_NODE_TYPE));
-								restoreBreakpoint(marker, attributes, participants);
-							}
-							else {
-								if(fOverwriteAll) {
-									marker.setAttributes(null);
-									restoreBreakpoint(marker, attributes, participants);
-								}
-							}
-						}
-						fCurrentWorkingSetProperty = null;
-						monitor.worked(1);
-					}
-					fManager.addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]));
-				} 
-				catch(FileNotFoundException e) {
-					throw new CoreException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, 
-							MessageFormat.format("Breakpoint import file not found: {0}", new String[]{fFileName}), e)); //$NON-NLS-1$
+		SubMonitor localmonitor = SubMonitor.convert(monitor, ImportExportMessages.ImportOperation_0, 1);
+		Reader reader = null;
+		try {
+			if (fBuffer == null) {
+				reader = new InputStreamReader(new FileInputStream(fFileName), "UTF-8"); //$NON-NLS-1$
+			} else {
+				reader = new StringReader(fBuffer.toString());
+			}
+			XMLMemento memento = XMLMemento.createReadRoot(reader);
+			IMemento[] nodes = memento.getChildren(IImportExportConstants.IE_NODE_BREAKPOINT);
+			IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
+			localmonitor.setWorkRemaining(nodes.length);
+			Map attributes = null;
+			IBreakpointImportParticipant[] participants = null;
+			for(int i = 0; i < nodes.length; i++) {
+				if(localmonitor.isCanceled()) {
+					return;
 				}
-				catch (UnsupportedEncodingException e) {
-					throw new CoreException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, 
-							MessageFormat.format("The import file was written in non-UTF-8 encoding.", new String[]{fFileName}), e)); //$NON-NLS-1$
+				attributes = collectBreakpointProperties(nodes[i]);
+				IResource resource = workspace.findMember((String) attributes.get(IImportExportConstants.IE_NODE_PATH));
+				// filter resource breakpoints that do not exist in this workspace
+				if(resource != null) {	
+					try {
+						participants = fManager.getImportParticipants((String) attributes.get(IImportExportConstants.IE_NODE_TYPE)); 
+					}
+					catch(CoreException ce) {}
+					IMarker marker = findExistingMarker(attributes, participants);
+					if(marker == null) {
+						marker = resource.createMarker((String) attributes.get(IImportExportConstants.IE_NODE_TYPE));
+						restoreBreakpoint(marker, attributes, participants);
+					}
+					else {
+						if(fOverwriteAll) {
+							marker.setAttributes(null);
+							restoreBreakpoint(marker, attributes, participants);
+						}
+					}
+				}
+				fCurrentWorkingSetProperty = null;
+				localmonitor.worked(1);
+			}
+			fManager.addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]));
+		} 
+		catch(FileNotFoundException e) {
+			throw new InvocationTargetException(e, 
+					MessageFormat.format("Breakpoint import file not found: {0}", new String[]{fFileName})); //$NON-NLS-1$
+		}
+		catch (UnsupportedEncodingException e) {
+			throw new InvocationTargetException(e, 
+					MessageFormat.format("The import file was written in non-UTF-8 encoding.", new String[]{fFileName})); //$NON-NLS-1$
+		}
+		catch(CoreException ce) {
+			throw new InvocationTargetException(ce, 
+					MessageFormat.format("There was a problem importing breakpoints from: {0}", new String[] {fFileName})); //$NON-NLS-1$
+		}
+		finally {
+			localmonitor.done();
+			if(reader != null) {
+				try {
+					reader.close();
+				} 
+				catch (IOException e) {
+					throw new InvocationTargetException(e);
 				}
 			}
-		};
-		try {
-			ResourcesPlugin.getWorkspace().run(wr, monitor);
-		} catch(CoreException e) {
-			throw new InvocationTargetException(e);
 		}
 	}
 	
@@ -289,9 +297,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			fAdded.add(breakpoint);
 			if (fCreateWorkingSets && fCurrentWorkingSetProperty != null) {
 				String[] names = fCurrentWorkingSetProperty.split("\\" + IImportExportConstants.DELIMITER); //$NON-NLS-1$
-				for (int m = 1; m < names.length; m++) {
-					createWorkingSet(names[m], breakpoint);
-				}
+				updateWorkingSets(names, breakpoint);
 			}
 			if(participants != null) {
 				for(int i = 0; i < participants.length; i++) {
@@ -303,6 +309,82 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	}
 	
 	/**
+	 * Updates the working sets the given breakpoint belongs to
+	 * @param wsnames
+	 * @param breakpoint
+	 * @since 3.5
+	 */
+	private void updateWorkingSets(String[] wsnames, IBreakpoint breakpoint) {
+		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSet set = null;
+		ArrayList sets = new ArrayList();
+		collectContainingWorkingsets(breakpoint, sets);
+		for (int i = 0; i < wsnames.length; i++) {
+			if("".equals(wsnames[i])) { //$NON-NLS-1$
+				continue;
+			}
+			set = mgr.getWorkingSet(wsnames[i]);
+			if(set == null) {
+				//create working set
+				set = mgr.createWorkingSet(wsnames[i], new IAdaptable[] {});
+				set.setId(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
+				mgr.addWorkingSet(set);
+			}
+			if(!sets.contains(set)) {
+				IAdaptable[] elements = set.getElements();
+				IAdaptable[] newElements = new IAdaptable[elements.length + 1];
+				newElements[newElements.length - 1] = breakpoint;
+				System.arraycopy(elements, 0, newElements, 0, elements.length);
+				set.setElements(newElements);
+			}
+			sets.remove(set);
+		}
+		ArrayList items = null;
+		for(Iterator iter = sets.iterator(); iter.hasNext();) {
+			set = (IWorkingSet) iter.next();
+			items = new ArrayList(Arrays.asList(set.getElements()));
+			if(items.remove(breakpoint)) {
+				set.setElements((IAdaptable[]) items.toArray(new IAdaptable[items.size()]));
+			}
+		}
+	}
+	
+	/**
+	 * Collects all of the breakpoint working sets that contain the given {@link IBreakpoint}
+	 * in the given list
+	 * 
+	 * @param breakpoint
+	 * @param collector
+	 * @since 3.5
+	 */
+	private void collectContainingWorkingsets(IBreakpoint breakpoint, List collector) {
+		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSet[] sets = mgr.getWorkingSets();
+		for (int i = 0; i < sets.length; i++) {
+			if(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(sets[i].getId()) &&
+					containsBreakpoint(sets[i], breakpoint)) {
+				collector.add(sets[i]);
+			}
+		}
+	}
+	
+	/**
+	 * Method to ensure markers and breakpoints are not both added to the working set
+	 * @param set the set to check
+	 * @param breakpoint the breakpoint to check for existence
+	 * @return true if it is present false otherwise
+	 */
+	private boolean containsBreakpoint(IWorkingSet set, IBreakpoint breakpoint) {
+		IAdaptable[] elements = set.getElements();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i].equals(breakpoint)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Returns the breakpoints that were imported by this operation, possibly
 	 * an empty list. 
 	 * 
@@ -311,42 +393,5 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	public IBreakpoint[] getImportedBreakpoints() {
 		return (IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]);
-	}
-
-	/**
-	 * Creates a working set and sets the values
-	 * @param breakpoint the restored breakpoint to add to the new working set
-	 */
-	private void createWorkingSet(String setname, IAdaptable element) {
-		IWorkingSetManager wsmanager = PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSet set = wsmanager.getWorkingSet(setname);
-		if (set == null) {
-			set = wsmanager.createWorkingSet(setname, new IAdaptable[] {});
-			set.setId(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
-			wsmanager.addWorkingSet(set);
-		}
-		if (!setContainsBreakpoint(set, (IBreakpoint) element)) {
-			IAdaptable[] elements = set.getElements();
-			IAdaptable[] newElements = new IAdaptable[elements.length + 1];
-			newElements[newElements.length - 1] = element;
-			System.arraycopy(elements, 0, newElements, 0, elements.length);
-			set.setElements(newElements);
-		}
-	}
-
-	/**
-	 * Method to ensure markers and breakpoints are not both added to the working set
-	 * @param set the set to check
-	 * @param breakpoint the breakpoint to check for existence
-	 * @return true if it is present false otherwise
-	 */
-	private boolean setContainsBreakpoint(IWorkingSet set, IBreakpoint breakpoint) {
-		IAdaptable[] elements = set.getElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].equals(breakpoint)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

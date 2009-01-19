@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkbenchPage;
@@ -62,7 +62,7 @@ public class WorkingSetsFilter extends ViewerFilter {
 				//remove breakpoint working sets
 				ArrayList ws = new ArrayList();
 				for (int i = 0; i < wsets.length; i++) {
-					if(!IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(wsets[i].getId())) {
+					if(!IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(wsets[i].getId())) {
 						ws.add(wsets[i]);
 					}
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkingSet;
@@ -57,7 +57,7 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
         }
         IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
         for (int i = 0; i < workingSets.length; i++) {
-            if (!IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(workingSets[i].getId())) {
+            if (!IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(workingSets[i].getId())) {
 		        IAdaptable[] elements = workingSets[i].getElements();
 		        for (int j = 0; j < elements.length; j++) {
 		            IResource resource = (IResource) elements[j].getAdapter(IResource.class);
@@ -92,9 +92,8 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
         } else if (event.getOldValue() instanceof IWorkingSet) {
             set = (IWorkingSet) event.getOldValue();
         }
-        if (set != null && !IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
+        if (set != null && !IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId())) {
             fireCategoryChanged(new WorkingSetCategory(set));
         }
     }
-    
 }

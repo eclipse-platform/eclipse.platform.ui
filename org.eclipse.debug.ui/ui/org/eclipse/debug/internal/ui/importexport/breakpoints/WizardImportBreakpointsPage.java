@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,7 +199,12 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	public boolean finish() {	
 		try {
 			saveWidgetState();
-			getContainer().run(true, true, new ImportBreakpointsOperation(fFileNameField.getText().trim(), fAutoRemoveDuplicates.getSelection(), fAutoCreateWorkingSets.getSelection()));
+			getContainer().run(false, 
+					true, 
+					new ImportBreakpointsOperation(
+							fFileNameField.getText().trim(), 
+							fAutoRemoveDuplicates.getSelection(), 
+							fAutoCreateWorkingSets.getSelection()));
 		}
 		catch (InterruptedException e) {
 			DebugPlugin.log(e);
