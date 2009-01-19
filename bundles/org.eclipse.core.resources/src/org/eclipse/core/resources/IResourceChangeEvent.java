@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,9 +76,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *    The workspace is closed for change during  notification of these events.
  *   </li>
  *   <li>
- *    Before-the-fact reports of the impending refresh of a single
- *    project. Event type is <code>PRE_REFRESH</code>, 
- *    and <code>getResource</code> returns the project being refreshed.
+ *    Before-the-fact reports of the impending refresh of a resource. 
+ *    Event type is <code>PRE_REFRESH</code> and the <code>getSource</code>
+ *    method returns the scope of the refresh (either the workspace or a single project).
+ *    If the event is fired by a project refresh the <code>getResource</code>
+ *    method returns the project being refreshed.
  *    The workspace is closed for changes during notification of these events.
  *   </li>
  * </ul>
@@ -165,10 +167,11 @@ public interface IResourceChangeEvent {
 	
 	/**
 	 * Event type constant (bit mask) indicating a before-the-fact 
-	 * report of refreshing of a project.
+	 * report of refreshing the workspace or a project.
 	 * See class comments for further details.
 	 *
 	 * @see #getType()
+	 * @see #getSource()
 	 * @see #getResource()
 	 * @since 3.4
 	 */

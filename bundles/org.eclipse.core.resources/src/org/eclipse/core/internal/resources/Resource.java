@@ -1515,8 +1515,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				if (!isRoot && !getProject().isAccessible())
 					return;
 				workspace.beginOperation(true);
-				if (getType() == IResource.PROJECT)
-					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_REFRESH, this));
+				if (getType() == IResource.PROJECT || getType() == IResource.ROOT)
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_REFRESH, this));
 				build = getLocalManager().refresh(this, depth, true, Policy.subMonitorFor(monitor, Policy.opWork));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();

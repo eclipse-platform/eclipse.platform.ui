@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class LifecycleEvent {
 	public static final int PRE_LINK_CREATE = 0x200;
 	public static final int PRE_LINK_DELETE = 0x400;
 	public static final int PRE_LINK_MOVE = 0x800;
-	public static final int PRE_PROJECT_REFRESH = 0x1000;
+	public static final int PRE_REFRESH = 0x1000;
 
 	/**
 	 * The kind of event

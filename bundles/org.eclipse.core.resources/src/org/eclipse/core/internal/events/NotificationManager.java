@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -259,11 +259,13 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				project = (IProject) event.resource;
 				notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_DELETE, project), true);
 				break;
-			case LifecycleEvent.PRE_PROJECT_REFRESH :
+			case LifecycleEvent.PRE_REFRESH :
 				if (!listeners.hasListenerFor(IResourceChangeEvent.PRE_REFRESH))
 					return;
-				project = (IProject) event.resource;
-				notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_REFRESH, project), true);
+				if (event.resource.getType() == IResource.PROJECT)
+					notify(getListeners(), new ResourceChangeEvent(event.resource, IResourceChangeEvent.PRE_REFRESH, event.resource), true);
+				else if (event.resource.getType() == IResource.ROOT)
+					notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_REFRESH, null), true);
 				break;
 		}
 	}

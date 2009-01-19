@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -941,6 +941,57 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		}
 	}
 
+	public void testPreRefreshNotification() throws Exception {
+		final IWorkspaceRoot root = getWorkspace().getRoot();
+		
+		project1 = root.getProject(getUniqueString());
+		project1.create(null);
+		project1.open(null);
+
+		assertTrue("1.0", project1.isOpen());
+
+		class Listener1 implements IResourceChangeListener {
+			public boolean wasPerformed = false;
+			public Object eventSource;
+			public Object eventResource ;
+
+			public void resourceChanged(final IResourceChangeEvent event) {
+				wasPerformed = true;
+				eventSource = event.getSource();
+				eventResource = event.getResource();
+			}
+		}
+
+		Listener1 listener1 = new Listener1();
+
+		// perform a refresh to test the added listeners
+		try {
+			getWorkspace().addResourceChangeListener(listener1, IResourceChangeEvent.PRE_REFRESH);
+
+			root.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
+			
+			assertTrue("2.0", listener1.wasPerformed);
+			assertEquals("3.0", getWorkspace(), listener1.eventSource);
+			assertEquals("4.0", null, listener1.eventResource);
+			
+			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
+			
+			assertTrue("5.0", listener1.wasPerformed);
+			assertEquals("6.0", project1, listener1.eventSource);
+			assertEquals("7.0", project1, listener1.eventResource);
+		} catch (InterruptedException e) {
+			fail("8.0", e);
+		} catch (CoreException e) {
+			fail("9.0", e);
+		} finally {
+			getWorkspace().removeResourceChangeListener(listener1);
+		}
+	}
+	
+	
+	
 
 	/**
 	 * Tests that phantom members don't show up in resource deltas when standard
