@@ -113,17 +113,28 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 				val = marker.getAttribute(IImportExportConstants.CHARSTART); 
 				root.putString(IImportExportConstants.CHARSTART, (val != null) ? val.toString() : null);
 				String value = null;
+				boolean wsattrib = false;
 				for(java.util.Iterator iter = marker.getAttributes().keySet().iterator(); iter.hasNext();) {
 					String iterval = iter.next().toString();
 					value = marker.getAttribute(iterval).toString();
 					if(!iterval.equals(IMarker.LINE_NUMBER)) {
 						child = root.createChild(IImportExportConstants.IE_NODE_ATTRIB);
 						if(iterval.equals(IInternalDebugUIConstants.WORKING_SET_NAME)) {
+							wsattrib = true;
 							value = getWorkingSetsAttribute(breakpoint);
 						}
 						child.putString(IImportExportConstants.IE_NODE_NAME, iterval);
 						child.putString(IImportExportConstants.IE_NODE_VALUE, value);
 					}
+				}
+				if(!wsattrib) {
+					//ensure the working set infos are present if not previously updated
+					child = root.createChild(IImportExportConstants.IE_NODE_ATTRIB);
+					child.putString(IImportExportConstants.IE_NODE_NAME, IInternalDebugUIConstants.WORKING_SET_NAME);
+					child.putString(IImportExportConstants.IE_NODE_VALUE, getWorkingSetsAttribute(breakpoint));
+					child = root.createChild(IImportExportConstants.IE_NODE_ATTRIB);
+					child.putString(IImportExportConstants.IE_NODE_NAME, IInternalDebugUIConstants.WORKING_SET_ID);
+					child.putString(IImportExportConstants.IE_NODE_VALUE, IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
 				}
 				localmonitor.worked(1);
 			}
