@@ -1204,6 +1204,22 @@
                scope="ON_SELECTED_AND_CHILDREN"
                values="org.eclipse.ui.internal.views.markers.SelectedWarningsParameters">
          </markerFieldConfiguration>
+         
+         <markerFieldConfiguration
+               enabled="false"
+               id="org.eclipse.ui.ide.selectedErrorsWarningsGrouping"
+               name="%MarkerFilterGrouping.SelectedErrorsWarnings"
+               scope="ON_SELECTED_AND_CHILDREN"
+               values="org.eclipse.ui.internal.views.markers.ErrorsWarningsParameters">
+         </markerFieldConfiguration> 
+          <markerFieldConfiguration
+               enabled="false"
+               id="org.eclipse.ui.ide.projectErrorsWarningsGrouping"
+               name="%MarkerFilterGrouping.ProjectErrorsWarnings"
+               scope="ON_ANY_IN_SAME_CONTAINER"
+               values="org.eclipse.ui.internal.views.markers.ErrorsWarningsParameters">
+         </markerFieldConfiguration>
+         
          <markerFieldReference
                id="org.eclipse.ui.ide.markerType"
                visible="true">
