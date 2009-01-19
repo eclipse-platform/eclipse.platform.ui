@@ -1595,26 +1595,27 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (display == null)
 			display = fComposite.getDisplay();
 
-		Color color = null;
+		Color bgColor = null;
 		if (fBackground != null)
-			color = getColor(display, fBackground);
+			bgColor = getColor(display, fBackground);
 
 		if (fAncestor != null)
-			fAncestor.setBackgroundColor(color);
+			fAncestor.setBackgroundColor(bgColor);
 		if (fLeft != null)
-			fLeft.setBackgroundColor(color);
+			fLeft.setBackgroundColor(bgColor);
 		if (fRight != null)
-			fRight.setBackgroundColor(color);
+			fRight.setBackgroundColor(bgColor);
 
+		Color fgColor = null;
 		if (fForeground != null)
-			color = getColor(display, fForeground);
+			fgColor = getColor(display, fForeground);
 
 		if (fAncestor != null)
-			fAncestor.setForegroundColor(color);
+			fAncestor.setForegroundColor(fgColor);
 		if (fLeft != null)
-			fLeft.setForegroundColor(color);
+			fLeft.setForegroundColor(fgColor);
 		if (fRight != null)
-			fRight.setForegroundColor(color);
+			fRight.setForegroundColor(fgColor);
 		
 		ColorRegistry registry= JFaceResources.getColorRegistry();
 		
