@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="commonExpression" name="Common Expressions"/>
       </appInfo>
       <documentation>
-         An action&apos;s enablement and/or visibility can be defined using the elements &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&gt;visibility&lt;/samp&gt; respectively. These two elements contain a boolean expression that is evaluated to determine the enablement and/or visibility.
+         An action&apos;s enablement and/or visibility can be defined using the elements &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&gt;visibility&lt;/samp&gt; respectively, if the extension point supports it. These two elements contain a boolean expression that is evaluated to determine the enablement and/or visibility.
 &lt;p&gt;
 The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&gt;visibility&lt;/samp&gt; elements. Both contain only one boolean expression sub-element. In the simplest case, this will be an &lt;samp&gt;objectClass&lt;/samp&gt;, &lt;samp&gt;objectState&lt;/samp&gt;, &lt;samp&gt;pluginState&lt;/samp&gt;, or &lt;samp&gt;systemProperty&lt;/samp&gt; element. In the more complex case, the &lt;samp&gt;and&lt;/samp&gt;, &lt;samp&gt;or&lt;/samp&gt;, and &lt;samp&gt;not&lt;/samp&gt; elements can be combined to form a boolean expression. Both the &lt;samp&gt;and&lt;/samp&gt;, and &lt;samp&gt;or&lt;/samp&gt; elements must contain 2 sub-elements. The &lt;samp&gt;not&lt;/samp&gt; element must contain only 1 sub-element.
 &lt;/p&gt;
@@ -231,32 +231,8 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>

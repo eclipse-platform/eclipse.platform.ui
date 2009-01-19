@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="popupMenus" name="Pop-up Menus"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point is used to add new actions to context menus owned by other plug-ins.  Action contributions may be made against a specific object type (&lt;samp&gt;objectContribution&lt;/samp&gt;) or against a specific context menu of a view or editor part (&lt;samp&gt;viewerContribution&lt;/samp&gt;). When using &lt;samp&gt;objectContribution&lt;/samp&gt;, the contribution will appear in all view or editor part context menus where objects of the specified type are selected. In contrast, using &lt;samp&gt;viewerContribution&lt;/samp&gt;, the contribution will only appear in the specified view or editor part context menu, regardless of the selection.
 &lt;p&gt;
@@ -18,6 +18,8 @@ Selection can be further constrained through the use of a name filter. If used, 
 Individual actions in an object contribution can use the attribute &lt;code&gt;enablesFor&lt;/code&gt; to specify if it should only apply for a single, multiple, or any other selection type. 
 &lt;p&gt;
 If these filtering mechanisms are inadequate an action contribution may use the &lt;samp&gt;filter&lt;/samp&gt; mechanism.  In this case the attributes of the target object are described in a series of name-value pairs.  The attributes which apply to the selection are type-specific and beyond the domain of the workbench itself, so the workbench will delegate filtering at this level to the actual selection.
+&lt;p&gt;
+The &lt;/code&gt;objectContribution&lt;/code&gt; element uses the core expression &lt;code&gt;enablement&lt;/code&gt;, as defined in &lt;a href=&quot;org_eclipse_core_expressions_definitions.html&quot;&gt;org.eclipse.core.expressions.definitions&lt;/a&gt;.
       </documentation>
    </annotation>
 
@@ -28,6 +30,11 @@ If these filtering mechanisms are inadequate an action contribution may use the 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="objectContribution" minOccurs="0" maxOccurs="unbounded"/>
@@ -45,9 +52,9 @@ If these filtering mechanisms are inadequate an action contribution may use the 
                <documentation>
                   an optional identifier of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
@@ -63,7 +70,7 @@ If these filtering mechanisms are inadequate an action contribution may use the 
    <element name="objectContribution">
       <annotation>
          <documentation>
-            This element is used to define a group of actions and/or menus for any viewer context menus for which the objects of the specified type are selected.
+            This element is used to define a group of actions and/or menus for any viewer context menus for which the objects of the specified type are selected.  &lt;code&gt;enablement&lt;/code&gt; in this element refers to core expression enablement, as defined in &lt;a href=&quot;org_eclipse_core_expressions_definitions.html&quot;&gt;org.eclipse.core.expressions.definitions&lt;/a&gt;, and effects the enablement of the objectContribution not the contained actions.
          </documentation>
       </annotation>
       <complexType>
@@ -87,9 +94,9 @@ If these filtering mechanisms are inadequate an action contribution may use the 
                   a fully qualified name of the class or interface that all objects in the 
 selection must subclass or implement.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="java.lang.object"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="nameFilter" type="string">
@@ -140,9 +147,9 @@ selection must subclass or implement.
 
    <element name="action">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="label" icon="icon"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element defines an action that the user can invoke in the UI.
          </documentation>
@@ -165,9 +172,9 @@ selection must subclass or implement.
                <documentation>
                   a translatable name used as the menu item text. The name can include mnenomic information.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="definitionId" type="string">
@@ -175,9 +182,9 @@ selection must subclass or implement.
                <documentation>
                   This specifies the command that this action is handling.  This is used to decide which key binding to display in the pop-up menu.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="menubarPath" type="string">
@@ -193,9 +200,9 @@ selection must subclass or implement.
                   a relative path of an icon used to visually represent the action in its context.
 The path is relative to the location of the plugin.xml file of the contributing plug-in.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">
@@ -258,9 +265,9 @@ The path is relative to the location of the plugin.xml file of the contributing 
                <documentation>
                   a name of the fully qualified class that implements &lt;samp&gt;org.eclipse.ui.IObjectActionDelegate&lt;/samp&gt; (for object contributions), &lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt; (for viewer contributions to a view part), or &lt;samp&gt;org.eclipse.ui.IEditorActionDelegate&lt;/samp&gt; (for viewer contributions to an editor part).  For backwards compatibility, &lt;samp&gt;org.eclipse.ui.IActionDelegate&lt;/samp&gt; may be implemented for object contributions.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="enablesFor" type="string">
@@ -318,9 +325,9 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
                <documentation>
                   an optional attribute that specifies the identifier of an action which this action overrides. The action represented by this identifier will not be contributed to the context menu. The action identifier must be from a prerequisite plug-in only. This attribute is only applicable to action elements of an object contribution.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.popupMenus/objectContribution/action/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
@@ -328,9 +335,9 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
                <documentation>
                   a translatable text representing the action&apos;s tool tip. Only used if the action appears in the toolbar.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -338,9 +345,9 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
 
    <element name="filter">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element is used to evaluate the attribute state of each object in the current selection. A match only if each object in the selection has the specified attribute state. Each object in the selection must implement, or adapt to, &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.
          </documentation>
@@ -402,18 +409,18 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
                <documentation>
                   A class that implements one of the interfaces listed for the class attribute.  It may also implement &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of a pop-up menu extension point: 
 &lt;p&gt;
@@ -511,9 +518,9 @@ In the example above, the specified action will appear as a menu item in the Tas
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The value of the action attribute &lt;samp&gt;class&lt;/samp&gt;
 must be a fully qualified class name of a Java class 
@@ -605,11 +612,10 @@ can be expressed using:
    </annotation>
 
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The workbench views have built-in context menus 
 that already come loaded with a number of actions. 
@@ -622,9 +628,9 @@ the end of the pop-up menu.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
