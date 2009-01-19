@@ -107,6 +107,8 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -1083,6 +1085,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (!((GrabFocus)Tweaklets.get(GrabFocus.KEY)).grabFocusAllowed(part)) {
         	return;
         }
+        checkIntro();
         if (mode == VIEW_ACTIVATE) {
 			activate(part);
 		} else if (mode == VIEW_VISIBLE) {
@@ -1103,6 +1106,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
         }
     }
+    
+	private void checkIntro() {
+		IIntroManager intro = getWorkbenchWindow().getWorkbench()
+				.getIntroManager();
+		IIntroPart part = intro.getIntro();
+		if (part == null) {
+			return;
+		}
+		if (!intro.isIntroStandby(part)) {
+			intro.setIntroStandby(part, true);
+		}
+	}
 
     /**
      * Returns whether a part exists in the current page.
