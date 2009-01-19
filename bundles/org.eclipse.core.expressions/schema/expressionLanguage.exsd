@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.core.expressions" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.core.expressions" id="commonExpression" name="Common Expressions"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          
       </documentation>
@@ -113,9 +113,9 @@
 
    <element name="instanceof">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="value"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element is used to perform an instanceof check of the object in focus. The expression returns
             EvaluationResult.TRUE if the object&apos;s type is a sub type of the type specified by the attribute value.
@@ -128,9 +128,9 @@
                <documentation>
                   a fully qualified name of a class or interface.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="java.lang.Object"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -138,9 +138,9 @@
 
    <element name="test">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="property"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element is used to evaluate the property state of the object in focus. The set of
             testable properties can be extended using the propery tester extension point. The test
@@ -210,9 +210,9 @@ rules:
 
    <element name="systemTest">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="value"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             Tests a system property by calling the System.getProperty method and compares the result
             with the value specified through the value attribute.
@@ -238,9 +238,9 @@ rules:
 
    <element name="equals">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="value"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element is used to perform an equals check of the object in focus. The expression returns
             EvaluationResult.TRUE if the object is equal to the value provided by the attribute value. Otherwise
@@ -286,9 +286,9 @@ rules:
 
    <element name="with">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="variable"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element changes the object to be inspected for all its child element to the object
             referenced by the given variable. If the variable can not be resolved then the expression
@@ -325,9 +325,9 @@ rules:
 
    <element name="resolve">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="variable"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element changes the object to be inspected for all its child element to the object
             referenced by the given variable. If the variable can not be resolved then the expression
@@ -375,9 +375,9 @@ rules:
 
    <element name="adapt">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="type"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element is used to adapt the object in focus to the type specified by the attribute
             type. The expression returns not loaded if either the adapter or the type referenced isn&apos;t
@@ -406,9 +406,9 @@ rules:
                <documentation>
                   the type to which the object in focus is to be adapted.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="java.lang.Object"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -417,9 +417,7 @@ rules:
    <element name="iterate">
       <annotation>
          <documentation>
-            This element is used to iterate over a variable that is of type java.util.Collection. If
-            the object in focus is not of type java.util.Collection then an ExpressionException will
-            be thrown while evaluating the expression.
+            This element is used to iterate over a variable that is of type java.util.Collection, or a variable that adapts to org.eclipse.core.expressions.IIterable. If the object in focus is not one of the above then a CoreException with an ExpressionStatus will be thrown while evaluating the expression.
          </documentation>
       </annotation>
       <complexType>
@@ -441,8 +439,7 @@ rules:
          <attribute name="operator">
             <annotation>
                <documentation>
-                  either &quot;and&quot; or &quot;or&quot;. The operator defines how the child
-                  elements will be combined. If not specified, &quot;and&quot; will be used.
+                  either &quot;and&quot; or &quot;or&quot;. The operator defines how the results of the child elements will be combined and what if any short circuit evaluation will be used. If not specified, &quot;and&quot; will be used.
                </documentation>
             </annotation>
             <simpleType>
@@ -468,9 +465,9 @@ rules:
 
    <element name="reference">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="definitionId"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element is used to reference an expression from the &lt;b&gt;org.eclipse.core.expressions.definitions&lt;/b&gt; extension point.  The expression definition will be evaluated within the current expression element using the current evaluation context.
          </documentation>
@@ -481,18 +478,18 @@ rules:
                <documentation>
                   The unique id of an expression from &lt;b&gt;org.eclipse.core.expressions.definitions&lt;/b&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.core.expressions.definitions/definition/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Release 3.0
       </documentation>
@@ -501,11 +498,10 @@ rules:
 
 
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2001, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
