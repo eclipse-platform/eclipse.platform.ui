@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -981,13 +981,13 @@ public class GenerateDiffFileWizard extends Wizard {
     		return fParticipant.getSyncInfoSet();
     	}
 
-		public boolean hasBinaryFiles() {
+		public IFile findBinaryFile() {
 			try {
-				final boolean[] found = new boolean[] { false };
+				final IFile[] found = new IFile[1];
 				fParticipant.getSubscriber().accept(resources, IResource.DEPTH_INFINITE, new IDiffVisitor() {
 					public boolean visit(IDiff diff) {
 						if (isBinaryFile(diff))
-							found[0] = true;
+							found[0] = getFile(diff);
 						return true;
 					}
 				});
@@ -995,7 +995,7 @@ public class GenerateDiffFileWizard extends Wizard {
 			} catch (CoreException e) {
 				CVSUIPlugin.log(e);
 			}
-			return false;
+			return null;
 		}
 
 		protected boolean isBinaryFile(IDiff diff) {
@@ -1520,9 +1520,9 @@ public class GenerateDiffFileWizard extends Wizard {
         	optionsPage.unified_projectRelativeOption.getSelection())
         	useProjectRelativePaths=true;
         
-        // TODO: Check for binary files
-        if (locationPage.hasBinaryFiles()) {
-        	int result = promptToIncludeBinary();
+        IFile binFile = locationPage.findBinaryFile();
+        if (binFile != null) {
+        	int result = promptToIncludeBinary(binFile);
         	if (result == 2)
         		return false;
         	if (result == 1)
@@ -1586,13 +1586,10 @@ public class GenerateDiffFileWizard extends Wizard {
         return true;
     }
     
-    private int promptToIncludeBinary() {
+    private int promptToIncludeBinary(IFile file) {
         MessageDialog dialog = new MessageDialog(getShell(), CVSUIMessages.GenerateDiffFileWizard_11, null, // accept
-                // the
-                // default
-                // window
-                // icon
-                CVSUIMessages.GenerateDiffFileWizard_12, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
+                // the default window icon
+                NLS.bind(CVSUIMessages.GenerateDiffFileWizard_12, file.getFullPath()), MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 1); // no is the default
         return dialog.open();
     }
