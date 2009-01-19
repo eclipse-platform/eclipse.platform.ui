@@ -468,6 +468,9 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 		IOperationHistory history = getHistory();
 		if (history != null)
 			history.addOperationHistoryListener(this);
+
+		// don't add save when in a dialog, IWorkbenchPart is null in dialog containers 
+		fAddSaveAction = fContainer.getWorkbenchPart() != null;
 	}
 	
 	public void rememberDocument(IDocument doc) {
