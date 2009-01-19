@@ -191,6 +191,14 @@ public interface IWorkbenchActionConstants {
      * Name of standard Help menu (value <code>"help"</code>).
      */
     public static final String M_HELP = MENU_PREFIX + "help"; //$NON-NLS-1$
+    
+    /**
+     * ID of the Project configure popup menu, can be used in 
+     * menuContributions and objectContributions.
+     * 
+     * @since 3.5
+     */
+    public static final String M_PROJECT_CONFIGURE = "org.eclipse.ui.projectConfigure"; //$NON-NLS-1$
 
     // Standard area for adding top level menus:
     /**
