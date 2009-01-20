@@ -59,7 +59,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * and links them to the corresponding workbench commands. 
  * This must be done in a MacOS X fragment because SWT doesn't provide an abstraction
  * for the (MacOS X only) application menu and we have to use MacOS specific natives.
- * The fragment is for the org.eclipse.ui plugin because we need access to the
+ * The fragment is for the org.eclipse.ui plug-in because we need access to the
  * Workbench "About" and "Preference" actions.
  * 
  * @noreference this class is not intended to be referenced by any client.
@@ -78,11 +78,11 @@ public class CocoaUIEnhancer implements IStartup {
 	static long sel_aboutMenuItemSelected_;
 
 	Callback proc3Args;
-	static final String SWT_OBJECT = "SWT_OBJECT"; //$NON-NLS-1$
+	static final byte[] SWT_OBJECT = "SWT_OBJECT".getBytes(); //$NON-NLS-1$
 
 	private void init() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		// TODO: These should either move out of Display or be accessible to this class.
-		String types = "*"; //$NON-NLS-1$
+		byte[] types = "*".getBytes(); //$NON-NLS-1$
 		int size = C.PTR_SIZEOF, align = C.PTR_SIZEOF == 4 ? 2 : 3;
 
 		Class clazz = CocoaUIEnhancer.class;
@@ -301,7 +301,7 @@ public class CocoaUIEnhancer implements IStartup {
 	}
 
     /**
-	 * Modify the given workbench window shell bits to show the toolbar toggle
+	 * Modify the given workbench window shell bits to show the tool bar toggle
 	 * button.
 	 * 
 	 * @param window
@@ -309,9 +309,9 @@ public class CocoaUIEnhancer implements IStartup {
 	 * @since 3.2
 	 */
 	protected void modifyWindowShell(IWorkbenchWindow window) {
-		// only add the button when either the coolbar or perspectivebar
-		// is initially visible. This is so that RCP apps can choose to use
-		// this fragment without fear that their explicitly invisble bars
+		// only add the button when either the cool bar or perspective bar
+		// is initially visible. This is so that RCP applications can choose to use
+		// this fragment without fear that their explicitly invisible bars
 		// can't be shown.
 		boolean coolBarInitiallyVsible = ((WorkbenchWindow) window)
 				.getCoolBarVisible();
@@ -319,8 +319,8 @@ public class CocoaUIEnhancer implements IStartup {
 				.getPerspectiveBarVisible();
 
 		if (coolBarInitiallyVsible || perspectiveBarInitiallyVsible) {
-			// Add an empty, hidden toolbar to the window.  Without this the
-			// toolbar button at the top right of the window will not appear
+			// Add an empty, hidden tool bar to the window.  Without this the
+			// tool bar button at the top right of the window will not appear
 			// even when setShowsToolbarButton(true) is called.
 			NSToolbar dummyBar = new NSToolbar();
 			dummyBar.alloc();
@@ -334,8 +334,7 @@ public class CocoaUIEnhancer implements IStartup {
 			
 			// Override the target and action of the toolbar button so we can control it.
 			try {
-				Field field = OS.class.getField("NSWindowToolbarButton");
-				Object fieldValue = field.get(OS.class);
+				Object fieldValue = wrapPointer(OS.NSWindowToolbarButton);
 				NSButton toolbarButton = (NSButton) invokeMethod(NSWindow.class, nsWindow, "standardWindowButton", new Object[] {fieldValue});
 
 				toolbarButton.setTarget(delegate);
@@ -393,7 +392,7 @@ public class CocoaUIEnhancer implements IStartup {
     }
 
 	/**
-     * Locate an action with the given id in the current menubar and run it.
+     * Locate an action with the given id in the current menu bar and run it.
      */
     private void runAction(String actionId) {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -451,7 +450,7 @@ public class CocoaUIEnhancer implements IStartup {
 	}
 
     /**
-	 * Find the action with the given ID by recursivly crawling the provided
+	 * Find the action with the given ID by recursively crawling the provided
 	 * menu manager. If the action cannot be found <code>null</code> is
 	 * returned.
 	 * 
@@ -489,7 +488,7 @@ public class CocoaUIEnhancer implements IStartup {
 			Object idValue = idField.get(window);
 			
 			Display display = Display.getCurrent();
-			Widget widget = (Widget) invokeMethod(Display.class, "findWidget", new Object[] { idValue });
+			Widget widget = (Widget) invokeMethod(Display.class, display, "findWidget", new Object[] { idValue });
 
 			if (!(widget instanceof Shell)) {
 				return;
@@ -557,10 +556,10 @@ public class CocoaUIEnhancer implements IStartup {
 	}
 	
 	/**
-	 * Specialized method.  It's behaviour is isolated and different enough from the usual invocation that custom code is warranted.
+	 * Specialized method.  It's behavior is isolated and different enough from the usual invocation that custom code is warranted.
 	 */
 	private static long[] OS_object_getInstanceVariable(long delegateId,
-			String name) throws IllegalArgumentException,
+			byte[] name) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException,
 			SecurityException, NoSuchMethodException {
 		Class clazz = OS.class;
@@ -568,7 +567,7 @@ public class CocoaUIEnhancer implements IStartup {
 		Class PTR_CLASS =  C.PTR_SIZEOF == 8 ? long.class : int.class;
 		if (PTR_CLASS == long.class) {
 			method = clazz.getMethod("object_getInstanceVariable", new Class[] {
-					long.class, String.class, long[].class });
+					long.class, byte[].class, long[].class });
 			long[] resultPtr = new long[1];
 			method.invoke(null, new Object[] { new Long(delegateId), name,
 					resultPtr });
@@ -576,7 +575,7 @@ public class CocoaUIEnhancer implements IStartup {
 		} 
 		else {
 			method = clazz.getMethod("object_getInstanceVariable", new Class[] {
-					int.class, String.class, int[].class });
+					int.class, byte[].class, int[].class });
 			int[] resultPtr = new int[1];
 			method.invoke(null, new Object[] { new Integer((int) delegateId),
 					name, resultPtr });
