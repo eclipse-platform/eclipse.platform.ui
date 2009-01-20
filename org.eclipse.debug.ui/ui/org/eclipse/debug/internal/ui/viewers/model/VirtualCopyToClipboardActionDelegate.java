@@ -29,6 +29,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
@@ -212,6 +213,9 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		if (control instanceof Tree) {
 			Tree tree = (Tree) control;
 			TreeItem[] selection = tree.getSelection();
+			if (selection.length == 0) {
+			    selection = tree.getItems();
+			}
 
 			for (int i = 0; i < selection.length; i++) {
 				TreeItem item = selection[i];
@@ -252,5 +256,13 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	 */
 	protected void doAction(Object element) {
 		//not used
+	}
+	
+	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
+	    if (selection.isEmpty()) {
+	        return true;
+	    } else {
+	        return super.getEnableStateForSelection(selection);
+	    }
 	}
 }
