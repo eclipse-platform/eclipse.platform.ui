@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,41 +32,37 @@ import org.eclipse.ui.internal.ide.model.WorkbenchFile;
 public class ContentTypeDecorator implements ILightweightLabelDecorator {
 
 	public void decorate(Object element, IDecoration decoration) {
-
-		if (element instanceof IFile == false) {
+		if (!(element instanceof IFile))
 			return;
-		}
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench.isClosing())
+			return;
+		
 		IFile file = (IFile) element;
+		ImageDescriptor image = null;
 		IContentDescription contentDescription = null;
 		try {
 			contentDescription = file.getContentDescription();
 		} catch (CoreException e) {
-			// We already have some kind of icon for this file so it's ok to not
+			// We already have some kind of icon for this file so it's OK to not
 			// find a better icon.
 		}
 		if (contentDescription != null) {
 			IContentType contentType = contentDescription.getContentType();
 			if (contentType != null) {
-				IWorkbench workbench = PlatformUI.getWorkbench();
-				if (workbench.isClosing()) {
-					return;
-				}
-				ImageDescriptor image = workbench
-						.getEditorRegistry().getImageDescriptor(file.getName(),
-								contentType);
-				if (image != null) {
-					// also add the image descriptor as a session property so that it will be
-					// picked up by the workbench label provider upon the next update.
-					try {
-						file.setSessionProperty(WorkbenchFile.IMAGE_CACHE_KEY, image);
-					} catch (CoreException e) {
-						// ignore - not being able to cache the image is not fatal
-					}
-					decoration.addOverlay(image);
-				}
+				image = workbench.getEditorRegistry().getImageDescriptor(file.getName(), contentType);
 			}
 		}
-
+		// add the image descriptor as a session property so that it will be
+		// picked up by the workbench label provider upon the next update.
+		try {
+			if (file.getSessionProperty(WorkbenchFile.IMAGE_CACHE_KEY) != image)
+				file.setSessionProperty(WorkbenchFile.IMAGE_CACHE_KEY, image);
+		} catch (CoreException e) {
+			// ignore - not being able to cache the image is not fatal
+		}
+		if (image != null)
+			decoration.addOverlay(image);
 	}
 
 	public void addListener(ILabelProviderListener listener) {
