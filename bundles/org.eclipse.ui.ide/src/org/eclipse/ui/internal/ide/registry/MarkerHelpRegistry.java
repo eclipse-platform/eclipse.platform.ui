@@ -27,12 +27,16 @@ import java.util.Map.Entry;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 /**
@@ -190,7 +194,16 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 				} else {
 					IMarkerResolution[] resolutions = generator
 							.getResolutions(marker);
-					if (resolutions.length > 0) {
+					if (resolutions == null) {
+						StatusManager.getManager().handle(
+								new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR,
+										"Failure in " + generator.getClass().getName()+ //$NON-NLS-1$
+										" from plugin " + element.getContributor().getName()+//$NON-NLS-1$
+										": getResolutions(IMarker) must not return null",//$NON-NLS-1$
+										null),StatusManager.LOG);
+
+						return false;
+					} else if (resolutions.length > 0) {
 						// there is at least one resolution
 						return true;
 					}
