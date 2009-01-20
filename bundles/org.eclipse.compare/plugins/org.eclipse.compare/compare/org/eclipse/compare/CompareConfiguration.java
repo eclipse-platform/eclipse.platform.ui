@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,31 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.CompareContainer;
+import org.eclipse.compare.internal.ComparePreferencePage;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.DiffImageDescriptor;
+import org.eclipse.compare.internal.ICompareUIConstants;
+import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -105,7 +119,8 @@ public class CompareConfiguration {
 	private DefaultLabelProvider labelProvider = new DefaultLabelProvider();
 	private boolean fDisposed;
 	private LocalResourceManager fResourceManager;
-	
+	private Set fIgnoredChanges = new HashSet(6); 
+
 	private class DefaultLabelProvider extends LabelProvider implements ICompareInputLabelProvider, ILabelProviderListener {
 		private Map labelProviders = new HashMap();
 		private ICompareInputLabelProvider defaultLabelProvider;
@@ -650,6 +665,46 @@ public class CompareConfiguration {
 	public void setDefaultLabelProvider(ICompareInputLabelProvider labelProvider) {
 		this.labelProvider.setDefaultLabelProvider(labelProvider);
 	}
-	
+
+	/**
+	 * Set whether given change kind should be ignored while computing
+	 * differences between documents. Changes specified by this method will be
+	 * excluded from a comparison result.
+	 * 
+	 * @param kind
+	 *            type of change, possible values are:
+	 *            {@link RangeDifference#CHANGE}
+	 *            {@link RangeDifference#CONFLICT} {@link RangeDifference#RIGHT}
+	 *            {@link RangeDifference#LEFT} {@link RangeDifference#ANCESTOR}
+	 *            {@link RangeDifference#ERROR}
+	 * @param ignored
+	 *            whether given kind should be included in the ignored set
+	 * @since 3.5
+	 */
+	public void setChangeIgnored(int kind, boolean ignored) {
+		if (ignored) {
+			fIgnoredChanges.add(new Integer(kind));
+		} else {
+			fIgnoredChanges.remove(new Integer(kind));
+		}
+	}
+
+	/**
+	 * Return if a given change kind is ignored while computing differences
+	 * between documents.
+	 * 
+	 * @param kind
+	 *            type of change, possible values are:
+	 *            {@link RangeDifference#CHANGE}
+	 *            {@link RangeDifference#CONFLICT} {@link RangeDifference#RIGHT}
+	 *            {@link RangeDifference#LEFT} {@link RangeDifference#ANCESTOR}
+	 *            {@link RangeDifference#ERROR}
+	 * @return whether kind of change is ignored
+	 * @since 3.5
+	 */
+	public boolean isChangeIgnored(int kind) {
+		return fIgnoredChanges.contains(new Integer(kind));
+	}
+
 }
 
