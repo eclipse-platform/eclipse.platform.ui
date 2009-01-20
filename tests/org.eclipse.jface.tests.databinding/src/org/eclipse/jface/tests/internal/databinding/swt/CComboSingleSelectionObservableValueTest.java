@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198903
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -21,8 +21,8 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.databinding.swt.ISWTObservable;
-import org.eclipse.jface.internal.databinding.swt.CComboSingleSelectionObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -31,11 +31,12 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @since 3.2
  */
-public class CComboSingleSelectionObservableValueTest extends AbstractSWTTestCase {
+public class CComboSingleSelectionObservableValueTest extends
+		AbstractSWTTestCase {
 	public void testSetValue() throws Exception {
 		CCombo combo = new CCombo(getShell(), SWT.NONE);
-		CComboSingleSelectionObservableValue observableValue = new CComboSingleSelectionObservableValue(
-				combo);
+		IObservableValue observableValue = SWTObservables
+				.observeSingleSelectionIndex(combo);
 		combo.add("Item1");
 		combo.add("Item2");
 
@@ -52,9 +53,11 @@ public class CComboSingleSelectionObservableValueTest extends AbstractSWTTestCas
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(CComboSingleSelectionObservableValueTest.class.getName());
+		TestSuite suite = new TestSuite(
+				CComboSingleSelectionObservableValueTest.class.getName());
 		suite.addTestSuite(CComboSingleSelectionObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -75,13 +78,13 @@ public class CComboSingleSelectionObservableValueTest extends AbstractSWTTestCas
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new CComboSingleSelectionObservableValue(realm, combo);
+			return WidgetProperties.singleSelectionIndex()
+					.observe(realm, combo);
 		}
 
 		public void change(IObservable observable) {
-			int index = _createValue((IObservableValue) observable);
-			combo.select(index);
-			combo.notifyListeners(SWT.Selection, null);
+			IObservableValue value = (IObservableValue) observable;
+			value.setValue(createValue(value));
 		}
 
 		public Object getValueType(IObservableValue observable) {
@@ -91,12 +94,11 @@ public class CComboSingleSelectionObservableValueTest extends AbstractSWTTestCas
 		public Object createValue(IObservableValue observable) {
 			return new Integer(_createValue(observable));
 		}
-		
+
 		private int _createValue(IObservableValue observable) {
-			CCombo combo = ((CCombo) ((ISWTObservable) observable).getWidget());
 			int value = Math.max(0, combo.getSelectionIndex());
-			
-			//returns either 0 or 1 depending upon current value
+
+			// returns either 0 or 1 depending upon current value
 			return Math.abs(value - 1);
 		}
 	}

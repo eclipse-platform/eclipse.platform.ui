@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -22,7 +22,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.LabelObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -35,43 +35,46 @@ public class LabelObservableValueTest extends ObservableDelegateTest {
 	private Delegate delegate;
 	private IObservableValue observable;
 	private Label label;
-	
+
 	public LabelObservableValueTest() {
 		this(null);
 	}
-	
+
 	public LabelObservableValueTest(String testName) {
 		super(testName, new Delegate());
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		delegate = (Delegate) getObservableContractDelegate();
 		observable = (IObservableValue) getObservable();
 		label = delegate.label;
 	}
-	
+
 	protected IObservable doCreateObservable() {
-		return getObservableContractDelegate().createObservable(SWTObservables.getRealm(Display.getDefault()));
+		return getObservableContractDelegate().createObservable(
+				SWTObservables.getRealm(Display.getDefault()));
 	}
-	
-    public void testSetValue() throws Exception {
-    	//preconditions
-        assertEquals("", label.getText());
-        assertEquals("", observable.getValue());
-        
-        String value = "value";
-        observable.setValue(value);
-        assertEquals("label text", value, label.getText());
-        assertEquals("observable value", value, observable.getValue());
-    }
-    
-    public static Test suite() {
-    	TestSuite suite = new TestSuite(LabelObservableValueTest.class.toString());
-    	suite.addTestSuite(LabelObservableValueTest.class);
-    	suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
-    	return suite;
+
+	public void testSetValue() throws Exception {
+		// preconditions
+		assertEquals("", label.getText());
+		assertEquals("", observable.getValue());
+
+		String value = "value";
+		observable.setValue(value);
+		assertEquals("label text", value, label.getText());
+		assertEquals("observable value", value, observable.getValue());
+	}
+
+	public static Test suite() {
+		TestSuite suite = new TestSuite(LabelObservableValueTest.class
+				.toString());
+		suite.addTestSuite(LabelObservableValueTest.class);
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
+		return suite;
 	}
 
 	/* package */static class Delegate extends
@@ -90,18 +93,18 @@ public class LabelObservableValueTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new LabelObservableValue(realm, label);
+			return WidgetProperties.text().observe(realm, label);
 		}
 
 		public void change(IObservable observable) {
 			IObservableValue value = (IObservableValue) observable;
 			value.setValue(value.getValue() + "a");
 		}
-		
+
 		public Object getValueType(IObservableValue observable) {
 			return String.class;
 		}
-		
+
 		public Object createValue(IObservableValue observable) {
 			return observable.getValue() + "a";
 		}

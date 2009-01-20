@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 118516, 213145
+ *     Matthew Hall - bugs 118516, 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -23,7 +23,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.TableSingleSelectionObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -33,34 +33,36 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * @since 3.2
  */
-public class TableSingleSelectionObservableValueTest extends ObservableDelegateTest {
+public class TableSingleSelectionObservableValueTest extends
+		ObservableDelegateTest {
 	private Delegate delegate;
 	private IObservableValue observable;
 	private Table table;
-	
+
 	public TableSingleSelectionObservableValueTest() {
 		this(null);
 	}
-	
+
 	public TableSingleSelectionObservableValueTest(String testName) {
 		super(testName, new Delegate());
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		observable = (IObservableValue) getObservable();
 		delegate = (Delegate) getObservableContractDelegate();
 		table = delegate.table;
 	}
-	
+
 	protected IObservable doCreateObservable() {
 		Delegate delegate = (Delegate) getObservableContractDelegate();
-		return delegate.createObservableValue(SWTObservables.getRealm(Display.getDefault()));
+		return delegate.createObservableValue(SWTObservables.getRealm(Display
+				.getDefault()));
 	}
-	
+
 	public void testSetValue() throws Exception {
-		//preconditions
+		// preconditions
 		assertEquals(-1, table.getSelectionIndex());
 		assertEquals(-1, ((Integer) observable.getValue()).intValue());
 
@@ -70,19 +72,22 @@ public class TableSingleSelectionObservableValueTest extends ObservableDelegateT
 				.getSelectionIndex());
 		assertEquals("observable value", value, observable.getValue());
 	}
-	
+
 	public void testGetValue() throws Exception {
 		int value = 1;
 		table.setSelection(value);
-		
+
 		assertEquals("table selection index", value, table.getSelectionIndex());
-		assertEquals("observable value", new Integer(value), observable.getValue());
+		assertEquals("observable value", new Integer(value), observable
+				.getValue());
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(TableSingleSelectionObservableValueTest.class.toString());
+		TestSuite suite = new TestSuite(
+				TableSingleSelectionObservableValueTest.class.toString());
 		suite.addTestSuite(TableSingleSelectionObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -104,7 +109,8 @@ public class TableSingleSelectionObservableValueTest extends ObservableDelegateT
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new TableSingleSelectionObservableValue(realm, table);
+			return WidgetProperties.singleSelectionIndex()
+					.observe(realm, table);
 		}
 
 		public Object getValueType(IObservableValue observable) {

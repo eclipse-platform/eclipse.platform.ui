@@ -7,17 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 194734
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IDiff;
 
 /**
  * @since 1.0
  * 
  */
-public abstract class ValueDiff {
+public abstract class ValueDiff implements IDiff {
 	/**
 	 * Creates a value diff.
 	 */

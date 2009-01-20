@@ -8,13 +8,19 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198904
+ *     Matthew Hall - bug 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.internal.databinding.swt.ComboObservableValue;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.internal.databinding.swt.ComboSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.ComboTextProperty;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
@@ -26,8 +32,7 @@ import org.eclipse.swt.widgets.Combo;
 public class ComboObservableValueTest extends AbstractSWTTestCase {
 	public void testDispose() throws Exception {
 		Combo combo = new Combo(getShell(), SWT.NONE);
-		ComboObservableValue observableValue = new ComboObservableValue(combo,
-				SWTProperties.TEXT);
+		IObservableValue observableValue = SWTObservables.observeText(combo);
 		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
 
@@ -51,25 +56,26 @@ public class ComboObservableValueTest extends AbstractSWTTestCase {
 	}
 
 	public void testSetValueWithNull() {
-		testSetValueWithNull(SWTProperties.TEXT);
-		testSetValueWithNull(SWTProperties.SELECTION);
+		testSetValueWithNull(WidgetProperties.text());
+		testSetValueWithNull(WidgetProperties.selection());
 	}
 
-	protected void testSetValueWithNull(String observableMode) {
+	protected void testSetValueWithNull(IValueProperty property) {
 		Combo combo = new Combo(getShell(), SWT.NONE);
-		combo.setItems(new String[] {"one", "two", "three"});
-		ComboObservableValue observable = new ComboObservableValue(
-				combo, observableMode);
+		combo.setItems(new String[] { "one", "two", "three" });
+		IObservableValue observable = property.observe(Realm.getDefault(),
+				combo);
 
-		observable.doSetValue("two");
+		observable.setValue("two");
 		assertEquals("two", combo.getText());
-		if (observableMode.equals(SWTProperties.SELECTION)) {
-			assertEquals("expect selection at index 1 in mode " + observableMode, 1, combo.getSelectionIndex());
+		if (property instanceof ComboSelectionProperty) {
+			assertEquals("expect selection at index 1 in selection mode", 1,
+					combo.getSelectionIndex());
 		}
 
-		if (observableMode.equals(SWTProperties.TEXT)) {
-			observable.doSetValue(null);
-			assertEquals("expect empty text in mode " + observableMode, "", combo.getText());
+		if (property instanceof ComboTextProperty) {
+			observable.setValue(null);
+			assertEquals("expect empty text in text mode", "", combo.getText());
 		}
 	}
 }

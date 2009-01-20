@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
- *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917
+ *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734,
+ *                    195222
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
+ *     Tom Schindl - bug 246462
  *******************************************************************************/
 package org.eclipse.jface.databinding.swt;
 
@@ -24,59 +26,15 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IVetoableValue;
 import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
-import org.eclipse.jface.internal.databinding.internal.swt.LinkObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ButtonObservableValue;
-import org.eclipse.jface.internal.databinding.swt.CComboObservableList;
-import org.eclipse.jface.internal.databinding.swt.CComboObservableValue;
-import org.eclipse.jface.internal.databinding.swt.CComboSingleSelectionObservableValue;
-import org.eclipse.jface.internal.databinding.swt.CLabelObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ComboObservableList;
-import org.eclipse.jface.internal.databinding.swt.ComboObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ComboSingleSelectionObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ControlObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ItemObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ItemTooltipObservableValue;
-import org.eclipse.jface.internal.databinding.swt.LabelObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ListObservableList;
-import org.eclipse.jface.internal.databinding.swt.ListObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ListSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.swt.SWTDelayedObservableValueDecorator;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
-import org.eclipse.jface.internal.databinding.swt.ScaleObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ShellObservableValue;
-import org.eclipse.jface.internal.databinding.swt.SpinnerObservableValue;
-import org.eclipse.jface.internal.databinding.swt.TableSingleSelectionObservableValue;
-import org.eclipse.jface.internal.databinding.swt.TextEditableObservableValue;
-import org.eclipse.jface.internal.databinding.swt.TextObservableValue;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Scale;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.TrayItem;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.Widget;
 
 /**
  * A factory for creating observables for SWT widgets
  * 
  * @since 1.1
- * 
  */
 public class SWTObservables {
 
@@ -140,25 +98,36 @@ public class SWTObservables {
 	}
 
 	/**
+	 * Returns an observable value tracking the enabled state of the given
+	 * control
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the enabled state of the given
 	 *         control
 	 */
 	public static ISWTObservableValue observeEnabled(Control control) {
-		return new ControlObservableValue(control, SWTProperties.ENABLED);
+		return (ISWTObservableValue) WidgetProperties.enabled()
+				.observe(control);
 	}
 
 	/**
+	 * Returns an observable value tracking the visible state of the given
+	 * control
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the visible state of the given
 	 *         control
 	 */
 	public static ISWTObservableValue observeVisible(Control control) {
-		return new ControlObservableValue(control, SWTProperties.VISIBLE);
+		return (ISWTObservableValue) WidgetProperties.visible()
+				.observe(control);
 	}
 
 	/**
-	 * Returns an observable tracking the tooltip text of the given item. The supported types are:
+	 * Returns an observable tracking the tooltip text of the given item. The
+	 * supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Control</li>
 	 * <li>org.eclipse.swt.custom.CTabItem</li>
@@ -168,30 +137,23 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.widgets.TrayItem</li>
 	 * <li>org.eclipse.swt.widgets.TreeColumn</li>
 	 * </ul>
+	 * 
 	 * @param widget
-	 * @return an observable value tracking the tooltip text of the given
-	 *         item
+	 * @return an observable value tracking the tooltip text of the given item
 	 * 
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeTooltipText(Widget widget) {
-		if (widget instanceof Control) {
-			return new ControlObservableValue((Control)widget, SWTProperties.TOOLTIP_TEXT);
-		} else if (widget instanceof CTabItem
-				|| widget instanceof TabItem
-				|| widget instanceof TableColumn
-				|| widget instanceof ToolItem
-				|| widget instanceof TrayItem
-				|| widget instanceof TreeColumn) {
-			return new ItemTooltipObservableValue((Item) widget);
-		}
-		
-		throw new IllegalArgumentException(
-				"Item [" + widget.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return (ISWTObservableValue) WidgetProperties.tooltipText().observe(
+				widget);
 	}
 
 	/**
+	 * Returns an observable value tracking the tooltip text of the given
+	 * control
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the tooltip text of the given
 	 *         control
 	 */
@@ -217,26 +179,8 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeSelection(Control control) {
-		if (control instanceof Spinner) {
-			return new SpinnerObservableValue((Spinner) control,
-					SWTProperties.SELECTION);
-		} else if (control instanceof Button) {
-			return new ButtonObservableValue((Button) control);
-		} else if (control instanceof Combo) {
-			return new ComboObservableValue((Combo) control,
-					SWTProperties.SELECTION);
-		} else if (control instanceof CCombo) {
-			return new CComboObservableValue((CCombo) control,
-					SWTProperties.SELECTION);
-		} else if (control instanceof List) {
-			return new ListObservableValue((List) control);
-		} else if (control instanceof Scale) {
-			return new ScaleObservableValue((Scale) control,
-					SWTProperties.SELECTION);
-		}
-
-		throw new IllegalArgumentException(
-				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return (ISWTObservableValue) WidgetProperties.selection().observe(
+				control);
 	}
 
 	/**
@@ -253,15 +197,8 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeMin(Control control) {
-		if (control instanceof Spinner) {
-			return new SpinnerObservableValue((Spinner) control,
-					SWTProperties.MIN);
-		} else if (control instanceof Scale) {
-			return new ScaleObservableValue((Scale) control, SWTProperties.MIN);
-		}
-
-		throw new IllegalArgumentException(
-				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return (ISWTObservableValue) WidgetProperties.minimum()
+				.observe(control);
 	}
 
 	/**
@@ -278,15 +215,8 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeMax(Control control) {
-		if (control instanceof Spinner) {
-			return new SpinnerObservableValue((Spinner) control,
-					SWTProperties.MAX);
-		} else if (control instanceof Scale) {
-			return new ScaleObservableValue((Scale) control, SWTProperties.MAX);
-		}
-
-		throw new IllegalArgumentException(
-				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return (ISWTObservableValue) WidgetProperties.maximum()
+				.observe(control);
 	}
 
 	/**
@@ -294,21 +224,19 @@ public class SWTObservables {
 	 * <code>control</code>. The supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Text</li>
+	 * <li>org.eclipse.swt.custom.StyledText (as of 1.3)</li>
 	 * </ul>
 	 * 
 	 * @param control
-	 * @param event event type to register for change events
+	 * @param event
+	 *            event type to register for change events
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeText(Control control, int event) {
-		if (control instanceof Text) {
-			return new TextObservableValue((Text) control, event);
-		}
-
-		throw new IllegalArgumentException(
-				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return (ISWTObservableValue) WidgetProperties.text(event).observe(
+				control);
 	}
 
 	/**
@@ -329,31 +257,11 @@ public class SWTObservables {
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if the type of <code>widget</code> is unsupported
-	 *             
+	 * 
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeText(Widget widget) {
-		if (widget instanceof Label) {
-			return new LabelObservableValue((Label) widget);
-		} else if (widget instanceof Link) {
-			return new LinkObservableValue((Link) widget);
-		} else if (widget instanceof CLabel) {
-			return new CLabelObservableValue((CLabel) widget);
-		} else if (widget instanceof Combo) {
-			return new ComboObservableValue((Combo) widget, SWTProperties.TEXT);
-		} else if (widget instanceof CCombo) {
-			return new CComboObservableValue((CCombo) widget,
-					SWTProperties.TEXT);
-		} else if (widget instanceof Shell) {
-			return new ShellObservableValue((Shell) widget);
-		} else if (widget instanceof Text) {
-			return new TextObservableValue((Text) widget, SWT.None);
-		} else if (widget instanceof Item) {
-			return new ItemObservableValue((Item)widget);
-		}
-
-		throw new IllegalArgumentException(
-				"Widget [" + widget.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return (ISWTObservableValue) WidgetProperties.text().observe(widget);
 	}
 
 	/**
@@ -367,6 +275,7 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.widgets.Shell</li>
 	 * <li>org.eclipse.swt.widgets.Text (as of 1.3)</li>
+	 * <li>org.eclipse.swt.custom.StyledText (as of 1.3)</li>
 	 * </ul>
 	 * 
 	 * @param control
@@ -393,16 +302,7 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static IObservableList observeItems(Control control) {
-		if (control instanceof Combo) {
-			return new ComboObservableList((Combo) control);
-		} else if (control instanceof CCombo) {
-			return new CComboObservableList((CCombo) control);
-		} else if (control instanceof List) {
-			return new ListObservableList((List) control);
-		}
-
-		throw new IllegalArgumentException(
-				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return WidgetProperties.items().observe(control);
 	}
 
 	/**
@@ -422,85 +322,102 @@ public class SWTObservables {
 	 */
 	public static ISWTObservableValue observeSingleSelectionIndex(
 			Control control) {
-		if (control instanceof Table) {
-			return new TableSingleSelectionObservableValue((Table) control);
-		} else if (control instanceof Combo) {
-			return new ComboSingleSelectionObservableValue((Combo) control);
-		} else if (control instanceof CCombo) {
-			return new CComboSingleSelectionObservableValue((CCombo) control);
-		} else if (control instanceof List) {
-			return new ListSingleSelectionObservableValue((List) control);
-		}
-
-		throw new IllegalArgumentException(
-				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return (ISWTObservableValue) WidgetProperties.singleSelectionIndex()
+				.observe(control);
 	}
 
 	/**
+	 * Returns an observable value tracking the foreground color of the given
+	 * control
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the foreground color of the given
 	 *         control
 	 */
 	public static ISWTObservableValue observeForeground(Control control) {
-		return new ControlObservableValue(control, SWTProperties.FOREGROUND);
+		return (ISWTObservableValue) WidgetProperties.foreground().observe(
+				control);
 	}
 
 	/**
+	 * Returns an observable value tracking the background color of the given
+	 * control
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the background color of the given
 	 *         control
 	 */
 	public static ISWTObservableValue observeBackground(Control control) {
-		return new ControlObservableValue(control, SWTProperties.BACKGROUND);
+		return (ISWTObservableValue) WidgetProperties.background().observe(
+				control);
 	}
 
 	/**
+	 * Returns an observable value tracking the font of the given control.
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the font of the given control
 	 */
 	public static ISWTObservableValue observeFont(Control control) {
-		return new ControlObservableValue(control, SWTProperties.FONT);
+		return (ISWTObservableValue) WidgetProperties.font().observe(control);
 	}
-	
+
 	/**
+	 * Returns an observable value tracking the size of the given control.
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the size of the given control
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeSize(Control control) {
-		return new ControlObservableValue(control,SWTProperties.SIZE);
+		return (ISWTObservableValue) WidgetProperties.size().observe(control);
 	}
-	
+
 	/**
+	 * Returns an observable value tracking the location of the given control.
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the location of the given control
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeLocation(Control control) {
-		return new ControlObservableValue(control,SWTProperties.LOCATION);
+		return (ISWTObservableValue) WidgetProperties.location().observe(
+				control);
 	}
-	
+
 	/**
+	 * Returns an observable value tracking the focus of the given control.
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the focus of the given control
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeFocus(Control control) {
-		return new ControlObservableValue(control,SWTProperties.FOCUS);
+		return (ISWTObservableValue) WidgetProperties.focused()
+				.observe(control);
 	}
-	
+
 	/**
+	 * Returns an observable value tracking the bounds of the given control.
+	 * 
 	 * @param control
+	 *            the control to observe
 	 * @return an observable value tracking the bounds of the given control
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeBounds(Control control) {
-		return new ControlObservableValue(control,SWTProperties.BOUNDS);
+		return (ISWTObservableValue) WidgetProperties.bounds().observe(control);
 	}
-	
+
 	/**
-	 * Returns an observable observing the editable attribute of
-	 * the provided <code>control</code>. The supported types are:
+	 * Returns an observable observing the editable attribute of the provided
+	 * <code>control</code>. The supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Text</li>
 	 * </ul>
@@ -511,12 +428,8 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeEditable(Control control) {
-		if (control instanceof Text) {
-			return new TextEditableObservableValue((Text) control);
-		}
-		
-		throw new IllegalArgumentException(
-				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		return (ISWTObservableValue) WidgetProperties.editable().observe(
+				control);
 	}
 
 	private static class DisplayRealm extends Realm {
@@ -555,20 +468,10 @@ public class SWTObservables {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
 		public int hashCode() {
 			return (display == null) ? 0 : display.hashCode();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;

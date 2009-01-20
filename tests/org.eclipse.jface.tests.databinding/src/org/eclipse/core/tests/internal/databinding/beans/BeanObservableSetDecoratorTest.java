@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 246625
+ *     Matthew Hall - bug 246625, 194734
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -16,8 +16,9 @@ import java.beans.PropertyDescriptor;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -26,37 +27,30 @@ import org.eclipse.swt.widgets.Display;
  */
 public class BeanObservableSetDecoratorTest extends TestCase {
 	private PropertyDescriptor propertyDescriptor;
-	private JavaBeanObservableSet observableSet;
+	private IObservableSet observableSet;
 	private BeanObservableSetDecorator decorator;
 	private Bean bean;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		bean = new Bean();
-		propertyDescriptor = new PropertyDescriptor("set",
-				Bean.class);
-		observableSet = new JavaBeanObservableSet(
-				SWTObservables.getRealm(Display.getDefault()), bean,
-				propertyDescriptor, String.class);
-		decorator = new BeanObservableSetDecorator(
-				observableSet, propertyDescriptor);
+		propertyDescriptor = new PropertyDescriptor("set", Bean.class);
+		observableSet = BeansObservables.observeSet(SWTObservables
+				.getRealm(Display.getDefault()), bean, "set");
+		decorator = new BeanObservableSetDecorator(observableSet,
+				propertyDescriptor);
 	}
 
-	public void testGetDelegate() throws Exception {
-		assertEquals(observableSet, decorator.getDecorated());
+	public void testGetDecorated() throws Exception {
+		assertSame(observableSet, decorator.getDecorated());
 	}
 
 	public void testGetObserved() throws Exception {
-		assertEquals(bean, decorator.getObserved());
+		assertSame(bean, decorator.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
-		assertEquals(propertyDescriptor, decorator.getPropertyDescriptor());
+		assertSame(propertyDescriptor, decorator.getPropertyDescriptor());
 	}
 }

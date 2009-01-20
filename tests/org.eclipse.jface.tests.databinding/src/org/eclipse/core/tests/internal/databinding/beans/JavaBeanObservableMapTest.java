@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 213145, 241585, 246103
+ *     Matthew Hall - bugs 213145, 241585, 246103, 194734
  *******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -20,14 +20,17 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.IBeanObservable;
+import org.eclipse.core.databinding.beans.IBeanProperty;
+import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableMap;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
@@ -46,7 +49,8 @@ public class JavaBeanObservableMapTest extends TestCase {
 
 	private PropertyDescriptor propertyDescriptor;
 
-	private JavaBeanObservableMap map;
+	private IObservableMap map;
+	private IBeanObservable beanObservable;
 
 	protected void setUp() throws Exception {
 		ThreadRealm realm = new ThreadRealm();
@@ -58,8 +62,11 @@ public class JavaBeanObservableMapTest extends TestCase {
 		set.add(model1);
 		set.add(model2);
 
-		propertyDescriptor = new PropertyDescriptor("value", Bean.class);
-		map = new JavaBeanObservableMap(set, propertyDescriptor);
+		String propertyName = "value";
+		propertyDescriptor = ((IBeanProperty) BeanProperties.value(
+				Bean.class, propertyName)).getPropertyDescriptor();
+		map = BeansObservables.observeMap(set, Bean.class, propertyName);
+		beanObservable = (IBeanObservable) map;
 	}
 
 	public void testGetValue() throws Exception {
@@ -139,11 +146,11 @@ public class JavaBeanObservableMapTest extends TestCase {
 	}
 	
 	public void testGetObserved() throws Exception {
-		assertEquals(set, map.getObserved());
+		assertEquals(set, beanObservable.getObserved());
 	}
 	
 	public void testGetPropertyDescriptor() throws Exception {
-		assertEquals(propertyDescriptor, map.getPropertyDescriptor());
+		assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
 	
 	public void testConstructor_SkipRegisterListeners() throws Exception {
@@ -152,7 +159,9 @@ public class JavaBeanObservableMapTest extends TestCase {
 		Bean bean = new Bean();
 		set.add(bean);
 		
-		JavaBeanObservableMap observable = new JavaBeanObservableMap(set, new PropertyDescriptor("value", Bean.class), false);
+		IObservableMap observable = PojoObservables.observeMap(set, Bean.class,
+				"value");
+		assertFalse(bean.hasListeners("value"));
 		ChangeEventTracker.observe(observable);
 
 		assertFalse(bean.hasListeners("value"));
@@ -164,7 +173,9 @@ public class JavaBeanObservableMapTest extends TestCase {
 		Bean bean = new Bean();
 		set.add(bean);
 		
-		JavaBeanObservableMap observable = new JavaBeanObservableMap(set, new PropertyDescriptor("value", Bean.class));
+		IObservableMap observable = BeansObservables.observeMap(set,
+				Bean.class, "value");
+		assertFalse(bean.hasListeners("value"));
 		ChangeEventTracker.observe(observable);
 
 		assertTrue(bean.hasListeners("value"));

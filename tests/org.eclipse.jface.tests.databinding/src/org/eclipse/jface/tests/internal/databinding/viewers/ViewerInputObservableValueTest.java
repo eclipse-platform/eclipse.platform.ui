@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Matthew Hall - initial API and implementation (bug 206839)
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - initial API and implementation (bug 206839)
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
@@ -21,7 +21,8 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.internal.databinding.viewers.ViewerInputObservableValue;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -55,34 +56,38 @@ public class ViewerInputObservableValueTest extends
 
 	public void testConstructor_IllegalArgumentException() {
 		try {
-			new ViewerInputObservableValue(Realm.getDefault(), null);
+			ViewersObservables.observeInput(null);
 			fail("Expected IllegalArgumentException for null argument");
 		} catch (IllegalArgumentException expected) {
 		}
 	}
 
-	public void testSetInputOnViewer_FiresNoChangeEvents() {
-		IObservableValue observable = new ViewerInputObservableValue(Realm
-				.getDefault(), viewer);
-		ValueChangeEventTracker listener = ValueChangeEventTracker.observe(observable);
+	public void testSetInputOnViewer_FiresChangeEventOnGetValue() {
+		IObservableValue observable = ViewersObservables.observeInput(viewer);
+		ValueChangeEventTracker listener = ValueChangeEventTracker
+				.observe(observable);
 
 		assertNull(viewer.getInput());
 		assertEquals(0, listener.count);
 
 		viewer.setInput(model);
 
-		assertEquals(model, observable.getValue());
+		assertEquals(model, viewer.getInput());
 		assertEquals(0, listener.count);
+
+		// Call to getValue() causes observable to discover change
+		assertEquals(model, observable.getValue());
+		assertEquals(1, listener.count);
 
 		viewer.setInput(null);
+		assertEquals(null, viewer.getInput());
 
 		assertEquals(null, observable.getValue());
-		assertEquals(0, listener.count);
+		assertEquals(2, listener.count);
 	}
 
 	public void testGetSetValue_FiresChangeEvents() {
-		IObservableValue observable = new ViewerInputObservableValue(Realm
-				.getDefault(), viewer);
+		IObservableValue observable = ViewersObservables.observeInput(viewer);
 		ValueChangeEventTracker listener = new ValueChangeEventTracker();
 		observable.addValueChangeListener(listener);
 
@@ -103,14 +108,12 @@ public class ViewerInputObservableValueTest extends
 	}
 
 	public void testGetValueType_AlwaysNull() throws Exception {
-		IObservableValue observable = new ViewerInputObservableValue(Realm
-				.getDefault(), viewer);
+		IObservableValue observable = ViewersObservables.observeInput(viewer);
 		assertEquals(null, observable.getValueType());
 	}
 
 	public void testDispose() throws Exception {
-		IObservableValue observable = new ViewerInputObservableValue(Realm
-				.getDefault(), viewer);
+		IObservableValue observable = ViewersObservables.observeInput(viewer);
 		observable.dispose();
 		assertNull(observable.getRealm());
 		try {
@@ -141,7 +144,8 @@ public class ViewerInputObservableValueTest extends
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ViewerInputObservableValueTest.class.getName());
+		TestSuite suite = new TestSuite(ViewerInputObservableValueTest.class
+				.getName());
 		suite.addTestSuite(ViewerInputObservableValueTest.class);
 		suite.addTest(MutableObservableValueContractTest.suite(new Delegate()));
 		return suite;
@@ -165,11 +169,11 @@ public class ViewerInputObservableValueTest extends
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new ViewerInputObservableValue(realm, viewer);
+			return ViewerProperties.input().observe(realm, viewer);
 		}
 
 		public void change(IObservable observable) {
-			IObservableValue value = (IObservableValue)observable;
+			IObservableValue value = (IObservableValue) observable;
 			value.setValue(createValue(value));
 		}
 

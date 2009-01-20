@@ -8,12 +8,11 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221351)
  *     Brad Reynolds - through JavaBeanObservableArrayBasedListTest.java
- *     Matthew Hall - bug 213145, 244098, 246103
+ *     Matthew Hall - bug 213145, 244098, 246103, 194734
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
@@ -25,13 +24,15 @@ import java.util.HashSet;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.IBeanObservable;
+import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
@@ -45,7 +46,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class JavaBeanObservableArrayBasedSetTest extends
 		AbstractDefaultRealmTestCase {
-	private JavaBeanObservableSet set;
+	private IObservableSet set;
+	private IBeanObservable beanObservable;
 
 	private PropertyDescriptor propertyDescriptor;
 
@@ -57,27 +59,36 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		super.setUp();
 
 		propertyName = "array";
-		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
+		propertyDescriptor = ((IBeanProperty) BeanProperties.set(
+				Bean.class, propertyName)).getPropertyDescriptor();
 		bean = new Bean(new HashSet());
 
-		set = new JavaBeanObservableSet(SWTObservables.getRealm(Display
-				.getDefault()), bean, propertyDescriptor, String.class);
+		set = BeansObservables.observeSet(SWTObservables.getRealm(Display
+				.getDefault()), bean, propertyName);
+		beanObservable = (IBeanObservable) set;
 	}
 
 	public void testGetObserved() throws Exception {
-		assertEquals(bean, set.getObserved());
+		assertEquals(bean, beanObservable.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
-		assertEquals(propertyDescriptor, set.getPropertyDescriptor());
+		assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
 
-	public void testRegistersListenerOnCreation() throws Exception {
+	public void testRegistersListenerAfterFirstListenerIsAdded()
+			throws Exception {
+		assertFalse(bean.changeSupport.hasListeners(propertyName));
+		SetChangeEventTracker.observe(set);
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
 
-	public void testRemovesListenerOnDisposal() throws Exception {
-		set.dispose();
+	public void testRemovesListenerAfterLastListenerIsRemoved()
+			throws Exception {
+		SetChangeEventTracker listener = SetChangeEventTracker.observe(set);
+
+		assertTrue(bean.changeSupport.hasListeners(propertyName));
+		set.removeSetChangeListener(listener);
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 	}
 
@@ -309,7 +320,8 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertEquals("array", event.getPropertyName());
 		assertTrue("old value", Arrays.equals(old, (Object[]) event
 				.getOldValue()));
-		assertTrue("new value", Arrays.equals(bean.getArray(), (Object[]) event.getNewValue()));
+		assertTrue("new value", Arrays.equals(bean.getArray(), (Object[]) event
+				.getNewValue()));
 		assertFalse("sets are equal", Arrays.equals(bean.getArray(), old));
 	}
 
@@ -319,11 +331,6 @@ public class JavaBeanObservableArrayBasedSetTest extends
 
 		PropertyChangeEvent evt;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-		 */
 		public void propertyChange(PropertyChangeEvent evt) {
 			count++;
 			this.evt = evt;
@@ -331,7 +338,8 @@ public class JavaBeanObservableArrayBasedSetTest extends
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(JavaBeanObservableArrayBasedSetTest.class.getName());
+		TestSuite suite = new TestSuite(
+				JavaBeanObservableArrayBasedSetTest.class.getName());
 		suite.addTestSuite(JavaBeanObservableArrayBasedSetTest.class);
 		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
 		return suite;
@@ -341,17 +349,10 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			String propertyName = "array";
-			PropertyDescriptor propertyDescriptor;
-			try {
-				propertyDescriptor = new PropertyDescriptor(propertyName,
-						Bean.class);
-			} catch (IntrospectionException e) {
-				throw new RuntimeException(e);
-			}
 			Object bean = new Bean(new Object[0]);
 
-			IObservableSet set = new JavaBeanObservableSet(realm, bean,
-					propertyDescriptor, String.class);
+			IObservableSet set = BeansObservables.observeSet(realm, bean,
+					propertyName, String.class);
 			for (int i = 0; i < elementCount; i++)
 				set.add(createElement(set));
 			return set;

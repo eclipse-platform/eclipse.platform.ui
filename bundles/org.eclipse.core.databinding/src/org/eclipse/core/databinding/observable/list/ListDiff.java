@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208858, 251884
+ *     Matthew Hall - bugs 208858, 251884, 194734
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
 
 import java.util.List;
 
+import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
@@ -21,7 +22,7 @@ import org.eclipse.core.internal.databinding.Util;
  * 
  * @since 1.0
  */
-public abstract class ListDiff {
+public abstract class ListDiff implements IDiff {
 
 	/**
 	 * Returns a ListDiffEntry array representing the differences in the list,

@@ -7,39 +7,46 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Chris Aniszczyk <zx@code9.com> - bug 131435
  *     Matthew Hall - bug 248621
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.swt;
 
+import org.eclipse.core.databinding.observable.IDecoratingObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.swt.ISWTObservable;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.ButtonObservableValue;
-import org.eclipse.jface.internal.databinding.swt.CComboObservableList;
-import org.eclipse.jface.internal.databinding.swt.CComboObservableValue;
-import org.eclipse.jface.internal.databinding.swt.CLabelObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ComboObservableList;
-import org.eclipse.jface.internal.databinding.swt.ComboObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ControlObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ItemObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ItemTooltipObservableValue;
-import org.eclipse.jface.internal.databinding.swt.LabelObservableValue;
-import org.eclipse.jface.internal.databinding.swt.ListObservableList;
-import org.eclipse.jface.internal.databinding.swt.ListObservableValue;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
-import org.eclipse.jface.internal.databinding.swt.ScaleObservableValue;
-import org.eclipse.jface.internal.databinding.swt.SpinnerObservableValue;
-import org.eclipse.jface.internal.databinding.swt.TableSingleSelectionObservableValue;
-import org.eclipse.jface.internal.databinding.swt.TextEditableObservableValue;
-import org.eclipse.jface.internal.databinding.swt.TextObservableValue;
+import org.eclipse.jface.internal.databinding.swt.CComboSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.CComboTextProperty;
+import org.eclipse.jface.internal.databinding.swt.CLabelTextProperty;
+import org.eclipse.jface.internal.databinding.swt.CTabItemTooltipTextProperty;
+import org.eclipse.jface.internal.databinding.swt.ComboSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.ComboTextProperty;
+import org.eclipse.jface.internal.databinding.swt.ControlTooltipTextProperty;
+import org.eclipse.jface.internal.databinding.swt.ItemTextProperty;
+import org.eclipse.jface.internal.databinding.swt.LabelTextProperty;
+import org.eclipse.jface.internal.databinding.swt.ScaleMaximumProperty;
+import org.eclipse.jface.internal.databinding.swt.ScaleMinimumProperty;
+import org.eclipse.jface.internal.databinding.swt.ScaleSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.SpinnerMaximumProperty;
+import org.eclipse.jface.internal.databinding.swt.SpinnerMinimumProperty;
+import org.eclipse.jface.internal.databinding.swt.SpinnerSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.StyledTextTextProperty;
+import org.eclipse.jface.internal.databinding.swt.TableSingleSelectionIndexProperty;
+import org.eclipse.jface.internal.databinding.swt.TextEditableProperty;
+import org.eclipse.jface.internal.databinding.swt.TextTextProperty;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
@@ -96,54 +103,54 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Spinner spinner = new Spinner(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeSelection(spinner);
 		assertNotNull(value);
-		assertTrue(value instanceof SpinnerObservableValue);
+		assertTrue(value.getWidget() == spinner);
 
-		SpinnerObservableValue spinnerObservable = (SpinnerObservableValue) value;
-		assertEquals(SWTProperties.SELECTION, spinnerObservable.getAttribute());
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof SpinnerSelectionProperty);
 	}
 
 	public void testObserveSelectionOfButton() throws Exception {
 		Button button = new Button(shell, SWT.PUSH);
 		ISWTObservableValue value = SWTObservables.observeSelection(button);
 		assertNotNull(value);
-		assertTrue(value instanceof ButtonObservableValue);
+		assertTrue(value.getWidget() == button);
 	}
 
 	public void testObserveSelectionOfCombo() throws Exception {
 		Combo combo = new Combo(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeSelection(combo);
 		assertNotNull(value);
-		assertTrue(value instanceof ComboObservableValue);
+		assertTrue(value.getWidget() == combo);
 
-		ComboObservableValue comboObservable = (ComboObservableValue) value;
-		assertEquals(SWTProperties.SELECTION, comboObservable.getAttribute());
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof ComboSelectionProperty);
 	}
 
 	public void testObserveSelectionOfCCombo() throws Exception {
 		CCombo combo = new CCombo(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeSelection(combo);
 		assertNotNull(value);
-		assertTrue(value instanceof CComboObservableValue);
+		assertTrue(value.getWidget() == combo);
 
-		CComboObservableValue ccomboObservable = (CComboObservableValue) value;
-		assertEquals(SWTProperties.SELECTION, ccomboObservable.getAttribute());
+		IPropertyObservable property = getPropertyObservable(value);
+		assertTrue(property.getProperty() instanceof CComboSelectionProperty);
 	}
 
 	public void testObserveSelectionOfList() throws Exception {
 		List list = new List(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeSelection(list);
 		assertNotNull(value);
-		assertTrue(value instanceof ListObservableValue);
+		assertTrue(value.getWidget() == list);
 	}
 	
 	public void testObserveSelectionOfScale() throws Exception {
 		Scale scale = new Scale(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeSelection(scale);
 		assertNotNull(value);
-		assertTrue(value instanceof ScaleObservableValue);
+		assertTrue(value.getWidget() == scale);
 		
-		ScaleObservableValue scaleObservable = (ScaleObservableValue) value;
-		assertEquals(SWTProperties.SELECTION, scaleObservable.getAttribute());
+		IPropertyObservable property = getPropertyObservable(value);
+		assertTrue(property.getProperty() instanceof ScaleSelectionProperty);
 	}
 
 	public void testObserveSelectionOfUnsupportedControl() throws Exception {
@@ -162,7 +169,28 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		ISWTObservableValue value = SWTObservables.observeText(text,
 				SWT.FocusOut);
 		assertNotNull(value);
-		assertTrue(value instanceof TextObservableValue);
+		assertTrue(value.getWidget() == text);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof TextTextProperty);
+
+		assertFalse(text.isListening(SWT.FocusOut));
+		ChangeEventTracker.observe(value);
+		assertTrue(text.isListening(SWT.FocusOut));
+	}
+
+	public void testObserveTextOfStyledText() throws Exception {
+		StyledText text = new StyledText(shell, SWT.NONE);
+		assertFalse(text.isListening(SWT.FocusOut));
+
+		ISWTObservableValue value = SWTObservables.observeText(text,
+				SWT.FocusOut);
+		assertNotNull(value);
+		assertTrue(value.getWidget() == text);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof StyledTextTextProperty);
+
+		assertFalse(text.isListening(SWT.FocusOut));
+		ChangeEventTracker.observe(value);
 		assertTrue(text.isListening(SWT.FocusOut));
 	}
 
@@ -179,41 +207,62 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Label label = new Label(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeText(label);
 		assertNotNull(label);
-		assertTrue(value instanceof LabelObservableValue);
+		assertTrue(value.getWidget() == label);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof LabelTextProperty);
 	}
 
 	public void testObserveTextOfCLabel() throws Exception {
 		CLabel label = new CLabel(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeText(label);
 		assertNotNull(label);
-		assertTrue(value instanceof CLabelObservableValue);
+		assertTrue(value.getWidget() == label);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof CLabelTextProperty);
 	}
 
 	public void testObserveTextOfCombo() throws Exception {
 		Combo combo = new Combo(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeText(combo);
 		assertNotNull(value);
-		assertTrue(value instanceof ComboObservableValue);
+		assertTrue(value.getWidget() == combo);
 
-		ComboObservableValue comboObservable = (ComboObservableValue) value;
-		assertEquals(SWTProperties.TEXT, comboObservable.getAttribute());
+		assertTrue(getPropertyObservable(value).getProperty() instanceof ComboTextProperty);
+	}
+
+	/**
+	 * @param observable
+	 * @return
+	 */
+	private IPropertyObservable getPropertyObservable(
+			ISWTObservableValue observable) {
+		IDecoratingObservable decoratingObservable = (IDecoratingObservable) observable;
+		IPropertyObservable propertyObservable = (IPropertyObservable) decoratingObservable
+				.getDecorated();
+		return propertyObservable;
 	}
 
 	public void testObserveTextOfCCombo() throws Exception {
 		CCombo combo = new CCombo(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeText(combo);
 		assertNotNull(value);
-		assertTrue(value instanceof CComboObservableValue);
+		assertTrue(value.getWidget() == combo);
 
-		CComboObservableValue ccomboObservable = (CComboObservableValue) value;
-		assertEquals(SWTProperties.TEXT, ccomboObservable.getAttribute());
+		IDecoratingObservable decorating = (IDecoratingObservable) value;
+		IPropertyObservable property = (IPropertyObservable) decorating
+				.getDecorated();
+		assertTrue(property.getProperty() instanceof CComboTextProperty);
 	}
 
 	public void testObserveTextOfText() throws Exception {
 		Text text = new Text(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeText(text);
 		assertNotNull(value);
-		assertTrue(value instanceof TextObservableValue);
+
+		assertTrue(value.getWidget() == text);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof TextTextProperty);
+		
 		assertFalse(text.isListening(SWT.Modify));
 		assertFalse(text.isListening(SWT.FocusOut));
 	}
@@ -223,7 +272,9 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Item item = new CTabItem(ctf, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeText(item);
 		assertNotNull(value);
-		assertTrue(value instanceof ItemObservableValue);
+		assertTrue(value.getWidget() == item);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof ItemTextProperty);
 	}
 
 	public void testObserveTextOfUnsupportedControl() throws Exception {
@@ -240,7 +291,9 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Item item = new CTabItem(ctf, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeTooltipText(item);
 		assertNotNull(value);
-		assertTrue(value instanceof ItemTooltipObservableValue);
+		assertTrue(value.getWidget() == item);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof CTabItemTooltipTextProperty);
 	}
 
 	public void testObserveTooltipOfUnsupportedControl() throws Exception {
@@ -256,28 +309,33 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Label label = new Label(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeTooltipText(label);
 		assertNotNull(value);
-		assertTrue(value instanceof ControlObservableValue);
+		assertTrue(value.getWidget() == label);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof ControlTooltipTextProperty);
 	}
 
 	public void testObserveItemsOfCombo() throws Exception {
 		Combo combo = new Combo(shell, SWT.NONE);
 		IObservableList list = SWTObservables.observeItems(combo);
 		assertNotNull(list);
-		assertTrue(list instanceof ComboObservableList);
+		assertTrue(list instanceof ISWTObservable);
+		assertTrue(((ISWTObservable) list).getWidget() == combo);
 	}
 
 	public void testObserveItemsOfCCombo() throws Exception {
 		CCombo ccombo = new CCombo(shell, SWT.NONE);
 		IObservableList list = SWTObservables.observeItems(ccombo);
 		assertNotNull(list);
-		assertTrue(list instanceof CComboObservableList);
+		ISWTObservable swtObservable = (ISWTObservable) list;
+		assertTrue(swtObservable.getWidget() == ccombo);
 	}
 
 	public void testObserveItemsOfList() throws Exception {
 		List list = new List(shell, SWT.NONE);
 		IObservableList observableList = SWTObservables.observeItems(list);
 		assertNotNull(observableList);
-		assertTrue(observableList instanceof ListObservableList);
+		ISWTObservable swtObservable = (ISWTObservable) observableList;
+		assertTrue(swtObservable.getWidget() == list);
 	}
 
 	public void testObserveItemsOfUnsupportedControl() throws Exception {
@@ -294,7 +352,9 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		ISWTObservableValue value = SWTObservables
 				.observeSingleSelectionIndex(table);
 		assertNotNull(value);
-		assertTrue(value instanceof TableSingleSelectionObservableValue);
+		assertTrue(value.getWidget() == table);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof TableSingleSelectionIndexProperty);
 	}
 
 	public void testObserveSingleSelectionIndexOfUnsupportedControl()
@@ -312,20 +372,20 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Spinner spinner = new Spinner(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeMin(spinner);
 		assertNotNull(value);
-		assertTrue(value instanceof SpinnerObservableValue);
+		assertTrue(value.getWidget() == spinner);
 		
-		SpinnerObservableValue spinnerObservable = (SpinnerObservableValue) value;
-		assertEquals(SWTProperties.MIN, spinnerObservable.getAttribute());
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof SpinnerMinimumProperty);
 	}
 	
 	public void testObserveMinOfScale() throws Exception {
 		Scale scale = new Scale(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeMin(scale);
 		assertNotNull(value);
-		assertTrue(value instanceof ScaleObservableValue);
+		assertTrue(value.getWidget() == scale);
 		
-		ScaleObservableValue scaleObservable = (ScaleObservableValue) value;
-		assertEquals(SWTProperties.MIN, scaleObservable.getAttribute());
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof ScaleMinimumProperty);
 	}
 
 	public void testObserveMinOfUnsupportedControl() throws Exception {
@@ -341,20 +401,20 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Spinner spinner = new Spinner(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeMax(spinner);
 		assertNotNull(value);
-		assertTrue(value instanceof SpinnerObservableValue);
+		assertTrue(value.getWidget() == spinner);
 		
-		SpinnerObservableValue spinnerObservable = (SpinnerObservableValue) value;
-		assertEquals(SWTProperties.MAX, spinnerObservable.getAttribute());
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof SpinnerMaximumProperty);
 	}
 	
 	public void testObserveMaxOfScale() throws Exception {
 		Scale scale = new Scale(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeMax(scale);
 		assertNotNull(value);
-		assertTrue(value instanceof ScaleObservableValue);
+		assertTrue(value.getWidget() == scale);
 		
-		ScaleObservableValue scaleObservable = (ScaleObservableValue) value;
-		assertEquals(SWTProperties.MAX, scaleObservable.getAttribute());
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof ScaleMaximumProperty);
 	}
 	
 	public void testObserveMaxOfUnsupportedControl() throws Exception {
@@ -370,7 +430,9 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Text text = new Text(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeEditable(text);
 		assertNotNull(value);
-		assertTrue(value instanceof TextEditableObservableValue);
+		assertTrue(value.getWidget() == text);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof TextEditableProperty);
 	}
 	
 	public void testObserveEditableOfUnsupportedControl() throws Exception {

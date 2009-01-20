@@ -1,0 +1,42 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Matthew Hall">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Interfaces and classes for representing and observing properties of objects.
+<h2>
+Package Specification</h2>
+<p>
+This package and its subpackages provide the <tt>IProperty</tt>,
+<tt>IValueProperty</tt>, <tt>IListProperty</tt>, <tt>ISetProperty</tt> and
+<tt>IMapProperty</tt> interfaces, along with classes
+which serve as base implementations of each interface.    
+<p>
+Properties are intended to serve as a convenient path to creating observables
+for observing specific attributes of source objects.  The main goals of this
+API are:
+<ul>
+<li>Simplify the process of creating custom observables.  Developing custom
+observables correctly can be tricky, so the properties API tries to ease this
+burden by providing all the observable implementations.  Property implementers
+only need to extend one of the provided base classes
+(<tt>SimpleValueProperty</tt>, <tt>SimpleListProperty</tt>,
+<tt>SimpleSetProperty</tt> or <tt>SimpleMapProperty</tt>) and implement a
+handful of abstract methods which the observables use to function.
+<li>Simplify observation of nested properties.  Traditionally observing a
+nested property required creating an observable for the first property, then
+wrapping that observable in a master-detail observable for each successive
+property in the chain.  Using property chaining it is trivial to define a
+nested property and to observe that property on a particular source object.
+</ul>
+<p>
+A set of delegating properties are also provided
+(<tt>DelegatingValueProperty</tt>, <tt>DelegatingListProperty</tt>,
+<tt>DelegatingSetProperty</tt> and <tt>DelegatingMapProperty</tt>) which
+may be used to implement properties where the property behavior depends on the
+type of source object.
+</body>
+</html>

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 206839, 124684, 239302, 245647
+ *     Matthew Hall - bug 206839, 124684, 239302, 245647, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -16,17 +16,7 @@ import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.SWTDelayedObservableValueDecorator;
-import org.eclipse.jface.internal.databinding.viewers.CheckableCheckedElementsObservableSet;
-import org.eclipse.jface.internal.databinding.viewers.CheckboxViewerCheckedElementsObservableSet;
-import org.eclipse.jface.internal.databinding.viewers.SelectionProviderMultipleSelectionObservableList;
-import org.eclipse.jface.internal.databinding.viewers.SelectionProviderSingleSelectionObservableValue;
-import org.eclipse.jface.internal.databinding.viewers.ViewerFiltersObservableSet;
-import org.eclipse.jface.internal.databinding.viewers.ViewerInputObservableValue;
-import org.eclipse.jface.internal.databinding.viewers.ViewerMultipleSelectionObservableList;
 import org.eclipse.jface.internal.databinding.viewers.ViewerObservableValueDecorator;
-import org.eclipse.jface.internal.databinding.viewers.ViewerSingleSelectionObservableValue;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckable;
@@ -34,7 +24,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Factory methods for creating observables for JFace viewers
@@ -42,6 +31,12 @@ import org.eclipse.swt.widgets.Display;
  * @since 1.1
  */
 public class ViewersObservables {
+	private static Object checkNull(Object obj) {
+		if (obj == null)
+			throw new IllegalArgumentException();
+		return obj;
+	}
+
 	/**
 	 * Returns an observable which delays notification of value change events
 	 * from <code>observable</code> until <code>delay</code> milliseconds have
@@ -65,11 +60,8 @@ public class ViewersObservables {
 	 */
 	public static IViewerObservableValue observeDelayedValue(int delay,
 			IViewerObservableValue observable) {
-		Viewer viewer = observable.getViewer();
-		return new ViewerObservableValueDecorator(
-				new SWTDelayedObservableValueDecorator(Observables
-						.observeDelayedValue(delay, observable), viewer
-						.getControl()), viewer);
+		return new ViewerObservableValueDecorator(Observables
+				.observeDelayedValue(delay, observable), observable.getViewer());
 	}
 
 	/**
@@ -85,26 +77,21 @@ public class ViewersObservables {
 	 */
 	public static IObservableValue observeSingleSelection(
 			ISelectionProvider selectionProvider) {
-		if (selectionProvider instanceof Viewer) {
-			return observeSingleSelection((Viewer) selectionProvider);
-		}
-		return new SelectionProviderSingleSelectionObservableValue(
-				SWTObservables.getRealm(Display.getDefault()),
-				selectionProvider);
+		return ViewerProperties.singleSelection().observe(
+				checkNull(selectionProvider));
 	}
 
 	/**
-	 * Returns an observable list that tracks the current selection of the
-	 * given selection provider. Assumes that the selection provider provides
-	 * selections of type {@link IStructuredSelection}. Note that the
-	 * observable list will not honor the full contract of
-	 * <code>java.util.List</code> in that it may delete or reorder elements
-	 * based on what the selection provider returns from
-	 * {@link ISelectionProvider#getSelection()} after having called
+	 * Returns an observable list that tracks the current selection of the given
+	 * selection provider. Assumes that the selection provider provides
+	 * selections of type {@link IStructuredSelection}. Note that the observable
+	 * list will not honor the full contract of <code>java.util.List</code> in
+	 * that it may delete or reorder elements based on what the selection
+	 * provider returns from {@link ISelectionProvider#getSelection()} after
+	 * having called
 	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
 	 * based on the requested change to the observable list. The affected
-	 * methods are <code>add</code>, <code>addAll</code>, and
-	 * <code>set</code>.
+	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
 	 * 
 	 * @param selectionProvider
 	 * @return the observable value tracking the (multi) selection of the given
@@ -114,12 +101,8 @@ public class ViewersObservables {
 	 */
 	public static IObservableList observeMultiSelection(
 			ISelectionProvider selectionProvider) {
-		if (selectionProvider instanceof Viewer) {
-			return observeMultiSelection((Viewer) selectionProvider);
-		}
-		return new SelectionProviderMultipleSelectionObservableList(
-				SWTObservables.getRealm(Display.getDefault()),
-				selectionProvider, Object.class);
+		return ViewerProperties.multipleSelection().observe(
+				checkNull(selectionProvider));
 	}
 
 	/**
@@ -136,23 +119,20 @@ public class ViewersObservables {
 	 * @since 1.2
 	 */
 	public static IViewerObservableValue observeSingleSelection(Viewer viewer) {
-		return new ViewerSingleSelectionObservableValue(
-				SWTObservables.getRealm(Display.getDefault()),
-				viewer);
+		return (IViewerObservableValue) ViewerProperties.singleSelection()
+				.observe(checkNull(viewer));
 	}
-	
+
 	/**
-	 * Returns an observable list that tracks the current selection of the
-	 * given viewer. Assumes that the viewer provides
-	 * selections of type {@link IStructuredSelection}. Note that the
-	 * observable list will not honor the full contract of
-	 * <code>java.util.List</code> in that it may delete or reorder elements
-	 * based on what the viewer returns from
+	 * Returns an observable list that tracks the current selection of the given
+	 * viewer. Assumes that the viewer provides selections of type
+	 * {@link IStructuredSelection}. Note that the observable list will not
+	 * honor the full contract of <code>java.util.List</code> in that it may
+	 * delete or reorder elements based on what the viewer returns from
 	 * {@link ISelectionProvider#getSelection()} after having called
 	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
 	 * based on the requested change to the observable list. The affected
-	 * methods are <code>add</code>, <code>addAll</code>, and
-	 * <code>set</code>.
+	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
 	 * 
 	 * @param viewer
 	 * @return the observable value tracking the (multi) selection of the given
@@ -160,13 +140,11 @@ public class ViewersObservables {
 	 * 
 	 * @since 1.2
 	 */
-	public static IViewerObservableList observeMultiSelection(
-			Viewer viewer) {
-		return new ViewerMultipleSelectionObservableList(
-				SWTObservables.getRealm(Display.getDefault()),
-				viewer, Object.class);
+	public static IViewerObservableList observeMultiSelection(Viewer viewer) {
+		return (IViewerObservableList) ViewerProperties.multipleSelection()
+				.observe(checkNull(viewer));
 	}
-	
+
 	/**
 	 * Returns an observable value that tracks the input of the given viewer.
 	 * <p>
@@ -179,8 +157,7 @@ public class ViewersObservables {
 	 * @since 1.2
 	 */
 	public static IObservableValue observeInput(Viewer viewer) {
-		return new ViewerInputObservableValue(SWTObservables.getRealm(viewer
-				.getControl().getDisplay()), viewer);
+		return ViewerProperties.input().observe(checkNull(viewer));
 	}
 
 	/**
@@ -197,16 +174,8 @@ public class ViewersObservables {
 	 */
 	public static IObservableSet observeCheckedElements(ICheckable checkable,
 			Object elementType) {
-		if (checkable instanceof CheckboxTableViewer) {
-			return observeCheckedElements((CheckboxTableViewer) checkable,
-					elementType);
-		}
-		if (checkable instanceof CheckboxTreeViewer) {
-			return observeCheckedElements((CheckboxTreeViewer) checkable,
-					elementType);
-		}
-		return new CheckableCheckedElementsObservableSet(SWTObservables
-				.getRealm(Display.getDefault()), checkable, elementType);
+		return ViewerProperties.checkedElements(elementType).observe(
+				checkNull(checkable));
 	}
 
 	/**
@@ -224,9 +193,8 @@ public class ViewersObservables {
 	 */
 	public static IViewerObservableSet observeCheckedElements(
 			CheckboxTableViewer viewer, Object elementType) {
-		return new CheckboxViewerCheckedElementsObservableSet(SWTObservables
-				.getRealm(viewer.getControl().getDisplay()), viewer,
-				elementType);
+		return (IViewerObservableSet) ViewerProperties.checkedElements(
+				elementType).observe(checkNull(viewer));
 	}
 
 	/**
@@ -244,9 +212,8 @@ public class ViewersObservables {
 	 */
 	public static IViewerObservableSet observeCheckedElements(
 			CheckboxTreeViewer viewer, Object elementType) {
-		return new CheckboxViewerCheckedElementsObservableSet(SWTObservables
-				.getRealm(viewer.getControl().getDisplay()), viewer,
-				elementType);
+		return (IViewerObservableSet) ViewerProperties.checkedElements(
+				elementType).observe(checkNull(viewer));
 	}
 
 	/**
@@ -267,7 +234,7 @@ public class ViewersObservables {
 	 * @since 1.3
 	 */
 	public static IViewerObservableSet observeFilters(StructuredViewer viewer) {
-		return new ViewerFiltersObservableSet(SWTObservables.getRealm(viewer
-				.getControl().getDisplay()), viewer);
+		return (IViewerObservableSet) ViewerProperties.filters().observe(
+				checkNull(viewer));
 	}
 }

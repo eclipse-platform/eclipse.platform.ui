@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -22,8 +22,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
-import org.eclipse.jface.internal.databinding.swt.SpinnerObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -38,7 +37,7 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 	private Spinner spinner;
 
 	private IObservableValue observable;
-	
+
 	public SpinnerObservableValueSelectionTest() {
 		this(null);
 	}
@@ -56,7 +55,8 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 	}
 
 	protected IObservable doCreateObservable() {
-		return getObservableContractDelegate().createObservable(SWTObservables.getRealm(Display.getDefault()));
+		return getObservableContractDelegate().createObservable(
+				SWTObservables.getRealm(Display.getDefault()));
 	}
 
 	public void testGetValue() throws Exception {
@@ -72,9 +72,11 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(SpinnerObservableValueSelectionTest.class.toString());
+		TestSuite suite = new TestSuite(
+				SpinnerObservableValueSelectionTest.class.toString());
 		suite.addTestSuite(SpinnerObservableValueSelectionTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -95,13 +97,12 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new SpinnerObservableValue(realm, spinner, SWTProperties.SELECTION);
+			return WidgetProperties.selection().observe(realm, spinner);
 		}
 
 		public void change(IObservable observable) {
-			spinner
-					.setSelection(createIntegerValue(
-							(IObservableValue) observable).intValue());
+			spinner.setSelection(createIntegerValue(
+					(IObservableValue) observable).intValue());
 			spinner.notifyListeners(SWT.Selection, null);
 		}
 

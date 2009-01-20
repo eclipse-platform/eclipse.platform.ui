@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthew Hall - initial API and implementation (bug 245647)
+ *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;

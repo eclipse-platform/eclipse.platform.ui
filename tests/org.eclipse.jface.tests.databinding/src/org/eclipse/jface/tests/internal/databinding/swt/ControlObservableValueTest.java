@@ -8,12 +8,13 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 170848
+ *     Matthew Hall - bug 194734
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import org.eclipse.jface.internal.databinding.swt.ControlObservableValue;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.SWT;
@@ -47,49 +48,43 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testSetValueEnabled() throws Exception {
-		ControlObservableValue observableValue = new ControlObservableValue(
-				shell, SWTProperties.ENABLED);
+		ISWTObservableValue observableValue = SWTObservables
+				.observeEnabled(shell);
 		Boolean value = Boolean.FALSE;
 		observableValue.setValue(value);
 		assertFalse(shell.isEnabled());
 	}
 
 	public void testGetValueEnabled() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.ENABLED);
+		ISWTObservableValue value = SWTObservables.observeEnabled(shell);
 		shell.setEnabled(false);
 		assertEquals(Boolean.FALSE, value.getValue());
 	}
 
 	public void testGetValueTypeEnabled() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.ENABLED);
+		ISWTObservableValue value = SWTObservables.observeEnabled(shell);
 		assertEquals(boolean.class, value.getValueType());
 	}
 
 	public void testSetValueVisible() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.VISIBLE);
+		ISWTObservableValue value = SWTObservables.observeVisible(shell);
 		value.setValue(Boolean.FALSE);
 		assertFalse(shell.isVisible());
 	}
 
 	public void testGetValueVisible() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.VISIBLE);
+		ISWTObservableValue value = SWTObservables.observeVisible(shell);
 		shell.setVisible(false);
 		assertEquals(Boolean.FALSE, value.getValue());
 	}
 
 	public void testGetValueTypeVisible() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.VISIBLE);
+		ISWTObservableValue value = SWTObservables.observeVisible(shell);
 		assertEquals(Boolean.TYPE, value.getValueType());
 	}
 
 	public void testSetValueForeground() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.FOREGROUND);
+		ISWTObservableValue value = SWTObservables.observeForeground(shell);
 
 		Color color = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 
@@ -98,8 +93,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testGetValueForeground() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.FOREGROUND);
+		ISWTObservableValue value = SWTObservables.observeForeground(shell);
 
 		Color color = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		shell.setForeground(color);
@@ -107,14 +101,12 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testGetValueTypeForgroundColor() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.FOREGROUND);
+		ISWTObservableValue value = SWTObservables.observeForeground(shell);
 		assertEquals(Color.class, value.getValueType());
 	}
 
 	public void testGetValueBackground() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.BACKGROUND);
+		ISWTObservableValue value = SWTObservables.observeBackground(shell);
 
 		Color color = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		shell.setBackground(color);
@@ -122,8 +114,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testSetValueBackground() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.BACKGROUND);
+		ISWTObservableValue value = SWTObservables.observeBackground(shell);
 
 		Color color = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 
@@ -132,20 +123,17 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testGetValueTypeBackgroundColor() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.BACKGROUND);
+		ISWTObservableValue value = SWTObservables.observeBackground(shell);
 		assertEquals(Color.class, value.getValueType());
 	}
 
 	public void testGetValueTypeTooltip() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.TOOLTIP_TEXT);
+		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		assertEquals(String.class, value.getValueType());
 	}
 
 	public void testSetValueFont() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.FONT);
+		ISWTObservableValue value = SWTObservables.observeFont(shell);
 
 		Font font = JFaceResources.getDialogFont();
 
@@ -154,8 +142,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testGetValueFont() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.FONT);
+		ISWTObservableValue value = SWTObservables.observeFont(shell);
 
 		Font font = JFaceResources.getDialogFont();
 		shell.setFont(font);
@@ -163,30 +150,26 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testGetValueTypeFont() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.FONT);
+		ISWTObservableValue value = SWTObservables.observeFont(shell);
 		assertEquals(Font.class, value.getValueType());
 	}
 
 	public void testSetValueTooltipText() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.TOOLTIP_TEXT);
+		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		String text = "text";
 		value.setValue(text);
 		assertEquals(text, shell.getToolTipText());
 	}
 
 	public void testGetValueTooltipText() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.TOOLTIP_TEXT);
+		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		String text = "text";
 		shell.setToolTipText(text);
 		assertEquals(text, value.getValue());
 	}
 
 	public void testGetValueTypeTooltipText() throws Exception {
-		ControlObservableValue value = new ControlObservableValue(shell,
-				SWTProperties.TOOLTIP_TEXT);
+		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		assertEquals(String.class, value.getValueType());
 	}
 }

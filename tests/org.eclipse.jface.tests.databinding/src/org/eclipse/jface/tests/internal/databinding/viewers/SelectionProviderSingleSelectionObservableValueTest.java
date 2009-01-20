@@ -9,21 +9,21 @@
  *    Brad Reynolds - initial API and implementation
  *    Brad Reynolds - bug 116920
  *    Ashley Cambrell - bug 198906
+ *    Matthew Hall - bug 194734
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.viewers.SelectionProviderSingleSelectionObservableValue;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -65,8 +65,7 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 
 	public void testConstructorIllegalArgumentException() {
 		try {
-			new SelectionProviderSingleSelectionObservableValue(SWTObservables
-					.getRealm(Display.getDefault()), null);
+			ViewersObservables.observeSingleSelection(null);
 			fail();
 		} catch (IllegalArgumentException e) {
 		}
@@ -80,9 +79,8 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 	 * </ul>
 	 */
 	public void testGetSetValue() {
-		SelectionProviderSingleSelectionObservableValue observable = new SelectionProviderSingleSelectionObservableValue(
-				SWTObservables.getRealm(Display.getDefault()),
-				selectionProvider);
+		IObservableValue observable = ViewersObservables
+				.observeSingleSelection(selectionProvider);
 		ValueChangeEventTracker listener = new ValueChangeEventTracker();
 		observable.addValueChangeListener(listener);
 		assertNull(observable.getValue());
@@ -110,9 +108,8 @@ public class SelectionProviderSingleSelectionObservableValueTest extends
 	}
 
 	public void testDispose() throws Exception {
-		SelectionProviderSingleSelectionObservableValue observable = new SelectionProviderSingleSelectionObservableValue(
-				SWTObservables.getRealm(Display.getDefault()),
-				selectionProvider);
+		IObservableValue observable = ViewersObservables
+				.observeSingleSelection(selectionProvider);
 		ValueChangeEventTracker listener = new ValueChangeEventTracker();
 		observable.addValueChangeListener(listener);
 

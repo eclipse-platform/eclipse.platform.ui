@@ -7,18 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 251884
+ *     Matthew Hall - bugs 251884, 194734
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
 
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.IDiff;
+
 /**
  * @since 1.0
  *
  */
-public abstract class SetDiff {
+public abstract class SetDiff implements IDiff {
 	
 	/**
 	 * @return the set of added elements

@@ -43,8 +43,25 @@ import org.eclipse.core.runtime.AssertionFailedException;
  */
 public abstract class AbstractObservableList extends AbstractList implements
 		IObservableList {
+	private final class PrivateChangeSupport extends ChangeSupport {
+		private PrivateChangeSupport(Realm realm) {
+			super(realm);
+		}
 
-	private ChangeSupport changeSupport;
+		protected void firstListenerAdded() {
+			AbstractObservableList.this.firstListenerAdded();
+		}
+
+		protected void lastListenerRemoved() {
+			AbstractObservableList.this.lastListenerRemoved();
+		}
+
+		protected boolean hasListeners() {
+			return super.hasListeners();
+		}
+	}
+
+	private PrivateChangeSupport changeSupport;
 	private boolean disposed = false;
 
 	/**
@@ -54,14 +71,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	public AbstractObservableList(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
 		ObservableTracker.observableCreated(this);
-		changeSupport = new ChangeSupport(realm){
-			protected void firstListenerAdded() {
-				AbstractObservableList.this.firstListenerAdded();
-			}
-			protected void lastListenerRemoved() {
-				AbstractObservableList.this.lastListenerRemoved();
-			}
-		};
+		changeSupport = new PrivateChangeSupport(realm);
 	}
 
 	/**
@@ -71,6 +81,16 @@ public abstract class AbstractObservableList extends AbstractList implements
 		this(Realm.getDefault());
 	}
 	
+	/**
+	 * Returns whether this observable list has any registered listeners.
+	 * 
+	 * @return whether this observable list has any registered listeners.
+	 * @since 1.2
+	 */
+	protected boolean hasListeners() {
+		return changeSupport.hasListeners();
+	}
+
 	public boolean isStale() {
 		getterCalled();
 		return false;

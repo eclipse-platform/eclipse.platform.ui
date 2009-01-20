@@ -7,12 +7,11 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098, 246103
+ *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
@@ -25,14 +24,16 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.IBeanObservable;
+import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
@@ -46,7 +47,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class JavaBeanObservableArrayBasedListTest extends
 		AbstractDefaultRealmTestCase {
-	private JavaBeanObservableList list;
+	private IObservableList list;
+	private IBeanObservable beanObservable;
 
 	private PropertyDescriptor propertyDescriptor;
 
@@ -63,29 +65,37 @@ public class JavaBeanObservableArrayBasedListTest extends
 		super.setUp();
 
 		propertyName = "array";
-		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
+		propertyDescriptor = ((IBeanProperty) BeanProperties.list(
+				Bean.class, propertyName)).getPropertyDescriptor();
 		bean = new Bean(new Object[0]);
 
-		list = new JavaBeanObservableList(SWTObservables.getRealm(Display
-				.getDefault()), bean, propertyDescriptor, Bean.class);
+		list = BeansObservables.observeList(SWTObservables.getRealm(Display
+				.getDefault()), bean, propertyName);
+		beanObservable = (IBeanObservable) list;
 	}
 
 	public void testGetObserved() throws Exception {
-		assertSame(bean, list.getObserved());
+		assertSame(bean, beanObservable.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
-		assertSame(propertyDescriptor, list.getPropertyDescriptor());
+		assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
 
-	public void testRegistersListenerOnCreation()
+	public void testRegistersListenerAfterFirstListenerIsAdded()
 			throws Exception {
+		assertFalse(bean.changeSupport.hasListeners(propertyName));
+		list.addListChangeListener(new ListChangeEventTracker());
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
 
-	public void testRemovesListenerOnDisposal()
+	public void testRemovesListenerAfterLastListenerIsRemoved()
 			throws Exception {
-		list.dispose();
+		ListChangeEventTracker listener = new ListChangeEventTracker();
+		list.addListChangeListener(listener);
+
+		assertTrue(bean.changeSupport.hasListeners(propertyName));
+		list.removeListChangeListener(listener);
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 	}
 
@@ -120,8 +130,9 @@ public class JavaBeanObservableArrayBasedListTest extends
 		assertEquals(1, listener.count);
 		ListChangeEvent event = listener.event;
 
-		assertEquals(list, event.getObservableList());
-		assertEntry(event.diff.getDifferences()[0], true, 0, element);
+		assertSame(list, event.getObservableList());
+		assertDiff(event.diff, Collections.EMPTY_LIST, Collections
+				.singletonList("1"));
 	}
 
 	public void testAdd_FiresPropertyChangeEvent() throws Exception {
@@ -150,7 +161,8 @@ public class JavaBeanObservableArrayBasedListTest extends
 		list.add(0, element);
 
 		ListChangeEvent event = listener.event;
-		assertEntry(event.diff.getDifferences()[0], true, 0, element);
+		assertDiff(event.diff, Collections.EMPTY_LIST, Collections
+				.singletonList("1"));
 	}
 
 	public void testAddAtIndexPropertyChangeEvent() throws Exception {
@@ -182,8 +194,10 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 		assertEquals(1, listener.count);
 		ListChangeEvent event = listener.event;
-		assertEquals(list, event.getObservableList());
-		assertEntry(event.diff.getDifferences()[0], false, 0, element);
+		assertSame(list, event.getObservableList());
+
+		assertDiff(event.diff, Collections.singletonList("1"),
+				Collections.EMPTY_LIST);
 	}
 
 	public void testRemovePropertyChangeEvent() throws Exception {
@@ -218,8 +232,10 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 		assertEquals(1, listener.count);
 		ListChangeEvent event = listener.event;
-		assertEquals(list, event.getObservableList());
-		assertEntry(event.diff.getDifferences()[0], false, 0, element);
+		assertSame(list, event.getObservableList());
+
+		assertDiff(event.diff, Collections.singletonList(element),
+				Collections.EMPTY_LIST);
 	}
 
 	public void testRemoveAtIndexPropertyChangeEvent() throws Exception {
@@ -252,10 +268,10 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 		assertEquals(1, listener.count);
 		ListChangeEvent event = listener.event;
-		assertEquals(list, event.getObservableList());
+		assertSame(list, event.getObservableList());
 
-		assertEntry(event.diff.getDifferences()[0], true, 0, elements.get(0));
-		assertEntry(event.diff.getDifferences()[1], true, 1, elements.get(1));
+		assertDiff(event.diff, Collections.EMPTY_LIST, Arrays
+				.asList(new String[] { "1", "2" }));
 	}
 
 	public void testAddAllPropertyChangeEvent() throws Exception {
@@ -292,9 +308,10 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 		assertEquals(1, listener.count);
 		ListChangeEvent event = listener.event;
-		assertEquals(list, event.getObservableList());
-		assertEntry(event.diff.getDifferences()[0], true, 2, elements.get(0));
-		assertEntry(event.diff.getDifferences()[1], true, 3, elements.get(1));
+		assertSame(list, event.getObservableList());
+
+		assertDiff(event.diff, Arrays.asList(new Object[] { "1", "2" }), Arrays
+				.asList(new Object[] { "1", "2", "1", "2" }));
 	}
 
 	public void testAddAllAtIndexPropertyChangeEvent() throws Exception {
@@ -306,16 +323,14 @@ public class JavaBeanObservableArrayBasedListTest extends
 	}
 
 	public void testRemoveAll() throws Exception {
-		List elements = Arrays.asList(new String[] { "1", "2" });
-		list.addAll(elements);
-		list.addAll(elements);
-
+		list.addAll(Arrays.asList(new String[] { "1", "2", "3", "4" }));
 		assertEquals(4, bean.getArray().length);
-		list.removeAll(elements);
+
+		list.removeAll(Arrays.asList(new String[] { "2", "4" }));
 
 		assertEquals(2, bean.getArray().length);
-		assertEquals(elements.get(0), bean.getArray()[0]);
-		assertEquals(elements.get(1), bean.getArray()[1]);
+		assertEquals("1", bean.getArray()[0]);
+		assertEquals("3", bean.getArray()[1]);
 	}
 
 	public void testRemoveAllListChangeEvent() throws Exception {
@@ -330,9 +345,11 @@ public class JavaBeanObservableArrayBasedListTest extends
 		list.removeAll(elements);
 
 		ListChangeEvent event = listener.event;
-		assertEquals(list, event.getObservableList());
-		assertEntry(event.diff.getDifferences()[0], false, 0, elements.get(0));
-		assertEntry(event.diff.getDifferences()[1], false, 0, elements.get(1));
+		assertSame(list, event.getObservableList());
+
+		assertDiff(event.diff, Arrays
+				.asList(new Object[] { "1", "2", "1", "2" }),
+				Collections.EMPTY_LIST);
 	}
 
 	public void testRemoveAllPropertyChangeEvent() throws Exception {
@@ -369,9 +386,11 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 		assertEquals(1, listener.count);
 		ListChangeEvent event = listener.event;
-		assertEquals(list, event.getObservableList());
-		assertEntry(event.diff.getDifferences()[0], false, 2, elements.get(2));
-		assertEntry(event.diff.getDifferences()[1], false, 2, elements.get(3));
+		assertSame(list, event.getObservableList());
+
+		assertDiff(event.diff, Arrays
+				.asList(new Object[] { "0", "1", "2", "3" }), Arrays
+				.asList(new Object[] { "0", "1" }));
 	}
 
 	public void testRetainAllPropertyChangeEvent() throws Exception {
@@ -425,9 +444,10 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 		assertEquals(1, listener.count);
 		ListChangeEvent event = listener.event;
-		assertEquals(list, event.getObservableList());
-		assertEntry(event.diff.getDifferences()[0], false, 0, oldElement);
-		assertEntry(event.diff.getDifferences()[1], true, 0, newElement);
+		assertSame(list, event.getObservableList());
+
+		assertDiff(event.diff, Collections.singletonList(oldElement),
+				Collections.singletonList(newElement));
 	}
 
 	public void testSetPropertyChangeEvent() throws Exception {
@@ -473,11 +493,12 @@ public class JavaBeanObservableArrayBasedListTest extends
 		assertEquals(Collections.singletonList("new"), list);
 	}
 
-	private static void assertEntry(ListDiffEntry entry, boolean addition,
-			int position, Object element) {
-		assertEquals("addition", addition, entry.isAddition());
-		assertEquals("position", position, entry.getPosition());
-		assertEquals("element", element, entry.getElement());
+	private static void assertDiff(ListDiff diff, List oldList, List newList) {
+		oldList = new ArrayList(oldList); // defensive copy in case arg is
+		// unmodifiable
+		diff.applyTo(oldList);
+		assertEquals("applying diff to list did not produce expected result",
+				newList, oldList);
 	}
 
 	private static void assertPropertyChangeEvent(Bean bean, Runnable runnable) {
@@ -492,8 +513,10 @@ public class JavaBeanObservableArrayBasedListTest extends
 		PropertyChangeEvent event = listener.evt;
 		assertEquals("event did not fire", 1, listener.count);
 		assertEquals("array", event.getPropertyName());
-		assertTrue("old value", Arrays.equals(old, (Object[]) event.getOldValue()));
-		assertTrue("new value", Arrays.equals(bean.getArray(), (Object[]) event.getNewValue()));
+		assertTrue("old value", Arrays.equals(old, (Object[]) event
+				.getOldValue()));
+		assertTrue("new value", Arrays.equals(bean.getArray(), (Object[]) event
+				.getNewValue()));
 		assertFalse("lists are equal", Arrays.equals(bean.getArray(), old));
 	}
 
@@ -503,11 +526,6 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 		PropertyChangeEvent evt;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-		 */
 		public void propertyChange(PropertyChangeEvent evt) {
 			count++;
 			this.evt = evt;
@@ -515,7 +533,8 @@ public class JavaBeanObservableArrayBasedListTest extends
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(JavaBeanObservableArrayBasedListTest.class.getName());
+		TestSuite suite = new TestSuite(
+				JavaBeanObservableArrayBasedListTest.class.getName());
 		suite.addTestSuite(JavaBeanObservableArrayBasedListTest.class);
 		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
 		return suite;
@@ -525,17 +544,10 @@ public class JavaBeanObservableArrayBasedListTest extends
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
 			String propertyName = "array";
-			PropertyDescriptor propertyDescriptor;
-			try {
-				propertyDescriptor = new PropertyDescriptor(propertyName,
-						Bean.class);
-			} catch (IntrospectionException e) {
-				throw new RuntimeException(e);
-			}
 			Object bean = new Bean(new Object[0]);
 
-			IObservableList list = new JavaBeanObservableList(realm, bean,
-					propertyDescriptor, String.class);
+			IObservableList list = BeansObservables.observeList(realm, bean,
+					propertyName, String.class);
 			for (int i = 0; i < elementCount; i++)
 				list.add(createElement(list));
 			return list;

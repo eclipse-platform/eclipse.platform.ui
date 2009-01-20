@@ -9,25 +9,27 @@
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 171616
  *     Katarzyna Marszalek - test case for bug 198519
- *     Matthew Hall - bug 213145, 246103
+ *     Matthew Hall - bug 213145, 246103, 194734
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.IBeanObservable;
+import org.eclipse.core.databinding.beans.IBeanProperty;
+import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
@@ -40,35 +42,34 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
  */
 public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	private Bean bean;
-	private JavaBeanObservableValue observableValue;
+	private IObservableValue observableValue;
+	private IBeanObservable beanObservable;
 	private PropertyDescriptor propertyDescriptor;
 	private String propertyName;
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 		
 		bean = new Bean();
 		propertyName = "value";
-		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
-		observableValue = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor);
+		propertyDescriptor = ((IBeanProperty) BeanProperties.value(
+				Bean.class, propertyName)).getPropertyDescriptor();
+		observableValue = BeansObservables.observeValue(bean, propertyName);
+		beanObservable = (IBeanObservable) observableValue;
 	}
 
 	public void testGetObserved() throws Exception {
-		assertEquals(bean, observableValue.getObserved());
+		assertEquals(bean, beanObservable.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
-    	assertEquals(propertyDescriptor, observableValue.getPropertyDescriptor());
+    	assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
 
 	public void testSetValueThrowsExceptionThrownByBean() throws Exception {
 		ThrowsSetException temp = new ThrowsSetException();
-		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm
-				.getDefault(), temp,
-				new PropertyDescriptor("value", ThrowsSetException.class));
+		IObservableValue observable = BeansObservables.observeValue(temp,
+				"value");
 
 		try {
 			observable.setValue("");
@@ -80,9 +81,8 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	
 	public void testGetValueThrowsExceptionThrownByBean() throws Exception {
 		ThrowsGetException temp = new ThrowsGetException();
-		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm
-				.getDefault(), temp,
-				new PropertyDescriptor("value", ThrowsGetException.class));
+		IObservableValue observable = BeansObservables.observeValue(temp,
+				"value");
 
 		try {
 			observable.getValue();
@@ -109,14 +109,16 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testConstructor_RegistersListeners() throws Exception {
-		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor);
+		IObservableValue observable = BeansObservables.observeValue(bean,
+				propertyName);
 		ChangeEventTracker.observe(observable);
 		
 		assertTrue(bean.hasListeners(propertyName));
 	}
 	
 	public void testConstructor_SkipRegisterListeners() throws Exception {
-		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor, false);
+		IObservableValue observable = PojoObservables.observeValue(bean,
+				propertyName);
 		ChangeEventTracker.observe(observable);
 		
 		assertFalse(bean.hasListeners(propertyName));
@@ -156,13 +158,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		}
 		
 		public IObservableValue createObservableValue(Realm realm) {
-			try {
-				PropertyDescriptor propertyDescriptor = new PropertyDescriptor("value", Bean.class);
-				return new JavaBeanObservableValue(realm, bean,
-						propertyDescriptor);					
-			} catch (IntrospectionException e) {
-				throw new RuntimeException(e);
-			}
+			return BeansObservables.observeValue(realm, bean, "value");
 		}
 		
 		public void change(IObservable observable) {

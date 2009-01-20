@@ -7,15 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 116920
- *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 116920, 164653
  *     Ashley Cambrell - bug 198904
+ *     Matthew Hall - bug 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.internal.databinding.swt.TextObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -35,7 +37,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 
 		Shell shell = new Shell();
 		text = new Text(shell, SWT.NONE);
-		
+
 		listener = new ValueChangeEventTracker();
 	}
 
@@ -45,48 +47,57 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	public void testConstructorUpdateEventTypes() {
 		try {
-			new TextObservableValue(text, SWT.NONE);
-			new TextObservableValue(text, SWT.FocusOut);
-			new TextObservableValue(text, SWT.Modify);
+			WidgetProperties.text(SWT.None);
+			WidgetProperties.text(SWT.FocusOut);
+			WidgetProperties.text(SWT.Modify);
 			assertTrue(true);
 		} catch (IllegalArgumentException e) {
 			fail();
 		}
 
 		try {
-			new TextObservableValue(text, SWT.Verify);
+			WidgetProperties.text(SWT.Verify);
 			fail();
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=171132
 	 * 
 	 * @throws Exception
 	 */
 	public void testGetValueBeforeFocusOutChangeEventsFire() throws Exception {
-		TextObservableValue observableValue = new TextObservableValue(text, SWT.FocusOut);
+		IObservableValue observableValue = WidgetProperties.text(SWT.FocusOut)
+				.observe(Realm.getDefault(), text);
 		observableValue.addValueChangeListener(listener);
-		
+
 		String a = "a";
 		String b = "b";
-		
+
 		text.setText(a);
-		assertEquals(a, observableValue.getValue()); //fetch the value updating the buffered value
-		
-		text.setText(b);
-		text.notifyListeners(SWT.FocusOut, null);
-		
+
+		assertEquals(0, listener.count);
+
+		// fetching the value updates the buffered value
+		assertEquals(a, observableValue.getValue());
 		assertEquals(1, listener.count);
+
+		text.setText(b);
+
+		assertEquals(1, listener.count);
+
+		text.notifyListeners(SWT.FocusOut, null);
+
+		assertEquals(2, listener.count);
 		assertEquals(a, listener.event.diff.getOldValue());
 		assertEquals(b, listener.event.diff.getNewValue());
 	}
 
 	public void testDispose() throws Exception {
-		TextObservableValue observableValue = new TextObservableValue(text,
-				SWT.Modify);
+		IObservableValue observableValue = WidgetProperties.text(SWT.Modify)
+				.observe(Realm.getDefault(), text);
 		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
 

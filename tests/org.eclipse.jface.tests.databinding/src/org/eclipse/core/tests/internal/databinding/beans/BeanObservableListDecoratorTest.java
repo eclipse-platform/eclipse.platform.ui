@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 208858, 213145, 246625
+ *     Matthew Hall - bugs 208858, 213145, 246625, 194734
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -18,13 +18,13 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.beans.BeanObservableListDecorator;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableList;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -36,36 +36,30 @@ import org.eclipse.swt.widgets.Display;
 public class BeanObservableListDecoratorTest extends TestCase {
 	private Bean bean;
 	private PropertyDescriptor propertyDescriptor;
-	private JavaBeanObservableList observableList;
+	private IObservableList observableList;
 	private BeanObservableListDecorator decorator;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 		
 		bean = new Bean();
 		propertyDescriptor = new PropertyDescriptor(
 				"list", Bean.class,"getList","setList");
-		observableList = new JavaBeanObservableList(
-				SWTObservables.getRealm(Display.getDefault()), bean,
-				propertyDescriptor, Bean.class);
+		observableList = BeansObservables.observeList(
+				SWTObservables.getRealm(Display.getDefault()), bean, "list");
 		decorator = new BeanObservableListDecorator(observableList, propertyDescriptor);
 	}
 
 	public void testGetDelegate() throws Exception {
-		assertEquals(observableList, decorator.getDecorated());
+		assertSame(observableList, decorator.getDecorated());
 	}
 
 	public void testGetObserved() throws Exception {
-		assertEquals(bean, decorator.getObserved());
+		assertSame(bean, decorator.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
-		assertEquals(propertyDescriptor, decorator.getPropertyDescriptor());
+		assertSame(propertyDescriptor, decorator.getPropertyDescriptor());
 	}
 
 	public static Test suite() {

@@ -8,13 +8,14 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198904
+ *     Matthew Hall - bug 194734
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
-import org.eclipse.jface.internal.databinding.swt.SpinnerObservableValue;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Spinner;
@@ -26,8 +27,7 @@ import org.eclipse.swt.widgets.Spinner;
 public class SpinnerObservableValueTest extends AbstractSWTTestCase {
 	public void testDispose() throws Exception {
 		Spinner spinner = new Spinner(getShell(), SWT.NONE);
-		SpinnerObservableValue observableValue = new SpinnerObservableValue(
-				spinner, SWTProperties.SELECTION);
+		ISWTObservableValue observableValue = SWTObservables.observeSelection(spinner);
 		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bug 208332, 194734
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.AbstractObservable;
-import org.eclipse.core.databinding.observable.ChangeSupport;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 
@@ -36,8 +35,6 @@ import org.eclipse.core.databinding.observable.Realm;
 public abstract class AbstractObservableSet extends AbstractObservable implements
 		IObservableSet {
 
-	private ChangeSupport changeSupport;
-
 	private boolean stale = false;
 
 	protected AbstractObservableSet() {
@@ -54,22 +51,14 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	
 	protected AbstractObservableSet(Realm realm) {
 		super(realm);
-		changeSupport = new ChangeSupport(realm){
-			protected void firstListenerAdded() {
-				AbstractObservableSet.this.firstListenerAdded();
-			}
-			protected void lastListenerRemoved() {
-				AbstractObservableSet.this.lastListenerRemoved();
-			}
-		};
 	}
 	
 	public synchronized void addSetChangeListener(ISetChangeListener listener) {
-		changeSupport.addListener(SetChangeEvent.TYPE, listener);
+		addListener(SetChangeEvent.TYPE, listener);
 	}
 
 	public synchronized void removeSetChangeListener(ISetChangeListener listener) {
-		changeSupport.removeListener(SetChangeEvent.TYPE, listener);
+		removeListener(SetChangeEvent.TYPE, listener);
 	}
 
 	protected abstract Set getWrappedSet();
@@ -78,7 +67,7 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 		// fire general change event first
 		super.fireChange();
 
-		changeSupport.fireEvent(new SetChangeEvent(this, diff));
+		fireEvent(new SetChangeEvent(this, diff));
 	}
 	
 	public boolean contains(Object o) {
@@ -202,17 +191,4 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	protected void fireChange() {
 		throw new RuntimeException("fireChange should not be called, use fireSetChange() instead"); //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
-	 */
-	public synchronized void dispose() {
-		super.dispose();
-		
-		if (changeSupport != null) {
-			changeSupport.dispose();
-			changeSupport = null;
-		}
-	}
-	
 }

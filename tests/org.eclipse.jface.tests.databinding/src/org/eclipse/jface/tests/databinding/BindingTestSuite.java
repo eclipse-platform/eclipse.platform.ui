@@ -77,6 +77,8 @@ import org.eclipse.core.tests.internal.databinding.RandomAccessListIteratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableListDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableSetDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableValueDecoratorTest;
+import org.eclipse.core.tests.internal.databinding.beans.BeanPropertyListenerSupportTest;
+import org.eclipse.core.tests.internal.databinding.beans.BeanValuePropertyTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableArrayBasedListTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableArrayBasedSetTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableListTest;
@@ -84,7 +86,6 @@ import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableMapTe
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanPropertyObservableMapTest;
-import org.eclipse.core.tests.internal.databinding.beans.ListenerSupportTest;
 import org.eclipse.core.tests.internal.databinding.conversion.DateConversionSupportTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IdentityConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IntegerToStringConverterTest;
@@ -163,7 +164,6 @@ import org.eclipse.jface.tests.internal.databinding.swt.ControlObservableValueTe
 import org.eclipse.jface.tests.internal.databinding.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ListSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SWTDelayedObservableValueDecoratorTest;
-import org.eclipse.jface.tests.internal.databinding.swt.SWTObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueSelectionTest;
@@ -172,6 +172,9 @@ import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueMa
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueFocusOutTest;
+import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueModifyTest;
+import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TableSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextEditableObservableValueTest;
@@ -198,7 +201,7 @@ public class BindingTestSuite extends TestSuite {
 	}
 
 	public BindingTestSuite() {
-		
+
 		// org.eclipse.core.tests.databinding
 		addTestSuite(AggregateValidationStatusTest.class);
 		addTestSuite(BindingTest.class);
@@ -253,19 +256,19 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ObservableSetTest.suite());
 		addTest(UnionSetTest.suite());
 		addTest(WritableSetTest.suite());
-		
-		//org.eclipse.core.tests.databinding.observable.value
+
+		// org.eclipse.core.tests.databinding.observable.value
 		addTestSuite(AbstractObservableValueTest.class);
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(ComputedValueTest.class);
 		addTest(DecoratingObservableValueTest.suite());
 		addTest(SelectObservableValueTest.suite());
 		addTest(WritableValueTest.suite());
-		
-		//org.eclipse.core.tests.databinding.validation
+
+		// org.eclipse.core.tests.databinding.validation
 		addTestSuite(MultiValidatorTest.class);
 		addTestSuite(ValidationStatusTest.class);
-		
+
 		// org.eclipse.core.tests.internal.databinding
 		addTestSuite(BindingMessagesTest.class);
 		addTestSuite(BindingStatusTest.class);
@@ -298,11 +301,12 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(StringToNumberParserTest.class);
 		addTestSuite(StringToShortConverterTest.class);
 
-		//org.eclipse.core.tests.internal.databinding.internal.beans
+		// org.eclipse.core.tests.internal.databinding.internal.beans
 		addTest(BeanObservableListDecoratorTest.suite());
 		addTestSuite(BeanObservableSetDecoratorTest.class);
 		addTestSuite(BeanObservableValueDecoratorTest.class);
 		addTestSuite(BeanObservableListDecoratorTest.class);
+		addTestSuite(BeanValuePropertyTest.class);
 		addTest(JavaBeanObservableArrayBasedListTest.suite());
 		addTest(JavaBeanObservableArrayBasedSetTest.suite());
 		addTest(JavaBeanObservableListTest.suite());
@@ -310,9 +314,9 @@ public class BindingTestSuite extends TestSuite {
 		addTest(JavaBeanObservableSetTest.suite());
 		addTest(JavaBeanObservableValueTest.suite());
 		addTestSuite(JavaBeanPropertyObservableMapTest.class);
-		addTestSuite(ListenerSupportTest.class);
-		
-		//org.eclipse.core.tests.internal.databinding.observable
+		addTestSuite(BeanPropertyListenerSupportTest.class);
+
+		// org.eclipse.core.tests.internal.databinding.observable
 		addTest(ConstantObservableValueTest.suite());
 		addTest(DelayedObservableValueTest.suite());
 		addTest(EmptyObservableListTest.suite());
@@ -325,8 +329,8 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ValidatedObservableValueTest.suite());
 		addTest(ValidatedObservableListTest.suite());
 		addTest(ValidatedObservableSetTest.suite());
-//		addTest(ValidatedObservableMapTest.suite());
-		
+		// addTest(ValidatedObservableMapTest.suite());
+
 		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
 		addTest(DetailObservableListTest.suite());
 		addTest(DetailObservableSetTest.suite());
@@ -353,24 +357,24 @@ public class BindingTestSuite extends TestSuite {
 		addTest(BindingScenariosTestSuite.suite());
 		// The files in this package are in the above test suite
 
-		//org.eclipse.jface.tests.databinding.swt
+		// org.eclipse.jface.tests.databinding.swt
 		addTestSuite(SWTObservablesTest.class);
-		
+
 		// org.eclipse.jface.tests.databinding.viewers
 		addTestSuite(ObservableListTreeContentProviderTest.class);
 		addTestSuite(ObservableMapLabelProviderTest.class);
 		addTestSuite(ObservableSetContentProviderTest.class);
 		addTestSuite(ObservableSetTreeContentProviderTest.class);
 		addTestSuite(ViewersObservablesTest.class);
-		
+
 		// org.eclipse.jface.tests.databinding.wizard
 		addTestSuite(WizardPageSupportTest.class);
-		
-		//org.eclipse.jface.tests.example.databinding.mask.internal
+
+		// org.eclipse.jface.tests.example.databinding.mask.internal
 		addTestSuite(EditMaskLexerAndTokenTest.class);
 		addTestSuite(EditMaskParserTest.class);
 
-		//org.eclipse.jface.tests.internal.databinding.internal.swt
+		// org.eclipse.jface.tests.internal.databinding.internal.swt
 		addTest(ButtonObservableValueTest.suite());
 		addTestSuite(CComboObservableValueTest.class);
 		addTest(CComboObservableValueSelectionTest.suite());
@@ -383,31 +387,32 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ComboObservableValueTextTest.suite());
 		addTestSuite(ComboSingleSelectionObservableValueTest.class);
 		addTest(SWTDelayedObservableValueDecoratorTest.suite());
-		
-		addTest(SWTObservableListTest.suite());
-		
+
 		addTestSuite(ControlObservableValueTest.class);
 		addTest(LabelObservableValueTest.suite());
 		addTestSuite(ListSingleSelectionObservableValueTest.class);
 		addTest(ScaleObservableValueMinTest.suite());
 		addTest(ScaleObservableValueMaxTest.suite());
 		addTest(ScaleObservableValueSelectionTest.suite());
-		
+
 		addTest(ShellObservableValueTest.suite());
-		
+
 		addTestSuite(SpinnerObservableValueTest.class);
 		addTest(SpinnerObservableValueMinTest.suite());
 		addTest(SpinnerObservableValueMaxTest.suite());
 		addTest(SpinnerObservableValueSelectionTest.suite());
-		
+
 		addTestSuite(TableObservableValueTest.class);
 		addTest(TableSingleSelectionObservableValueTest.suite());
 		addTest(TextEditableObservableValueTest.suite());
 		addTest(TextObservableValueFocusOutTest.suite());
 		addTest(TextObservableValueModifyTest.suite());
 		addTestSuite(TextObservableValueTest.class);
-		
-		//org.eclipse.jface.tests.internal.databinding.internal.viewers
+		addTest(StyledTextObservableValueFocusOutTest.suite());
+		addTest(StyledTextObservableValueModifyTest.suite());
+		addTestSuite(StyledTextObservableValueTest.class);
+
+		// org.eclipse.jface.tests.internal.databinding.internal.viewers
 		addTest(ObservableViewerElementSetTest.suite());
 		addTestSuite(ObservableCollectionTreeContentProviderTest.class);
 		addTestSuite(SelectionProviderMultiSelectionObservableListTest.class);

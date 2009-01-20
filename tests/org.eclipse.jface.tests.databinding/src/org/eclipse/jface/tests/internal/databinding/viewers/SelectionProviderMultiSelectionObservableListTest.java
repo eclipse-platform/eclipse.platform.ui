@@ -8,15 +8,21 @@
  * Contributors:
  *    Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 194734
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.viewers.SelectionProviderMultipleSelectionObservableList;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,7 +30,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -37,7 +42,8 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 
 	private TableViewer viewer;
 
-	private static String[] model = new String[] { "0", "1", "2", "3" };
+	private static String[] model = new String[] { "element0", "element1",
+			"element2", "element3" };
 
 	protected void setUp() throws Exception {
 		Shell shell = new Shell();
@@ -55,8 +61,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 
 	public void testConstructorIllegalArgumentException() {
 		try {
-			new SelectionProviderMultipleSelectionObservableList(SWTObservables
-					.getRealm(Display.getDefault()), null, Object.class);
+			ViewersObservables.observeMultiSelection(null);
 			fail();
 		} catch (IllegalArgumentException e) {
 		}
@@ -70,17 +75,16 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 	 * </ul>
 	 */
 	public void testAddRemove() {
-		SelectionProviderMultipleSelectionObservableList observable = new SelectionProviderMultipleSelectionObservableList(
-				SWTObservables.getRealm(Display.getDefault()),
-				selectionProvider, Object.class);
+		IObservableList observable = ViewersObservables
+				.observeMultiSelection(selectionProvider);
 		ListChangeEventTracker listener = new ListChangeEventTracker();
 		observable.addListChangeListener(listener);
 		assertEquals(0, observable.size());
 
 		selectionProvider.setSelection(new StructuredSelection(model[0]));
 		assertEquals(1, listener.count);
-		assertEquals(1, listener.event.diff.getDifferences().length);
-		assertDiffEntry(listener.event.diff.getDifferences()[0], 0, model[0], true);
+		assertDiff(listener.event.diff, Collections.EMPTY_LIST, Collections
+				.singletonList(model[0]));
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(1, observable.size());
 		assertEquals(model[0], observable.get(0));
@@ -88,68 +92,67 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		selectionProvider.setSelection(new StructuredSelection(model[1]));
 		assertEquals(2, listener.count);
 		assertEquals(2, listener.event.diff.getDifferences().length);
-		assertDiffEntry(listener.event.diff.getDifferences()[0], 0, model[1], true);
-		assertDiffEntry(listener.event.diff.getDifferences()[1], 1, model[0], false);
+		assertDiff(listener.event.diff, Collections.singletonList(model[0]),
+				Collections.singletonList(model[1]));
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(1, observable.size());
 		assertEquals(model[1], observable.get(0));
 
-		selectionProvider.setSelection(new StructuredSelection(new Object[]{model[2],model[3]}));
+		selectionProvider.setSelection(new StructuredSelection(new Object[] {
+				model[2], model[3] }));
 		assertEquals(3, listener.count);
 		assertEquals(3, listener.event.diff.getDifferences().length);
-		assertDiffEntry(listener.event.diff.getDifferences()[0], 0, model[2], true);
-		assertDiffEntry(listener.event.diff.getDifferences()[1], 1, model[3], true);
-		assertDiffEntry(listener.event.diff.getDifferences()[2], 2, model[1], false);
+		assertDiff(listener.event.diff, Collections.singletonList(model[1]),
+				Arrays.asList(new Object[] { model[2], model[3] }));
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(2, observable.size());
 		assertEquals(model[2], observable.get(0));
 		assertEquals(model[3], observable.get(1));
-		
+
 		selectionProvider.setSelection(StructuredSelection.EMPTY);
 		assertEquals(4, listener.count);
 		assertEquals(2, listener.event.diff.getDifferences().length);
-		assertDiffEntry(listener.event.diff.getDifferences()[0], 1, model[3], false);
-		assertDiffEntry(listener.event.diff.getDifferences()[1], 0, model[2], false);
+		assertDiff(listener.event.diff, Arrays.asList(new Object[] { model[2],
+				model[3] }), Collections.EMPTY_LIST);
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(0, observable.size());
-		
+
 		observable.add(model[1]);
 		assertEquals(5, listener.count);
 		assertEquals(1, listener.event.diff.getDifferences().length);
-		assertDiffEntry(listener.event.diff.getDifferences()[0], 0, model[1], true);
+		assertDiff(listener.event.diff, Collections.EMPTY_LIST, Collections
+				.singletonList(model[1]));
 		assertEquals(observable, listener.event.getObservableList());
-		assertEquals(1, ((IStructuredSelection)viewer.getSelection()).size());
+		assertEquals(1, ((IStructuredSelection) viewer.getSelection()).size());
 
 		observable.add(0, model[2]);
 		assertEquals(6, listener.count);
 		assertEquals(1, listener.event.diff.getDifferences().length);
-		// This is a bit surprising (we added at index 0 but the event says index 1).
-		// It is to the fact that the observable list tracks the underlying selection
+		// This is a bit surprising (we added at index 0 but the event says
+		// index 1).
+		// It is to the fact that the observable list tracks the underlying
+		// selection
 		// provider's notion of which element is at which index.
-		assertDiffEntry(listener.event.diff.getDifferences()[0], 1, model[2], true);
+		assertDiff(listener.event.diff, Collections.singletonList(model[1]),
+				Arrays.asList(new Object[] { model[1], model[2] }));
 		assertEquals(observable, listener.event.getObservableList());
-		assertEquals(2, ((IStructuredSelection)viewer.getSelection()).size());
+		assertEquals(2, ((IStructuredSelection) viewer.getSelection()).size());
 
 		observable.clear();
 		assertEquals(7, listener.count);
 		assertEquals(2, listener.event.diff.getDifferences().length);
-		assertDiffEntry(listener.event.diff.getDifferences()[0], 1, model[2], false);
-		assertDiffEntry(listener.event.diff.getDifferences()[1], 0, model[1], false);
+		assertDiff(listener.event.diff, Arrays.asList(new Object[] { model[1],
+				model[2] }), Collections.EMPTY_LIST);
 		assertEquals(observable, listener.event.getObservableList());
-		assertEquals(0, ((IStructuredSelection)viewer.getSelection()).size());
-}
+		assertEquals(0, ((IStructuredSelection) viewer.getSelection()).size());
+	}
 
-	/**
-	 * @param diffEntry
-	 * @param position
-	 * @param element
-	 * @param isAddition
-	 */
-	private void assertDiffEntry(ListDiffEntry diffEntry, int position,
-			String element, boolean isAddition) {
-		assertEquals(isAddition, diffEntry.isAddition());
-		assertEquals(position, diffEntry.getPosition());
-		assertEquals(element, diffEntry.getElement());
+	private void assertDiff(ListDiff diff, List oldList, List newList) {
+		// defensive copy in case arg is unmodifiable
+		oldList = new ArrayList(oldList);
+		diff.applyTo(oldList);
+		assertEquals("applying diff to list did not produce expected result",
+				newList, oldList);
 	}
 
 	private class ContentProvider implements IStructuredContentProvider {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 251884
+ *     Matthew Hall - bugs 251884, 194734
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -16,11 +16,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.IDiff;
+
 /**
  * @since 1.1
  * 
  */
-public abstract class MapDiff {
+public abstract class MapDiff implements IDiff {
 	/**
 	 * Returns true if the diff has no added, removed or changed entries.
 	 * 

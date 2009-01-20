@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 241585, 247394, 226289
+ *     Matthew Hall - bugs 241585, 247394, 226289, 194734
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
@@ -57,6 +59,12 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 			}
 			fireMapChange(Diffs.createMapDiff(addedKeys, removedKeys,
 					Collections.EMPTY_SET, oldValues, newValues));
+		}
+	};
+
+	private IStaleListener staleListener = new IStaleListener() {
+		public void handleStale(StaleEvent staleEvent) {
+			fireStale();
 		}
 	};
 
@@ -137,6 +145,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	private void hookListeners() {
 		if (keySet != null) {
 			keySet.addSetChangeListener(setChangeListener);
+			keySet.addStaleListener(staleListener);
 			for (Iterator it = this.keySet.iterator(); it.hasNext();) {
 				Object key = it.next();
 				hookListener(key);
@@ -147,6 +156,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	private void unhookListeners() {
 		if (keySet != null) {
 			keySet.removeSetChangeListener(setChangeListener);
+			keySet.removeStaleListener(staleListener);
 			Object[] keys = keySet.toArray();
 			for (int i = 0; i < keys.length; i++) {
 				unhookListener(keys[i]);
@@ -209,6 +219,10 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	 * @return the old value for the given key
 	 */
 	protected abstract Object doPut(Object key, Object value);
+
+	public boolean isStale() {
+		return super.isStale() || keySet.isStale();
+	}
 
 	public synchronized void dispose() {
 		unhookListeners();

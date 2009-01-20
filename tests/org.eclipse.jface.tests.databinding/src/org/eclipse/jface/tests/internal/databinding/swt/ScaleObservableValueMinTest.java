@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -22,8 +22,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
-import org.eclipse.jface.internal.databinding.swt.ScaleObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Scale;
@@ -42,11 +41,11 @@ public class ScaleObservableValueMinTest extends ObservableDelegateTest {
 	public ScaleObservableValueMinTest() {
 		this(null);
 	}
-	
+
 	public ScaleObservableValueMinTest(String testName) {
 		super(testName, new Delegate());
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -56,9 +55,10 @@ public class ScaleObservableValueMinTest extends ObservableDelegateTest {
 	}
 
 	protected IObservable doCreateObservable() {
-		return getObservableContractDelegate().createObservable(SWTObservables.getRealm(Display.getDefault()));
+		return getObservableContractDelegate().createObservable(
+				SWTObservables.getRealm(Display.getDefault()));
 	}
-	
+
 	public void testGetValue() throws Exception {
 		int min = 100;
 		scale.setMinimum(min);
@@ -72,9 +72,11 @@ public class ScaleObservableValueMinTest extends ObservableDelegateTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ScaleObservableValueMinTest.class.toString());
+		TestSuite suite = new TestSuite(ScaleObservableValueMinTest.class
+				.toString());
 		suite.addTestSuite(ScaleObservableValueMinTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -95,7 +97,7 @@ public class ScaleObservableValueMinTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new ScaleObservableValue(realm, scale, SWTProperties.MIN);
+			return WidgetProperties.minimum().observe(realm, scale);
 		}
 
 		public void change(IObservable observable) {

@@ -9,13 +9,18 @@
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198904
  *     Eric Rizzo - bug 134884
+ *     Matthew Hall - bug 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.internal.databinding.swt.CComboObservableValue;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -26,8 +31,7 @@ import org.eclipse.swt.custom.CCombo;
 public class CComboObservableValueTest extends AbstractSWTTestCase {
 	public void testDispose() throws Exception {
 		CCombo combo = new CCombo(getShell(), SWT.NONE);
-		CComboObservableValue observableValue = new CComboObservableValue(
-				combo, SWTProperties.TEXT);
+		ISWTObservableValue observableValue = SWTObservables.observeText(combo);
 
 		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
@@ -52,21 +56,21 @@ public class CComboObservableValueTest extends AbstractSWTTestCase {
 	}
 
 	public void testSetValueWithNull() {
-		testSetValueWithNull(SWTProperties.TEXT);
-		testSetValueWithNull(SWTProperties.SELECTION);
+		testSetValueWithNull(WidgetProperties.text());
+		testSetValueWithNull(WidgetProperties.selection());
 	}
 
-	protected void testSetValueWithNull(String observableMode) {
+	protected void testSetValueWithNull(IValueProperty property) {
 		CCombo combo = new CCombo(getShell(), SWT.NONE);
-		combo.setItems(new String[] {"one", "two", "three"});
-		CComboObservableValue observable = new CComboObservableValue(
-				combo, observableMode);
+		combo.setItems(new String[] { "one", "two", "three" });
+		IObservableValue observable = property.observe(Realm.getDefault(),
+				combo);
 
-		observable.doSetValue("two");
+		observable.setValue("two");
 		assertEquals("two", combo.getText());
 		assertEquals(1, combo.getSelectionIndex());
 
-		observable.doSetValue(null);
+		observable.setValue(null);
 		assertEquals("", combo.getText());
 		assertEquals(-1, combo.getSelectionIndex());
 	}

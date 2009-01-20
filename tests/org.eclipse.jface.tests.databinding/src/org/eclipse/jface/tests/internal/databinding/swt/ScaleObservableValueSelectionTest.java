@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -22,8 +22,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
-import org.eclipse.jface.internal.databinding.swt.ScaleObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Scale;
@@ -42,11 +41,11 @@ public class ScaleObservableValueSelectionTest extends ObservableDelegateTest {
 	public ScaleObservableValueSelectionTest() {
 		this(null);
 	}
-	
+
 	public ScaleObservableValueSelectionTest(String testName) {
 		super(testName, new Delegate());
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -56,7 +55,8 @@ public class ScaleObservableValueSelectionTest extends ObservableDelegateTest {
 	}
 
 	protected IObservable doCreateObservable() {
-		return getObservableContractDelegate().createObservable(SWTObservables.getRealm(Display.getDefault()));
+		return getObservableContractDelegate().createObservable(
+				SWTObservables.getRealm(Display.getDefault()));
 	}
 
 	public void testGetValue() throws Exception {
@@ -97,7 +97,7 @@ public class ScaleObservableValueSelectionTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new ScaleObservableValue(realm, scale, SWTProperties.SELECTION);
+			return WidgetProperties.selection().observe(realm, scale);
 		}
 
 		public void change(IObservable observable) {

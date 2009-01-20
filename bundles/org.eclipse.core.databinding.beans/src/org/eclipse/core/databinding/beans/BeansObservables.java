@@ -8,17 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164268, 171616, 147515
- *     Matthew Hall - bug 221704, 234686, 246625, 226289, 246782
+ *     Matthew Hall - bug 221704, 234686, 246625, 226289, 246782, 194734,
+ *                    195222, 247997
  *     Thomas Kratz - bug 213787
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 
-import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -33,11 +30,7 @@ import org.eclipse.core.internal.databinding.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableMapDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableList;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableMap;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
-import org.eclipse.core.internal.databinding.beans.JavaBeanPropertyObservableMap;
+import org.eclipse.core.internal.databinding.beans.BeanPropertyHelper;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -64,7 +57,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value tracking the current value of the named
 	 *         property of the given bean
 	 */
@@ -81,35 +74,53 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value tracking the current value of the named
 	 *         property of the given bean
 	 */
 	public static IObservableValue observeValue(Realm realm, Object bean,
 			String propertyName) {
-		PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(),
-				propertyName);
-		return new JavaBeanObservableValue(realm, bean, descriptor);
+		return BeanProperties.value(bean.getClass(), propertyName).observe(
+				realm, bean);
 	}
 
 	/**
-	 * Returns an observable map in the default realm tracking the current
-	 * values of the named property for the beans in the given set.
+	 * Returns an observable map in the given observable set's realm tracking
+	 * the current values of the named property for the beans in the given set.
+	 * Elements in the set which do not have the named property will have null
+	 * values, and attempts to {@link IObservableMap#put(Object, Object) put}
+	 * values to these elements will be ignored.
+	 * 
+	 * @param domain
+	 *            the set of bean objects
+	 * @param propertyName
+	 *            the name of the property. May be nested e.g. "parent.name"
+	 * @return an observable map tracking the current values of the named
+	 *         property for the beans in the given domain set
+	 * @since 1.2
+	 */
+	public static IObservableMap observeMap(IObservableSet domain,
+			String propertyName) {
+		return BeanProperties.value(propertyName).observeDetail(domain);
+	}
+
+	/**
+	 * Returns an observable map in the given observable set's realm tracking
+	 * the current values of the named property for the beans in the given set.
 	 * 
 	 * @param domain
 	 *            the set of bean objects
 	 * @param beanClass
 	 *            the common base type of bean objects that may be in the set
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the current values of the named
 	 *         property for the beans in the given domain set
 	 */
 	public static IObservableMap observeMap(IObservableSet domain,
 			Class beanClass, String propertyName) {
-		PropertyDescriptor descriptor = getPropertyDescriptor(beanClass,
-				propertyName);
-		return new JavaBeanObservableMap(domain, descriptor);
+		return BeanProperties.value(beanClass, propertyName).observeDetail(
+				domain);
 	}
 
 	/**
@@ -121,7 +132,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the bean object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the map-typed named property of the
 	 *         given bean object
 	 * @since 1.1
@@ -140,7 +151,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the bean object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @param keyType
 	 *            the element type of the observable map's key set, or
 	 *            <code>null</code> if untyped
@@ -153,10 +164,8 @@ final public class BeansObservables {
 	 */
 	public static IObservableMap observeMap(Realm realm, Object bean,
 			String propertyName, Class keyType, Class valueType) {
-		PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(),
-				propertyName);
-		return new JavaBeanPropertyObservableMap(realm, bean, descriptor,
-				keyType, valueType);
+		return BeanProperties.map(bean.getClass(), propertyName, keyType,
+				valueType).observe(realm, bean);
 	}
 
 	/**
@@ -166,7 +175,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the bean object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the map-typed named property of the
 	 *         given bean object
 	 * @since 1.2
@@ -193,41 +202,48 @@ final public class BeansObservables {
 	 *         given bean object
 	 * @since 1.2
 	 */
-	public static IObservableMap observeMap(Object bean, String propertyName, Class keyType, Class valueType) {
-		return observeMap(Realm.getDefault(), bean, propertyName, keyType, valueType);
-	}
-
-	/*package*/ static PropertyDescriptor getPropertyDescriptor(Class beanClass,
-			String propertyName) {
-		BeanInfo beanInfo;
-		try {
-			beanInfo = Introspector.getBeanInfo(beanClass);
-		} catch (IntrospectionException e) {
-			// cannot introspect, give up
-			return null;
-		}
-		PropertyDescriptor[] propertyDescriptors = beanInfo
-				.getPropertyDescriptors();
-		for (int i = 0; i < propertyDescriptors.length; i++) {
-			PropertyDescriptor descriptor = propertyDescriptors[i];
-			if (descriptor.getName().equals(propertyName)) {
-				return descriptor;
-			}
-		}
-		throw new BindingException(
-				"Could not find property with name " + propertyName + " in class " + beanClass); //$NON-NLS-1$ //$NON-NLS-2$
+	public static IObservableMap observeMap(Object bean, String propertyName,
+			Class keyType, Class valueType) {
+		return observeMap(Realm.getDefault(), bean, propertyName, keyType,
+				valueType);
 	}
 
 	/**
-	 * Returns an array of observable maps in the default realm tracking the
-	 * current values of the named propertys for the beans in the given set.
+	 * Returns an array of observable maps in the given observable set's realm
+	 * tracking the current values of the named properties for the beans in the
+	 * given set. Elements in the set which do not have the named property will
+	 * have null values, and attempts to
+	 * {@link IObservableMap#put(Object, Object) put} values to these elements
+	 * will be ignored.
+	 * 
+	 * @param domain
+	 *            the set of objects
+	 * @param propertyNames
+	 *            the array of property names. May be nested e.g. "parent.name"
+	 * @return an array of observable maps tracking the current values of the
+	 *         named propertys for the beans in the given domain set
+	 * @since 1.2
+	 */
+	public static IObservableMap[] observeMaps(IObservableSet domain,
+			String[] propertyNames) {
+		IObservableMap[] result = new IObservableMap[propertyNames.length];
+		for (int i = 0; i < propertyNames.length; i++) {
+			result[i] = observeMap(domain, propertyNames[i]);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns an array of observable maps in the given observable set's realm
+	 * tracking the current values of the named properties for the beans in the
+	 * given set.
 	 * 
 	 * @param domain
 	 *            the set of objects
 	 * @param beanClass
 	 *            the common base type of objects that may be in the set
 	 * @param propertyNames
-	 *            the array of property names
+	 *            the array of property names. May be nested e.g. "parent.name"
 	 * @return an array of observable maps tracking the current values of the
 	 *         named propertys for the beans in the given domain set
 	 */
@@ -283,9 +299,9 @@ final public class BeansObservables {
 	 * collection-typed named property of the given bean object. The returned
 	 * list is mutable. When an item is added or removed the setter is invoked
 	 * for the list on the parent bean to provide notification to other
-	 * listeners via <code>PropertyChangeEvents</code>. This is done to
-	 * provide the same behavior as is expected from arrays as specified in the
-	 * bean spec in section 7.2.
+	 * listeners via <code>PropertyChangeEvents</code>. This is done to provide
+	 * the same behavior as is expected from arrays as specified in the bean
+	 * spec in section 7.2.
 	 * 
 	 * @param realm
 	 *            the realm
@@ -294,8 +310,8 @@ final public class BeansObservables {
 	 * @param propertyName
 	 *            the name of the property
 	 * @param elementType
-	 *            type of the elements in the list. If <code>null</code> and
-	 *            the property is an array the type will be inferred. If
+	 *            type of the elements in the list. If <code>null</code> and the
+	 *            property is an array the type will be inferred. If
 	 *            <code>null</code> and the property type cannot be inferred
 	 *            element type will be <code>null</code>.
 	 * @return an observable list tracking the collection-typed named property
@@ -303,12 +319,8 @@ final public class BeansObservables {
 	 */
 	public static IObservableList observeList(Realm realm, Object bean,
 			String propertyName, Class elementType) {
-		PropertyDescriptor propertyDescriptor = getPropertyDescriptor(bean
-				.getClass(), propertyName);
-		elementType = getCollectionElementType(elementType, propertyDescriptor);
-
-		return new JavaBeanObservableList(realm, bean, propertyDescriptor,
-				elementType);
+		return BeanProperties.list(bean.getClass(), propertyName, elementType)
+				.observe(realm, bean);
 	}
 
 	/**
@@ -379,16 +391,12 @@ final public class BeansObservables {
 	 * @param realm
 	 *            the realm to use
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value factory
 	 */
 	public static IObservableFactory valueFactory(final Realm realm,
 			final String propertyName) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeValue(realm, target, propertyName);
-			}
-		};
+		return BeanProperties.value(propertyName).valueFactory(realm);
 	}
 
 	/**
@@ -396,7 +404,7 @@ final public class BeansObservables {
 	 * realm, tracking the given property of a particular bean object
 	 * 
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value factory
 	 * @since 1.2
 	 */
@@ -417,11 +425,8 @@ final public class BeansObservables {
 	 */
 	public static IObservableFactory listFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeList(realm, target, propertyName, elementType);
-			}
-		};
+		return BeanProperties.list(propertyName, elementType)
+				.listFactory(realm);
 	}
 
 	/**
@@ -451,11 +456,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeSet(realm, target, propertyName);
-			}
-		};
+		return BeanProperties.set(propertyName).setFactory(realm);
 	}
 
 	/**
@@ -479,6 +480,7 @@ final public class BeansObservables {
 	 * @param realm
 	 * @param master
 	 * @param propertyName
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -494,11 +496,10 @@ final public class BeansObservables {
 		warnIfDifferentRealms(realm, master.getRealm());
 
 		IObservableValue value = MasterDetailObservables.detailValue(master,
-				valueFactory(realm, propertyName), propertyType);
-		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
-				value, getValueTypePropertyDescriptor(master, propertyName));
-
-		return decorator;
+				BeanProperties.value(propertyName, propertyType).valueFactory(
+						realm), propertyType);
+		return new BeanObservableValueDecorator(value, BeanPropertyHelper
+				.getValueTypePropertyDescriptor(master, propertyName));
 	}
 
 	/* package */static void warnIfDifferentRealms(Realm detailRealm,
@@ -521,6 +522,7 @@ final public class BeansObservables {
 	 * 
 	 * @param master
 	 * @param propertyName
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -531,17 +533,18 @@ final public class BeansObservables {
 	 */
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailValue(master.getRealm(), master, propertyName,
-				propertyType);
+		Class beanClass = null;
+		if (master.getValueType() instanceof Class)
+			beanClass = (Class) master.getValueType();
+		return observeDetailValue(master, beanClass, propertyName, propertyType);
 	}
 
 	/**
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailValue(master, valueFactory(realm,
-	 * propertyName), propertyType)</code>.
-	 * This method returns an {@link IBeanObservable} with a
-	 * {@link PropertyDescriptor} based on the given master type and property
-	 * name.
+	 * propertyName), propertyType)</code>. This method returns an
+	 * {@link IBeanObservable} with a {@link PropertyDescriptor} based on the
+	 * given master type and property name.
 	 * 
 	 * @param realm
 	 *            the realm
@@ -551,7 +554,7 @@ final public class BeansObservables {
 	 * @param masterType
 	 *            the type of the master observable value
 	 * @param propertyName
-	 *            the property name
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -564,15 +567,15 @@ final public class BeansObservables {
 	 *             instead.
 	 */
 	public static IObservableValue observeDetailValue(Realm realm,
-			IObservableValue master, Class masterType, String propertyName, Class propertyType) {
+			IObservableValue master, Class masterType, String propertyName,
+			Class propertyType) {
 		warnIfDifferentRealms(realm, master.getRealm());
 		Assert.isNotNull(masterType, "masterType cannot be null"); //$NON-NLS-1$
 		IObservableValue value = MasterDetailObservables.detailValue(master,
-				valueFactory(realm, propertyName), propertyType);
-		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
-				value, getPropertyDescriptor(masterType, propertyName));
-
-		return decorator;
+				BeanProperties.value(masterType, propertyName, propertyType)
+						.valueFactory(realm), propertyType);
+		return new BeanObservableValueDecorator(value, BeanPropertyHelper
+				.getPropertyDescriptor(masterType, propertyName));
 	}
 
 	/**
@@ -588,7 +591,7 @@ final public class BeansObservables {
 	 * @param masterType
 	 *            the type of the master observable value
 	 * @param propertyName
-	 *            the property name
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -599,8 +602,8 @@ final public class BeansObservables {
 	 */
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			Class masterType, String propertyName, Class propertyType) {
-		return observeDetailValue(master.getRealm(), master, masterType,
-				propertyName, propertyType);
+		return BeanProperties.value(masterType, propertyName, propertyType)
+				.observeDetail(master);
 	}
 
 	/**
@@ -625,13 +628,11 @@ final public class BeansObservables {
 			IObservableValue master, String propertyName, Class propertyType) {
 		warnIfDifferentRealms(realm, master.getRealm());
 		IObservableList observableList = MasterDetailObservables.detailList(
-				master, listFactory(realm, propertyName, propertyType),
-				propertyType);
-		BeanObservableListDecorator decorator = new BeanObservableListDecorator(
-				observableList, getValueTypePropertyDescriptor(master,
+				master, BeanProperties.list(propertyName, propertyType)
+						.listFactory(realm), propertyType);
+		return new BeanObservableListDecorator(observableList,
+				BeanPropertyHelper.getValueTypePropertyDescriptor(master,
 						propertyName));
-
-		return decorator;
 	}
 
 	/**
@@ -650,8 +651,11 @@ final public class BeansObservables {
 	 */
 	public static IObservableList observeDetailList(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailList(master.getRealm(), master, propertyName,
-				propertyType);
+		Class beanClass = null;
+		if (master.getValueType() instanceof Class)
+			beanClass = (Class) master.getValueType();
+		return BeanProperties.list(beanClass, propertyName, propertyType)
+				.observeDetail(master);
 	}
 
 	/**
@@ -677,13 +681,10 @@ final public class BeansObservables {
 		warnIfDifferentRealms(realm, master.getRealm());
 
 		IObservableSet observableSet = MasterDetailObservables.detailSet(
-				master, setFactory(realm, propertyName, propertyType),
-				propertyType);
-		BeanObservableSetDecorator decorator = new BeanObservableSetDecorator(
-				observableSet, getValueTypePropertyDescriptor(master,
-						propertyName));
-
-		return decorator;
+				master, BeanProperties.set(propertyName, propertyType)
+						.setFactory(realm), propertyType);
+		return new BeanObservableSetDecorator(observableSet, BeanPropertyHelper
+				.getValueTypePropertyDescriptor(master, propertyName));
 	}
 
 	/**
@@ -702,8 +703,11 @@ final public class BeansObservables {
 	 */
 	public static IObservableSet observeDetailSet(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailSet(master.getRealm(), master, propertyName,
-				propertyType);
+		Class beanClass = null;
+		if (master.getValueType() instanceof Class)
+			beanClass = (Class) master.getValueType();
+		return BeanProperties.set(beanClass, propertyName, propertyType)
+				.observeDetail(master);
 	}
 
 	/**
@@ -724,11 +728,9 @@ final public class BeansObservables {
 			IObservableValue master, String propertyName) {
 		warnIfDifferentRealms(realm, master.getRealm());
 		IObservableMap observableMap = MasterDetailObservables.detailMap(
-				master, mapPropertyFactory(realm, propertyName));
-		BeanObservableMapDecorator decorator = new BeanObservableMapDecorator(
-				observableMap, getValueTypePropertyDescriptor(master,
-						propertyName));
-		return decorator;
+				master, BeanProperties.map(propertyName).mapFactory(realm));
+		return new BeanObservableMapDecorator(observableMap, BeanPropertyHelper
+				.getValueTypePropertyDescriptor(master, propertyName));
 	}
 
 	/**
@@ -743,7 +745,11 @@ final public class BeansObservables {
 	 */
 	public static IObservableMap observeDetailMap(IObservableValue master,
 			String propertyName) {
-		return observeDetailMap(master.getRealm(), master, propertyName);
+		Class beanClass = null;
+		if (master.getValueType() instanceof Class)
+			beanClass = (Class) master.getValueType();
+		return BeanProperties.map(beanClass, propertyName)
+				.observeDetail(master);
 	}
 
 	/**
@@ -771,12 +777,8 @@ final public class BeansObservables {
 	 */
 	public static IObservableSet observeSet(Realm realm, Object bean,
 			String propertyName, Class elementType) {
-		PropertyDescriptor propertyDescriptor = getPropertyDescriptor(bean
-				.getClass(), propertyName);
-		elementType = getCollectionElementType(elementType, propertyDescriptor);
-
-		return new JavaBeanObservableSet(realm, bean, propertyDescriptor,
-				elementType);
+		return BeanProperties.set(bean.getClass(), propertyName, elementType)
+				.observe(realm, bean);
 	}
 
 	/**
@@ -824,11 +826,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeSet(realm, target, propertyName, elementType);
-			}
-		};
+		return BeanProperties.set(propertyName, elementType).setFactory(realm);
 	}
 
 	/**
@@ -861,19 +859,21 @@ final public class BeansObservables {
 	 * @param beanClass
 	 *            the common base type of bean objects that may be in the set
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return a factory for creating {@link IObservableMap} objects
-	 *
+	 * 
 	 * @since 1.1
 	 */
-	public static IObservableFactory setToMapFactory(final Class beanClass, final String propertyName) {
+	public static IObservableFactory setToMapFactory(final Class beanClass,
+			final String propertyName) {
 		return new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return observeMap((IObservableSet) target, beanClass, propertyName);
+				return observeMap((IObservableSet) target, beanClass,
+						propertyName);
 			}
 		};
 	}
-	
+
 	/**
 	 * Returns a factory for creating an observable map. The factory, when
 	 * provided with a bean object, will create an {@link IObservableMap} in the
@@ -890,11 +890,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableFactory mapPropertyFactory(final Realm realm,
 			final String propertyName) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeMap(realm, target, propertyName);
-			}
-		};
+		return BeanProperties.map(propertyName).mapFactory(realm);
 	}
 
 	/**
@@ -910,33 +906,5 @@ final public class BeansObservables {
 	 */
 	public static IObservableFactory mapPropertyFactory(String propertyName) {
 		return mapPropertyFactory(Realm.getDefault(), propertyName);
-	}
-
-	/**
-	 * @param elementType
-	 *            can be <code>null</code>
-	 * @param propertyDescriptor
-	 * @return type of the items in a collection/array property
-	 */
-	/*package*/ static Class getCollectionElementType(Class elementType,
-			PropertyDescriptor propertyDescriptor) {
-		if (elementType == null) {
-			Class propertyType = propertyDescriptor.getPropertyType();
-			elementType = propertyType.isArray() ? propertyType
-					.getComponentType() : Object.class;
-		}
-
-		return elementType;
-	}
-
-	/**
-	 * @param observable
-	 * @param propertyName
-	 * @return property descriptor or <code>null</code>
-	 */
-	/* package*/ static PropertyDescriptor getValueTypePropertyDescriptor(
-			IObservableValue observable, String propertyName) {
-		return (observable.getValueType() != null) ? getPropertyDescriptor(
-				(Class) observable.getValueType(), propertyName) : null;
 	}
 }

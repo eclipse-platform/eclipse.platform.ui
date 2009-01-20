@@ -8,11 +8,13 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198904
+ *     Matthew Hall - bug 194734
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import org.eclipse.jface.internal.databinding.swt.TableSingleSelectionObservableValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
@@ -24,8 +26,8 @@ import org.eclipse.swt.widgets.TableItem;
 public class TableObservableValueTest extends AbstractSWTTestCase {
 	public void testDispose() throws Exception {
 		Table table = new Table(getShell(), SWT.NONE);
-		TableSingleSelectionObservableValue observableValue = new TableSingleSelectionObservableValue(
-				table);
+		IObservableValue observableValue = SWTObservables
+				.observeSingleSelectionIndex(table);
 
 		TableItem item1 = new TableItem(table, SWT.NONE);
 		item1.setText("Item1");

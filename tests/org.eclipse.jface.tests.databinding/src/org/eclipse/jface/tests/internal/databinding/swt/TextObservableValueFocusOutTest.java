@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.internal.databinding.swt.TextObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -31,8 +31,10 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TextObservableValueFocusOutTest extends TestCase {
 	public static Test suite() {
-		TestSuite suite = new TestSuite(TextObservableValueFocusOutTest.class.toString());
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		TestSuite suite = new TestSuite(TextObservableValueFocusOutTest.class
+				.toString());
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -41,7 +43,7 @@ public class TextObservableValueFocusOutTest extends TestCase {
 		private Shell shell;
 
 		private Text text;
-		
+
 		public void setUp() {
 			shell = new Shell();
 			text = new Text(shell, SWT.NONE);
@@ -52,7 +54,7 @@ public class TextObservableValueFocusOutTest extends TestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new TextObservableValue(realm, text, SWT.FocusOut);
+			return WidgetProperties.text(SWT.FocusOut).observe(realm, text);
 		}
 
 		public Object getValueType(IObservableValue observable) {
@@ -61,10 +63,10 @@ public class TextObservableValueFocusOutTest extends TestCase {
 
 		public void change(IObservable observable) {
 			text.setFocus();
-			
+
 			IObservableValue observableValue = (IObservableValue) observable;
 			text.setText((String) createValue(observableValue));
-			
+
 			text.notifyListeners(SWT.FocusOut, null);
 		}
 

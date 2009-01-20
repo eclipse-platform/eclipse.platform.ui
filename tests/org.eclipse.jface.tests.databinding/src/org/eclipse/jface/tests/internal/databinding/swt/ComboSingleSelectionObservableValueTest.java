@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Ashley Cambrell - initial API and implementation (bug 198903)
+ *     Matthew Hall - bug 194734
  ******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import org.eclipse.jface.internal.databinding.swt.ComboSingleSelectionObservableValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
@@ -23,8 +25,8 @@ public class ComboSingleSelectionObservableValueTest extends
 		AbstractSWTTestCase {
 	public void testSetValue() throws Exception {
 		Combo combo = new Combo(getShell(), SWT.NONE);
-		ComboSingleSelectionObservableValue observableValue = new ComboSingleSelectionObservableValue(
-				combo);
+		IObservableValue observableValue = SWTObservables
+				.observeSingleSelectionIndex(combo);
 		combo.add("Item1");
 		combo.add("Item2");
 

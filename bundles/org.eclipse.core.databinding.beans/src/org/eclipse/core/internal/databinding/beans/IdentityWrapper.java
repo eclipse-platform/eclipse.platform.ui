@@ -29,7 +29,7 @@ public class IdentityWrapper {
 	public IdentityWrapper(Object o) {
 		this.o = o;
 	}
-	
+
 	/**
 	 * @return the unwrapped object
 	 */

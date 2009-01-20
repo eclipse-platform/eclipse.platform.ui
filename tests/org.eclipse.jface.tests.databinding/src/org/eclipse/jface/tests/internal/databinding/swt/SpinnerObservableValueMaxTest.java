@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -22,8 +22,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
-import org.eclipse.jface.internal.databinding.swt.SpinnerObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -46,7 +45,7 @@ public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 	public SpinnerObservableValueMaxTest(String testName) {
 		super(testName, new Delegate());
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -54,9 +53,10 @@ public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 		observable = (IObservableValue) getObservable();
 		spinner = delegate.spinner;
 	}
-	
+
 	protected IObservable doCreateObservable() {
-		return getObservableContractDelegate().createObservable(SWTObservables.getRealm(Display.getDefault()));
+		return getObservableContractDelegate().createObservable(
+				SWTObservables.getRealm(Display.getDefault()));
 	}
 
 	public void testGetValue() throws Exception {
@@ -70,11 +70,13 @@ public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 		observable.setValue(new Integer(max));
 		assertEquals(max, spinner.getMaximum());
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite = new TestSuite(SpinnerObservableValueMaxTest.class.toString());
+		TestSuite suite = new TestSuite(SpinnerObservableValueMaxTest.class
+				.toString());
 		suite.addTestSuite(SpinnerObservableValueMaxTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -95,7 +97,7 @@ public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new SpinnerObservableValue(realm, spinner, SWTProperties.MAX);
+			return WidgetProperties.maximum().observe(realm, spinner);
 		}
 
 		public void change(IObservable observable) {

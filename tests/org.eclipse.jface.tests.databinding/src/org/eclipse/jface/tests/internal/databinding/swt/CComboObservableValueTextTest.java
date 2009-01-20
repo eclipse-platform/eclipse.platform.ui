@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -22,10 +22,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.databinding.swt.ISWTObservable;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.CComboObservableValue;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Display;
@@ -66,9 +64,11 @@ public class CComboObservableValueTextTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(CComboObservableValueTextTest.class.getName());
+		TestSuite suite = new TestSuite(CComboObservableValueTextTest.class
+				.getName());
 		suite.addTestSuite(CComboObservableValueTextTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -88,12 +88,12 @@ public class CComboObservableValueTextTest extends TestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new CComboObservableValue(realm, combo, SWTProperties.TEXT);
+			return WidgetProperties.text().observe(realm, combo);
 		}
 
 		public void change(IObservable observable) {
-			CCombo combo = (CCombo) ((ISWTObservable) observable).getWidget();
-			combo.setText(combo.getText() + "a");
+			IObservableValue ov = (IObservableValue) observable;
+			ov.setValue(createValue(ov));
 		}
 
 		public Object getValueType(IObservableValue observable) {

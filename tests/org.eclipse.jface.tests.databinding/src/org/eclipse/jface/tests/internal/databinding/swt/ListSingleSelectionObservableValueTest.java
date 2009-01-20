@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Ashley Cambrell - initial API and implementation
+ *     Matthew Hall - bug 194734
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import org.eclipse.jface.internal.databinding.swt.ListSingleSelectionObservableValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.List;
@@ -23,8 +25,8 @@ import org.eclipse.swt.widgets.List;
 public class ListSingleSelectionObservableValueTest extends AbstractSWTTestCase {
 	public void testSetValue() throws Exception {
 		List list = new List(getShell(), SWT.NONE);
-		ListSingleSelectionObservableValue observableValue = new ListSingleSelectionObservableValue(
-				list);
+		IObservableValue observableValue = SWTObservables
+				.observeSingleSelectionIndex(list);
 		list.add("Item1");
 
 		assertEquals(-1, list.getSelectionIndex());
@@ -39,8 +41,8 @@ public class ListSingleSelectionObservableValueTest extends AbstractSWTTestCase 
 
 	public void testDispose() throws Exception {
 		List list = new List(getShell(), SWT.NONE);
-		ListSingleSelectionObservableValue observableValue = new ListSingleSelectionObservableValue(
-				list);
+		IObservableValue observableValue = SWTObservables
+				.observeSingleSelectionIndex(list);
 		list.add("Item1");
 		list.add("Item2");
 

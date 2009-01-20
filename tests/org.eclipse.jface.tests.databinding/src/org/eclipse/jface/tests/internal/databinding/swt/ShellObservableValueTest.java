@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 212235)
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -21,7 +21,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.internal.databinding.swt.ShellObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Shell;
 
@@ -34,13 +35,13 @@ public class ShellObservableValueTest extends AbstractDefaultRealmTestCase {
 	String oldValue;
 	String newValue;
 	Shell shell;
-	ShellObservableValue observable;
+	IObservableValue observable;
 	ValueChangeEventTracker tracker;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
-		observable = new ShellObservableValue(shell);
+		observable = SWTObservables.observeText(shell);
 		oldValue = "old";
 		newValue = "new";
 		shell.setText(oldValue);
@@ -88,9 +89,11 @@ public class ShellObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ShellObservableValueTest.class.toString());
+		TestSuite suite = new TestSuite(ShellObservableValueTest.class
+				.toString());
 		suite.addTestSuite(ShellObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -109,7 +112,7 @@ public class ShellObservableValueTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new ShellObservableValue(realm, shell);
+			return WidgetProperties.text().observe(realm, shell);
 		}
 
 		public Object getValueType(IObservableValue observable) {

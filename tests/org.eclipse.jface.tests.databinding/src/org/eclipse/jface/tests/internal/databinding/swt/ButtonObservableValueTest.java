@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198904
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -22,7 +22,9 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.internal.databinding.swt.ButtonObservableValue;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -33,22 +35,18 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ButtonObservableValueTest extends AbstractSWTTestCase {
 	private Button button;
-	private ButtonObservableValue observableValue;
+	private ISWTObservableValue observableValue;
 	private ValueChangeEventTracker listener;
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		Shell shell = getShell();
 		button = new Button(shell, SWT.CHECK);
-		observableValue = new ButtonObservableValue(
-				button);
+		observableValue = SWTObservables.observeSelection(button);
 		listener = new ValueChangeEventTracker();
 	}
-	
+
 	public void testSelection_ChangeNotifiesObservable() throws Exception {
 		observableValue.addValueChangeListener(listener);
 		button.setSelection(true);
@@ -60,19 +58,21 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 		assertEquals("Selection event should notify observable.", 1,
 				listener.count);
 	}
-	
+
 	public void testSelection_NoChange() throws Exception {
 		button.setSelection(true);
 		button.notifyListeners(SWT.Selection, null);
 		observableValue.addValueChangeListener(listener);
-		
-		//precondition
+
+		// precondition
 		assertEquals(0, listener.count);
-		
+
 		button.notifyListeners(SWT.Selection, null);
-		assertEquals("Value did not change.  Listeners should not have been notified.", 0, listener.count);
+		assertEquals(
+				"Value did not change.  Listeners should not have been notified.",
+				0, listener.count);
 	}
-	
+
 	public void testSetValue_NullConvertedToFalse() {
 		button.setSelection(true);
 		assertEquals(Boolean.TRUE, observableValue.getValue());
@@ -104,9 +104,11 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ButtonObservableValueTest.class.getName());
+		TestSuite suite = new TestSuite(ButtonObservableValueTest.class
+				.getName());
 		suite.addTestSuite(ButtonObservableValueTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -130,7 +132,7 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new ButtonObservableValue(realm, button);
+			return WidgetProperties.selection().observe(realm, button);
 		}
 
 		public Object getValueType(IObservableValue observable) {
@@ -138,14 +140,14 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 		}
 
 		public void change(IObservable observable) {
-			button.setSelection(changeValue(button));
-			button.notifyListeners(SWT.Selection, null);
+			((IObservableValue) observable).setValue(Boolean
+					.valueOf(changeValue(button)));
 		}
-		
+
 		public Object createValue(IObservableValue observable) {
 			return Boolean.valueOf(changeValue(button));
 		}
-		
+
 		private boolean changeValue(Button button) {
 			return !button.getSelection();
 		}

@@ -7,12 +7,11 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098, 246103
+ *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,14 +21,17 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.IBeanObservable;
+import org.eclipse.core.databinding.beans.IBeanProperty;
+import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
@@ -42,46 +44,49 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.3
  */
 public class JavaBeanObservableSetTest extends TestCase {
-	private JavaBeanObservableSet observableSet;
+	private IObservableSet observableSet;
+	private IBeanObservable beanObservable;
 	private Bean bean;
 	private PropertyDescriptor propertyDescriptor;
 	private String propertyName;
 	private SetChangeListener listener;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	protected void setUp() throws Exception {
 		bean = new Bean();
 		propertyName = "set";
-		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
+		propertyDescriptor = ((IBeanProperty) BeanProperties.set(
+				Bean.class, propertyName)).getPropertyDescriptor();
 
-		observableSet = new JavaBeanObservableSet(SWTObservables
-				.getRealm(Display.getDefault()), bean, propertyDescriptor,
-				Bean.class);
+		observableSet = BeansObservables
+				.observeSet(SWTObservables.getRealm(Display.getDefault()),
+						bean, propertyName, Bean.class);
+		beanObservable = (IBeanObservable) observableSet;
 		listener = new SetChangeListener();
 	}
 
 	public void testGetObserved() throws Exception {
-		assertEquals(bean, observableSet.getObserved());
+		assertEquals(bean, beanObservable.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
-		assertEquals(propertyDescriptor, observableSet.getPropertyDescriptor());
+		assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
 	
 	public void testGetElementType() throws Exception {
 		assertEquals(Bean.class, observableSet.getElementType());
 	}
 	
-	public void testRegistersListenerOnCreation() throws Exception {
+	public void testRegistersListenerAfterFirstListenerIsAdded() throws Exception {
+		assertFalse(bean.changeSupport.hasListeners(propertyName));
+		observableSet.addSetChangeListener(new SetChangeListener());
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
 		
-	public void testRemovesListenerOnDisposal() throws Exception {
-		observableSet.dispose();
+    public void testRemovesListenerAfterLastListenerIsRemoved() throws Exception {
+		observableSet.addSetChangeListener(listener);
+		
+		assertTrue(bean.changeSupport.hasListeners(propertyName));
+		observableSet.removeSetChangeListener(listener);
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 	}
 	
@@ -94,16 +99,18 @@ public class JavaBeanObservableSetTest extends TestCase {
 
 	public void testConstructor_RegisterListeners() throws Exception {
 		bean = new Bean();
-		new JavaBeanObservableSet(new CurrentRealm(true), bean,
-				propertyDescriptor, Bean.class);
+		observableSet = BeansObservables.observeSet(new CurrentRealm(true), bean,
+				propertyName);
+		assertFalse(bean.hasListeners(propertyName));
+		ChangeEventTracker.observe(observableSet);
 		assertTrue(bean.hasListeners(propertyName));
 	}
 
 	public void testConstructor_SkipsRegisterListeners() throws Exception {
 		bean = new Bean();
 
-		observableSet = new JavaBeanObservableSet(new CurrentRealm(true), bean,
-				propertyDescriptor, Bean.class, false);
+		observableSet = PojoObservables.observeSet(new CurrentRealm(true),
+				bean, propertyName);
 		assertFalse(bean.hasListeners(propertyName));
 		ChangeEventTracker.observe(observableSet);
 		assertFalse(bean.hasListeners(propertyName));
@@ -151,16 +158,9 @@ public class JavaBeanObservableSetTest extends TestCase {
 				int elementCount) {
 			Bean bean = new Bean();
 			String propertyName = "set";
-			PropertyDescriptor propertyDescriptor;
-			try {
-				propertyDescriptor = new PropertyDescriptor(propertyName,
-						Bean.class);
-			} catch (IntrospectionException e) {
-				throw new RuntimeException(e);
-			}
 
-			IObservableSet set = new JavaBeanObservableSet(realm,
-					bean, propertyDescriptor, String.class);
+			IObservableSet set = BeansObservables.observeSet(realm, bean,
+					propertyName, String.class);
 			for (int i = 0; i < elementCount; i++)
 				set.add(createElement(set));
 			return set;

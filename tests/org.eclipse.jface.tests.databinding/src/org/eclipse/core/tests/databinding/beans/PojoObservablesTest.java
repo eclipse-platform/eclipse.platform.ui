@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 194734
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.beans;
 
+import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -19,10 +21,6 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableList;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableMap;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
@@ -47,12 +45,12 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 		propertyName = "value";
 	}
 
-	public void testObserveValue_ReturnsJavaBeanObservableValue()
+	public void testObserveValue_ReturnsIBeanObservable()
 			throws Exception {
 		IObservableValue value = PojoObservables.observeValue(pojo, propertyName);
 
 		assertNotNull(value);
-		assertTrue(value instanceof JavaBeanObservableValue);
+		assertTrue(value instanceof IBeanObservable);
 	}
 
 	public void testObserveValue_DoesNotAttachListeners() throws Exception {
@@ -62,17 +60,17 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 		assertFalse(pojo.hasListeners(propertyName));
 	}
 
-	public void testObservableValueWithRealm_ReturnsJavaBeanObservable()
+	public void testObservableValueWithRealm_ReturnsIBeanObservable()
 			throws Exception {
 		CurrentRealm realm = new CurrentRealm(true);
 		IObservableValue value = PojoObservables.observeValue(realm, pojo,
 				propertyName);
 
 		assertNotNull(value);
-		assertTrue(value instanceof JavaBeanObservableValue);
+		assertTrue(value instanceof IBeanObservable);
 	}
 
-	public void testObservableMap_ReturnsJavaBeanObservableMap()
+	public void testObservableMap_ReturnsIBeanObservable()
 			throws Exception {
 		IObservableSet set = new WritableSet();
 		set.add(new Bean());
@@ -80,7 +78,7 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 		IObservableMap map = PojoObservables.observeMap(set, Bean.class,
 				propertyName);
 		assertNotNull(map);
-		assertTrue(map instanceof JavaBeanObservableMap);
+		assertTrue(map instanceof IBeanObservable);
 	}
 	
 	public void testObservableMap_DoesNotAttachListeners() throws Exception {
@@ -101,9 +99,9 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 		assertEquals(2, maps.length);
 	}
 	
-	public void testObserveListWithElementType_ReturnsJavaBeanObservableList() throws Exception {
+	public void testObserveListWithElementType_ReturnsIBeanObservable() throws Exception {
 		IObservableList list = PojoObservables.observeList(Realm.getDefault(), pojo, "list", String.class);
-		assertTrue(list instanceof JavaBeanObservableList);
+		assertTrue(list instanceof IBeanObservable);
 	}
 	
 	public void testObserveListWithElementType_DoesNotAttachListeners() throws Exception {
@@ -113,9 +111,9 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 		assertFalse(pojo.hasListeners("list"));
 	}
 	
-	public void testObserveList_ReturnsJavaBeanObservableList() throws Exception {
+	public void testObserveList_ReturnsIBeanObservable() throws Exception {
 		IObservableList observable = PojoObservables.observeList(Realm.getDefault(), pojo, "list");
-		assertTrue(observable instanceof JavaBeanObservableList);
+		assertTrue(observable instanceof IBeanObservable);
 	}
 	
 	public void testObserveList_DoesNotAttachListeners() throws Exception {
@@ -125,9 +123,9 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 		assertFalse(pojo.hasListeners("list"));
 	}
 	
-	public void testObserveSetWithElementType_ReturnsJavaBeanObservableList() throws Exception {
+	public void testObserveSetWithElementType_ReturnsIBeanObservable() throws Exception {
 		IObservableSet list = PojoObservables.observeSet(Realm.getDefault(), pojo, "set", String.class);
-		assertTrue(list instanceof JavaBeanObservableSet);
+		assertTrue(list instanceof IBeanObservable);
 	}
 	
 	public void testObserveSetWithElementType_DoesNotAttachListeners() throws Exception {
@@ -137,9 +135,9 @@ public class PojoObservablesTest extends AbstractDefaultRealmTestCase {
 		assertFalse(pojo.hasListeners("set"));
 	}
 	
-	public void testObserveSet_ReturnsJavaBeanObservableList() throws Exception {
+	public void testObserveSet_ReturnsIBeanObservable() throws Exception {
 		IObservableSet list = PojoObservables.observeSet(Realm.getDefault(), pojo, "set");
-		assertTrue(list instanceof JavaBeanObservableSet);
+		assertTrue(list instanceof IBeanObservable);
 	}
 	
 	public void testObserveSet_DoesNotAttachListeners() throws Exception {
