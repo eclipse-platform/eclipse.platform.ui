@@ -13,23 +13,60 @@ package org.eclipse.compare.contentmergeviewer;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.CompareViewerPane;
+import org.eclipse.compare.ICompareContainer;
+import org.eclipse.compare.ICompareInputLabelProvider;
+import org.eclipse.compare.IPropertyChangeNotifier;
+import org.eclipse.compare.internal.ChangePropertyAction;
+import org.eclipse.compare.internal.CompareEditor;
+import org.eclipse.compare.internal.CompareHandlerService;
+import org.eclipse.compare.internal.CompareMessages;
+import org.eclipse.compare.internal.ICompareUIConstants;
+import org.eclipse.compare.internal.MergeViewerContentProvider;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.internal.ViewerSwitchingCancelled;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * An abstract compare and merge viewer with two side-by-side content areas
@@ -60,18 +97,6 @@ import org.eclipse.swt.widgets.*;
 public abstract class ContentMergeViewer extends ContentViewer
 					implements IPropertyChangeNotifier, IFlushable {
 	
-	class SaveAction extends MergeViewerAction {
-				
-		SaveAction(boolean left) {
-			super(true, false, false);
-			Utilities.initAction(this, getResourceBundle(), "action.save."); //$NON-NLS-1$
-		}
-			
-		public void run() {
-			flush(null);
-		}
-	}	
-	
 	/* package */ static final int HORIZONTAL= 1;
 	/* package */ static final int VERTICAL= 2;
 	
@@ -90,7 +115,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			int headerHeight= fLeftLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
 			Rectangle r= composite.getClientArea();
 			
-			int centerWidth= getCenterWidth();	
+			int centerWidth= getCenterWidth();
 			int width1= (int)((r.width-centerWidth)*getHorizontalSplitRatio());
 			int width2= r.width-width1-centerWidth;
 			
@@ -102,7 +127,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			} else {
 				height1= 0;
 				height2= r.height-headerHeight;
-			}		
+			}
 							
 			int y= 0;
 			
@@ -260,8 +285,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	private Action fCopyLeftToRightAction;	// copy from left to right
 	private Action fCopyRightToLeftAction;	// copy from right to left
 
-	MergeViewerAction fLeftSaveAction;
-	MergeViewerAction fRightSaveAction;
+	private boolean fIsLeftDirty;
+	private boolean fIsRightDirty;
 	
 	private CompareHandlerService fHandlerService;
 
@@ -332,12 +357,9 @@ public abstract class ContentMergeViewer extends ContentViewer
 			}
 		};
 		fCompareConfiguration.addPropertyChangeListener(fPropertyChangeListener);
-			
-		fLeftSaveAction= new SaveAction(true);
-		fLeftSaveAction.setEnabled(false);
-		fRightSaveAction= new SaveAction(false);
-		fRightSaveAction.setEnabled(false);
 		
+		fIsLeftDirty = false;
+		fIsRightDirty = false;
 	}
 	
 	//---- hooks ---------------------
@@ -452,10 +474,10 @@ public abstract class ContentMergeViewer extends ContentViewer
 	}
 	
 	/**
-	 * The <code>ContentMergeViewer</code> implementation of this 
+	 * The <code>ContentMergeViewer</code> implementation of this
 	 * <code>ContentViewer</code> method
 	 * checks to ensure that the content provider is an <code>IMergeViewerContentProvider</code>.
-	 * @param contentProvider the content provider to set. Must implement IMergeViewerContentProvider. 
+	 * @param contentProvider the content provider to set. Must implement IMergeViewerContentProvider.
 	 */
 	public void setContentProvider(IContentProvider contentProvider) {
 		Assert.isTrue(contentProvider instanceof IMergeViewerContentProvider);
@@ -467,7 +489,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	}
 
 	/**
-	 * The <code>ContentMergeViewer</code> implementation of this 
+	 * The <code>ContentMergeViewer</code> implementation of this
 	 * <code>Viewer</code> method returns the empty selection. Subclasses may override.
 	 * @return empty selection.
 	 */
@@ -480,7 +502,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	}
 	
 	/**
-	 * The <code>ContentMergeViewer</code> implementation of this 
+	 * The <code>ContentMergeViewer</code> implementation of this
 	 * <code>Viewer</code> method does nothing. Subclasses may reimplement.
 	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
@@ -489,7 +511,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	}
 
 	/**
-	 * Callback that is invoked when a property in the compare configuration 
+	 * Callback that is invoked when a property in the compare configuration
 	 * ({@link #getCompareConfiguration()} changes.
 	 * @param event the property change event
 	 * @since 3.3
@@ -698,7 +720,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			boolean oldFlag = fIsThreeWay;
 			if (Utilities.isHunk(input)) {
 				fIsThreeWay = true;
-			} else if (input instanceof ICompareInput)	
+			} else if (input instanceof ICompareInput)
 				fIsThreeWay= (((ICompareInput)input).getKind() & Differencer.DIRECTION_MASK) != 0;
 			else
 				fIsThreeWay= ancestor != null;
@@ -791,7 +813,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	protected IToolBarManager getToolBarManager(Composite parent) {
 		return CompareViewerPane.getToolBarManager(parent);
-	} 
+	}
 	
 	private void initializeToolbars(Composite parent) {
 		ToolBarManager tbm = (ToolBarManager) getToolBarManager(parent);
@@ -916,7 +938,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		if (fHandlerService != null)
 			fHandlerService.dispose();
 		
-		Object input= getInput();	
+		Object input= getInput();
 		if (input instanceof ICompareInput) {
 			ICompareContainer container = getCompareConfiguration().getContainer();
 			container.removeCompareInputChangeListener((ICompareInput)input, fCompareInputChangeListener);
@@ -1051,7 +1073,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	/* package */ int getHeaderHeight() {
 		int headerHeight= fLeftLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
-		headerHeight= Math.max(headerHeight, fDirectionLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y);		
+		headerHeight= Math.max(headerHeight, fDirectionLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y);
 		return headerHeight;
 	}
 	
@@ -1092,7 +1114,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	protected void setLeftDirty(boolean dirty) {
 		if (isLeftDirty() != dirty) {
-			fLeftSaveAction.setEnabled(dirty);
+			fIsLeftDirty = dirty;
 			// Only fire the event if the combined dirty state has changed
 			if (!isRightDirty())
 				fireDirtyState(dirty);
@@ -1110,7 +1132,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	protected void setRightDirty(boolean dirty) {
 		if (isRightDirty() != dirty) {
-			fRightSaveAction.setEnabled(dirty);
+			fIsRightDirty = dirty;
 			// Only fire the event if the combined dirty state has changed
 			if (!isLeftDirty())
 				fireDirtyState(dirty);
@@ -1120,9 +1142,9 @@ public abstract class ContentMergeViewer extends ContentViewer
 	/**
 	 * Method from the old internal <code>ISavable</code> interface
 	 * Save the viewers's content.
-	 * Note: this method is for internal use only. Clients should not call this method. 
+	 * Note: this method is for internal use only. Clients should not call this method.
 	 * @param monitor a progress monitor
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @deprecated use {@link IFlushable#flush(IProgressMonitor)}.
 	 */
 	public void save(IProgressMonitor monitor) throws CoreException {
@@ -1182,7 +1204,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @since 3.3
 	 */
 	protected boolean isRightDirty() {
-		return fRightSaveAction.isEnabled();
+		return fIsRightDirty;
 	}
 
 	/**
@@ -1191,13 +1213,13 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @since 3.3
 	 */
 	protected boolean isLeftDirty() {
-		return fLeftSaveAction.isEnabled();
+		return fIsLeftDirty;
 	}
 
 	/**
 	 * Handle a change to the given input reported from an {@link org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener}.
 	 * This class registers a listener with its input and reports any change events through
-	 * this method. By default, this method prompts for any unsaved changes and then refreshes 
+	 * this method. By default, this method prompts for any unsaved changes and then refreshes
 	 * the viewer. Subclasses may override.
 	 * @since 3.3
 	 */

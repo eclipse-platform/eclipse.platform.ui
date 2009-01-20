@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.compare.ICompareContainer;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -81,7 +83,10 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ChangeEncodingAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
@@ -103,7 +108,6 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 	public static final String PASTE_ID= "paste"; //$NON-NLS-1$
 	public static final String DELETE_ID= "delete"; //$NON-NLS-1$
 	public static final String SELECT_ALL_ID= "selectAll"; //$NON-NLS-1$
-	public static final String SAVE_ID= "save"; //$NON-NLS-1$
 	public static final String FIND_ID= "find"; //$NON-NLS-1$
 	public static final String GOTO_LINE_ID= "gotoLine"; //$NON-NLS-1$
 	public static final String CHANGE_ENCODING_ID= "changeEncoding"; //$NON-NLS-1$
@@ -114,7 +118,6 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 		
 		TextOperationAction(int operationCode, boolean mutable, boolean selection, boolean content) {
 			this(operationCode, null, mutable, selection, content);
-
 		}
 		
 		public TextOperationAction(int operationCode, String actionDefinitionId, boolean mutable, boolean selection, boolean content) {
@@ -439,6 +442,7 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 	private boolean fShowLineNumber=false;
 	private LineNumberRulerColumn fLineNumberColumn;
 	private List textActions = new ArrayList();
+	private CommandContributionItem fSaveContributionItem;
 
 	public MergeSourceViewer(SourceViewer sourceViewer,	ResourceBundle bundle, ICompareContainer container) {
 		Assert.isNotNull(sourceViewer);
@@ -793,7 +797,7 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 		addMenu(menu, REDO_ID);
 		menu.add(new GroupMarker("save")); //$NON-NLS-1$
 		if (fAddSaveAction)
-			addMenu(menu, SAVE_ID);
+			addSave(menu);
 		menu.add(new Separator("file")); //$NON-NLS-1$
 	
 		menu.add(new Separator("ccp")); //$NON-NLS-1$
@@ -827,6 +831,25 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 		IAction action= getAction(actionId);
 		if (action != null)
 			menu.add(action);
+	}
+	
+	private void addSave(IMenuManager menu) {
+		ICommandService commandService = (ICommandService) fContainer.getWorkbenchPart().getSite().getService(ICommandService.class);
+		final Command command = commandService.getCommand("org.eclipse.ui.file.save");
+		
+		final IHandler handler = command.getHandler();
+		if (handler != null) {
+			if (fSaveContributionItem == null) {
+				fSaveContributionItem = new CommandContributionItem(
+						new CommandContributionItemParameter(fContainer
+								.getWorkbenchPart().getSite(), null, command
+								.getId(), CommandContributionItem.STYLE_PUSH));
+			}
+			// save is an editable dependent action, ie add only when edit
+			// is possible
+			if (handler.isHandled() && getSourceViewer().isEditable())
+				menu.add(fSaveContributionItem);
+		}
 	}
 
 	/**

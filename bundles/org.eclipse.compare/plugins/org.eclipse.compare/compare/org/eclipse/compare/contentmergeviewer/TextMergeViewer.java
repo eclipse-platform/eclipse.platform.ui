@@ -258,7 +258,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		ActionFactory.PASTE.getId(),
 		ActionFactory.DELETE.getId(),
 		ActionFactory.SELECT_ALL.getId(),
-		ActionFactory.SAVE.getId(),
 		ActionFactory.FIND.getId(),
 		ITextEditorActionDefinitionIds.LINE_GOTO
 	};
@@ -270,7 +269,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		MergeSourceViewer.PASTE_ID,
 		MergeSourceViewer.DELETE_ID,
 		MergeSourceViewer.SELECT_ALL_ID,
-		MergeSourceViewer.SAVE_ID,
 		MergeSourceViewer.FIND_ID,
 		MergeSourceViewer.GOTO_LINE_ID
 	};
@@ -1920,7 +1918,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		fLeft= createPart(composite);
 		fLeft.getSourceViewer().getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
-		fLeft.addAction(MergeSourceViewer.SAVE_ID, fLeftSaveAction);
 		fLeft.getSourceViewer().getTextWidget().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result = NLS.bind(CompareMessages.TextMergeViewer_accessible_left, getCompareConfiguration().getLeftLabel(getInput()));
@@ -1930,7 +1927,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		fRight= createPart(composite);
 		fRight.getSourceViewer().getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
-		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
 		fRight.getSourceViewer().getTextWidget().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result = NLS.bind(CompareMessages.TextMergeViewer_accessible_right, getCompareConfiguration().getRightLabel(getInput()));
@@ -2531,12 +2527,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 						IAction action= null;
 						if (part != null) {
 							action= part.getAction(TEXT_ACTIONS[i]);
-							if (action == null && TEXT_ACTIONS[i].equals(MergeSourceViewer.SAVE_ID)) {
-								if (part == fLeft)
-									action= fLeftSaveAction;
-								else
-									action= fRightSaveAction;
-							}
 						}
 						fHandlerService.setGlobalActionHandler(GLOBAL_ACTIONS[i], action);
 					}
