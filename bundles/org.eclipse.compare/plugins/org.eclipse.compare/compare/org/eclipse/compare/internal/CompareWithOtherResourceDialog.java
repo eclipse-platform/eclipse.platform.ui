@@ -48,7 +48,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -72,8 +71,9 @@ import org.eclipse.ui.part.ResourceTransfer;
 public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 	
 	private int MIN_WIDTH = 320;
-	private int MIN_HEIGHT = 240;
-	
+	private int MIN_HEIGHT_WITH_ANCESTOR = 320;
+	private int MIN_HEIGHT_WITHOUT_ANCESTOR = 238;
+
 	private class FileTextDragListener implements DragSourceListener {
 
 		private ContentTypeElement element;
@@ -500,9 +500,7 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 			expandable.addExpansionListener(new ExpansionAdapter() {
 				public void expansionStateChanged(ExpansionEvent e) {
 					p.layout();
-					Point size = getShell().getSize(); 
-					size.y = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
-					getShell().setSize(size);
+					adjustSize(e.getState());
 				}
 			});
 		}
@@ -724,10 +722,16 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 		setSelection(selection);
 		getShell().setText(CompareMessages.CompareWithOther_dialogTitle);
 		setTitle(CompareMessages.CompareWithOther_dialogMessage);
-		getShell().setMinimumSize(convertHorizontalDLUsToPixels(MIN_WIDTH),
-				convertVerticalDLUsToPixels(MIN_HEIGHT));
+		adjustSize(ancestorPanel.expandable.isExpanded());
 
 		return mainPanel;
+	}
+
+	private void adjustSize(boolean expanded) {
+		int minWidth = convertHorizontalDLUsToPixels(MIN_WIDTH);
+		int minHeight = convertVerticalDLUsToPixels(expanded ? MIN_HEIGHT_WITH_ANCESTOR
+				: MIN_HEIGHT_WITHOUT_ANCESTOR);
+		getShell().setMinimumSize(minWidth, minHeight);
 	}
 
 	/*
