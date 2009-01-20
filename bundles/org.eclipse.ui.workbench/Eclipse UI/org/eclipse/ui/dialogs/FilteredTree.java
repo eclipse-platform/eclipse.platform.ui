@@ -703,7 +703,9 @@ public class FilteredTree extends Composite {
 				}
 
 				if (filterText.getText().equals(initialText) && filterText.getSelectionCount() == 0) {
-					filterText.setText(""); //$NON-NLS-1$
+					// XXX: We cannot call clearText() due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=260664 
+					setFilterText(""); //$NON-NLS-1$
+					textChanged();
 				}
 				filterText.setForeground(filterTextForeground[0]);
 			}
@@ -739,7 +741,9 @@ public class FilteredTree extends Composite {
 				 */
 				public void mouseDown(MouseEvent e) {
 					if (filterText.getText().equals(initialText)) {
-						filterText.setText(""); //$NON-NLS-1$
+						// XXX: We cannot call clearText() due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=260664
+						setFilterText(""); //$NON-NLS-1$
+						textChanged();
 					}
 				}
 			});
@@ -788,9 +792,6 @@ public class FilteredTree extends Composite {
 				if (hasItems && e.keyCode == SWT.ARROW_DOWN) {
 					treeViewer.getTree().setFocus();
 					return;
-				}
-				if (useNewLook && filterText.getSelectionText().equals(initialText)) {
-					filterText.setText(""); //$NON-NLS-1$
 				}
 			}
 		});
@@ -1047,8 +1048,7 @@ public class FilteredTree extends Composite {
 	}
 
 	/**
-	 * Clears the text in the filter text widget. Also removes the optional
-	 * additional filter that is provided via addFilter(ViewerFilter).
+	 * Clears the text in the filter text widget.
 	 */
 	protected void clearText() {
 		setFilterText(""); //$NON-NLS-1$
