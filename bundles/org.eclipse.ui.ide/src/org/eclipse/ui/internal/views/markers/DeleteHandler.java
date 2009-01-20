@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.resources.IMarker;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.MarkerViewHandler;
@@ -59,15 +60,29 @@ public class DeleteHandler extends MarkerViewHandler {
 		if (dialog.open() != 0) {
 			return view;
 		}
+		
+		WorkspaceJob deleteJob = new WorkspaceJob(IDEWorkbenchMessages.MarkerDeleteHandler_JobTitle){	//See Bug#250807
+				public IStatus runInWorkspace(IProgressMonitor monitor)
+				throws CoreException {
+					monitor.beginTask(IDEWorkbenchMessages.MarkerDeleteHandler_JobMessageLabel, 10*selected.length);
+					try {
+						for (int i = 0; i < selected.length; i++) {
+							if(monitor.isCanceled())return Status.CANCEL_STATUS;
+							selected[i].delete();
+							monitor.worked(10);
+						}
+					} catch (CoreException e) {
+						Policy.handle(e);
+						throw e;
+					}finally{
+						monitor.done();
+					}
+					return Status.OK_STATUS;
+	 			}
+			};
+		deleteJob.setUser(true);
+		deleteJob.schedule();
 
-		for (int i = 0; i < selected.length; i++) {
-			try {
-				selected[i].delete();
-			} catch (CoreException e) {
-				Policy.handle(e);
-				throw new ExecutionException(e.getMessage(), e);
-			}
-		}
 		return this;
 	}
 }

@@ -591,7 +591,9 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String MarkerResolutionSelectionDialog_title;
 	public static String MarkerResolutionSelectionDialog_messageLabel;
-
+	public static String MarkerDeleteHandler_JobTitle;
+	public static String MarkerDeleteHandler_JobMessageLabel;
+	
 	public static String FilteredResourcesSelectionDialog_showDerivedResourcesAction;
 	
 	public static String ResourceSelectionDialog_label;
