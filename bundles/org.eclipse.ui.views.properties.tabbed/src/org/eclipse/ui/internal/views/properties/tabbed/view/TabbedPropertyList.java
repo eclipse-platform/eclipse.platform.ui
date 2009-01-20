@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mariot Chauvin <mariot.chauvin@obeo.fr> - bug 259553
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.view;
 
@@ -44,7 +45,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
 import org.eclipse.ui.views.properties.tabbed.ITabItem;
@@ -713,14 +713,12 @@ public class TabbedPropertyList
 	 * @return the dimensions of the provided string.
 	 */
 	private Point getTextDimension(String text) {
-		Shell shell = new Shell();
-		GC gc = new GC(shell);
+		GC gc = new GC(this);
 		gc.setFont(JFaceResources.getFontRegistry().getBold(
 				JFaceResources.DEFAULT_FONT));
 		Point point = gc.textExtent(text);
 		point.x++;
 		gc.dispose();
-		shell.dispose();
 		return point;
 	}
 
