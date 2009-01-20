@@ -149,11 +149,11 @@ public class ChangeEncodingAction extends TextEditorAction {
 				};
 
 				if (resource != null) {
-					fEncodingEditor= new ResourceEncodingFieldEditor("", (Composite)composite, resource); //$NON-NLS-1$
+					fEncodingEditor= new ResourceEncodingFieldEditor("", (Composite)composite, resource, null); //$NON-NLS-1$
 					fEncodingEditor.setPage(page);
 					fEncodingEditor.load();
 				} else {
-					fEncodingEditor= new EncodingFieldEditor(ENCODING_PREF_KEY, "", (Composite)composite); //$NON-NLS-1$
+					fEncodingEditor= new EncodingFieldEditor(ENCODING_PREF_KEY, "", null, (Composite)composite); //$NON-NLS-1$
 					store= new PreferenceStore();
 					String defaultEncoding= encodingSupport.getDefaultEncoding();
 					store.setDefault(ENCODING_PREF_KEY, defaultEncoding);
