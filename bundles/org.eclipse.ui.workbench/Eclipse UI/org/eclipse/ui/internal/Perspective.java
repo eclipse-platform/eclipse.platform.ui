@@ -845,6 +845,8 @@ public class Perspective {
         showViewShortcuts = layout.getShowViewShortcuts();
         perspectiveShortcuts = layout.getPerspectiveShortcuts();
         showInPartIds = layout.getShowInPartIds();
+        hideMenuIDs = layout.getHiddenMenuItems();
+        hideToolBarIDs = layout.getHiddenToolBarItems();
 
         // Retrieve fast views
         if (fastViewManager != null) {

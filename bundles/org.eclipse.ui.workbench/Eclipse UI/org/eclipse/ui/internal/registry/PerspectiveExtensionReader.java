@@ -124,6 +124,10 @@ public class PerspectiveExtensionReader extends RegistryReader {
 					result = processPerspectiveShortcut(child);
 				} else if (type.equals(IWorkbenchRegistryConstants.TAG_SHOW_IN_PART)) {
 					result = processShowInPart(child);
+				} else if (type.equals(IWorkbenchRegistryConstants.TAG_HIDDEN_MENU_ITEM)) {
+					result = processHiddenMenuItem(child);
+				} else if (type.equals(IWorkbenchRegistryConstants.TAG_HIDDEN_TOOLBAR_ITEM)) {
+					result = processHiddenToolBarItem(child);
 				}
                 if (!result) {
                     WorkbenchPlugin.log("Unable to process element: " + //$NON-NLS-1$
@@ -155,6 +159,28 @@ public class PerspectiveExtensionReader extends RegistryReader {
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id != null) {
 			pageLayout.addShowInPart(id);
+		}
+        return true;
+    }
+
+    /**
+     * Process a hidden menu item
+     */
+    private boolean processHiddenMenuItem(IConfigurationElement element) {
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        if (id != null) {
+			pageLayout.addHiddenMenuItemId(id);
+		}
+        return true;
+    }
+
+    /**
+     * Process a hidden toolbar item
+     */
+    private boolean processHiddenToolBarItem(IConfigurationElement element) {
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        if (id != null) {
+			pageLayout.addHiddenToolBarItemId(id);
 		}
         return true;
     }

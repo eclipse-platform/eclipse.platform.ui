@@ -1047,6 +1047,16 @@ public interface IWorkbenchRegistryConstants {
 	public static String TAG_HANDLER_SUBMISSION = "handlerSubmission"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing the id of a menu item to hide
+	 */
+	public static String TAG_HIDDEN_MENU_ITEM = "hiddenMenuItem"; //$NON-NLS-1$
+
+	/**
+	 * The name of the element storing the id of a toolbar item to hide
+	 */
+	public static String TAG_HIDDEN_TOOLBAR_ITEM = "hiddenToolBarItem"; //$NON-NLS-1$
+
+	/**
 	 * Trigger point hint tag. Value <code>hint</code>.
 	 */
 	public static String TAG_HINT = "hint"; //$NON-NLS-1$

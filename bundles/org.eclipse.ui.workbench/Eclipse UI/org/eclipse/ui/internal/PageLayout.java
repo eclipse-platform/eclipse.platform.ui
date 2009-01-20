@@ -18,6 +18,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +100,11 @@ public class PageLayout implements IPageLayout {
 
 	private List minimizedStacks = new ArrayList();
 
+    private Collection hiddenMenuItemIds = new ArrayList();
+
+    private Collection hiddenToolBarItemIds = new ArrayList();
+
+	
     /**
      * Constructs a new PageLayout for other purposes.
      */
@@ -349,6 +355,30 @@ public class PageLayout implements IPageLayout {
     public void addShowViewShortcut(String id) {
         if (!showViewShortcuts.contains(id)) {
             showViewShortcuts.add(id);
+        }
+    }
+
+    /**
+     * Adds an id to the collection of menu item ids that should be hidden in this perspective.
+     * The given id should be one that represents an existing menu item.
+     * 
+     * @param id the menu item id
+     */
+    public void addHiddenMenuItemId(String id) {
+        if (!hiddenMenuItemIds.contains(id)) {
+        	hiddenMenuItemIds.add(id);
+        }
+    }
+
+    /**
+     * Adds an id to the collection of toolbar item ids that should be hidden in this perspective.
+     * The given id should be one that represents an existing toolbar item.
+     * 
+     * @param id the toolbar item id
+     */
+    public void addHiddenToolBarItemId(String id) {
+        if (!hiddenToolBarItemIds.contains(id)) {
+        	hiddenToolBarItemIds.add(id);
         }
     }
 
@@ -604,6 +634,22 @@ public class PageLayout implements IPageLayout {
      */
     public ArrayList getShowViewShortcuts() {
         return showViewShortcuts;
+    }
+
+    /**
+     * @return the collection of menu item ids that should be hidden. This is a <code>List</code> of 
+     * <code>String</code>s.
+     */
+    public Collection getHiddenMenuItems() {
+        return hiddenMenuItemIds;
+    }
+
+    /**
+     * @return the collection of toolbar item ids that should be hidden. This is a <code>List</code> of 
+     * <code>String</code>s.
+     */
+    public Collection getHiddenToolBarItems() {
+        return hiddenToolBarItemIds;
     }
 
     /**
