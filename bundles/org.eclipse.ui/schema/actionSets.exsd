@@ -297,7 +297,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
          <attribute name="retarget" type="boolean">
             <annotation>
                <documentation>
-                  an optional attribute to retarget this action. When true, view and editor parts may supply a handler for this action using the standard mechanism for setting a global action handler on their site using this action&apos;s identifier. If this attribute is true, the &lt;samp&gt;class&lt;/samp&gt; attribute should not be supplied.  &lt;br /&gt;&lt;b&gt;Note:&lt;/b&gt;The combination of &lt;code&gt;pulldown&lt;/code&gt; and &lt;code&gt;retarget&lt;/code&gt; is not supported.  Commands can be used to provide this type of functionality, see &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.ui.menus&lt;/a&gt; and the command element with a style of &lt;code&gt;pulldown&lt;/code&gt;.
+                  an optional attribute to retarget this action. When true, view and editor parts may supply a handler for this action using the standard mechanism for setting a global action handler on their site using this action&apos;s identifier. If this attribute is true, the &lt;samp&gt;class&lt;/samp&gt; attribute should not be supplied.  &lt;br&gt;&lt;b&gt;Note:&lt;/b&gt;The combination of &lt;code&gt;pulldown&lt;/code&gt; and &lt;code&gt;retarget&lt;/code&gt; is not supported.  Commands can be used to provide this type of functionality, see &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.ui.menus&lt;/a&gt; and the command element with a style of &lt;code&gt;pulldown&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>

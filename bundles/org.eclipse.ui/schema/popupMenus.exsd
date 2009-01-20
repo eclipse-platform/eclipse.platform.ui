@@ -19,7 +19,7 @@ Individual actions in an object contribution can use the attribute &lt;code&gt;e
 &lt;p&gt;
 If these filtering mechanisms are inadequate an action contribution may use the &lt;samp&gt;filter&lt;/samp&gt; mechanism.  In this case the attributes of the target object are described in a series of name-value pairs.  The attributes which apply to the selection are type-specific and beyond the domain of the workbench itself, so the workbench will delegate filtering at this level to the actual selection.
 &lt;p&gt;
-The &lt;/code&gt;objectContribution&lt;/code&gt; element uses the core expression &lt;code&gt;enablement&lt;/code&gt;, as defined in &lt;a href=&quot;org_eclipse_core_expressions_definitions.html&quot;&gt;org.eclipse.core.expressions.definitions&lt;/a&gt;.
+The &lt;code&gt;objectContribution&lt;/code&gt; element uses the core expression &lt;code&gt;enablement&lt;/code&gt;, as defined in &lt;a href=&quot;org_eclipse_core_expressions_definitions.html&quot;&gt;org.eclipse.core.expressions.definitions&lt;/a&gt;.
       </documentation>
    </annotation>
 
