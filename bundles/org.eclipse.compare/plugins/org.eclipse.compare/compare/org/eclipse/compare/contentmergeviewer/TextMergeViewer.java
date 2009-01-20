@@ -86,6 +86,7 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.CursorLinePainter;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -120,6 +121,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.custom.LineBackgroundEvent;
+import org.eclipse.swt.custom.LineBackgroundListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -154,6 +157,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
@@ -428,7 +432,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private List fSourceViewerDecorationSupport = new ArrayList(3);
 	// whether enhanced viewer configuration has been done
 	private boolean isConfigured = false;
-	// maps containing actions contributed by client
 
 	private final class InternalOutlineViewerCreator extends OutlineViewerCreator implements ISelectionChangedListener {
 		public Viewer findStructureViewer(Viewer oldViewer,
@@ -1651,7 +1654,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			display= fComposite.getDisplay();
 		refreshBirdsEyeView();
 		invalidateLines();
-		updateAllDiffBackgrounds(display);
 		invalidateTextPresentation();
 	}
 	
@@ -2473,7 +2475,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 		contributeChangeEncodingAction(viewer);
 
-		getSourceViewerDecorationSupport(viewer.getSourceViewer()).install(fPreferenceStore);
+		contributeDiffBackgroundListener(viewer);
 
 		return viewer;
 	}
@@ -2515,6 +2517,37 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private void contributeChangeEncodingAction(MergeSourceViewer viewer) {
 		IAction action = new ChangeEncodingAction(getTextEditorAdapter());
 		viewer.addAction(MergeSourceViewer.CHANGE_ENCODING_ID, action);
+	}
+	
+	private void contributeDiffBackgroundListener(final MergeSourceViewer viewer) {
+		viewer.getSourceViewer().getTextWidget().addLineBackgroundListener(
+				new LineBackgroundListener() {
+					public void lineGetBackground(LineBackgroundEvent event) {
+						StyledText textWidget = viewer.getSourceViewer()
+								.getTextWidget();
+						if (textWidget != null) {
+
+							int caret = textWidget.getCaretOffset();
+							int length = event.lineText.length();
+
+							if (event.lineOffset <= caret
+									&& caret <= event.lineOffset + length) {
+								// current line, do nothing
+								// decorated by CursorLinePainter
+							} else {
+								// find diff for the event line
+								Diff diff = findDiff(viewer, event.lineOffset,
+										event.lineOffset + length);
+								if (diff != null && updateDiffBackground(diff)) {
+									// highlights only the event line, not the
+									// whole diff
+									event.lineBackground = getColor(fComposite
+											.getDisplay(), getFillColor(diff));
+								}
+							}
+						}
+					}
+				});
 	}
 
 	private void connectGlobalActions(final MergeSourceViewer part) {
@@ -2764,7 +2797,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			configureSourceViewer(fAncestor.getSourceViewer(), false);
 			configureSourceViewer(fLeft.getSourceViewer(), cc.isLeftEditable() && cp.isLeftEditable(input));
 			configureSourceViewer(fRight.getSourceViewer(), cc.isRightEditable() && cp.isRightEditable(input));
-			isConfigured = true; // confiure once
+			isConfigured = true; // configure once
 		}
 
 		//if the input is part of a patch hunk, toggle synchronized scrolling
@@ -2812,6 +2845,20 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private void configureSourceViewer(SourceViewer sourceViewer, boolean editable) {
 		configureTextViewer(sourceViewer);
 		setEditable(sourceViewer, editable);
+		if (!isCursorLinePainterInstalled(sourceViewer))
+			getSourceViewerDecorationSupport(sourceViewer).install(fPreferenceStore);
+	}
+
+	private boolean isCursorLinePainterInstalled(SourceViewer viewer) {
+		Listener[] listeners = viewer.getTextWidget().getListeners(3001/*StyledText.LineGetBackground*/);
+		for (int i = 0; i < listeners.length; i++) {
+			if (listeners[i] instanceof TypedListener) {
+				TypedListener listener = (TypedListener) listeners[i];
+				if (listener.getEventListener() instanceof CursorLinePainter)
+					return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -2844,41 +2891,20 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return new ContributorInfo(this, element, leg);
 	}
 	
-	private void updateDiffBackground(Diff diff) {
-		
-		if (! fHighlightRanges)
-			return;
-		
+	private boolean updateDiffBackground(Diff diff) {
+
+		if (!fHighlightRanges)
+			return false;
+
 		if (diff == null || diff.isToken())
-			return;
-			
+			return false;
+
 		if (fShowCurrentOnly && !isCurrentDiff(diff))
-			return;
-						
-		Color c= getColor(null, getFillColor(diff));
-		if (c == null)
-			return;
-			
-		if (isThreeWay())
-			fAncestor.setLineBackground(diff.getPosition(ANCESTOR_CONTRIBUTOR), c);
-		fLeft.setLineBackground(diff.getPosition(LEFT_CONTRIBUTOR), c);
-		fRight.setLineBackground(diff.getPosition(RIGHT_CONTRIBUTOR), c);
+			return false;
+
+		return true;
 	}
-	
-	private void updateAllDiffBackgrounds(Display display) {
-		if (fMerger.hasChanges()) {
-			boolean threeWay= isThreeWay();
-			for (Iterator iterator = fMerger.changesIterator(); iterator.hasNext();) {
-				Diff diff = (Diff) iterator.next();
-				Color c= getColor(display, getFillColor(diff));
-				if (threeWay)
-					fAncestor.setLineBackground(diff.getPosition(ANCESTOR_CONTRIBUTOR), c);
-				fLeft.setLineBackground(diff.getPosition(LEFT_CONTRIBUTOR), c);
-				fRight.setLineBackground(diff.getPosition(RIGHT_CONTRIBUTOR), c);
-			}
-		}
-	}
-	
+
 	/*
 	 * Called whenever one of the documents changes.
 	 * Sets the dirty state of this viewer and updates the lines.
@@ -3203,13 +3229,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			String msg= MessageFormat.format(format, new Object[] { Integer.toString(PlatformUI.getWorkbench().getProgressService().getLongOperationTime()/1000) } );
 			MessageDialog.openError(fComposite.getShell(), title, msg);
 		}
-		
-		if (fMerger.hasChanges()) {
-			for (Iterator iterator = fMerger.changesIterator(); iterator.hasNext();) {
-				Diff diff = (Diff) iterator.next();
-				updateDiffBackground(diff);
-			}
-		}
+
 		invalidateTextPresentation();
 	}
 	
@@ -4371,19 +4391,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		} else {
 			fCurrentDiff= d;
 		}
-		
-		Diff d1= oldDiff != null ? oldDiff.getParent() : null;
-		Diff d2= fCurrentDiff != null ? fCurrentDiff.getParent() : null;
-		if (d1 != d2) {
-			updateDiffBackground(d1);
-			updateDiffBackground(d2);
-		}
-		
+
 		updateControls();
 		invalidateLines();
 		refreshBirdsEyeView();
 	}
-	
+
 	/*
 	 * Smart determines whether
 	 */
