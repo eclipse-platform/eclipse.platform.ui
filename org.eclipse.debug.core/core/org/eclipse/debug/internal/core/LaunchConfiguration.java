@@ -471,14 +471,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		try {
 			IFileStore store = getFileStore();
 			if (store != null) {
-				File localFile = store.toLocalFile(EFS.CACHE, null);
+				File localFile = store.toLocalFile(EFS.NONE, null);
 				if (localFile != null) {
-					if (store.fetchInfo().exists()) {
-						return new Path(localFile.getAbsolutePath());
-					} else {
-						// when it does not exist, toLocalFile(...) returns a bogus file
-						return new Path(store.toString());
-					}
+					return new Path(localFile.getAbsolutePath());
 				}
 			}
 		} catch (CoreException e) {
