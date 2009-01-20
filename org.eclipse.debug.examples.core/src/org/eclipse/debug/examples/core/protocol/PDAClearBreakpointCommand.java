@@ -22,7 +22,7 @@ package org.eclipse.debug.examples.core.protocol;
 public class PDAClearBreakpointCommand extends PDACommand {
 
     public PDAClearBreakpointCommand(int line) {
-        super("clear " + (line - 1));
+        super("clear " + line);
     }
     
     public PDACommandResult createResult(String resultText) {
