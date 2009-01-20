@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,11 @@ package org.eclipse.ui.ide.dialogs;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+
 import org.eclipse.ui.ide.IDEEncoding;
 
 /**
- * The EncodingFieldEditor is a field editor that allows the 
+ * The EncodingFieldEditor is a field editor that allows the
  * user to set an encoding on a preference in a preference
  * store.
  * <p>
@@ -36,7 +37,7 @@ public final class EncodingFieldEditor extends AbstractEncodingFieldEditor {
 	 * @param labelText
 	 *            the label text of the field editor
 	 * @param groupTitle
-	 *            the title for the field editor's control. If groupTitle is 
+	 *            the title for the field editor's control. If groupTitle is
 	 *            <code>null</code> the control will be unlabelled
 	 *            (by default a {@link Composite} instead of a {@link Group}.
 	 * @param parent
@@ -46,7 +47,10 @@ public final class EncodingFieldEditor extends AbstractEncodingFieldEditor {
 	 */
 	public EncodingFieldEditor(String name, String labelText,
 			String groupTitle, Composite parent) {
-		super(name, labelText, groupTitle, parent);
+		super();
+		init(name, labelText);
+		setGroupTitle(groupTitle);
+		createControl(parent);
 	}
 	/**
 	 * Create a new instance of the receiver on the preference called name
@@ -56,7 +60,9 @@ public final class EncodingFieldEditor extends AbstractEncodingFieldEditor {
 	 * @param parent
 	 */
 	public EncodingFieldEditor(String name, String labelText, Composite parent) {
-		super(name, labelText, parent);
+		super();
+		init(name, labelText);
+		createControl(parent);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.ide.dialogs.AbstractEncodingFieldEditor#getStoredValue()
@@ -75,7 +81,7 @@ public final class EncodingFieldEditor extends AbstractEncodingFieldEditor {
 			return;
 		}
 		
-		IDEEncoding.addIDEEncoding(encoding);	
+		IDEEncoding.addIDEEncoding(encoding);
 		
 		if (encoding.equals(getDefaultEnc())) {
 			getPreferenceStore().setToDefault(getPreferenceName());
