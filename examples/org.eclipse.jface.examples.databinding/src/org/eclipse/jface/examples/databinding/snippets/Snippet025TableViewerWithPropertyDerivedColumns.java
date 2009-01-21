@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Coconut Palm Software, Inc. - Initial API and implementation
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 261843
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -252,7 +252,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 
 			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
 					BeanProperties.value(Person.class, "name").observeDetail(
-							masterSelection), null, null);
+							masterSelection));
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
 			bindViewer(mothercomboViewer, viewModel.getPeople(), Person.class,
@@ -260,7 +260,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 
 			dbc.bindValue(ViewerProperties.singleSelection().observe(
 					mothercomboViewer), BeanProperties.value(Person.class,
-					"mother").observeDetail(masterSelection), null, null);
+					"mother").observeDetail(masterSelection));
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
 			bindViewer(fatherComboViewer, viewModel.getPeople(), Person.class,
@@ -268,7 +268,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 
 			dbc.bindValue(ViewerProperties.singleSelection().observe(
 					fatherComboViewer), BeanProperties.value(Person.class,
-					"father").observeDetail(masterSelection), null, null);
+					"father").observeDetail(masterSelection));
 		}
 
 		private void bindViewer(StructuredViewer viewer, IObservableList input,

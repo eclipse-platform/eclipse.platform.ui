@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
+ *     Matthew Hall - bug 261843
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -20,21 +21,23 @@ import java.util.TreeSet;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.set.DelegatingSetProperty;
 import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -382,8 +385,9 @@ public class Snippet026AnonymousBeanProperties {
 				treeChildrenProperty.setFactory(), null);
 		contactViewer.setContentProvider(cp);
 
-		IObservableMap[] labelMaps = BeansObservables.observeMaps(cp
-				.getKnownElements(), new String[] { "name", "status" });
+		IObservableMap[] labelMaps = Properties.observeEach(cp
+				.getKnownElements(), BeanProperties.values(new String[] {
+				"name", "status" }));
 		contactViewer
 				.setLabelProvider(new ObservableMapLabelProvider(labelMaps));
 
@@ -391,20 +395,25 @@ public class Snippet026AnonymousBeanProperties {
 
 		contactViewer.expandAll();
 
-		IObservableValue selection = ViewersObservables
-				.observeSingleSelection(contactViewer);
+		final IObservableValue selection = ViewerProperties.singleSelection()
+				.observe(contactViewer);
 
 		DataBindingContext dbc = new DataBindingContext();
 
-		dbc.bindValue(SWTObservables.observeText(nameText, SWT.Modify),
-				BeanProperties.value("name").observeDetail(selection), null,
-				null);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
+				BeanProperties.value("name").observeDetail(selection));
 
 		statusViewer.setContentProvider(new ArrayContentProvider());
 		statusViewer.setInput(statuses);
 
-		dbc.bindValue(ViewersObservables.observeSingleSelection(statusViewer),
-				BeanProperties.value("status").observeDetail(selection), null,
-				null);
+		dbc.bindValue(ViewerProperties.singleSelection().observe(statusViewer),
+				BeanProperties.value("status").observeDetail(selection));
+
+		dbc.bindValue(WidgetProperties.enabled().observe(
+				statusViewer.getControl()), new ComputedValue() {
+			protected Object calculate() {
+				return Boolean.valueOf(selection.getValue() instanceof Contact);
+			}
+		});
 	}
 }

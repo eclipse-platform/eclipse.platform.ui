@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 247997
+ *     Matthew Hall - bug 195222, 247997, 261843
  ******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -160,6 +160,19 @@ public class PojoProperties {
 		for (int i = 0; i < properties.length; i++)
 			properties[i] = value(beanClass, propertyNames[i], null);
 		return properties;
+	}
+
+	/**
+	 * Returns a value property array for the given property names of an
+	 * arbitrary bean class.
+	 * 
+	 * @param propertyNames
+	 *            array of property names. May be nested e.g. "parent.name"
+	 * @return a value property array for the given property names of the given
+	 *         bean class.
+	 */
+	public static IBeanValueProperty[] values(String[] propertyNames) {
+		return values(null, propertyNames);
 	}
 
 	/**
