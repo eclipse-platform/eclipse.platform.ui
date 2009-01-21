@@ -44,6 +44,11 @@ import org.eclipse.swt.widgets.Widget;
  * filter (optional), and element sorter (optional).
  * </p>
  * <p>
+ * As of 3.2, TreeViewer supports multiple equal elements (each with a
+ * different parent chain) in the tree. This support requires that clients
+ * enable the element map by calling <code>setUseHashLookup(true)</code>.
+ * </p>
+ * <p>
  * Content providers for tree viewers must implement either the
  * {@link ITreeContentProvider} interface, (as of 3.2) the
  * {@link ILazyTreeContentProvider} interface, or (as of 3.3) the
