@@ -502,12 +502,15 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			for (int i = 0; i < selectionIndices.length; i++) {
 				int selectionIndex = selectionIndices[i];
 				lazy.updateElement(selectionIndex);// Start the update
-				Object element = doGetItem(selectionIndex).getData();
-				// Only add the element if it got updated.
-				// If this is done deferred the selection will
-				// be incomplete until selection is finished.
-				if (element != null) {
-					result.add(element);
+				// check for the case where the content provider changed the number of items
+				if (selectionIndex < doGetItemCount()) {
+					Object element = doGetItem(selectionIndex).getData();
+					// Only add the element if it got updated.
+					// If this is done deferred the selection will
+					// be incomplete until selection is finished.
+					if (element != null) {
+						result.add(element);
+					}
 				}
 			}
 		} else {
