@@ -1804,6 +1804,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * 
 	 * @return <code>true</code> if selection should be preserved,
 	 *         <code>false</code> otherwise
+	 * @since 3.5
 	 */
 	protected boolean getPreserveSelection() {
 		return this.preserveSelection;

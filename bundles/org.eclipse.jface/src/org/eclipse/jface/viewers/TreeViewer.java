@@ -386,6 +386,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	void preservingSelection(Runnable updateCode, boolean reveal) {
+		if (!getPreserveSelection()) {
+			return;
+		}
 		if (preservingSelection){
 			// avoid preserving the selection if called reentrantly,
 			// see bug 172640
