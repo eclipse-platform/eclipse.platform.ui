@@ -30,6 +30,7 @@ import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
@@ -98,7 +99,7 @@ public final class BindingPersistence extends PreferencePersistence {
 	 * The index of the scheme definition configuration elements in the indexed
 	 * array.
 	 * 
-	 * @see BindingPersistence#read(BindingManager, ICommandService)
+	 * @see BindingPersistence#read()
 	 */
 	private static final int INDEX_SCHEME_DEFINITIONS = 2;
 
@@ -607,23 +608,27 @@ public final class BindingPersistence extends PreferencePersistence {
 
 		HashSet cocoaTempList = new HashSet();
 		IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
+		
+		// the local cache for the sequence modifiers
+		IConfigurationElement[] sequenceModifiers = new IConfigurationElement[0];
+		if(configurationElementCount >0)
+			sequenceModifiers =  getSequenceModifierElements(configurationElements[0]);
+
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
-
+			
+			// different extension. update the cache ...
+			if( i>0 && !configurationElement.getDeclaringExtension().equals(configurationElements[i-1].getDeclaringExtension()))
+				sequenceModifiers = getSequenceModifierElements(configurationElement);
+			
 			/*
 			 * Read out the command id. Doing this before determining if the key
 			 * binding is actually valid is a bit wasteful. However, it is
 			 * helpful to have the command identifier when logging syntax
 			 * errors.
 			 */
-			String commandId = configurationElement
-					.getAttribute(ATT_COMMAND_ID);
-			if ((commandId == null) || (commandId.length() == 0)) {
-				commandId = configurationElement.getAttribute(ATT_COMMAND);
-			}
-			if ((commandId != null) && (commandId.length() == 0)) {
-				commandId = null;
-			}
+			String commandId = readCommandId(configurationElement);
+			
 			String viewParameter = null;
 			final Command command;
 			if (commandId != null) {
@@ -659,114 +664,48 @@ public final class BindingPersistence extends PreferencePersistence {
 			}
 
 			// Read out the scheme id.
-			String schemeId = configurationElement.getAttribute(ATT_SCHEME_ID);
-			if ((schemeId == null) || (schemeId.length() == 0)) {
-				schemeId = configurationElement
-						.getAttribute(ATT_KEY_CONFIGURATION_ID);
-				if ((schemeId == null) || (schemeId.length() == 0)) {
-					schemeId = configurationElement
-							.getAttribute(ATT_CONFIGURATION);
-					if ((schemeId == null) || (schemeId.length() == 0)) {
-						// The scheme id should never be null. This is invalid.
-						addWarning(warningsToLog, "Key bindings need a scheme", //$NON-NLS-1$
-								configurationElement, commandId);
-						continue;
-					}
-				}
-			}
-
+			String schemeId = readSchemeId(configurationElement, warningsToLog, commandId);
+			if(isEmpty(schemeId))
+				continue;
+				
 			// Read out the context id.
-			String contextId = configurationElement
-					.getAttribute(ATT_CONTEXT_ID);
-			if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
-				contextId = null;
-			} else if ((contextId == null) || (contextId.length() == 0)) {
-				contextId = configurationElement.getAttribute(ATT_SCOPE);
-				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
-					contextId = null;
-				}
-			}
-			if ((contextId == null) || (contextId.length() == 0)) {
-				contextId = IContextIds.CONTEXT_ID_WINDOW;
-			}
+			String contextId = readContextId(configurationElement);
 
+			String keySequenceText = readKeySequenceText(configurationElement);
+			if(isEmpty(keySequenceText)) {
+				// The key sequence should never be null. This is pointless
+				addWarning(
+						warningsToLog,
+						"Defining a key binding with no key sequence has no effect", //$NON-NLS-1$
+						configurationElement, commandId);
+				continue;
+			}
+			
+
+			
 			// Read out the key sequence.
-			KeySequence keySequence = null;
-			String keySequenceText = configurationElement
-					.getAttribute(ATT_SEQUENCE);
-			if ((keySequenceText == null) || (keySequenceText.length() == 0)) {
-				keySequenceText = configurationElement
-						.getAttribute(ATT_KEY_SEQUENCE);
-			}
-			if ((keySequenceText == null) || (keySequenceText.length() == 0)) {
-				keySequenceText = configurationElement.getAttribute(ATT_STRING);
-				if ((keySequenceText == null)
-						|| (keySequenceText.length() == 0)) {
-					// The key sequence should never be null. This is pointless
-					addWarning(
-							warningsToLog,
-							"Defining a key binding with no key sequence has no effect", //$NON-NLS-1$
-							configurationElement, commandId);
-					continue;
-				}
-
-				// The key sequence is in the old-style format.
-				try {
-					keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
-				} catch (final IllegalArgumentException e) {
-					addWarning(warningsToLog, "Could not parse key sequence", //$NON-NLS-1$
-							configurationElement, commandId, "keySequence", //$NON-NLS-1$
-							keySequenceText);
-					continue;
-				}
-
-			} else {
-				// The key sequence is in the new-style format.
-				try {
-					keySequence = KeySequence.getInstance(keySequenceText);
-				} catch (final ParseException e) {
-					addWarning(warningsToLog, "Could not parse key sequence", //$NON-NLS-1$
-							configurationElement, commandId, "keySequence", //$NON-NLS-1$
-							keySequenceText);
-					continue;
-				}
-				if (keySequence.isEmpty() || !keySequence.isComplete()) {
-					addWarning(
-							warningsToLog,
-							"Key bindings should not have an empty or incomplete key sequence", //$NON-NLS-1$
-							configurationElement, commandId, "keySequence", //$NON-NLS-1$
-							keySequence.toString());
-					continue;
-				}
-
-			}
+			KeySequence keySequence = readKeySequence(configurationElement, warningsToLog, commandId, keySequenceText);
+			if(keySequence == null)
+				continue;
 
 			// Read out the locale and platform.
-			String locale = configurationElement.getAttribute(ATT_LOCALE);
-			if ((locale != null) && (locale.length() == 0)) {
-				locale = null;
-			}
-			String platform = configurationElement.getAttribute(ATT_PLATFORM);
-			if ((platform != null) && (platform.length() == 0)) {
-				platform = null;
-			}
+			
+			String locale = readNonEmptyAttribute(configurationElement, ATT_LOCALE);
+			String platform = readNonEmptyAttribute(configurationElement, ATT_PLATFORM);
 
 			// Read out the parameters, if any.
-			final ParameterizedCommand parameterizedCommand;
-			if (command == null) {
-				parameterizedCommand = null;
-			} else if (viewParameter != null) { 
-				HashMap parms = new HashMap();
-				parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
-				parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
-			} else {
-				parameterizedCommand = readParameters(configurationElement,
-						warningsToLog, command);
+			ParameterizedCommand parameterizedCommand = 
+				readParameterizedCommand(warningsToLog, configurationElement, viewParameter, command);
+
+			List modifiedBindings = applyModifiers(keySequence, keySequenceText, platform, sequenceModifiers, parameterizedCommand, schemeId, contextId, locale, warningsToLog);
+
+			KeyBinding binding = (KeyBinding) modifiedBindings.get(0);
+			if(modifiedBindings.size() > 1) {
+				for (int j = 1; j < modifiedBindings.size(); j++) {
+					bindings.add(modifiedBindings.get(j));
+				}
 			}
 
-			final Binding binding = new KeyBinding(keySequence,
-					parameterizedCommand, schemeId, contextId, locale,
-					platform, null, Binding.SYSTEM);
 			if (Util.WS_COCOA.equals(platform)) {
 				cocoaTempList.add(binding);
 			} else if (Util.WS_CARBON.equals(platform)) {
@@ -791,6 +730,279 @@ public final class BindingPersistence extends PreferencePersistence {
 		logWarnings(
 				warningsToLog,
 				"Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point"); //$NON-NLS-1$
+	}
+	
+	private static List applyModifiers(KeySequence keySequence, String keySequenceText,
+			String platform, IConfigurationElement[] sequenceModifiers,
+			ParameterizedCommand parameterizedCommand, String schemeId,
+			String contextId, String locale, List warningsToLog) {
+
+		List bindings = new ArrayList();
+
+		for (int i = 0; i < sequenceModifiers.length; i++) {
+
+			IConfigurationElement sequenceModifier = sequenceModifiers[i];
+			String findSequence = sequenceModifier.getAttribute(ATT_FIND);
+
+			if (keySequenceText.startsWith(findSequence)) {
+				String replaceSequence = sequenceModifier.getAttribute(ATT_REPLACE);
+				String modifiedSequence = replaceSequence + keySequenceText.substring(findSequence.length());
+				String platformsString = sequenceModifier.getAttribute(ATT_PLATFORMS);
+
+				String[] platforms = parseCommaSeparatedString(platformsString);
+				
+				try {
+					if (platform == null) {
+						addGenericBindings(keySequence, parameterizedCommand, schemeId, contextId, locale,
+								bindings, modifiedSequence, platforms);
+	
+					} else {
+						getBindingForPlatform(keySequence, platform,
+								parameterizedCommand, schemeId, contextId, locale,
+								bindings, modifiedSequence, platforms);
+					}
+				}catch(ParseException e) {
+					bindings.clear();
+					addWarning(
+							warningsToLog,
+							"Cannot create modified sequence for key binding", //$NON-NLS-1$
+							sequenceModifier, parameterizedCommand.getId(), ATT_REPLACE,
+							replaceSequence);
+
+				}
+				break;
+			}
+		}
+		
+		if(bindings.size() == 0) {
+			// no modifier was applied/error occurred  ...
+			KeyBinding binding = new KeyBinding(keySequence,
+					parameterizedCommand, schemeId, contextId, locale,
+					platform, null, Binding.SYSTEM);
+			bindings.add(binding);
+		}
+
+		return bindings;
+	}
+
+	private static void getBindingForPlatform(KeySequence keySequence,
+			String platform, ParameterizedCommand parameterizedCommand,
+			String schemeId, String contextId, String locale, List bindings,
+			String modifiedSequence, String[] platforms) throws ParseException {
+		
+		int j = 0;
+		for (; j < platforms.length; j++) {
+			if(platforms[j].equals(SWT.getPlatform())) {
+				KeyBinding newBinding = new KeyBinding(KeySequence
+						.getInstance(modifiedSequence),
+						parameterizedCommand, schemeId, contextId,
+						locale, platforms[j], null, Binding.SYSTEM);
+				bindings.add(newBinding);
+				break;
+			}
+		}
+		if(j == platforms.length) {
+			// platform doesn't match. use the unmodified sequence
+			KeyBinding newBinding = new KeyBinding(keySequence,
+					parameterizedCommand, schemeId, contextId,
+					locale, null, null, Binding.SYSTEM);
+			bindings.add(newBinding);
+		}
+	}
+
+	private static void addGenericBindings(KeySequence keySequence, ParameterizedCommand parameterizedCommand,
+			String schemeId, String contextId, String locale, List bindings,
+			String modifiedSequence, String[] platforms) throws ParseException {
+		
+		KeyBinding originalBinding = new KeyBinding(keySequence,
+				null, schemeId, contextId, locale,
+				null, null, Binding.SYSTEM);
+		bindings.add(originalBinding);
+		
+		String platform = SWT.getPlatform();
+		boolean modifierExists = false;
+		for (int i = 0; i < platforms.length; i++) {
+			if(platforms[i].equals(platform)) {
+				modifierExists = true;
+				break;
+			}
+		}
+		
+		if(modifierExists) {
+			KeyBinding newBinding = new KeyBinding(KeySequence.getInstance(modifiedSequence),
+					parameterizedCommand, schemeId, contextId,
+					locale, SWT.getPlatform(), null, Binding.SYSTEM);
+	
+			KeyBinding deleteBinding = new KeyBinding(keySequence,
+					null, schemeId, contextId,
+					locale, SWT.getPlatform(), null, Binding.SYSTEM);
+
+			bindings.add(newBinding);
+			bindings.add(deleteBinding);
+		}
+
+	}
+
+	private static IConfigurationElement[] getSequenceModifierElements(IConfigurationElement configurationElement) {
+		
+		IExtension extension = configurationElement.getDeclaringExtension();
+		IConfigurationElement[] configurationElements = extension.getConfigurationElements();
+		List modifierElements = new ArrayList();
+		for (int i = 0; i < configurationElements.length; i++) {
+			final IConfigurationElement anElement = configurationElements[i];
+			if(TAG_SEQUENCE_MODIFIER.equals(anElement.getName()))
+				modifierElements.add(anElement);
+		}
+		return (IConfigurationElement[]) modifierElements.toArray(new IConfigurationElement[modifierElements.size()]);
+	}
+
+	public static String[] parseCommaSeparatedString(String commaSeparatedString) {
+			StringTokenizer tokenizer = new StringTokenizer(commaSeparatedString, ", "); //$NON-NLS-1$
+			int count = tokenizer.countTokens();
+			String[] tokens = new String[count];
+			for (int i = 0; i < tokens.length; i++) {
+				tokens[i] = tokenizer.nextToken();
+			}
+			return tokens;
+	}
+
+
+	private static String readKeySequenceText(IConfigurationElement configurationElement) {
+		
+		String keySequenceText = configurationElement.getAttribute(ATT_SEQUENCE);
+		if (isEmpty(keySequenceText)) {
+			keySequenceText = configurationElement.getAttribute(ATT_KEY_SEQUENCE);
+		}
+		if (isEmpty(keySequenceText))
+			keySequenceText = configurationElement.getAttribute(ATT_STRING);
+
+		return keySequenceText;
+
+	}
+	
+	private static KeySequence readKeySequence(IConfigurationElement configurationElement, List warningsToLog, String commandId, String keySequenceText) {
+
+		KeySequence keySequence = null;
+		if(keySequenceText.equals(configurationElement.getAttribute(ATT_STRING))){
+			// The key sequence is in the old-style format.
+			try {
+				keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
+			} catch (final IllegalArgumentException e) {
+				addWarning(warningsToLog, "Could not parse key sequence", //$NON-NLS-1$
+						configurationElement, commandId, "keySequence", //$NON-NLS-1$
+						keySequenceText);
+				return null;
+			}
+		} else {
+			// The key sequence is in the new-style format.
+			try {
+				keySequence = KeySequence.getInstance(keySequenceText);
+			} catch (final ParseException e) {
+				addWarning(warningsToLog, "Could not parse key sequence", //$NON-NLS-1$
+						configurationElement, commandId, "keySequence", //$NON-NLS-1$
+						keySequenceText);
+				return null;
+			}
+			if (keySequence.isEmpty() || !keySequence.isComplete()) {
+				addWarning(
+						warningsToLog,
+						"Key bindings should not have an empty or incomplete key sequence", //$NON-NLS-1$
+						configurationElement, commandId, "keySequence", //$NON-NLS-1$
+						keySequence.toString());
+				return null;
+			}
+
+		}
+		return keySequence;
+	}
+
+	private static ParameterizedCommand readParameterizedCommand(
+			final List warningsToLog,
+			final IConfigurationElement configurationElement,
+			String viewParameter, final Command command) {
+		final ParameterizedCommand parameterizedCommand;
+		if (command == null) {
+			parameterizedCommand = null;
+		} else if (viewParameter != null) { 
+			HashMap parms = new HashMap();
+			parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
+			parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
+		} else {
+			parameterizedCommand = readParameters(configurationElement,
+					warningsToLog, command);
+		}
+		return parameterizedCommand;
+	}
+
+	/**
+	 *  Reads the specified attribute from the configuration element. 
+	 *  If the value is an empty string, will return null.
+	 *  
+	 * @param configurationElement
+	 * @return the attribute value
+	 */
+	private static String readNonEmptyAttribute(IConfigurationElement configurationElement, String attribute) {
+		String attributeValue = configurationElement.getAttribute(attribute);
+		if ((attributeValue != null) && (attributeValue.length() == 0)) {
+			attributeValue = null;
+		}
+		return attributeValue;
+	}
+	
+	
+	private static String readContextId(
+			final IConfigurationElement configurationElement) {
+		String contextId = configurationElement
+				.getAttribute(ATT_CONTEXT_ID);
+		if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
+			contextId = null;
+		} else if ((contextId == null) || (contextId.length() == 0)) {
+			contextId = configurationElement.getAttribute(ATT_SCOPE);
+			if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
+				contextId = null;
+			}
+		}
+		if ((contextId == null) || (contextId.length() == 0)) {
+			contextId = IContextIds.CONTEXT_ID_WINDOW;
+		}
+		return contextId;
+	}
+
+	
+	private static String readSchemeId(IConfigurationElement configurationElement, List warningsToLog, String commandId) {
+		
+		String schemeId = configurationElement.getAttribute(ATT_SCHEME_ID);
+		if ((schemeId == null) || (schemeId.length() == 0)) {
+			schemeId = configurationElement
+					.getAttribute(ATT_KEY_CONFIGURATION_ID);
+			if ((schemeId == null) || (schemeId.length() == 0)) {
+				schemeId = configurationElement
+						.getAttribute(ATT_CONFIGURATION);
+				if ((schemeId == null) || (schemeId.length() == 0)) {
+					// The scheme id should never be null. This is invalid.
+					addWarning(warningsToLog, "Key bindings need a scheme", //$NON-NLS-1$
+							configurationElement, commandId);
+				}
+			}
+		}
+		return schemeId;
+	}
+	
+	private static String readCommandId(
+			final IConfigurationElement configurationElement) {
+		String commandId = configurationElement
+				.getAttribute(ATT_COMMAND_ID);
+		if ((commandId == null) || (commandId.length() == 0)) {
+			commandId = configurationElement.getAttribute(ATT_COMMAND);
+		}
+		if ((commandId != null) && (commandId.length() == 0)) {
+			commandId = null;
+		}
+		return commandId;
+	}
+	
+	private static boolean isEmpty(String string) {
+		return string == null || string.length() == 0;
 	}
 
 	/**

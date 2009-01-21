@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="bindings" name="Bindings"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;
 The &lt;code&gt;org.eclipse.ui.bindings&lt;/code&gt; extension point is used to declare bindings and schemes.  Schemes are sets of one or more bindings.  A binding is a mapping between a certain group of conditions, some user input and a triggered command.
@@ -25,10 +25,16 @@ A scheme is a group of these bindings into a set that the end user can select.  
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="scheme" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="key" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="sequenceModifier" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -49,9 +55,9 @@ A scheme is a group of these bindings into a set that the end user can select.  
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -59,9 +65,9 @@ A scheme is a group of these bindings into a set that the end user can select.  
 
    <element name="scheme">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             &lt;p&gt;
 A scheme is a grouping of bindings that an end user can chose to use.
@@ -84,9 +90,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
                <documentation>
                   The name for this scheme, as it should be displayed to an end-user.  This value should be translated.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -94,9 +100,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
                <documentation>
                   The description for this scheme, as it would be displayed to an end user.  This value should be translated.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parentId" type="string">
@@ -104,9 +110,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
                <documentation>
                   The identifier for the parent of this scheme.  If there is no parent, then do not specify this attribute.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.bindings/scheme/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -114,9 +120,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
 
    <element name="key">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="commandId"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             &lt;p&gt;A binding between some keyboard input and the triggering of a command.&lt;/p&gt;
          </documentation>
@@ -152,9 +158,9 @@ It is also strongly recommended that you keep the key sequences short.  One or t
                <documentation>
                   The identifier of the scheme in which this key binding is active.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.bindings/scheme/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="contextId" type="string" use="default" value="org.eclipse.ui.contexts.window">
@@ -162,9 +168,9 @@ It is also strongly recommended that you keep the key sequences short.  One or t
                <documentation>
                   The identifier of the context in which this key binding is active.  Please see the &lt;code&gt;org.eclipse.ui.contexts&lt;/code&gt; extension point.  If this is not specified, then it defaults to &lt;code&gt;org.eclipse.ui.contexts.window&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.contexts/context/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="commandId" type="string">
@@ -177,9 +183,9 @@ The identifier of the command which should be executed when this binding is trig
 If no command identifier is specified, this is a deletion marker.  This means that any binding in the same context with the same sequence, platform and locale will become inactive when this binding becomes active.  If the platform or locale on a deletion is not specified, then it matches any platform or locale.
 &lt;/p&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="platform" type="string">
@@ -201,9 +207,9 @@ If no command identifier is specified, this is a deletion marker.  This means th
 
    <element name="parameter">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="id"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             A parameter name and value that should be passed to the command when it is executed.  This allows for the command to be qualified in some way.  For example, a &quot;Show View&quot; command might accept the view id as a parameter.
          </documentation>
@@ -214,9 +220,9 @@ If no command identifier is specified, this is a deletion marker.  This means th
                <documentation>
                   The parameter name as understood by the command.  This is not a translatable name, but the key to name-value map.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/commandParameter/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="value" type="string">
@@ -229,28 +235,92 @@ If no command identifier is specified, this is a deletion marker.  This means th
       </complexType>
    </element>
 
+   <element name="sequenceModifier">
+      <annotation>
+         <documentation>
+            Sequence Modifiers transform the key bindings on this extension. If a keybinding defined in this extension starts with the &apos;find&apos; string, it will replace that portion with the &apos;replace&apos; string. This replacement happens either if the platform in the keybinding is one of the platform in the &apos;platforms&apos; or the platform in keybinding is not specified, but the current platform is one of the platform specified in &apos;platforms&apos;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="find" type="string" use="required">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;
+The key sequence that has to be replaced. This key sequence should consist of one or more modifier keys without the actual key. The keys are separated by the &lt;code&gt;+&lt;/code&gt; character.
+&lt;/p&gt;
+&lt;p&gt;
+The recognized modifiers keys are &lt;code&gt;M1&lt;/code&gt;, &lt;code&gt;M2&lt;/code&gt;, &lt;code&gt;M3&lt;/code&gt;, &lt;code&gt;M4&lt;/code&gt;, &lt;code&gt;ALT&lt;/code&gt;, &lt;code&gt;COMMAND&lt;/code&gt;, &lt;code&gt;CTRL&lt;/code&gt;, and &lt;code&gt;SHIFT&lt;/code&gt;.  The &quot;M&quot; modifier keys are a platform-independent way of representing keys, and these are generally preferred.  &lt;code&gt;M1&lt;/code&gt; is the &lt;code&gt;COMMAND&lt;/code&gt; key on MacOS X, and the &lt;code&gt;CTRL&lt;/code&gt; key on most other platforms.  &lt;code&gt;M2&lt;/code&gt; is the &lt;code&gt;SHIFT&lt;/code&gt; key.  &lt;code&gt;M3&lt;/code&gt; is the &lt;code&gt;Option&lt;/code&gt; key on MacOS X, and the &lt;code&gt;ALT&lt;/code&gt; key on most other platforms.  &lt;code&gt;M4&lt;/code&gt; is the &lt;code&gt;CTRL&lt;/code&gt; key on MacOS X, and is undefined on other platforms.
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="replace" type="string" use="required">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;
+The key sequence that will be replaced with. This key sequence should consist of one or more modifier keys without the actual key. The keys are separated by the &lt;code&gt;+&lt;/code&gt; character.
+&lt;/p&gt;
+&lt;p&gt;
+The recognized modifiers keys are &lt;code&gt;M1&lt;/code&gt;, &lt;code&gt;M2&lt;/code&gt;, &lt;code&gt;M3&lt;/code&gt;, &lt;code&gt;M4&lt;/code&gt;, &lt;code&gt;ALT&lt;/code&gt;, &lt;code&gt;COMMAND&lt;/code&gt;, &lt;code&gt;CTRL&lt;/code&gt;, and &lt;code&gt;SHIFT&lt;/code&gt;.  The &quot;M&quot; modifier keys are a platform-independent way of representing keys, and these are generally preferred.  &lt;code&gt;M1&lt;/code&gt; is the &lt;code&gt;COMMAND&lt;/code&gt; key on MacOS X, and the &lt;code&gt;CTRL&lt;/code&gt; key on most other platforms.  &lt;code&gt;M2&lt;/code&gt; is the &lt;code&gt;SHIFT&lt;/code&gt; key.  &lt;code&gt;M3&lt;/code&gt; is the &lt;code&gt;Option&lt;/code&gt; key on MacOS X, and the &lt;code&gt;ALT&lt;/code&gt; key on most other platforms.  &lt;code&gt;M4&lt;/code&gt; is the &lt;code&gt;CTRL&lt;/code&gt; key on MacOS X, and is undefined on other platforms.
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="platforms" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A comma seperated value of the platforms for which the modifier to be applied on . The individual platform string should be specified in the same way as the string from &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.  For example, the following strings are considered valid for a platform: &lt;code&gt;win32&lt;/code&gt;, &lt;code&gt;gtk&lt;/code&gt;, &lt;code&gt;motif&lt;/code&gt;, &lt;code&gt;carbon&lt;/code&gt; and &lt;code&gt;photon&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
-      <appinfo>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+There is no public API for defining bindings.  To try to achieve stability for the user, bindings are only defined through the extension points.  If you are an RCP application, you should be able to override this behaviour in the &lt;code&gt;WorkbenchAdvisor&lt;/code&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;command&lt;/a&gt;.  For the binding to work, the command must have an active &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;handler&lt;/a&gt;.  Handlers can be registered programmatically; please see the &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; extension point.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.1
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;pre&gt;
 &lt;extension
  point=&quot;org.eclipse.ui.bindings&quot;&gt;
+ &lt;sequenceModifier
+  find=&quot;M1+M2&quot;
+  replace=&quot;M2+M3&quot;
+  platforms=&quot;cocoa,carbon&quot; /&gt;
  &lt;key
   sequence=&quot;M2+F5&quot;
   commandId=&quot;example.commandId&quot;
   schemeId=&quot;org.eclipse.ui.defaultAcceleratorConfiguration&quot;
   contextId=&quot;org.eclipse.ui.contexts.dialog&quot; /&gt;
+ &lt;key
+  sequence=&quot;M1+M2+8&quot;
+  commandId=&quot;another.example.commandId&quot;
+  schemeId=&quot;org.eclipse.ui.defaultAcceleratorConfiguration&quot;
+  contextId=&quot;org.eclipse.ui.contexts.window&quot; /&gt;
  &lt;key
   sequence=&quot;M2+F7&quot;
   commandId=&quot;other.commandId&quot;
@@ -262,31 +332,19 @@ If no command identifier is specified, this is a deletion marker.  This means th
   id=&quot;default.id&quot; /&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appinfo>
-         <meta.section type="apiInfo"/>
-      </appinfo>
-      <documentation>
-         &lt;p&gt;
-There is no public API for defining bindings.  To try to achieve stability for the user, bindings are only defined through the extension points.  If you are an RCP application, you should be able to override this behaviour in the &lt;code&gt;WorkbenchAdvisor&lt;/code&gt;.
-&lt;/p&gt;
-&lt;p&gt;
-For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;command&lt;/a&gt;.  For the binding to work, the command must have an active &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;handler&lt;/a&gt;.  Handlers can be registered programmatically; please see the &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; extension point.
-&lt;/p&gt;
+In this example, on win32 &lt;code&gt;another.example.commandId&lt;/code&gt; would be bound to &lt;b&gt;M1+M2+8&lt;/b&gt;, but on cocoa it would be bound to &lt;b&gt;M2+M3+8&lt;/b&gt;.
+
       </documentation>
    </annotation>
 
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         Copyright (c) 2005,2007 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005,2009 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

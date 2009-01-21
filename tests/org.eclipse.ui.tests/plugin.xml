@@ -4064,5 +4064,49 @@
                id="popup:org.eclipse.ui.tests.dynamicMenuContribution">
          </dynamic>
       </menuContribution>
-   </extension>   
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+         <sequenceModifier
+               find="M1+8"
+               platforms="carbon,cocoa,gtk,win32"
+               replace="M2+8">
+         </sequenceModifier>
+      <key
+            commandId="org.eclipse.ui.navigate.addToWorkingSet"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+8 W">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.import"
+            contextId="org.eclipse.ui.contexts.window"
+            platform="carbon,cocoa,gtk,win32"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+8 I">
+	  </key>
+   </extension>
+      <extension
+            point="org.eclipse.ui.bindings">
+         <key
+               commandId="org.eclipse.ui.file.export"
+               contextId="org.eclipse.ui.contexts.window"
+               schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+               sequence="M1+8 E">
+         </key>
+      </extension>
+      <extension
+            point="org.eclipse.ui.bindings">
+         <key
+               commandId="org.eclipse.ui.navigate.back"
+               contextId="org.eclipse.ui.contexts.window"
+               schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+               sequence="M1+8 Q">
+         </key>
+         <sequenceModifier
+               find="M1+8"
+               platforms="cocoa"
+               replace="M2+8">
+         </sequenceModifier>
+      </extension>   
 </plugin>            

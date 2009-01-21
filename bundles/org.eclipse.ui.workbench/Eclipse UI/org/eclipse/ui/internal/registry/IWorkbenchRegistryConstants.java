@@ -869,6 +869,8 @@ public interface IWorkbenchRegistryConstants {
 	 */
 	public static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
 
+	public static String TAG_SEQUENCE_MODIFIER = "sequenceModifier"; //$NON-NLS-1$
+
 	/**
 	 * The name of the active when element, which appears on a handler
 	 * definition.
@@ -1332,4 +1334,10 @@ public interface IWorkbenchRegistryConstants {
 	public static final String ATT_PRIORITY_LEVEL = "priorityLevel"; //$NON-NLS-1$
 	
 	public static final String ATT_MODE = "mode"; //$NON-NLS-1$
+
+	public static final String ATT_PLATFORMS = "platforms"; //$NON-NLS-1$
+
+	public static final String ATT_REPLACE = "replace"; //$NON-NLS-1$
+
+	public static final String ATT_FIND = "find"; //$NON-NLS-1$
 }

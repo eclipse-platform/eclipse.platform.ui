@@ -126,8 +126,8 @@ public final class BindingPersistenceTest extends UITestCase {
 
 		ParameterizedCommand about = new ParameterizedCommand(commandService
 				.getCommand("org.eclipse.ui.help.aboutAction"), null);
-		KeySequence m5A = KeySequence.getInstance("M1+8 A");
-		KeySequence m5B = KeySequence.getInstance("M1+8 B");
+		KeySequence m18A = KeySequence.getInstance("M1+8 A");
+		KeySequence m18B = KeySequence.getInstance("M1+8 B");
 		int numAboutBindings = 0;
 
 		Binding[] bindings = bindingService.getBindings();
@@ -138,10 +138,10 @@ public final class BindingPersistenceTest extends UITestCase {
 				int idx = (platform == null ? -1 : platform.indexOf(','));
 				assertEquals(binding.toString(), -1, idx);
 				if (about.equals(binding.getParameterizedCommand())) {
-					if (m5A.equals(binding.getTriggerSequence())) {
+					if (m18A.equals(binding.getTriggerSequence())) {
 						numAboutBindings++;
 						assertNull("M+8 A", binding.getPlatform());
-					} else if (m5B.equals(binding.getTriggerSequence())) {
+					} else if (m18B.equals(binding.getTriggerSequence())) {
 						numAboutBindings++;
 						// assertEquals(Util.WS_CARBON, binding.getPlatform());
 						// temp work around for honouring carbon bindings
@@ -156,6 +156,123 @@ public final class BindingPersistenceTest extends UITestCase {
 		// assertEquals(2, numAboutBindings);
 		// temp work around for honouring carbon bindings
 		assertEquals(3, numAboutBindings);
+	}
+
+	public final void testBindingTransform() throws Exception {
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		ParameterizedCommand addWS = new ParameterizedCommand(commandService
+				.getCommand("org.eclipse.ui.navigate.addToWorkingSet"), null);
+		KeySequence m18w = KeySequence.getInstance("M1+8 W");
+		KeySequence m28w = KeySequence.getInstance("M2+8 W");
+		boolean foundDeleteMarker = false;
+		int numOfMarkers = 0;
+		Binding[] bindings = bindingService.getBindings();
+		for (int i = 0; i < bindings.length; i++) {
+			final Binding binding = bindings[i];
+			if (binding.getType() == Binding.SYSTEM) {
+				String platform = binding.getPlatform();
+				int idx = (platform == null ? -1 : platform.indexOf(','));
+				assertEquals(binding.toString(), -1, idx);
+				if (addWS.equals(binding.getParameterizedCommand())) {
+					if (m18w.equals(binding.getTriggerSequence())) {
+						numOfMarkers++;
+						assertNull(m18w.format(), binding.getPlatform());
+					} else if (m28w.equals(binding.getTriggerSequence())) {
+						numOfMarkers++;
+						assertTrue(platform, Util.WS_CARBON.equals(platform)
+								|| Util.WS_COCOA.equals(platform)
+								|| Util.WS_GTK.equals(platform)
+								|| Util.WS_WIN32.equals(platform));
+					}
+				} else if (binding.getParameterizedCommand() == null
+						&& m18w.equals(binding.getTriggerSequence())) {
+					numOfMarkers++;
+					foundDeleteMarker = true;
+				}
+			}
+		}
+		assertEquals(3, numOfMarkers);
+		assertTrue("Unable to find delete marker", foundDeleteMarker);
+
+	}
+
+	public void testModifierWithPlatform() throws Exception {
+
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+		ParameterizedCommand importCmd = new ParameterizedCommand(
+				commandService.getCommand("org.eclipse.ui.file.import"), null);
+		Binding[] bindings = bindingService.getBindings();
+		int numOfMarkers = 0;
+		for (int i = 0; i < bindings.length; i++) {
+			final Binding binding = bindings[i];
+			if (binding.getType() != Binding.SYSTEM)
+				continue;
+
+			if (importCmd.equals(binding.getParameterizedCommand())) {
+				// make sure the modifier is applied
+				assertEquals(KeySequence.getInstance("M2+8 I"), binding
+						.getTriggerSequence());
+				numOfMarkers++;
+			}
+		}
+
+		// only one binding, if the platform matches
+		assertEquals(numOfMarkers, 1);
+	}
+
+	public void testModifierNotApplied() throws Exception {
+
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+		ParameterizedCommand exportCmd = new ParameterizedCommand(
+				commandService.getCommand("org.eclipse.ui.file.export"), null);
+		Binding[] bindings = bindingService.getBindings();
+		for (int i = 0; i < bindings.length; i++) {
+			final Binding binding = bindings[i];
+			if (binding.getType() != Binding.SYSTEM)
+				continue;
+
+			if (exportCmd.equals(binding.getParameterizedCommand())) {
+				// make sure the modifier is NOT applied
+				assertEquals(KeySequence.getInstance("M1+8 E"), binding
+						.getTriggerSequence());
+				break;
+			}
+		}
+	}
+	
+	public void testDifferentPlatform() throws Exception {
+
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+		ParameterizedCommand backCmd = new ParameterizedCommand(
+				commandService.getCommand("org.eclipse.ui.navigate.back"), null);
+		Binding[] bindings = bindingService.getBindings();
+		for (int i = 0; i < bindings.length; i++) {
+			final Binding binding = bindings[i];
+			if (binding.getType() != Binding.SYSTEM)
+				continue;
+
+			if (backCmd.equals(binding.getParameterizedCommand())) {
+				// make sure the modifier is NOT applied
+				assertEquals(KeySequence.getInstance("M1+8 Q"), binding
+						.getTriggerSequence());
+				// and the platform should be null
+				assertNull(binding.getPlatform());
+				break;
+			}
+		}
 	}
 
 }
