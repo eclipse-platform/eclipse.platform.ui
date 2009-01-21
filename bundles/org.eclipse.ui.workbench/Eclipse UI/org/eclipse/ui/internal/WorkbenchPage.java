@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1314,6 +1314,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         
         IEditorReference[] editorRefs = (IEditorReference[]) toClose.toArray(new IEditorReference[toClose.size()]);
+        
+        // if active navigation position belongs to an editor being closed, update it
+        // (The navigation position for an editor N was updated as an editor N + 1 
+        // was activated. As a result, all but the last editor have up-to-date 
+        // navigation positions.)
+        for (int i = 0; i < editorRefs.length; i++) {
+            IEditorReference ref = editorRefs[i];
+            if (ref == null)
+            	continue;
+            IEditorPart oldPart = ref.getEditor(false);
+            if (oldPart == null)
+            	continue;
+            if (navigationHistory.updateActive(oldPart))
+            	break; // updated - skip the rest
+        }
         
         // notify the model manager before the close
         List partsToClose = new ArrayList();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -927,4 +927,27 @@ public class NavigationHistory implements INavigationHistory {
 			it.remove();
 		}
 	}
+
+	public boolean updateActive(IEditorPart editor) {
+        NavigationHistoryEntry e = getEntry(activeEntry);
+        if (e == null)
+        	return false;
+        // 1) check if editor ID matches
+        IWorkbenchPartSite site = editor.getSite();
+        if (site == null) // might happen if site has not being initialized yet
+        	return false;
+        String editorID = site.getId(); 
+        if (editorID == null) // should not happen for an editor
+        	return false;
+        if (!editorID.equals(e.editorInfo.editorID))
+            return false;
+        // 2) check that input matches
+		IEditorInput input = editor.getEditorInput();
+		if (input == null)
+			return false;
+		if (!input.equals(e.editorInfo.editorInput))
+			return false;
+		updateEntry(e);
+		return true;
+    }
 }

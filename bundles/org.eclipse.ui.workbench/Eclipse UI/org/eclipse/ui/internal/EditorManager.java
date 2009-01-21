@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1567,7 +1567,7 @@ public class EditorManager implements IExtensionChangeHandler {
 				editorMem.putString(IWorkbenchConstants.TAG_WORKBOOK,
 						editorPane.getWorkbook().getID());
 
-				if (editor == page.getActivePart()) {
+				if (editor == page.getActiveEditor()) {
 					editorMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART,
 							"true"); //$NON-NLS-1$
 				}
