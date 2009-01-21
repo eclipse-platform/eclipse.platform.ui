@@ -90,7 +90,7 @@ public class WritableValue extends AbstractObservableValue {
 
         if (this.value == null && value != null) {
             changed = true;
-        } else if (this.value != null && !this.value.equals(value)) {
+        } else if (this.value != null && this.value != value) {
             changed = true;
         }
 
