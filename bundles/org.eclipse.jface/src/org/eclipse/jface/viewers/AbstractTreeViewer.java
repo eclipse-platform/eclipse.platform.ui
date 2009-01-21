@@ -1509,7 +1509,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (level == ALL_LEVELS || level > 0) {
 
 			if (widget instanceof Item) {
-				setExpanded((Item) widget, false);
+				Item item = (Item) widget;
+				setExpanded(item, false);
+				Object element = item.getData();
+				if (element != null && level == ALL_LEVELS) {
+					internalPruneChildren(item, element);
+					return;
+				}
 			}
 
 			if (level == ALL_LEVELS || level > 1) {
@@ -2531,28 +2537,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (widget instanceof Item) {
 			Item ti = (Item) widget;
 			if (!getExpanded(ti)) {
-				// need a dummy node if element is expandable;
-				// but try to avoid recreating the dummy node
-				boolean needDummy = isExpandable(ti, null, parent);
-				boolean haveDummy = false;
-				// remove all children
-				Item[] items = getItems(ti);
-				for (int i = 0; i < items.length; i++) {
-					if (items[i].getData() != null) {
-						disassociate(items[i]);
-						items[i].dispose();
-					} else {
-						if (needDummy && !haveDummy) {
-							haveDummy = true;
-						} else {
-							items[i].dispose();
-						}
-					}
-				}
-				if (needDummy && !haveDummy) {
-					newItem(ti, SWT.NULL, -1);
-				}
-
+				internalPruneChildren(ti, parent);
 				return;
 			}
 		}
@@ -2720,6 +2705,30 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			// System.out.println("WORKAROUND setRedraw");
 			tree.setRedraw(false);
 			tree.setRedraw(true);
+		}
+	}
+
+	private void internalPruneChildren(Item item, Object element) {
+		// need a dummy node if element is expandable;
+		// but try to avoid recreating the dummy node
+		boolean needDummy = isExpandable(item, null, element);
+		boolean haveDummy = false;
+		// remove all children
+		Item[] items = getItems(item);
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getData() != null) {
+				disassociate(items[i]);
+				items[i].dispose();
+			} else {
+				if (needDummy && !haveDummy) {
+					haveDummy = true;
+				} else {
+					items[i].dispose();
+				}
+			}
+		}
+		if (needDummy && !haveDummy) {
+			newItem(item, SWT.NULL, -1);
 		}
 	}
 
