@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,9 +67,10 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     private String imageFilename;
 
-    private transient ImageDescriptor imageDesc;
+    private transient volatile ImageDescriptor imageDesc;
+    private transient Object imageDescLock = new Object();
 
-    private boolean testImage = true;
+    private volatile boolean testImage = true;
 
     private String className;
 
@@ -271,47 +272,45 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @return the image descriptor
      */
     public ImageDescriptor getImageDescriptor() {
-    	if (testImage) {
-    		testImage = false;
+	    	if (!testImage)
+	            return imageDesc;
+	    	
+    	synchronized (imageDescLock) {
+	    	if (!testImage) // test again in case we waited for another thread to calculate it
+	            return imageDesc;
 			if (imageDesc == null) {
 				String imageFileName = getImageFilename();
 				String command = getFileName();
-				if (imageFileName != null && configurationElement != null) {
-					imageDesc = AbstractUIPlugin.imageDescriptorFromPlugin(
-							configurationElement.getNamespace(), imageFileName);
-				} else if (command != null) {
-					imageDesc = WorkbenchImages.getImageDescriptorFromProgram(
-							command, 0);
-				}
+				if (imageFileName != null && configurationElement != null)
+					imageDesc = AbstractUIPlugin.imageDescriptorFromPlugin(configurationElement.getNamespaceIdentifier(), imageFileName);
+				else if (command != null)
+					imageDesc = WorkbenchImages.getImageDescriptorFromProgram(command, 0);
 			}
-			verifyImage();    		
+			// Verifies that the image descriptor generates an image.  If not, the 
+			// descriptor is replaced with the default image.
+			if (imageDesc == null)
+				imageDesc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+			else {
+				Image img = imageDesc.createImage(false);
+				if (img == null) // @issue what should be the default image?
+				    imageDesc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+				else
+				    img.dispose();
+			}
+			testImage = false;
+	        return imageDesc;
     	}
-    	
-        return imageDesc;
     }
 
     /**
-	 * Verifies that the image descriptor generates an image.  If not, the 
-	 * descriptor is replaced with the default image.
-	 * 
-	 * @since 3.1
-	 */
-	private void verifyImage() {
-		if (imageDesc == null) {
-			imageDesc = WorkbenchImages
-         		.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-		}
-		else {
-			Image img = imageDesc.createImage(false);
-			if (img == null) {
-			    // @issue what should be the default image?
-			    imageDesc = WorkbenchImages
-			            .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-			} else {
-			    img.dispose();
-			}
-		}
-	}
+     * The Image to use to repesent this editor
+     */
+    /* package */void setImageDescriptor(ImageDescriptor desc) {
+    	synchronized (imageDescLock) {
+	        imageDesc = desc;
+	        testImage = true;
+    	}
+    }
 
     /**
      * The name of the image describing this editor.
@@ -524,14 +523,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     /* package */void setID(String anID) {
         Assert.isNotNull(anID);
         id = anID;
-    }
-
-    /**
-     * The Image to use to repesent this editor
-     */
-    /* package */void setImageDescriptor(ImageDescriptor desc) {
-        imageDesc = desc;
-        testImage = true;
     }
 
     /**
