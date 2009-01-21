@@ -217,13 +217,21 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		}
     }
 
+    /** keep track of how often we schedule the job to avoid overloading the JobManager */
+    private long lastUpdateJobScheduleRequest = 0;
+    
     /**
      * Schedule an update.
      */
     void scheduleUpdate() {
         if (PlatformUI.isWorkbenchRunning()) {
-            //Add in a 100ms delay so as to keep priority low
-            updateJob.schedule(100);
+            // make sure we don't schedule too often
+        	long now = System.currentTimeMillis();
+        	if (now - lastUpdateJobScheduleRequest >= 100) {
+        		//Add in a 100ms delay so as to keep priority low
+        		updateJob.schedule(100);
+        		lastUpdateJobScheduleRequest = now;
+        	}
         }
     }
 

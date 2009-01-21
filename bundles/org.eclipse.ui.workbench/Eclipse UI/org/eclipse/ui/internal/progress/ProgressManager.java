@@ -31,6 +31,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -98,10 +99,9 @@ public class ProgressManager extends ProgressProvider implements
 
 	final Object familyKey = new Object();
 
-	private IJobProgressManagerListener[] listeners = new IJobProgressManagerListener[0];
-
-	final Object listenersKey = new Object();
-
+	//	list of IJobProgressManagerListener
+	private ListenerList listeners = new ListenerList();
+	
 	IJobChangeListener changeListener;
 
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
@@ -556,20 +556,18 @@ public class ProgressManager extends ProgressProvider implements
 			sleepGroup(group,info);
 		}
 
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				IJobProgressManagerListener listener = listeners[i];
-				// Is this one the user never sees?
-				if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
-					continue;
-				if (listener.showsDebug())
-					listener.refreshJobInfo(info);
-				else
-					listener.removeJob(info);
+		Object[] listenersArray = listeners.getListeners();
+		for (int i = 0; i < listenersArray.length; i++) {
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+			// Is this one the user never sees?
+			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
+				continue;
+			if (listener.showsDebug())
+				listener.refreshJobInfo(info);
+			else
+				listener.removeJob(info);
 
-			}
 		}
-
 	}
 
 	/**
@@ -577,20 +575,18 @@ public class ProgressManager extends ProgressProvider implements
 	 * @param group
 	 */
 	private void sleepGroup(GroupInfo group, JobInfo info) {
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				
-				IJobProgressManagerListener listener = listeners[i];
-				if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
-					continue;
-		
-				if (listener.showsDebug() || group.isActive())
-					listener.refreshGroup(group);
-				else
-					listener.removeGroup(group);
-			}
+		Object[] listenersArray = listeners.getListeners();
+		for (int i = 0; i < listenersArray.length; i++) {
+			
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
+				continue;
+	
+			if (listener.showsDebug() || group.isActive())
+				listener.refreshGroup(group);
+			else
+				listener.removeGroup(group);
 		}
-		
 	}
 
 	/**
@@ -662,17 +658,7 @@ public class ProgressManager extends ProgressProvider implements
 	 * @param listener
 	 */
 	void addListener(IJobProgressManagerListener listener) {
-
-		synchronized (listenersKey) {
-			ArrayList newListeners = new ArrayList(listeners.length + 1);
-			for (int i = 0; i < listeners.length; i++) {
-				newListeners.add(listeners[i]);
-			}
-			newListeners.add(listener);
-			listeners = new IJobProgressManagerListener[newListeners.size()];
-			newListeners.toArray(listeners);
-		}
-
+		listeners.add(listener);
 	}
 
 	/**
@@ -682,17 +668,7 @@ public class ProgressManager extends ProgressProvider implements
 	 * @param listener
 	 */
 	void removeListener(IJobProgressManagerListener listener) {
-		synchronized (listenersKey) {
-			ArrayList newListeners = new ArrayList();
-			for (int i = 0; i < listeners.length; i++) {
-				if (listeners[i].equals(listener)) {
-					continue;
-				}
-				newListeners.add(listeners[i]);
-			}
-			listeners = new IJobProgressManagerListener[newListeners.size()];
-			newListeners.toArray(listeners);
-		}
+		listeners.remove(listener);
 	}
 
 	/**
@@ -732,12 +708,11 @@ public class ProgressManager extends ProgressProvider implements
 			refreshGroup(group);
 		}
 
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				IJobProgressManagerListener listener = listeners[i];
-				if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
-					listener.refreshJobInfo(info);
-				}
+		Object[] listenersArray = listeners.getListeners();
+		for (int i = 0; i < listenersArray.length; i++) {
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
+				listener.refreshJobInfo(info);
 			}
 		}
 	}
@@ -749,10 +724,9 @@ public class ProgressManager extends ProgressProvider implements
 	 */
 	public void refreshGroup(GroupInfo info) {
 
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				listeners[i].refreshGroup(info);
-			}
+		Object[] listenersArray = listeners.getListeners();
+		for (int i = 0; i < listenersArray.length; i++) {
+			((IJobProgressManagerListener)listenersArray[i]).refreshGroup(info);
 		}
 	}
 
@@ -763,10 +737,9 @@ public class ProgressManager extends ProgressProvider implements
 	public void refreshAll() {
 
 		pruneStaleJobs();
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				listeners[i].refreshAll();
-			}
+		Object[] listenersArray = listeners.getListeners();
+		for (int i = 0; i < listenersArray.length; i++) {
+			((IJobProgressManagerListener)listenersArray[i]).refreshAll();
 		}
 
 	}
@@ -787,15 +760,13 @@ public class ProgressManager extends ProgressProvider implements
 			}
 		}
 
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				IJobProgressManagerListener listener = listeners[i];
-				if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
-					listener.removeJob(info);
-				}
+		Object[] listenersArray = listeners.getListeners();
+		for (int i = 0; i < listenersArray.length; i++) {
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
+				listener.removeJob(info);
 			}
 		}
-
 	}
 
 	/**
@@ -806,10 +777,9 @@ public class ProgressManager extends ProgressProvider implements
 	 */
 	public void removeGroup(GroupInfo group) {
 
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				listeners[i].removeGroup(group);
-			}
+		Object[] listenersArray = listeners.getListeners();
+		for (int i = 0; i < listenersArray.length; i++) {
+			((IJobProgressManagerListener)listenersArray[i]).removeGroup(group);
 		}
 	}
 
@@ -825,12 +795,11 @@ public class ProgressManager extends ProgressProvider implements
 		}
 
 		jobs.put(info.getJob(), info);
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				IJobProgressManagerListener listener = listeners[i];
-				if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
-					listener.addJob(info);
-				}
+		Object[] listenersArray = listeners.getListeners();
+		for (int i = 0; i < listenersArray.length; i++) {
+			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenersArray[i];
+			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
+				listener.addJob(info);
 			}
 		}
 	}
@@ -1066,9 +1035,7 @@ public class ProgressManager extends ProgressProvider implements
 	 * Shutdown the receiver.
 	 */
 	private void shutdown() {
-		synchronized (listenersKey) {
-			this.listeners = new IJobProgressManagerListener[0];
-		}
+		listeners.clear();
 		Job.getJobManager().setProgressProvider(null);
 		Job.getJobManager().removeJobChangeListener(this.changeListener);
 	}
