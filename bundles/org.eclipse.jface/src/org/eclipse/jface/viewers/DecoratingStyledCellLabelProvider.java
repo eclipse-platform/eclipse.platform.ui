@@ -290,7 +290,7 @@ public class DecoratingStyledCellLabelProvider extends
 
 	public void removeListener(ILabelProviderListener listener) {
 		super.removeListener(listener);
-		if (this.decorator != null) {
+		if (this.decorator != null && !isListenerAttached()) {
 			this.decorator.removeListener(this.labelProviderListener);
 		}
 	}
