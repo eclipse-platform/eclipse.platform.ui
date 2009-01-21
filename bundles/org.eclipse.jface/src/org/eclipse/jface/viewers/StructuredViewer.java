@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceListener;
@@ -79,12 +80,20 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	private List filters;
 
 	/**
+	 * Indicates whether the viewer should attempt to preserve the selection
+	 * across update operations.
+	 * 
+	 * @see #setSelection(ISelection, boolean)
+	 */
+	private boolean preserveSelection = true;
+
+	/**
 	 * Indicates whether a selection change is in progress on this viewer.
 	 * 
 	 * @see #setSelection(ISelection, boolean)
 	 */
 	private boolean inChange;
-
+	
 	/**
 	 * Used while a selection change is in progress on this viewer to indicates
 	 * whether the selection should be restored.
@@ -1307,7 +1316,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Attempts to preserves the current selection across a run of the given
-	 * code.
+	 * code. This method should not preserve the selection if
+	 * {@link #getPreserveSelection()} returns false.
 	 * <p>
 	 * The default implementation of this method:
 	 * <ul>
@@ -1315,14 +1325,16 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * <li>runs the given runnable</li>
 	 * <li>attempts to restore the old selection (using
 	 * <code>setSelectionToWidget</code></li>
-	 * <li>rediscovers the resulting selection (via <code>getSelection</code>)
-	 * </li>
-	 * <li>calls <code>handleInvalidSelection</code> if the resulting selection is different from the old selection</li>
+	 * <li>rediscovers the resulting selection (via <code>getSelection</code>)</li>
+	 * <li>calls <code>handleInvalidSelection</code> if the resulting selection
+	 * is different from the old selection</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * @param updateCode
 	 *            the code to run
+	 * 
+	 * @see #getPreserveSelection()
 	 */
 	protected void preservingSelection(Runnable updateCode) {
 		preservingSelection(updateCode, false);
@@ -1330,8 +1342,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Attempts to preserves the current selection across a run of the given
-	 * code, with a best effort to avoid scrolling if <code>reveal</code> is false,
-	 * or to reveal the selection if <code>reveal</code> is true.
+	 * code, with a best effort to avoid scrolling if <code>reveal</code> is
+	 * false, or to reveal the selection if <code>reveal</code> is true. This
+	 * method should not preserve the selection if
+	 * {@link #getPreserveSelection()} returns false.
 	 * <p>
 	 * The default implementation of this method:
 	 * <ul>
@@ -1339,8 +1353,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * <li>runs the given runnable</li>
 	 * <li>attempts to restore the old selection (using
 	 * <code>setSelectionToWidget</code></li>
-	 * <li>rediscovers the resulting selection (via <code>getSelection</code>)
-	 * </li>
+	 * <li>rediscovers the resulting selection (via <code>getSelection</code>)</li>
 	 * <li>calls <code>handleInvalidSelection</code> if the selection did not
 	 * take</li>
 	 * </ul>
@@ -1354,7 +1367,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @since 3.3
 	 */
 	void preservingSelection(Runnable updateCode, boolean reveal) {
-
+		if (!preserveSelection) {
+			return;
+		}
+		
 		ISelection oldSelection = null;
 		try {
 			// preserve selection
@@ -1755,6 +1771,42 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		if (elementMap != null) {
 			elementMap = new CustomHashtable(elementMap, comparer);
 		}
+	}
+
+	/**
+	 * Enable or disable the preserve selection behavior of this viewer. The
+	 * default is that the viewer attempts to preserve the selection across
+	 * update operations. This is an advanced option, to support clients that
+	 * manage the selection without relying on the viewer, or clients running
+	 * into performance problems when using viewers and {@link SWT#VIRTUAL}.
+	 * Note that this method has been introduced in 3.5 and that trying to
+	 * disable the selection behavior may not be possible for all subclasses of
+	 * <code>StructuredViewer</code>, or may cause program errors. This method
+	 * is supported for {@link TableViewer}, {@link TreeViewer},
+	 * {@link ListViewer}, {@link CheckboxTableViewer},
+	 * {@link CheckboxTreeViewer}, and {@link ComboViewer}, but no promises are
+	 * made for other subclasses of StructuredViewer, or subclasses of the
+	 * listed viewer classes.
+	 * 
+	 * @param preserve
+	 *            <code>true</code> if selection should be preserved,
+	 *            <code>false</code> otherwise
+	 * @since 3.5
+	 */
+	public void setPreserveSelection(boolean preserve) {
+		this.preserveSelection = preserve;
+	}
+
+	/**
+	 * Returns whether an attempt should be made to preserve selection across
+	 * update operations. To be used by subclasses that override
+	 * {@link #preservingSelection(Runnable)}.
+	 * 
+	 * @return <code>true</code> if selection should be preserved,
+	 *         <code>false</code> otherwise
+	 */
+	protected boolean getPreserveSelection() {
+		return this.preserveSelection;
 	}
 
 	/**

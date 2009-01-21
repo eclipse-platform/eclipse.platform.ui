@@ -309,6 +309,9 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * Method declared on Viewer.
      */
     protected void preservingSelection(Runnable updateCode) {
+		if (!getPreserveSelection()) {
+			return;
+		}
     	//If a check provider is present, it determines the state across input
     	//changes.
     	if(checkStateProvider != null) {
