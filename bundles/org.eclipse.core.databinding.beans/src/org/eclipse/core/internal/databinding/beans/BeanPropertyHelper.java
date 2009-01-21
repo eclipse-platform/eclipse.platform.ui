@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Martin Frey <martin.frey@logica.com> - bug 256150
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -17,6 +18,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -135,23 +138,70 @@ public class BeanPropertyHelper {
 	 */
 	public static PropertyDescriptor getPropertyDescriptor(Class beanClass,
 			String propertyName) {
-		BeanInfo beanInfo;
-		try {
-			beanInfo = Introspector.getBeanInfo(beanClass);
-		} catch (IntrospectionException e) {
-			// cannot introspect, give up
-			return null;
-		}
-		PropertyDescriptor[] propertyDescriptors = beanInfo
-				.getPropertyDescriptors();
-		for (int i = 0; i < propertyDescriptors.length; i++) {
-			PropertyDescriptor descriptor = propertyDescriptors[i];
-			if (descriptor.getName().equals(propertyName)) {
-				return descriptor;
+		if (!beanClass.isInterface()) {
+			BeanInfo beanInfo;
+			try {
+				beanInfo = Introspector.getBeanInfo(beanClass);
+			} catch (IntrospectionException e) {
+				// cannot introspect, give up
+				return null;
+			}
+			PropertyDescriptor[] propertyDescriptors = beanInfo
+					.getPropertyDescriptors();
+			for (int i = 0; i < propertyDescriptors.length; i++) {
+				PropertyDescriptor descriptor = propertyDescriptors[i];
+				if (descriptor.getName().equals(propertyName)) {
+					return descriptor;
+				}
+			}
+		} else {
+			try {
+				PropertyDescriptor propertyDescriptors[];
+				List pds = new ArrayList();
+				getInterfacePropertyDescriptors(pds, beanClass);
+				if (pds.size() > 0) {
+					propertyDescriptors = (PropertyDescriptor[]) pds
+							.toArray(new PropertyDescriptor[pds.size()]);
+					PropertyDescriptor descriptor;
+					for (int i = 0; i < propertyDescriptors.length; i++) {
+						descriptor = propertyDescriptors[i];
+						if (descriptor.getName().equals(propertyName))
+							return descriptor;
+					}
+				}
+			} catch (IntrospectionException e) {
+				// cannot introspect, give up
+				return null;
 			}
 		}
 		throw new BindingException(
 				"Could not find property with name " + propertyName + " in class " + beanClass); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Goes recursively into the interface and gets all defined
+	 * propertyDescriptors
+	 * 
+	 * @param propertyDescriptors
+	 *            The result list of all PropertyDescriptors the given interface
+	 *            defines (hierarchical)
+	 * @param iface
+	 *            The interface to fetch the PropertyDescriptors
+	 * @throws IntrospectionException
+	 */
+	private static void getInterfacePropertyDescriptors(
+			List propertyDescriptors, Class iface)
+			throws IntrospectionException {
+		BeanInfo beanInfo = Introspector.getBeanInfo(iface);
+		PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+		for (int i = 0; i < pds.length; i++) {
+			PropertyDescriptor pd = pds[i];
+			propertyDescriptors.add(pd);
+		}
+		Class[] subIntfs = iface.getInterfaces();
+		for (int j = 0; j < subIntfs.length; j++) {
+			getInterfacePropertyDescriptors(propertyDescriptors, subIntfs[j]);
+		}
 	}
 
 	/**

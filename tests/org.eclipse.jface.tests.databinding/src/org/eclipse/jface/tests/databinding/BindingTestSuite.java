@@ -14,7 +14,7 @@
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647
- *                    254524, 246103, 249992
+ *                    254524, 246103, 249992, 256150
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -77,6 +77,7 @@ import org.eclipse.core.tests.internal.databinding.RandomAccessListIteratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableListDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableSetDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableValueDecoratorTest;
+import org.eclipse.core.tests.internal.databinding.beans.BeanPropertyHelperTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanPropertyListenerSupportTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanValuePropertyTest;
 import org.eclipse.core.tests.internal.databinding.beans.JavaBeanObservableArrayBasedListTest;
@@ -301,7 +302,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(StringToNumberParserTest.class);
 		addTestSuite(StringToShortConverterTest.class);
 
-		// org.eclipse.core.tests.internal.databinding.internal.beans
+		// org.eclipse.core.tests.internal.databinding.beans
 		addTest(BeanObservableListDecoratorTest.suite());
 		addTestSuite(BeanObservableSetDecoratorTest.class);
 		addTestSuite(BeanObservableValueDecoratorTest.class);
@@ -314,6 +315,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(JavaBeanObservableSetTest.suite());
 		addTest(JavaBeanObservableValueTest.suite());
 		addTestSuite(JavaBeanPropertyObservableMapTest.class);
+		addTestSuite(BeanPropertyHelperTest.class);
 		addTestSuite(BeanPropertyListenerSupportTest.class);
 
 		// org.eclipse.core.tests.internal.databinding.observable
@@ -374,7 +376,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(EditMaskLexerAndTokenTest.class);
 		addTestSuite(EditMaskParserTest.class);
 
-		// org.eclipse.jface.tests.internal.databinding.internal.swt
+		// org.eclipse.jface.tests.internal.databinding.swt
 		addTest(ButtonObservableValueTest.suite());
 		addTestSuite(CComboObservableValueTest.class);
 		addTest(CComboObservableValueSelectionTest.suite());
@@ -412,7 +414,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(StyledTextObservableValueModifyTest.suite());
 		addTestSuite(StyledTextObservableValueTest.class);
 
-		// org.eclipse.jface.tests.internal.databinding.internal.viewers
+		// org.eclipse.jface.tests.internal.databinding.viewers
 		addTest(ObservableViewerElementSetTest.suite());
 		addTestSuite(ObservableCollectionTreeContentProviderTest.class);
 		addTestSuite(SelectionProviderMultiSelectionObservableListTest.class);

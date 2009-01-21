@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bug 221351, 256150
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -23,7 +23,7 @@ import java.util.Set;
  * 
  * @since 3.3
  */
-public class Bean {
+public class Bean implements IBean {
 	protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(
 			this);
 	protected String value;
