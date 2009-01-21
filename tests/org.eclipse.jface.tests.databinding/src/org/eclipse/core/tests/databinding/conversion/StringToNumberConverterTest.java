@@ -235,8 +235,8 @@ public class StringToNumberConverterTest extends TestCase {
 				.toInteger(false);
 
 		try {
-			converter.convert("1 1 1");
-			fail("exception should have been thrown");
+			Object result = converter.convert("1 1 -1");
+			fail("exception should have been thrown, but result was " + result);
 		} catch (IllegalArgumentException e) {
 		}
 	}
