@@ -16,7 +16,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -45,6 +47,9 @@ public class PrintData extends RequestData {
 
 	// to normalize external links to new base href
 	private static final Pattern PATTERN_LINK = Pattern.compile("(src|href)=\"(.*?\")", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+
+	// Where to inject css
+	private static final Pattern PATTERN_END_HEAD = Pattern.compile("</head.*?>", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
 	/*
 	 * Constructs the print data for the given request.
@@ -135,6 +140,7 @@ public class PrintData extends RequestData {
 					content = injectHeading(content, sectionId);
 				}
 				content = normalizeHrefs(content, baseHref);
+				content = injectCss(content);
 				out.write(content);
 			}				
 		}
@@ -153,6 +159,18 @@ public class PrintData extends RequestData {
 		if (matcher.find()) {
 			String heading = "<a id=\"section" + sectionId + "\">" + sectionId + ". </a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return content.substring(0, matcher.start(1)) + heading + content.substring(matcher.start(1));
+		}
+		return content;
+	}
+	/*
+	 * 
+	 * Injects the sectionId into the document heading.
+	 */
+	private String injectCss(String content) {
+		Matcher matcher = PATTERN_END_HEAD.matcher(content);
+		if (matcher.find()) {
+			String css = getCssIncludes(); //"<link rel=\"stylesheet\" type=\"text/css\" href=\"../testbook.css\">";
+			return content.substring(0, matcher.start(0)) + css + content.substring(matcher.start(0));
 		}
 		return content;
 	}
@@ -283,5 +301,11 @@ public class PrintData extends RequestData {
 			return href.substring(0, index);
 		}
 		return href;
+	}
+	
+	private String getCssIncludes() {
+		List css = new ArrayList();
+		CssUtil.addCssFiles("topic_css", css); //$NON-NLS-1$
+		return CssUtil.createCssIncludes(css);
 	}
 }

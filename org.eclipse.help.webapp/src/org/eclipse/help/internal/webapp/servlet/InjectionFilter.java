@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,12 @@ package org.eclipse.help.internal.webapp.servlet;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.webapp.data.CssUtil;
@@ -33,11 +31,7 @@ import org.eclipse.help.webapp.IFilter;
  * dynamic help view.
  */
 public class InjectionFilter implements IFilter {
-	private final static String cssLink1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
-	private static final String cssLink2 = "\" type=\"text/css\"></link>"; //$NON-NLS-1$
-
 	private static final String disabledBook3 = "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
-
 	private static final String disabledBook4 = "livehelp.js\"> </script>"; //$NON-NLS-1$	
 
 	private final String TOPIC_CSS = "topic_css"; //$NON-NLS-1$
@@ -70,20 +64,20 @@ public class InjectionFilter implements IFilter {
 
 		List cssIncludes = new ArrayList();
 		if (isNav) {
-			addCssFiles(NAV_CSS, cssIncludes);
+			CssUtil.addCssFiles(NAV_CSS, cssIncludes);
 		} else {
-			addCssFiles(TOPIC_CSS, cssIncludes);
+			CssUtil.addCssFiles(TOPIC_CSS, cssIncludes);
 		}
 		
 		boolean enabled = isInfocenter || isNav || HelpBasePlugin.getActivitySupport().isRoleEnabled(
 				pathInfo);
 		if ("/ntopic".equals(req.getServletPath())) { //$NON-NLS-1$
 			addNarrow = true;
-			addCssFiles(NARROW_CSS, cssIncludes);
+			CssUtil.addCssFiles(NARROW_CSS, cssIncludes);
 		}
 		if (!enabled) {
 			addDisabled = true;
-			addCssFiles(DISABLED_CSS, cssIncludes);
+			CssUtil.addCssFiles(DISABLED_CSS, cssIncludes);
 		}
 		
 		needsLiveHelp = !enabled && HelpBasePlugin.getActivitySupport().getDocumentMessageUsesLiveHelp(addNarrow);
@@ -96,13 +90,7 @@ public class InjectionFilter implements IFilter {
 		String relativePath = FilterUtils.getRelativePathPrefix(req);
 		StringBuffer script = new StringBuffer();
 		StringBuffer disabledContent = new StringBuffer();
-		for (Iterator iter = cssIncludes.iterator(); iter.hasNext();) {
-			String cssPath = (String)iter.next();
-			script.append(cssLink1);
-			script.append("../content/PLUGINS_ROOT"); //$NON-NLS-1$
-			script.append(cssPath);
-			script.append(cssLink2);
-		}
+		script.append(CssUtil.createCssIncludes(cssIncludes));
 		if (addDisabled) {
 			if (needsLiveHelp) {
 				script.append(disabledBook3);
@@ -120,13 +108,6 @@ public class InjectionFilter implements IFilter {
 		}
 	}
 
-	private void addCssFiles(final String preference, List list) {
-		String topicCssPath = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, preference, "", null);  //$NON-NLS-1$
-		String[] cssFiles = CssUtil.getCssFilenames(topicCssPath);
-		for (int i = 0; i < cssFiles.length; i++) {
-			list.add(cssFiles[i]);
-		}
-	}
 
 	private void appendDisabled(StringBuffer buff, int nsteps, boolean narrow, String relativePath) {
 		String message = HelpBasePlugin.getActivitySupport().getDocumentMessage(narrow);
