@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
+ *     Carsten Pfeiffer, Gebit Solutions GmbH - bug 259536
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -153,6 +154,13 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 		}
         
         return (IEditorDescriptor) editors.get(0);
+    }
+
+    /**
+     * Returns all editor descriptors of this mapping, not filtered by activities.
+     */
+    IEditorDescriptor[] getUnfilteredEditors() {
+    	return (IEditorDescriptor[]) editors.toArray(new IEditorDescriptor[editors.size()]);
     }
 
     /* (non-Javadoc)

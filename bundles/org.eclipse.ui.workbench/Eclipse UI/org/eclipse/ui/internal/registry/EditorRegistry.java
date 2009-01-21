@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
+ *     Carsten Pfeiffer, Gebit Solutions GmbH - bug 259536
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -29,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Map.Entry;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -1270,7 +1272,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         IEditorDescriptor[] editors;
         while (iter.hasNext()) {
             mapping = (FileEditorMapping) iter.next();
-            editors = mapping.getEditors();
+            editors = mapping.getUnfilteredEditors();
             for (int i = 0; i < editors.length; i++) {
 				if (editors[i] == desc) {
                     mapping.removeEditor((EditorDescriptor) editors[i]);
@@ -1297,11 +1299,60 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                 mapIDtoEditor.values().remove(desc);
                 removeEditorFromMapping(typeEditorMappings.defaultMap, desc);
                 removeEditorFromMapping(typeEditorMappings.map, desc);
-				//TODO remove from content type mappings
+                removeEditorFromContentTypeMappings(contentTypeToEditorMappings, desc);
             }
 
         }
     }
+
+    /**
+     * Removes all occurrences of the given editor descriptor from the map of content types.
+     * If the descriptor was the only editor, the whole content type is removed from the map.
+     */
+	private void removeEditorFromContentTypeMappings(Map map, IEditorDescriptor desc) {
+		for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+			Entry entry = (Entry) iter.next();
+			IEditorDescriptor[] descriptors = (IEditorDescriptor[]) entry.getValue();
+			IEditorDescriptor[] newDescriptors = removeDescriptor(descriptors, desc);
+			if (descriptors != newDescriptors) {
+				if (newDescriptors == null) {
+					iter.remove();
+				} else {
+					entry.setValue(newDescriptors);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks the given IEditorDescriptor for an occurrence of the given descriptor and
+	 * returns an array not containing this descriptor.
+	 * If the result would then be an empty array, <code>null</code> is returned.
+	 * If the descriptor is not contained at all in the given array, it is returned as is.
+	 */
+	private IEditorDescriptor[] removeDescriptor(IEditorDescriptor[] descriptors, IEditorDescriptor desc) {
+		for (int i = 0; i < descriptors.length; i++) {
+			if (descriptors[i] == desc) {
+				// remove the whole mapping
+				if (descriptors.length == 1) {
+					return null;
+				}
+				
+				IEditorDescriptor[] newDescriptors = new IEditorDescriptor[descriptors.length - 1];
+				if (i == 0) {
+					System.arraycopy(descriptors, 1, newDescriptors, 0, newDescriptors.length);
+				} else {
+					System.arraycopy(descriptors, 0, newDescriptors, 0, i);
+					if (i < newDescriptors.length) {
+						System.arraycopy(descriptors, i + 1, newDescriptors, i, newDescriptors.length - i);
+					}
+				}
+				return newDescriptors;
+			}
+		}
+
+		return descriptors;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
