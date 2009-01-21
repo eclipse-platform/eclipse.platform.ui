@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -386,6 +386,44 @@ public class NetTest extends TestCase {
 		IProxyData data3[] = this.getProxyManager().getProxyDataForHost(
 				"http://randomhost.com");
 		assertEquals(data3.length, 0);
+	}
+
+	public void testBug257503() throws CoreException {
+		setDataTest(IProxyData.HTTP_PROXY_TYPE);
+		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
+		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
+
+		validateSystemProperties(true);
+		setSystemProxiesEnabled(true);
+		validateSystemProperties(false);
+		setSystemProxiesEnabled(false);
+		validateSystemProperties(true);
+
+	}
+
+	private void validateSystemProperties(boolean present) {
+		validateProperty("http.proxySet", "true", present);
+		validateProperty("http.proxyHost", "www.eclipse.org", present);
+		validateProperty("http.proxyPort", "1024", present);
+		validateProperty("http.proxyUser", "me", present);
+		validateProperty("http.proxyUserName", "me", present);
+		validateProperty("http.proxyPassword", "passw0rd", present);
+
+		validateProperty("https.proxySet", "true", present);
+		validateProperty("https.proxyHost", "www.eclipse.org", present);
+		validateProperty("https.proxyPort", "1024", present);
+		validateProperty("https.proxyUser", "me", present);
+		validateProperty("https.proxyUserName", "me", present);
+		validateProperty("https.proxyPassword", "passw0rd", present);
+
+		validateProperty("socksProxyHost", "www.eclipse.org", present);
+		validateProperty("socksProxyPort", "1024", present);
+	}
+
+	private void validateProperty(String key, String expected, boolean equals) {
+		String actual = System.getProperties().getProperty(key);
+		assertTrue((equals && expected.equals(actual))
+				|| (!equals && !expected.equals(actual)));
 	}
 
 }

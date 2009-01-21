@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,7 +168,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		} finally {
 			updatingPreferences = false;
 		}
-		updateSystemProperties(proxyData, proxiesEnabled);
+		updateSystemProperties(proxyData);
 		return true;
 	}
 
@@ -205,14 +205,14 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		}
 	}
 	
-	/* package */void updateSystemProperties(IProxyData proxyData, boolean proxiesEnabled) {
+	/* package */void updateSystemProperties(IProxyData proxyData) {
 		try {
 			if (proxyData.getType().equals(IProxyData.HTTP_PROXY_TYPE)) {
-				updateHttpSystemProperties(proxyData, proxiesEnabled);
+				updateHttpSystemProperties();
 			} else if (proxyData.getType().equals(IProxyData.HTTPS_PROXY_TYPE)) {
-				updateHttpsSystemProperties(proxyData, proxiesEnabled);
+				updateHttpsSystemProperties();
 			} else if (proxyData.getType().equals(IProxyData.SOCKS_PROXY_TYPE)) {
-				updateSocksSystemProperties(proxyData, proxiesEnabled);
+				updateSocksSystemProperties();
 			}
 		} catch (SecurityException e) {
 			Activator.logError("A security exception occurred while trying to put the proxy data into the system properties", e); //$NON-NLS-1$
@@ -378,10 +378,12 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		return name;
 	}
 
-	private void updateHttpSystemProperties(IProxyData data, boolean proxiesEnabled) {
+	private void updateHttpSystemProperties() {
+		IProxyData data = getProxyData(IProxyData.HTTP_PROXY_TYPE);
+		boolean proxiesEnabled = isProxyEnabled();
 		Assert.isTrue(data.getType().equals(IProxyData.HTTP_PROXY_TYPE));
 		Properties sysProps = System.getProperties();
-		if (!proxiesEnabled || data.getHost() == null) {
+		if (!proxiesEnabled || data.getHost() == null || data.getHost().equals("")) { //$NON-NLS-1$
 			sysProps.remove("http.proxySet"); //$NON-NLS-1$
 			sysProps.remove("http.proxyHost"); //$NON-NLS-1$
 			sysProps.remove("http.proxyPort"); //$NON-NLS-1$
@@ -399,7 +401,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 				sysProps.put("http.proxyPort", String.valueOf(port)); //$NON-NLS-1$
 			}
 			sysProps.put("http.nonProxyHosts",  //$NON-NLS-1$
-					convertHostsToPropertyString(ProxyManager.getProxyManager().getNonProxiedHosts()));
+					convertHostsToPropertyString(getNonProxiedHosts()));
 
 			String userid = data.getUserId();
 			String password = data.getPassword();
@@ -415,11 +417,32 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 			}
 		}
 	}
-	
-	private void updateHttpsSystemProperties(IProxyData data, boolean proxiesEnabled) {
+
+	private boolean isProxyEnabled() {
+		return !ProxySelector.getDefaultProvider().equalsIgnoreCase("DIRECT"); //$NON-NLS-1$
+	}
+
+	private IProxyData getProxyData(String type) {
+		IProxyData data[] = ProxySelector.getProxyData(ProxySelector
+				.getDefaultProvider());
+		for (int i = 0; i < data.length; i++) {
+			if (data[i].getType().equalsIgnoreCase(type)) {
+				return data[i]; 
+			}
+		}
+		return new ProxyData(type, null, -1, false, null);
+	}
+
+	private String[] getNonProxiedHosts() {
+		return ProxySelector.getBypassHosts(ProxySelector.getDefaultProvider());
+	}
+
+	private void updateHttpsSystemProperties() {
+		IProxyData data = getProxyData(IProxyData.HTTPS_PROXY_TYPE);
+		boolean proxiesEnabled = isProxyEnabled();
 		Assert.isTrue(data.getType().equals(IProxyData.HTTPS_PROXY_TYPE));
 		Properties sysProps = System.getProperties();
-		if (!proxiesEnabled || data.getHost() == null) {
+		if (!proxiesEnabled || data.getHost() == null || data.getHost().equals("")) { //$NON-NLS-1$
 			sysProps.remove("https.proxySet"); //$NON-NLS-1$
 			sysProps.remove("https.proxyHost"); //$NON-NLS-1$
 			sysProps.remove("https.proxyPort"); //$NON-NLS-1$
@@ -437,7 +460,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 				sysProps.put("https.proxyPort", String.valueOf(port)); //$NON-NLS-1$
 			}
 			sysProps.put("https.nonProxyHosts",  //$NON-NLS-1$
-					convertHostsToPropertyString(ProxyManager.getProxyManager().getNonProxiedHosts()));
+					convertHostsToPropertyString(getNonProxiedHosts()));
 
 			String userid = data.getUserId();
 			String password = data.getPassword();
@@ -454,10 +477,12 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		}
 	}
 	
-	private void updateSocksSystemProperties(IProxyData data, boolean proxiesEnabled) {
+	private void updateSocksSystemProperties() {
+		IProxyData data = getProxyData(IProxyData.SOCKS_PROXY_TYPE);
+		boolean proxiesEnabled = isProxyEnabled();
 		Assert.isTrue(data.getType().equals(IProxyData.SOCKS_PROXY_TYPE));
 		Properties sysProps = System.getProperties();
-		if (!proxiesEnabled || data.getHost() == null) {
+		if (!proxiesEnabled || data.getHost() == null || data.getHost().equals("")) { //$NON-NLS-1$
 			sysProps.remove("socksProxyHost"); //$NON-NLS-1$
 			sysProps.remove("socksProxyPort"); //$NON-NLS-1$
 		} else {
@@ -480,8 +505,8 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		}
 	}
 
-	public void initialize(boolean proxiesEnabled) {
-		updateSystemProperties(getProxyData(VERIFY_EMPTY), proxiesEnabled);
+	public void initialize() {
+		updateSystemProperties(getProxyData(VERIFY_EMPTY));
 		((IEclipsePreferences)getParentPreferences()).addNodeChangeListener(this);
 		((IEclipsePreferences)getPreferenceNode()).addPreferenceChangeListener(this);
 	}
@@ -559,7 +584,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (updatingPreferences)
 			return;
-		updateSystemProperties(getProxyData(DO_NOT_VERIFY), ProxyManager.getProxyManager().isProxiesEnabled());
+		updateSystemProperties(getProxyData(DO_NOT_VERIFY));
 		
 	}
 

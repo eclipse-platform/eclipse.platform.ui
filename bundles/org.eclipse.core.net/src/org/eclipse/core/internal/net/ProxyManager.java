@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,7 +268,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	private void updateSystemProperties() {
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
-			type.updateSystemProperties(internalGetProxyData(type.getName(), ProxyType.DO_NOT_VERIFY), internalIsProxiesEnabled());
+			type.updateSystemProperties(internalGetProxyData(type.getName(), ProxyType.DO_NOT_VERIFY));
 		}
 	}
 
@@ -278,7 +278,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		// Now initialize each proxy type
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
-			type.initialize(internalIsProxiesEnabled());
+			type.initialize();
 		}
 		registerAuthenticator();
 	}
