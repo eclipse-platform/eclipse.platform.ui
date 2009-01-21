@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,17 @@
 package org.eclipse.core.tests.internal.alias;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.internal.filesystem.wrapper.WrapperFileSystem;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
@@ -289,6 +292,60 @@ public class BasicAliasTest extends ResourceTest {
 			clear(EFS.getLocalFileSystem().getStore(location1));
 			clear(EFS.getLocalFileSystem().getStore(location2));
 		}
+	}
+	
+	private void replaceProject(IProject project, URI newLocation) throws CoreException {
+		IProjectDescription projectDesc = project.getDescription();
+		projectDesc.setLocationURI(newLocation);
+		project.move(projectDesc, IResource.REPLACE, null);
+	}
+	
+	public void testBug256837() {
+		final AliasManager aliasManager = ((Workspace) getWorkspace()).getAliasManager();
+		//force AliasManager to restart (simulates a shutdown/startup)
+		aliasManager.startup(null);
+
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject p1 = root.getProject(getUniqueString());
+		IProject p2 = root.getProject(getUniqueString());
+		ensureExistsInWorkspace(new IResource[] {p1, p2}, true);
+
+		IFileStore tempStore = null;
+		try {
+			tempStore = getTempStore();
+			tempStore.mkdir(EFS.NONE, getMonitor());
+		} catch (CoreException e1) {
+			fail("1.0", e1);
+		}
+
+		try {
+			replaceProject(p2, WrapperFileSystem.getWrappedURI(p2.getLocationURI()));
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		IFolder link2TempFolder = p1.getFolder("link2TempFolder");
+		try {
+			link2TempFolder.createLink(tempStore.toURI(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		// change the location of p2 project to the temp folder
+		try {
+			replaceProject(p2, tempStore.toURI());
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+
+		// now p2 and link2TempFolder should be aliases
+		IResource[] resources = aliasManager.computeAliases(link2TempFolder, ((Folder) link2TempFolder).getStore());
+		assertEquals("5.0", 1, resources.length);
+		assertEquals("6.0", p2, resources[0]);
+
+		resources = aliasManager.computeAliases(p2, ((Project) p2).getStore());
+		assertEquals("7.0", 1, resources.length);
+		assertEquals("8.0", link2TempFolder, resources[0]);
 	}
 
 	public void testCloseOpenProject() {

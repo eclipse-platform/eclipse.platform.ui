@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -621,6 +621,15 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		//invalidate location map if there are added or removed projects.
 		if (delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED).length > 0)
 			changedProjects = true;
+		
+		//invalidate location map if any project has the description changed.
+		IResourceDelta[] changed = delta.getAffectedChildren(IResourceDelta.CHANGED);
+		for (int i = 0; i < changed.length; i++) {
+			if ((changed[i].getFlags() & IResourceDelta.DESCRIPTION) == IResourceDelta.DESCRIPTION) {
+				changedProjects = true;
+				break;
+			}
+		}
 	}
 
 	/* (non-Javadoc)
