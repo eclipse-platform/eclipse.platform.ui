@@ -331,4 +331,103 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		assertEquals("Wrong checkstate: " + comment, CheckStateProviderTestsUtil.shouldBeChecked(te, shift), item.getChecked());
 		assertEquals("Wrong checkstate: " + comment, CheckStateProviderTestsUtil.shouldBeGrayed(te, shift), item.getGrayed());
 	}
+	
+	public void testGetCheckedElements() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+		
+		TestElement[] children = fRootElement.getChildren();
+		
+		List checked = new ArrayList((children.length + 1) / 2);
+		
+		for (int i = 0; i < children.length; i+=2) {
+			ctv.setChecked(children[i], true);
+			checked.add(children[i]);
+		}
+		
+		Object[] actuallyChecked = ctv.getCheckedElements();
+		
+		for (int i = 0; i < actuallyChecked.length; i++) {
+			assertTrue("getCheckedElements should include all checked elements", checked.remove(actuallyChecked[i]));
+		}
+		
+		assertTrue("getCheckedElements should not include any unchecked elements", checked.isEmpty());
+	}
+
+	public void testSetCheckedElements() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+		
+		TestElement[] children = fRootElement.getChildren();
+		
+		List toCheck = new ArrayList((children.length + 1) / 2);
+		
+		for (int i = 0; i < children.length; i+=2) {
+			toCheck.add(children[i]);
+		}
+		
+		ctv.setCheckedElements(toCheck.toArray());
+		
+		for (int i = 0; i < children.length; i++) {
+			if(i % 2 == 0) {
+				assertTrue("an element passed through setCheckedElements should be checked", ctv.getChecked(children[i]));
+			} else {
+				assertFalse("an element not passed through setCheckedElements should be unchecked", ctv.getChecked(children[i]));
+			}
+		}
+	}
+	
+	public void testSetGrayedElements() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+		
+		TestElement[] children = fRootElement.getChildren();
+		
+		List toGray = new ArrayList((children.length + 1) / 2);
+		
+		for (int i = 0; i < children.length; i+=2) {
+			toGray.add(children[i]);
+		}
+		
+		ctv.setGrayedElements(toGray.toArray());
+		
+		for (int i = 0; i < children.length; i++) {
+			if(i % 2 == 0) {
+				assertTrue("an element passed through setGrayedElements should be grayed", ctv.getGrayed(children[i]));
+			} else {
+				assertFalse("an element not passed through setGrayedElements should not be grayed", ctv.getGrayed(children[i]));
+			}
+		}
+	}
+	
+	public void testSetAllChecked() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+		
+		ctv.expandToLevel(2);
+		
+		ctv.setAllChecked(true);
+		Object[] expandedElements = ctv.getExpandedElements();
+		
+		for (int i = 0; i < expandedElements.length; i++) {
+			assertTrue("all expanded items should be checked", ctv.getChecked(expandedElements[i]));
+		}
+		
+		ctv.setAllChecked(false);
+		
+		for (int i = 0; i < expandedElements.length; i++) {
+			assertFalse("all expanded items should be unchecked", ctv.getChecked(expandedElements[i]));
+		}
+	}
+	
+	public void testSetGrayChecked() {
+		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
+		
+		TestElement[] children = fRootElement.getChildren();
+		
+		ctv.setGrayChecked(children[0], true);
+		ctv.setGrayChecked(children[1], false);
+	
+		assertTrue("an item invoked with setGrayChecked(true) should be checked", ctv.getChecked(children[0]));
+		assertTrue("an item invoked with setGrayChecked(true) should be grayed", ctv.getGrayed(children[0]));
+		
+		assertFalse("an item invoked with setGrayChecked(false) should be unchecked", ctv.getChecked(children[1]));
+		assertFalse("an item invoked with setGrayChecked(false) should not be grayed", ctv.getGrayed(children[1]));
+	}
 }

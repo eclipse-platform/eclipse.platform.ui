@@ -42,6 +42,8 @@ public class AllTests extends TestSuite {
 		addTestSuite(TableFontProviderTest.class);
 		addTestSuite(ListViewerTest.class);
 		addTestSuite(CheckboxTableViewerTest.class);
+		addTestSuite(CheckboxTableViewerTest.DeprecatedConstructor.class);
+		addTestSuite(CheckboxTableViewerTest.FactoryMethod.class);
 		addTestSuite(CheckboxTreeViewerTest.class);
 		addTestSuite(ComboViewerTest.class);
 		addTestSuite(CComboViewerTest.class);

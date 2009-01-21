@@ -190,6 +190,106 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     	assertTrue("unfiltered count", getItemCount() == 10);
     }
     
+    public void testSetAndGetData() {
+    	
+    	//get with no data
+    	assertNull("get with no data", fViewer.getData("foo"));
+    	
+    	//remove with no data
+    	fViewer.setData("foo", null);
+    	
+    	//get with no data after remove
+    	assertNull("get with no data after remove", fViewer.getData("foo"));
+    	
+    	//set
+    	fViewer.setData("foo", "bar");
+    	
+    	//remove key which does not exist
+    	fViewer.setData("baz", null);
+    	
+    	//get key which does not exist
+    	assertNull("get key which does not exist", fViewer.getData("baz"));
+    	
+    	//get value instead of key
+    	assertNull("get value instead of key", fViewer.getData("bar"));
+    	
+    	//get single value
+    	assertEquals("get single value", "bar", fViewer.getData("foo"));
+    	
+    	//set new value
+    	fViewer.setData("foo", "baz");
+    	
+    	//get overridden value
+    	assertEquals("get overridden value", "baz", fViewer.getData("foo"));
+    	
+    	//add more values
+    	fViewer.setData("alpha", "1");
+    	fViewer.setData("beta", "2");
+    	fViewer.setData("delta", "3");
+    	
+    	//get multiple values
+    	assertEquals("get multiple values", "baz", fViewer.getData("foo"));
+    	assertEquals("get multiple values", "1", fViewer.getData("alpha"));
+    	assertEquals("get multiple values", "2", fViewer.getData("beta"));
+    	assertEquals("get multiple values", "3", fViewer.getData("delta"));
+    	
+    	//override with multiple values
+    	fViewer.setData("alpha", "10");
+    	
+    	//get overridden value
+    	assertEquals("get overridden value", "10", fViewer.getData("alpha"));
+    	
+    	//add more values
+    	fViewer.setData("gamma", "4");
+    	fViewer.setData("epsilon", "5");
+    	
+    	//remove first value
+    	fViewer.setData("foo", null);
+    	
+    	//check remaining values
+    	assertEquals("get after remove", null, fViewer.getData("foo"));
+    	assertEquals("get after remove", "10", fViewer.getData("alpha"));
+    	assertEquals("get after remove", "2", fViewer.getData("beta"));
+    	assertEquals("get after remove", "3", fViewer.getData("delta"));
+    	assertEquals("get after remove", "4", fViewer.getData("gamma"));
+    	assertEquals("get after remove", "5", fViewer.getData("epsilon"));
+    	
+    	//remove middle value
+    	fViewer.setData("delta", null);
+    	
+    	//check remaining values
+    	assertEquals("get after remove", null, fViewer.getData("foo"));
+    	assertEquals("get after remove", "10", fViewer.getData("alpha"));
+    	assertEquals("get after remove", "2", fViewer.getData("beta"));
+    	assertEquals("get after remove", null, fViewer.getData("delta"));
+    	assertEquals("get after remove", "4", fViewer.getData("gamma"));
+    	assertEquals("get after remove", "5", fViewer.getData("epsilon"));
+    	
+    	//remove last value
+    	fViewer.setData("epsilon", null);
+    	
+    	//check remaining values
+    	assertEquals("get after remove", null, fViewer.getData("foo"));
+    	assertEquals("get after remove", "10", fViewer.getData("alpha"));
+    	assertEquals("get after remove", "2", fViewer.getData("beta"));
+    	assertEquals("get after remove", null, fViewer.getData("delta"));
+    	assertEquals("get after remove", "4", fViewer.getData("gamma"));
+    	assertEquals("get after remove", null, fViewer.getData("epsilon"));
+    	
+    	//remove remaining values
+    	fViewer.setData("alpha", null);
+    	fViewer.setData("beta", null);
+    	fViewer.setData("gamma", null);
+    	
+    	//check final values
+    	assertEquals("get after remove", null, fViewer.getData("foo"));
+    	assertEquals("get after remove", null, fViewer.getData("alpha"));
+    	assertEquals("get after remove", null, fViewer.getData("beta"));
+    	assertEquals("get after remove", null, fViewer.getData("delta"));
+    	assertEquals("get after remove", null, fViewer.getData("gamma"));
+    	assertEquals("get after remove", null, fViewer.getData("epsilon"));
+    }
+    
     public void testInsertChild() {
         TestElement first = fRootElement.getFirstChild();
         TestElement newElement = first.addChild(TestModelChange.INSERT);

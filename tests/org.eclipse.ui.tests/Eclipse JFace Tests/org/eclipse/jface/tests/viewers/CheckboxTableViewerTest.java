@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.tests.viewers.CheckStateProviderTestsUtil.TestCheckStateProvider;
 import org.eclipse.jface.tests.viewers.CheckStateProviderTestsUtil.TestMethodsInvokedCheckStateProvider;
@@ -51,6 +53,86 @@ public class CheckboxTableViewerTest extends TableViewerTest {
             return null;
         }
     }
+    public static class DeprecatedConstructor extends CheckboxTableViewerTest {
+		public DeprecatedConstructor(String name) {
+			super(name);
+		}
+    	
+	    protected StructuredViewer createViewer(Composite parent) {
+	    	TableViewer viewer = new CheckboxTableViewer(parent);
+	    	
+	        Table table = viewer.getTable();
+	        table.setLinesVisible(true);
+	        TableLayout layout = new TableLayout();
+	        table.setLayout(layout);
+	        table.setHeaderVisible(true);
+
+	        String headers[] = { "column 1 header", "column 2 header" };
+
+	        ColumnLayoutData layouts[] = { new ColumnWeightData(100),
+	                new ColumnWeightData(100) };
+
+	        final TableColumn columns[] = new TableColumn[headers.length];
+
+	        for (int i = 0; i < headers.length; i++) {
+	            layout.addColumnData(layouts[i]);
+	            TableColumn tc = new TableColumn(table, SWT.NONE, i);
+	            tc.setResizable(layouts[i].resizable);
+	            tc.setText(headers[i]);
+	            columns[i] = tc;
+	        }
+
+	        viewer.setContentProvider(new TestModelContentProvider());
+	        viewer.setLabelProvider(new TableTestLabelProvider());
+	        return viewer;
+	    }
+	    
+		public void testViewerColumn() {
+	    	assertNull(getViewerColumn((TableViewer) fViewer, -1));
+			assertNotNull(getViewerColumn((TableViewer) fViewer, 0));
+			assertNotNull(getViewerColumn((TableViewer) fViewer, 1));
+				//due to CheckboxTableViewer.createTable, there is an
+				//extra column, so the next test looks for column 3
+				//instead of 2 -- a result of using deprecated code
+			assertNull(getViewerColumn((TableViewer) fViewer, 3));
+	    }
+    }
+    
+    public static class FactoryMethod extends CheckboxTableViewerTest {
+		public FactoryMethod(String name) {
+			super(name);
+		}
+    	
+	    protected StructuredViewer createViewer(Composite parent) {
+	    	TableViewer viewer = CheckboxTableViewer.newCheckList(parent, SWT.NONE);
+	    	
+	        Table table = viewer.getTable();
+	        table.setLinesVisible(true);
+	        TableLayout layout = new TableLayout();
+	        table.setLayout(layout);
+	        table.setHeaderVisible(true);
+
+	        String headers[] = { "column 1 header", "column 2 header" };
+
+	        ColumnLayoutData layouts[] = { new ColumnWeightData(100),
+	                new ColumnWeightData(100) };
+
+	        final TableColumn columns[] = new TableColumn[headers.length];
+
+	        for (int i = 0; i < headers.length; i++) {
+	            layout.addColumnData(layouts[i]);
+	            TableColumn tc = new TableColumn(table, SWT.NONE, i);
+	            tc.setResizable(layouts[i].resizable);
+	            tc.setText(headers[i]);
+	            columns[i] = tc;
+	        }
+
+	        viewer.setContentProvider(new TestModelContentProvider());
+	        viewer.setLabelProvider(new TableTestLabelProvider());
+	        return viewer;
+	    }
+    }
+
 
     public CheckboxTableViewerTest(String name) {
         super(name);
@@ -315,5 +397,70 @@ public class CheckboxTableViewerTest extends TableViewerTest {
 	private void checkState(String comment, TestElement te, TableItem item, int shift) {
 		assertEquals("Wrong checkstate: " + comment, CheckStateProviderTestsUtil.shouldBeChecked(te, shift), item.getChecked());
 		assertEquals("Wrong checkstate: " + comment, CheckStateProviderTestsUtil.shouldBeGrayed(te, shift), item.getGrayed());
+	}
+	
+	public void testGetCheckedElements() {
+		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
+		
+		TestElement[] children = fRootElement.getChildren();
+		
+		List checked = new ArrayList((children.length + 1) / 2);
+		
+		for (int i = 0; i < children.length; i+=2) {
+			ctv.setChecked(children[i], true);
+			checked.add(children[i]);
+		}
+		
+		Object[] actuallyChecked = ctv.getCheckedElements();
+		
+		for (int i = 0; i < actuallyChecked.length; i++) {
+			assertTrue("getCheckedElements should include all checked elements", checked.remove(actuallyChecked[i]));
+		}
+		
+		assertTrue("getCheckedElements should not include any unchecked elements", checked.isEmpty());
+	}
+	
+	public void testSetCheckedElements() {
+		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
+		
+		TestElement[] children = fRootElement.getChildren();
+		
+		List toCheck = new ArrayList((children.length + 1) / 2);
+		
+		for (int i = 0; i < children.length; i+=2) {
+			toCheck.add(children[i]);
+		}
+		
+		ctv.setCheckedElements(toCheck.toArray());
+		
+		for (int i = 0; i < children.length; i++) {
+			if(i % 2 == 0) {
+				assertTrue("an element passed through setCheckedElements should be checked", ctv.getChecked(children[i]));
+			} else {
+				assertFalse("an element not passed through setCheckedElements should be unchecked", ctv.getChecked(children[i]));
+			}
+		}
+	}
+	
+	public void testSetGrayedElements() {
+		CheckboxTableViewer ctv = (CheckboxTableViewer) fViewer;
+		
+		TestElement[] children = fRootElement.getChildren();
+		
+		List toGray = new ArrayList((children.length + 1) / 2);
+		
+		for (int i = 0; i < children.length; i+=2) {
+			toGray.add(children[i]);
+		}
+		
+		ctv.setGrayedElements(toGray.toArray());
+		
+		for (int i = 0; i < children.length; i++) {
+			if(i % 2 == 0) {
+				assertTrue("an element passed through setGrayedElements should be grayed", ctv.getGrayed(children[i]));
+			} else {
+				assertFalse("an element not passed through setGrayedElements should not be grayed", ctv.getGrayed(children[i]));
+			}
+		}
 	}
 }
