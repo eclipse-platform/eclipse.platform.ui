@@ -244,7 +244,7 @@ public final class ContextService implements IContextService {
 	 */
 	public final void removeContextManagerListener(
 			final IContextManagerListener listener) {
-		contextManager.addContextManagerListener(listener);
+		contextManager.removeContextManagerListener(listener);
 	}
 
 	/*
