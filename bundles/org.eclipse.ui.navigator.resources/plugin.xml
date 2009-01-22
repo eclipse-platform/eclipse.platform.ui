@@ -167,11 +167,6 @@
             id="org.eclipse.ui.navigator.resources.GoIntoActions">
 			<enablement>
 				<and>
-				    <!--
-					<with variable="selection">
-						<count value="1"/>
-					</with>
-					-->
 					<or>
 						<and>
 							<adapt type="org.eclipse.core.resources.IProject" />
