@@ -49,7 +49,7 @@ public class WorkingSet extends AbstractWorkingSet {
 	 *            trailing whitespace.
 	 * @param uniqueId
 	 *            the unique id
-	 * @param element
+	 * @param elements
 	 *            the content of the new working set. May be empty but not
 	 *            <code>null</code>.
 	 */
