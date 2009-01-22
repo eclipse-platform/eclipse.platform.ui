@@ -9,15 +9,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/internal/navigator/resources/actions/GoIntoActionProvider.java" type="org.eclipse.ui.internal.navigator.resources.actions.GoIntoActionProvider">
-        <filter id="640712815">
-            <message_arguments>
-                <message_argument value="CommonViewer"/>
-                <message_argument value="GoIntoActionProvider"/>
-                <message_argument value="getFrameList()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ui/internal/navigator/resources/workbench/ResourceExtensionSorter.java" type="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionSorter">
         <filter id="571473929">
             <message_arguments>
@@ -40,6 +31,15 @@
             <message_arguments>
                 <message_argument value="TextActionHandler"/>
                 <message_argument value="TextActionHandler"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/resources/GoIntoActionProvider.java" type="org.eclipse.ui.navigator.resources.GoIntoActionProvider">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonViewer"/>
+                <message_argument value="GoIntoActionProvider"/>
+                <message_argument value="getFrameList()"/>
             </message_arguments>
         </filter>
     </resource>

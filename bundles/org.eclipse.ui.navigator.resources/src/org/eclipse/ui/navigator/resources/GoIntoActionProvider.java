@@ -11,7 +11,7 @@
  *        bug 214271 Undo/redo not enabled if nothing selected
  ******************************************************************************/
 
-package org.eclipse.ui.internal.navigator.resources.actions;
+package org.eclipse.ui.navigator.resources;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IActionBars;
@@ -22,19 +22,15 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 /**
- *
+ * Provides the Go Into action for the {@link ProjectExplorer}
+ * 
+ * @since 3.4
+ * 
  */
 public class GoIntoActionProvider extends CommonActionProvider {
 
 	private GoIntoAction goIntoAction;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator
-	 * .ICommonActionExtensionSite)
-	 */
 	public void init(ICommonActionExtensionSite anActionSite) {
 		anActionSite.getViewSite().getShell();
 		CommonViewer viewer = (CommonViewer) anActionSite.getStructuredViewer();

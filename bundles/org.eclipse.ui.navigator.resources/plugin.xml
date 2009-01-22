@@ -163,7 +163,7 @@
 			</enablement>
       </actionProvider>
       <actionProvider
-            class="org.eclipse.ui.internal.navigator.resources.actions.GoIntoActionProvider"
+            class="org.eclipse.ui.navigator.resources.GoIntoActionProvider"
             id="org.eclipse.ui.navigator.resources.GoIntoActions">
 			<enablement>
 				<and>
