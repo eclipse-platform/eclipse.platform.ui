@@ -35,7 +35,7 @@ public class PipelineTest extends NavigatorTestBase {
 				false);
 
 		assertEquals(
-				"There should be two visible extension for the pipeline viewer.",
+				"There should be two visible extensions for the pipeline viewer.",
 				2, contentService.getVisibleExtensionIds().length);
 
 		contentService.getActivationService().activateExtensions(
