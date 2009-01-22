@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,7 +145,7 @@ public class TocFragmentServlet extends HttpServlet {
 		}
 
 		private void serializeTocs() {
-			ITopic[] topicPath = tocData.getTopicPath();
+ 			ITopic[] topicPath = tocData.getTopicPath();
 	
 			int selectedToc = tocData.getSelectedToc();
 			// Iterate over all tocs - if there is a selected toc only generate that
@@ -176,7 +176,7 @@ public class TocFragmentServlet extends HttpServlet {
 			ITopic[] topics = toc.getTopics();
 			
 			if (requestKind == REQUEST_SHOW_CHILDREN) {
-				topicPath = getTopicPathFromRootPath(toc);
+				topicPath = tocData.getTopicPathFromRootPath(toc);
 			}
 			
 			buf.append("<node"); //$NON-NLS-1$
@@ -208,28 +208,6 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			buf.append("</node>\n"); //$NON-NLS-1$
 			
-		}
-		
-		private ITopic[] getTopicPathFromRootPath(IToc toc) {
-			ITopic[] topicPath;
-			// Determine the topicPath from the path passed in as a parameter
-			int[] rootPath = tocData.getRootPath();
-			if (rootPath == null) {
-				return null;
-			}
-			int pathLength = rootPath.length;
-			topicPath = new ITopic[pathLength];
-			ITopic[] children = toc.getTopics();
-			for (int i = 0; i < pathLength; i++) {
-				int index = rootPath[i];
-				if (index < children.length) {
-					topicPath[i] = children[index];
-					children = topicPath[i].getSubtopics();
-				} else {
-					return null;  // Mismatch between expected and actual children
-				}
-			}
-			return topicPath;
 		}
 	
 		private void serializeTopic(ITopic topic, ITopic[] topicPath, boolean isSelected, String parentPath)  {

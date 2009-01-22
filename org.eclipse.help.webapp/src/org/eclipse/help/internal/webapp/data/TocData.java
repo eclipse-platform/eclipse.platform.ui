@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -436,6 +436,28 @@ public class TocData extends ActivitiesData {
         }
 
     }
+    
+    public ITopic[] getTopicPathFromRootPath(IToc toc) {
+		ITopic[] topicPath;
+		// Determine the topicPath from the path passed in as a parameter
+		int[] rootPath = getRootPath();
+		if (rootPath == null) {
+			return null;
+		}
+		int pathLength = rootPath.length;
+		topicPath = new ITopic[pathLength];
+		ITopic[] children = toc.getTopics();
+		for (int i = 0; i < pathLength; i++) {
+			int index = rootPath[i];
+			if (index < children.length) {
+				topicPath[i] = children[index];
+				children = topicPath[i].getSubtopics();
+			} else {
+				return null;  // Mismatch between expected and actual children
+			}
+		}
+		return topicPath;
+	}
     
     public ITopic[] getTopicPath() {
     	return topicPath;

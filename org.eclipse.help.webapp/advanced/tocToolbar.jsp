@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2007 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
 	String printTocLabel = UrlUtil.JavaScriptEncode(ServletResources.getString("PrintToc", request));
 	String printError = UrlUtil.JavaScriptEncode(ServletResources.getString("PrintError", request));
 	String menuData = printTopicLabel + "=printTopic(\\'" + printError + "\\')," + printTocLabel + "=printToc(\\'" + printError + "\\')";
+    String quickSearchError = UrlUtil.JavaScriptEncode(ServletResources.getString("QuickSearchError", request));
 %>
 
 <jsp:include page="toolbar.jsp">
@@ -41,6 +42,13 @@
 	<jsp:param name="action"   value=""/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='off'/>
+	
+	<jsp:param name="name"     value="quick_search"/>
+	<jsp:param name="tooltip"  value='QuickSearch'/>
+	<jsp:param name="image"    value="quick_search.gif"/>
+	<jsp:param name="action"   value="quickSearch"/>
+	<jsp:param name="param"    value="<%=quickSearchError%>"/>
+	<jsp:param name="state"    value='off'/> 
 
 	<jsp:param name="name"     value="collapseall"/>
 	<jsp:param name="tooltip"  value='CollapseAll'/>

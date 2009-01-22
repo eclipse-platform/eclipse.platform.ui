@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.help.internal.search.SearchResults;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
 import org.eclipse.help.internal.workingset.AdaptableToc;
+import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.search.ISearchEngineResult2;
@@ -67,7 +68,7 @@ public class SearchData extends ActivitiesData {
 	private QueryTooComplexException queryException = null;
 
 	/**
-	 * Constructs the xml data for the search resuls page.
+	 * Constructs the xml data for the search results page.
 	 * 
 	 * @param context
 	 * @param request
@@ -380,12 +381,15 @@ public class SearchData extends ActivitiesData {
 
 	private SearchResults createHitCollector() {
 		WorkingSet[] workingSets;
-		if (request.getParameterValues("scopedSearch") == null) { //$NON-NLS-1$
-			// scopes are working set names
-			workingSets = getWorkingSets();
-		} else {
+		if (request.getParameterValues("scopedSearch") != null) { //$NON-NLS-1$
 			// scopes are books (advanced search)
 			workingSets = createTempWorkingSets();
+		} else if (request.getParameterValues("quickSearch") != null) { //$NON-NLS-1$
+			// scopes is a toc or topic and its children
+			workingSets = createQuickSearchWorkingSet();
+		} else {
+			// scopes are working set names
+			workingSets = getWorkingSets();
 		}
 
 		int maxHits = 500;
@@ -451,6 +455,32 @@ public class SearchData extends ActivitiesData {
 				.toArray(new AdaptableToc[tocs.size()]);
 		WorkingSet[] workingSets = new WorkingSet[1];
 		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs); //$NON-NLS-1$
+		return workingSets;
+	}
+	
+	/**
+	 * @return WorkingSet[] consisting of a single toc or topic or null
+	 */
+	private WorkingSet[] createQuickSearchWorkingSet() {
+		WorkingSet[] workingSets = new WorkingSet[1];
+		TocData tocData = new TocData(context, request, response);
+		int selectedToc = tocData.getSelectedToc();
+		if (selectedToc < 0) {
+			return new WorkingSet[0];
+		}
+		IToc toc = tocData.getTocs()[selectedToc];
+		ITopic[] topics = tocData.getTopicPathFromRootPath(toc);
+		List resources = new ArrayList();
+		AdaptableToc adaptableToc = new AdaptableToc(toc);
+		if (topics != null) {
+			ITopic selectedTopic = topics[topics.length - 1];
+			AdaptableTopic adaptableTopic = new AdaptableTopic(selectedTopic);
+			resources.add(adaptableTopic);
+			adaptableTopic.setParent(adaptableToc);
+		} else {
+			resources.add(adaptableToc);
+		}
+		workingSets[0] = new WorkingSet("quickSearch", resources); //$NON-NLS-1$
 		return workingSets;
 	}
 

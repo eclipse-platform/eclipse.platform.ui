@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,4 +134,61 @@ function getWindowBounds(window) {
 		rect.height = window.document.body.clientHeight;
 	}
 	return rect;
+}
+
+function getSearchWord() {
+    var navFrame = parent.parent.parent;
+	var searchFrame = navFrame.parent.parent.frames["SearchFrame"];
+	return searchFrame.document.forms["searchForm"].searchWord.value;
+}
+
+function quickSearch(button, errorMsg) {		//search this topic and all subTopics
+	var topic = parent.tocViewFrame.getSelectedTopic();
+	if (topic) {
+		var node = parent.tocViewFrame.getActiveAnchor();
+		var treeItem = parent.tocViewFrame.getTreeItem(node);
+        if (!treeItem) { return; }  // TODO need better error
+	    var parameters = "?searchWord=" + getSearchWord();
+	     
+	    // Defect 593: resize search window     2/2
+	    var w = 315;
+		var h = 70;	   
+		if (isIE){		
+			var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
+			var t = top.screenTop + (top.document.body.clientHeight - h) / 2;		
+		} else {		
+			var l = top.screenX + (top.innerWidth - w) / 2;
+			var t = top.screenY + (top.innerHeight - h) / 2;		
+		}		
+		// move the dialog just a bit higher than the middle
+		if (t-50 > 0) t = t-50;
+	  	window.location="javascript://needModal";  
+	  	// Defect 593 ends
+
+		var quickSearchWindow = window.open("quickSearch.jsp" + parameters, "QuickSearch", "location=no, status=no,resizable=yes,height="+h+",width="+w +",left="+l+",top="+t);		
+	    quickSearchWindow.focus();
+	}
+	else {
+		alert(errorMsg);
+	}	
+}
+
+function searchFor(searchWord) {  
+	var node = parent.tocViewFrame.getActiveAnchor();
+	var treeItem = parent.tocViewFrame.getTreeItem(node);
+    var topAncestor = parent.tocViewFrame.getTopAncestor(treeItem);
+    if (!topAncestor) { return; } 
+	var toc = topAncestor.nodeid;
+	var maxHits = 500;
+	var query ="searchWord="+encodeURIComponent(searchWord)+"&maxHits="+maxHits + "&quickSearch=true&toc="+toc;
+    if (topAncestor !== treeItem) {
+        query += "&path=";
+        query += treeItem.nodeid;
+    }
+    var navFrame = parent.parent.parent;
+	var searchFrame = navFrame.parent.parent.frames["SearchFrame"];
+	navFrame.showView('search');
+	var searchView = navFrame.ViewsFrame.search.searchViewFrame;
+	searchView.location.replace("searchView.jsp?"+query);	
+	searchFrame.document.forms["searchForm"].searchWord.value	= searchWord;
 }
