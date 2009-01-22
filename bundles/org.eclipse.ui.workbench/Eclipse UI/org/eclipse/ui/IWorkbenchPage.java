@@ -1072,7 +1072,9 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * </code>
 	 * </p>
 	 * 
-	 * @return the aggregate working set for this page
+	 * @return the aggregate working set for this page, this implements 
+	 *   {@link IAggregateWorkingSet}
+	 * @see IAggregateWorkingSet
 	 * @since 3.2
 	 */
 	public IWorkingSet getAggregateWorkingSet();

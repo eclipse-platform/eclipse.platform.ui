@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -30,7 +31,7 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.2
  */
 public class AggregateWorkingSet extends AbstractWorkingSet implements
-		IPropertyChangeListener {
+		IAggregateWorkingSet, IPropertyChangeListener {
 
 	private IWorkingSet[] components;
 

@@ -176,6 +176,8 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * It is recommended that clients of aggregate working sets treat them in a
 	 * specific way. Please see the documentation for
 	 * {@link IWorkbenchPage#getAggregateWorkingSet()} for details.
+	 * <p>
+	 * If this is true, you can cast this working set to an {@link IAggregateWorkingSet} 
 	 * 
 	 * @return whether this working set is an aggregate working set or not
 	 * @since 3.2
