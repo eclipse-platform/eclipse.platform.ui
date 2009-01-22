@@ -1194,4 +1194,11 @@ public class NavigatorContentService implements IExtensionActivationListener,
 				.toArray(new ILabelProvider[resultProvidersList.size()]);
 	}
 
+	/**
+	 * @return the viewer
+	 */
+	public Viewer getViewer() {
+		return structuredViewerManager.getViewer();
+	}
+	
 }

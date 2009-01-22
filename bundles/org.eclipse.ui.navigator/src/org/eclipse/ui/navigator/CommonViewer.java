@@ -31,10 +31,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.internal.navigator.CommonNavigatorFrameSource;
 import org.eclipse.ui.internal.navigator.ContributorTrackingSet;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorDecoratingLabelProvider;
 import org.eclipse.ui.internal.navigator.NavigatorPipelineService;
+import org.eclipse.ui.internal.navigator.framelist.FrameList;
 
 /**
  * 
@@ -60,6 +62,10 @@ public class CommonViewer extends TreeViewer {
 	private final NavigatorContentService contentService;
 
 	private ISelection cachedSelection;
+	
+	private FrameList frameList;
+	
+	private CommonNavigator commonNavigator;
 	
 	/**
 	 * <p>
@@ -102,6 +108,18 @@ public class CommonViewer extends TreeViewer {
 
 	}
 
+	void setCommonNavigator(CommonNavigator navigator) {
+		commonNavigator = navigator;
+	}
+	
+	/**
+	 * @return the CommonNavigator
+	 * @since 3.4
+	 */
+	public CommonNavigator getCommonNavigator() {
+		return commonNavigator;
+	}
+	
 	protected void removeWithoutRefresh(Object[] elements) {
 		super.remove(elements);
 	}
@@ -473,4 +491,24 @@ public class CommonViewer extends TreeViewer {
 		super.internalRefresh(element, updateLabels);
 	}
 
+
+	/**
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+    public void createFrameList() {
+        CommonNavigatorFrameSource frameSource = new CommonNavigatorFrameSource(commonNavigator);
+        frameList = new FrameList(frameSource);
+        frameSource.connectTo(frameList);
+    }
+    
+	/**
+	 * @return a FrameList
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+    public FrameList getFrameList() {
+        return frameList;
+    }
+	
+	
 }

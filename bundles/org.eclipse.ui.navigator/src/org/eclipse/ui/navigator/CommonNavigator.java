@@ -136,7 +136,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	private String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$ 
 
 	private LinkHelperService linkService;
-	
+
 	/**
 	 * 
 	 */
@@ -156,11 +156,13 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	public void createPartControl(Composite aParent) {
 
 		commonViewer = createCommonViewer(aParent);	
-
+		commonViewer.setCommonNavigator(this);
+        commonViewer.createFrameList();
+		
 		try {
 			commonViewer.getControl().setRedraw(false);
 			
-			INavigatorFilterService filterService = commonViewer
+	        INavigatorFilterService filterService = commonViewer
 					.getNavigatorContentService().getFilterService();
 			ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
 			for (int i = 0; i < visibleFilters.length; i++) {
@@ -177,7 +179,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	
 			getSite().setSelectionProvider(commonViewer);
 	
-			updateTitle();
+			setPartName(getConfigurationElement().getAttribute("name")); //$NON-NLS-1$
 		} finally { 
 			commonViewer.getControl().setRedraw(true);
 		}
@@ -221,6 +223,41 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	/**
 	 * <p>
+	 * Updates the title text and title tool tip. Called whenever the input of
+	 * the viewer changes.
+	 * </p>
+	 * @since 3.4
+	 */
+	public void updateTitle() {
+		Object input = commonViewer.getInput();
+		if (input == null) {
+			setTitleToolTip(""); //$NON-NLS-1$
+		} else {
+			String inputToolTip = getFrameToolTipText(input);
+			setTitleToolTip(inputToolTip);
+		}
+	}
+	
+	/**
+	 * <p>
+	 * Returns the tool tip text for the given element. Used as the tool tip
+	 * text for the current frame, and for the view title tooltip.
+	 * </p>
+	 * @param anElement 
+	 * @return the tool tip text
+	 * @since 3.4
+	 * 
+	 */
+	public String getFrameToolTipText(Object anElement) {
+		if (commonViewer == null)
+			return ""; //$NON-NLS-1$
+		return ((ILabelProvider) commonViewer.getLabelProvider())
+					.getText(anElement);
+	}
+
+	
+	/**
+	 * <p>
 	 * Note: This method is for internal use only. Clients should not call this
 	 * method.
 	 * </p>
@@ -246,7 +283,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * Note: This method is for internal use only. Clients should not call this
 	 * method.
 	 * </p>
-	 * 
 	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite,
 	 *      org.eclipse.ui.IMemento)
 	 */
@@ -521,47 +557,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		return getSite().getPage().getInput();
 	}
 
-	/**
-	 * <p>
-	 * Updates the title text and title tool tip. Called whenever the input of
-	 * the viewer changes.
-	 * </p>
-	 */
-	protected void updateTitle() {
-
-		if (commonViewer == null) {
-			return;
-		}
-
-		Object input = commonViewer.getInput();
-		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$ 
-		// IWorkingSet workingSet = workingSetFilter.getWorkingSet();
-
-		if (input == null) {
-			setPartName(viewName);
-			setTitleToolTip(""); //$NON-NLS-1$ 
-		} else {
-			String inputToolTip = getFrameToolTipText(input);
-
-			setPartName(viewName);
-			setTitleToolTip(inputToolTip);
-		}
-	}
-
-	/**
-	 * <p>
-	 * Returns the tool tip text for the given element. Used as the tool tip
-	 * text for the current frame, and for the view title tooltip.
-	 * </p>
-	 */
-	protected String getFrameToolTipText(Object anElement) {
-		if (commonViewer != null) {
-			return ((ILabelProvider) commonViewer.getLabelProvider())
-					.getText(anElement);
-		}
-		return ""; //$NON-NLS-1$
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
 	 */
@@ -663,5 +658,5 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	protected IMemento getMemento() {
 		return memento;
 	}
- 
+    
 }

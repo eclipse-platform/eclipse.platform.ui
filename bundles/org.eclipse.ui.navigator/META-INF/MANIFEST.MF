@@ -11,6 +11,7 @@ Export-Package: org.eclipse.ui.internal.navigator;x-friends:="org.eclipse.ui.nav
  org.eclipse.ui.internal.navigator.dnd;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources",
  org.eclipse.ui.internal.navigator.extensions;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources",
  org.eclipse.ui.internal.navigator.filters;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources,org.eclipse.ui.tests.navigator",
+ org.eclipse.ui.internal.navigator.framelist;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources,org.eclipse.ui.tests.navigator",
  org.eclipse.ui.internal.navigator.sorters;x-internal:=true,
  org.eclipse.ui.internal.navigator.wizards;x-internal:=true,
  org.eclipse.ui.navigator

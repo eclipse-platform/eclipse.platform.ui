@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,8 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSet;
@@ -25,16 +25,19 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.CommonActionProvider;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.IExtensionActivationListener;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class WorkingSetActionProvider extends CommonActionProvider {
 
@@ -42,7 +45,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private boolean contributedToViewMenu = false;
 
-	private StructuredViewer viewer;
+	private CommonViewer viewer;
 
 	private INavigatorContentService contentService;
 
@@ -61,10 +64,9 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private IPropertyChangeListener topLevelModeListener;
 
-
 	/**
 	 * Provides a smart listener to monitor changes to the Working Set Manager.
-	 *
+	 * 
 	 */
 	public class WorkingSetManagerListener implements IPropertyChangeListener {
 
@@ -72,23 +74,29 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 		/*
 		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+		 * 
+		 * @see
+		 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org
+		 * .eclipse.jface.util.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
 			String property = event.getProperty();
 			Object newValue = event.getNewValue();
 			Object oldValue = event.getOldValue();
 
+			String newLabel = null;
 			if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && oldValue == workingSet) {
+				newLabel = ""; //$NON-NLS-1$
 				setWorkingSet(null);
 			} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && newValue == workingSet) {
+				newLabel = workingSet.getLabel();
 			} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property) && newValue == workingSet) {
 				if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
 					// act as if the working set has been made null
 					if (!emptyWorkingSet) {
 						emptyWorkingSet = true;
 						workingSetFilter.setWorkingSet(null);
+						newLabel = null;
 					}
 				} else {
 					// we've gone from empty to non-empty on our set.
@@ -96,11 +104,15 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 					if (emptyWorkingSet) {
 						emptyWorkingSet = false;
 						workingSetFilter.setWorkingSet(workingSet);
+						newLabel = workingSet.getLabel();
 					}
 				}
-				if (viewer != null) {
-					viewer.refresh();
-				}
+			}
+			if (viewer != null) {
+				if (newLabel != null)
+					((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(newLabel);
+				viewer.getFrameList().reset();
+				viewer.refresh();
 			}
 		}
 
@@ -126,20 +138,34 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	}
 
 	private IPropertyChangeListener filterChangeListener = new IPropertyChangeListener() {
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-		 */
 		public void propertyChange(PropertyChangeEvent event) {
 			IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
 
-			if (newWorkingSet != null && !contentService.isActive(WorkingSetsContentProvider.EXTENSION_ID)) {
-				contentService.getActivationService().activateExtensions(new String[]{WorkingSetsContentProvider.EXTENSION_ID}, false);
-				contentService.getActivationService().persistExtensionActivations();
+			setWorkingSet(newWorkingSet);
+			if (newWorkingSet != null) {
+				if (!contentService.isActive(WorkingSetsContentProvider.EXTENSION_ID)) {
+					contentService.getActivationService().activateExtensions(
+							new String[] { WorkingSetsContentProvider.EXTENSION_ID }, false);
+					contentService.getActivationService().persistExtensionActivations();
+				}
+				if (newWorkingSet.isAggregateWorkingSet()) {
+					IAggregateWorkingSet agWs = (IAggregateWorkingSet) newWorkingSet;
+					IWorkingSet[] comps = agWs.getComponents();
+					if (comps.length > 1) {
+						((ProjectExplorer) viewer.getCommonNavigator())
+								.setWorkingSetLabel(WorkbenchNavigatorMessages.WorkingSetActionProvider_multipleWorkingSets);
+					} else if (comps.length > 0) {
+						((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(comps[0].getLabel());
+					} else {
+						((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(null);
+					}
+				} else
+					((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(workingSet.getLabel());
+			} else {
+				((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(null);
 			}
 
-			setWorkingSet(newWorkingSet);
+			viewer.getFrameList().reset();
 		}
 	};
 
@@ -165,8 +191,9 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 						managerChangeListener.listen();
 
 					} else {
-						savedWorkingSet= workingSet;
+						savedWorkingSet = workingSet;
 						setWorkingSet(null);
+						((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(null);
 						managerChangeListener.ignore();
 						workingSetActionGroup.setWorkingSet(null);
 						workingSetRootModeActionGroup.setShowTopLevelWorkingSets(false);
@@ -179,14 +206,15 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	};
 
-
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
+	 * 
+	 * @see
+	 * org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator
+	 * .ICommonActionExtensionSite)
 	 */
 	public void init(ICommonActionExtensionSite aSite) {
-		viewer = aSite.getStructuredViewer();
+		viewer = (CommonViewer) aSite.getStructuredViewer();
 		contentService = aSite.getContentService();
 
 		extensionStateModel = contentService.findStateModel(WorkingSetsContentProvider.EXTENSION_ID);
@@ -194,10 +222,12 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		workingSetActionGroup = new WorkingSetFilterActionGroup(aSite.getViewSite().getShell(), filterChangeListener);
 		workingSetRootModeActionGroup = new WorkingSetRootModeActionGroup(viewer, extensionStateModel);
 
-		topLevelModeListener= new IPropertyChangeListener() {
+		topLevelModeListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				setWorkingSet(workingSet);
-			}};
+				viewer.getFrameList().reset();
+			}
+		};
 
 		if (contentService.isActive(WorkingSetsContentProvider.EXTENSION_ID)) {
 			managerChangeListener.listen();
@@ -208,17 +238,17 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	}
 
-    /**
-     * Restores the working set filter from the persistence store.
-     */
-    protected void initWorkingSetFilter(String workingSetName) {
-        IWorkingSet workingSet = null;
+	/**
+	 * Restores the working set filter from the persistence store.
+	 */
+	protected void initWorkingSetFilter(String workingSetName) {
+		IWorkingSet workingSet = null;
 
-        if (workingSetName != null && workingSetName.length() > 0) {
+		if (workingSetName != null && workingSetName.length() > 0) {
 			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 			workingSet = workingSetManager.getWorkingSet(workingSetName);
 		} else if (PlatformUI.getPreferenceStore().getBoolean(
-						IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT)) {
+				IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT)) {
 			// use the window set by default if the global preference is set
 			workingSet = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getAggregateWorkingSet();
 		}
@@ -228,20 +258,22 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 			internalSetWorkingSet(workingSet);
 			workingSetActionGroup.setWorkingSet(workingSet);
 		}
-    }
+	}
 
 	/**
 	 * Set current active working set.
-	 *
-	 * @param workingSet  working set to be activated, may be <code>null</code>
+	 * 
+	 * @param workingSet
+	 *            working set to be activated, may be <code>null</code>
 	 */
 	protected void setWorkingSet(IWorkingSet workingSet) {
-        internalSetWorkingSet(workingSet);
+		internalSetWorkingSet(workingSet);
 
-        workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
+		workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
 
 		if (viewer != null) {
-			if (workingSet == null || emptyWorkingSet || !extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS)) {
+			if (workingSet == null || emptyWorkingSet
+					|| !extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS)) {
 				if (viewer.getInput() != originalViewerInput) {
 					viewer.setInput(originalViewerInput);
 				}
@@ -256,7 +288,8 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 				filterAdded = false;
 				if (!workingSet.isAggregateWorkingSet()) {
 					IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-					viewer.setInput(workingSetManager.createAggregateWorkingSet("", "", new IWorkingSet[] { workingSet })); //$NON-NLS-1$ //$NON-NLS-2$
+					viewer.setInput(workingSetManager.createAggregateWorkingSet(
+							"", "", new IWorkingSet[] { workingSet })); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					viewer.setInput(workingSet);
 				}
@@ -266,21 +299,25 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private void internalSetWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;
-		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet()
-				&& workingSet.isEmpty();
+		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet() && workingSet.isEmpty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.CommonActionProvider#restoreState(org.eclipse.ui.IMemento)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.navigator.CommonActionProvider#restoreState(org.eclipse
+	 * .ui.IMemento)
 	 */
 	public void restoreState(IMemento aMemento) {
 		super.restoreState(aMemento);
 
 		boolean showWorkingSets = true;
-		if(aMemento != null) {
+		if (aMemento != null) {
 			Integer showWorkingSetsInt = aMemento.getInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS);
 			showWorkingSets = showWorkingSetsInt == null || showWorkingSetsInt.intValue() == 1;
-			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets);
+			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
+					showWorkingSets);
 			workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
 
 			String lastWorkingSetName = aMemento.getString(TAG_CURRENT_WORKING_SET_NAME);
@@ -288,19 +325,25 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		} else {
 			showWorkingSets = false;
 
-			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets);
+			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
+					showWorkingSets);
 			workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.CommonActionProvider#saveState(org.eclipse.ui.IMemento)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.navigator.CommonActionProvider#saveState(org.eclipse.ui
+	 * .IMemento)
 	 */
 	public void saveState(IMemento aMemento) {
 		super.saveState(aMemento);
 
-		if(aMemento != null) {
-			int showWorkingSets = extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS) ? 1 : 0;
+		if (aMemento != null) {
+			int showWorkingSets = extensionStateModel
+					.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS) ? 1 : 0;
 			aMemento.putInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets);
 
 			if (workingSet != null) {
@@ -312,8 +355,10 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
+	 * 
+	 * @see
+	 * org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars
+	 * )
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		if (!contributedToViewMenu) {
@@ -331,7 +376,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
 	public void dispose() {
@@ -356,5 +401,4 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		return filterChangeListener;
 	}
 
-	
 }

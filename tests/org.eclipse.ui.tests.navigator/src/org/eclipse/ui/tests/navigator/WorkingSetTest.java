@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Oakland Software Incorporated - initial API and implementation
+ *     Francis Upton IV, Oakland Software Incorporated - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
@@ -28,6 +28,7 @@ import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.internal.AggregateWorkingSet;
 import org.eclipse.ui.internal.WorkingSet;
 import org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
@@ -62,6 +63,8 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		TreeItem[] items = viewer.getTree().getItems();
 		assertTrue("There should be some items.", items.length > 0);
+		assertEquals(null, ((ProjectExplorer) _commonNavigator)
+				.getWorkingSetLabel());
 	}
 
 	// Bug 212389 projects are not shown when they are not in the working set,
@@ -99,6 +102,8 @@ public class WorkingSetTest extends NavigatorTestBase {
 		// project
 		assertTrue("First item needs to be project", items[0].getData().equals(
 				p1));
+		assertEquals("ws1", ((ProjectExplorer) _commonNavigator)
+				.getWorkingSetLabel());
 	}
 
 	// bug 220090 test that working sets are shown when selected locally (not
@@ -130,13 +135,15 @@ public class WorkingSetTest extends NavigatorTestBase {
 				workingSet);
 		l.propertyChange(event);
 
-		//DisplayHelper.sleep(Display.getCurrent(), 10000000);
+		// DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
 		TreeItem[] items = viewer.getTree().getItems();
 		// The bug is here where the first item is a IFile, not the enclosing
 		// project
-		assertTrue("First item needs to be working set", items[0].getData().equals(
-				workingSet));
+		assertTrue("First item needs to be working set", items[0].getData()
+				.equals(workingSet));
+		assertEquals("ws1", ((ProjectExplorer) _commonNavigator)
+				.getWorkingSetLabel());
 	}
 
 	// bug 244174 test property to switch back and forth between working sets
@@ -152,27 +159,28 @@ public class WorkingSetTest extends NavigatorTestBase {
 		IExtensionStateModel extensionStateModel = contentService
 				.findStateModel(WorkingSetsContentProvider.EXTENSION_ID);
 
-		// Force the content provider to be loaded so that it responds to the 
+		// Force the content provider to be loaded so that it responds to the
 		// working set events
-		INavigatorContentExtension ce = 
-				contentService.getContentExtensionById(WorkingSetsContentProvider.EXTENSION_ID);
+		INavigatorContentExtension ce = contentService
+				.getContentExtensionById(WorkingSetsContentProvider.EXTENSION_ID);
 		ce.getContentProvider();
-		
+
 		IWorkingSet workingSet = new WorkingSet("ws1", "ws1",
 				new IAdaptable[] { p1 });
 
 		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
-		.getActionProvider(contentService, _actionService,
-				WorkingSetActionProvider.class);
+				.getActionProvider(contentService, _actionService,
+						WorkingSetActionProvider.class);
 		IPropertyChangeListener l = provider.getFilterChangeListener();
 		PropertyChangeEvent event = new PropertyChangeEvent(this,
 				WorkingSetFilterActionGroup.CHANGE_WORKING_SET, null,
 				workingSet);
 		l.propertyChange(event);
 
-		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = activeWindow.getActivePage();
-		activePage.setWorkingSets(new IWorkingSet[] {workingSet});
+		activePage.setWorkingSets(new IWorkingSet[] { workingSet });
 
 		extensionStateModel.setBooleanProperty(
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
@@ -180,8 +188,8 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		TreeItem[] items = viewer.getTree().getItems();
 
-		assertTrue("First item needs to be working set", items[0].getData().equals(
-				workingSet));
+		assertTrue("First item needs to be working set", items[0].getData()
+				.equals(workingSet));
 
 		extensionStateModel.setBooleanProperty(
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, false);
@@ -196,10 +204,47 @@ public class WorkingSetTest extends NavigatorTestBase {
 		viewer.refresh();
 
 		items = viewer.getTree().getItems();
-		assertTrue("First item needs to be working set", items[0].getData().equals(
-				workingSet));
-
+		assertTrue("First item needs to be working set", items[0].getData()
+				.equals(workingSet));
 	}
 
-	
+	public void testMultipleWorkingSets() throws Exception {
+
+		IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
+		p1.create(null);
+		p1.open(null);
+		IProject p2 = ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
+		p2.create(null);
+		p2.open(null);
+
+		// Force the content provider to be loaded so that it responds to the
+		// working set events
+		INavigatorContentExtension ce = contentService
+				.getContentExtensionById(WorkingSetsContentProvider.EXTENSION_ID);
+		ce.getContentProvider();
+
+		IWorkingSet workingSet1 = new WorkingSet("ws1", "ws1",
+				new IAdaptable[] { p1 });
+		IWorkingSet workingSet2 = new WorkingSet("ws2", "ws2",
+				new IAdaptable[] { p1 });
+
+		AggregateWorkingSet agWorkingSet = new AggregateWorkingSet("AgWs",
+				"Ag Working Set",
+				new IWorkingSet[] { workingSet1, workingSet2 });
+
+		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
+				.getActionProvider(contentService, _actionService,
+						WorkingSetActionProvider.class);
+
+		IPropertyChangeListener l = provider.getFilterChangeListener();
+		PropertyChangeEvent event = new PropertyChangeEvent(this,
+				WorkingSetFilterActionGroup.CHANGE_WORKING_SET, null,
+				agWorkingSet);
+		l.propertyChange(event);
+
+		assertEquals(
+				WorkbenchNavigatorMessages.WorkingSetActionProvider_multipleWorkingSets,
+				((ProjectExplorer) _commonNavigator).getWorkingSetLabel());
+	}
+
 }

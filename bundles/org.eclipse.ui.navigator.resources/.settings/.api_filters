@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.navigator.resources" version="2">
+    <resource path="src/org/eclipse/ui/internal/navigator/resources/actions/GotoActionGroup.java" type="org.eclipse.ui.internal.navigator.resources.actions.GotoActionGroup">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonViewer"/>
+                <message_argument value="GotoActionGroup"/>
+                <message_argument value="getFrameList()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="GotoActionGroup"/>
+                <message_argument value="getFrameList()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

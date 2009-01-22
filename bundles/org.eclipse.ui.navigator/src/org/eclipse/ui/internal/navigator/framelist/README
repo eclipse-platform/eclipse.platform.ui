@@ -1,0 +1,10 @@
+This is copied from the org.eclipse.ui.views.framelist package in the org.eclipse.ui.ide plugin.
+
+This was necessary because the CNF cannot depend on the ide plugin.
+
+This is nearly identical to the IDE version, the following are differences:
+
+1) Fixed compile warnings
+2) Each action gets an Id which allows it to be removed by Id.
+
+15 Jan 09 FRU

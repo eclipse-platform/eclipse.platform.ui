@@ -10,16 +10,25 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
+import org.eclipse.ui.PlatformUI;
+
 /**
- * The help context ids for the Common Navigator.
+ * The help context ids used by the Common Navigator. These are defined in the
+ * workbench plugin. There is no separate help for the Common Navigator.
  * 
  * @since 3.2
  * 
  */
 public interface INavigatorHelpContextIds {
 
+	// Note we are using the workbench help since help requires the
+	// workbench
 	/** */
-	public static final String PREFIX = NavigatorPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
+	public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
+
+	/** */
+	public static final String GOTO_RESOURCE_ACTION = PREFIX
+			+ "goto_resource_action_context"; //$NON-NLS-1$
 
 	/** */
 	public static final String TEXT_CUT_ACTION = PREFIX
@@ -40,4 +49,10 @@ public interface INavigatorHelpContextIds {
 	/** */
 	public static final String TEXT_SELECT_ALL_ACTION = PREFIX
 			+ "text_select_all_action_context"; //$NON-NLS-1$
+
+	// Dialogs
+	/** */
+	public static final String GOTO_RESOURCE_DIALOG = PREFIX
+			+ "goto_resource_dialog_context"; //$NON-NLS-1$
+
 }

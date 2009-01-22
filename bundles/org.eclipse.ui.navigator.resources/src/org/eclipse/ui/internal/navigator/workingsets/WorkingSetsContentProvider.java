@@ -17,14 +17,15 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
-// Access to this internal class can be removed when
-// bug 217955 is fixed
-import org.eclipse.ui.internal.AggregateWorkingSet;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 /**
  * Provides children and parents for IWorkingSets.
@@ -47,13 +48,13 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 
 	private static final Object[] NO_CHILDREN = new Object[0];
-	/* package */ static final int WORKING_SETS = 0;
-	/* package */ static final int PROJECTS = 1;
 
 	private WorkingSetHelper helper;
-	private int rootMode = WORKING_SETS;
+	private IAggregateWorkingSet workingSetRoot;
 	private IExtensionStateModel extensionStateModel;	
-
+	private ProjectExplorer projectExplorer;
+	private CommonViewer viewer;
+	
 	private IPropertyChangeListener rootModeListener = new IPropertyChangeListener() {
 		
 		/* (non-Javadoc)
@@ -63,7 +64,6 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 			if(SHOW_TOP_LEVEL_WORKING_SETS.equals(event.getProperty())) {
 				updateRootMode();
 			}
-			
 		} 
 
 	};
@@ -73,6 +73,10 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */  
 	public void init(ICommonContentExtensionSite aConfig) {
+		NavigatorContentService cs = (NavigatorContentService) aConfig.getService();
+		viewer = (CommonViewer) cs.getViewer();
+		projectExplorer = (ProjectExplorer) viewer.getCommonNavigator();
+		
 		extensionStateModel = aConfig.getExtensionStateModel(); 
 		extensionStateModel.addPropertyChangeListener(rootModeListener);
 		updateRootMode();
@@ -97,10 +101,10 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		if (parentElement instanceof IWorkingSet) {
 			IWorkingSet workingSet = (IWorkingSet) parentElement;
 			if (workingSet.isAggregateWorkingSet()) {
-				switch (rootMode) {
-					case WORKING_SETS :
-						return ((AggregateWorkingSet) workingSet).getComponents();
-					case PROJECTS :
+				switch (projectExplorer.getRootMode()) {
+					case ProjectExplorer.WORKING_SETS :
+						return ((IAggregateWorkingSet) workingSet).getComponents();
+					case ProjectExplorer.PROJECTS :
 						return workingSet.getElements();
 				}
 			}
@@ -125,7 +129,6 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 	public void dispose() {
 		helper = null;
-
 		extensionStateModel.removePropertyChangeListener(rootModeListener);
 	}
 
@@ -134,14 +137,13 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 			IWorkingSet rootSet = (IWorkingSet) newInput;
 			helper = new WorkingSetHelper(rootSet);
 		}
-
 	} 
  
 	private void updateRootMode() {
 		if( extensionStateModel.getBooleanProperty(SHOW_TOP_LEVEL_WORKING_SETS) )
-			rootMode = WORKING_SETS;
+			projectExplorer.setRootMode(ProjectExplorer.WORKING_SETS);
 		else 
-			rootMode = PROJECTS;
+			projectExplorer.setRootMode(ProjectExplorer.PROJECTS);
 	}
 
 	protected class WorkingSetHelper {
@@ -159,7 +161,9 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 			workingSet = set;
 
 			if (workingSet.isAggregateWorkingSet()) {
-				AggregateWorkingSet aggregateSet = (AggregateWorkingSet) workingSet;
+				IAggregateWorkingSet aggregateSet = (IAggregateWorkingSet) workingSet;
+				if (workingSetRoot == null)
+					workingSetRoot = aggregateSet;
 
 				IWorkingSet[] components = aggregateSet.getComponents();
 
@@ -186,6 +190,8 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		 * @return The parent associated with the element, if any.
 		 */
 		public Object getParent(Object element) {
+			if (element instanceof IWorkingSet && element != workingSetRoot)
+				return workingSetRoot;
 			return parents.get(element);
 		}
 	}
