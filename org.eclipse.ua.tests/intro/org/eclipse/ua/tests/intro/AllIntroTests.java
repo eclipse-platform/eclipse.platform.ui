@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.ua.tests.intro.anchors.ExtensionReorderingTest;
 import org.eclipse.ua.tests.intro.contentdetect.ContentDetectorTest;
+import org.eclipse.ua.tests.intro.other.AllOtherTests;
 import org.eclipse.ua.tests.intro.parser.AllParserTests;
 
 /*
@@ -36,5 +37,6 @@ public class AllIntroTests extends TestSuite {
 		addTest(AllParserTests.suite());
 		addTestSuite(ContentDetectorTest.class);
 		addTestSuite(ExtensionReorderingTest.class);
+		addTest(AllOtherTests.suite());
 	}
 }

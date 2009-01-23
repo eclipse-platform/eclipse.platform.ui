@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -35,6 +37,7 @@ import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.ReopenUtil;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.IntroPart;
 
@@ -152,8 +155,15 @@ public final class CustomizableIntroPart extends IntroPart implements
         model = extensionPointManager.getCurrentModel();
 
         if (model != null && model.hasValidConfig()) {
+
+            boolean startAtHomePage = ReopenUtil.isReopenPreference();
+			if (startAtHomePage) {
+    			PlatformUI.getPreferenceStore().setValue(
+    	        		IWorkbenchPreferenceConstants.SHOW_INTRO, true);	
+    			memento = null;
+    		}
             // we have a valid config contribution, get presentation. Make sure
-            // you pass corret memento.
+            // you pass correct memento.
             presentation = model.getPresentation();
             if (presentation != null)
                 presentation.init(this, getMemento(memento,
