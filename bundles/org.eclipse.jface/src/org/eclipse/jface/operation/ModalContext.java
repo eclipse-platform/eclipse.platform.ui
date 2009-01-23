@@ -183,8 +183,14 @@ public class ModalContext {
 					}
 					// For all other exceptions, log the problem.
 					catch (Throwable t) {
+						if (t instanceof VirtualMachineError) {
+							throw (VirtualMachineError) t;
+						}
 						exceptionCount++;
-						if (exceptionCount > 2 || display.isDisposed()) {
+						// We're counting exceptions in client code, such as asyncExecs,
+						// so be generous about how many may fail consecutively before we
+						// give up.
+						if (exceptionCount > 50 || display.isDisposed()) {
 			                if (t instanceof RuntimeException) {
 								throw (RuntimeException) t;
 							} else if (t instanceof Error) {

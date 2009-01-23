@@ -2711,7 +2711,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private void shutdown() {
 		// shutdown application-specific portions first
-		advisor.postShutdown();
+		try {
+			advisor.postShutdown();
+		} catch (Exception ex) {
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+							"Exceptions during shutdown", ex)); //$NON-NLS-1$
+		}
 
 		// notify regular workbench clients of shutdown, and clear the list when
 		// done
