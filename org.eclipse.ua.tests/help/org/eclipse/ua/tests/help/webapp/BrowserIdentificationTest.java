@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Dave Carver - modification to isAdvanced(), see Bug 238533
  *******************************************************************************/
 
 package org.eclipse.ua.tests.help.webapp;

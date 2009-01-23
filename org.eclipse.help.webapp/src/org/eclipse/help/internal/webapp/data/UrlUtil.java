@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation    
- *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466 
+ *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466   
+ *     Dave Carver - modification to isAdvanced(), see Bug 238533
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 import java.io.IOException;
@@ -683,7 +684,7 @@ public class UrlUtil {
 	public static boolean isAdvanced(String agent) {
 	        if (agent == null) return false;
 		if (isIE(agent) && "5.5".compareTo(getIEVersion(agent)) <= 0) return true; //$NON-NLS-1$
-		if (isMozilla(agent) && isGecko(agent)) return true;
+		if (isMozilla(agent)) return true; // && isGecko(agent)) return true;
 		if (isSafari(agent) && "120".compareTo(getSafariVersion(agent)) <= 0) return true; //$NON-NLS-1$
 		if (isOpera(agent) && getMajorVersion(getOperaVersion(agent)) >= 9) return true;
 		if (isMozilla(agent) && !isKonqueror(agent)) return true;
