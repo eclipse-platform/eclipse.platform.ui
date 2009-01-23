@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River - Pawel Piech - Added coalescing of label updates (bug 247575).
+ *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -32,14 +33,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -47,7 +46,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class TreeModelLabelProvider extends ColumnLabelProvider {
 	
-	private InternalTreeModelViewer fViewer;
+	private ITreeModelLabelProviderTarget fViewer;
 	private List fComplete;
 	
 	/**
@@ -105,7 +104,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	/**
 	 * Constructs a new label provider on the given display
 	 */
-	public TreeModelLabelProvider(InternalTreeModelViewer viewer) {
+	public TreeModelLabelProvider(ITreeModelLabelProviderTarget viewer) {
 		fViewer = viewer;
 	}
 	
@@ -134,7 +133,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	 * @return display
 	 */
 	private Display getDisplay() {
-		return fViewer.getControl().getDisplay();
+		return fViewer.getDisplay();
 	}
 	
 	/**
@@ -220,7 +219,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 		// NOT USED - the viewer updates each row instead 
 	}	
 	
-	public synchronized void update(TreePath elementPath, ViewerRow row) {
+	public synchronized boolean update(TreePath elementPath) {
 		String[] visibleColumns = fViewer.getVisibleColumns();
 		Object element = elementPath.getLastSegment();
 		IElementLabelProvider presentation = ViewerAdapterService.getLabelProvider(element);
@@ -230,11 +229,11 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 		        updates = new LinkedList();
 		        fPendingUpdates.put(presentation, updates);
 		    }
-		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, (TreeItem) row.getItem(), this, visibleColumns, fViewer.getPresentationContext()));
+		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, fViewer, visibleColumns, fViewer.getPresentationContext()));
 		    if (fPendingUpdatesJob != null) {
 		    	fPendingUpdatesJob.cancel();
 		    }
-		    fPendingUpdatesJob = new UIJob(fViewer.getControl().getDisplay(), "Schedule Pending Label Updates") { //$NON-NLS-1$
+		    fPendingUpdatesJob = new UIJob(fViewer.getDisplay(), "Schedule Pending Label Updates") { //$NON-NLS-1$
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					 startRequests(this);
 					 return Status.OK_STATUS;
@@ -242,10 +241,10 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 			};
 			fPendingUpdatesJob.setSystem(true);
 			fPendingUpdatesJob.schedule();
-		} else if (element instanceof String) {
-			// for example, expression error messages
-			row.setText(0, (String)element);
-		}		
+			return true;
+		} else {
+		    return false;
+		}
 	}
 	
 	private void startRequests(UIJob updateJob) {
@@ -333,12 +332,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 			fUpdatesInProgress.add(update);
 		}
 		if (begin) {
-			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE) {
+			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 				System.out.println("LABEL SEQUENCE BEGINS"); //$NON-NLS-1$
 			}
 			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
 		}
-		if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE) {
+		if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 			System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(ModelContentProvider.UPDATE_BEGINS, update);
@@ -355,12 +354,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 			fUpdatesInProgress.remove(update);
 			end = fUpdatesInProgress.isEmpty();
 		}
-		if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE) {
+		if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 			System.out.println("\tEND - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(ModelContentProvider.UPDATE_COMPLETE, update);
 		if (end) {
-			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE) {
+			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 				System.out.println("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
 			}
 			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);

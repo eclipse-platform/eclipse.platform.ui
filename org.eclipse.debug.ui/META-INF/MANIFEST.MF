@@ -28,6 +28,7 @@ Export-Package: org.eclipse.debug.internal.ui;x-internal:=true,
  org.eclipse.debug.internal.ui.sourcelookup.browsers;x-internal:=true,
  org.eclipse.debug.internal.ui.stringsubstitution;x-internal:=true,
  org.eclipse.debug.internal.ui.viewers;x-internal:=true,
+ org.eclipse.debug.internal.ui.viewers.breadcrumb;x-internal:=true,
  org.eclipse.debug.internal.ui.viewers.model;x-internal:=true,
  org.eclipse.debug.internal.ui.viewers.model.provisional;x-friends:="org.eclipse.debug.examples.ui,org.eclipse.jdt.debug.ui",
  org.eclipse.debug.internal.ui.viewers.provisional;x-internal:=true,
@@ -60,7 +61,8 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.ui.editors;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.3.0,4.0.0)",
- org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)"
+ org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)",
+ org.eclipse.ui.forms;bundle-version="3.3.100"
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Import-Package: com.ibm.icu.text

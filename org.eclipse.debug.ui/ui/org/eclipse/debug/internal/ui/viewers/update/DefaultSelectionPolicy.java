@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech (Wind River) - added a breadcrumb mode to Debug view (Bug 252677)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
@@ -17,6 +18,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 
 /**
  * Default selection policy for the debug view.
@@ -103,10 +107,20 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 		return false;
 	}
 
-    /* (non-Javadoc)
+    /**
+     * If an attempt is made to select an invalid element, it usually indicates that the 
+     * currently selected element was removed from the model.  Instead of leaving the 
+     * selection empty, attempt to select the parent element instead.
+     * 
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#handleInvalidSelection(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection)
      */
     public ISelection replaceInvalidSelection(ISelection selection, ISelection newSelection) {
+        if (selection instanceof ITreeSelection) {
+            TreePath[] paths = ((ITreeSelection)selection).getPaths();
+            if (paths.length > 0 && paths[0].getSegmentCount() > 1) {
+                return new TreeSelection(paths[0].getParentPath());
+            }
+        }
         return newSelection;
     }
 }

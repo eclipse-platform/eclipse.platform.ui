@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech - Wind River - Bug 205335: ModelContentProvider does not cancel stale updates when switching viewer input
  *     Wind River Systems - Fix for viewer state save/restore [188704] 
+ *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -49,7 +50,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -65,8 +65,14 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 abstract class ModelContentProvider implements IContentProvider, IModelChangedListener {
 
-	private Viewer fViewer;
+	private ITreeModelContentProviderTarget fViewer;
 
+    /**
+     * Flag indicating whether the viewer should ignore SELECT, REVEAL, 
+     * EXPAND, and COLLAPSE flags of {@link IModelDelta} coming from the model.
+     */
+	private boolean fSuppressModelControlRequests = false;
+	
 	private Map fModelProxies = new HashMap(); // model proxy by element
 	
 	/**
@@ -197,19 +203,27 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	protected static final TreePath EMPTY_TREE_PATH = new TreePath(new Object[]{});
 	
 	// debug flags
+    public static String DEBUG_PRESENTATION_ID = null;
 	public static boolean DEBUG_CONTENT_PROVIDER = false;
 	public static boolean DEBUG_UPDATE_SEQUENCE = false;
     public static boolean DEBUG_STATE_SAVE_RESTORE = false;
-	
+    public static boolean DEBUG_DELTAS = false;
+
 	static {
+        DEBUG_PRESENTATION_ID = Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/presentationId"); //$NON-NLS-1$
+        if (!DebugUIPlugin.DEBUG || "".equals(DEBUG_PRESENTATION_ID)) { //$NON-NLS-1$
+            DEBUG_PRESENTATION_ID = null;
+        }
 		DEBUG_CONTENT_PROVIDER = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
 		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/contentProvider")); //$NON-NLS-1$
 		DEBUG_UPDATE_SEQUENCE = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
 		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/updateSequence")); //$NON-NLS-1$
 		DEBUG_STATE_SAVE_RESTORE = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
 	            Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/stateSaveRestore")); //$NON-NLS-1$
+        DEBUG_DELTAS = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+                Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/deltas")); //$NON-NLS-1$
 	} 	
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -245,7 +259,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public synchronized void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		fViewer = viewer;
+		fViewer = (ITreeModelContentProviderTarget)viewer;
 		if (oldInput != null) {
 			for (Iterator itr = fCompareRequestsInProgress.values().iterator(); itr.hasNext(); ) {
 				((ElementCompareRequest)itr.next()).cancel();
@@ -312,7 +326,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 								UIJob job = new UIJob("restore state") { //$NON-NLS-1$
 									public IStatus runInUIThread(IProgressMonitor monitor) {
 										if (!isDisposed() && input.equals(getViewer().getInput())) {
-			                                if (DEBUG_STATE_SAVE_RESTORE) {
+			                                if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 			                                    System.out.println("RESTORE: " + stateDelta.toString()); //$NON-NLS-1$
 			                                }
 										    fViewerStates.remove(keyMementoString);
@@ -441,21 +455,21 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	protected void saveViewerState(Object input) {
 		IElementMementoProvider stateProvider = ViewerAdapterService.getMementoProvider(input);
 		if (stateProvider != null) {
-            if (DEBUG_STATE_SAVE_RESTORE) {
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                 System.out.println("SAVE BEGIN: " + input); //$NON-NLS-1$
             }
 
 			// build a model delta representing expansion and selection state
 			final ModelDelta saveDeltaRoot = new ModelDelta(input, IModelDelta.NO_CHANGE);
             buildViewerState(saveDeltaRoot);
-            if (DEBUG_STATE_SAVE_RESTORE) {
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                 System.out.println("SAVE DELTA FROM VIEW: " + saveDeltaRoot); //$NON-NLS-1$
             }
 		   
 			if (fPendingState != null) {
 			    // If the restore for the current input was never completed, preserve 
 			    // that restore along with the restore that was completed.
-                if (DEBUG_STATE_SAVE_RESTORE) {
+                if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                     System.out.println("SAVE OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
                 }
                 
@@ -492,7 +506,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                             saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
                             copyIntoDelta(pendingDeltaNode, saveDeltaNode);
                         } else {
-                            if (DEBUG_STATE_SAVE_RESTORE) {
+                            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                                 System.out.println(" Skipping: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
                             }
                         }
@@ -515,7 +529,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				// encode delta with mementos in place of elements, in non-UI thread
 				encodeDelta(saveDeltaRoot, stateProvider);
 			} else {
-	            if (DEBUG_STATE_SAVE_RESTORE) {
+	            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 	                System.out.println("SAVE CANCELED, NO DATA"); //$NON-NLS-1$
 	            }			
 			}
@@ -621,7 +635,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 							} catch (IOException e) {
 								DebugUIPlugin.log(e);
 							}
-	                        if (DEBUG_STATE_SAVE_RESTORE) {
+	                        if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 	                            System.out.println("SAVE COMPLETED: " + rootDelta); //$NON-NLS-1$
 	                        }
 							stateSaveComplete(this);
@@ -634,7 +648,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 							req.cancel();
 						}
 						requests.clear();
-		                if (DEBUG_STATE_SAVE_RESTORE) {
+		                if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 		                    System.out.println("SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
 		                }
 						stateSaveComplete(this);
@@ -785,15 +799,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 								synchronized (ModelContentProvider.this) {
 									if (!isDisposed()) {
 									    context = getPresentationContext();
-									    viewer = getViewer();
+									    viewer = (Viewer)getViewer();
 									}
 								}
 								if (context != null && !proxy.isDisposed()) {
     								proxy.init(context);
     								Object[] mcls = fModelListeners.getListeners();
-    								for (int i = 0; i < mcls.length; i++) {
-    									proxy.addModelChangedListener((IModelChangedListener) mcls[i]);
-    								}
     								proxy.addModelChangedListener(ModelContentProvider.this);
     								proxy.installed(viewer);
 								}
@@ -826,21 +837,58 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
-	public void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
-		WorkbenchJob job = new WorkbenchJob("process model delta") { //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (!proxy.isDisposed()) {
-					updateNodes(new IModelDelta[] { delta });
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.schedule();
-		
+	public synchronized void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
+	    if (fViewer != null && !proxy.isDisposed()) {
+    		new WorkbenchJob(fViewer.getDisplay(), "process model delta") { //$NON-NLS-1$
+    			public IStatus runInUIThread(IProgressMonitor monitor) {
+                    if (!proxy.isDisposed()) {
+                        if (DEBUG_DELTAS && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                            DebugUIPlugin.debug("RECEIVED DELTA: " + delta.toString()); //$NON-NLS-1$
+                        }
+    
+                        updateNodes(new IModelDelta[] { delta }, false);
+                        
+                        // Call model listeners after updating the viewer model.
+                        Object[] listeners = fModelListeners.getListeners();
+                        for (int i = 0; i < listeners.length; i++) {
+                            ((IModelChangedListener)listeners[i]).modelChanged(delta, proxy);
+                        }
+                    }
+                    return Status.OK_STATUS;
+    	        }
+    	    }.schedule();
+	    }
 	}
 
-	protected void updateNodes(IModelDelta[] nodes) {
+	/**
+	 * Turns on the mode which causes the model viewer to ignore SELECT, 
+	 * EXPAND, and COLLAPSE flags of {@link IModelDelta}.
+	 *  
+	 * @param suppress If <code>true</code> it turns on the suppress mode.
+	 */
+    protected void setSuppressModelControlDeltas(boolean suppress) {
+        fSuppressModelControlRequests = suppress;
+    }
+    
+    /**
+     * Returns true if the viewer is currently in the mode to ignore SELECT, 
+     * REVEAL, EXPAND, and COLLAPSE flags of {@link IModelDelta}.
+     *  
+     * @return Returns <code>true</code> if in suppress mode.
+     */
+    protected boolean isSuppressModelControlDeltas() {
+        return fSuppressModelControlRequests;
+    }
+
+    /**
+     * Updates the viewer with the following deltas. 
+     * 
+     * @param nodes Model deltas to be processed.
+     * @param override If true, it overrides the mode which suppresses 
+     * processing of SELECT, REVEAL, EXPAND, COLLAPSE flags of 
+     * {@link IModelDelta}.
+     */
+	protected void updateNodes(IModelDelta[] nodes, boolean override) {
 		for (int i = 0; i < nodes.length; i++) {
 			IModelDelta node = nodes[i];
 			int flags = node.getFlags();
@@ -853,15 +901,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			}
 			if ((flags & IModelDelta.CONTENT) != 0) {
 				handleContent(node);
-			}
-			if ((flags & IModelDelta.EXPAND) != 0) {
-				handleExpand(node);
-			}
-			if ((flags & IModelDelta.COLLAPSE) != 0) {
-				handleCollapse(node);
-			}
-			if ((flags & IModelDelta.SELECT) != 0) {
-				handleSelect(node);
 			}
 			if ((flags & IModelDelta.STATE) != 0) {
 				handleState(node);
@@ -878,10 +917,21 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			if ((flags & IModelDelta.UNINSTALL) != 0) {
 				handleUninstall(node);
 			}
-			if ((flags & IModelDelta.REVEAL) != 0) {
-				handleReveal(node);
-			}
-			updateNodes(node.getChildDeltas());
+            if (!fSuppressModelControlRequests || override) {
+                if ((flags & IModelDelta.EXPAND) != 0) {
+                    handleExpand(node);
+                }
+                if ((flags & IModelDelta.COLLAPSE) != 0) {
+                    handleCollapse(node);
+                }
+                if ((flags & IModelDelta.SELECT) != 0) {
+                    handleSelect(node);
+                }
+                if ((flags & IModelDelta.REVEAL) != 0) {
+                    handleReveal(node);
+                }
+            }
+			updateNodes(node.getChildDeltas(), override);
 		}
 	}
 
@@ -936,7 +986,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @return viewer
 	 */
-	protected Viewer getViewer() {
+	protected ITreeModelContentProviderTarget getViewer() {
 		return fViewer;
 	}
 	
@@ -1046,10 +1096,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * @return whether to filter the element
 	 */
 	protected boolean shouldFilter(Object parentElementOrTreePath, Object element) {
-		ViewerFilter[] filters = ((StructuredViewer)fViewer).getFilters();
+		ViewerFilter[] filters = fViewer.getFilters();
 		if (filters.length > 0) {
 			for (int j = 0; j < filters.length; j++) {
-				if (!(filters[j].select(fViewer, parentElementOrTreePath, element))) {
+				if (!(filters[j].select((Viewer)fViewer, parentElementOrTreePath, element))) {
 					return true;
 				}
 			}
@@ -1103,7 +1153,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		CheckState state = new CheckState();
 		fPendingState.accept(state);
 		if (state.isComplete()) {
-            if (DEBUG_STATE_SAVE_RESTORE) {
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                 System.out.println("RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
             }
 			fPendingState = null;
@@ -1135,12 +1185,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			requests.add(update);
 		}
 		if (begin) {
-			if (DEBUG_UPDATE_SEQUENCE) {
+			if (DEBUG_UPDATE_SEQUENCE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 				System.out.println("MODEL SEQUENCE BEGINS"); //$NON-NLS-1$
 			}
 			notifyUpdate(UPDATE_SEQUENCE_BEGINS, null);
 		}
-		if (DEBUG_UPDATE_SEQUENCE) {
+		if (DEBUG_UPDATE_SEQUENCE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 			System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(UPDATE_BEGINS, update);
@@ -1165,11 +1215,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			end = fRequestsInProgress.isEmpty();
 		}
 		notifyUpdate(UPDATE_COMPLETE, update);
-		if (DEBUG_UPDATE_SEQUENCE) {
+		if (DEBUG_UPDATE_SEQUENCE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 			System.out.println("\tEND - " + update); //$NON-NLS-1$
 		}
 		if (end) {
-			if (DEBUG_UPDATE_SEQUENCE) {
+			if (DEBUG_UPDATE_SEQUENCE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 				System.out.println("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
 			}
 			notifyUpdate(UPDATE_SEQUENCE_COMPLETE, null);
@@ -1350,11 +1400,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	void addModelChangedListener(IModelChangedListener listener) {
 		fModelListeners.add(listener); 
-		Iterator proxies = fModelProxies.values().iterator();
-		while (proxies.hasNext()) {
-			IModelProxy proxy = (IModelProxy) proxies.next();
-			proxy.addModelChangedListener(listener);
-		}
 	}
 	
 	/**
@@ -1364,11 +1409,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	void removeModelChangedListener(IModelChangedListener listener) {
 		fModelListeners.remove(listener);
-		Iterator proxies = fModelProxies.values().iterator();
-		while (proxies.hasNext()) {
-			IModelProxy proxy = (IModelProxy) proxies.next();
-			proxy.removeModelChangedListener(listener);
-		}
 	}
 	
 	/**
@@ -1408,7 +1448,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 								reCreate  = new ArrayList();
 							}
 							reCreate.add(childrenUpdate);
-							if (DEBUG_CONTENT_PROVIDER) {
+							if (DEBUG_CONTENT_PROVIDER && getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID)) {
 								System.out.println("canceled update in progress handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
 							}
 						}
@@ -1424,7 +1464,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 						IChildrenUpdate childrenUpdate = (IChildrenUpdate) update;
 						if (childrenUpdate.getOffset() > modelIndex) {
 							((ChildrenUpdate)childrenUpdate).setOffset(childrenUpdate.getOffset() - 1);
-							if (DEBUG_CONTENT_PROVIDER) {
+							if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 								System.out.println("modified waiting update handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
 							}
 						}

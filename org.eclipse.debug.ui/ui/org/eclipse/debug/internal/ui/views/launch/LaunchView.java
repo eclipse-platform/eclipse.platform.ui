@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River - Pawel Piech - Busy status while updates in progress (Bug 206822)
+ *     Pawel Piech (Wind River) - added a breadcrumb mode to Debug view (Bug 252677)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
@@ -67,6 +68,8 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.AbstractDebugContextProvider;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -83,9 +86,12 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
@@ -100,9 +106,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
+import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
@@ -150,7 +159,45 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	private EditSourceLookupPathAction fEditSourceAction = null;
 	private LookupSourceAction fLookupAction = null;
 
-	class ContextProvider extends AbstractDebugContextProvider implements IModelChangedListener {
+	/**
+	 * Page-book page for the breadcrumb viewer.  This page is activated in 
+	 * Debug view when the height of the view is reduced to just one line. 
+	 */
+	private class BreadcrumbPage extends Page {
+
+	    LaunchViewBreadcrumb fCrumb;
+	    Control fControl;
+
+	    public void createControl(Composite parent) {
+	        fCrumb = new LaunchViewBreadcrumb(LaunchView.this, (TreeModelViewer)getViewer(), fTreeViewerDebugContextProvider);
+	        fControl = fCrumb.createContent(parent);
+	    }
+
+	    public void init(IPageSite pageSite) {
+	        super.init(pageSite);
+            pageSite.setSelectionProvider(fCrumb.getSelectionProvider());
+	    }
+	    
+	    public Control getControl() {
+	        return fControl;
+	    }
+
+	    public void setFocus() {
+	        fCrumb.activate();
+	    }
+	    
+	    IDebugContextProvider getContextProvider() {
+	        return fCrumb.getContextProvider();
+	    }
+
+	    int getHeight() {
+	        return fCrumb.getHeight();
+	    }
+	}
+
+	private BreadcrumbPage fBreadcrumbPage;
+	
+	class TreeViewerContextProvider extends AbstractDebugContextProvider implements IModelChangedListener {
 		
 		private ISelection fContext = null;
 		private TreeModelViewer fViewer = null;
@@ -193,7 +240,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			return new TreePath(list.toArray());
 		}
 		
-		public ContextProvider(TreeModelViewer viewer) {
+		public TreeViewerContextProvider(TreeModelViewer viewer) {
 			super(LaunchView.this);
 			fViewer = viewer;
 			fViewer.addModelChangedListener(this);
@@ -247,7 +294,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 				Job job = new UIJob("context change") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						// verify selection is still the same context since job was scheduled
-						synchronized (ContextProvider.this) {
+						synchronized (TreeViewerContextProvider.this) {
 							if (fContext instanceof IStructuredSelection) {
 								IStructuredSelection ss = (IStructuredSelection) fContext;
 								Object changed = ((IStructuredSelection)finalEvent.getContext()).getFirstElement();
@@ -277,7 +324,62 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	/**
 	 * Context provider
 	 */
-	private ContextProvider fProvider;
+	private TreeViewerContextProvider fTreeViewerDebugContextProvider;
+	
+	private ISelectionChangedListener fTreeViewerSelectionChangedListener = new ISelectionChangedListener() {
+	    public void selectionChanged(SelectionChangedEvent event) {
+	        fTreeViewerDebugContextProvider.activate(event.getSelection());
+	    }
+	};
+
+	private class ContextProviderProxy extends AbstractDebugContextProvider implements IDebugContextListener {
+	    private IDebugContextProvider fActiveProvider;
+	    private IDebugContextProvider[] fProviders;
+	    
+	    ContextProviderProxy(IDebugContextProvider[] providers) {
+	        super(LaunchView.this);
+	        fProviders = providers;
+	        fActiveProvider = providers[0];
+	        for (int i = 0; i < fProviders.length; i++) {
+	            fProviders[i].addDebugContextListener(this);
+	        }
+	    }
+	    
+	    void setActiveProvider(IDebugContextProvider provider) {
+            if (!provider.equals(fActiveProvider)) {
+    	        ISelection activeContext = getActiveContext();
+                fActiveProvider = provider;
+                ISelection newActiveContext = getActiveContext();
+    	        if (!activeContext.equals(newActiveContext)) {
+        	        fire(new DebugContextEvent(this, getActiveContext(), DebugContextEvent.ACTIVATED));
+    	        }
+            }
+	    }
+	    
+        public ISelection getActiveContext() {
+            ISelection activeContext = fActiveProvider.getActiveContext();
+            if (activeContext != null) {
+                return activeContext;
+            }
+            return TreeSelection.EMPTY;
+        }
+
+        public void debugContextChanged(DebugContextEvent event) {
+	        if (event.getSource().equals(fActiveProvider)) {
+	            fire(new DebugContextEvent(this, event.getContext(), event.getFlags()));
+	        }
+	    }
+        
+        void dispose() {
+            for (int i = 0; i < fProviders.length; i++) {
+                fProviders[i].removeDebugContextListener(this);
+            }
+            fProviders = null;
+            fActiveProvider = null;
+        }
+	}
+	
+	private ContextProviderProxy fContextProviderProxy;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
@@ -333,6 +435,40 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		action.dispose();
 	}
 	
+	public void createPartControl(final Composite parent) {
+	    super.createPartControl(parent);
+
+	    getSite().getSelectionProvider().addSelectionChangedListener(this);
+	    
+	    ((IPageBookViewPage)getDefaultPage()).getSite().setSelectionProvider(getViewer());
+	    
+	    fBreadcrumbPage = new BreadcrumbPage();
+        fBreadcrumbPage.createControl(getPageBook());
+        initPage(fBreadcrumbPage);
+        
+        fContextProviderProxy = new ContextProviderProxy(
+            new IDebugContextProvider[] {fTreeViewerDebugContextProvider, fBreadcrumbPage.getContextProvider()});
+        DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextProvider(fContextProviderProxy);
+        
+        parent.addControlListener(new ControlListener() {
+            public void controlMoved(ControlEvent e) {
+            }
+            public void controlResized(ControlEvent e) {
+                if (parent.isDisposed()) {
+                    return;
+                }
+                int breadcrumbHeight = fBreadcrumbPage.getHeight();
+                if (parent.getClientArea().height < breadcrumbHeight + 5) {
+                    getPageBook().showPage(fBreadcrumbPage.getControl());
+                    fContextProviderProxy.setActiveProvider(fBreadcrumbPage.getContextProvider());
+                } else {
+                    showViewer();
+                    fContextProviderProxy.setActiveProvider(fTreeViewerDebugContextProvider);
+                }
+            }
+        });
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
@@ -342,7 +478,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL,
 				new DebugModelPresentationContext(IDebugUIConstants.ID_DEBUG_VIEW, fPresentation));
         
-        viewer.addSelectionChangedListener(this);
+        viewer.addSelectionChangedListener(fTreeViewerSelectionChangedListener);
         viewer.getControl().addKeyListener(new KeyAdapter() {
         	public void keyPressed(KeyEvent event) {
         		if (event.character == SWT.DEL && event.stateMask == 0) {
@@ -351,12 +487,11 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         	}
         });
         viewer.addViewerUpdateListener(this);        
-        // add my viewer as a selection provider, so selective re-launch works
-		getSite().setSelectionProvider(viewer);
+        
 		viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
 		//setEventHandler(new LaunchViewEventHandler(this));
-		fProvider = new ContextProvider(viewer);
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextProvider(fProvider);
+		fTreeViewerDebugContextProvider = new TreeViewerContextProvider(viewer);
+		
 		return viewer;
 	}
 		
@@ -491,12 +626,13 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextProvider(fProvider);
+	    getSite().getSelectionProvider().removeSelectionChangedListener(this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextProvider(fTreeViewerDebugContextProvider);
         disposeActions();
-		fProvider.dispose();
+		fTreeViewerDebugContextProvider.dispose();
 	    Viewer viewer = getViewer();
 		if (viewer != null) {
-			viewer.removeSelectionChangedListener(this);
+			viewer.removeSelectionChangedListener(fTreeViewerSelectionChangedListener);
             ((TreeModelViewer)viewer).removeViewerUpdateListener(this);
 		}
 		IWorkbenchPage page = getSite().getPage();
@@ -532,7 +668,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		fProvider.activate(event.getSelection());
 		updateObjects();
 	}
 
@@ -633,7 +768,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		/**
 		 * TODO hack to get around bug 148424, remove if UI ever fixes the PropertyDialogAction to respect enablesWhen conditions
 		 */
-		TreeSelection sel = (TreeSelection) fProvider.getActiveContext();
+		TreeSelection sel = (TreeSelection) fTreeViewerDebugContextProvider.getActiveContext();
 		boolean enabled = true;
 		if(sel != null && sel.size() > 0) {
 			enabled = !(sel.getFirstElement() instanceof ILaunch);
@@ -867,5 +1002,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         }       
     }   
 	
-
+    /**
+     * Returns whether the breadcrumb viewer is currently visible in the view.
+     */
+    boolean isBreadcrumbVisible() {
+        return fBreadcrumbPage.getControl().isVisible();
+    }
 }

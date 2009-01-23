@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
@@ -27,20 +32,25 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -69,7 +79,9 @@ import org.eclipse.ui.IMemento;
  * 
  * @since 3.3
  */
-public class InternalTreeModelViewer extends TreeViewer {
+public class InternalTreeModelViewer extends TreeViewer 
+    implements ITreeModelViewer,  ITreeModelContentProviderTarget, ITreeModelLabelProviderTarget
+{
 	
 	private IPresentationContext fContext;
 	
@@ -542,6 +554,14 @@ public class InternalTreeModelViewer extends TreeViewer {
 		 * @return column labels
 		 */
 		public String[] getLabel() {
+		    if (fLabel == null) {
+		        String[] visibleColumns = getVisibleColumns();
+		        String[] label = new String[visibleColumns == null ? 1 : visibleColumns.length];
+		        for (int i = 0; i < label.length; i++) {
+		            label[i] = fItem.getText(i);
+		        }
+		        return label;
+		    }
 			return fLabel.fText;
 
 		}
@@ -982,6 +1002,10 @@ public class InternalTreeModelViewer extends TreeViewer {
 		fContext = context;
 		setContentProvider(createContentProvider());
 		setLabelProvider(createLabelProvider());
+		
+		if ((style & SWT.POP_UP) != 0) {
+		    ((ModelContentProvider)getContentProvider()).setSuppressModelControlDeltas(true);
+		}
 	}
 	
 	/**
@@ -1023,7 +1047,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 	 * @param item
 	 */
 	private void preserveItem(TreeItem item) {
-		Object[] labels = (Object[]) item.getData(LabelUpdate.PREV_LABEL_KEY);
+		Object[] labels = (Object[]) item.getData(PREV_LABEL_KEY);
 		if (labels != null) {
 			for (int i = 0; i < labels.length; i++) {
 				if (labels[i] != null) {
@@ -1031,25 +1055,25 @@ public class InternalTreeModelViewer extends TreeViewer {
 				}
 			}
 		}
-		Object[] images = (Object[]) item.getData(LabelUpdate.PREV_IMAGE_KEY);
+		Object[] images = (Object[]) item.getData(PREV_IMAGE_KEY);
 		if (images != null) {
 			for (int i = 0; i < images.length; i++) {
 				item.setImage(i, (Image) images[i]);
 			}
 		}
-		Object[] fonts = (Object[]) item.getData(LabelUpdate.PREV_FONT_KEY);
+		Object[] fonts = (Object[]) item.getData(PREV_FONT_KEY);
 		if (fonts != null) {
 			for (int i = 0; i < fonts.length; i++) {
 				item.setFont(i, (Font) fonts[i]);
 			}
 		}
-		Object[] foregrounds = (Object[]) item.getData(LabelUpdate.PREV_FOREGROUND_KEY);
+		Object[] foregrounds = (Object[]) item.getData(PREV_FOREGROUND_KEY);
 		if (foregrounds != null) {
 			for (int i = 0; i < foregrounds.length; i++) {
 				item.setForeground(i, (Color) foregrounds[i]);
 			}
 		}
-		Object[] backgrounds = (Object[]) item.getData(LabelUpdate.PREV_BACKGROUND_KEY);
+		Object[] backgrounds = (Object[]) item.getData(PREV_BACKGROUND_KEY);
 		if (backgrounds != null) {
 			for (int i = 0; i < backgrounds.length; i++) {
 				item.setBackground(i, (Color) backgrounds[i]);
@@ -1066,16 +1090,18 @@ public class InternalTreeModelViewer extends TreeViewer {
 	protected void handleInvalidSelection(ISelection selection, ISelection newSelection) {
 	    IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(selection, getPresentationContext());
 	    if (selectionPolicy != null) {
-	    	ISelection temp = newSelection;
-            newSelection = selectionPolicy.replaceInvalidSelection(selection, newSelection);
-            if (temp != newSelection) {
-            	if (newSelection == null) {
-            		newSelection = new StructuredSelection();
-            	}
-            	// call super.setSelection(...) to avoid asking the selection policy
-            	// if the selection should be overridden
-            	super.setSelection(newSelection, false);
-            	return;
+            while (!selection.equals(newSelection)) {
+                ISelection temp = newSelection;
+                selection = selectionPolicy.replaceInvalidSelection(selection, newSelection);
+                if (selection == null) {
+                    selection = TreeSelection.EMPTY;
+                }
+                if (!temp.equals(selection)) {
+                    setSelectionToWidget(selection, false);
+                    newSelection = getSelection();
+                } else {
+                    break;
+                }
             }
 	    }
 	    super.handleInvalidSelection(selection, newSelection);
@@ -1615,7 +1641,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 	 * @param curr
 	 * @return
 	 */
-	protected boolean overrideSelection(ISelection current, ISelection candidate) {
+	public boolean overrideSelection(ISelection current, ISelection candidate) {
 		IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(current, getPresentationContext());
 		if (selectionPolicy == null) {
 			return true;
@@ -1710,7 +1736,12 @@ public class InternalTreeModelViewer extends TreeViewer {
 			return;
 		}
 		
-		((TreeModelLabelProvider)getLabelProvider()).update(getTreePathFromItem(item), getViewerRowFromItem(treeItem));
+		if ( !((TreeModelLabelProvider)getLabelProvider()).update(getTreePathFromItem(item)) ) {
+            if (element instanceof String) {
+                item.setData(PREV_LABEL_KEY, new String[] { (String)element } );
+            }		    
+		}
+		    
 
 		// As it is possible for user code to run the event
 		// loop check here.
@@ -1735,12 +1766,20 @@ public class InternalTreeModelViewer extends TreeViewer {
 		return new VirtualModel(root, childIndexes);
 	}
 		
-	void addLabelUpdateListener(ILabelUpdateListener listener) {
-		((TreeModelLabelProvider)getLabelProvider()).addLabelUpdateListener(listener);
+	public void addLabelUpdateListener(ILabelUpdateListener listener) {
+        IBaseLabelProvider labelProvider = getLabelProvider();
+        if (labelProvider instanceof TreeModelLabelProvider) {
+            ((TreeModelLabelProvider)labelProvider).addLabelUpdateListener(listener);
+        }
 	}
 	
-	void removeLabelUpdateListener(ILabelUpdateListener listener) {
-		((TreeModelLabelProvider)getLabelProvider()).removeLabelUpdateListener(listener);
+	public void removeLabelUpdateListener(ILabelUpdateListener listener) {
+	    if (!getControl().isDisposed()) {
+	        IBaseLabelProvider labelProvider = getLabelProvider();
+	        if (labelProvider instanceof TreeModelLabelProvider) {
+	            ((TreeModelLabelProvider)labelProvider).removeLabelUpdateListener(listener);
+	        }
+	    }
 	}
 	
 	/**
@@ -1750,7 +1789,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 	 * @param path tree path
 	 * @return item or <code>null</code>
 	 */
-	Widget findItem(TreePath path) {
+	public Widget findItem(TreePath path) {
 		if (path.getSegmentCount() == 0) {
 			return getTree();
 		}
@@ -1902,12 +1941,305 @@ public class InternalTreeModelViewer extends TreeViewer {
 	 * 
 	 * @param elementPath tree path to element to consider for expansion
 	 */
-	void autoExpand(TreePath elementPath) {
+	public void autoExpand(TreePath elementPath) {
 		int level = getAutoExpandLevel();
-		if (level > 0 || level == ALL_LEVELS) {
-			if (level == ALL_LEVELS || level >= elementPath.getSegmentCount()) {
+		if (level > 0 || level == ITreeModelViewer.ALL_LEVELS) {
+			if (level == ITreeModelViewer.ALL_LEVELS || level >= elementPath.getSegmentCount()) {
 				expandToLevel(elementPath, 1);
 			}
 		}
 	}
+
+    public int findElementIndex(TreePath parentPath, Object element) {
+        Widget parentItem = findItem(parentPath);
+        if (parentItem != null) {
+            Item[] children = getChildren(parentItem);
+            for (int i = 0; i < children.length; i++) {
+                Item item = children[i];
+                Object data = item.getData();
+                if ( (element != null && element.equals(data)) || (element == null && data == null) ) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public Display getDisplay() {
+        Control control = getControl();
+        if (control != null) {
+            return  control.getDisplay();
+        }
+        return null;
+    }
+
+    protected static final String[] STATE_PROPERTIES = new String[]{ IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
+    
+    public void update(Object element) {
+        update(element, STATE_PROPERTIES);
+    }
+    
+    /**
+     * Label data cache keys
+     * TODO: workaround for bug 159461
+     */
+    static String PREV_LABEL_KEY = "PREV_LABEL_KEY"; //$NON-NLS-1$
+    static String PREV_IMAGE_KEY = "PREV_IMAGE_KEY"; //$NON-NLS-1$
+    static String PREV_FONT_KEY = "PREV_FONT_KEY"; //$NON-NLS-1$
+    static String PREV_FOREGROUND_KEY = "PREV_FOREGROUND_KEY"; //$NON-NLS-1$
+    static String PREV_BACKGROUND_KEY = "PREV_BACKGROUND_KEY"; //$NON-NLS-1$
+
+    public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] imageDescriptors,
+        FontData[] fontDatas, RGB[] _foregrounds, RGB[] _backgrounds) 
+    {
+        Widget widget = findItem(path);
+        String[] columnIds = getVisibleColumns();
+        
+        if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
+            TreeItem item = (TreeItem)widget;
+            /*Object data = item.getData();
+            int itemCount = item.getItemCount();
+            item.clearAll(false);
+            item.setData(data);
+            item.setItemCount(itemCount);*/
+            
+            for (int i=0; i<numColumns; i++){
+                // text might be null if the launch has been terminated
+                item.setText(i,(labels[i] == null ? IInternalDebugCoreConstants.EMPTY_STRING : labels[i]));
+            }
+            item.setData(PREV_LABEL_KEY, labels);
+            
+            if (imageDescriptors == null) {
+                for (int i=0; i<numColumns; i++){
+                    item.setImage(i,null);
+                }
+                item.setData(PREV_IMAGE_KEY, null);
+            } else {
+                Image[] images = new Image[imageDescriptors.length];
+                for (int i = 0; i < imageDescriptors.length; i++) {
+                    images[i] = ((TreeModelLabelProvider)getLabelProvider()).getImage(imageDescriptors[i]);
+                }
+                if (columnIds == null) {
+                    item.setImage(images[0]);
+                } else {
+                    item.setImage(images);
+                }
+                item.setData(PREV_IMAGE_KEY, images);
+            }
+            
+            if (_foregrounds == null) { 
+                for (int i=0; i<numColumns; i++){
+                    item.setForeground(i,null);
+                }
+                item.setData(PREV_FOREGROUND_KEY, null);
+            } else {
+                Color[] foregrounds = new Color[_foregrounds.length];
+                for (int i = 0; i< foregrounds.length; i++) {
+                    foregrounds[i] = ((TreeModelLabelProvider)getLabelProvider()).getColor(_foregrounds[i]);
+                }
+                if (columnIds == null) {
+                    item.setForeground(0,foregrounds[0]);
+                } else {
+                    for (int i = 0; i< foregrounds.length; i++) {
+                        item.setForeground(i, foregrounds[i]);
+                    }
+                }
+                item.setData(PREV_FOREGROUND_KEY, foregrounds);
+            }
+            
+            if (_backgrounds == null) {
+                for (int i=0; i<numColumns; i++){
+                    item.setBackground(i,null);
+                }
+                item.setData(PREV_BACKGROUND_KEY, null);
+            } else {
+                Color[] backgrounds = new Color[_backgrounds.length];
+                for (int i = 0; i< backgrounds.length; i++) {
+                    backgrounds[i] = ((TreeModelLabelProvider)getLabelProvider()).getColor(_backgrounds[i]);
+                }
+                if (columnIds == null) {
+                    item.setBackground(0,backgrounds[0]);
+                } else {
+                    for (int i = 0; i< backgrounds.length; i++) {
+                        item.setBackground(i, backgrounds[i]);
+                    }
+                }
+                item.setData(PREV_BACKGROUND_KEY, backgrounds);
+            }
+            
+            if (fontDatas == null) {
+                for (int i=0; i<numColumns; i++){
+                    item.setFont(i,null);
+                }
+                item.setData(PREV_FONT_KEY, null);
+            } else {
+                Font[] fonts = new Font[fontDatas.length];
+                for (int i = 0; i < fontDatas.length; i++) {
+                    fonts[i] = ((TreeModelLabelProvider)getLabelProvider()).getFont(fontDatas[i]);
+                }
+                if (columnIds == null) {
+                    item.setFont(0,fonts[0]);
+                } else {
+                    for (int i = 0; i < fonts.length; i++) {
+                        item.setFont(i, fonts[i]);
+                    }
+                }
+                item.setData(PREV_FONT_KEY, fonts);
+            }
+        }
+    }
+    
+    public ViewerLabel getElementLabel(TreePath path, String columnId) {
+        if (path.getSegmentCount() == 0) {
+            return null;
+        }
+        
+        int columnIdx = -1;
+        String[] visibleColumns = getVisibleColumns();
+        if (columnId != null && visibleColumns != null) {
+            int i = 0;
+            for (i = 0; i < visibleColumns.length; i++) {
+                if (columnId.equals(getVisibleColumns()[i])) {
+                    columnIdx = i;
+                    break;
+                }
+            }
+            if (i == visibleColumns.length) {
+                return null;
+            }
+        } else {
+            columnIdx = 0;
+        }
+        TreeItem item = (TreeItem)findItem(path);
+        
+        if (item != null) {
+            ViewerLabel label = new ViewerLabel(item.getText(columnIdx), item.getImage(columnIdx));
+            label.setFont(item.getFont(columnIdx));
+            label.setBackground(item.getBackground(columnIdx));
+            label.setForeground(item.getForeground(columnIdx));
+            return label;
+        }
+        return null;
+    }
+
+    public void reveal(TreePath path, int index) {
+        Widget item = findItem(path);
+        TreeItem[] children = null;
+        if (item instanceof TreeItem) {
+            children = ((TreeItem)item).getItems();
+        } else if (item instanceof Tree) {
+            children = ((Tree)item).getItems();
+        }
+        if (children != null && index < children.length) {
+            getTree().setTopItem(children[index]);
+        }
+    }
+    
+    public int getChildCount(TreePath path) {
+        if (path.getSegmentCount() == 0) {
+            return ((Tree)getControl()).getItemCount();
+        } else {
+            Widget[] items = internalFindItems(path);
+            if (items.length > 0) {
+                if (items[0] instanceof TreeItem) {
+                    return ((TreeItem)items[0]).getItemCount();
+                }
+            }   
+        }
+        return -1;
+    }
+    
+    public Object getChildElement(TreePath path, int index) {
+        TreeItem childItem = ((Tree)getControl()).getItem(index);
+        if (path.getSegmentCount() == 0) {
+            Tree tree = (Tree)getControl();
+            try {
+                childItem = tree.getItem(index);
+            } catch (IllegalArgumentException e) {}
+        } else {
+            try {
+                Widget[] items = internalFindItems(path);
+                if (items.length > 0) {
+                    if (items[0] instanceof TreeItem) {
+                        childItem = ((TreeItem)items[0]).getItem(index);
+                    }
+                }
+            } catch (IllegalArgumentException e) {}
+        }
+        if (childItem != null) {
+            return childItem.getData();
+        } 
+        return null;
+    }
+
+    public TreePath getTopElementPath() {
+        TreeItem topItem = ((Tree)getControl()).getTopItem();
+        if (topItem != null && topItem.getData() != null) {
+            return getTreePathFromItem(topItem);
+        }
+        return null;
+    }
+    
+    public void saveElementState(TreePath path, ModelDelta delta) {
+        Tree tree = (Tree) getControl();
+        TreeItem[] selection = tree.getSelection();
+        Set set = new HashSet();
+        for (int i = 0; i < selection.length; i++) {
+            set.add(selection[i]);
+        }
+        
+        TreeItem[] items = null;
+        Widget w = internalGetWidgetToSelect(path);
+        if (w instanceof Tree) {
+            delta.setChildCount(((ModelContentProvider)getContentProvider()).viewToModelCount(path, tree.getItemCount()));
+            delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+            items = tree.getItems(); 
+        } else if (w instanceof TreeItem) {
+            TreeItem item = (TreeItem)w;
+            delta.setChildCount(((ModelContentProvider)getContentProvider()).viewToModelCount(path, item.getItemCount()));
+            if (item.getExpanded()) {
+                delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+            }
+            if (set.contains(item)) {
+                delta.setFlags(delta.getFlags() | IModelDelta.SELECT);
+            }
+            items = ((TreeItem)w).getItems();
+        }
+        if (items != null) {
+            for (int i = 0; i < items.length; i++) {
+                doSaveElementState(path, delta, items[i], set, i);
+            }
+        }
+    }
+    
+    private void doSaveElementState(TreePath parentPath, ModelDelta delta, TreeItem item, Collection set, int index) {
+        Object element = item.getData();
+        if (element != null) {
+            boolean expanded = item.getExpanded();
+            boolean selected = set.contains(item);
+            if (expanded || selected) {
+                int flags = IModelDelta.NO_CHANGE;
+                if (expanded) {
+                    flags = flags | IModelDelta.EXPAND;
+                }
+                if (selected) {
+                    flags = flags | IModelDelta.SELECT;
+                }
+                int modelIndex = ((ModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, index);
+                TreePath elementPath = parentPath.createChildPath(element);
+                int numChildren = ((ModelContentProvider)getContentProvider()).viewToModelCount(elementPath, item.getItemCount());
+                ModelDelta childDelta = delta.addNode(element, modelIndex, flags, numChildren);
+                if (expanded) {
+                    TreeItem[] items = item.getItems();
+                    for (int i = 0; i < items.length; i++) {
+                        doSaveElementState(elementPath, childDelta, items[i], set, i);
+                    }
+                }
+            }
+        }
+    }
+    
+    public void updateViewer(IModelDelta delta) {
+        ((ModelContentProvider)getContentProvider()).updateNodes(new IModelDelta[] { delta }, true);
+    }
 }

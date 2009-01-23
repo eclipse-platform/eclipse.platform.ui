@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * @since 3.3
@@ -36,20 +32,10 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	private String[] fLabels;
 	private FontData[] fFontDatas;
 	private TreeModelLabelProvider fProvider;
-	private TreeItem fItem;
+	private ITreeModelLabelProviderTarget fTreeViewer;
 	private int fNumColumns; 
 	private IPresentationContext fContext;
 	private Object fViewerInput;
-	
-	/**
-	 * Label data cache keys
-	 * TODO: workaround for bug 159461
-	 */
-	static String PREV_LABEL_KEY = "PREV_LABEL_KEY"; //$NON-NLS-1$
-	static String PREV_IMAGE_KEY = "PREV_IMAGE_KEY"; //$NON-NLS-1$
-	static String PREV_FONT_KEY = "PREV_FONT_KEY"; //$NON-NLS-1$
-	static String PREV_FOREGROUND_KEY = "PREV_FOREGROUND_KEY"; //$NON-NLS-1$
-	static String PREV_BACKGROUND_KEY = "PREV_BACKGROUND_KEY"; //$NON-NLS-1$
 	
 	/**
 	 * @param viewerInput input at the time the request was made
@@ -59,18 +45,18 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	 * @param columnIds column identifiers or <code>null</code>
 	 * @param context presentation context
 	 */
-	public LabelUpdate(Object viewerInput, TreePath elementPath, TreeItem item, TreeModelLabelProvider provider, String[] columnIds, IPresentationContext context) {
+	public LabelUpdate(Object viewerInput, TreePath elementPath, TreeModelLabelProvider provider, ITreeModelLabelProviderTarget treeViewer, String[] columnIds, IPresentationContext context) {
 		fContext = context;
 		fViewerInput = viewerInput;
 		fElementPath = elementPath;
 		fProvider = provider;
 		fColumnIds = columnIds;
-		fItem = item;
 		fNumColumns = 1;
 		if (columnIds != null) {
 			fNumColumns = columnIds.length;
 		}
 		fLabels = new String[fNumColumns];
+		fTreeViewer = treeViewer;
 	}
 
 	/* (non-Javadoc)
@@ -164,93 +150,7 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	 * Applies settings to viewer cell
 	 */
 	public void update() {
-		// label data is stored to prevent flickering of asynchronous view, see bug 159461
-		if (!fItem.isDisposed()) {
-			
-			for (int i=0; i<fNumColumns; i++){
-				// text might be null if the launch has been terminated
-				fItem.setText(i,(fLabels[i] == null ? IInternalDebugCoreConstants.EMPTY_STRING : fLabels[i]));
-			}
-			fItem.setData(PREV_LABEL_KEY, fLabels);
-			
-			if (fImageDescriptors == null) {
-				for (int i=0; i<fNumColumns; i++){
-					fItem.setImage(i,null);
-				}
-				fItem.setData(PREV_IMAGE_KEY, null);
-			} else {
-				Image[] images = new Image[fImageDescriptors.length];
-				for (int i = 0; i < fImageDescriptors.length; i++) {
-					images[i] = fProvider.getImage(fImageDescriptors[i]);
-				}
-				if (fColumnIds == null) {
-					fItem.setImage(images[0]);
-				} else {
-					fItem.setImage(images);
-				}
-				fItem.setData(PREV_IMAGE_KEY, images);
-			}
-			
-			if (fForegrounds == null) {	
-				for (int i=0; i<fNumColumns; i++){
-					fItem.setForeground(i,null);
-				}
-				fItem.setData(PREV_FOREGROUND_KEY, null);
-			} else {
-				Color[] foregrounds = new Color[fForegrounds.length];
-				for (int i = 0; i< foregrounds.length; i++) {
-					foregrounds[i] = fProvider.getColor(fForegrounds[i]);
-				}
-				if (fColumnIds == null) {
-					fItem.setForeground(0,foregrounds[0]);
-				} else {
-					for (int i = 0; i< foregrounds.length; i++) {
-						fItem.setForeground(i, foregrounds[i]);
-					}
-				}
-				fItem.setData(PREV_FOREGROUND_KEY, foregrounds);
-			}
-			
-			if (fBackgrounds == null) {
-				for (int i=0; i<fNumColumns; i++){
-					fItem.setBackground(i,null);
-				}
-				fItem.setData(PREV_BACKGROUND_KEY, null);
-			} else {
-				Color[] backgrounds = new Color[fBackgrounds.length];
-				for (int i = 0; i< backgrounds.length; i++) {
-					backgrounds[i] = fProvider.getColor(fBackgrounds[i]);
-				}
-				if (fColumnIds == null) {
-					fItem.setBackground(0,backgrounds[0]);
-				} else {
-					for (int i = 0; i< backgrounds.length; i++) {
-						fItem.setBackground(i, backgrounds[i]);
-					}
-				}
-				fItem.setData(PREV_BACKGROUND_KEY, backgrounds);
-			}
-			
-			if (fFontDatas == null) {
-				for (int i=0; i<fNumColumns; i++){
-					fItem.setFont(i,null);
-				}
-				fItem.setData(PREV_FONT_KEY, null);
-			} else {
-				Font[] fonts = new Font[fFontDatas.length];
-				for (int i = 0; i < fFontDatas.length; i++) {
-					fonts[i] = fProvider.getFont(fFontDatas[i]);
-				}
-				if (fColumnIds == null) {
-					fItem.setFont(0,fonts[0]);
-				} else {
-					for (int i = 0; i < fonts.length; i++) {
-						fItem.setFont(i, fonts[i]);
-					}
-				}
-				fItem.setData(PREV_FONT_KEY, fonts);
-			}
-		}
+	    fTreeViewer.setElementData(fElementPath, fNumColumns, fLabels, fImageDescriptors, fFontDatas, fForegrounds, fBackgrounds);
 		fProvider.updateComplete(this);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - Fix for viewer state save/restore [188704] 
+ *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -48,7 +49,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 		TreeModelContentProvider provider = (TreeModelContentProvider) getContentProvider();
 		TreePath elementPath = getElementPath();
 		if (fElements != null) {
-			InternalTreeModelViewer viewer = (InternalTreeModelViewer) provider.getViewer();
+			ITreeModelContentProviderTarget viewer = provider.getViewer();
 			for (int i = 0; i < fElements.length; i++) {
 				int modelIndex = fIndex + i;
 				Object element = fElements[i];
@@ -56,7 +57,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					int viewIndex = provider.modelToViewIndex(elementPath, modelIndex);
 					if (provider.shouldFilter(elementPath, element)) {
 						if (provider.addFilteredIndex(elementPath, modelIndex, element)) {
-							if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
+                            if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 								System.out.println("REMOVE(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}
 							viewer.remove(elementPath, viewIndex);
@@ -70,7 +71,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 							}
 							viewer.insert(elementPath, element, insertIndex);
 						} else {
-							if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
+							if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 								System.out.println("replace(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}
 							viewer.replace(elementPath, viewIndex, element);
@@ -114,7 +115,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					fIndex = Math.min(fIndex, otherStart);
 					end = Math.max(end, otherEnd);
 					fLength = end - fIndex;
-					if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
+					if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 						System.out.println("coalesced: " + this.toString()); //$NON-NLS-1$
 					}
 					return true;
@@ -151,8 +152,8 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 		buf.append(getElement());
 		buf.append(" {"); //$NON-NLS-1$
 		buf.append(getOffset());
-		buf.append(',');
-		buf.append(getLength());
+		buf.append("->"); //$NON-NLS-1$
+		buf.append(getOffset() + getLength());
 		buf.append("}"); //$NON-NLS-1$
 		return buf.toString();
 	}

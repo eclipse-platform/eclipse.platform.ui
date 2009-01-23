@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,29 +7,34 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech (Wind River) - added a breadcrumb mode to Debug view (Bug 252677)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 
 /**
  * A tree viewer for a model.
  * <p>
- * Clients may instantiate this class. Clients may not subclass this class.
+ * Style flags supported by this viewer are the same as for {@link TreeViewer}, 
+ * except:
+ * <ul>
+ * <li>SWT.VIRTUAL - Indicates that the viewer should be in lazy mode.  This 
+ * flag is required when creating this viewer.
+ * <li>SWT.POP_UP - Indicates that the viewer is used in a popup window, and it
+ * should ignore requests from the model to select, expand, or collapse tree 
+ * elements.</li>
+ * </ul>
  * </p>
- * @since 3.3
+ * @since 3.3 
+ * @noextend Clients may instantiate this class. Clients may not subclass this class.
  */
 public class TreeModelViewer extends InternalTreeModelViewer {
 
-	/**
-	 * Constructs a new viewer.
-	 * 
-	 * @param parent parent widget
-	 * @param style viewer style bits
-	 * @param context presentation context
-	 */
 	public TreeModelViewer(Composite parent, int style, IPresentationContext context) {
 		super(parent, style, context);
 	}
@@ -166,4 +171,8 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	public void setVisibleColumns(String[] ids) {
 		super.setVisibleColumns(ids);
 	}		
+	
+    public ViewerLabel getElementLabel(TreePath path, String columnId) {
+        return super.getElementLabel(path, columnId);
+    }
 }

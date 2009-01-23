@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial implementation
+ *     Pawel Piech (Wind River) - added a breadcrumb mode to Debug view (Bug 252677)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -133,7 +134,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 				VirtualElement element = (VirtualElement)elements[0];
 				TreePath path = element.realize();
 				if (path != null) {
-					fViewer.setSelection(new TreeSelection(path));
+					fViewer.setSelection(new TreeSelection(path), true, true);
 				} else {
 					DebugUIPlugin.errorDialog(fViewer.getControl().getShell(), ActionMessages.VirtualFindAction_0,
 							MessageFormat.format(ActionMessages.VirtualFindAction_1, new String[]{element.getLabel()[0]}),

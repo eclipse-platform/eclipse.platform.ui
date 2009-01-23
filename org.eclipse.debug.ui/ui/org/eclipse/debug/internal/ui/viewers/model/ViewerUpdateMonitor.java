@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -69,23 +70,9 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
      * Presentation context
      */
     private IPresentationContext fContext;
+
     
-    protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("Asynchronous viewer update") { //$NON-NLS-1$
-        public IStatus runInUIThread(IProgressMonitor monitor) {
-            // necessary to check if viewer is disposed
-        	try {
-	            if (!isCanceled() && !getContentProvider().isDisposed()) {
-	            	IStatus status = getStatus();
-	                if (status == null || status.isOK()) {
-	                	performUpdate();
-	                }
-	            }
-        	} finally {
-        		getContentProvider().updateComplete(ViewerUpdateMonitor.this);
-        	}
-            return Status.OK_STATUS;
-        }
-    };
+    protected WorkbenchJob fViewerUpdateJob;
     
     /**
      * Constructs an update for the given content provider
@@ -102,6 +89,22 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
         fElement = element;
         fElementPath = elementPath;
         // serialize updates per viewer
+        fViewerUpdateJob =  new WorkbenchJob(contentProvider.getViewer().getDisplay(), "Asynchronous viewer update") { //$NON-NLS-1$
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                // necessary to check if viewer is disposed
+                try {
+                    if (!isCanceled() && !getContentProvider().isDisposed()) {
+                        IStatus status = getStatus();
+                        if (status == null || status.isOK()) {
+                            performUpdate();
+                        }
+                    }
+                } finally {
+                    getContentProvider().updateComplete(ViewerUpdateMonitor.this);
+                }
+                return Status.OK_STATUS;
+            }
+        };
         fViewerUpdateJob.setRule(getUpdateSchedulingRule());
         fViewerUpdateJob.setSystem(true);
     }
