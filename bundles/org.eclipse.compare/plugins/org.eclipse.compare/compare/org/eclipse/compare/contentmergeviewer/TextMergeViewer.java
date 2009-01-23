@@ -99,6 +99,7 @@ import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextPresentationListener;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
@@ -2390,6 +2391,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 	
 	/**
+	 * Tells whether the given text viewer is backed by an editor.
+	 * 
+	 * @param textViewer the text viewer to check
+	 * @return <code>true</code> if the viewer is backed by an editor
+	 * @since 3.5
+	 */
+	protected boolean isEditorBacked(ITextViewer textViewer) {
+		return false;
+	}
+
+	/**
 	 * Returns an editor input for the given source viewer. The method returns <code>null</code>
 	 * when no input is available, for example when the input for the merge viewer has not been set
 	 * yet.
@@ -3628,9 +3640,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fAncestor.addTextAction(fIgnoreWhitespace);
 		fHandlerService.registerAction(fIgnoreWhitespace, fIgnoreWhitespace.getActionDefinitionId());
 		
-		showWhitespaceAction = new ShowWhitespaceAction(new MergeSourceViewer[] {
-				fLeft, fRight, fAncestor
-		});
+		boolean needsLeftPainter= !isEditorBacked(fLeft.getSourceViewer());
+		boolean needsRightPainter= !isEditorBacked(fLeft.getSourceViewer());
+		boolean needsAncestorPainter= !isEditorBacked(fAncestor.getSourceViewer());
+		showWhitespaceAction = new ShowWhitespaceAction(
+				new MergeSourceViewer[] {fLeft, fRight, fAncestor},
+				new boolean[] {needsLeftPainter, needsRightPainter, needsAncestorPainter });
 		fHandlerService.registerAction(showWhitespaceAction, ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS);
 		
 		toggleLineNumbersAction = new TextEditorPropertyAction(CompareMessages.TextMergeViewer_16, new MergeSourceViewer[] {

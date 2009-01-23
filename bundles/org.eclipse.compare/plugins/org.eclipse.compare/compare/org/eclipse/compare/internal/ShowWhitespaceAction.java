@@ -13,18 +13,24 @@ package org.eclipse.compare.internal;
 import java.util.*;
 
 import org.eclipse.jface.text.WhitespaceCharacterPainter;
+
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 public class ShowWhitespaceAction extends TextEditorPropertyAction {
 
 	private Map fPainters;
 	private boolean isWhitespaceShowing;
+	private boolean[] fNeedsPainters;
 	
-	public ShowWhitespaceAction(MergeSourceViewer[] viewers) {
+	public ShowWhitespaceAction(MergeSourceViewer[] viewers, boolean[] needsPainters) {
 		super(CompareMessages.ShowWhitespaceAction_0, viewers, AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS);
+		fNeedsPainters = needsPainters;
+		synchronizeWithPreference();
 	}
 	
 	protected void toggleState(boolean checked) {
+		if (fNeedsPainters == null)
+			return; // Not initialized yet
 		if (checked) {
 			showWhitespace();
 		} else {
@@ -45,10 +51,12 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 			Map painters = getPainters();
 			MergeSourceViewer[] viewers = getViewers();
 			for (int i = 0; i < viewers.length; i++) {
-				MergeSourceViewer viewer = viewers[i];
-				WhitespaceCharacterPainter painter= new WhitespaceCharacterPainter(viewer.getSourceViewer());
-				viewer.getSourceViewer().addPainter(painter);
-				painters.put(viewer, painter);
+				if (fNeedsPainters[i]) {
+					MergeSourceViewer viewer = viewers[i];
+					WhitespaceCharacterPainter painter= new WhitespaceCharacterPainter(viewer.getSourceViewer());
+					viewer.getSourceViewer().addPainter(painter);
+					painters.put(viewer, painter);
+				}
 			}
 		} finally {
 			isWhitespaceShowing = true;
@@ -62,7 +70,7 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 			WhitespaceCharacterPainter painter = (WhitespaceCharacterPainter)painters.get(viewer);
 			if (painter != null) {
 				viewer.getSourceViewer().removePainter(painter);
-				painter.deactivate(true);	
+				painter.deactivate(true);
 			}
 		}
 		painters.clear();
