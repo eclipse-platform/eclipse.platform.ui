@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -334,7 +334,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		synchronized (this) {
 			// tries to get a description from the cache	
 			Cache.Entry entry = cache.getEntry(file.getFullPath());
-			if (entry != null && entry.getTimestamp() == info.getContentId())
+			if (entry != null && entry.getTimestamp() == getTimestamp(info))
 				// there was a description in the cache, and it was up to date
 				return (IContentDescription) entry.getCached();
 			
@@ -361,7 +361,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			// we actually got a description filled by a describer (or a default description for a non-obvious type)
 			if (entry == null)
 				// there was no entry before - create one
-				entry = cache.addEntry(file.getFullPath(), newDescription, info.getContentId());
+				entry = cache.addEntry(file.getFullPath(), newDescription, getTimestamp(info));
 			else {
 				// just update the existing entry
 				entry.setTimestamp(info.getContentId());
@@ -369,6 +369,14 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			}
 			return newDescription;
 		}
+	}
+
+	/**
+	 * Returns a timestamp that uniquely identifies a particular content state
+	 * of a particular resource. For use as a key in a content type cache.
+	 */
+	private long getTimestamp(ResourceInfo info) {
+		return info.getContentId() + info.getNodeId();
 	}
 
 	/**
