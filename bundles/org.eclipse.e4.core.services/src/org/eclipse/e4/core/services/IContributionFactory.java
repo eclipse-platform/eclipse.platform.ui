@@ -1,9 +1,11 @@
 package org.eclipse.e4.core.services;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
+
 public interface IContributionFactory {
 
 	public Object call(Object object, String uri,
-			String methodName, Context context, Object defaultValue);
+			String methodName, IEclipseContext context, Object defaultValue);
 
-	public Object create(String uri, Context context);
+	public Object create(String uri, IEclipseContext context);
 }
