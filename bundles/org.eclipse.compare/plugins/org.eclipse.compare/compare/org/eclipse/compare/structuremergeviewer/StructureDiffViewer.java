@@ -633,18 +633,23 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		String key= event.getProperty();
 		if (key.equals(CompareConfiguration.IGNORE_WHITESPACE)) {
 			diff();
-		} else if (key.equals("ANCESTOR_ENCODING")) { //$NON-NLS-1$
+		} else if (key.equals("ANCESTOR_STRUCTURE_REFRESH")) { //$NON-NLS-1$
 			fAncestorStructure.refresh(new NullProgressMonitor());
 			diff();
-		} else if (key.equals("LEFT_ENCODING")) { //$NON-NLS-1$
+		} else if (key.equals("LEFT_STRUCTURE_REFRESH")) { //$NON-NLS-1$
 			fLeftStructure.refresh(new NullProgressMonitor());
 			diff();
-		} else if (key.equals("RIGHT_ENCODING")) { //$NON-NLS-1$
+		} else if (key.equals("RIGHT_STRUCTURE_REFRESH")) { //$NON-NLS-1$
 			fRightStructure.refresh(new NullProgressMonitor());
 			diff();
-		}
-		else
+		} else if (key.equals("ALL_STRUCTURE_REFRESH")) { //$NON-NLS-1$
+			fAncestorStructure.refresh(new NullProgressMonitor());
+			fLeftStructure.refresh(new NullProgressMonitor());
+			fRightStructure.refresh(new NullProgressMonitor());
+			diff();
+		} else {
 			super.propertyChange(event);
+		}
 	}
 		
 	/**

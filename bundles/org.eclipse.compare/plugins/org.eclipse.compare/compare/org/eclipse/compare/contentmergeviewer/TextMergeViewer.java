@@ -432,6 +432,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private List fSourceViewerDecorationSupport = new ArrayList(3);
 	// whether enhanced viewer configuration has been done
 	private boolean isConfigured = false;
+	private boolean fRedoDiff = false;
 
 	private final class InternalOutlineViewerCreator extends OutlineViewerCreator implements ISelectionChangedListener {
 		public Viewer findStructureViewer(Viewer oldViewer,
@@ -557,7 +558,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 						} catch (CoreException e) {
 							CompareUIPlugin.log(e);
 						} finally {
-							encodingChanged(fLeg);
+							update(true);
+							updateStructure(fLeg);
 						}
 					}
 				}
@@ -1021,11 +1023,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			IEditorInput input = getDocumentKey();
 			if (input != null && input.equals(element)) {
 				this.fViewer.updateDirtyState(input, getDocumentProvider(), fLeg);
-				
+
 				// recalculate diffs and update controls
 				new UIJob(CompareMessages.DocumentMerger_0) {
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						encodingChanged(fLeg);
+						update(true);
+						updateStructure(fLeg);
 						return Status.OK_STATUS;
 					}
 				}.schedule();
@@ -2223,6 +2226,16 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 * @since 3.3
 	 */
 	protected boolean handleSetFocus() {
+		if (fRedoDiff) {
+			new UIJob(CompareMessages.DocumentMerger_0) {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					update(true);
+					updateStructure();
+					return Status.OK_STATUS;
+				}
+			}.schedule();
+			fRedoDiff = false;
+		}
 		if (fFocusPart == null) {
 			if (fLeft != null && fLeft.getEnabled()) {
 				fFocusPart= fLeft;
@@ -2919,7 +2932,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		} else if (doc == fRight.getSourceViewer().getDocument()) {
 			setRightDirty(dirty);
 		}
-		
+		if (!isLeftDirty() && !isRightDirty()) {
+			fRedoDiff = false;
+		}
 		updateLines(doc);
 	}
 	
@@ -2998,10 +3013,27 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private void updateDirtyState(IEditorInput key,
 			IDocumentProvider documentProvider, char type) {
 		boolean dirty = documentProvider.canSaveDocument(key);
+		boolean oldLeftDirty = isLeftDirty();
+		boolean oldRightDirty = isRightDirty();
 		if (type == LEFT_CONTRIBUTOR)
 			setLeftDirty(dirty);
 		else if (type == RIGHT_CONTRIBUTOR)
 			setRightDirty(dirty);
+		if ((oldLeftDirty && !isLeftDirty())
+				|| (oldRightDirty && !isRightDirty())) {
+			/*
+			 * Dirty state has changed from true to false, combined dirty state
+			 * is false. _In most cases_ this means that save has taken place
+			 * outside compare editor. Ask to redo diff calculation when the
+			 * editor gets focus.
+			 * 
+			 * However, undoing all the changes made in another editor would
+			 * result in asking for redo diff as well. In this case, we set the
+			 * flag back to false, see
+			 * TextMergeViewer.documentChanged(DocumentEvent, boolean)
+			 */
+			fRedoDiff = true;
+		}
 	}
 
 	private Position getNewRange(char type, Object input) {
@@ -5206,20 +5238,24 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		};
 	}
 
-	private void encodingChanged(char leg) {
-		update(true);
+	private void updateStructure() {
+		getCompareConfiguration().setProperty("ALL_STRUCTURE_REFRESH", null); //$NON-NLS-1$
+	}
+
+	private void updateStructure(char leg) {
 		String key = null;
 		switch (leg) {
 		case ANCESTOR_CONTRIBUTOR:
-			key = "ANCESTOR_ENCODING"; //$NON-NLS-1$
+			key = "ANCESTOR_STRUCTURE_REFRESH"; //$NON-NLS-1$
 			break;
 		case LEFT_CONTRIBUTOR:
-			key = "LEFT_ENCODING"; //$NON-NLS-1$
+			key = "LEFT_STRUCTURE_REFRESH"; //$NON-NLS-1$
 			break;
 		case RIGHT_CONTRIBUTOR:
-			key = "RIGHT_ENCODING"; //$NON-NLS-1$
+			key = "RIGHT_STRUCTURE_REFRESH"; //$NON-NLS-1$
 			break;
 		}
+		Assert.isNotNull(key);
 		getCompareConfiguration().setProperty(key, null);
 	}
 
