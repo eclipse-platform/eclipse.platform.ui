@@ -686,6 +686,7 @@ public class UrlUtil {
 		if (isMozilla(agent) && isGecko(agent)) return true;
 		if (isSafari(agent) && "120".compareTo(getSafariVersion(agent)) <= 0) return true; //$NON-NLS-1$
 		if (isOpera(agent) && getMajorVersion(getOperaVersion(agent)) >= 9) return true;
+		if (isMozilla(agent) && !isKonqueror(agent)) return true;
 		return false;
 	}
 	

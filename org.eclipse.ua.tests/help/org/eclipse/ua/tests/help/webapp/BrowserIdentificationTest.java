@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dave Carver - modification to isAdvanced(), see Bug 238533
  *******************************************************************************/
 
 package org.eclipse.ua.tests.help.webapp;
@@ -116,7 +117,7 @@ public class BrowserIdentificationTest extends TestCase {
 		assertEquals("6.0", UrlUtil.getIEVersion(agent));
 		assertTrue(UrlUtil.isAdvanced(agent));
 	} 
-	
+
 	public void testXulRunnerOnUbuntu() {
 		final String agent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9) Gecko";
 		assertFalse(UrlUtil.isIE(agent));
@@ -126,6 +127,17 @@ public class BrowserIdentificationTest extends TestCase {
 		assertFalse(UrlUtil.isSafari(agent));
 		assertTrue(UrlUtil.isGecko(agent));
 		assertEquals("1.9", UrlUtil.getMozillaVersion(agent));
+		assertTrue(UrlUtil.isAdvanced(agent));
+	}
+	
+	public void testXulRunnerTruncated() {
+		final String agent = "Mozilla/5.0 (X11; U; Linux i686;";
+		assertFalse(UrlUtil.isIE(agent));
+		assertTrue(UrlUtil.isMozilla(agent));
+		assertFalse(UrlUtil.isOpera(agent));
+		assertFalse(UrlUtil.isKonqueror(agent));
+		assertFalse(UrlUtil.isSafari(agent));
+		assertFalse(UrlUtil.isGecko(agent));
 		assertTrue(UrlUtil.isAdvanced(agent));
 	}
 	
