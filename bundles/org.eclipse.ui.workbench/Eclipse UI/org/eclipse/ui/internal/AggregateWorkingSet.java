@@ -163,26 +163,29 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			restoreWorkingSet();
 			workingSetMemento = null;
 		}
-		return components;
+		
+		IWorkingSet[] copiedArray = new IWorkingSet[components.length];
+		System.arraycopy(components, 0, copiedArray, 0, components.length);
+		return copiedArray;
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
-			for (int i = 0; i < getComponents().length; i++) {
-				IWorkingSet set = getComponents()[i];
+			for (int i = 0; i < components.length; i++) {
+				IWorkingSet set = components[i];
 				if (set.equals(event.getOldValue())) {
 					IWorkingSet[] newComponents = new IWorkingSet[components.length - 1];
 					Util
-							.arrayCopyWithRemoval(getComponents(),
+							.arrayCopyWithRemoval(components,
 									newComponents, i);
 					setComponents(newComponents);
 				}
 			}
 		} else if (property
 				.equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
-			for (int i = 0; i < getComponents().length; i++) {
-				IWorkingSet set = getComponents()[i];
+			for (int i = 0; i < components.length; i++) {
+				IWorkingSet set = components[i];
 				if (set.equals(event.getNewValue())) {
 					constructElements(true);
 					break;
@@ -221,13 +224,13 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			AggregateWorkingSet workingSet = (AggregateWorkingSet) object;
 
 			return Util.equals(workingSet.getName(), getName())
-					&& Util.equals(workingSet.getComponents(), getComponents());
+					&& Util.equals(workingSet.components, components);
 		}
 		return false;
 	}
 
 	public int hashCode() {
-		int hashCode = getName().hashCode() & getComponents().hashCode();
+		int hashCode = getName().hashCode() & components.hashCode();
 		return hashCode;
 	}
 	

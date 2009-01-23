@@ -30,9 +30,8 @@ public interface IAggregateWorkingSet extends IWorkingSet {
 	/**
 	 * Returns the working sets contained in this aggregate working set.
 	 * 
-	 * <p>
-	 * The returned array is subject to change if the aggregate working set
-	 * changes.  Clients should not modify the contents of the array.
+	 * Clients can do what they wish with the returned array, as it
+	 * will have no effect on the state of the this object.
 	 * 
 	 * @return the working sets contained in this aggregate working set.
 	 */
