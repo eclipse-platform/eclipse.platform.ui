@@ -308,6 +308,26 @@ public class CharsetTest extends ResourceTest {
 			fail("4.0");
 		}
 	}
+	
+	/**
+	 * In this bug, a file starts with a particular content id and content type. It is then
+	 * deleted and recreated, with the same content id but a different content type.
+	 * This tricks the content type cache into returning an invalid result.
+	 */
+	public void testBug261994() throws UnsupportedEncodingException, CoreException {
+		//recreate a file with different contents but the same content id
+		IWorkspace workspace = getWorkspace();
+		IProject project1 = workspace.getRoot().getProject("Project1");
+		IFile file = project1.getFile("file1.xml");
+		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_ISO_8859_1_ENCODING.getBytes("ISO-8859-1")));
+		ContentDescriptionManagerTest.waitForCacheFlush();
+		assertEquals("1.0", "ISO-8859-1", file.getCharset());
+		
+		//delete and recreate the file with different contents
+		ensureDoesNotExistInWorkspace(file);
+		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes("UTF-8")));
+		assertEquals("2.0", "UTF-8", file.getCharset());
+	}
 
 	public void testChangesDifferentProject() throws CoreException {
 		IWorkspace workspace = getWorkspace();
