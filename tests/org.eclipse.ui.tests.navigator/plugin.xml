@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
-            class="org.eclipse.ui.navigator.CommonNavigator"
+            class="org.eclipse.ui.navigator.resources.ProjectExplorer"
             id="org.eclipse.ui.tests.navigator.TestView"
             name="%test.navigator.viewName"/>
             
@@ -29,7 +29,7 @@
 
       <view
             allowMultiple="false"
-            class="org.eclipse.ui.navigator.CommonNavigator"
+            class="org.eclipse.ui.navigator.resources.ProjectExplorer"
             id="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView"
             name="Test Hide Available Extensions View"/>            
    </extension>
@@ -43,7 +43,10 @@
             activeByDefault="true"
             priority="higher">
          <triggerPoints>
-			<adapt type="org.eclipse.core.resources.IProject"/>
+            <or>
+			    <adapt type="org.eclipse.core.resources.IProject"/>
+				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+			</or>
          </triggerPoints> 
          <possibleChildren>
             <or>
@@ -222,11 +225,11 @@
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderRed"
             priority="lower">
-         <enablement>
+         <triggerPoints>
             <instanceof
                   value="org.eclipse.core.resources.IResource">
             </instanceof>
-         </enablement>
+         </triggerPoints>
 	  </navigatorContent>      
       <navigatorContent 
             id="org.eclipse.ui.tests.navigator.testOverriddenContent2" 
@@ -234,11 +237,11 @@
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
             priority="lower">
-         <enablement>
+         <triggerPoints>
             <instanceof
                   value="org.eclipse.core.resources.IResource">
             </instanceof>
-         </enablement>
+         </triggerPoints>
 	  </navigatorContent>      
       <navigatorContent 
             id="org.eclipse.ui.tests.navigator.testOverride1" 
@@ -246,11 +249,11 @@
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderGreen"
             priority="lower">
-         <enablement>
+         <triggerPoints>
             <instanceof
                   value="org.eclipse.core.resources.IResource">
             </instanceof>
-         </enablement>
+         </triggerPoints>
 		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testOverriddenContent1"/>
 	  </navigatorContent>      
       <navigatorContent 
@@ -259,11 +262,11 @@
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan"
             priority="lower">
-         <enablement>
+         <triggerPoints>
             <instanceof
                   value="org.eclipse.core.resources.IResource">
             </instanceof>
-         </enablement>
+         </triggerPoints>
 		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testOverriddenContent2"/>
 	  </navigatorContent>      
    </extension>

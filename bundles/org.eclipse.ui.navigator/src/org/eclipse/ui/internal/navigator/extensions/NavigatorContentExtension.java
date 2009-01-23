@@ -135,7 +135,7 @@ public class NavigatorContentExtension implements IMementoAware,
 							.createContentProvider();
 					if (treeContentProvider != null) {
 						contentProvider = new SafeDelegateTreeContentProvider(
-								treeContentProvider, descriptor, contentService);
+								treeContentProvider);
 						contentProvider.init(new CommonContentExtensionSite(
 								getId(), contentService, appliedMemento));
 						viewerManager.initialize(contentProvider);

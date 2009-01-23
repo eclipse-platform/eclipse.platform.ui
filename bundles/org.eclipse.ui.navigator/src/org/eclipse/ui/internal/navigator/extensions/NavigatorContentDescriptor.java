@@ -233,11 +233,20 @@ public final class NavigatorContentDescriptor implements
 		};
 
 		children = configElement.getChildren(TAG_OVERRIDE);
-		if (children.length == 1) {
+		if (children.length == 0) {
+			overridePolicy = OverridePolicy.get(OverridePolicy.InvokeAlwaysRegardlessOfSuppressedExt_LITERAL);
+		} else if (children.length == 1) {
 			suppressedExtensionId = children[0]
 					.getAttribute(ATT_SUPPRESSED_EXT_ID);
 			overridePolicy = OverridePolicy.get(children[0]
 					.getAttribute(ATT_POLICY));
+		} else if (children.length > 1) {
+			throw new WorkbenchException(NLS.bind(
+					CommonNavigatorMessages.Too_many_elements_Warning,
+					new Object[] {
+							TAG_OVERRIDE,
+							id,configElement.getDeclaringExtension()
+							.getNamespaceIdentifier() }));
 		}
 	}
 

@@ -65,6 +65,8 @@ public class CommonSorterDescriptorManager {
 	public CommonSorterDescriptor[] findApplicableSorters(
 			NavigatorContentService contentService, Object aParent) {
 
+		// FIXME - this could end up being null if the object
+		// was removed from the cache
 		INavigatorContentDescriptor sourceOfContribution = contentService
 				.getSourceOfContribution(aParent);
 

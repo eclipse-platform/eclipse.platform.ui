@@ -33,14 +33,10 @@ public final class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(INavigatorContentServiceTests.class));
 		addTest(new TestSuite(ProgrammaticOpenTest.class));
 		addTest(new TestSuite(PipelineTest.class));
-
-		// Not passing yet
-		if (false)
-			addTest(new TestSuite(OverrideTest.class));
+		addTest(new TestSuite(OverrideTest.class));
 		
 		// Takes too long
-		if (false)
-			addTest(new TestSuite(CreateProjectTest.class));
+		//addTest(new TestSuite(CreateProjectTest.class));
 
 	}
 

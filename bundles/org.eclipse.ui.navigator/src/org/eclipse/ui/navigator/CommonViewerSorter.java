@@ -74,17 +74,15 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		if (contentService == null)
 			return 0;
 
-		INavigatorContentDescriptor source = contentService.getSourceOfContribution(element);
-		if (source == null)
-			source = getSource(element);
+		INavigatorContentDescriptor source = getSource(element);
 		return source != null ? source.getPriority() : Priority.NORMAL_PRIORITY_VALUE;
 	}
 
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
 		if (contentService == null)
 			return -1;
-		INavigatorContentDescriptor sourceOfLvalue = contentService.getSourceOfContribution(e1);
-		INavigatorContentDescriptor sourceOfRvalue = contentService.getSourceOfContribution(e2);
+		INavigatorContentDescriptor sourceOfLvalue = getSource(e1);
+		INavigatorContentDescriptor sourceOfRvalue = getSource(e2);
 		
 		Object parent;
 		if (parentPath == null) {
@@ -147,7 +145,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	}
 
 	private INavigatorContentDescriptor getSource(Object o) {
-		Set descriptors = contentService.findDescriptorsWithPossibleChild(o);
+		Set descriptors = contentService.findDescriptorsByTriggerPoint(o, NavigatorContentService.CONSIDER_OVERRIDES);
 		if (descriptors != null && descriptors.size() > 0) {
 			return (INavigatorContentDescriptor) descriptors.iterator().next();
 		}

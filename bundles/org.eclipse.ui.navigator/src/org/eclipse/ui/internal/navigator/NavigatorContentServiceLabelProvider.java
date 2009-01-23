@@ -94,7 +94,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 */
 	public Image getImage(Object anElement) {
 
-		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(anElement);
+		Set contentExtensions = contentService.findContentExtensionsByTriggerPoint(anElement);
 		Image image = null; 
 		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && image == null; ) { 
 			image = findImage((NavigatorContentExtension) itr.next(), anElement);
@@ -312,7 +312,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 */
 	public void updateLabel(ViewerLabel label, TreePath elementPath) { 
 		 
-		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(elementPath.getLastSegment());
+		Set contentExtensions = contentService.findContentExtensionsByTriggerPoint(elementPath.getLastSegment());
 		reusableLabel.reset(label);
 		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && !(reusableLabel.isValid() && reusableLabel.hasChanged()); ) {			 
 			findUpdateLabel((NavigatorContentExtension)itr.next(), reusableLabel, elementPath);			 

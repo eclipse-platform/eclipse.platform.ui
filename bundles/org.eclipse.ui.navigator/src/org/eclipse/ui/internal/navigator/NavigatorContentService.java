@@ -372,28 +372,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
-	 * Return a set of content providers that could provide a parent for the
-	 * given element. These content extensions are determined by consulting the
-	 * <b>possibleChildren</b> expression in the <b>navigatorContent</b>
-	 * extension.
-	 * 
-	 * <p>
-	 * Clients that wish to tap into the link with editor support must describe
-	 * all of their possible children in their <b>possibleChildren</b>
-	 * expressions.
-	 * </p>
-	 * 
-	 * @param anElement
-	 *            An element from the tree (generally from a setSelection()
-	 *            method).
-	 * @return The set of content providers that may be able to provide a
-	 *         parent.
-	 */
-	public ITreeContentProvider[] findParentContentProviders(Object anElement) {
-		return extractContentProviders(findContentExtensionsWithPossibleChild(anElement));
-	}
-
-	/**
 	 * <p>
 	 * Return all of the content providers that are relevant for the viewer. The
 	 * viewer is determined by the ID used to create the
@@ -437,8 +415,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *         (non-null) label.
 	 */
 	public ILabelProvider[] findRelevantLabelProviders(Object anElement) {
-		return extractLabelProviders(findContentExtensionsWithPossibleChild(
-				anElement, false));
+		return extractLabelProviders(findContentExtensionsByTriggerPoint(anElement, true, CONSIDER_OVERRIDES));
 	}
 
 	/**
@@ -516,7 +493,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public Set findOverrideableContentExtensionsByTriggerPoint(Object anElement) {
 		Set overrideableExtensions = new TreeSet(
 				ExtensionPriorityComparator.INSTANCE);
-		Set descriptors = findDescriptorsByTriggerPoint(anElement);
+		Set descriptors = findDescriptorsByTriggerPoint(anElement, !CONSIDER_OVERRIDES);
 		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) iter
 					.next();
@@ -593,7 +570,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *         the given element.
 	 */
 	public Set findContentExtensionsByTriggerPoint(Object anElement) {
-		return findContentExtensionsByTriggerPoint(anElement, true);
+		return findContentExtensionsByTriggerPoint(anElement, true, !CONSIDER_OVERRIDES);
 	}
 
 	/**
@@ -604,14 +581,15 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *            The element to use in the query
 	 * @param toLoadIfNecessary
 	 *            True will force the load of the extension, False will not
+	 * @param computeOverrides 
 	 * @return The set of {@link INavigatorContentExtension}s that are
 	 *         <i>visible</i> and <i>active</i> for this content service and
 	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i> for
 	 *         the given element.
 	 */
 	public Set findContentExtensionsByTriggerPoint(Object anElement,
-			boolean toLoadIfNecessary) {
-		Set enabledDescriptors = findDescriptorsByTriggerPoint(anElement);
+			boolean toLoadIfNecessary, boolean computeOverrides) {
+		Set enabledDescriptors = findDescriptorsByTriggerPoint(anElement, computeOverrides);
 		return extractDescriptorInstances(enabledDescriptors, toLoadIfNecessary);
 	}
 
@@ -702,7 +680,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @param element
 	 *            The element contributed by the descriptor to be returned
 	 * @return The descriptor that contributed the element or null.
-	 * @see #findContentExtensionsWithPossibleChild(Object)
+	 * @see #findContentExtensionsByTriggerPoint(Object)
 	 */
 	public NavigatorContentDescriptor getSourceOfContribution(Object element) {
 		return (NavigatorContentDescriptor) getContributionMemory()
@@ -726,26 +704,33 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
+	 * 
+	 */
+	public static final boolean CONSIDER_OVERRIDES = true;
+	
+	/**
 	 * Search for extensions that declare the given element in their
 	 * <b>triggerPoints</b> expression.
 	 * 
 	 * @param anElement
 	 *            The element to use in the query
+	 * @param considerOverrides 
 	 * 
 	 * @return The set of {@link INavigatorContentDescriptor}s that are
 	 *         <i>visible</i> and <i>active</i> for this content service and
 	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i> for
 	 *         the given element.
 	 */
-	public Set findDescriptorsByTriggerPoint(Object anElement) {
-
+	public Set findDescriptorsByTriggerPoint(Object anElement, boolean considerOverrides) {
+		// Here we use the cache, since objects are inserted into the
+		// cache in response to the trigger point
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
 		Set result = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		if (descriptor != null) {
 			result.add(descriptor);
 		}
 		result.addAll(CONTENT_DESCRIPTOR_REGISTRY
-				.findDescriptorsForTriggerPoint(anElement, assistant));
+				.findDescriptorsForTriggerPoint(anElement, assistant, considerOverrides));
 		return result;
 	}
 
@@ -779,12 +764,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public Set findDescriptorsWithPossibleChild(Object anElement,
 			boolean toComputeOverrides) {
-
-		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
+		// Don't use the cache which is only used for triggerPoints
 		Set result = new TreeSet(ExtensionPriorityComparator.INSTANCE);
-		if (descriptor != null) {
-			result.add(descriptor);
-		}
 		result.addAll(CONTENT_DESCRIPTOR_REGISTRY
 				.findDescriptorsForPossibleChild(anElement, assistant,
 						toComputeOverrides));

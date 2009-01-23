@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
@@ -39,19 +38,11 @@ public class SafeDelegateTreeContentProvider implements
 
 	private final ITreeContentProvider contentProvider;
 
-	private NavigatorContentService contentService;
-
-	private NavigatorContentDescriptor descriptor;
-
 	private Viewer viewer;
 
-	SafeDelegateTreeContentProvider(ITreeContentProvider aContentProvider,
-			NavigatorContentDescriptor aDescriptor,
-			NavigatorContentService theContentService) {
+	SafeDelegateTreeContentProvider(ITreeContentProvider aContentProvider) {
 		super();
 		contentProvider = aContentProvider;
-		contentService = theContentService;
-		descriptor = aDescriptor;
 	}
 
 	/**
@@ -89,13 +80,11 @@ public class SafeDelegateTreeContentProvider implements
 			return getChildren(tp);
 		}
 		Object[] children = contentProvider.getChildren(aParentElement);
-		contentService.rememberContribution(descriptor, children);
 		return children;
 	}
 
 	public Object[] getElements(Object anInputElement) {
 		Object[] elements = contentProvider.getElements(anInputElement);
-		contentService.rememberContribution(descriptor, elements);
 		return elements;
 	}
 
@@ -275,7 +264,6 @@ public class SafeDelegateTreeContentProvider implements
 		if (contentProvider instanceof ITreePathContentProvider) {
 			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
 			Object[] children = tpcp.getChildren(parentPath);
-			contentService.rememberContribution(descriptor, children);
 			return children;
 		}
 		return getChildren(parentPath.getLastSegment());

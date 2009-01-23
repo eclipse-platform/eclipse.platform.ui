@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.navigator.dnd;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.part.IDropActionDelegate;
@@ -25,8 +26,6 @@ import org.eclipse.ui.part.PluginTransferData;
  * 
  */
 public class NavigatorPluginDropAction implements IDropActionDelegate {
-
-	private static final boolean DEBUG = false;
 
 	private static final String CN_PLUGIN_ACTION_ID = "org.eclipse.ui.navigator.PluginDropAction"; //$NON-NLS-1$
 
@@ -46,7 +45,7 @@ public class NavigatorPluginDropAction implements IDropActionDelegate {
 	 */
 	public boolean run(Object sourceData, Object target) {
 
-		if (DEBUG) {
+		if (Policy.DEBUG_DND) {
 			System.out.println("NavigatorPluginDropAction.run (begin)"); //$NON-NLS-1$
 		}
 
@@ -79,7 +78,7 @@ public class NavigatorPluginDropAction implements IDropActionDelegate {
 					.unregisterContentService(contentService);
 		}
 
-		if (DEBUG) {
+		if (Policy.DEBUG_DND) {
 			System.out.println("NavigatorPluginDropAction.run (exit)"); //$NON-NLS-1$
 		}
 

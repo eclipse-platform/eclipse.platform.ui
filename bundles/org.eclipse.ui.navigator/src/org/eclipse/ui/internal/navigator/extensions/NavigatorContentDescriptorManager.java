@@ -149,6 +149,7 @@ public class NavigatorContentDescriptorManager {
 		return finalDescriptors;
 	}
 
+
 	/**
 	 * 
 	 * Returns all content descriptor(s) which enable for the given element.
@@ -159,12 +160,40 @@ public class NavigatorContentDescriptorManager {
 	 * @param aVisibilityAssistant
 	 *            The relevant viewer assistant; used to filter out unbound
 	 *            content descriptors.
+	 * @param considerOverrides 
 	 * @return the best content descriptor for the given element.
 	 */
 	public Set findDescriptorsForTriggerPoint(Object anElement,
-			VisibilityAssistant aVisibilityAssistant) {
+			VisibilityAssistant aVisibilityAssistant, boolean considerOverrides) {
+		return findDescriptors(anElement, cachedTriggerPointEvaluations, aVisibilityAssistant, considerOverrides, !POSSIBLE_CHILD);
+	}
+
+
+	/**
+	 * 
+	 * Returns all content descriptor(s) which enable for the given element.
+	 * 
+	 * @param anElement
+	 *            the element to return the best content descriptor for
+	 * 
+	 * @param aVisibilityAssistant
+	 *            The relevant viewer assistant; used to filter out unbound
+	 *            content descriptors.
+	 * @param toComputeOverrides
+	 * @return the best content descriptor for the given element.
+	 */
+	public Set findDescriptorsForPossibleChild(Object anElement,
+			VisibilityAssistant aVisibilityAssistant, boolean toComputeOverrides) {
+		return findDescriptors(anElement, cachedPossibleChildrenEvaluations, aVisibilityAssistant, toComputeOverrides, POSSIBLE_CHILD);
+	}
+
+	private static final boolean POSSIBLE_CHILD = true;
+	
+
+	private Set findDescriptors(Object anElement,
+			Map cachedEvaluations, VisibilityAssistant aVisibilityAssistant, boolean considerOverrides, boolean possibleChild) {
 		EvaluationCache cache = getEvaluationCache(
-				cachedTriggerPointEvaluations, aVisibilityAssistant);
+				cachedEvaluations, aVisibilityAssistant);
 
 		Set descriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		NavigatorContentDescriptor[] cachedDescriptors = null;
@@ -172,19 +201,24 @@ public class NavigatorContentDescriptorManager {
 			descriptors.addAll(Arrays.asList(cachedDescriptors));
 		}
 
-		/* Find other ContentProviders which enable for this object */
-		for (Iterator contentDescriptorsItr = firstClassDescriptorsMap.values()
-				.iterator(); contentDescriptorsItr.hasNext();) {
-			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
-					.next();
+		if (considerOverrides) {
+			addDescriptorsConsideringOverrides(anElement, firstClassDescriptorsSet, aVisibilityAssistant, descriptors, possibleChild);
+			if (Policy.DEBUG_RESOLUTION) {
+				System.out.println("Find descriptors for: (" + anElement + //$NON-NLS-1$
+						"): " + descriptors); //$NON-NLS-1$
+			}
+		} else {
 
-			if (aVisibilityAssistant.isActive(descriptor)
-					&& aVisibilityAssistant.isVisible(descriptor)
-						&& descriptor.isTriggerPoint(anElement)) {
+			/* Find other ContentProviders which enable for this object */
+			for (Iterator contentDescriptorsItr = firstClassDescriptorsSet.iterator(); contentDescriptorsItr.hasNext();) {
+				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr.next();
+
+				if (aVisibilityAssistant.isActive(descriptor) && aVisibilityAssistant.isVisible(descriptor)
+						&& (possibleChild ? descriptor.isPossibleChild(anElement) : descriptor.isTriggerPoint(anElement))) {
 					descriptors.add(descriptor);
 				}
 			}
-
+		}
 		cache.setDescriptors(anElement, (NavigatorContentDescriptor[]) descriptors.toArray(new NavigatorContentDescriptor[descriptors.size()]));
 
 		return descriptors;
@@ -202,65 +236,9 @@ public class NavigatorContentDescriptorManager {
 
 	}
 
-	/**
-	 * 
-	 * Returns all content descriptor(s) which enable for the given element.
-	 * 
-	 * @param anElement
-	 *            the element to return the best content descriptor for
-	 * 
-	 * @param aVisibilityAssistant
-	 *            The relevant viewer assistant; used to filter out unbound
-	 *            content descriptors.
-	 * @param toComputeOverrides
-	 * @return the best content descriptor for the given element.
-	 */
-	public Set findDescriptorsForPossibleChild(Object anElement,
-			VisibilityAssistant aVisibilityAssistant, boolean toComputeOverrides) {
-
-		EvaluationCache cache = getEvaluationCache(
-				cachedPossibleChildrenEvaluations, aVisibilityAssistant);
-
-		Set descriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
-		NavigatorContentDescriptor[] cachedDescriptors = null;
-		if ((cachedDescriptors = cache.getDescriptors(anElement, toComputeOverrides)) != null) {
-			descriptors.addAll(Arrays.asList(cachedDescriptors));
-		}
-
-		if (toComputeOverrides) {
-			addDescriptorsForPossibleChild(anElement, firstClassDescriptorsSet,
-				aVisibilityAssistant, descriptors);
-			if (Policy.DEBUG_RESOLUTION) {
-				System.out.println("Find descriptors for: (" + anElement + //$NON-NLS-1$
-						"): " + descriptors); //$NON-NLS-1$
-			}
-		} else {
-
-			NavigatorContentDescriptor descriptor;
-			/* Find other ContentProviders which enable for this object */
-			for (Iterator contentDescriptorsItr = allDescriptors.values().iterator(); contentDescriptorsItr
-					.hasNext();) {
-				descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
-						.next();
-
-				boolean isApplicable = aVisibilityAssistant.isActive(descriptor)
-						&& aVisibilityAssistant.isVisible(descriptor)
-						&& descriptor.isPossibleChild(anElement);
-
-				if (isApplicable) {
-					descriptors.add(descriptor);
-				}
-
-			}
-		}
-		cache.setDescriptors(anElement, (NavigatorContentDescriptor[]) descriptors.toArray(new NavigatorContentDescriptor[descriptors.size()]), toComputeOverrides);
-
-		return descriptors;
-	}
-
-	private boolean addDescriptorsForPossibleChild(Object anElement,
+	private boolean addDescriptorsConsideringOverrides(Object anElement,
 			Set theChildDescriptors, VisibilityAssistant aVisibilityAssistant,
-			Set theFoundDescriptors) {
+			Set theFoundDescriptors, boolean possibleChild) {
 		int initialSize = theFoundDescriptors.size();
 
 		NavigatorContentDescriptor descriptor;
@@ -272,17 +250,17 @@ public class NavigatorContentDescriptorManager {
 
 			boolean isApplicable = aVisibilityAssistant.isActive(descriptor)
 					&& aVisibilityAssistant.isVisible(descriptor)
-					&& descriptor.isPossibleChild(anElement);
+					&& (possibleChild ? descriptor.isPossibleChild(anElement) : descriptor.isTriggerPoint(anElement));
 
 			if (descriptor.hasOverridingExtensions()) {
 
 				boolean isOverridden;
 
-				boolean oldWay = true;
+				boolean oldWay = !true;
 				if (oldWay) {
-					isOverridden = addDescriptorsForPossibleChild(anElement,
+					isOverridden = addDescriptorsConsideringOverrides(anElement,
 							descriptor.getOverriddingExtensions(),
-							aVisibilityAssistant, theFoundDescriptors);
+							aVisibilityAssistant, theFoundDescriptors, possibleChild);
 
 					if (!isOverridden && isApplicable) {
 						theFoundDescriptors.add(descriptor);
@@ -292,9 +270,9 @@ public class NavigatorContentDescriptorManager {
 					// this on when testing is completed
 					Set overridingDescriptors = new TreeSet(
 							ExtensionPriorityComparator.INSTANCE);
-					isOverridden = addDescriptorsForPossibleChild(anElement,
+					isOverridden = addDescriptorsConsideringOverrides(anElement,
 							descriptor.getOverriddingExtensions(),
-							aVisibilityAssistant, overridingDescriptors);
+							aVisibilityAssistant, overridingDescriptors, possibleChild);
 
 					if (!isOverridden && isApplicable) {
 						theFoundDescriptors.add(descriptor);

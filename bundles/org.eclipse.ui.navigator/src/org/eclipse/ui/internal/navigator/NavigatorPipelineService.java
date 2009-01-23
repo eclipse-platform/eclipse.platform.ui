@@ -73,7 +73,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		
 		ContributorTrackingSet trackedSet =(ContributorTrackingSet) anAddModification.getChildren();
 		
-		Set contentDescriptors = contentService.findDescriptorsByTriggerPoint(anAddModification.getParent());
+		Set contentDescriptors = contentService.findDescriptorsByTriggerPoint(anAddModification.getParent(), false);
 		
 		
 		for (Iterator descriptorsItr = contentDescriptors.iterator(); descriptorsItr.hasNext();) {
@@ -94,11 +94,11 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	private void registerContribution(Object parent, Object[] contributions) {
 		 
 		// returns an array sorted by priority
-		Set possibleContributors = contentService.findDescriptorsByTriggerPoint(parent);
+		Set possibleContributors = contentService.findDescriptorsByTriggerPoint(parent, false);
 		Set possibleMatches = null;
 		for (int i = 0; i < contributions.length; i++) {
 			// returns an array sorted by reverse priority
-			possibleMatches = contentService.findDescriptorsWithPossibleChild(contributions[i]); 
+			possibleMatches = contentService.findDescriptorsByTriggerPoint(contributions[i], NavigatorContentService.CONSIDER_OVERRIDES); 
 			NavigatorContentDescriptor[] descriptors = (NavigatorContentDescriptor[]) possibleMatches.toArray(new NavigatorContentDescriptor[possibleMatches.size()]); 
 			for (int indx = possibleMatches.size()-1; indx > -1; indx--) {
 								
@@ -107,7 +107,6 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 					contentService.rememberContribution(descriptors[indx], contributions[i]);
 					break;
 				}
-				
 			}
 		}
 	}
