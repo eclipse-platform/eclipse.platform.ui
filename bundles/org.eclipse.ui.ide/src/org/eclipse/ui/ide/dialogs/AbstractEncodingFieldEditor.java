@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -95,7 +96,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * @param labelText
 	 *            the label text of the field editor
 	 * @param groupTitle
-	 *            the title for the field editor's control. If groupTitle is 
+	 *            the title for the field editor's control. If groupTitle is
 	 *            <code>null</code> the control will be unlabelled
 	 *            (by default a {@link Composite} instead of a {@link Group}.
 	 * @param parent
@@ -235,7 +236,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		}
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		topControl.setLayoutData(data);		
+		topControl.setLayoutData(data);
 		topControl.setLayout(layout);
 
 		SelectionAdapter buttonListener = new SelectionAdapter() {
@@ -300,7 +301,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		if (otherEncodingButton != null)
 			otherEncodingButton.setEnabled(enabled);
 		if (encodingCombo != null)
-			encodingCombo.setEnabled(enabled);
+			encodingCombo.setEnabled(enabled && otherEncodingButton.getSelection());
 		
 	}
 
