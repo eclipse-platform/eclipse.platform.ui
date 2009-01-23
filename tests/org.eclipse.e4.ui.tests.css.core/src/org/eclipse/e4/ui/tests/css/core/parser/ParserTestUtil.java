@@ -5,8 +5,7 @@ import java.io.StringReader;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
-import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.stylesheets.StyleSheet;
 
@@ -24,8 +23,7 @@ public final class ParserTestUtil {
 
 	public static CSSStyleSheet parseCss(String css)
 			throws IOException {
-		Display display = Display.getDefault();
-		CSSEngine engine = new CSSSWTEngineImpl(display);
+		CSSEngine engine = new CSSEngineImpl();
 		engine.setErrorHandler(ERROR_HANDLER);
 		StyleSheet result = engine.parseStyleSheet(new StringReader(css));
 		return (CSSStyleSheet) result;
