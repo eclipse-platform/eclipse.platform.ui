@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.Handler;
 import org.eclipse.e4.ui.model.application.Part;
@@ -30,10 +30,10 @@ public class PartRenderer {
 	public static final String FACTORY = "partFactory";
 
 	private final IContributionFactory contributionFactory;
-	private final Context context;
+	private final IEclipseContext context;
 	
 	public PartRenderer(IContributionFactory contributionFactory,
-			Context context) {
+			IEclipseContext context) {
 		this.contributionFactory = contributionFactory;
 		this.context = context;
 	}

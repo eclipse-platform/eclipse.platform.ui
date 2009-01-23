@@ -11,13 +11,12 @@
 package org.eclipse.e4.workbench.ui;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.e4.core.services.ComputedValue;
-import org.eclipse.e4.core.services.Context;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
-public class ProgressMonitorValue extends ComputedValue {
+public class ProgressMonitorValue implements IComputedValue {
 
-	@Override
-	protected Object compute(Context context) {
+	public Object compute(IEclipseContext context) {
 		return new NullProgressMonitor();
 	}
 

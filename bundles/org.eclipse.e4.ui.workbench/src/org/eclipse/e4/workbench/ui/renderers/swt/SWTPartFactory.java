@@ -1,6 +1,6 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.Context;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.Command;
 import org.eclipse.e4.ui.model.application.HandledItem;
 import org.eclipse.e4.ui.model.application.Handler;
@@ -69,7 +69,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 		Control control = display.getFocusControl();
 		while (control != null && h == null) {
-			Context l = (Context) control.getData("LOCATOR");
+			IEclipseContext l = (IEclipseContext) control.getData("LOCATOR");
 			if (l != null) {
 				IHandlerService hs = (IHandlerService) l
 						.get(IHandlerService.class.getName());
@@ -117,7 +117,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 	}
 
-	protected Object canExecuteItem(final Context context,
+	protected Object canExecuteItem(final IEclipseContext context,
 			Display display, final HandledItem item,
 			final ISelectionService selectionService) {
 		Handler h = getHandler(display, item);
@@ -130,7 +130,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		return result;
 	}
 
-	protected void executeItem(final Context context,
+	protected void executeItem(final IEclipseContext context,
 			Display display, final HandledItem item,
 			final ISelectionService selectionService) {
 		Handler h = getHandler(display, item);

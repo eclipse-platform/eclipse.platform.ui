@@ -14,15 +14,14 @@ package org.eclipse.e4.workbench.ui;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.e4.core.services.ComputedValue;
-import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IBackgroundRunner;
 import org.eclipse.e4.core.services.IRunnableWithProgress;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
-public class BackgroundRunnerValue extends ComputedValue {
+public class BackgroundRunnerValue implements IComputedValue {
 
-	@Override
-	protected Object compute(Context context) {
+	public Object compute(IEclipseContext context) {
 		return new IBackgroundRunner() {
 			public void schedule(long delay, String name,
 					final IRunnableWithProgress runnable) {

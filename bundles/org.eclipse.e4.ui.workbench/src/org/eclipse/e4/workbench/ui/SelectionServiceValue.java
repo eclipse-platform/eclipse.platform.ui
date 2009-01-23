@@ -12,12 +12,12 @@ package org.eclipse.e4.workbench.ui;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.core.services.ComputedValue;
-import org.eclipse.e4.core.services.Context;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IComputedValue;
 import org.eclipse.e4.ui.services.ISelectionService;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-public class SelectionServiceValue extends ComputedValue {
+public class SelectionServiceValue implements IComputedValue {
 	static class SelectionWritableValue extends WritableValue implements
 			ISelectionService {
 
@@ -40,15 +40,7 @@ public class SelectionServiceValue extends ComputedValue {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.core.services.ComputedValue#compute(org.eclipse.e4.core
-	 * .services.Context)
-	 */
-	@Override
-	protected Object compute(Context context) {
+	public Object compute(IEclipseContext context) {
 		return new SelectionWritableValue();
 	}
 

@@ -1,13 +1,12 @@
 package org.eclipse.e4.demo.e4photo;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.e4.core.services.ComputedValue;
-import org.eclipse.e4.core.services.Context;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
-public class WorkspaceValue extends ComputedValue {
+public class WorkspaceValue implements IComputedValue {
 
-	@Override
-	protected Object compute(Context context) {
+	public Object compute(IEclipseContext context) {
 		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_AUTO_REFRESH, true);
 		return ResourcesPlugin.getWorkspace();
 	}

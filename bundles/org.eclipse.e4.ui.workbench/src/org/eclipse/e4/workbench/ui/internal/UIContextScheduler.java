@@ -11,25 +11,14 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.Context;
+import org.eclipse.e4.core.services.context.spi.IEclipseContextScheduler;
 import org.eclipse.swt.widgets.Display;
 
-public class UIContext extends Context {
+public class UIContextScheduler implements IEclipseContextScheduler {
+	
+	static final public IEclipseContextScheduler instance = new UIContextScheduler();
 
-	/**
-	 * @param parent
-	 * @param name
-	 */
-	public UIContext(Context parent, String name) {
-		super(parent, name);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.e4.core.services.Context#schedule(java.lang.Runnable)
-	 */
-	@Override
-	protected void schedule(Runnable runnable) {
+	public void schedule(Runnable runnable) {
 		Display.getDefault().asyncExec(runnable);
 	}
-
 }

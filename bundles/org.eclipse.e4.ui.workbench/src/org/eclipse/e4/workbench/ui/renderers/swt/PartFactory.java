@@ -3,8 +3,8 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.Item;
 import org.eclipse.e4.ui.model.application.ItemPart;
@@ -29,14 +29,14 @@ public abstract class PartFactory {
 
 	protected PartRenderer renderer;
 	protected IContributionFactory contributionFactory;
-	protected Context context;
+	protected IEclipseContext context;
 	protected EMFDataBindingContext dbc;
 	
 	public PartFactory() {		
 		dbc = new EMFDataBindingContext();
 	}
 	
-	public void init(PartRenderer renderer, Context context, IContributionFactory contributionFactory) {
+	public void init(PartRenderer renderer, IEclipseContext context, IContributionFactory contributionFactory) {
 		this.renderer = renderer;
 		this.contributionFactory = contributionFactory;
 		this.context = context;

@@ -31,10 +31,11 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.core.services.ComputedValue;
-import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IComputedValue;
 import org.eclipse.e4.ui.model.application.Application;
 import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
@@ -81,7 +82,7 @@ public class Workbench implements IWorkbench,
 	private ResourceSetImpl resourceSet;
 	private ModelService modelService;
 
-	public Context getContext() {
+	public IEclipseContext getContext() {
 		return globalContext;
 	}
 
@@ -92,7 +93,7 @@ public class Workbench implements IWorkbench,
 	private int rv;
 	private Map<String,Object> languages;
 	private ExceptionHandler exceptionHandler;
-	private Context globalContext;
+	private IEclipseContext globalContext;
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
 			PackageAdmin packageAdmin, URI workbenchXmiURI) {
@@ -134,13 +135,13 @@ public class Workbench implements IWorkbench,
 		}
 	}
 
-	private Context createContext() {
+	private IEclipseContext createContext() {
 		// Initialize Services
 		modelService = new ModelService(Platform.getAdapterManager());
 
 		resourceUtility = new ResourceUtility(packageAdmin);
 
-		final UIContext mainContext = new UIContext(null, "globalContext");
+		final IEclipseContext mainContext = EclipseContextFactory.create("globalContext", UIContextScheduler.instance);
 
 		IConfigurationElement[] contributions = registry
 				.getConfigurationElementsFor("org.eclipse.e4.services");
@@ -150,7 +151,7 @@ public class Workbench implements IWorkbench,
 			try {
 				for (IConfigurationElement serviceElement : contribution
 						.getChildren("service")) {
-					ComputedValue factory = (ComputedValue) contribution
+					IComputedValue factory = (IComputedValue) contribution
 							.createExecutableExtension("class");
 					String apiClassname = serviceElement.getAttribute("api");
 					mainContext.set(apiClassname, factory);
@@ -515,7 +516,7 @@ public class Workbench implements IWorkbench,
 		return getBundleForName(platformURI.segment(1));
 	}
 
-	public Object createObject(Class<?> targetClass, Context context) {
+	public Object createObject(Class<?> targetClass, IEclipseContext context) {
 
 		Constructor<?> targetConstructor = null;
 
@@ -613,7 +614,7 @@ public class Workbench implements IWorkbench,
 	}
 
 	public Object create(String uriString,
-			Context context) {
+			IEclipseContext context) {
 		URI uri = URI.createURI(uriString);
 		Bundle bundle = getBundle(uri);
 		if (bundle != null) {
@@ -640,7 +641,7 @@ public class Workbench implements IWorkbench,
 	}
 
 	public Object call(Object object, String uriString, String methodName,
-			Context context, Object defaultValue) {
+			IEclipseContext context, Object defaultValue) {
 		URI uri = URI.createURI(uriString);
 		if (uri.segmentCount() > 3) {
 			String prefix = uri.segment(2);
