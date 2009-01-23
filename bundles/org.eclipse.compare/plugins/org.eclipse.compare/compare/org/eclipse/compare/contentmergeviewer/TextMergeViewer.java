@@ -4901,6 +4901,18 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			return getFindReplaceTarget();
 		if (adapter == CompareHandlerService.class)
 			return fHandlerService;
+		if (adapter == IEditorInput.class) {
+			// return active editor input
+			if (fLeft != null && fLeft == fFocusPart)
+				if (fLeftContributor != null)
+					return fLeftContributor.getDocumentKey();
+			if (fRight != null && fRight == fFocusPart)
+				if (fRightContributor != null)
+					return fRightContributor.getDocumentKey();
+			if (fAncestor != null && fAncestor == fFocusPart)
+				if (fAncestorContributor != null)
+					return fAncestorContributor.getDocumentKey();
+		}
 		return null;
 	}
 	

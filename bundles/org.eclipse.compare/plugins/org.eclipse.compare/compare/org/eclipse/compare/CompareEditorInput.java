@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,39 @@
 package org.eclipse.compare; 
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.eclipse.compare.contentmergeviewer.IFlushable;
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.internal.BinaryCompareViewer;
+import org.eclipse.compare.internal.ChangePropertyAction;
+import org.eclipse.compare.internal.CompareEditorInputNavigator;
+import org.eclipse.compare.internal.CompareMessages;
+import org.eclipse.compare.internal.ComparePreferencePage;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.ICompareAsText;
+import org.eclipse.compare.internal.ICompareUIConstants;
+import org.eclipse.compare.internal.OutlineViewerCreator;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -28,7 +52,17 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -37,8 +71,15 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.ISaveablesSource;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.services.IServiceLocator;
 
 
@@ -289,6 +330,14 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				Viewer v = fContentInputPane.getViewer();
 				if (v != null) {
 					return Utilities.getAdapter(v, IFindReplaceTarget.class);
+				}
+			}
+		}
+		if (adapter == IEditorInput.class) {
+			if (fContentInputPane != null) {
+				Viewer v = fContentInputPane.getViewer();
+				if (v != null) {
+					return Utilities.getAdapter(v, IEditorInput.class);
 				}
 			}
 		}
