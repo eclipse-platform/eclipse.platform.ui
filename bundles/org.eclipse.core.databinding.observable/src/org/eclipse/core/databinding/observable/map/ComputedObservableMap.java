@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
@@ -85,6 +86,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 					return new Map.Entry() {
 
 						public Object getKey() {
+							getterCalled();
 							return key;
 						}
 
@@ -186,12 +188,18 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	}
 
 	final public Object get(Object key) {
+		getterCalled();
 		if (!keySet.contains(key))
 			return null;
 		return doGet(key);
 	}
 
+	private void getterCalled() {
+		ObservableTracker.getterCalled(this);
+	}
+
 	final public Object put(Object key, Object value) {
+		checkRealm();
 		if (!keySet.contains(key))
 			return null;
 		return doPut(key, value);
