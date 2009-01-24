@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bugs 195222, 251611
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -31,10 +31,10 @@ public abstract class ControlStringListProperty extends WidgetListProperty {
 
 	protected void doSetList(Object source, List list, ListDiff diff) {
 		String[] strings = (String[]) list.toArray(new String[list.size()]);
-		doSetStringList((Control) source, strings);
+		doSetStringList((Control) source, strings, diff);
 	}
 
-	abstract void doSetStringList(Control control, String[] list);
+	abstract void doSetStringList(Control control, String[] list, ListDiff diff);
 
 	protected List doGetList(Object source) {
 		String[] list = doGetStringList((Control) source);
