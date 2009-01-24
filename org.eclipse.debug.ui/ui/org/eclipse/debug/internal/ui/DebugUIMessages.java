@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
+ * Remy Chi Jian Suen - Make WorkingDirectoryBlock from JDT a Debug API class (Bug 221973)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -236,7 +237,23 @@ public class DebugUIMessages extends NLS {
 	public static String GoToAddressComposite_5;
 	public static String GoToAddressComposite_6;
 	public static String GoToAddressComposite_7;
-	
+
+	//
+	// Blocks
+	//
+	public static String WorkingDirectoryBlock_4;
+	public static String WorkingDirectoryBlock_7;
+	public static String WorkingDirectoryBlock_0;
+	public static String WorkingDirectoryBlock_Working_Directory_8;
+	public static String WorkingDirectoryBlock_10;
+	public static String WorkingDirectoryBlock_12;
+	public static String WorkingDirectoryBlock_17;
+	public static String WorkingDirectoryBlock_18;
+	public static String WorkingDirectoryBlock_19;
+	public static String WorkingDirectoryBlock_20;
+	public static String WorkingDirectoryBlock_1;
+	public static String WorkingDirectoryBlock_Exception_occurred_reading_configuration___15;
+		
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
