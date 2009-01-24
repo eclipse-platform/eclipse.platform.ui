@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920, 164653
  *     Ashley Cambrell - bug 198904
- *     Matthew Hall - bug 194734, 195222
+ *     Matthew Hall - bug 194734, 195222, 256543
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -50,6 +50,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 			WidgetProperties.text(SWT.None);
 			WidgetProperties.text(SWT.FocusOut);
 			WidgetProperties.text(SWT.Modify);
+			WidgetProperties.text(SWT.DefaultSelection);
 			assertTrue(true);
 		} catch (IllegalArgumentException e) {
 			fail();

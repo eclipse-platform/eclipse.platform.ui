@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 256543
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -327,12 +328,12 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the text of a {@link CCombo},
-	 * {@link CLabel}, {@link Combo}, {@link Label}, {@link Item}, {@link Link},
-	 * {@link Shell} or {@link Text}.
+	 * {@link CLabel}, {@link Combo}, {@link Item}, {@link Label}, {@link Link},
+	 * {@link Shell}, {@link StyledText} or {@link Text}.
 	 * 
 	 * @return a value property for observing the text of a {@link CCombo},
-	 *         {@link CLabel}, {@link Combo}, {@link Label}, {@link Item},
-	 *         {@link Link}, {@link Shell} or {@link Text}.
+	 *         {@link CLabel}, {@link Combo}, {@link Item}, {@link Label},
+	 *         {@link Link}, {@link Shell}, {@link StyledText} or {@link Text}.
 	 */
 	public static IValueProperty text() {
 		return new DelegatingValueProperty(String.class) {
@@ -343,7 +344,8 @@ public class WidgetProperties {
 			private IValueProperty label = new LabelTextProperty();
 			private IValueProperty link = new LinkTextProperty();
 			private IValueProperty shell = new ShellTextProperty();
-			private IValueProperty text = new TextTextProperty(SWT.None);
+			private IValueProperty styledText = new StyledTextTextProperty();
+			private IValueProperty text = new TextTextProperty();
 
 			protected IValueProperty doGetDelegate(Object source) {
 				if (source instanceof CCombo)
@@ -360,6 +362,8 @@ public class WidgetProperties {
 					return link;
 				if (source instanceof Shell)
 					return shell;
+				if (source instanceof StyledText)
+					return styledText;
 				if (source instanceof Text)
 					return text;
 				throw notSupported(source);
@@ -373,16 +377,34 @@ public class WidgetProperties {
 	 * 
 	 * @param event
 	 *            the SWT event type to register for change events. May be
-	 *            {@link SWT#None}, {@link SWT#Modify} or {@link SWT#FocusOut}.
+	 *            {@link SWT#None}, {@link SWT#Modify}, {@link SWT#FocusOut} or
+	 *            {@link SWT#DefaultSelection}.
 	 * 
 	 * @return a value property for observing the text of a {@link StyledText}
 	 *         or {@link Text}.
 	 */
 	public static IValueProperty text(final int event) {
+		return text(new int[] { event });
+	}
+
+	/**
+	 * Returns a value property for observing the text of a {@link StyledText}
+	 * or {@link Text}.
+	 * 
+	 * @param events
+	 *            array of SWT event types to register for change events. May
+	 *            include {@link SWT#None}, {@link SWT#Modify},
+	 *            {@link SWT#FocusOut} or {@link SWT#DefaultSelection}.
+	 * 
+	 * @return a value property for observing the text of a {@link StyledText}
+	 *         or {@link Text}.
+	 */
+	public static IValueProperty text(int[] events) {
+		final int[] events_ = (int[]) events.clone();
 		return new DelegatingValueProperty(String.class) {
 			private IValueProperty styledText = new StyledTextTextProperty(
-					event);
-			private IValueProperty text = new TextTextProperty(event);
+					events_);
+			private IValueProperty text = new TextTextProperty(events_);
 
 			protected IValueProperty doGetDelegate(Object source) {
 				if (source instanceof StyledText)

@@ -10,7 +10,7 @@
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
  *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734,
- *                    195222
+ *                    195222, 256543
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *     Tom Schindl - bug 246462
@@ -27,6 +27,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IVetoableValue;
 import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
 import org.eclipse.jface.internal.databinding.swt.SWTDelayedObservableValueDecorator;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
@@ -228,6 +229,29 @@ public class SWTObservables {
 	 * </ul>
 	 * 
 	 * @param control
+	 * @param events
+	 *            array of SWT event types to register for change events. May
+	 *            include {@link SWT#None}, {@link SWT#Modify},
+	 *            {@link SWT#FocusOut} or {@link SWT#DefaultSelection}.
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
+	 * @since 1.3
+	 */
+	public static ISWTObservableValue observeText(Control control, int[] events) {
+		return (ISWTObservableValue) WidgetProperties.text(events).observe(
+				control);
+	}
+
+	/**
+	 * Returns an observable observing the text attribute of the provided
+	 * <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Text</li>
+	 * <li>org.eclipse.swt.custom.StyledText (as of 1.3)</li>
+	 * </ul>
+	 * 
+	 * @param control
 	 * @param event
 	 *            event type to register for change events
 	 * @return observable value
@@ -243,14 +267,15 @@ public class SWTObservables {
 	 * Returns an observable observing the text attribute of the provided
 	 * <code>widget</code>. The supported types are:
 	 * <ul>
-	 * <li>org.eclipse.swt.widgets.Label</li>
-	 * <li>org.eclipse.swt.widgets.Link</li>
-	 * <li>org.eclipse.swt.custom.Label</li>
-	 * <li>org.eclipse.swt.widgets.Combo</li>
 	 * <li>org.eclipse.swt.custom.CCombo</li>
-	 * <li>org.eclipse.swt.widgets.Shell</li>
-	 * <li>org.eclipse.swt.widgets.Text</li>
+	 * <li>org.eclipse.swt.custom.CLabel</li>
+	 * <li>org.eclipse.swt.widgets.Combo</li>
 	 * <li>org.eclipse.swt.widgets.Item</li>
+	 * <li>org.eclipse.swt.widgets.Label</li>
+	 * <li>org.eclipse.swt.widgets.Link (as of 1.2)</li>
+	 * <li>org.eclipse.swt.widgets.Shell</li>
+	 * <li>org.eclipse.swt.widgets.StyledText (as of 1.3)</li>
+	 * <li>org.eclipse.swt.widgets.Text (as of 1.3)</li>
 	 * </ul>
 	 * 
 	 * @param widget
@@ -268,14 +293,14 @@ public class SWTObservables {
 	 * Returns an observable observing the text attribute of the provided
 	 * <code>control</code>. The supported types are:
 	 * <ul>
+	 * <li>org.eclipse.swt.custom.CCombo</li>
+	 * <li>org.eclipse.swt.custom.CLabel</li>
+	 * <li>org.eclipse.swt.widgets.Combo</li>
 	 * <li>org.eclipse.swt.widgets.Label</li>
 	 * <li>org.eclipse.swt.widgets.Link (as of 1.2)</li>
-	 * <li>org.eclipse.swt.custom.Label</li>
-	 * <li>org.eclipse.swt.widgets.Combo</li>
-	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.widgets.Shell</li>
-	 * <li>org.eclipse.swt.widgets.Text (as of 1.3)</li>
 	 * <li>org.eclipse.swt.custom.StyledText (as of 1.3)</li>
+	 * <li>org.eclipse.swt.widgets.Text (as of 1.3)</li>
 	 * </ul>
 	 * 
 	 * @param control

@@ -8,7 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <zx@code9.com> - bug 131435
- *     Matthew Hall - bug 194734
+ *     Matthew Hall - bugs 194734, 256543
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -44,16 +44,17 @@ public class StyledTextObservableValueTest extends AbstractDefaultRealmTestCase 
 	 */
 	public void testConstructorUpdateEventTypes() {
 		try {
-			new StyledTextTextProperty(SWT.NONE);
-			new StyledTextTextProperty(SWT.FocusOut);
-			new StyledTextTextProperty(SWT.Modify);
+			new StyledTextTextProperty(new int[] { SWT.None });
+			new StyledTextTextProperty(new int[] { SWT.FocusOut });
+			new StyledTextTextProperty(new int[] { SWT.Modify });
+			new StyledTextTextProperty(new int[] { SWT.DefaultSelection });
 			assertTrue(true);
 		} catch (IllegalArgumentException e) {
 			fail();
 		}
 
 		try {
-			new StyledTextTextProperty(SWT.Verify);
+			new StyledTextTextProperty(new int[] { SWT.Verify });
 			fail();
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 256543
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -23,22 +24,29 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class StyledTextTextProperty extends WidgetStringValueProperty {
 	/**
-	 * @param event
+	 * 
 	 */
-	public StyledTextTextProperty(int event) {
-		super(checkEvent(event));
+	public StyledTextTextProperty() {
 	}
 
-	private static int checkEvent(int event) {
-		switch (event) {
-		case SWT.None:
-		case SWT.Modify:
-		case SWT.FocusOut:
-			return event;
-		default:
+	/**
+	 * @param events
+	 */
+	public StyledTextTextProperty(int[] events) {
+		super(checkEvents(events));
+	}
+
+	private static int[] checkEvents(int[] events) {
+		for (int i = 0; i < events.length; i++)
+			checkEvent(events[i]);
+		return events;
+	}
+
+	private static void checkEvent(int event) {
+		if (event != SWT.None && event != SWT.Modify && event != SWT.FocusOut
+				&& event != SWT.DefaultSelection)
 			throw new IllegalArgumentException("UpdateEventType [" //$NON-NLS-1$
 					+ event + "] is not supported."); //$NON-NLS-1$
-		}
 	}
 
 	String doGetStringValue(Object source) {
@@ -55,6 +63,6 @@ public class StyledTextTextProperty extends WidgetStringValueProperty {
 
 	protected ISWTObservableValue wrapObservable(IObservableValue observable,
 			Widget widget) {
-		return new SWTVetoableValueDecorator(observable, widget);
+		return new SWTVetoableValueDecorator(widget, this, observable);
 	}
 }

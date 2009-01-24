@@ -14,7 +14,7 @@
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647
- *                    254524, 246103, 249992, 256150
+ *                    254524, 246103, 249992, 256150, 256543
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -173,12 +173,14 @@ import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueMa
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SpinnerObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueDefaultSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueFocusOutTest;
 import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueModifyTest;
 import org.eclipse.jface.tests.internal.databinding.swt.StyledTextObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TableSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextEditableObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueDefaultSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueFocusOutTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueModifyTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueTest;
@@ -407,9 +409,11 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(TableObservableValueTest.class);
 		addTest(TableSingleSelectionObservableValueTest.suite());
 		addTest(TextEditableObservableValueTest.suite());
+		addTest(TextObservableValueDefaultSelectionTest.suite());
 		addTest(TextObservableValueFocusOutTest.suite());
 		addTest(TextObservableValueModifyTest.suite());
 		addTestSuite(TextObservableValueTest.class);
+		addTest(StyledTextObservableValueDefaultSelectionTest.suite());
 		addTest(StyledTextObservableValueFocusOutTest.suite());
 		addTest(StyledTextObservableValueModifyTest.suite());
 		addTestSuite(StyledTextObservableValueTest.class);

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 256543
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -35,8 +36,9 @@ import org.eclipse.swt.widgets.Widget;
 public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
 		ISWTObservableValue, IDecoratingObservable {
 
-	private IObservableValue decorated;
 	private Widget widget;
+	private WidgetStringValueProperty property;
+	private IObservableValue decorated;
 	private boolean updating;
 
 	private IValueChangeListener valueListener = new IValueChangeListener() {
@@ -54,7 +56,7 @@ public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
 
 	private Listener verifyListener = new Listener() {
 		public void handleEvent(Event event) {
-			String currentText = (String) decorated.getValue();
+			String currentText = (String) property.getValue(widget);
 			String newText = currentText.substring(0, event.start) + event.text
 					+ currentText.substring(event.end);
 			if (!fireValueChanging(Diffs.createValueDiff(currentText, newText))) {
@@ -70,11 +72,14 @@ public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
 	};
 
 	/**
-	 * @param decorated
 	 * @param widget
+	 * @param property
+	 * @param decorated
 	 */
-	public SWTVetoableValueDecorator(IObservableValue decorated, Widget widget) {
+	public SWTVetoableValueDecorator(Widget widget,
+			WidgetStringValueProperty property, IObservableValue decorated) {
 		super(decorated.getRealm());
+		this.property = property;
 		this.decorated = decorated;
 		this.widget = widget;
 		Assert
