@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 259380
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -16,14 +17,13 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckable;
 
 /**
  * @since 3.3
  * 
  */
 public class CheckboxTableViewerCheckedElementsProperty extends
-		CheckableCheckedElementsProperty {
+		CheckboxViewerCheckedElementsProperty {
 	/**
 	 * @param elementType
 	 */
@@ -31,13 +31,8 @@ public class CheckboxTableViewerCheckedElementsProperty extends
 		super(elementType);
 	}
 
-	protected Set createElementSet(ICheckable checkable) {
-		return ViewerElementSet.withComparer(((CheckboxTableViewer) checkable)
-				.getComparer());
-	}
-
-	protected Set doGetSet(ICheckable checkable) {
-		CheckboxTableViewer viewer = (CheckboxTableViewer) checkable;
+	protected Set doGetSet(Object source) {
+		CheckboxTableViewer viewer = (CheckboxTableViewer) source;
 		Set set = createElementSet(viewer);
 		set.addAll(Arrays.asList(viewer.getCheckedElements()));
 		return set;
