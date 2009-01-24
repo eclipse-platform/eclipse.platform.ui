@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262269
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.core.internal.databinding.IdentityWrapper;
+import org.eclipse.core.internal.databinding.IdentityMap;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
@@ -51,7 +51,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	}
 
 	protected void firstListenerAdded() {
-		cachedValues = new HashMap();
+		cachedValues = new IdentityMap();
 		if (listener == null) {
 			listener = detailProperty
 					.adaptListener(new ISimplePropertyListener() {
@@ -78,8 +78,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 
 	protected void hookListener(Object addedKey) {
 		if (cachedValues != null) {
-			cachedValues.put(new IdentityWrapper(addedKey), detailProperty
-					.getValue(addedKey));
+			cachedValues.put(addedKey, detailProperty.getValue(addedKey));
 			detailProperty.addListener(addedKey, listener);
 		}
 	}
@@ -87,7 +86,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	protected void unhookListener(Object removedKey) {
 		if (cachedValues != null) {
 			detailProperty.removeListener(removedKey, listener);
-			cachedValues.remove(new IdentityWrapper(removedKey));
+			cachedValues.remove(removedKey);
 		}
 	}
 
@@ -112,10 +111,10 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 
 	private void notifyIfChanged(Object key) {
 		if (cachedValues != null) {
-			Object oldValue = cachedValues.get(new IdentityWrapper(key));
+			Object oldValue = cachedValues.get(key);
 			Object newValue = detailProperty.getValue(key);
 			if (!Util.equals(oldValue, newValue)) {
-				cachedValues.put(new IdentityWrapper(key), newValue);
+				cachedValues.put(key, newValue);
 				fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
 						newValue));
 			}

@@ -7,15 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 210115, 146397, 249526
+ *     Matthew Hall - bugs 210115, 146397, 249526, 262269
  *******************************************************************************/
 package org.eclipse.core.databinding.observable;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.internal.databinding.IdentityWrapper;
+import org.eclipse.core.internal.databinding.IdentitySet;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -96,7 +94,7 @@ public class ObservableTracker {
 		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener
 				.get();
 
-		Set observableSet = new HashSet();
+		Set observableSet = new IdentitySet();
 		// Push the new listeners to the top of the stack
 		currentGetterCalledSet.set(observableSet);
 		currentChangeListener.set(changeListener);
@@ -111,14 +109,8 @@ public class ObservableTracker {
 			currentStaleListener.set(lastStaleListener);
 		}
 
-		int i = 0;
-		IObservable[] result = new IObservable[observableSet.size()];
-		for (Iterator it = observableSet.iterator(); it.hasNext();) {
-			IdentityWrapper wrapper = (IdentityWrapper) it.next();
-			result[i++] = (IObservable) wrapper.unwrap();
-		}
-
-		return result;
+		return (IObservable[]) observableSet
+				.toArray(new IObservable[observableSet.size()]);
 	}
 	
 	/**
@@ -135,7 +127,7 @@ public class ObservableTracker {
 	public static IObservable[] runAndCollect(Runnable runnable) {
 		Set lastObservableCreatedSet = (Set) currentObservableCreatedSet.get();
 
-		Set observableSet = new HashSet();
+		Set observableSet = new IdentitySet();
 		// Push the new listeners to the top of the stack
 		currentObservableCreatedSet.set(observableSet);
 		try {
@@ -146,14 +138,8 @@ public class ObservableTracker {
 			currentObservableCreatedSet.set(lastObservableCreatedSet);
 		}
 
-		int i = 0;
-		IObservable[] result = new IObservable[observableSet.size()];
-		for (Iterator it = observableSet.iterator(); it.hasNext();) {
-			IdentityWrapper wrapper = (IdentityWrapper) it.next();
-			result[i++] = (IObservable) wrapper.unwrap();
-		}
-
-		return result;
+		return (IObservable[]) observableSet
+				.toArray(new IObservable[observableSet.size()]);
 	}
 
 	/**
@@ -215,26 +201,17 @@ public class ObservableTracker {
 			Assert.isTrue(false, "Getter called outside realm of observable " //$NON-NLS-1$
 					+ toString(observable));
 
-		Set lastGetterCalledSet = (Set) currentGetterCalledSet.get();
-		if (lastGetterCalledSet == null) {
-			return;
-		}
-		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
-				.get();
-		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener
-				.get();
-
-		boolean added = false;
-		if (lastGetterCalledSet != null) {
-			added = lastGetterCalledSet.add(new IdentityWrapper(observable));
-		}
-
-		// If anyone is listening for observable usage...
-		if (added && lastChangeListener != null) {
-			observable.addChangeListener(lastChangeListener);
-		}
-		if (added && lastStaleListener != null) {
-			observable.addStaleListener(lastStaleListener);
+		Set getterCalledSet = (Set) currentGetterCalledSet.get();
+		if (getterCalledSet != null && getterCalledSet.add(observable)) {
+			// If anyone is listening for observable usage...
+			IChangeListener changeListener = (IChangeListener) currentChangeListener
+					.get();
+			if (changeListener != null)
+				observable.addChangeListener(changeListener);
+			IStaleListener staleListener = (IStaleListener) currentStaleListener
+					.get();
+			if (staleListener != null)
+				observable.addStaleListener(staleListener);
 		}
 	}
 
@@ -246,9 +223,9 @@ public class ObservableTracker {
 	 * @since 1.2
 	 */
 	public static void observableCreated(IObservable observable) {
-		Set lastObservableCreatedSet = (Set) currentObservableCreatedSet.get();
-		if (lastObservableCreatedSet != null) {
-			lastObservableCreatedSet.add(new IdentityWrapper(observable));
+		Set observableCreatedSet = (Set) currentObservableCreatedSet.get();
+		if (observableCreatedSet != null) {
+			observableCreatedSet.add(observable);
 		}
 	}
 }

@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 262269
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
@@ -19,7 +19,7 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.core.internal.databinding.IdentityWrapper;
+import org.eclipse.core.internal.databinding.IdentityMap;
 
 /**
  * @since 1.0
@@ -27,7 +27,7 @@ import org.eclipse.core.internal.databinding.IdentityWrapper;
  */
 public class StalenessTracker {
 
-	private Map staleMap = new HashMap();
+	private Map staleMap = new IdentityMap();
 
 	private int staleCount = 0;
 
@@ -65,8 +65,7 @@ public class StalenessTracker {
 	 */
 	public void processStalenessChange(IObservable child, boolean callback) {
 		boolean oldStale = staleCount > 0;
-		IdentityWrapper wrappedChild = new IdentityWrapper(child);
-		boolean oldChildStale = getOldChildStale(wrappedChild);
+		boolean oldChildStale = getOldChildStale(child);
 		boolean newChildStale = child.isStale();
 		if (oldChildStale != newChildStale) {
 			if (oldChildStale) {
@@ -74,7 +73,7 @@ public class StalenessTracker {
 			} else {
 				staleCount++;
 			}
-			staleMap.put(wrappedChild, newChildStale ? Boolean.TRUE : Boolean.FALSE);
+			staleMap.put(child, newChildStale ? Boolean.TRUE : Boolean.FALSE);
 		}
 		boolean newStale = staleCount > 0;
 		if (callback && (newStale != oldStale)) {
@@ -83,10 +82,10 @@ public class StalenessTracker {
 	}
 
 	/**
-	 * @param wrappedChild
+	 * @param child
 	 */
-	private boolean getOldChildStale(IdentityWrapper wrappedChild) {
-		Object oldChildValue = staleMap.get(wrappedChild);
+	private boolean getOldChildStale(IObservable child) {
+		Object oldChildValue = staleMap.get(child);
 		boolean oldChildStale = oldChildValue == null ? false
 				: ((Boolean) oldChildValue).booleanValue();
 		return oldChildStale;
@@ -110,12 +109,11 @@ public class StalenessTracker {
 	 */
 	public void removeObservable(IObservable observable) {
 		boolean oldStale = staleCount > 0;
-		IdentityWrapper wrappedChild = new IdentityWrapper(observable);
-		boolean oldChildStale = getOldChildStale(wrappedChild);
+		boolean oldChildStale = getOldChildStale(observable);
 		if (oldChildStale) {
 			staleCount--;
 		}
-		staleMap.remove(wrappedChild);
+		staleMap.remove(observable);
 		observable.removeChangeListener(childListener);
 		observable.removeStaleListener(childListener);
 		boolean newStale = staleCount > 0;

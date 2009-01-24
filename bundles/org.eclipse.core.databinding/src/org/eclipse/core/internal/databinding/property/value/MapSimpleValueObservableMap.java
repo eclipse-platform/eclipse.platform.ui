@@ -7,14 +7,13 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262269
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.AbstractSet;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,15 +30,16 @@ import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.core.internal.databinding.IdentityWrapper;
+import org.eclipse.core.internal.databinding.IdentityMap;
+import org.eclipse.core.internal.databinding.IdentitySet;
 import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.observable.IdentityObservableSet;
 
 /**
  * @since 1.2
@@ -65,18 +65,14 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		}
 
 		private void updateKnownValues() {
-			Set identityKnownValues = new HashSet();
-			for (Iterator it = masterMap.values().iterator(); it.hasNext();) {
-				identityKnownValues.add(new IdentityWrapper(it.next()));
-			}
-
-			knownMasterValues.retainAll(identityKnownValues);
-			knownMasterValues.addAll(identityKnownValues);
+			Set knownValues = new IdentitySet(masterMap.values());
+			knownMasterValues.retainAll(knownValues);
+			knownMasterValues.addAll(knownValues);
 		}
 
 		private MapDiff convertDiff(MapDiff diff) {
-			Map oldValues = new HashMap();
-			Map newValues = new HashMap();
+			Map oldValues = new IdentityMap();
+			Map newValues = new IdentityMap();
 
 			Set addedKeys = diff.getAddedKeys();
 			for (Iterator it = addedKeys.iterator(); it.hasNext();) {
@@ -94,7 +90,7 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 				oldValues.put(key, oldValue);
 			}
 
-			Set changedKeys = new HashSet(diff.getChangedKeys());
+			Set changedKeys = new IdentitySet(diff.getChangedKeys());
 			for (Iterator it = changedKeys.iterator(); it.hasNext();) {
 				Object key = it.next();
 
@@ -144,29 +140,25 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 	}
 
 	protected void firstListenerAdded() {
-		knownMasterValues = new WritableSet(getRealm());
-		cachedValues = new HashMap();
+		knownMasterValues = new IdentityObservableSet(getRealm(), null);
+		cachedValues = new IdentityMap();
 		knownMasterValues.addSetChangeListener(new ISetChangeListener() {
 			public void handleSetChange(SetChangeEvent event) {
 				for (Iterator it = event.diff.getRemovals().iterator(); it
 						.hasNext();) {
-					IdentityWrapper wrapper = (IdentityWrapper) it.next();
-					Object key = wrapper.unwrap();
+					Object key = it.next();
 					detailProperty.removeListener(key, detailListener);
-					cachedValues.remove(wrapper);
+					cachedValues.remove(key);
 				}
 				for (Iterator it = event.diff.getAdditions().iterator(); it
 						.hasNext();) {
-					IdentityWrapper wrapper = (IdentityWrapper) it.next();
-					Object key = wrapper.unwrap();
-					cachedValues.put(wrapper, detailProperty.getValue(key));
+					Object key = it.next();
+					cachedValues.put(key, detailProperty.getValue(key));
 					detailProperty.addListener(key, detailListener);
 				}
 			}
 		});
-		for (Iterator it = masterMap.values().iterator(); it.hasNext();) {
-			knownMasterValues.add(new IdentityWrapper(it.next()));
-		}
+		knownMasterValues.addAll(masterMap.values());
 
 		masterMap.addMapChangeListener(masterListener);
 		masterMap.addStaleListener(staleListener);
@@ -293,12 +285,11 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		if (cachedValues != null) {
 			final Set keys = keysFor(masterValue);
 
-			final Object oldValue = cachedValues.get(new IdentityWrapper(
-					masterValue));
+			final Object oldValue = cachedValues.get(masterValue);
 			final Object newValue = detailProperty.getValue(masterValue);
 
 			if (!Util.equals(oldValue, newValue)) {
-				cachedValues.put(new IdentityWrapper(masterValue), newValue);
+				cachedValues.put(masterValue, newValue);
 				fireMapChange(new MapDiff() {
 					public Set getAddedKeys() {
 						return Collections.EMPTY_SET;
@@ -325,7 +316,7 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 	}
 
 	private Set keysFor(Object value) {
-		Set keys = new HashSet();
+		Set keys = new IdentitySet();
 
 		for (Iterator it = masterMap.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Entry) it.next();

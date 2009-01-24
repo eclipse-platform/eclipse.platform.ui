@@ -13,8 +13,8 @@
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
- *                    237703, 237718, 222289, 247394, 233306, 247647
- *                    254524, 246103, 249992, 256150, 256543
+ *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
+ *                    246103, 249992, 256150, 256543, 262269
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -72,6 +72,8 @@ import org.eclipse.core.tests.databinding.validation.MultiValidatorTest;
 import org.eclipse.core.tests.databinding.validation.ValidationStatusTest;
 import org.eclipse.core.tests.internal.databinding.BindingMessagesTest;
 import org.eclipse.core.tests.internal.databinding.BindingStatusTest;
+import org.eclipse.core.tests.internal.databinding.IdentityMapTest;
+import org.eclipse.core.tests.internal.databinding.IdentitySetTest;
 import org.eclipse.core.tests.internal.databinding.QueueTest;
 import org.eclipse.core.tests.internal.databinding.RandomAccessListIteratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableListDecoratorTest;
@@ -115,6 +117,7 @@ import org.eclipse.core.tests.internal.databinding.observable.ConstantObservable
 import org.eclipse.core.tests.internal.databinding.observable.DelayedObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableSetTest;
+import org.eclipse.core.tests.internal.databinding.observable.IdentityObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.MapEntryObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.StalenessObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableListTest;
@@ -275,6 +278,8 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.core.tests.internal.databinding
 		addTestSuite(BindingMessagesTest.class);
 		addTestSuite(BindingStatusTest.class);
+		addTestSuite(IdentityMapTest.class);
+		addTestSuite(IdentitySetTest.class);
 		addTestSuite(RandomAccessListIteratorTest.class);
 		addTestSuite(QueueTest.class);
 
@@ -325,6 +330,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(DelayedObservableValueTest.suite());
 		addTest(EmptyObservableListTest.suite());
 		addTest(EmptyObservableSetTest.suite());
+		addTest(IdentityObservableSetTest.suite());
 		addTest(MapEntryObservableValueTest.suite());
 		addTest(StalenessObservableValueTest.suite());
 		addTest(UnmodifiableObservableValueTest.suite());

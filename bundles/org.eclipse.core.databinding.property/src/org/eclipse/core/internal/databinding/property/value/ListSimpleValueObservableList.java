@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262269
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -14,8 +15,6 @@ package org.eclipse.core.internal.databinding.property.value;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -35,15 +34,16 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.core.internal.databinding.IdentityWrapper;
+import org.eclipse.core.internal.databinding.IdentityMap;
+import org.eclipse.core.internal.databinding.IdentitySet;
 import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.observable.IdentityObservableSet;
 
 /**
  * @since 1.2
@@ -67,11 +67,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		}
 
 		private void updateKnownElements() {
-			Set identityKnownElements = new HashSet();
-			for (Iterator it = masterList.iterator(); it.hasNext();) {
-				identityKnownElements.add(new IdentityWrapper(it.next()));
-			}
-
+			Set identityKnownElements = new IdentitySet(masterList);
 			knownMasterElements.retainAll(identityKnownElements);
 			knownMasterElements.addAll(identityKnownElements);
 		}
@@ -123,29 +119,25 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 	}
 
 	protected void firstListenerAdded() {
-		knownMasterElements = new WritableSet(getRealm());
-		cachedValues = new HashMap();
+		knownMasterElements = new IdentityObservableSet(getRealm(), null);
+		cachedValues = new IdentityMap();
 		knownMasterElements.addSetChangeListener(new ISetChangeListener() {
 			public void handleSetChange(SetChangeEvent event) {
 				for (Iterator it = event.diff.getRemovals().iterator(); it
 						.hasNext();) {
-					IdentityWrapper wrapper = (IdentityWrapper) it.next();
-					Object key = wrapper.unwrap();
+					Object key = it.next();
 					detailProperty.removeListener(key, detailListener);
-					cachedValues.remove(wrapper);
+					cachedValues.remove(key);
 				}
 				for (Iterator it = event.diff.getAdditions().iterator(); it
 						.hasNext();) {
-					IdentityWrapper wrapper = (IdentityWrapper) it.next();
-					Object key = wrapper.unwrap();
-					cachedValues.put(wrapper, detailProperty.getValue(key));
+					Object key = it.next();
+					cachedValues.put(key, detailProperty.getValue(key));
 					detailProperty.addListener(key, detailListener);
 				}
 			}
 		});
-		for (Iterator it = masterList.iterator(); it.hasNext();) {
-			knownMasterElements.add(new IdentityWrapper(it.next()));
-		}
+		knownMasterElements.addAll(masterList);
 
 		masterList.addListChangeListener(masterListener);
 		masterList.addStaleListener(staleListener);
@@ -360,11 +352,10 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 
 	private void notifyIfChanged(Object masterElement) {
 		if (cachedValues != null) {
-			Object oldValue = cachedValues.get(new IdentityWrapper(
-					masterElement));
+			Object oldValue = cachedValues.get(masterElement);
 			Object newValue = detailProperty.getValue(masterElement);
 			if (!Util.equals(oldValue, newValue)) {
-				cachedValues.put(new IdentityWrapper(masterElement), newValue);
+				cachedValues.put(masterElement, newValue);
 				fireListChange(indicesOf(masterElement), oldValue, newValue);
 			}
 		}

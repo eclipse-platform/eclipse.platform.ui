@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthew Hall - initial API and implementation
+ *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262269
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -130,7 +131,7 @@ public class ListDelegatingValueObservableList extends AbstractObservableList
 
 	public boolean contains(Object o) {
 		getterCalled();
-		return cache.contains(o);
+		return cache.containsValue(o);
 	}
 
 	public boolean isEmpty() {

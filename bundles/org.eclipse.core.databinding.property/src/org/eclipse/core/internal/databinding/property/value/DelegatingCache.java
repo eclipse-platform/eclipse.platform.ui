@@ -1,20 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262269
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -26,11 +25,10 @@ import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.core.internal.databinding.IdentityWrapper;
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.IdentityMap;
+import org.eclipse.core.internal.databinding.observable.IdentityObservableSet;
 
 /**
  * @since 3.3
@@ -50,8 +48,8 @@ abstract class DelegatingCache {
 
 		DelegateCache(IValueProperty delegate) {
 			this.delegate = delegate;
-			this.masterElements = new WritableSet(realm, Collections.EMPTY_SET,
-					elements.getElementType());
+			this.masterElements = new IdentityObservableSet(realm, elements
+					.getElementType());
 			this.masterElementValues = delegate.observeDetail(masterElements);
 			this.cachedValues = new HashMap();
 
@@ -62,22 +60,22 @@ abstract class DelegatingCache {
 			boolean wasEmpty = masterElements.isEmpty();
 
 			masterElements.add(masterElement);
-			cachedValues.put(new IdentityWrapper(masterElement),
-					masterElementValues.get(masterElement));
+			cachedValues.put(masterElement, masterElementValues
+					.get(masterElement));
 
 			if (wasEmpty)
 				delegateCaches.put(delegate, this);
 		}
 
 		void remove(Object masterElement) {
-			cachedValues.remove(new IdentityWrapper(masterElement));
+			cachedValues.remove(masterElement);
 			masterElements.remove(masterElement);
 			if (cachedValues.isEmpty())
 				dispose();
 		}
 
 		Object get(Object masterElement) {
-			return cachedValues.get(new IdentityWrapper(masterElement));
+			return cachedValues.get(masterElement);
 		}
 
 		Object put(Object masterElement, Object detailValue) {
@@ -98,11 +96,10 @@ abstract class DelegatingCache {
 		}
 
 		private void notifyIfChanged(Object masterElement) {
-			Object oldValue = cachedValues.get(new IdentityWrapper(
-					masterElement));
+			Object oldValue = cachedValues.get(masterElement);
 			Object newValue = masterElementValues.get(masterElement);
-			if (!Util.equals(oldValue, newValue)) {
-				cachedValues.put(new IdentityWrapper(masterElement), newValue);
+			if (oldValue != newValue) {
+				cachedValues.put(masterElement, newValue);
 				handleValueChange(masterElement, oldValue, newValue);
 			}
 		}
@@ -125,22 +122,20 @@ abstract class DelegatingCache {
 		this.realm = realm;
 		this.detailProperty = detailProperty;
 
-		this.elements = new WritableSet(realm);
-		this.delegateCaches = new HashMap();
+		this.elements = new IdentityObservableSet(realm, null);
+		this.delegateCaches = new IdentityMap();
 
 		elements.addSetChangeListener(new ISetChangeListener() {
 			public void handleSetChange(SetChangeEvent event) {
 				for (Iterator it = event.diff.getRemovals().iterator(); it
 						.hasNext();) {
-					IdentityWrapper wrapper = (IdentityWrapper) it.next();
-					Object element = wrapper.unwrap();
+					Object element = it.next();
 					getCache(element).remove(element);
 
 				}
 				for (Iterator it = event.diff.getAdditions().iterator(); it
 						.hasNext();) {
-					IdentityWrapper wrapper = (IdentityWrapper) it.next();
-					Object element = wrapper.unwrap();
+					Object element = it.next();
 					getCache(element).add(element);
 				}
 			}
@@ -163,7 +158,7 @@ abstract class DelegatingCache {
 		return getCache(element).put(element, value);
 	}
 
-	boolean contains(Object value) {
+	boolean containsValue(Object value) {
 		for (Iterator it = delegateCaches.values().iterator(); it.hasNext();) {
 			DelegateCache cache = (DelegateCache) it.next();
 			if (cache.containsValue(value))
@@ -172,20 +167,12 @@ abstract class DelegatingCache {
 		return false;
 	}
 
-	private Set identitySet(Collection elements) {
-		Set result = new HashSet();
-		for (Iterator it = elements.iterator(); it.hasNext();) {
-			result.add(new IdentityWrapper(it.next()));
-		}
-		return result;
-	}
-
 	void addAll(Collection elements) {
-		this.elements.addAll(identitySet(elements));
+		this.elements.addAll(elements);
 	}
 
 	void retainAll(Collection elements) {
-		this.elements.retainAll(identitySet(elements));
+		this.elements.retainAll(elements);
 	}
 
 	abstract void handleValueChange(Object masterElement, Object oldValue,
