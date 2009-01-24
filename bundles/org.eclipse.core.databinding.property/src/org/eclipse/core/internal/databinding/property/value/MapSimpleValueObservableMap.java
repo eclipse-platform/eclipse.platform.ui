@@ -45,8 +45,8 @@ import org.eclipse.core.internal.databinding.Util;
  * @since 1.2
  * 
  */
-public class ObservableMapSimpleValuePropertyObservableMap extends
-		AbstractObservableMap implements IPropertyObservable {
+public class MapSimpleValueObservableMap extends AbstractObservableMap
+		implements IPropertyObservable {
 	private IObservableMap masterMap;
 	private SimpleValueProperty detailProperty;
 
@@ -129,7 +129,7 @@ public class ObservableMapSimpleValuePropertyObservableMap extends
 	 * @param map
 	 * @param valueProperty
 	 */
-	public ObservableMapSimpleValuePropertyObservableMap(IObservableMap map,
+	public MapSimpleValueObservableMap(IObservableMap map,
 			SimpleValueProperty valueProperty) {
 		super(map.getRealm());
 		this.masterMap = map;

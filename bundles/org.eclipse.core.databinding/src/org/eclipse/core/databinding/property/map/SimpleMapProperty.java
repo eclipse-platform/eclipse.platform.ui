@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.internal.databinding.property.map.SimpleMapPropertyObservableMap;
+import org.eclipse.core.internal.databinding.property.map.SimplePropertyObservableMap;
 
 /**
  * Simplified abstract implementation of IMapProperty. This class takes care of
@@ -45,7 +45,7 @@ import org.eclipse.core.internal.databinding.property.map.SimpleMapPropertyObser
  */
 public abstract class SimpleMapProperty extends MapProperty {
 	public IObservableMap observe(Realm realm, Object source) {
-		return new SimpleMapPropertyObservableMap(realm, source, this);
+		return new SimplePropertyObservableMap(realm, source, this);
 	}
 
 	// Accessors

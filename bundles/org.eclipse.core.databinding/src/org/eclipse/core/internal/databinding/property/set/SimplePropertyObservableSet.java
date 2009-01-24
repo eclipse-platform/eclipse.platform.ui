@@ -33,7 +33,7 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
  * @since 1.2
  * 
  */
-public class SimpleSetPropertyObservableSet extends AbstractObservableSet
+public class SimplePropertyObservableSet extends AbstractObservableSet
 		implements IPropertyObservable {
 	private Object source;
 	private SimpleSetProperty property;
@@ -51,7 +51,7 @@ public class SimpleSetPropertyObservableSet extends AbstractObservableSet
 	 * @param source
 	 * @param property
 	 */
-	public SimpleSetPropertyObservableSet(Realm realm, Object source,
+	public SimplePropertyObservableSet(Realm realm, Object source,
 			SimpleSetProperty property) {
 		super(realm);
 		this.source = source;

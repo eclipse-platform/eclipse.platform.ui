@@ -27,7 +27,7 @@ import org.eclipse.core.internal.databinding.Util;
  * @since 1.2
  * 
  */
-public class SimpleValuePropertyObservableValue extends AbstractObservableValue
+public class SimplePropertyObservableValue extends AbstractObservableValue
 		implements IPropertyObservable {
 	private Object source;
 	private SimpleValueProperty property;
@@ -42,7 +42,7 @@ public class SimpleValuePropertyObservableValue extends AbstractObservableValue
 	 * @param source
 	 * @param property
 	 */
-	public SimpleValuePropertyObservableValue(Realm realm, Object source,
+	public SimplePropertyObservableValue(Realm realm, Object source,
 			SimpleValueProperty property) {
 		super(realm);
 		this.source = source;

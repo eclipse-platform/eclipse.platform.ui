@@ -36,7 +36,7 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
  * @since 1.2
  * 
  */
-public class SimpleListPropertyObservableList extends AbstractObservableList
+public class SimplePropertyObservableList extends AbstractObservableList
 		implements IPropertyObservable {
 	private Object source;
 	private SimpleListProperty property;
@@ -54,7 +54,7 @@ public class SimpleListPropertyObservableList extends AbstractObservableList
 	 * @param source
 	 * @param property
 	 */
-	public SimpleListPropertyObservableList(Realm realm, Object source,
+	public SimplePropertyObservableList(Realm realm, Object source,
 			SimpleListProperty property) {
 		super(realm);
 		this.source = source;

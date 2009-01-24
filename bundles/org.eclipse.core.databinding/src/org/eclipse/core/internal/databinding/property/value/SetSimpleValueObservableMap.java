@@ -24,13 +24,14 @@ import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
+import org.eclipse.core.internal.databinding.IdentityWrapper;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.2
  */
-public class ObservableSetSimpleValuePropertyObservableMap extends
-		ComputedObservableMap implements IPropertyObservable {
+public class SetSimpleValueObservableMap extends ComputedObservableMap
+		implements IPropertyObservable {
 	private SimpleValueProperty detailProperty;
 
 	private INativePropertyListener listener;
@@ -43,14 +44,14 @@ public class ObservableSetSimpleValuePropertyObservableMap extends
 	 * @param keySet
 	 * @param valueProperty
 	 */
-	public ObservableSetSimpleValuePropertyObservableMap(IObservableSet keySet,
+	public SetSimpleValueObservableMap(IObservableSet keySet,
 			SimpleValueProperty valueProperty) {
 		super(keySet);
 		this.detailProperty = valueProperty;
 	}
 
 	protected void firstListenerAdded() {
-		cachedValues = new HashMap(this);
+		cachedValues = new HashMap();
 		if (listener == null) {
 			listener = detailProperty
 					.adaptListener(new ISimplePropertyListener() {
@@ -76,16 +77,17 @@ public class ObservableSetSimpleValuePropertyObservableMap extends
 	}
 
 	protected void hookListener(Object addedKey) {
-		if (listener != null) {
-			cachedValues.put(addedKey, detailProperty.getValue(addedKey));
+		if (cachedValues != null) {
+			cachedValues.put(new IdentityWrapper(addedKey), detailProperty
+					.getValue(addedKey));
 			detailProperty.addListener(addedKey, listener);
 		}
 	}
 
 	protected void unhookListener(Object removedKey) {
-		if (listener != null) {
+		if (cachedValues != null) {
 			detailProperty.removeListener(removedKey, listener);
-			cachedValues.remove(removedKey);
+			cachedValues.remove(new IdentityWrapper(removedKey));
 		}
 	}
 
@@ -110,10 +112,10 @@ public class ObservableSetSimpleValuePropertyObservableMap extends
 
 	private void notifyIfChanged(Object key) {
 		if (cachedValues != null) {
-			Object oldValue = cachedValues.get(key);
+			Object oldValue = cachedValues.get(new IdentityWrapper(key));
 			Object newValue = detailProperty.getValue(key);
 			if (!Util.equals(oldValue, newValue)) {
-				cachedValues.put(key, newValue);
+				cachedValues.put(new IdentityWrapper(key), newValue);
 				fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
 						newValue));
 			}

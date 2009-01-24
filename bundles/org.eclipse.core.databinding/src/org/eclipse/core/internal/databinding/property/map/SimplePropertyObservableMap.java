@@ -36,7 +36,7 @@ import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 /**
  * @since 1.2
  */
-public class SimpleMapPropertyObservableMap extends AbstractObservableMap
+public class SimplePropertyObservableMap extends AbstractObservableMap
 		implements IPropertyObservable {
 	private Object source;
 	private SimpleMapProperty property;
@@ -54,7 +54,7 @@ public class SimpleMapPropertyObservableMap extends AbstractObservableMap
 	 * @param source
 	 * @param property
 	 */
-	public SimpleMapPropertyObservableMap(Realm realm, Object source,
+	public SimplePropertyObservableMap(Realm realm, Object source,
 			SimpleMapProperty property) {
 		super(realm);
 		this.source = source;

@@ -19,10 +19,10 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.internal.databinding.property.value.ObservableListSimpleValuePropertyObservableList;
-import org.eclipse.core.internal.databinding.property.value.ObservableMapSimpleValuePropertyObservableMap;
-import org.eclipse.core.internal.databinding.property.value.ObservableSetSimpleValuePropertyObservableMap;
-import org.eclipse.core.internal.databinding.property.value.SimpleValuePropertyObservableValue;
+import org.eclipse.core.internal.databinding.property.value.ListSimpleValueObservableList;
+import org.eclipse.core.internal.databinding.property.value.MapSimpleValueObservableMap;
+import org.eclipse.core.internal.databinding.property.value.SetSimpleValueObservableMap;
+import org.eclipse.core.internal.databinding.property.value.SimplePropertyObservableValue;
 
 /**
  * Simplified abstract implementation of IValueProperty. This class takes care
@@ -169,18 +169,18 @@ public abstract class SimpleValueProperty extends ValueProperty {
 			INativePropertyListener listener);
 
 	public IObservableValue observe(Realm realm, Object source) {
-		return new SimpleValuePropertyObservableValue(realm, source, this);
+		return new SimplePropertyObservableValue(realm, source, this);
 	}
 
 	public IObservableList observeDetail(IObservableList master) {
-		return new ObservableListSimpleValuePropertyObservableList(master, this);
+		return new ListSimpleValueObservableList(master, this);
 	}
 
 	public IObservableMap observeDetail(IObservableSet master) {
-		return new ObservableSetSimpleValuePropertyObservableMap(master, this);
+		return new SetSimpleValueObservableMap(master, this);
 	}
 
 	public IObservableMap observeDetail(IObservableMap master) {
-		return new ObservableMapSimpleValuePropertyObservableMap(master, this);
+		return new MapSimpleValueObservableMap(master, this);
 	}
 }

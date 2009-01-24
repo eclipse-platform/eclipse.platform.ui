@@ -18,9 +18,9 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.internal.databinding.property.value.ObservableListDelegatingValuePropertyObservableList;
-import org.eclipse.core.internal.databinding.property.value.ObservableMapDelegatingValuePropertyObservableMap;
-import org.eclipse.core.internal.databinding.property.value.ObservableSetDelegatingValuePropertyObservableMap;
+import org.eclipse.core.internal.databinding.property.value.ListDelegatingValueObservableList;
+import org.eclipse.core.internal.databinding.property.value.MapDelegatingValueObservableMap;
+import org.eclipse.core.internal.databinding.property.value.SetDelegatingValueObservableMap;
 
 /**
  * @since 1.2
@@ -76,17 +76,17 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 	}
 
 	public IObservableList observeDetail(IObservableList master) {
-		return new ObservableListDelegatingValuePropertyObservableList(master,
+		return new ListDelegatingValueObservableList(master,
 				this);
 	}
 
 	public IObservableMap observeDetail(IObservableSet master) {
-		return new ObservableSetDelegatingValuePropertyObservableMap(master,
+		return new SetDelegatingValueObservableMap(master,
 				this);
 	}
 
 	public IObservableMap observeDetail(IObservableMap master) {
-		return new ObservableMapDelegatingValuePropertyObservableMap(master,
+		return new MapDelegatingValueObservableMap(master,
 				this);
 	}
 

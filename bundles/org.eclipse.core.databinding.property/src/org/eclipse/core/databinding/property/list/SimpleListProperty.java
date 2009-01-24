@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.internal.databinding.property.list.SimpleListPropertyObservableList;
+import org.eclipse.core.internal.databinding.property.list.SimplePropertyObservableList;
 
 /**
  * Simplified abstract implementation of IListProperty. This class takes care of
@@ -44,7 +44,7 @@ import org.eclipse.core.internal.databinding.property.list.SimpleListPropertyObs
  */
 public abstract class SimpleListProperty extends ListProperty {
 	public IObservableList observe(Realm realm, Object source) {
-		return new SimpleListPropertyObservableList(realm, source, this);
+		return new SimplePropertyObservableList(realm, source, this);
 	}
 
 	// Accessors

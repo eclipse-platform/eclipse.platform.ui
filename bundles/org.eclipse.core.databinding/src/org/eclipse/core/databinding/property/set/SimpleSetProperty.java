@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.internal.databinding.property.set.SimpleSetPropertyObservableSet;
+import org.eclipse.core.internal.databinding.property.set.SimplePropertyObservableSet;
 
 /**
  * Simplified abstract implementation of ISetProperty. This class takes care of
@@ -44,7 +44,7 @@ import org.eclipse.core.internal.databinding.property.set.SimpleSetPropertyObser
  */
 public abstract class SimpleSetProperty extends SetProperty {
 	public IObservableSet observe(Realm realm, Object source) {
-		return new SimpleSetPropertyObservableSet(realm, source, this);
+		return new SimplePropertyObservableSet(realm, source, this);
 	}
 
 	// Accessors

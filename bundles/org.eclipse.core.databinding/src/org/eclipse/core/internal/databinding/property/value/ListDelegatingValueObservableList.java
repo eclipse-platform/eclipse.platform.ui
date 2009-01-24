@@ -35,8 +35,8 @@ import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
 /**
  * @since 1.2
  */
-public class ObservableListDelegatingValuePropertyObservableList extends
-		AbstractObservableList implements IPropertyObservable {
+public class ListDelegatingValueObservableList extends AbstractObservableList
+		implements IPropertyObservable {
 	private IObservableList masterList;
 	private DelegatingValueProperty detailProperty;
 	private DelegatingCache cache;
@@ -84,8 +84,8 @@ public class ObservableListDelegatingValuePropertyObservableList extends
 	 * @param masterList
 	 * @param valueProperty
 	 */
-	public ObservableListDelegatingValuePropertyObservableList(
-			IObservableList masterList, DelegatingValueProperty valueProperty) {
+	public ListDelegatingValueObservableList(IObservableList masterList,
+			DelegatingValueProperty valueProperty) {
 		super(masterList.getRealm());
 		this.masterList = masterList;
 		this.detailProperty = valueProperty;

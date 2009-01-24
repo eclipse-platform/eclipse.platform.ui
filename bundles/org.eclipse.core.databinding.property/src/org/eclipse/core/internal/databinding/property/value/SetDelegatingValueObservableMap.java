@@ -36,8 +36,8 @@ import org.eclipse.core.internal.databinding.Util;
 /**
  * @since 1.2
  */
-public class ObservableSetDelegatingValuePropertyObservableMap extends
-		AbstractObservableMap implements IPropertyObservable {
+public class SetDelegatingValueObservableMap extends AbstractObservableMap
+		implements IPropertyObservable {
 	private IObservableSet masterSet;
 	private DelegatingValueProperty detailProperty;
 	private DelegatingCache cache;
@@ -162,8 +162,8 @@ public class ObservableSetDelegatingValuePropertyObservableMap extends
 	 * @param keySet
 	 * @param valueProperty
 	 */
-	public ObservableSetDelegatingValuePropertyObservableMap(
-			IObservableSet keySet, DelegatingValueProperty valueProperty) {
+	public SetDelegatingValueObservableMap(IObservableSet keySet,
+			DelegatingValueProperty valueProperty) {
 		super(keySet.getRealm());
 		this.masterSet = keySet;
 		this.detailProperty = valueProperty;

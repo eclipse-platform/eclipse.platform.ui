@@ -48,8 +48,8 @@ import org.eclipse.core.internal.databinding.Util;
 /**
  * @since 1.2
  */
-public class ObservableListSimpleValuePropertyObservableList extends
-		AbstractObservableList implements IPropertyObservable {
+public class ListSimpleValueObservableList extends AbstractObservableList
+		implements IPropertyObservable {
 	private IObservableList masterList;
 	private SimpleValueProperty detailProperty;
 
@@ -106,8 +106,8 @@ public class ObservableListSimpleValuePropertyObservableList extends
 	 * @param masterList
 	 * @param valueProperty
 	 */
-	public ObservableListSimpleValuePropertyObservableList(
-			IObservableList masterList, SimpleValueProperty valueProperty) {
+	public ListSimpleValueObservableList(IObservableList masterList,
+			SimpleValueProperty valueProperty) {
 		super(masterList.getRealm());
 		this.masterList = masterList;
 		this.detailProperty = valueProperty;
@@ -373,7 +373,7 @@ public class ObservableListSimpleValuePropertyObservableList extends
 	private int[] indicesOf(Object masterElement) {
 		List indices = new ArrayList();
 
-		for (ListIterator it = ObservableListSimpleValuePropertyObservableList.this.masterList
+		for (ListIterator it = ListSimpleValueObservableList.this.masterList
 				.listIterator(); it.hasNext();) {
 			if (masterElement == it.next())
 				indices.add(new Integer(it.previousIndex()));
