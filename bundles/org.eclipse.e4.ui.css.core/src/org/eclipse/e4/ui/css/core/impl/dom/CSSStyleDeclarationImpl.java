@@ -171,10 +171,8 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 			ExtendedCSSRule extendedRule = (ExtendedCSSRule) parentRule;
 			SelectorList selectors = extendedRule.getSelectorList();
 			//we assume there's only the one
-			if(selectors.getLength() != 1)
-				return null;
-			//TODO not sure right way to handle case of more than one selector
-			return selectors.item(0);
+			if( selectors.getLength() >= 1 )
+				return selectors.item( 0 );
 		}
 		return null;
 	}	
