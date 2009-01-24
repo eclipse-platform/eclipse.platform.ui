@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
+ *     Matthew Hall - bug 262221
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -20,25 +21,25 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * Customizes a {@link Binding} between two
- * {@link IObservableList observable lists}. The following behaviors can be
- * customized via the strategy:
+ * Customizes a {@link Binding} between two {@link IObservableList observable
+ * lists}. The following behaviors can be customized via the strategy:
  * <ul>
  * <li>Conversion</li>
  * <li>Automatic processing</li>
  * </ul>
  * <p>
- * Conversion:<br/> When elements are added they can be
- * {@link #convert(Object) converted} to the destination element type.
+ * Conversion:<br/>
+ * When elements are added they can be {@link #convert(Object) converted} to the
+ * destination element type.
  * </p>
  * <p>
- * Automatic processing:<br/> The processing to perform when the source
- * observable changes. This behavior is configured via policies provided on
- * construction of the strategy (e.g. {@link #POLICY_NEVER},
- * {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
+ * Automatic processing:<br/>
+ * The processing to perform when the source observable changes. This behavior
+ * is configured via policies provided on construction of the strategy (e.g.
+ * {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
  * </p>
- *
- *
+ * 
+ * 
  * @see DataBindingContext#bindList(IObservableList, IObservableList,
  *      UpdateListStrategy, UpdateListStrategy)
  * @see IConverter
@@ -72,7 +73,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * Helper method allowing API evolution of the above constant values. The
 	 * compiler will not inline constant values into client code if values are
 	 * "computed" using this helper.
-	 *
+	 * 
 	 * @param i
 	 *            an integer
 	 * @return the same integer
@@ -101,7 +102,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * Creates a new update list strategy with a configurable update policy. A
 	 * default converter will be provided. The defaults can be changed by
 	 * calling one of the setter methods.
-	 *
+	 * 
 	 * @param updatePolicy
 	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, or
 	 *            {@link #POLICY_UPDATE}
@@ -115,7 +116,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * default converter will be provided if <code>provideDefaults</code> is
 	 * <code>true</code>. The defaults can be changed by calling one of the
 	 * setter methods.
-	 *
+	 * 
 	 * @param provideDefaults
 	 *            if <code>true</code>, default validators and a default
 	 *            converter will be provided based on the observable list's
@@ -133,11 +134,10 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * When an element is added to the destination converts the element from the
 	 * source element type to the destination element type.
 	 * <p>
-	 * Default implementation will use the
-	 * {@link #setConverter(IConverter) converter} if one exists. If no
-	 * converter exists no conversion occurs.
+	 * Default implementation will use the {@link #setConverter(IConverter)
+	 * converter} if one exists. If no converter exists no conversion occurs.
 	 * </p>
-	 *
+	 * 
 	 * @param element
 	 * @return the converted element
 	 */
@@ -146,7 +146,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param source
 	 * @param destination
 	 */
@@ -181,7 +181,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	/**
 	 * Sets the converter to be invoked when converting added elements from the
 	 * source element type to the destination element type.
-	 *
+	 * 
 	 * @param converter
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -193,7 +193,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	/**
 	 * Adds the given element at the given index to the given observable list.
 	 * Clients may extend but must call the super implementation.
-	 *
+	 * 
 	 * @param observableList
 	 * @param element
 	 * @param index
@@ -204,9 +204,11 @@ public class UpdateListStrategy extends UpdateStrategy {
 		try {
 			observableList.add(index, element);
 		} catch (Exception ex) {
-			return ValidationStatus.error(BindingMessages
-					.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
-					ex);
+			return ValidationStatus
+					.error(
+							BindingMessages
+									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
+							ex);
 		}
 		return Status.OK_STATUS;
 	}
@@ -214,7 +216,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	/**
 	 * Removes the element at the given index from the given observable list.
 	 * Clients may extend but must call the super implementation.
-	 *
+	 * 
 	 * @param observableList
 	 * @param index
 	 * @return a status
@@ -223,9 +225,89 @@ public class UpdateListStrategy extends UpdateStrategy {
 		try {
 			observableList.remove(index);
 		} catch (Exception ex) {
-			return ValidationStatus.error(BindingMessages
-					.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
-					ex);
+			return ValidationStatus
+					.error(
+							BindingMessages
+									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
+							ex);
+		}
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Returns whether ListBinding should call
+	 * {@link #doMove(IObservableList, int, int)} and
+	 * {@link #doReplace(IObservableList, int, Object)} instead of paired calls
+	 * to {@link #doRemove(IObservableList, int)} and
+	 * {@link #doAdd(IObservableList, Object, int)}. The default implementation
+	 * returns true for this class and false for subclasses.
+	 * <p>
+	 * This method is provided for the benefit of subclasses which extend the
+	 * {@link #doAdd(IObservableList, Object, int)} and
+	 * {@link #doRemove(IObservableList, int)} methods. The
+	 * {@link #doMove(IObservableList, int, int)} and
+	 * {@link #doReplace(IObservableList, int, Object)} methods were added in
+	 * version 1.2 so that logically related remove() and add() operations could
+	 * be combined into a single method call. However to ensure that custom
+	 * behavior is not lost in existing code, {@link ListBinding} is advised by
+	 * this method whether these new methods may be used.
+	 * <p>
+	 * To enable use of these methods in subclasses, override this method to
+	 * return true.
+	 * 
+	 * @return whether ListBinding should call doMove() and doReplace() instead
+	 *         of paired calls of doRemove() and doAdd()
+	 * @since 1.2
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected boolean useMoveAndReplace() {
+		return getClass() == UpdateListStrategy.class;
+	}
+
+	/**
+	 * Moves the element in the observable list located at the given old index
+	 * to the given new index.
+	 * 
+	 * @param observableList
+	 * @param oldIndex
+	 * @param newIndex
+	 * @return a status
+	 * @since 1.2
+	 */
+	protected IStatus doMove(IObservableList observableList, int oldIndex,
+			int newIndex) {
+		try {
+			observableList.move(oldIndex, newIndex);
+		} catch (Exception ex) {
+			return ValidationStatus
+					.error(
+							BindingMessages
+									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
+							ex);
+		}
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Replaces the element in the observable list located at the given index to
+	 * with the given element.
+	 * 
+	 * @param observableList
+	 * @param index
+	 * @param element
+	 * @return a status
+	 * @since 1.2
+	 */
+	protected IStatus doReplace(IObservableList observableList, int index,
+			Object element) {
+		try {
+			observableList.set(index, element);
+		} catch (Exception ex) {
+			return ValidationStatus
+					.error(
+							BindingMessages
+									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
+							ex);
 		}
 		return Status.OK_STATUS;
 	}

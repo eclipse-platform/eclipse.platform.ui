@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 262221
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -18,7 +19,7 @@ import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.BindingStatus;
@@ -149,37 +150,64 @@ public class ListBinding extends Binding {
 						} else {
 							updatingModel = true;
 						}
-						MultiStatus multiStatus = BindingStatus.ok();
+						final MultiStatus multiStatus = BindingStatus.ok();
 
 						try {
 							if (clearDestination) {
 								destination.clear();
 							}
-							ListDiffEntry[] diffEntries = diff.getDifferences();
-							for (int i = 0; i < diffEntries.length; i++) {
-								ListDiffEntry listDiffEntry = diffEntries[i];
-								if (listDiffEntry.isAddition()) {
+							diff.accept(new ListDiffVisitor() {
+								boolean useMoveAndReplace = updateListStrategy
+										.useMoveAndReplace();
+
+								public void handleAdd(int index, Object element) {
 									IStatus setterStatus = updateListStrategy
-											.doAdd(
-													destination,
+											.doAdd(destination,
 													updateListStrategy
-															.convert(listDiffEntry
-																	.getElement()),
-													listDiffEntry.getPosition());
+															.convert(element),
+													index);
 
 									mergeStatus(multiStatus, setterStatus);
-									// TODO - at this point, the two lists
-									// will be out of sync if an error occurred...
-								} else {
-									IStatus setterStatus = updateListStrategy
-											.doRemove(destination,
-													listDiffEntry.getPosition());
-									
-									mergeStatus(multiStatus, setterStatus);
-									// TODO - at this point, the two lists
-									// will be out of sync if an error occurred...
 								}
-							}
+
+								public void handleRemove(int index,
+										Object element) {
+									IStatus setterStatus = updateListStrategy
+											.doRemove(destination, index);
+
+									mergeStatus(multiStatus, setterStatus);
+								}
+
+								public void handleMove(int oldIndex,
+										int newIndex, Object element) {
+									if (useMoveAndReplace) {
+										IStatus setterStatus = updateListStrategy
+												.doMove(destination, oldIndex,
+														newIndex);
+
+										mergeStatus(multiStatus, setterStatus);
+									} else {
+										super.handleMove(oldIndex, newIndex,
+												element);
+									}
+								}
+
+								public void handleReplace(int index,
+										Object oldElement, Object newElement) {
+									if (useMoveAndReplace) {
+										IStatus setterStatus = updateListStrategy
+												.doReplace(destination, index,
+														newElement);
+
+										mergeStatus(multiStatus, setterStatus);
+									} else {
+										super.handleReplace(index, oldElement,
+												newElement);
+									}
+								}
+							});
+							// TODO - at this point, the two lists will be out
+							// of sync if an error occurred...
 						} finally {
 							validationStatusObservable.setValue(multiStatus);
 
@@ -210,11 +238,13 @@ public class ListBinding extends Binding {
 
 	public void dispose() {
 		if (targetChangeListener != null) {
-			((IObservableList)getTarget()).removeListChangeListener(targetChangeListener);
+			((IObservableList) getTarget())
+					.removeListChangeListener(targetChangeListener);
 			targetChangeListener = null;
 		}
 		if (modelChangeListener != null) {
-			((IObservableList)getModel()).removeListChangeListener(modelChangeListener);
+			((IObservableList) getModel())
+					.removeListChangeListener(modelChangeListener);
 			modelChangeListener = null;
 		}
 		super.dispose();
