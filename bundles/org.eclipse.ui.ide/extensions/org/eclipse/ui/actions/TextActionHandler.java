@@ -15,6 +15,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -171,9 +174,10 @@ public class TextActionHandler {
          */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
-                setEnabled(activeTextControl.getSelectionCount() > 0
+                setEnabled(activeTextControl.getEditable()
+                		&& (activeTextControl.getSelectionCount() > 0
                         || activeTextControl.getCaretPosition() < activeTextControl
-                                .getCharCount());
+                                .getCharCount()));
                 return;
             }
             if (deleteAction != null) {
@@ -210,7 +214,7 @@ public class TextActionHandler {
          */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
-                setEnabled(activeTextControl.getSelectionCount() > 0);
+                setEnabled(activeTextControl.getEditable() && activeTextControl.getSelectionCount() > 0);
                 return;
             }
             if (cutAction != null) {
@@ -284,7 +288,21 @@ public class TextActionHandler {
          */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
-                setEnabled(true);
+        		boolean canPaste = false;
+            	if (activeTextControl.getEditable()) {
+            		Clipboard clipboard = new Clipboard(activeTextControl.getDisplay());
+            		TransferData[] td = clipboard.getAvailableTypes();
+            		for (int i = 0; i < td.length; ++i) {
+            			if (TextTransfer.getInstance().isSupportedType(td[i])) {
+            				canPaste = true;
+            				break;
+            			}
+            		}
+            		
+            		clipboard.dispose();
+            	}
+            	
+                setEnabled(canPaste);
                 return;
             }
             if (pasteAction != null) {
@@ -321,7 +339,7 @@ public class TextActionHandler {
          */
         public void updateEnabledState() {
             if (activeTextControl != null && !activeTextControl.isDisposed()) {
-                setEnabled(true);
+                setEnabled(activeTextControl.getCharCount() > 0);
                 return;
             }
             if (selectAllAction != null) {
@@ -367,7 +385,6 @@ public class TextActionHandler {
 			return;
 		}
 
-        activeTextControl = textControl;
         textControl.addListener(SWT.Activate, textControlListener);
         textControl.addListener(SWT.Deactivate, textControlListener);
 
@@ -377,6 +394,10 @@ public class TextActionHandler {
         textControl.addKeyListener(keyAdapter);
         textControl.addMouseListener(mouseAdapter);
 
+        if (textControl.isFocusControl()) {
+        	activeTextControl = textControl;
+        	updateActionsEnableState();
+        }
     }
 
     /**
