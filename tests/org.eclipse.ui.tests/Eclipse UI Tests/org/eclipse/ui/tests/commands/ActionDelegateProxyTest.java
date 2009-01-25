@@ -90,12 +90,12 @@ public class ActionDelegateProxyTest extends UITestCase {
 	
 	private static final String contents = "one\ntwo\nthree\n";
 	
-	public void XXtestEditorActionDelegate() throws Exception {
+	public void testEditorActionDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().closeAllEditors(false);
 		IHandlerService service = (IHandlerService) window.getService(IHandlerService.class);
 		assertFalse(EditorActionDelegate.executed);
-		assertNull(EditorActionDelegate.part);
+		EditorActionDelegate.part = null;
 		try {
 			service.executeCommand(STAY_COMMAND, null);
 			fail("the command is not yet handled");

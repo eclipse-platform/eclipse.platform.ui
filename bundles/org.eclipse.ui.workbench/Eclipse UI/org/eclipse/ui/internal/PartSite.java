@@ -18,7 +18,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Control;
@@ -449,34 +448,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
 			keyBindingService = new KeyBindingService(this);
-
-			// TODO why is this here? and it should be using HandlerSubmissions
-			// directly..
-			if (this instanceof EditorSite) {
-				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this)
-						.getExtensionActionBarContributor();
-
-				if (contributor != null) {
-					ActionDescriptor[] actionDescriptors = contributor
-							.getExtendedActions();
-
-					if (actionDescriptors != null) {
-						for (int i = 0; i < actionDescriptors.length; i++) {
-							ActionDescriptor actionDescriptor = actionDescriptors[i];
-
-							if (actionDescriptor != null) {
-								IAction action = actionDescriptors[i]
-										.getAction();
-
-								if (action != null
-										&& action.getActionDefinitionId() != null) {
-									keyBindingService.registerAction(action);
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 
 		return keyBindingService;
