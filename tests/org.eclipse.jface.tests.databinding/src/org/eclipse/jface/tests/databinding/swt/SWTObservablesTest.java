@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Chris Aniszczyk <zx@code9.com> - bug 131435
- *     Matthew Hall - bug 248621, 213893
+ *     Matthew Hall - bug 248621, 213893, 262320
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.swt;
@@ -31,6 +31,7 @@ import org.eclipse.jface.internal.databinding.swt.CTabItemTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ComboSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ComboTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlTooltipTextProperty;
+import org.eclipse.jface.internal.databinding.swt.ItemImageProperty;
 import org.eclipse.jface.internal.databinding.swt.ItemTextProperty;
 import org.eclipse.jface.internal.databinding.swt.LabelImageProperty;
 import org.eclipse.jface.internal.databinding.swt.LabelTextProperty;
@@ -315,6 +316,16 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		assertTrue(value.getWidget() == cLabel);
 		IPropertyObservable propertyObservable = getPropertyObservable(value);
 		assertTrue(propertyObservable.getProperty() instanceof CLabelImageProperty);
+	}
+
+	public void testObserveImageOfItem() throws Exception {
+		CTabFolder ctf = new CTabFolder(shell, SWT.NONE);
+		Item item = new CTabItem(ctf, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeImage(item);
+		assertNotNull(item);
+		assertTrue(value.getWidget() == item);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof ItemImageProperty);
 	}
 
 	public void testObserveImageOfLabel() throws Exception {

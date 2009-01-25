@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 256543, 213893
+ *     Matthew Hall - bugs 256543, 213893, 262320
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -40,6 +40,7 @@ import org.eclipse.jface.internal.databinding.swt.ControlLocationProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlSizeProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlVisibleProperty;
+import org.eclipse.jface.internal.databinding.swt.ItemImageProperty;
 import org.eclipse.jface.internal.databinding.swt.ItemTextProperty;
 import org.eclipse.jface.internal.databinding.swt.LabelImageProperty;
 import org.eclipse.jface.internal.databinding.swt.LabelTextProperty;
@@ -183,24 +184,27 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the image of a {@link Button},
-	 * {@link CLabel} or {@link Label}.
+	 * {@link CLabel}, {@link Item} or {@link Label}.
 	 * 
 	 * @return a value property for observing the image of a {@link Button},
-	 *         {@link CLabel} or {@link Label}.
+	 *         {@link CLabel}, {@link Item} or {@link Label}.
 	 */
 	public static IValueProperty image() {
 		return new DelegatingValueProperty(Image.class) {
 			private IValueProperty button = new ButtonImageProperty();
 			private IValueProperty cLabel = new CLabelImageProperty();
+			private IValueProperty item = new ItemImageProperty();
 			private IValueProperty label = new LabelImageProperty();
 
 			protected IValueProperty doGetDelegate(Object source) {
 				if (source instanceof Button)
 					return button;
-				if (source instanceof Label)
-					return label;
 				if (source instanceof CLabel)
 					return cLabel;
+				if (source instanceof Item)
+					return item;
+				if (source instanceof Label)
+					return label;
 				throw notSupported(source);
 			}
 		};

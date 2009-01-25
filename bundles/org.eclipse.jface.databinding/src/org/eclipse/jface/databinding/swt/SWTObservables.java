@@ -10,7 +10,7 @@
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
  *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734,
- *                    195222, 256543, 213893
+ *                    195222, 256543, 213893, 262320
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *     Tom Schindl - bug 246462
@@ -320,6 +320,7 @@ public class SWTObservables {
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Button</li>
 	 * <li>org.eclipse.swt.custom.CLabel</li>
+	 * <li>org.eclipse.swt.widgets.Item</li>
 	 * <li>org.eclipse.swt.widgets.Label</li>
 	 * </ul>
 	 * 
