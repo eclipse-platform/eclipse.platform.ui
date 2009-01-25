@@ -168,6 +168,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	/**
 	 * @param mode
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 3.4
 	 */
 	public void setRootMode(int mode) {
 		rootMode = mode;
@@ -176,6 +177,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	/**
 	 * @return the root mode
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 3.4
 	 */
 	public int getRootMode() {
 		return rootMode;
@@ -184,6 +186,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	/**
 	 * @param label
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 3.4
 	 */
 	public void setWorkingSetLabel(String label) {
 		workingSetLabel = label;
@@ -192,6 +195,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	/**
 	 * @return the working set label
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 3.4
 	 */
 	public String getWorkingSetLabel() {
 		return workingSetLabel;
