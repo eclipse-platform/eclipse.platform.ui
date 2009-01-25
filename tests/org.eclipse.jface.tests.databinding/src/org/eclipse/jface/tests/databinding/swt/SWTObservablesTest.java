@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Chris Aniszczyk <zx@code9.com> - bug 131435
- *     Matthew Hall - bug 248621
+ *     Matthew Hall - bug 248621, 213893
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.swt;
@@ -21,14 +21,18 @@ import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.internal.databinding.swt.ButtonImageProperty;
+import org.eclipse.jface.internal.databinding.swt.ButtonTextProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboTextProperty;
+import org.eclipse.jface.internal.databinding.swt.CLabelImageProperty;
 import org.eclipse.jface.internal.databinding.swt.CLabelTextProperty;
 import org.eclipse.jface.internal.databinding.swt.CTabItemTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ComboSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ComboTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ItemTextProperty;
+import org.eclipse.jface.internal.databinding.swt.LabelImageProperty;
 import org.eclipse.jface.internal.databinding.swt.LabelTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ScaleMaximumProperty;
 import org.eclipse.jface.internal.databinding.swt.ScaleMinimumProperty;
@@ -203,6 +207,15 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		}
 	}
 
+	public void testObserveTextOfButton() throws Exception {
+		Button button = new Button(shell, SWT.PUSH);
+		ISWTObservableValue value = SWTObservables.observeText(button);
+		assertNotNull(button);
+		assertTrue(value.getWidget() == button);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof ButtonTextProperty);
+	}
+
 	public void testObserveTextOfLabel() throws Exception {
 		Label label = new Label(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeText(label);
@@ -284,6 +297,33 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 			fail("Exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}
+	}
+
+	public void testObserveImageOfButton() throws Exception {
+		Button button = new Button(shell, SWT.PUSH);
+		ISWTObservableValue value = SWTObservables.observeImage(button);
+		assertNotNull(button);
+		assertTrue(value.getWidget() == button);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof ButtonImageProperty);
+	}
+
+	public void testObserveImageOfCLabel() throws Exception {
+		CLabel cLabel = new CLabel(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeImage(cLabel);
+		assertNotNull(cLabel);
+		assertTrue(value.getWidget() == cLabel);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof CLabelImageProperty);
+	}
+
+	public void testObserveImageOfLabel() throws Exception {
+		Label label = new Label(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeImage(label);
+		assertNotNull(label);
+		assertTrue(value.getWidget() == label);
+		IPropertyObservable propertyObservable = getPropertyObservable(value);
+		assertTrue(propertyObservable.getProperty() instanceof LabelImageProperty);
 	}
 
 	public void testObserveTooltipOfItem() throws Exception {

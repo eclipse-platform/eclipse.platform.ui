@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 256543
+ *     Matthew Hall - bugs 256543, 213893
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -16,11 +16,14 @@ import org.eclipse.core.databinding.property.list.DelegatingListProperty;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.jface.internal.databinding.swt.ButtonImageProperty;
 import org.eclipse.jface.internal.databinding.swt.ButtonSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.ButtonTextProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboItemsProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboSingleSelectionIndexProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboTextProperty;
+import org.eclipse.jface.internal.databinding.swt.CLabelImageProperty;
 import org.eclipse.jface.internal.databinding.swt.CLabelTextProperty;
 import org.eclipse.jface.internal.databinding.swt.CTabItemTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ComboItemsProperty;
@@ -38,6 +41,7 @@ import org.eclipse.jface.internal.databinding.swt.ControlSizeProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlVisibleProperty;
 import org.eclipse.jface.internal.databinding.swt.ItemTextProperty;
+import org.eclipse.jface.internal.databinding.swt.LabelImageProperty;
 import org.eclipse.jface.internal.databinding.swt.LabelTextProperty;
 import org.eclipse.jface.internal.databinding.swt.LinkTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ListItemsProperty;
@@ -64,6 +68,7 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
@@ -174,6 +179,31 @@ public class WidgetProperties {
 	 */
 	public static IValueProperty foreground() {
 		return new ControlForegroundProperty();
+	}
+
+	/**
+	 * Returns a value property for observing the image of a {@link Button},
+	 * {@link CLabel} or {@link Label}.
+	 * 
+	 * @return a value property for observing the image of a {@link Button},
+	 *         {@link CLabel} or {@link Label}.
+	 */
+	public static IValueProperty image() {
+		return new DelegatingValueProperty(Image.class) {
+			private IValueProperty button = new ButtonImageProperty();
+			private IValueProperty cLabel = new CLabelImageProperty();
+			private IValueProperty label = new LabelImageProperty();
+
+			protected IValueProperty doGetDelegate(Object source) {
+				if (source instanceof Button)
+					return button;
+				if (source instanceof Label)
+					return label;
+				if (source instanceof CLabel)
+					return cLabel;
+				throw notSupported(source);
+			}
+		};
 	}
 
 	/**
@@ -327,16 +357,19 @@ public class WidgetProperties {
 	}
 
 	/**
-	 * Returns a value property for observing the text of a {@link CCombo},
-	 * {@link CLabel}, {@link Combo}, {@link Item}, {@link Label}, {@link Link},
-	 * {@link Shell}, {@link StyledText} or {@link Text}.
+	 * Returns a value property for observing the text of a {@link Button},
+	 * {@link CCombo}, {@link CLabel}, {@link Combo}, {@link Item},
+	 * {@link Label}, {@link Link}, {@link Shell}, {@link StyledText} or
+	 * {@link Text}.
 	 * 
-	 * @return a value property for observing the text of a {@link CCombo},
-	 *         {@link CLabel}, {@link Combo}, {@link Item}, {@link Label},
-	 *         {@link Link}, {@link Shell}, {@link StyledText} or {@link Text}.
+	 * @return a value property for observing the text of a {@link Button},
+	 *         {@link CCombo}, {@link CLabel}, {@link Combo}, {@link Item},
+	 *         {@link Label}, {@link Link}, {@link Shell}, {@link StyledText} or
+	 *         {@link Text}.
 	 */
 	public static IValueProperty text() {
 		return new DelegatingValueProperty(String.class) {
+			private IValueProperty button = new ButtonTextProperty();
 			private IValueProperty cCombo = new CComboTextProperty();
 			private IValueProperty cLabel = new CLabelTextProperty();
 			private IValueProperty combo = new ComboTextProperty();
@@ -348,6 +381,8 @@ public class WidgetProperties {
 			private IValueProperty text = new TextTextProperty();
 
 			protected IValueProperty doGetDelegate(Object source) {
+				if (source instanceof Button)
+					return button;
 				if (source instanceof CCombo)
 					return cCombo;
 				if (source instanceof CLabel)

@@ -10,7 +10,7 @@
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
  *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734,
- *                    195222, 256543
+ *                    195222, 256543, 213893
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *     Tom Schindl - bug 246462
@@ -267,6 +267,7 @@ public class SWTObservables {
 	 * Returns an observable observing the text attribute of the provided
 	 * <code>widget</code>. The supported types are:
 	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Button (as of 1.3)</li>
 	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.custom.CLabel</li>
 	 * <li>org.eclipse.swt.widgets.Combo</li>
@@ -293,6 +294,7 @@ public class SWTObservables {
 	 * Returns an observable observing the text attribute of the provided
 	 * <code>control</code>. The supported types are:
 	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Button (as of 1.3)</li>
 	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.custom.CLabel</li>
 	 * <li>org.eclipse.swt.widgets.Combo</li>
@@ -310,6 +312,25 @@ public class SWTObservables {
 	 */
 	public static ISWTObservableValue observeText(Control control) {
 		return observeText((Widget) control);
+	}
+
+	/**
+	 * Returns an observable observing the image attribute of the provided
+	 * <code>widget</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Button</li>
+	 * <li>org.eclipse.swt.custom.CLabel</li>
+	 * <li>org.eclipse.swt.widgets.Label</li>
+	 * </ul>
+	 * 
+	 * @param widget
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>widget</code> type is unsupported
+	 * @since 1.3
+	 */
+	public static ISWTObservableValue observeImage(Widget widget) {
+		return (ISWTObservableValue) WidgetProperties.image().observe(widget);
 	}
 
 	/**
