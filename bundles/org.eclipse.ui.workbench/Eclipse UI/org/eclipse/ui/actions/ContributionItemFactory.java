@@ -188,6 +188,10 @@ public abstract class ContributionItemFactory {
 			};
 			WorkbenchPlugin.getDefault().getPreferenceStore()
 					.addPropertyChangeListener(perfs[0]);
+			action.setVisible(WorkbenchPlugin.getDefault().getPreferenceStore()
+					.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+					|| ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
+							.alwaysShowPinAction());
 			return action;
 		}
 	};
