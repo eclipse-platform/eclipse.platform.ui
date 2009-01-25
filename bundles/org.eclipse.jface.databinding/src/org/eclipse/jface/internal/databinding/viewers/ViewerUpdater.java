@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 226765)
- *     Matthew Hall - bug 230296
+ *     Matthew Hall - bug 230296, 238296
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
 
 import java.util.Iterator;
 
+import org.eclipse.jface.databinding.viewers.IViewerUpdater;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,7 +25,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * 
  * @since 1.2
  */
-public abstract class ViewerUpdater {
+public abstract class ViewerUpdater implements IViewerUpdater {
 	private final StructuredViewer viewer;
 
 	/**
@@ -37,53 +38,15 @@ public abstract class ViewerUpdater {
 		this.viewer = viewer;
 	}
 
-	/**
-	 * Insert the element into the viewer at the specified position.
-	 * 
-	 * @param element
-	 *            the element to add
-	 * @param position
-	 *            the position of the element
-	 */
 	public abstract void insert(Object element, int position);
 
-	/**
-	 * Remove the element from the viewer
-	 * 
-	 * @param element
-	 *            the element to remove
-	 * @param position
-	 *            the position of the element
-	 */
 	public abstract void remove(Object element, int position);
 
-	/**
-	 * Replace the specified element at the given position with the new element.
-	 * 
-	 * @param oldElement
-	 *            the element being replaced
-	 * @param newElement
-	 *            the element that replaces <code>oldElement</code>
-	 * @param position
-	 *            the position of the element being replaced.
-	 */
 	public void replace(Object oldElement, Object newElement, int position) {
 		remove(oldElement, position);
 		insert(newElement, position);
 	}
 
-	/**
-	 * Moves the specified element from the specified old position to the
-	 * specified new position. No action is taken if the viewer has a sorter or
-	 * filter(s).
-	 * 
-	 * @param element
-	 *            the element being moved
-	 * @param oldPosition
-	 *            the position of the element before it is moved
-	 * @param newPosition
-	 *            the position of the element after it is moved
-	 */
 	public void move(Object element, int oldPosition, int newPosition) {
 		if (isElementOrderPreserved()) {
 			IStructuredSelection selection = (IStructuredSelection) viewer
@@ -119,19 +82,7 @@ public abstract class ViewerUpdater {
 		return false;
 	}
 
-	/**
-	 * Adds the elements to the viewer.
-	 * 
-	 * @param elements
-	 *            the elements to add
-	 */
 	public abstract void add(Object[] elements);
 
-	/**
-	 * Removes the elements from the viewer
-	 * 
-	 * @param elements
-	 *            the elements to remove
-	 */
 	public abstract void remove(Object[] elements);
 }

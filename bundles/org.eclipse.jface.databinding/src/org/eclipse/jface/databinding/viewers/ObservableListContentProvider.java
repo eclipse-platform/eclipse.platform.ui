@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix in: 214355
- *     Matthew Hall - bugs 215531, 226765, 222991
+ *     Matthew Hall - bugs 215531, 226765, 222991, 238296
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -47,6 +47,10 @@ public class ObservableListContentProvider implements
 
 	private static class Impl extends ObservableCollectionContentProvider
 			implements IListChangeListener {
+		Impl(IViewerUpdater explicitViewerUpdater) {
+			super(explicitViewerUpdater);
+		}
+
 		protected void checkInput(Object input) {
 			Assert
 					.isTrue(input instanceof IObservableList,
@@ -120,7 +124,19 @@ public class ObservableListContentProvider implements
 	 * Constructs an ObservableListContentProvider
 	 */
 	public ObservableListContentProvider() {
-		impl = new Impl();
+		this(null);
+	}
+
+	/**
+	 * Constructs an ObservableListContentProvider with the given viewer updater
+	 * 
+	 * @param viewerUpdater
+	 *            the viewer updater to use when elements are added, removed,
+	 *            moved or replaced in the input observable list.
+	 * @since 1.3
+	 */
+	public ObservableListContentProvider(IViewerUpdater viewerUpdater) {
+		impl = new Impl(viewerUpdater);
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
- *     Matthew Hall - bugs 226765, 222991
+ *     Matthew Hall - bugs 226765, 222991, 238296
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.IViewerUpdater;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTableViewer;
 import org.eclipse.jface.viewers.IElementComparer;
@@ -49,10 +50,12 @@ public abstract class ObservableCollectionContentProvider implements
 
 	private IObservableFactory elementSetFactory;
 
+	private final IViewerUpdater explicitViewerUpdater;
+
 	/**
 	 * Interface for sending updates to the viewer.
 	 */
-	protected ViewerUpdater viewerUpdater;
+	protected IViewerUpdater viewerUpdater;
 
 	/**
 	 * Observable set of all elements known to the content provider. Subclasses
@@ -76,8 +79,13 @@ public abstract class ObservableCollectionContentProvider implements
 
 	/**
 	 * Constructs an ObservableCollectionContentProvider
+	 * 
+	 * @param explicitViewerUpdater
 	 */
-	protected ObservableCollectionContentProvider() {
+	protected ObservableCollectionContentProvider(
+			IViewerUpdater explicitViewerUpdater) {
+		this.explicitViewerUpdater = explicitViewerUpdater;
+
 		display = Display.getDefault();
 		viewerObservable = new WritableValue(SWTObservables.getRealm(display));
 		viewerUpdater = null;
@@ -158,7 +166,9 @@ public abstract class ObservableCollectionContentProvider implements
 		return null;
 	}
 
-	ViewerUpdater createViewerUpdater(Viewer viewer) {
+	IViewerUpdater createViewerUpdater(Viewer viewer) {
+		if (explicitViewerUpdater != null)
+			return explicitViewerUpdater;
 		if (viewer instanceof AbstractListViewer)
 			return new ListViewerUpdater((AbstractListViewer) viewer);
 		if (viewer instanceof AbstractTableViewer)

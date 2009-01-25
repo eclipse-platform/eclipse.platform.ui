@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bugs 215531, 226765, 222991
+ *     Matthew Hall - bugs 215531, 226765, 222991, 238296
  *******************************************************************************/
 package org.eclipse.jface.databinding.viewers;
 
@@ -42,6 +42,10 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 
 	private static class Impl extends ObservableCollectionContentProvider
 			implements ISetChangeListener {
+		protected Impl(IViewerUpdater explicitViewerUpdater) {
+			super(explicitViewerUpdater);
+		}
+
 		protected void checkInput(Object input) {
 			Assert
 					.isTrue(input instanceof IObservableSet,
@@ -80,7 +84,19 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 	 * Constructs an ObservableSetContentProvider
 	 */
 	public ObservableSetContentProvider() {
-		impl = new Impl();
+		this(null);
+	}
+
+	/**
+	 * Constructs an ObservableSetContentProvider with the given viewer updater
+	 * 
+	 * @param viewerUpdater
+	 *            the viewer updater to use when elements are added or removed
+	 *            from the input observable set.
+	 * @since 1.3
+	 */
+	public ObservableSetContentProvider(IViewerUpdater viewerUpdater) {
+		impl = new Impl(viewerUpdater);
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
