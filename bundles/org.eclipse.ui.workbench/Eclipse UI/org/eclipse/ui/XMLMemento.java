@@ -570,7 +570,7 @@ public final class XMLMemento implements IMemento {
     			buffer.append('&');
     			buffer.append(replacement);
     			buffer.append(';');
-    		} else {
+    		} else if (c==9 || c==10 || c==13 || c>=32){
     			buffer.append(c);
     		}
     	}
