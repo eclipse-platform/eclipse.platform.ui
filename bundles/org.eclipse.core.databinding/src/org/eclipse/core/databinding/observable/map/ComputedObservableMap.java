@@ -46,16 +46,20 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 			Map newValues = new HashMap();
 			for (Iterator it = removedKeys.iterator(); it.hasNext();) {
 				Object removedKey = it.next();
-				Object oldValue = doGet(removedKey);
-				unhookListener(removedKey);
-				if (oldValue != null) {
-					oldValues.put(removedKey, oldValue);
+				Object oldValue = null;
+				if (removedKey != null) {
+					oldValue = doGet(removedKey);
+					unhookListener(removedKey);
 				}
+				oldValues.put(removedKey, oldValue);
 			}
 			for (Iterator it = addedKeys.iterator(); it.hasNext();) {
 				Object addedKey = it.next();
-				hookListener(addedKey);
-				Object newValue = doGet(addedKey);
+				Object newValue = null;
+				if (addedKey != null) {
+					newValue = doGet(addedKey);
+					hookListener(addedKey);
+				}
 				newValues.put(addedKey, newValue);
 			}
 			fireMapChange(Diffs.createMapDiff(addedKeys, removedKeys,
