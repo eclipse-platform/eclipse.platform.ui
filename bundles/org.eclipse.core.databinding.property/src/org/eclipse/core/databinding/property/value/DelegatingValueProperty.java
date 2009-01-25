@@ -71,23 +71,24 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 		return valueType;
 	}
 
+	public IObservableValue observe(Object source) {
+		return getDelegate(source).observe(source);
+	}
+
 	public IObservableValue observe(Realm realm, Object source) {
 		return getDelegate(source).observe(realm, source);
 	}
 
 	public IObservableList observeDetail(IObservableList master) {
-		return new ListDelegatingValueObservableList(master,
-				this);
+		return new ListDelegatingValueObservableList(master, this);
 	}
 
 	public IObservableMap observeDetail(IObservableSet master) {
-		return new SetDelegatingValueObservableMap(master,
-				this);
+		return new SetDelegatingValueObservableMap(master, this);
 	}
 
 	public IObservableMap observeDetail(IObservableMap master) {
-		return new MapDelegatingValueObservableMap(master,
-				this);
+		return new MapDelegatingValueObservableMap(master, this);
 	}
 
 	private class NullValueProperty extends SimpleValueProperty {

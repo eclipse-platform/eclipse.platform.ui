@@ -69,6 +69,10 @@ public abstract class DelegatingSetProperty extends SetProperty {
 		return elementType;
 	}
 
+	public IObservableSet observe(Object source) {
+		return getDelegate(source).observe(source);
+	}
+
 	public IObservableSet observe(Realm realm, Object source) {
 		return getDelegate(source).observe(realm, source);
 	}

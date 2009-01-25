@@ -75,6 +75,10 @@ public abstract class DelegatingMapProperty extends MapProperty {
 		return valueType;
 	}
 
+	public IObservableMap observe(Object source) {
+		return getDelegate(source).observe(source);
+	}
+
 	public IObservableMap observe(Realm realm, Object source) {
 		return getDelegate(source).observe(realm, source);
 	}

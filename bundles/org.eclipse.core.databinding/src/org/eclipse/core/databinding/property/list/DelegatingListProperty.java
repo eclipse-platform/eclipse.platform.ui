@@ -70,6 +70,10 @@ public abstract class DelegatingListProperty extends ListProperty {
 		return elementType;
 	}
 
+	public IObservableList observe(Object source) {
+		return getDelegate(source).observe(source);
+	}
+
 	public IObservableList observe(Realm realm, Object source) {
 		return getDelegate(source).observe(realm, source);
 	}
