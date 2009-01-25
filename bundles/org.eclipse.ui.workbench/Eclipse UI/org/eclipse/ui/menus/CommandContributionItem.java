@@ -73,9 +73,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
  */
-public final class CommandContributionItem extends ContributionItem {
+public class CommandContributionItem extends ContributionItem {
 	/**
 	 * A push button tool item or menu item.
 	 */

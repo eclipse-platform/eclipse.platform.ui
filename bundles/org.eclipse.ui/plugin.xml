@@ -2020,6 +2020,23 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.PinEditorHandler"
+            commandId="org.eclipse.ui.window.pinEditor">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditorId">
+                  <instanceof
+                        value="java.lang.String">
+                  </instanceof>
+               </with>
+               <test
+                     property="org.eclipse.ui.preferences.reuseEditor">
+               </test>
+            </and>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -2193,5 +2210,15 @@
                priorityLevel="workbench">
          </variable>
       </sourceProvider>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.ui.internal.handlers.ReuseEditorTester"
+            id="org.eclipse.ui.preferences.reuseTester"
+            namespace="org.eclipse.ui.preferences"
+            properties="reuseEditor"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 </plugin>

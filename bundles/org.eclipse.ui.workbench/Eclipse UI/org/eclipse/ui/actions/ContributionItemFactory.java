@@ -11,15 +11,28 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.ChangeToPerspectiveMenu;
-import org.eclipse.ui.internal.PinEditorAction;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.ReopenEditorMenu;
 import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.actions.HelpSearchContributionItem;
-import org.eclipse.ui.internal.actions.PinEditorContributionItem;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 
 /**
  * Access to standard contribution items provided by the workbench.
@@ -83,23 +96,102 @@ public abstract class ContributionItemFactory {
         return contributionItemId;
     }
 
-    /**
-     * Workbench action (id "pinEditor"): Toggle whether the editor is pinned.
-     * This action maintains its enablement state.
-     */
-    public static final ContributionItemFactory PIN_EDITOR = new ContributionItemFactory(
-            "pinEditor") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ContributionItemFactory */
-        public IContributionItem create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            PinEditorAction action = new PinEditorAction(window);
-            action.setId(getId());
-            return new PinEditorContributionItem(action, window);
-        }
-    };
+	/**
+	 * Workbench action (id "pinEditor"): Toggle whether the editor is pinned.
+	 * This action maintains its enablement state.
+	 */
+	public static final ContributionItemFactory PIN_EDITOR = new ContributionItemFactory(
+			"pinEditor") { //$NON-NLS-1$
+		private static final String COMMAND_ID = "org.eclipse.ui.window.pinEditor"; //$NON-NLS-1$
 
+		/* (non-javadoc) method declared on ContributionItemFactory */
+		public IContributionItem create(final IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+
+			CommandContributionItemParameter parameter = new CommandContributionItemParameter(
+					window,
+					COMMAND_ID,
+					COMMAND_ID,
+					null,
+					WorkbenchImages
+							.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR),
+					WorkbenchImages
+							.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED),
+					null, null, null, null,
+					CommandContributionItem.STYLE_CHECK, null, false);
+			final IPropertyChangeListener[] perfs = new IPropertyChangeListener[1];
+			final IPartListener partListener = new IPartListener() {
+
+				public void partOpened(IWorkbenchPart part) {
+				}
+
+				public void partDeactivated(IWorkbenchPart part) {
+				}
+
+				public void partClosed(IWorkbenchPart part) {
+				}
+
+				public void partBroughtToTop(IWorkbenchPart part) {
+					if (!(part instanceof IEditorPart)) {
+						return;
+					}
+					ICommandService commandService = (ICommandService) window
+							.getService(ICommandService.class);
+
+					commandService.refreshElements(COMMAND_ID, null);
+				}
+
+				public void partActivated(IWorkbenchPart part) {
+				}
+			};
+			window.getPartService().addPartListener(partListener);
+			final CommandContributionItem action = new CommandContributionItem(
+					parameter) {
+				public void dispose() {
+					WorkbenchPlugin.getDefault().getPreferenceStore()
+							.removePropertyChangeListener(perfs[0]);
+					window.getPartService().removePartListener(partListener);
+				}
+			};
+
+			perfs[0] = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (event.getProperty().equals(
+							IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+						if (action.getParent() != null) {
+							IPreferenceStore store = WorkbenchPlugin
+									.getDefault().getPreferenceStore();
+							boolean reuseEditors = store
+									.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+									|| ((TabBehaviour) Tweaklets
+											.get(TabBehaviour.KEY))
+											.alwaysShowPinAction();
+							action.setVisible(reuseEditors);
+							action.getParent().markDirty();
+							if (window.getShell() != null
+									&& !window.getShell().isDisposed()) {
+								// this property change notification could be
+								// from a non-ui thread
+								window.getShell().getDisplay().syncExec(
+										new Runnable() {
+											public void run() {
+												action.getParent()
+														.update(false);
+											}
+										});
+							}
+						}
+					}
+				}
+			};
+			WorkbenchPlugin.getDefault().getPreferenceStore()
+					.addPropertyChangeListener(perfs[0]);
+			return action;
+		}
+	};
+	
     /**
      * Workbench contribution item (id "openWindows"): A list of windows
      * currently open in the workbench. Selecting one of the items makes the
