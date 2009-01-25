@@ -23,6 +23,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.internal.ExceptionHandler;
 
 /**
@@ -33,18 +35,39 @@ import org.eclipse.ui.internal.ExceptionHandler;
  */
 public class WidgetMethodHandler extends AbstractHandler implements
 		IExecutableExtension {
-
+	
 	/**
 	 * The parameters to pass to the method this handler invokes. This handler
 	 * always passes no parameters.
 	 */
 	protected static final Class[] NO_PARAMETERS = new Class[0];
 
+	public WidgetMethodHandler() {
+		display = Display.getCurrent();
+		if (display != null) {
+			focusListener = new Listener() {
+				public void handleEvent(Event event) {
+					updateEnablement();
+				}
+			};
+			display.addFilter(SWT.FocusIn, focusListener);
+		}
+	}
+	
+	void updateEnablement() {
+		boolean rc = isHandled();
+		if (rc != isEnabled()) {
+			setBaseEnabled(rc);
+		}
+	}
+
 	/**
 	 * The name of the method to be invoked by this handler. This value should
 	 * never be <code>null</code>.
 	 */
 	protected String methodName;
+	private Listener focusListener;
+	private Display display;
 
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final Method methodToExecute = getMethodToExecute();
@@ -288,5 +311,16 @@ public class WidgetMethodHandler extends AbstractHandler implements
 			String propertyName, Object data) {
 		// The data is really just a string (i.e., the method name).
 		methodName = data.toString();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
+	 */
+	public void dispose() {
+		if (display!=null && !display.isDisposed()) {
+			display.removeFilter(SWT.FocusIn, focusListener);
+		}
+		display = null;
+		focusListener = null;
 	}
 }
