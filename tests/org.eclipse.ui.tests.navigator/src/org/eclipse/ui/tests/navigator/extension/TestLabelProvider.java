@@ -105,12 +105,10 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	public void dispose() {
 		final Font f = boldFont;
-		final Color c = getBackground(null);
 		boldFont = null;
 		Display.getCurrent().timerExec(20, new Runnable() {
 			public void run() {
 				f.dispose();
-				c.dispose();
 			}
 		});
 	}
