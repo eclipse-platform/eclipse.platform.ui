@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Oakland Software Incorporated - initial API and implementation
+ *.....IBM Corporation - fixed dead code warning
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
@@ -18,6 +19,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
@@ -30,6 +32,8 @@ public class ActivityTest extends NavigatorTestBase {
 	}
 
 	protected static final String ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
+
+	private static final boolean DEBUG = false;
 
 	protected boolean verifyMenu(IStructuredSelection sel, String item) {
 		MenuManager mm = new MenuManager();
@@ -47,7 +51,7 @@ public class ActivityTest extends NavigatorTestBase {
 				ActionContributionItem aci = (ActionContributionItem) items[i];
 				if (aci.getAction().getText().startsWith(item))
 					return true;
-				if (false)
+				if (DEBUG)
 					System.out.println("action text: " + aci.getAction().getText());
 			}
 		}

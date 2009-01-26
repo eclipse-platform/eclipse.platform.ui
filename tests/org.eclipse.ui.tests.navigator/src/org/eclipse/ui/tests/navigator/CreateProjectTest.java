@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 webtekie@gmail.com
+ * Copyright (c) 2008, 2009 webtekie@gmail.com, IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     webtekie@gmail.com - initial API and implementation
+ *.....IBM Corporation - fixed dead code warning
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
@@ -37,6 +38,7 @@ import org.eclipse.ui.navigator.CommonNavigator;
 public class CreateProjectTest extends TestCase {
 
 	private static final int NUM_OF_PROJECTS = 300; // number of projects to
+	private static final boolean DEBUG = false;
 
 	// created
 
@@ -94,7 +96,7 @@ public class CreateProjectTest extends TestCase {
 		int numOfProjects = view.getCommonViewer().getTree().getItemCount();
 		System.out.println("Projects created: " + numOfProjects);
 
-		if (false)
+		if (DEBUG)
 			DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
 		// as a test compare number of created projects with NUM_OF_PROJECTS

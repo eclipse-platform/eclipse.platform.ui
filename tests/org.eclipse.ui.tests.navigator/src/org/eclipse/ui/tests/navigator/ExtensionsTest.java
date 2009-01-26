@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Oakland Software Incorporated - initial API and implementation
+ *.....IBM Corporation - fixed dead code warning
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
@@ -15,6 +16,8 @@ import org.eclipse.ui.internal.navigator.filters.CommonFilterSelectionDialog;
 import org.eclipse.ui.navigator.CommonViewer;
 
 public class ExtensionsTest extends NavigatorTestBase {
+	
+	private static final boolean DEBUG = false;
 
 	public ExtensionsTest() {
 		_navigatorInstanceId = "org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView";
@@ -45,7 +48,7 @@ public class ExtensionsTest extends NavigatorTestBase {
 		assertEquals(1, _commonNavigator.getCommonViewer().getTree()
 				.getItemCount());
 
-		if (false)
+		if (DEBUG)
 			DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
 	}
