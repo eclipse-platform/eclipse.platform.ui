@@ -59,14 +59,7 @@ public class ProjectUnzipUtil {
 	public boolean createProjects() {
 		try {
 			expandZip();
-			try {
-				ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-			} catch (Exception e) {
-				// Work around NPE in 262363
-				System.out.println("Exception in refreshing workspace - ignored");
-				e.printStackTrace();
-				// continue
-			}
+			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 			buildProjects();
 		} catch (CoreException e) {
 			e.printStackTrace();
