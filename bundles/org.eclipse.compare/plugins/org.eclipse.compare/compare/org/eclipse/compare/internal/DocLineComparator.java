@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,30 +45,27 @@ public class DocLineComparator implements ITokenComparator {
 		fIgnoreWhiteSpace= ignoreWhiteSpace;
 
 		fLineOffset= 0;
-		if (region != null) {
-			fLength= region.getLength();
-			int start= region.getOffset();
+		if (region == null) {
+			region = new Region(0, fDocument.getLength());
+		}
+		fLength= region.getLength();
+		int start= region.getOffset();
+		try {
+			fLineOffset= fDocument.getLineOfOffset(start);
+		} catch (BadLocationException ex) {
+			// silently ignored
+		}
+
+		if (fLength == 0)
+			fLineCount= 0;
+		else {
+			int endLine= fDocument.getNumberOfLines();
 			try {
-				fLineOffset= fDocument.getLineOfOffset(start);
+				endLine= fDocument.getLineOfOffset(start + fLength);
 			} catch (BadLocationException ex) {
 				// silently ignored
 			}
-
-			if (fLength == 0)
-				fLineCount= 0;
-			else {
-				int endLine= fDocument.getNumberOfLines();
-				try {
-					endLine= fDocument.getLineOfOffset(start + fLength);
-				} catch (BadLocationException ex) {
-					// silently ignored
-				}
-				fLineCount= endLine - fLineOffset + 1;
-			}
-
-		} else {
-			fLength= document.getLength();
-			fLineCount= fDocument.getNumberOfLines();
+			fLineCount= endLine - fLineOffset + 1;
 		}
 	}
 

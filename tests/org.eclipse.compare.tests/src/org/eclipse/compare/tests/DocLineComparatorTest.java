@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.compare.internal.DocLineComparator;
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
 
 public class DocLineComparatorTest extends TestCase {
 	
@@ -70,4 +71,54 @@ public class DocLineComparatorTest extends TestCase {
 
 		Assert.assertTrue(comp1.rangesEqual(0, comp2, 0));
 	}
+
+	public void testNoContent() {
+		IDocument doc= new Document();
+		
+		IRangeComparator comp1= new DocLineComparator(doc, null, true);
+		IRangeComparator comp2= new DocLineComparator(doc, new Region(0, doc.getLength()), true);
+
+		Assert.assertTrue(comp1.rangesEqual(0, comp2, 0));
+		Assert.assertEquals(comp1.getRangeCount(), comp2.getRangeCount());
+		Assert.assertEquals(0, comp2.getRangeCount());
+	}
+	
+	public void testOneLine() {
+		IDocument doc = new Document();
+		doc.set("line1"); //$NON-NLS-1$
+		
+		IRangeComparator comp1= new DocLineComparator(doc, null, true);
+		IRangeComparator comp2= new DocLineComparator(doc, new Region(0, doc.getLength()), true);
+
+		Assert.assertEquals(comp1.getRangeCount(), comp2.getRangeCount());
+		Assert.assertEquals(1, comp2.getRangeCount());
+	}
+	
+	public void testTwoLines() {
+		IDocument doc = new Document();
+		doc.set("line1\nline2"); //$NON-NLS-1$
+		
+		IRangeComparator comp1= new DocLineComparator(doc, null, true);
+		IRangeComparator comp2= new DocLineComparator(doc, new Region(0, doc.getLength()), true);
+
+		Assert.assertEquals(comp1.getRangeCount(), comp2.getRangeCount());
+		Assert.assertEquals(2, comp2.getRangeCount());
+		
+		IRangeComparator comp3= new DocLineComparator(doc, new Region(0, "line1".length()), true);
+		Assert.assertEquals(1, comp3.getRangeCount());
+		
+		comp3= new DocLineComparator(doc, new Region(0, "line1".length()+1), true);
+		Assert.assertEquals(2, comp3.getRangeCount()); // two lines
+	}
+	
+	public void testBug259422() {
+		IDocument doc = new Document();
+		doc.set(""); //$NON-NLS-1$
+		
+		IRangeComparator comp1= new DocLineComparator(doc, null, true);
+		IRangeComparator comp2= new DocLineComparator(doc, new Region(0, doc.getLength()), true);
+
+		Assert.assertEquals(comp1.getRangeCount(), comp2.getRangeCount());
+	}
+	
 }
