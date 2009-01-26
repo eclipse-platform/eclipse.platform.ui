@@ -804,7 +804,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 								}
 								if (context != null && !proxy.isDisposed()) {
     								proxy.init(context);
-    								Object[] mcls = fModelListeners.getListeners();
     								proxy.addModelChangedListener(ModelContentProvider.this);
     								proxy.installed(viewer);
 								}
