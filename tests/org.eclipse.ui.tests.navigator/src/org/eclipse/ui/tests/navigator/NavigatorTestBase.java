@@ -19,6 +19,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -105,6 +106,15 @@ public class NavigatorTestBase extends TestCase {
 		}
 		// Hide it, we want a new one each time
 		EditorTestHelper.showView(_navigatorInstanceId, false);
+	}
+	
+	// Need this to workaround a problem of the DecoratingStyledCellLabelProvider. 
+	// The method returns early because there is a (background) decoration pending.
+	protected void refreshViewer() {
+		TreeItem[] rootItems = viewer.getTree().getItems();
+		if (rootItems.length > 0)
+			rootItems[0].setText("");
+		viewer.refresh();
 	}
 
 }

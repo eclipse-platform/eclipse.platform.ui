@@ -184,7 +184,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		extensionStateModel.setBooleanProperty(
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
-		viewer.refresh();
+		refreshViewer();
 
 		TreeItem[] items = viewer.getTree().getItems();
 
@@ -193,7 +193,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		extensionStateModel.setBooleanProperty(
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, false);
-		viewer.refresh();
+		refreshViewer();
 
 		items = viewer.getTree().getItems();
 		assertTrue("First item needs to be project", items[0].getData().equals(
@@ -201,7 +201,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		extensionStateModel.setBooleanProperty(
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
-		viewer.refresh();
+		refreshViewer();
 
 		items = viewer.getTree().getItems();
 		assertTrue("First item needs to be working set", items[0].getData()

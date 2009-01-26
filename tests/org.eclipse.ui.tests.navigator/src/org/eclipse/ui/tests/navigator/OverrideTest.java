@@ -34,7 +34,7 @@ public class OverrideTest extends NavigatorTestBase {
 					new String[] { TEST_OVERRIDE1, TEST_CONTENT1 }, true);
 		}
 
-		viewer.refresh();
+		refreshViewer();
 
 		TreeItem[] rootItems = viewer.getTree().getItems();
 
@@ -58,7 +58,7 @@ public class OverrideTest extends NavigatorTestBase {
 					new String[] { TEST_CONTENT2, TEST_OVERRIDE2 }, true);
 		}
 
-		viewer.refresh();
+		refreshViewer();
 		TreeItem[] rootItems = viewer.getTree().getItems();
 		if (!rootItems[0].getText().startsWith("Cyan"))
 			fail("Wrong text: " + rootItems[0].getText());

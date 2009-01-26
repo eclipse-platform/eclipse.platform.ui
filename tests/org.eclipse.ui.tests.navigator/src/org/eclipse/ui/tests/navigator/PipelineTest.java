@@ -44,7 +44,7 @@ public class PipelineTest extends NavigatorTestBase {
 				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
 						COMMON_NAVIGATOR_JAVA_EXT }, true);
 
-		viewer.refresh();
+		refreshViewer();
 
 		// we do this to force the rendering of the children of items[0]
 		viewer.setSelection(
