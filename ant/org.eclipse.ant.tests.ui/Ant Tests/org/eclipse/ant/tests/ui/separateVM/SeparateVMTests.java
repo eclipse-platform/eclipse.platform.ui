@@ -225,16 +225,20 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
     }
 
 	private boolean checkAntHomeMessage(String message) {
-		if (message.endsWith("org.apache.ant")) {
+		String msg = message;
+		if (msg.endsWith("org.apache.ant")) {
 			return true;
 		}
 		
-		if (message.endsWith(PLUGIN_VERSION)) {
+		if (msg.endsWith(PLUGIN_VERSION)) {
 			return true;
 		}
 		
 		//org.apache.ant_1.7.1.v200704241635
-		message = message.substring(0, message.length() - 14);
-		return message.endsWith(PLUGIN_VERSION);
+		int index = msg.lastIndexOf('.');
+		if (index > 0) {
+			msg = msg.substring(0, index);
+		}
+		return msg.endsWith(PLUGIN_VERSION);
 	}
 }

@@ -594,7 +594,10 @@ public class OptionTests extends AbstractAntTest {
 		}
 		
 		//org.apache.ant_1.7.1.v200704241635
-		msg = msg.substring(0, msg.length() - 14);
+		int index = msg.lastIndexOf('.');
+		if (index > 0) {
+			msg = msg.substring(0, index);
+		}
 		return msg.endsWith(PLUGIN_VERSION);
 	}
 	
