@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
 
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;

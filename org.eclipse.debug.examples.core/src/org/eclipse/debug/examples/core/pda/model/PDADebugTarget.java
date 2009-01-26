@@ -446,7 +446,6 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	
 	private void vmSuspended(PDAVMSuspendedEvent event) {
 	    setVMSuspended(true);
-	    int detail = DebugEvent.UNSPECIFIED;
 	    fireSuspendEvent(calcDetail(event.fReason));
 	}
 	
