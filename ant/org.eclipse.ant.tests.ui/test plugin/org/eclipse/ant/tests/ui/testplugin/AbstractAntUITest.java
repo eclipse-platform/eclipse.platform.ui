@@ -472,9 +472,8 @@ public abstract class AbstractAntUITest extends TestCase {
             IDocumentPartitioner partitioner = document.getDocumentPartitioner();
             if (partitioner != null) {
                 ITypedRegion[] regions= partitioner.computePartitioning(offset, document.getLineInformationOfOffset(offset).getLength());
-                
-                for (int i = 0; i < regions.length; i++) {
-                    IOConsolePartition partition = (IOConsolePartition)regions[i];
+                if (regions.length > 0) {
+                    IOConsolePartition partition = (IOConsolePartition)regions[0];
                     return partition.getColor();
                 }   
             }
