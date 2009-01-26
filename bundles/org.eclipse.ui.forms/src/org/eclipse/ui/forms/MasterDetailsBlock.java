@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Roland Tepp (roland@videobet.com) - patch (see Bugzilla #107197) 
  *******************************************************************************/
 package org.eclipse.ui.forms;
 
@@ -138,21 +139,67 @@ public abstract class MasterDetailsBlock {
 	 */
 	public void createContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
+		createContent(managedForm, form.getBody());
+	}
+	/**
+	 * Creates the content of the master/details block inside the parent composite.
+	 * This method should be called as late as possible inside the parent part.
+	 * 
+	 * @param managedForm
+	 *            the managed form to create the block in
+	 */
+	public void createContent(IManagedForm managedForm, Composite parent) {
+		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		form.getBody().setLayout(layout);
-		sashForm = new MDSashForm(form.getBody(), SWT.NULL);
+		applyLayout(parent);
+		sashForm = new MDSashForm(parent, SWT.NULL);
 		sashForm.setData("form", managedForm); //$NON-NLS-1$
 		toolkit.adapt(sashForm, false, false);
-		sashForm.setMenu(form.getBody().getMenu());
-		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		sashForm.setMenu(parent.getMenu());
+		applyLayoutData(sashForm);
 		createMasterPart(managedForm, sashForm);
 		createDetailsPart(managedForm, sashForm);
 		hookResizeListener();
 		createToolBarActions(managedForm);
 		form.updateToolBar();
+	}
+	
+	/**
+	 * Applies layout data to the sash form containing master and detail parts
+	 * of the master/details block.
+	 * 
+	 * <p>The default implementation fills the whole parent composite area.
+	 * Override this method if master/details block is to be placed on a form
+	 * along with other components.</p>
+	 * 
+	 * <p>Implementations that override this method should also override 
+	 * <code>applyLayout(Composite)</code> method implementation.</p>
+	 * 
+	 * @param sashForm The sash form to be laid out on the parent composite.
+	 * @see #applyLayout(Composite)
+	 */
+	protected void applyLayoutData(SashForm sashForm) {
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
+
+	/**
+	 * Applies layout to the parent composite of the master/details block.
+	 * 
+	 * <p>The default implementation fills the whole parent composite area.
+	 * Override this method if master/details block is to be placed on a form
+	 * along with other components.</p>
+	 * 
+	 * <p>Implementations that override this method should also override 
+	 * <code>applyLayoutData(SashForm)</code> method implementation.</p>
+	 * 
+	 * @param parent parent composite for the master/details block
+	 * @see #applyLayoutData(SashForm)
+	 */
+	protected void applyLayout(final Composite parent) {
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		parent.setLayout(layout);
 	}
 	
 	private void hookResizeListener() {
