@@ -11,9 +11,11 @@
 
 package org.eclipse.core.tests.databinding.observable.map;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.map.CompositeMap;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -33,11 +35,22 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 
 	private WritableSet persons;
 	private CompositeMap composedMap;
+	private IObservableMap first;
+
+	boolean hasListeners(AbstractObservable o) {
+		try {
+			Method method = AbstractObservable.class.getSuperclass().getDeclaredMethod("hasListeners", new Class[0]);
+			method.setAccessible(true);
+			return ((Boolean)method.invoke(o, new Object[0])).booleanValue();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		persons = new WritableSet();
-		IObservableMap first = BeansObservables.observeMap(persons,
+		first = BeansObservables.observeMap(persons,
 				SimplePerson.class, "cart");
 		composedMap = new CompositeMap(first, new IObservableFactory() {
 			public IObservable createObservable(Object target) {
@@ -199,6 +212,15 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(new Integer(13), tracker.event.diff.getOldValue(person0));
 		assertEquals(new Integer(42), tracker.event.diff.getNewValue(person0));
 		assertEquals(new Integer(42), composedMap.get(person0));
+	}
+	
+	public void testDispose() {
+		SimplePerson person0 = new SimplePerson("p0", "a0", "c0", "s0");
+		person0.getCart().setNumItems(13);
+		persons.add(person0);
+		assertTrue(hasListeners((AbstractObservable) first));
+		composedMap.dispose();
+		assertFalse(hasListeners((AbstractObservable) first));
 	}
 	
 }

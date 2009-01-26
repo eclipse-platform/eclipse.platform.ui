@@ -283,12 +283,12 @@ public class CompositeMap extends ObservableMap {
 			IObservableFactory secondMapFactory) {
 		super(firstMap.getRealm(), new HashMap());
 		this.firstMap = new BidiObservableMap(firstMap);
-		firstMap.addMapChangeListener(firstMapListener);
-		rangeSet.addAll(firstMap.values());
+		this.firstMap.addMapChangeListener(firstMapListener);
+		rangeSet.addAll(this.firstMap.values());
 		this.secondMap = (IObservableMap) secondMapFactory
 				.createObservable(rangeSet);
 		secondMap.addMapChangeListener(secondMapListener);
-		for (Iterator it = firstMap.entrySet().iterator(); it.hasNext();) {
+		for (Iterator it = this.firstMap.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Entry) it.next();
 			wrappedMap.put(entry.getKey(), secondMap.get(entry.getValue()));
 		}
