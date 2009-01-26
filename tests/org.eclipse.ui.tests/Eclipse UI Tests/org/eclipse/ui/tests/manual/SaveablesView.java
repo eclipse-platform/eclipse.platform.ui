@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.manual;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -25,10 +30,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -93,7 +95,6 @@ public class SaveablesView extends ViewPart {
 		}
 
 		public Image getImage(Object obj) {
-			if(true)return null;
 			ImageDescriptor descriptor = ((Saveable) obj)
 					.getImageDescriptor();
 			Image image = resourceManager.createImage(descriptor);
@@ -115,7 +116,12 @@ public class SaveablesView extends ViewPart {
 	}
 	
 	public void dispose() {
+		((SaveablesList) getSite().getService(
+				ISaveablesLifecycleListener.class))
+				.removeModelLifecycleListener(saveablesLifecycleListener);
+		saveablesLifecycleListener = null;
 		resourceManager.dispose();
+		resourceManager = null;
 		super.dispose();
 	}
 
