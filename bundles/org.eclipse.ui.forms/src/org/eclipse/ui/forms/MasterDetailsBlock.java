@@ -147,6 +147,7 @@ public abstract class MasterDetailsBlock {
 	 * 
 	 * @param managedForm
 	 *            the managed form to create the block in
+	 * @since 3.4
 	 */
 	public void createContent(IManagedForm managedForm, Composite parent) {
 		final ScrolledForm form = managedForm.getForm();
@@ -177,6 +178,7 @@ public abstract class MasterDetailsBlock {
 	 * 
 	 * @param sashForm The sash form to be laid out on the parent composite.
 	 * @see #applyLayout(Composite)
+	 * @since 3.4
 	 */
 	protected void applyLayoutData(SashForm sashForm) {
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -194,6 +196,7 @@ public abstract class MasterDetailsBlock {
 	 * 
 	 * @param parent parent composite for the master/details block
 	 * @see #applyLayoutData(SashForm)
+	 * @since 3.4
 	 */
 	protected void applyLayout(final Composite parent) {
 		GridLayout layout = new GridLayout();
