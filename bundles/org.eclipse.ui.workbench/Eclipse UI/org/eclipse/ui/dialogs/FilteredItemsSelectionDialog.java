@@ -656,7 +656,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		final Label headerLabel = createHeader(content);
 
-		pattern = new Text(content, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.CANCEL);
+		pattern = new Text(content, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
 		pattern.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result = LegacyActionTools.removeMnemonics(headerLabel

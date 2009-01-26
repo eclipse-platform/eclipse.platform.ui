@@ -347,8 +347,8 @@ public class FilteredTree extends Composite {
 			useNativeSearchField = Boolean.FALSE;
 			Text testText = null;
 			try {
-				testText = new Text(composite, SWT.SEARCH | SWT.CANCEL);
-				useNativeSearchField = new Boolean((testText.getStyle() & SWT.CANCEL) != 0);
+				testText = new Text(composite, SWT.SEARCH | SWT.ICON_CANCEL);
+				useNativeSearchField = new Boolean((testText.getStyle() & SWT.ICON_CANCEL) != 0);
 			} finally {
 				if (testText != null) {
 					testText.dispose();
@@ -703,7 +703,7 @@ public class FilteredTree extends Composite {
 				}
 
 				if (filterText.getText().equals(initialText) && filterText.getSelectionCount() == 0) {
-					// XXX: We cannot call clearText() due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=260664 
+					// XXX: We cannot call clearText() due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=260664
 					setFilterText(""); //$NON-NLS-1$
 					textChanged();
 				}
@@ -839,7 +839,7 @@ public class FilteredTree extends Composite {
 		// if we're using a field with built in cancel we need to listen for
 		// default selection changes (which tell us the cancel button has been
 		// pressed)
-		if ((filterText.getStyle() & SWT.CANCEL) != 0) {
+		if ((filterText.getStyle() & SWT.ICON_CANCEL) != 0) {
 			filterText.addSelectionListener(new SelectionAdapter() {
 				/*
 				 * (non-Javadoc)
@@ -847,7 +847,7 @@ public class FilteredTree extends Composite {
 				 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				public void widgetDefaultSelected(SelectionEvent e) {
-					if (e.detail == SWT.CANCEL)
+					if (e.detail == SWT.ICON_CANCEL)
 						clearText();
 				}
 			});
@@ -856,7 +856,7 @@ public class FilteredTree extends Composite {
 		GridData gridData= new GridData(SWT.FILL, useNewLook ? SWT.CENTER : SWT.BEGINNING, true, false);
 		// if the text widget supported cancel then it will have it's own
 		// integrated button. We can take all of the space.
-		if ((filterText.getStyle() & SWT.CANCEL) != 0)
+		if ((filterText.getStyle() & SWT.ICON_CANCEL) != 0)
 			gridData.horizontalSpan = 2;
 		filterText.setLayoutData(gridData);
 	}
@@ -874,7 +874,7 @@ public class FilteredTree extends Composite {
 	protected Text doCreateFilterText(Composite parent) {
 		if (!useNewLook || useNativeSearchField(parent)) {
 			return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH
-					| SWT.CANCEL);
+					| SWT.ICON_CANCEL);
 		}
 		return new Text(parent, SWT.SINGLE);
 	}
@@ -932,7 +932,7 @@ public class FilteredTree extends Composite {
 	private void createClearTextOld(Composite parent) {
 		// only create the button if the text widget doesn't support one
 		// natively
-		if ((filterText.getStyle() & SWT.CANCEL) == 0) {
+		if ((filterText.getStyle() & SWT.ICON_CANCEL) == 0) {
 			filterToolBar= new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL);
 			filterToolBar.createControl(parent);
 
@@ -966,7 +966,7 @@ public class FilteredTree extends Composite {
 	private void createClearTextNew(Composite parent) {
 		// only create the button if the text widget doesn't support one
 		// natively
-		if ((filterText.getStyle() & SWT.CANCEL) == 0) {
+		if ((filterText.getStyle() & SWT.ICON_CANCEL) == 0) {
 			final Image inactiveImage= JFaceResources.getImageRegistry().getDescriptor(DISABLED_CLEAR_ICON).createImage();
 			final Image activeImage= JFaceResources.getImageRegistry().getDescriptor(CLEAR_ICON).createImage();
 			final Image pressedImage= new Image(getDisplay(), activeImage, SWT.IMAGE_GRAY);
