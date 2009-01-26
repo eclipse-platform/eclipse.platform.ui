@@ -375,15 +375,27 @@ public class QuickFixPage extends WizardPage {
 			 *      int)
 			 */
 			public String getColumnText(Object element, int columnIndex) {
+				IMarker marker =(IMarker) element;
 				if (columnIndex == 0)
-					return Util.getResourceName((IMarker) element);
-				int line = ((IMarker) element).getAttribute(
-						IMarker.LINE_NUMBER, -1);
-				if (line < 0) {
-					return MarkerMessages.Unknown;
+					return Util.getResourceName(marker);
+				
+				// Is the location override set?
+				String locationString = marker.getAttribute(IMarker.LOCATION,
+						MarkerSupportInternalUtilities.EMPTY_STRING);
+				if (locationString.length() > 0) {
+					return locationString;
 				}
-				return NLS.bind(MarkerMessages.label_lineNumber, Integer
-						.toString(line));
+
+				// No override so use line number
+				int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+				String lineNumberString=null;
+				if (lineNumber < 0)
+					lineNumberString = MarkerMessages.Unknown;
+				else
+					lineNumberString = NLS.bind(MarkerMessages.label_lineNumber,
+							Integer.toString(lineNumber));
+
+				return lineNumberString;
 			}
 
 			/*
