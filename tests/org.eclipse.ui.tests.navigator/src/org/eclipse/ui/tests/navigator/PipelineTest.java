@@ -34,6 +34,8 @@ public class PipelineTest extends NavigatorTestBase {
 				COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT },
 				false);
 
+		// Note this test will fail showing only one if the JDT stuff
+		// is not included in the executing bundles (which it normally is)
 		assertEquals(
 				"There should be two visible extensions for the pipeline viewer.",
 				2, contentService.getVisibleExtensionIds().length);
