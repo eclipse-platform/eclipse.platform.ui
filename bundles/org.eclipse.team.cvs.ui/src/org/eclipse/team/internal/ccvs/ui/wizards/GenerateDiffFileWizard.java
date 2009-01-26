@@ -395,10 +395,10 @@ public class GenerateDiffFileWizard extends Wizard {
 			 * Avoid draw flicker by clearing error message
 			 * if all is valid.
 			 */
-			 if (pageValid) {
-				 setMessage(null);
-				 setErrorMessage(null);
-			 }
+			if (pageValid) {
+				setMessage(null);
+				setErrorMessage(null);
+			}
 			setPageComplete(pageValid);
 			return pageValid;
 		}
@@ -1049,13 +1049,6 @@ public class GenerateDiffFileWizard extends Wizard {
 
 	/**
 	 * Page to select the options for creating the patch.
-	 *
-	 * @param pageName the name of the page
-	 * @param title the title for this wizard page,
-	 *   or <code>null</code> if none
-	 * @param titleImage the image descriptor for the title of this wizard page,
-	 *   or <code>null</code> if none
-	 * @param store the value store where the page stores it's data
 	 */
 	private class OptionsPage extends WizardPage {
 
@@ -1089,8 +1082,21 @@ public class GenerateDiffFileWizard extends Wizard {
 
 		/**
 		 * Constructor for PatchFileCreationOptionsPage.
+		 * 
+		 * @param pageName
+		 *            the name of the page
+		 * 
+		 * @param title
+		 *            the title for this wizard page, or <code>null</code> if
+		 *            none
+		 * @param titleImage
+		 *            the image descriptor for the title of this wizard page, or
+		 *            <code>null</code> if none
+		 * @param store
+		 *            the value store where the page stores it's data
 		 */
-		protected OptionsPage(String pageName, String title, ImageDescriptor titleImage, DefaultValuesStore store) {
+		protected OptionsPage(String pageName, String title,
+				ImageDescriptor titleImage, DefaultValuesStore store) {
 			super(pageName, title, titleImage);
 			this.store = store;
 		}
@@ -1115,7 +1121,6 @@ public class GenerateDiffFileWizard extends Wizard {
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 			diffTypeGroup.setLayoutData(data);
 			diffTypeGroup.setText(CVSUIMessages.Diff_output_format_12);
-
 
 			unifiedDiffOption = new Button(diffTypeGroup, SWT.RADIO);
 			unifiedDiffOption.setText(CVSUIMessages.Unified__format_required_by_Compare_With_Patch_feature__13);
@@ -1360,6 +1365,7 @@ public class GenerateDiffFileWizard extends Wizard {
 			try {
 				value= dialogSettings.getInt(PREF_LAST_SELECTION);
 			} catch (NumberFormatException e) {
+				// ignore
 			}
 
 			switch (value) {
@@ -1475,333 +1481,333 @@ public class GenerateDiffFileWizard extends Wizard {
 	/**
 	 * Declares the wizard banner iamge descriptor
 	 */
-	 protected void initializeDefaultPageImageDescriptor() {
-		 final String iconPath= "icons/full/"; //$NON-NLS-1$
-		 try {
-			 final URL installURL = CVSUIPlugin.getPlugin().getBundle().getEntry("/"); //$NON-NLS-1$
-			 final URL url = new URL(installURL, iconPath + "wizards/newconnect_wiz.gif");	//$NON-NLS-1$
-			 ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-			 setDefaultPageImageDescriptor(desc);
-		 } catch (MalformedURLException e) {
-			 // Should not happen.  Ignore.
-		 }
-	 }
+	protected void initializeDefaultPageImageDescriptor() {
+		final String iconPath= "icons/full/"; //$NON-NLS-1$
+		try {
+			final URL installURL = CVSUIPlugin.getPlugin().getBundle().getEntry("/"); //$NON-NLS-1$
+			final URL url = new URL(installURL, iconPath + "wizards/newconnect_wiz.gif");	//$NON-NLS-1$
+			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+			setDefaultPageImageDescriptor(desc);
+		} catch (MalformedURLException e) {
+			// Should not happen.  Ignore.
+		}
+	}
 
-	 /* (Non-javadoc)
-	  * Method declared on IWizard.
-	  */
-	 public boolean needsProgressMonitor() {
-		 return true;
-	 }
+	/* (Non-javadoc)
+	 * Method declared on IWizard.
+	 */
+	public boolean needsProgressMonitor() {
+		return true;
+	}
 
-	 /**
-	  * Completes processing of the wizard. If this method returns <code>
-	  * true</code>, the wizard will close; otherwise, it will stay active.
-	  */
-	 public boolean performFinish() {
+	/**
+	 * Completes processing of the wizard. If this method returns <code>
+	 * true</code>, the wizard will close; otherwise, it will stay active.
+	 */
+	public boolean performFinish() {
 
-		 final int location= locationPage.getSelectedLocation();
+		final int location= locationPage.getSelectedLocation();
 
-		 final File file= location != LocationPage.CLIPBOARD? locationPage.getFile() : null;
+		final File file= location != LocationPage.CLIPBOARD? locationPage.getFile() : null;
 
-		 if (!(file == null || validateFile(file))) {
-			 return false;
-		 }
+		if (!(file == null || validateFile(file))) {
+			return false;
+		}
 
-		 //Is this a multi-patch?
-		 boolean multiPatch=false;
-		 if (optionsPage.unifiedDiffOption.getSelection() && optionsPage.unified_workspaceRelativeOption.getSelection())
-			 multiPatch=true;
+		//Is this a multi-patch?
+		boolean multiPatch=false;
+		if (optionsPage.unifiedDiffOption.getSelection() && optionsPage.unified_workspaceRelativeOption.getSelection())
+			multiPatch=true;
 
 
-		 //If not a multipatch, patch should use project relative or selection relative paths[default]?
-		 boolean useProjectRelativePaths=false;
-		 if (optionsPage.unifiedDiffOption.getSelection() &&
-				 optionsPage.unified_projectRelativeOption.getSelection())
-			 useProjectRelativePaths=true;
+		//If not a multipatch, patch should use project relative or selection relative paths[default]?
+		boolean useProjectRelativePaths=false;
+		if (optionsPage.unifiedDiffOption.getSelection() &&
+				optionsPage.unified_projectRelativeOption.getSelection())
+			useProjectRelativePaths=true;
 
-		 IFile binFile = locationPage.findBinaryFile();
-		 if (binFile != null) {
-			 int result = promptToIncludeBinary(binFile);
-			 if (result == 2)
-				 return false;
-			 if (result == 1)
-				 locationPage.removeBinaryFiles();
-		 }
+		IFile binFile = locationPage.findBinaryFile();
+		if (binFile != null) {
+			int result = promptToIncludeBinary(binFile);
+			if (result == 2)
+				return false;
+			if (result == 1)
+				locationPage.removeBinaryFiles();
+		}
 
-		 /**
-		  * Perform diff operation.
-		  */
-		  try {
-			  if (file != null) {
-				  generateDiffToFile(file,multiPatch,useProjectRelativePaths);
-			  } else {
-				  generateDiffToClipboard(multiPatch,useProjectRelativePaths);
-			  }
-		  } catch (TeamException e) {}
+		/**
+		 * Perform diff operation.
+		 */
+		try {
+			if (file != null) {
+				generateDiffToFile(file,multiPatch,useProjectRelativePaths);
+			} else {
+				generateDiffToClipboard(multiPatch,useProjectRelativePaths);
+			}
+		} catch (TeamException e) {}
 
-		  /**
-		   * Refresh workspace if necessary and save default selection.
-		   */
-		  switch (location) {
+		/**
+		 * Refresh workspace if necessary and save default selection.
+		 */
+		switch (location) {
 
-		  case LocationPage.WORKSPACE:
-			  final String workspaceResource= locationPage.getWorkspaceLocation();
-			  if (workspaceResource != null){
-				  defaultValuesStore.storeLocationSelection(LocationPage.WORKSPACE);
-				  defaultValuesStore.storeWorkspacePath(workspaceResource);
-				  /* try {
+		case LocationPage.WORKSPACE:
+			final String workspaceResource= locationPage.getWorkspaceLocation();
+			if (workspaceResource != null){
+				defaultValuesStore.storeLocationSelection(LocationPage.WORKSPACE);
+				defaultValuesStore.storeWorkspacePath(workspaceResource);
+				/* try {
 	                workspaceResource.getParent().refreshLocal(IResource.DEPTH_ONE, null);
 	            } catch(CoreException e) {
 	                CVSUIPlugin.openError(getShell(), CVSUIMessages.GenerateCVSDiff_error, null, e);
 	                return false;
 	            } */
-			  } else {
-				  //Problem with workspace location, open with clipboard next time
-				  defaultValuesStore.storeLocationSelection(LocationPage.CLIPBOARD);
-			  }
-			  break;
+			} else {
+				//Problem with workspace location, open with clipboard next time
+				defaultValuesStore.storeLocationSelection(LocationPage.CLIPBOARD);
+			}
+			break;
 
-		  case LocationPage.FILESYSTEM:
-			  defaultValuesStore.storeFilesystemPath(file.getPath());
-			  defaultValuesStore.storeLocationSelection(LocationPage.FILESYSTEM);
-			  break;
+		case LocationPage.FILESYSTEM:
+			defaultValuesStore.storeFilesystemPath(file.getPath());
+			defaultValuesStore.storeLocationSelection(LocationPage.FILESYSTEM);
+			break;
 
-		  case LocationPage.CLIPBOARD:
-			  defaultValuesStore.storeLocationSelection(LocationPage.CLIPBOARD);
-			  break;
+		case LocationPage.CLIPBOARD:
+			defaultValuesStore.storeLocationSelection(LocationPage.CLIPBOARD);
+			break;
 
-		  default:
-			  return false;
-		  }
+		default:
+			return false;
+		}
 
 
-		  /**
-		   * Save default selections of Options Page
-		   */
+		/**
+		 * Save default selections of Options Page
+		 */
 
-		  defaultValuesStore.storeOutputFormat(optionsPage.getFormatSelection());
-		  defaultValuesStore.storePatchRoot(optionsPage.getRootSelection());
+		defaultValuesStore.storeOutputFormat(optionsPage.getFormatSelection());
+		defaultValuesStore.storePatchRoot(optionsPage.getRootSelection());
 
-		  return true;
-	 }
+		return true;
+	}
 
-	 private int promptToIncludeBinary(IFile file) {
-		 MessageDialog dialog = new MessageDialog(getShell(), CVSUIMessages.GenerateDiffFileWizard_11, null, // accept
-				 // the default window icon
-				 NLS.bind(CVSUIMessages.GenerateDiffFileWizard_12, file.getFullPath()), MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
-			 IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 1); // no is the default
-		 return dialog.open();
-	 }
+	private int promptToIncludeBinary(IFile file) {
+		MessageDialog dialog = new MessageDialog(getShell(), CVSUIMessages.GenerateDiffFileWizard_11, null, // accept
+				// the default window icon
+				NLS.bind(CVSUIMessages.GenerateDiffFileWizard_12, file.getFullPath()), MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
+			IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 1); // no is the default
+		return dialog.open();
+	}
 
-	 private void generateDiffToClipboard(boolean multiPatch, boolean useProjectRelativePaths) throws TeamException {
-		 DiffOperation diffop = new ClipboardDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
-		 try {
-			 diffop.run();
-		 } catch (InvocationTargetException e) {}
-		 catch (InterruptedException e) {}
-	 }
+	private void generateDiffToClipboard(boolean multiPatch, boolean useProjectRelativePaths) throws TeamException {
+		DiffOperation diffop = new ClipboardDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
+		try {
+			diffop.run();
+		} catch (InvocationTargetException e) {}
+		catch (InterruptedException e) {}
+	}
 
-	 private void generateDiffToFile(File file, boolean multiPatch, boolean useProjectRelativePaths) throws TeamException {
-		 DiffOperation diffop = null;
-		 if (locationPage.selectedLocation == LocationPage.WORKSPACE){
-			 diffop = new WorkspaceFileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
-		 }
-		 else {
-			 diffop = new FileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
-		 }
+	private void generateDiffToFile(File file, boolean multiPatch, boolean useProjectRelativePaths) throws TeamException {
+		DiffOperation diffop = null;
+		if (locationPage.selectedLocation == LocationPage.WORKSPACE){
+			diffop = new WorkspaceFileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
+		}
+		else {
+			diffop = new FileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
+		}
 
-		 try {
-			 diffop.run();
-		 } catch (InvocationTargetException e) {}
-		 catch (InterruptedException e) {}
-	 }
+		try {
+			diffop.run();
+		} catch (InvocationTargetException e) {}
+		catch (InterruptedException e) {}
+	}
 
-	 public boolean validateFile(File file) {
+	public boolean validateFile(File file) {
 
-		 if (file == null)
-			 return false;
+		if (file == null)
+			return false;
 
-		 /**
-		  * Consider file valid if it doesn't exist for now.
-		  */
-		 if (!file.exists())
-			 return true;
+		/**
+		 * Consider file valid if it doesn't exist for now.
+		 */
+		if (!file.exists())
+			return true;
 
-		 /**
-		  * The file exists.
-		  */
-		 if (!file.canWrite()) {
-			 final String title= CVSUIMessages.GenerateCVSDiff_1;
-			 final String msg= CVSUIMessages.GenerateCVSDiff_2;
-			 final MessageDialog dialog= new MessageDialog(getShell(), title, null, msg, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
-			 dialog.open();
-			 return false;
-		 }
+		/**
+		 * The file exists.
+		 */
+		if (!file.canWrite()) {
+			final String title= CVSUIMessages.GenerateCVSDiff_1;
+			final String msg= CVSUIMessages.GenerateCVSDiff_2;
+			final MessageDialog dialog= new MessageDialog(getShell(), title, null, msg, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
+			dialog.open();
+			return false;
+		}
 
-		 final String title = CVSUIMessages.GenerateCVSDiff_overwriteTitle;
-		 final String msg = CVSUIMessages.GenerateCVSDiff_overwriteMsg;
-		 final MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
-		 dialog.open();
-		 if (dialog.getReturnCode() != 0)
-			 return false;
+		final String title = CVSUIMessages.GenerateCVSDiff_overwriteTitle;
+		final String msg = CVSUIMessages.GenerateCVSDiff_overwriteMsg;
+		final MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+		dialog.open();
+		if (dialog.getReturnCode() != 0)
+			return false;
 
-		 return true;
-	 }
+		return true;
+	}
 
-	 public LocationPage getLocationPage() {
-		 return locationPage;
-	 }
+	public LocationPage getLocationPage() {
+		return locationPage;
+	}
 
-	 /**
-	  * The class maintain proper selection of radio button within the group:
-	  * <ul>
-	  * <li>Only one button can be selected at the time.</li>
-	  * <li>Disabled button can't be selected unless all buttons in the group
-	  * are disabled.</li>
-	  * </ul>
-	  */
-	 /*private*/ class RadioButtonGroup {
+	/**
+	 * The class maintain proper selection of radio button within the group:
+	 * <ul>
+	 * <li>Only one button can be selected at the time.</li>
+	 * <li>Disabled button can't be selected unless all buttons in the group
+	 * are disabled.</li>
+	 * </ul>
+	 */
+	/*private*/ class RadioButtonGroup {
 
-		 /**
-		  * List of buttons in the group. Both radio groups contain 3 elements.
-		  */
+		/**
+		 * List of buttons in the group. Both radio groups contain 3 elements.
+		 */
 		private List buttons = new ArrayList(3);
 
-		 /**
-		  * Index of the selected button.
-		  */
-		 private int selected = 0;
+		/**
+		 * Index of the selected button.
+		 */
+		private int selected = 0;
 
-		 /**
-		  * Add a button to the group. While adding a new button the method
-		  * checks if there is only one button selected in the group.
-		  * 
-		  * @param buttonCode
-		  *            A button's code (eg. <code>ROOT_WORKSPACE</code>). To get
-		  *            an index we need to subtract 1 from it.
-		  * @param button
-		  *            A button to add.
-		  */
-		 public void add(int buttonCode, Button button) {
-			 if (button != null && (button.getStyle() & SWT.RADIO) != 0) {
-				 if (button.getSelection() && !buttons.isEmpty()) {
-					 deselectAll();
-					 selected = buttonCode - 1;
-				 }
-				 buttons.add(buttonCode - 1, button);
-			 }
-		 }
+		/**
+		 * Add a button to the group. While adding a new button the method
+		 * checks if there is only one button selected in the group.
+		 * 
+		 * @param buttonCode
+		 *            A button's code (eg. <code>ROOT_WORKSPACE</code>). To get
+		 *            an index we need to subtract 1 from it.
+		 * @param button
+		 *            A button to add.
+		 */
+		public void add(int buttonCode, Button button) {
+			if (button != null && (button.getStyle() & SWT.RADIO) != 0) {
+				if (button.getSelection() && !buttons.isEmpty()) {
+					deselectAll();
+					selected = buttonCode - 1;
+				}
+				buttons.add(buttonCode - 1, button);
+			}
+		}
 
-		 /**
-		  * Returns selected button's code.
-		  * 
-		  * @return Selected button's code.
-		  */
-		 public int getSelected() {
-			 return selected + 1;
-		 }
+		/**
+		 * Returns selected button's code.
+		 * 
+		 * @return Selected button's code.
+		 */
+		public int getSelected() {
+			return selected + 1;
+		}
 
-		 /**
-		  * Set selection to the given button. When
-		  * <code>selectEnabledOnly</code> flag is true the returned value can
-		  * differ from the parameter when a button we want to set selection to
-		  * is disabled and there are other buttons which are enabled.
-		  * 
-		  * @param buttonCode
-		  *            A button's code (eg. <code>ROOT_WORKSPACE</code>). To get
-		  *            an index we need to subtract 1 from it.
-		  * @return Code of the button to which selection was finally set.
-		  */
-		 public int setSelection(int buttonCode, boolean selectEnabledOnly) {
-			 deselectAll();
+		/**
+		 * Set selection to the given button. When
+		 * <code>selectEnabledOnly</code> flag is true the returned value can
+		 * differ from the parameter when a button we want to set selection to
+		 * is disabled and there are other buttons which are enabled.
+		 * 
+		 * @param buttonCode
+		 *            A button's code (eg. <code>ROOT_WORKSPACE</code>). To get
+		 *            an index we need to subtract 1 from it.
+		 * @return Code of the button to which selection was finally set.
+		 */
+		public int setSelection(int buttonCode, boolean selectEnabledOnly) {
+			deselectAll();
 
-			 ((Button) buttons.get(buttonCode - 1)).setSelection(true);
-			 selected = buttonCode - 1;
-			 if (selectEnabledOnly)
-				 selected = selectEnabledOnly() - 1;
-			 return getSelected();
-		 }
+			((Button) buttons.get(buttonCode - 1)).setSelection(true);
+			selected = buttonCode - 1;
+			if (selectEnabledOnly)
+				selected = selectEnabledOnly() - 1;
+			return getSelected();
+		}
 
-		 /**
-		  * Make sure that only an enabled radio button is selected.
-		  * 
-		  * @return A code of the selected button.
-		  */
-		 public int selectEnabledOnly() {
-			 deselectAll();
+		/**
+		 * Make sure that only an enabled radio button is selected.
+		 * 
+		 * @return A code of the selected button.
+		 */
+		public int selectEnabledOnly() {
+			deselectAll();
 
-			 Button selectedButton = (Button) buttons.get(selected);
-			 if (!selectedButton.isEnabled()) {
-				 // if the button is disabled, set selection to an enabled one
-				 for (Iterator iterator = buttons.iterator(); iterator.hasNext();) {
-					 Button b = (Button) iterator.next();
-					 if (b.isEnabled()) {
-						 b.setSelection(true);
-						 selected = buttons.indexOf(b);
-						 return selected + 1;
-					 }
-				 }
-				 // if none found, reset the initial selection
-				 selectedButton.setSelection(true);
-			 } else {
-				 // because selection has been cleared, set it again
-				 selectedButton.setSelection(true);
-			 }
-			 // return selected button's code so the value can be stored
-			 return getSelected();
-		 }
+			Button selectedButton = (Button) buttons.get(selected);
+			if (!selectedButton.isEnabled()) {
+				// if the button is disabled, set selection to an enabled one
+				for (Iterator iterator = buttons.iterator(); iterator.hasNext();) {
+					Button b = (Button) iterator.next();
+					if (b.isEnabled()) {
+						b.setSelection(true);
+						selected = buttons.indexOf(b);
+						return selected + 1;
+					}
+				}
+				// if none found, reset the initial selection
+				selectedButton.setSelection(true);
+			} else {
+				// because selection has been cleared, set it again
+				selectedButton.setSelection(true);
+			}
+			// return selected button's code so the value can be stored
+			return getSelected();
+		}
 
-		 /**
-		  * Enable or disable given buttons.
-		  * 
-		  * @param enabled
-		  *            Indicates whether to enable or disable the buttons.
-		  * @param buttonsToChange
-		  *            Buttons to enable/disable.
-		  * @param defaultSelection
-		  *            The button to select if the currently selected button
-		  *            becomes disabled.
-		  */
-		 public void setEnablement(boolean enabled, int[] buttonsToChange,
-				 int defaultSelection) {
+		/**
+		 * Enable or disable given buttons.
+		 * 
+		 * @param enabled
+		 *            Indicates whether to enable or disable the buttons.
+		 * @param buttonsToChange
+		 *            Buttons to enable/disable.
+		 * @param defaultSelection
+		 *            The button to select if the currently selected button
+		 *            becomes disabled.
+		 */
+		public void setEnablement(boolean enabled, int[] buttonsToChange,
+				int defaultSelection) {
 
-			 // enable (or disable) given buttons
-			 for (int i = 0; i < buttonsToChange.length; i++) {
-				 ((Button) this.buttons.get(buttonsToChange[i] - 1))
-				 .setEnabled(enabled);
-			 }
-			 // check whether the selected button is enabled
-			 if (!((Button) this.buttons.get(selected)).isEnabled()) {
-				 if (defaultSelection != -1)
-					 // set the default selection and check if it's enabled
-					 setSelection(defaultSelection, true);
-				 else
-					 // no default selection is given, select any enabled button
-					 selectEnabledOnly();
-			 }
-		 }
+			// enable (or disable) given buttons
+			for (int i = 0; i < buttonsToChange.length; i++) {
+				((Button) this.buttons.get(buttonsToChange[i] - 1))
+				.setEnabled(enabled);
+			}
+			// check whether the selected button is enabled
+			if (!((Button) this.buttons.get(selected)).isEnabled()) {
+				if (defaultSelection != -1)
+					// set the default selection and check if it's enabled
+					setSelection(defaultSelection, true);
+				else
+					// no default selection is given, select any enabled button
+					selectEnabledOnly();
+			}
+		}
 
-		 /**
-		  * Enable or disable given buttons with no default selection. The selection
-		  * will be set to an enabled button using the <code>selectEnabledOnly</code> method.
-		  * 
-		  * @param enabled Indicates whether to enable or disable the buttons.
-		  * @param buttonsToChange Buttons to enable/disable.
-		  */
-		 public void setEnablement(boolean enabled, int[] buttonsToChange) {
-			 // -1 means that no default selection is given
-			 setEnablement(enabled, buttonsToChange, -1);
-		 }
+		/**
+		 * Enable or disable given buttons with no default selection. The selection
+		 * will be set to an enabled button using the <code>selectEnabledOnly</code> method.
+		 * 
+		 * @param enabled Indicates whether to enable or disable the buttons.
+		 * @param buttonsToChange Buttons to enable/disable.
+		 */
+		public void setEnablement(boolean enabled, int[] buttonsToChange) {
+			// -1 means that no default selection is given
+			setEnablement(enabled, buttonsToChange, -1);
+		}
 
-		 /**
-		  * Deselect all buttons in the group.
-		  */
-		 private void deselectAll() {
-			 // clear all selections
-			 for (Iterator iterator = buttons.iterator(); iterator.hasNext();)
-				 ((Button) iterator.next()).setSelection(false);
-		 }
-	 }
+		/**
+		 * Deselect all buttons in the group.
+		 */
+		private void deselectAll() {
+			// clear all selections
+			for (Iterator iterator = buttons.iterator(); iterator.hasNext();)
+				((Button) iterator.next()).setSelection(false);
+		}
+	}
 
 }
