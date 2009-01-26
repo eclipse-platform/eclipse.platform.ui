@@ -152,7 +152,7 @@ function quickSearch(button, errorMsg) {		//search this topic and all subTopics
 	     
 	    // Defect 593: resize search window     2/2
 	    var w = 315;
-		var h = 70;	   
+		var h = 120;
 		if (isIE){		
 			var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
 			var t = top.screenTop + (top.document.body.clientHeight - h) / 2;		
