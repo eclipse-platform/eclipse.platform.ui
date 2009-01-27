@@ -92,7 +92,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	/**
 	 * true if we are inside a preservingSelection() call
 	 */
-	private boolean preservingSelection;
+	private boolean insidePreservingSelection;
 
 	/**
 	 * Creates a tree viewer on a newly-created tree control under the given
@@ -391,20 +391,17 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	void preservingSelection(Runnable updateCode, boolean reveal) {
-		if (!getPreserveSelection()) {
-			return;
-		}
-		if (preservingSelection){
+		if (insidePreservingSelection || !getPreserveSelection()){
 			// avoid preserving the selection if called reentrantly,
 			// see bug 172640
 			updateCode.run();
 			return;
 		}
-		preservingSelection = true;
+		insidePreservingSelection = true;
 		try {
 			super.preservingSelection(updateCode, reveal);
 		} finally {
-			preservingSelection = false;
+			insidePreservingSelection = false;
 		}
 	}
 
@@ -530,7 +527,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 		}
 		// Restore the selection if we are not already in a nested preservingSelection:
-		if (!preservingSelection) {
+		if (!insidePreservingSelection) {
 			setSelectionToWidget(selection, false);
 			// send out notification if old and new differ
 			ISelection newSelection = getSelection();
