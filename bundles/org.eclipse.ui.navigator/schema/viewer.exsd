@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui.navigator" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui.navigator" id="viewer" name="Common Viewer Configuration"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;
 The &lt;b&gt;viewer&lt;/b&gt; element defines the configuration for a common viewer. The extension
@@ -26,9 +26,9 @@ its viewer id.
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -56,9 +56,9 @@ its viewer id.
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -66,9 +66,9 @@ its viewer id.
 
    <element name="viewer">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="id"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             Provides basic configuration to establish the characteristics of a viewer. Clients must also define an &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension to create the view part.
          </documentation>
@@ -83,9 +83,9 @@ its viewer id.
                <documentation>
                   The id that matches the id provides in an &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="popupMenuId" type="string">
@@ -116,11 +116,11 @@ A viewer may have multiple viewerContentBindings defined, and their includes/exc
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  There should be a corresponding &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension that corresponds to this Id. That extension should specify an instance of &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.
+                  Used to associate the binding with an instance of the &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.  There must be a corresponding &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension that corresponds to this Id. That extension must specify an instance of &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -144,11 +144,11 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  There should be a corresponding &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension that corresponds to this Id. That extension should specify an instance of &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.
+                  Used to associate the binding with an instance of the &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.  There must be a corresponding &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension that corresponds to this Id. That extension must specify an instance of &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -248,9 +248,9 @@ Patterns are regular expressions which match unique identifiers. Please see the 
 
    <element name="popupMenu">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="id"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             A popupMenu element may only be defined if the &quot;popupMenuId&quot; attribute of the 
 &lt;b&gt;viewer&lt;/b&gt; element is not specified. 
@@ -316,9 +316,9 @@ If the &lt;b&gt;popupMenu&lt;/b&gt; element is specified and contains NO &lt;b&g
 
    <element name="insertionPoint">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             Defines an insertion point for the context menu. Indcludes the name of the point for clients to refer to, and whether the insertion point should be rendered as a separator or a group marker.
          </documentation>
@@ -394,9 +394,9 @@ Clients should only define this extension in lightweight plugins with shallow de
                <documentation>
                   Provide an implementation of &lt;code&gt;org.eclipse.ui.navigator.CommonDragAdapterAssistant&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonDragAdapterAssistant"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="viewerId" type="string" use="required">
@@ -404,27 +404,27 @@ Clients should only define this extension in lightweight plugins with shallow de
                <documentation>
                   Associate this drag assistant with a particular viewer id.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;
 The following example configures the popup menu id for a viewer.      
@@ -608,9 +608,9 @@ The following example demonstrates the standard properties available to the view
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2002, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
