@@ -4413,8 +4413,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (fCenterButton != null && !fCenterButton.isDisposed())
 			fCenterButton.setVisible(false);
 
-		Diff oldDiff= fCurrentDiff;
-					
 		if (d != null && revealAndSelect) {
 			
 			// before we set fCurrentDiff we change the selection
