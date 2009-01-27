@@ -769,10 +769,23 @@
             commandId="org.eclipse.ui.edit.text.showInformation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
-            contextId="org.eclipse.ui.textEditorScope"
             sequence="M2+M3+A"
+            contextId="org.eclipse.ui.textEditorScope"
+            commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M2+M3+A"
+            contextId="org.eclipse.ui.textEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="COMMAND+ALT+A"
+            contextId="org.eclipse.ui.textEditorScope"
+            commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            
       <key
             commandId="org.eclipse.ui.edit.text.hippieCompletion"
             contextId="org.eclipse.ui.textEditorScope"
