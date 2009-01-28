@@ -467,15 +467,10 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 					}
             	} else {
 					/*
-					 * if we are in UI thread we cannot lock it, so spin event
-					 * loop. The caller will see this as locking but UI will
-					 * stay responsive.
+					 * if we are in UI thread we cannot lock it, so process
+					 * queued output.
 					 */
-            		while(fBuffer != 0){
-            			if(!Display.getDefault().readAndDispatch()){
-            				Display.getDefault().sleep();
-            			}
-            		}
+            		processQueue();
             	}
             }
 		}
@@ -516,47 +511,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
          * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
-        	synchronized (overflowLock) {
-        		ArrayList pendingCopy = new ArrayList();
-        		StringBuffer buffer = null;
-        		boolean consoleClosed = false;
-        		while (pendingPartitions.size() > 0) {
-        			synchronized(pendingPartitions) {
-        				pendingCopy.addAll(pendingPartitions);
-        				pendingPartitions.clear();
-        				fBuffer = 0;
-        				pendingPartitions.notifyAll();
-        			}
-
-        			buffer = new StringBuffer();
-        			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
-        				PendingPartition pp = (PendingPartition) i.next();
-        				if (pp != consoleClosedPartition) { 
-        					buffer.append(pp.text);
-        				} else {
-        					consoleClosed = true;
-        				}
-        			}
-        		}
-
-        		if (connected) {
-        			setUpdateInProgress(true);
-        			updatePartitions = pendingCopy;
-        			firstOffset = document.getLength();
-        			try {
-        				document.replace(firstOffset, 0, buffer.toString());
-        			} catch (BadLocationException e) {
-        			}
-        			updatePartitions = null;
-        			setUpdateInProgress(false);
-        		}
-        		if (consoleClosed) {
-        			console.partitionerFinished();
-        		}
-        		checkBufferSize();
-
-        	}
-
+        	processQueue();
         	return Status.OK_STATUS;
         }        
 		
@@ -571,6 +526,58 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
             boolean shouldRun = connected && pendingPartitions != null && pendingPartitions.size() > 0;
             return shouldRun;
         }
+	}
+	
+	void processQueue() {
+    	synchronized (overflowLock) {
+    		ArrayList pendingCopy = new ArrayList();
+    		StringBuffer buffer = null;
+    		boolean consoleClosed = false;
+    		while (pendingPartitions.size() > 0) {
+    			synchronized(pendingPartitions) {
+    				pendingCopy.addAll(pendingPartitions);
+    				pendingPartitions.clear();
+    				fBuffer = 0;
+    				pendingPartitions.notifyAll();
+    			}
+    			// determine buffer size
+    			int size = 0;
+    			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
+    				PendingPartition pp = (PendingPartition) i.next();
+    				if (pp != consoleClosedPartition) { 
+    					size+= pp.text.length();
+    				} 
+    			}
+    			buffer = new StringBuffer(size);
+    			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
+    				PendingPartition pp = (PendingPartition) i.next();
+    				if (pp != consoleClosedPartition) { 
+    					buffer.append(pp.text);
+    				} else {
+    					consoleClosed = true;
+    				}
+    			}
+    		}
+
+    		if (connected) {
+    			setUpdateInProgress(true);
+    			updatePartitions = pendingCopy;
+    			firstOffset = document.getLength();
+    			try {
+    				if (buffer != null) {
+    					document.replace(firstOffset, 0, buffer.toString());
+    				}
+    			} catch (BadLocationException e) {
+    			}
+    			updatePartitions = null;
+    			setUpdateInProgress(false);
+    		}
+    		if (consoleClosed) {
+    			console.partitionerFinished();
+    		}
+    		checkBufferSize();
+    	}
+
 	}
 	
     /**
