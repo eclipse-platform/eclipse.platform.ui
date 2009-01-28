@@ -7,15 +7,16 @@ import org.eclipse.e4.ui.tests.css.core.parser.FontFaceRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.MediaRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.StyleRuleTest;
 
-public class CssCoreTestSuite {
+public class CssCoreTestSuite extends TestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("All CSS core tests");
+		return new CssCoreTestSuite();
+	}
+	public CssCoreTestSuite() {
 		// $JUnit-BEGIN$
-		suite.addTestSuite(StyleRuleTest.class);
-		suite.addTestSuite(MediaRulesTest.class);
-		suite.addTestSuite(FontFaceRulesTest.class);
+		addTestSuite(StyleRuleTest.class);
+		addTestSuite(MediaRulesTest.class);
+		addTestSuite(FontFaceRulesTest.class);
 		// $JUnit-END$
-		return suite;
 	}
 }
