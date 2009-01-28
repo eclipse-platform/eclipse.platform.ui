@@ -76,7 +76,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *    The workspace is closed for change during  notification of these events.
  *   </li>
  *   <li>
- *    Before-the-fact reports of the impending refresh of a resource. 
+ *    Before-the-fact reports of the impending refresh of a single project. 
  *    Event type is <code>PRE_REFRESH</code> and the <code>getSource</code>
  *    method returns the scope of the refresh (either the workspace or a single project).
  *    If the event is fired by a project refresh the <code>getResource</code>
@@ -229,10 +229,9 @@ public interface IResourceChangeEvent {
 	 * Returns the resource in question or <code>null</code>
 	 * if not applicable to this type of event. 
 	 * <p>
-	 * If the event is a <code>PRE_CLOSE</code> or 
-	 * <code>PRE_DELETE</code> event then the resource 
-	 * will be the affected project. Otherwise the resource will 
-	 * be <code>null</code>.
+	 * If the event is of type <code>PRE_CLOSE</code>,
+	 * <code>PRE_DELETE</code>, or <code>PRE_REFRESH</code>, then the resource 
+	 * will be the affected project. Otherwise the resource will be <code>null</code>.
 	 * </p>
 	 * @return the resource, or <code>null</code> if not applicable
 	 */
@@ -241,8 +240,9 @@ public interface IResourceChangeEvent {
 	/**
 	 * Returns an object identifying the source of this event.
 	 * <p>
-	 * If the event is a <code>PRE_BUILD</code> or <code>POST_BUILD</code>
-	 * then this will be the scope of the build (either the {@link IWorkspace} or a single {@link IProject}).
+	 * If the event is a <code>PRE_BUILD</code>, <code>POST_BUILD</code>,
+	 * or <code>PRE_REFRESH</code> then this will be the scope of the build 
+	 * (either the {@link IWorkspace} or a single {@link IProject}).
 	 * </p>
 	 *
 	 * @return an object identifying the source of this event 
@@ -259,6 +259,7 @@ public interface IResourceChangeEvent {
 	 * @see #PRE_BUILD
 	 * @see #PRE_CLOSE
 	 * @see #PRE_DELETE
+	 * @see #PRE_REFRESH
 	 */
 	public int getType();
 }
