@@ -1029,6 +1029,7 @@ public class FilteredTree extends Composite {
 				public void widgetDisposed(DisposeEvent e) {
 					inactiveImage.dispose();
 					activeImage.dispose();
+					pressedImage.dispose();
 				}
 			});
 			clearButton.getAccessible().addAccessibleListener(
