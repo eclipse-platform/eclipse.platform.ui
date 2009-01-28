@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui.navigator" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui.navigator" id="navigatorContent" name="navigatorContent"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          A content extension provides a content and label provider 
 that can be used by a navigator content service. The
@@ -27,9 +27,9 @@ expand to the right node.
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -66,9 +66,9 @@ expand to the right node.
 
    <element name="navigatorContent">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression and also to provide a parent whenever an element matches the &lt;b&gt;possibleChildren&lt;/b&gt; expression. 
 &lt;br&gt;&lt;br&gt;
@@ -104,9 +104,9 @@ When an extension is deactivated by the user, the content and label providers ar
                <documentation>
                   Specify a display name for the Content Extension. The display name is used in the activation dialog to allow clients to turn an extension on or off.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="priority">
@@ -139,13 +139,13 @@ When an extension is deactivated by the user, the content and label providers ar
                <documentation>
                   Supplies the name of a class which implements &lt;code&gt;org.eclipse.jface.viewers.ITreeContentProvider&lt;/code&gt; or &lt;code&gt;org.eclipse.ui.navigator.ICommonContentProvider&lt;/code&gt;.
 &lt;br&gt;&lt;br&gt;
-The content provider will be consulted when addeding children to the tree. Use the &lt;b&gt;enablement&lt;/b&gt; or &lt;b&gt;triggerPoints&lt;/b&gt; clause to indicate what kinds of content should trigger a request to your content provider.
+The content provider will be consulted when adding children to the tree. Use the &lt;b&gt;enablement&lt;/b&gt; or &lt;b&gt;triggerPoints&lt;/b&gt; clause to indicate what kinds of content should trigger a request to your content provider.
 &lt;br&gt;&lt;br&gt; 
 Elements contributed from the content provider are not guaranteed to appear in the tree in the same order. Clients should take advantage of the sorting extension (&lt;b&gt;commonSorter&lt;/b&gt;) to ensure proper ordering of their elements.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -153,9 +153,9 @@ Elements contributed from the content provider are not guaranteed to appear in t
                <documentation>
                   A plugin-relative path to an icon for use when displaying the metadata about the content extension to the user.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="activeByDefault" type="boolean">
@@ -181,9 +181,9 @@ Clients may also implement &lt;code&gt;org.eclipse.ui.navigator.IDescriptionProv
 &lt;br&gt;&lt;br&gt;
 Since 3.4, clients may also implement &lt;code&gt;org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider&lt;/code&gt; to provide styled text labels. Note that the empty styled string signals that the label provider does not wish to render the label.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelProvider"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -219,7 +219,7 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
    <element name="triggerPoints">
       <annotation>
          <documentation>
-            The &lt;b&gt;triggerPoints&lt;/b&gt; expression defines the nodes in a tree that should cause this extension to be invoked for children.
+            The &lt;b&gt;triggerPoints&lt;/b&gt; expression defines the nodes to be used when resolving the Common Navigator  content provider&apos;s getElements() or getChildren().  This is also used to select the extension for providing labels, images, descriptions and for sorting.
          </documentation>
       </annotation>
       <complexType>
@@ -244,7 +244,7 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
    <element name="possibleChildren">
       <annotation>
          <documentation>
-            The &lt;b&gt;possibleChildren&lt;/b&gt; expression defines the nodes in a tree that could be contributed by this extension. Clients should describes when this content extension could provide a parent for elements that match the expression.
+            The &lt;b&gt;possibleChildren&lt;/b&gt; expression defines the node to be used when resolving the Common Navigator content provider&apos;s getParent().  It is also used to help determine the parent when handling drop operations.
          </documentation>
       </annotation>
       <complexType>
@@ -268,9 +268,9 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
 
    <element name="actionProvider">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="class"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             Supplies the name of a class that implements &lt;code&gt;org.eclipse.ui.navigator.CommonActionProvider&lt;/code&gt;. The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars for the view that holds the navigator. Clients may also contribute directly to the view menu through the IActionBars view menu.
 &lt;br&gt;&lt;br&gt;
@@ -293,9 +293,9 @@ Any items contributed to the toolbar or the view menu should be removed with the
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonActionProvider"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
@@ -409,9 +409,9 @@ That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;o
 
    <element name="commonFilter">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             Defines a filter that can big associated with a particular Common Viewer. Common filters are bound to a viewer like content extensions by using &lt;b&gt;org.eclipse.ui.navigator.viewer/viewerContentBinding&lt;/b&gt;.
          </documentation>
@@ -432,9 +432,9 @@ That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;o
                <documentation>
                   A translateable name that will be used to refer to this particular filter in dialogs presented to the user.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -442,9 +442,9 @@ That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;o
                <documentation>
                   A translatable description of what this filter is designed to hide from the view.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
@@ -452,9 +452,9 @@ That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;o
                <documentation>
                   Clients may choose to define an explicit ViewerFilter subclass via the &quot;class&quot; attribute. Alternatively, clients may choose to nest a &lt;b&gt;filterExpression&lt;/b&gt; element to describe what the filter should hide. Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&quot; attribute, but not both.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerFilter"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="activeByDefault" type="boolean">
@@ -518,9 +518,9 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
                <documentation>
                   A subclass of &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerSorter"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -615,9 +615,9 @@ An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;po
                <documentation>
                   An implementation of &lt;code&gt;org.eclipse.ui.navigator.CommonDropAdapterAssistant&lt;/code&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonDropAdapterAssistant"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -649,18 +649,18 @@ An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;po
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;br&gt;
 &lt;h2&gt;Adding content&lt;/h2&gt;
@@ -889,9 +889,9 @@ using this feature.
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2002, 2006, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
