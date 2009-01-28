@@ -7,6 +7,8 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -30,6 +32,9 @@ import org.eclipse.jface.viewers.Viewer;
  * 	<li>If a user checks a check box, its children or parents must change state
  * 		accordingly.</li>
  * </ol>
+ * <p>
+ * <b>Note:</b> be sure to call dispose()
+ * </p>
  * @since 3.5
  *
  */
@@ -44,6 +49,7 @@ public class TreeManager {
 	private static ITreeContentProvider treeContentProvider = null;
 	
 	private List listeners = new ArrayList();
+	private LocalResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 
 	/**
 	 * Instances of this interface will handle changes in the model
@@ -222,7 +228,7 @@ public class TreeManager {
 				if(imageDescriptor == null) {
 					return null;
 				}
-				image = imageDescriptor.createImage();
+				image = resourceManager.createImage(imageDescriptor);
 			}
 			return image;
 		}
@@ -231,10 +237,6 @@ public class TreeManager {
 			this.imageDescriptor = imageDescriptor;
 		}
 		
-		public void setImage(Image image) {
-			this.image = image;
-		}
-
 		public void addChild(TreeItem newChild) {
             newChild.parent = this;
             children.add(newChild);
@@ -477,5 +479,12 @@ public class TreeManager {
 			CheckListener listener = (CheckListener) i.next();
 			listener.checkChanged(item);
 		}
+	}
+	
+	public void dispose() {
+		resourceManager.dispose();
+		resourceManager = null;
+		listeners.clear();
+		listeners = null;
 	}
 }

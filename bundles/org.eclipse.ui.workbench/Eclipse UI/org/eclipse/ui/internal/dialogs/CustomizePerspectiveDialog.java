@@ -2970,7 +2970,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					DisplayItem menuEntry = new DisplayItem(
 							menuItems[i].getText(), contributionItem);
 
-					menuEntry.setImage(menuItems[i].getImage());
+					Image image = menuItems[i].getImage();
+					if (image != null) {
+						menuEntry.setImageDescriptor(ImageDescriptor
+								.createFromImage(image));
+					}
 					menuEntry.setActionSet((ActionSet) idToActionSet
 							.get(getActionSetID(contributionItem)));
 					parent.addChild(menuEntry);
@@ -3000,7 +3004,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 								.setCheckState(getMenuItemIsVisible(menuEntry));
 					}
 
-					if (menuItems[i].getImage() == null) {
+					if (image == null) {
 						if (parent != null && parent.getParent() == null) {
 							menuEntry.setImageDescriptor(menuImageDescriptor);
 						} else if (menuEntry.getChildren().size() > 0) {
@@ -3104,7 +3108,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					.getData();
 			DisplayItem toolBarEntry = new DisplayItem(toolitems[i]
 					.getToolTipText(), contributionItem);
-			toolBarEntry.setImage(toolitems[i].getImage());
+			Image image = toolitems[i].getImage();
+			if (image != null) {
+				toolBarEntry.setImageDescriptor(ImageDescriptor
+						.createFromImage(image));
+			}
 			toolBarEntry.setActionSet((ActionSet) idToActionSet
 					.get(getActionSetID(contributionItem)));
 			contributionItem.setVisible(true);// force parents to update
@@ -3214,6 +3222,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			resource.dispose();
 		}
 
+		treeManager.dispose();
 		customizeActionBars.dispose();
 
 		return super.close();
