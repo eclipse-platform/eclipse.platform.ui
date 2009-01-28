@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	// Keep track of the folder that existed the last time we checked
 	private ICVSRemoteFolder existingRemote;
 
+	private ICVSRemoteFolder remoteFolder;
+	
 	public SharingWizard() {
 		IDialogSettings cvsSettings = CVSUIPlugin.getPlugin().getDialogSettings();
 		IDialogSettings section = cvsSettings.getSection("SharingWizard");//$NON-NLS-1$
@@ -181,7 +183,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		try {
 			if (page == modulePage) {
 				if (aboutToShow) {
-					ICVSRemoteFolder remoteFolder = getRemoteFolder();
+					remoteFolder = null; // reset
+					getRemoteFolder(); // initialize remoteFolder
 					if (exists(remoteFolder)) {
 						prepareTagPage(remoteFolder);
 						return tagPage;
@@ -487,8 +490,11 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	}
 	
 	private ICVSRemoteFolder getRemoteFolder() {
-		ICVSRemoteFolder folder = modulePage.getSelectedModule();
-		return (ICVSRemoteFolder) folder.forTag(getTag());
+		if (remoteFolder == null) {
+			ICVSRemoteFolder folder = modulePage.getSelectedModule();
+			remoteFolder = (ICVSRemoteFolder)folder.forTag(getTag());
+		}
+		return remoteFolder;
 	}
 	
 	private boolean exists(ICVSRemoteFolder folder, IProgressMonitor monitor) throws TeamException {
