@@ -92,7 +92,7 @@ public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 	 */
 	private Button applyStyleToShellCheckbox;
 
-	private Shell shell;
+	protected Shell shell;
 
 	private Composite leftPanel;
 
