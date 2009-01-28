@@ -838,7 +838,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	public synchronized void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
 	    if (fViewer != null && !proxy.isDisposed()) {
-    		new WorkbenchJob(fViewer.getDisplay(), "process model delta") { //$NON-NLS-1$
+    		WorkbenchJob job = new WorkbenchJob(fViewer.getDisplay(), "process model delta") { //$NON-NLS-1$
     			public IStatus runInUIThread(IProgressMonitor monitor) {
                     if (!proxy.isDisposed()) {
                         if (DEBUG_DELTAS && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
@@ -855,7 +855,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                     }
                     return Status.OK_STATUS;
     	        }
-    	    }.schedule();
+    		};
+    		job.setSystem(true);
+    		job.schedule();
 	    }
 	}
 
