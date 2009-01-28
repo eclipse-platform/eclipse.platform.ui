@@ -116,11 +116,8 @@ A viewer may have multiple viewerContentBindings defined, and their includes/exc
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  Used to associate the binding with an instance of the &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.  There must be a corresponding &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension that corresponds to this Id. That extension must specify an instance of &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.
+                  Used to associate the binding with an instance of the &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.  There must be a corresponding viewer (typically using the &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension, but the viewer can be also dynamically defined at runtime) that corresponds to this Id.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -144,11 +141,8 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  Used to associate the binding with an instance of the &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.  There must be a corresponding &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension that corresponds to this Id. That extension must specify an instance of &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.
+                  Used to associate the binding with an instance of the &lt;code&gt;org.eclipse.ui.navigator.CommonNavigator&lt;/code&gt;.  There must be a corresponding viewer (typically using the &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension, but the viewer can be also dynamically defined at runtime) that corresponds to this Id.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
