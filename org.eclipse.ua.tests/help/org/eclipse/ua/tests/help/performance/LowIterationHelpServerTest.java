@@ -19,16 +19,16 @@ import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ua.tests.help.util.LoadServletUtil;
 
 /**
- * Test the performance of the help server without launching the Help UI
+ * A version of the servlet read test with a low iteration count
  */
 
-public class HelpServerTest extends PerformanceTestCase {
+public class LowIterationHelpServerTest extends PerformanceTestCase {
 	
 	/*
 	 * Returns an instance of this Test.
 	 */
 	public static Test suite() {
-		return new TestSuite(HelpServerTest.class);
+		return new TestSuite(LowIterationHelpServerTest.class);
 	}
 
 	protected void setUp() throws Exception {
@@ -39,17 +39,17 @@ public class HelpServerTest extends PerformanceTestCase {
 		LoadServletUtil.stopServer();
 	}
 	
-	public void testServletRead100x() throws Exception {
+	public void testServletRead20x() throws Exception {
 		tagAsSummary("Servlet Read", Dimension.ELAPSED_PROCESS);
 		LoadServletUtil.startServer();
 		// run the tests
-		for (int i=0; i < 100; ++i) {
+		for (int i=0; i < 15; ++i) {
 			boolean warmup = i < 2;
 			if (!warmup) {
 			    startMeasuring();
 			} 
 			
-			for (int j = 0; j <= 100; j++) {
+			for (int j = 0; j <= 20; j++) {
 				LoadServletUtil.readLoadServlet(200);
 			}
 
