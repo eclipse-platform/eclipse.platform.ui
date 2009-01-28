@@ -99,16 +99,11 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			}
 		} 
 
-		if (sourceOfLvalue == null)
-			sourceOfLvalue = getSource(e1);
-		if (sourceOfRvalue == null)
-			sourceOfRvalue = getSource(e2);		
-
 		boolean flags[] = new boolean[4];
-		flags[0] = sourceOfLvalue.isPossibleChild(e1);
-		flags[1] = sourceOfLvalue.isPossibleChild(e2);
-		flags[2] = sourceOfRvalue.isPossibleChild(e1);
-		flags[3] = sourceOfRvalue.isPossibleChild(e2);
+		flags[0] = sourceOfLvalue.isTriggerPoint(e1);
+		flags[1] = sourceOfLvalue.isTriggerPoint(e2);
+		flags[2] = sourceOfRvalue.isTriggerPoint(e1);
+		flags[3] = sourceOfRvalue.isTriggerPoint(e2);
 		
 		int whoknows  = 0;		 
 		whoknows  = whoknows  | (flags[0] & flags[1] ? LEFT_UNDERSTANDS : 0); 
