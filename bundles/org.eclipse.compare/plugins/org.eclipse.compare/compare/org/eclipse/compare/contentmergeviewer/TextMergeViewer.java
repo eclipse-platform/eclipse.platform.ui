@@ -1650,12 +1650,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (RESOLVED == null)
 			RESOLVED= new RGB(0, 255, 0);	// GREEN
 					
-		updatePresentation(display);
+		updatePresentation();
 	}
 
-	private void updatePresentation(Display display) {
-		if (display == null)
-			display= fComposite.getDisplay();
+	private void updatePresentation() {
 		refreshBirdsEyeView();
 		invalidateLines();
 		invalidateTextPresentation();
@@ -3304,7 +3302,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	//---- update UI stuff
 	
 	private void updateControls() {
-		
+		if (getControl().isDisposed())
+			return;
+
 		boolean leftToRight= false;
 		boolean rightToLeft= false;
 		
@@ -3683,7 +3683,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		} else if (key.equals(ComparePreferencePage.HIGHLIGHT_TOKEN_CHANGES)) {
 			fHighlightTokenChanges= fPreferenceStore.getBoolean(ComparePreferencePage.HIGHLIGHT_TOKEN_CHANGES);
 			updateResolveStatus();
-			updatePresentation(null);
+			updatePresentation();
 			
 //		} else if (key.equals(ComparePreferencePage.USE_RESOLVE_UI)) {
 //			fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
@@ -4967,7 +4967,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			updateControls();
 		
 		updateVScrollBar();
-		updatePresentation(null);
+		updatePresentation();
 	}
 
 	private void resetDiffs() {
