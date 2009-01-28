@@ -88,7 +88,7 @@ public class HelpServerTest extends PerformanceTestCase {
 		tagAsSummary("Servlet Read", Dimension.ELAPSED_PROCESS);
 		startServer();
 		// run the tests
-		for (int i=0; i < 10; ++i) {
+		for (int i=0; i < 100; ++i) {
 			boolean warmup = i < 2;
 			if (!warmup) {
 			    startMeasuring();
