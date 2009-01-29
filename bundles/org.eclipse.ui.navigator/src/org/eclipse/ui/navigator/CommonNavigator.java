@@ -157,7 +157,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 		commonViewer = createCommonViewer(aParent);	
 		commonViewer.setCommonNavigator(this);
-        commonViewer.createFrameList();
 		
 		try {
 			commonViewer.getControl().setRedraw(false);
@@ -184,7 +183,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			commonViewer.getControl().setRedraw(true);
 		}
 
-		/*
+        commonViewer.createFrameList();
+
+        /*
 		 * Create the CommonNavigatorManager last because information about the
 		 * state of the CommonNavigator is required for the initialization of
 		 * the CommonNavigatorManager
