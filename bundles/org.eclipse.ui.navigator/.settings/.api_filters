@@ -44,14 +44,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/navigator/CommonNavigator.java" type="org.eclipse.ui.navigator.CommonNavigator">
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.CommonNavigator"/>
-                <message_argument value="createCommonManager()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ui/navigator/INavigatorSorterService.java" type="org.eclipse.ui.navigator.INavigatorSorterService">
         <filter id="403853384">
             <message_arguments>
@@ -66,10 +58,10 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorViewerDescriptor.java" type="org.eclipse.ui.navigator.INavigatorViewerDescriptor">
+    <resource path="src/org/eclipse/ui/navigator/INavigatorContentExtension.java" type="org.eclipse.ui.navigator.INavigatorContentExtension">
         <filter id="403853384">
             <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorViewerDescriptor"/>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorContentExtension"/>
             </message_arguments>
         </filter>
     </resource>
@@ -80,10 +72,10 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorContentExtension.java" type="org.eclipse.ui.navigator.INavigatorContentExtension">
+    <resource path="src/org/eclipse/ui/navigator/INavigatorViewerDescriptor.java" type="org.eclipse.ui.navigator.INavigatorViewerDescriptor">
         <filter id="403853384">
             <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorContentExtension"/>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorViewerDescriptor"/>
             </message_arguments>
         </filter>
     </resource>
