@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,14 +51,13 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 
 /**
- * A ruler action which can select the textual range of a marker
- * that has a visual representation in a vertical ruler.
+ * A ruler action which can select the textual range of a marker that has a visual representation in
+ * a vertical ruler.
  * <p>
  * This class may be instantiated but is not intended for sub-classing.
  * </p>
- *
- * @since 2.0
- * @noextend This class is not intended to be subclassed by clients.
+ * 
+ * @since 2.0, allowed to be subclassed since 3.5
  */
 public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
@@ -194,7 +193,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param markers the list of markers to choose from
 	 * @return the chosen marker or <code>null</code> if none of the given markers has a marker annotation in the model
 	 */
-	protected IMarker chooseMarker(List markers) {
+	protected final IMarker chooseMarker(List markers) {
 
 		AbstractMarkerAnnotationModel model= getAnnotationModel();
 		IAnnotationAccessExtension access= getAnnotationAccessExtension();
@@ -232,7 +231,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * 			this action's editor has no such extension
 	 * @since 3.0
 	 */
-	protected IAnnotationAccessExtension  getAnnotationAccessExtension() {
+	protected final IAnnotationAccessExtension getAnnotationAccessExtension() {
 		Object adapter= fTextEditor.getAdapter(IAnnotationAccess.class);
 		if (adapter instanceof IAnnotationAccessExtension)
 			return (IAnnotationAccessExtension)adapter;
@@ -246,7 +245,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 *
 	 * @return the resource for which to create the marker or <code>null</code>
 	 */
-	protected IResource getResource() {
+	protected final IResource getResource() {
 		IEditorInput input= fTextEditor.getEditorInput();
 
 		IResource resource= (IResource) input.getAdapter(IFile.class);
@@ -262,7 +261,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 *
 	 * @return the marker annotation model or <code>null</code> if there's none
 	 */
-	protected AbstractMarkerAnnotationModel getAnnotationModel() {
+	protected final AbstractMarkerAnnotationModel getAnnotationModel() {
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
 		IAnnotationModel model= provider.getAnnotationModel(fTextEditor.getEditorInput());
 		if (model instanceof AbstractMarkerAnnotationModel)
@@ -275,7 +274,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 *
 	 * @return the document of the editor's input
 	 */
-	protected IDocument getDocument() {
+	protected final IDocument getDocument() {
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
 		return provider.getDocument(fTextEditor.getEditorInput());
 	}
@@ -287,7 +286,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param document the document the position refers to
 	 * @return <code>true</code> if the line is included by the given position
 	 */
-	protected boolean includesRulerLine(Position position, IDocument document) {
+	protected final boolean includesRulerLine(Position position, IDocument document) {
 
 		if (position != null) {
 			try {
@@ -336,7 +335,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param exception the exception to be handled
 	 * @param message the message to be logged with the given exception
 	 */
-	protected void handleCoreException(CoreException exception, String message) {
+	protected final void handleCoreException(CoreException exception, String message) {
 		IStatus status;
 		if (message != null)
 			status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception);
@@ -369,7 +368,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @return an unmodifiable list with all markers which include the ruler's line of activity
 	 *         (element type: {@link IMarker})
 	 */
-	protected List getMarkers() {
+	protected final List getMarkers() {
 		final IResource resource= getResource();
 		if (resource == null || !resource.exists())
 			return Collections.EMPTY_LIST;
@@ -435,7 +434,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 *         (element type: {@link IMarker})
 	 * @since 3.3
 	 */
-	protected boolean hasMarkers() {
+	protected final boolean hasMarkers() {
 		final IResource resource= getResource();
 		if (resource == null || !resource.exists())
 			return false;
