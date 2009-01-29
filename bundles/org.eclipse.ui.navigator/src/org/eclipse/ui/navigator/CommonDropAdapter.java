@@ -221,14 +221,10 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 					result = true;
 					if (Policy.DEBUG_DND) { 
 						System.out
-								.println("CommonDropAdapter.validateDrop VALID found \""+assistants[i].getClass().getName()+"\" would handle drop."); //$NON-NLS-1$ //$NON-NLS-2$ 
+								.println("CommonDropAdapter.validateDrop found \""+assistants[i].getClass().getName()+"\" would handle drop."); //$NON-NLS-1$ //$NON-NLS-2$ 
 					}					
 					break;
 				}
-				if (Policy.DEBUG_DND) { 
-					System.out
-							.println("CommonDropAdapter.validateDrop not valid found \""+assistants[i].getClass().getName()+"\" would handle drop."); //$NON-NLS-1$ //$NON-NLS-2$ 
-				}					
 			}
 		}
 
