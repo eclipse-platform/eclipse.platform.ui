@@ -151,8 +151,7 @@ public class Workbench implements IWorkbench,
 			try {
 				for (IConfigurationElement serviceElement : contribution
 						.getChildren("service")) {
-					IComputedValue factory = (IComputedValue) contribution
-							.createExecutableExtension("class");
+					Object factory = contribution.createExecutableExtension("class");
 					String apiClassname = serviceElement.getAttribute("api");
 					mainContext.set(apiClassname, factory);
 				}
