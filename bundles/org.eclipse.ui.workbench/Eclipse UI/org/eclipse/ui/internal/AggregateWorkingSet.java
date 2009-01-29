@@ -1,5 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+/* Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,8 +78,9 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	 */
 	private void constructElements(boolean fireEvent) {
 		Set elements = new HashSet();
-		for (int i = 0; i < components.length; i++) {
-			IWorkingSet workingSet = components[i];
+		IWorkingSet[] localComponents = getComponentsInternal();
+		for (int i = 0; i < localComponents.length; i++) {
+			IWorkingSet workingSet = localComponents[i];
 			elements.addAll(Arrays.asList(workingSet.getElements()));
 		}
 		internalSetElements((IAdaptable[]) elements
@@ -135,8 +135,9 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			memento.putString(AbstractWorkingSet.TAG_AGGREGATE, Boolean.TRUE
 					.toString());
 
-			for (int i = 0; i < components.length; i++) {
-				IWorkingSet componentSet = components[i];
+			IWorkingSet[] localComponents = getComponentsInternal();
+			for (int i = 0; i < localComponents.length; i++) {
+				IWorkingSet componentSet = localComponents[i];
 				memento.createChild(IWorkbenchConstants.TAG_WORKING_SET,
 						componentSet.getName());
 			}
@@ -159,33 +160,39 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	 * @return the component working sets
 	 */
 	public IWorkingSet[] getComponents() {
+		IWorkingSet[] localComponents = getComponentsInternal();
+		IWorkingSet[] copiedArray = new IWorkingSet[localComponents.length];
+		System.arraycopy(localComponents, 0, copiedArray, 0, localComponents.length);
+		return copiedArray;
+	}
+
+	private IWorkingSet[] getComponentsInternal() {
 		if (components == null) {
 			restoreWorkingSet();
 			workingSetMemento = null;
 		}
-		
-		IWorkingSet[] copiedArray = new IWorkingSet[components.length];
-		System.arraycopy(components, 0, copiedArray, 0, components.length);
-		return copiedArray;
+		return components;
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
+		IWorkingSet[] localComponents = getComponentsInternal();
+		
 		if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
-			for (int i = 0; i < components.length; i++) {
-				IWorkingSet set = components[i];
+			for (int i = 0; i < localComponents.length; i++) {
+				IWorkingSet set = localComponents[i];
 				if (set.equals(event.getOldValue())) {
-					IWorkingSet[] newComponents = new IWorkingSet[components.length - 1];
+					IWorkingSet[] newComponents = new IWorkingSet[localComponents.length - 1];
 					Util
-							.arrayCopyWithRemoval(components,
+							.arrayCopyWithRemoval(localComponents,
 									newComponents, i);
 					setComponents(newComponents);
 				}
 			}
 		} else if (property
 				.equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
-			for (int i = 0; i < components.length; i++) {
-				IWorkingSet set = components[i];
+			for (int i = 0; i < localComponents.length; i++) {
+				IWorkingSet set = localComponents[i];
 				if (set.equals(event.getNewValue())) {
 					constructElements(true);
 					break;
@@ -224,22 +231,23 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			AggregateWorkingSet workingSet = (AggregateWorkingSet) object;
 
 			return Util.equals(workingSet.getName(), getName())
-					&& Util.equals(workingSet.components, components);
+					&& Util.equals(workingSet.getComponentsInternal(), getComponentsInternal());
 		}
 		return false;
 	}
 
 	public int hashCode() {
-		int hashCode = getName().hashCode() & components.hashCode();
+		int hashCode = getName().hashCode() & getComponentsInternal().hashCode();
 		return hashCode;
 	}
 	
 	public boolean isSelfUpdating() {
-		if (components == null || components.length == 0) {
+		IWorkingSet[] localComponents = getComponentsInternal();
+		if (localComponents == null || localComponents.length == 0) {
 			return false;
 		}
-		for (int i= 0; i < components.length; i++) {
-			if (!components[i].isSelfUpdating()) {
+		for (int i= 0; i < localComponents.length; i++) {
+			if (!localComponents[i].isSelfUpdating()) {
 				return false;
 			}
 		}
