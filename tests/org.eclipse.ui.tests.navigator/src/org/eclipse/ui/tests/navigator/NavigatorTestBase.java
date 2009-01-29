@@ -28,6 +28,7 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActionService;
+import org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
 public class NavigatorTestBase extends TestCase {
@@ -38,10 +39,12 @@ public class NavigatorTestBase extends TestCase {
 
 	public static final String COMMON_NAVIGATOR_TEST_EXT = "org.eclipse.ui.tests.navigator.testContent"; //$NON-NLS-1$
 
+	public static final String TEST_CONTENT = "org.eclipse.ui.tests.navigator.testContent";
 	public static final String TEST_CONTENT1 = "org.eclipse.ui.tests.navigator.testOverriddenContent1";
 	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testOverriddenContent2";
 	public static final String TEST_OVERRIDE1= "org.eclipse.ui.tests.navigator.testOverride1";
 	public static final String TEST_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testOverride2";
+	public static final String TEST_SORTER_CONTENT = "org.eclipse.ui.tests.navigator.testSorterContent";
 
 	protected String _navigatorInstanceId;
 
@@ -65,6 +68,8 @@ public class NavigatorTestBase extends TestCase {
 					"Set the _navigatorInstanceId in the constructor");
 		}
 
+		TestResourceContentProvider.resetTest();
+		
 		if (_initTestData) {
 
 			TestWorkspace.init();

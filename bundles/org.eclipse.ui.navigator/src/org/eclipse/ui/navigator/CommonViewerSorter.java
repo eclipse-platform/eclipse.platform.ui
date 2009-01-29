@@ -17,7 +17,10 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 /**
  * 
@@ -78,6 +81,11 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return source != null ? source.getPriority() : Priority.NORMAL_PRIORITY_VALUE;
 	}
 
+	private void logMissingExtension(Object parent, Object object) {
+		NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.CommonViewerSorter_NoContentExtensionForObject,
+				object != null ? object.toString() : "<null>", parent != null ? parent.toString() : "<null>"), null); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
 		if (contentService == null)
 			return -1;
@@ -91,6 +99,15 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			parent = parentPath.getLastSegment();
 		}
 		
+		if (sourceOfLvalue == null) {
+			logMissingExtension(parent, e1);
+			return -1;
+		}
+		if (sourceOfRvalue == null) {
+			logMissingExtension(parent, e2);
+			return -1;
+		}
+
 		// shortcut if contributed by same source
 		if(sourceOfLvalue == sourceOfRvalue) {
 			ViewerSorter sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);

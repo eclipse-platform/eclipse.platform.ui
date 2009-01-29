@@ -124,6 +124,9 @@ public class CommonNavigatorMessages extends NLS {
 	/** */
 	public static String NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_;
 
+	/** */
+	public static String CommonViewerSorter_NoContentExtensionForObject;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);
 	}

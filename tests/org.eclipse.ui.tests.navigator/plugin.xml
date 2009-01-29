@@ -269,6 +269,22 @@
          </triggerPoints>
 		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testOverriddenContent2"/>
 	  </navigatorContent>      
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testSorterContent"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            name="Test Navigator Extension [Sorter NPE test]">
+	     <triggerPoints>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </triggerPoints>            
+       <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
+          <parentExpression>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+          </parentExpression>
+       </commonSorter>
+      </navigatorContent>
    </extension>
 
    <extension
