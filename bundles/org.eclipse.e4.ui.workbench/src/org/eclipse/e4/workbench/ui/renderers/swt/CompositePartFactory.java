@@ -25,8 +25,8 @@ public class CompositePartFactory extends SWTPartFactory {
 		if (part instanceof Part<?>) {
 			Part<?> compositeModel = (Part<?>) part;
 			String policy = compositeModel.getPolicy();
-			if (policy!=null && (policy.equals("HorizontalComposite")
-					|| policy.equals("VerticalComposite"))) {
+			if (policy!=null && (policy.equals("HorizontalComposite") //$NON-NLS-1$
+					|| policy.equals("VerticalComposite"))) { //$NON-NLS-1$
 				Composite composite = new Composite((Composite) parentWidget,
 						SWT.NONE);
 				newWidget = composite;
@@ -40,11 +40,11 @@ public class CompositePartFactory extends SWTPartFactory {
 	public void postProcess(Part<?> part) {
 		super.postProcess(part);
 		
-		if (part.getPolicy() != null && part.getPolicy().endsWith("Composite")) {
+		if (part.getPolicy() != null && part.getPolicy().endsWith("Composite")) { //$NON-NLS-1$
 			Composite composite = (Composite) part.getWidget();
 			Control[] children = composite.getChildren();
 			GridLayout gl = new GridLayout(
-					part.getPolicy().startsWith("Horizontal") ? children.length : 1, false);
+					part.getPolicy().startsWith("Horizontal") ? children.length : 1, false); //$NON-NLS-1$
 			gl.horizontalSpacing = 0;
 			gl.verticalSpacing = 0;
 			gl.marginHeight = 0;

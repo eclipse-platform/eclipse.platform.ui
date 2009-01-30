@@ -42,7 +42,7 @@ public abstract class SWTPartFactory extends PartFactory {
 			((Control) widget).setMenu(swtMenu);
 		} else {
 			throw new IllegalArgumentException(
-					"The widget must be MenuItem, Decorations, or Control but is: "
+					"The widget must be MenuItem, Decorations, or Control but is: " //$NON-NLS-1$
 							+ widgetObject);
 		}
 		for (org.eclipse.e4.ui.model.application.MenuItem menuItem : menu
@@ -69,7 +69,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 		Control control = display.getFocusControl();
 		while (control != null && h == null) {
-			IEclipseContext l = (IEclipseContext) control.getData("LOCATOR");
+			IEclipseContext l = (IEclipseContext) control.getData("LOCATOR"); //$NON-NLS-1$
 			if (l != null) {
 				IHandlerService hs = (IHandlerService) l
 						.get(IHandlerService.class.getName());
@@ -126,7 +126,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 		
 		Object result = contributionFactory.call(h.getObject(), h.getURI(),
-				"canExecute", context, Boolean.TRUE);
+				"canExecute", context, Boolean.TRUE); //$NON-NLS-1$
 		return result;
 	}
 
@@ -137,7 +137,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		if (h==null) {
 			return;
 		}
-		contributionFactory.call(h.getObject(), h.getURI(), "execute",
+		contributionFactory.call(h.getObject(), h.getURI(), "execute", //$NON-NLS-1$
 				context, null);
 	}
 

@@ -12,11 +12,11 @@ public class ModeledContentProvider implements ITreeContentProvider {
 	}
 	
 	public Object[] getChildren(Object parentElement) {
-		return modelSvc.getChildren(parentElement, "Children");
+		return modelSvc.getChildren(parentElement, "Children"); //$NON-NLS-1$
 	}
 
 	public Object getParent(Object element) {
-		return modelSvc.getProperty(element, "Parent");
+		return modelSvc.getProperty(element, "Parent"); //$NON-NLS-1$
 	}
 
 	public boolean hasChildren(Object element) {

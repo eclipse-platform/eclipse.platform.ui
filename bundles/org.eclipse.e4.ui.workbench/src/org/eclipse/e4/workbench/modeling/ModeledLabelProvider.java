@@ -17,7 +17,7 @@ public class ModeledLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		String label = (String) modelSvc.getProperty(element, "Label");
+		String label = (String) modelSvc.getProperty(element, "Label"); //$NON-NLS-1$
 		if (label == null)
 			label = super.getText(element);
 		

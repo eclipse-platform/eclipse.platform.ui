@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class ICEAdapter extends ModelHandlerBase implements IAdapterFactory {
 
-	public static final String CLASS_IMPL = "classImpl";
+	public static final String CLASS_IMPL = "classImpl"; //$NON-NLS-1$
 	
 	public ICEAdapter() {
 		super();
@@ -32,15 +32,15 @@ public class ICEAdapter extends ModelHandlerBase implements IAdapterFactory {
 		IConfigurationElement ice = (IConfigurationElement) element;
 		
 		// Construct a meaningful 'label'
-		if ("label".equals(id)) {
-			String idVal = ice.getAttribute("id");
-			String nameVal = ice.getAttribute("name");
+		if ("label".equals(id)) { //$NON-NLS-1$
+			String idVal = ice.getAttribute("id"); //$NON-NLS-1$
+			String nameVal = ice.getAttribute("name"); //$NON-NLS-1$
 			
-			String constructedName = "";
+			String constructedName = ""; //$NON-NLS-1$
 			if (nameVal != null) {
 				constructedName = nameVal;
 				if (idVal != null)
-					constructedName += " [" + idVal + "]";
+					constructedName += " [" + idVal + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else if (idVal != null) {
 				constructedName = idVal;
@@ -52,7 +52,7 @@ public class ICEAdapter extends ModelHandlerBase implements IAdapterFactory {
 		}
 		else if (CLASS_IMPL.equals(id)) {
 			try {
-				return ice.createExecutableExtension("class");
+				return ice.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -70,7 +70,6 @@ public class ICEAdapter extends ModelHandlerBase implements IAdapterFactory {
 
 	@Override
 	public void setProperty(Object element, String id, Object value) {
-		IConfigurationElement ice = (IConfigurationElement) element;
 		super.setProperty(element, id, value);
 	}
 }

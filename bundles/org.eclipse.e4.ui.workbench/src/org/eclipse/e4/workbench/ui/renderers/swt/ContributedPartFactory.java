@@ -39,8 +39,8 @@ public class ContributedPartFactory extends SWTPartFactory {
 			bindWidget(part, newWidget);
 			ContributedPart contributedPart = (ContributedPart) part;
 			final IHandlerService hs = new PartHandlerService(part);
-			IEclipseContext localContext = EclipseContextFactory.create("ContributedPart", context, UIContextScheduler.instance);
-			newComposite.setData("LOCATOR", localContext);
+			IEclipseContext localContext = EclipseContextFactory.create("ContributedPart", context, UIContextScheduler.instance); //$NON-NLS-1$
+			newComposite.setData("LOCATOR", localContext); //$NON-NLS-1$
 			localContext.set(Composite.class.getName(), newComposite);
 			localContext.set(IHandlerService.class.getName(), hs);
 			Object newPart = contributionFactory.create(contributedPart.getURI(), localContext);

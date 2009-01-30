@@ -25,7 +25,7 @@ public class PartSashFactory extends SWTPartFactory {
 		if (part instanceof org.eclipse.e4.ui.model.application.SashForm<?>) {
 			org.eclipse.e4.ui.model.application.SashForm<?> sashModel = (org.eclipse.e4.ui.model.application.SashForm<?>) part;
 			int orientation = (sashModel.getPolicy() != null && sashModel
-					.getPolicy().startsWith("Horizontal")) ? SWT.HORIZONTAL
+					.getPolicy().startsWith("Horizontal")) ? SWT.HORIZONTAL //$NON-NLS-1$
 					: SWT.VERTICAL;
 			SashForm newSash = new SashForm((Composite) parentWidget,
 					SWT.SMOOTH | orientation);

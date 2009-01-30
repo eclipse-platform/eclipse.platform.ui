@@ -27,7 +27,7 @@ public class PartRenderer {
 	private final List partFactories = new ArrayList();
 	
 	// SWT property ids containing the currently rendered part (and factory) for a given widget
-	public static final String FACTORY = "partFactory";
+	public static final String FACTORY = "partFactory"; //$NON-NLS-1$
 
 	private final IContributionFactory contributionFactory;
 	private final IEclipseContext context;

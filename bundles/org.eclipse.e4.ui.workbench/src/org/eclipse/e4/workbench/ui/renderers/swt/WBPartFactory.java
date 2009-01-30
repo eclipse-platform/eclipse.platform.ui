@@ -39,9 +39,9 @@ public class WBPartFactory extends SWTPartFactory {
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
 			final IHandlerService hs = new PartHandlerService(part);
-			IEclipseContext localContext = EclipseContextFactory.create("WorkbenchWindow", context, UIContextScheduler.instance);
+			IEclipseContext localContext = EclipseContextFactory.create("WorkbenchWindow", context, UIContextScheduler.instance); //$NON-NLS-1$
 			localContext.set(IHandlerService.class.getName(), hs);
-			wbwShell.setData("LOCATOR", localContext);
+			wbwShell.setData("LOCATOR", localContext); //$NON-NLS-1$
 		} else {
 			newWidget = null;
 		}

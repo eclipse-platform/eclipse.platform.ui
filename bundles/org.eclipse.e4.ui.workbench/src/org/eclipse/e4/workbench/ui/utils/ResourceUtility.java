@@ -30,7 +30,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 public class ResourceUtility {
-	public static final String PROTOCOL = "bundle-resource://";
+	public static final String PROTOCOL = "bundle-resource://"; //$NON-NLS-1$
 	
 	private ImageRegistry IMAGE_REGISTRY = new ImageRegistry();
 	
@@ -68,7 +68,7 @@ public class ResourceUtility {
 	public ImageDescriptor resolveIconResource(String resource) {
 		Image rv;
 		
-		String bundle = resource.substring(PROTOCOL.length(),resource.indexOf("/", PROTOCOL.length())); 
+		String bundle = resource.substring(PROTOCOL.length(),resource.indexOf("/", PROTOCOL.length()));  //$NON-NLS-1$
 		String path = resource.substring(bundle.length() + PROTOCOL.length()); 
 		
 		if( (rv = IMAGE_REGISTRY.get(resource) ) == null ) {	
@@ -125,8 +125,8 @@ public class ResourceUtility {
 	public ColorDescriptor getColor(String colorDefinition) {
 		RGB rgb = new RGB(255,255,255);
 		
-		if( colorDefinition.indexOf("rgb") != -1 ) {
-			Pattern p = Pattern.compile("\\d+");
+		if( colorDefinition.indexOf("rgb") != -1 ) { //$NON-NLS-1$
+			Pattern p = Pattern.compile("\\d+"); //$NON-NLS-1$
 			Matcher m = p.matcher(colorDefinition);
 			int valCount = 0;
 			while( m.find() ) {
@@ -167,16 +167,16 @@ public class ResourceUtility {
 	}
 	
 	public Gradient getGradientColors(String gradientDefinition) {
-		String[] gradientparts = gradientDefinition.split(";");
+		String[] gradientparts = gradientDefinition.split(";"); //$NON-NLS-1$
 		
-		String[] colors = gradientparts[0].split("-");
+		String[] colors = gradientparts[0].split("-"); //$NON-NLS-1$
 		ColorDescriptor[] descs = new ColorDescriptor[colors.length];
 		int i = 0;
 		for( String color: colors ) {
 			descs[i++] = getColor(color);
 		}
 		
-		Pattern p = Pattern.compile("\\d+");
+		Pattern p = Pattern.compile("\\d+"); //$NON-NLS-1$
 		Matcher m = p.matcher(gradientparts[1]);
 		
 		ArrayList<Integer> vals = new ArrayList<Integer>();
@@ -201,7 +201,7 @@ public class ResourceUtility {
 			iVals[i++] = v;
 		}
 		
-		return new Gradient(descs,iVals,gradientparts.length == 3 && gradientparts[2].indexOf("true") != -1);
+		return new Gradient(descs,iVals,gradientparts.length == 3 && gradientparts[2].indexOf("true") != -1); //$NON-NLS-1$
 	}
 
 	public ImageDescriptor imageDescriptorFromURI(URI iconPath) {

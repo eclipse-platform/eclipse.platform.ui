@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class PartFactory {
-	public static final String OWNING_ME = "modelElement";
+	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
 
 	protected PartRenderer renderer;
 	protected IContributionFactory contributionFactory;
@@ -117,7 +117,7 @@ public abstract class PartFactory {
 	protected Image getImage(ApplicationElement element) {
 		if (element instanceof Item) {
 			String iconURI = ((Item) element).getIconURI();
-			if (iconURI != null && !iconURI.equals("null")) {
+			if (iconURI != null && !iconURI.equals("null")) { //$NON-NLS-1$
 				ResourceUtility resUtils = (ResourceUtility) context
 						.get(ResourceUtility.class.getName());
 				ImageDescriptor desc = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));

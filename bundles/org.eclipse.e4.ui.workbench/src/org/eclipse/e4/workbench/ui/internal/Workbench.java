@@ -27,7 +27,6 @@ import java.util.Map;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
@@ -35,7 +34,6 @@ import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IComputedValue;
 import org.eclipse.e4.ui.model.application.Application;
 import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
@@ -69,9 +67,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-public class Workbench implements IWorkbench,
-		IContributionFactory {
-	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow";
+public class Workbench implements IWorkbench, IContributionFactory {
+	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
 	private Application<WorkbenchWindow> workbench;
 	private ResourceUtility resourceUtility;
 	private static final boolean saveAndRestore = true;
@@ -87,11 +84,11 @@ public class Workbench implements IWorkbench,
 	}
 
 	private ILegacyHook legacyHook;
-	
+
 	// UI Construction...
 	private PartRenderer renderer;
 	private int rv;
-	private Map<String,Object> languages;
+	private Map<String, Object> languages;
 	private ExceptionHandler exceptionHandler;
 	private IEclipseContext globalContext;
 
@@ -105,7 +102,7 @@ public class Workbench implements IWorkbench,
 		try {
 			workbenchData = new File(
 					new File(instanceLocation.getURL().toURI()),
-					".metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi");
+					".metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi"); //$NON-NLS-1$
 		} catch (URISyntaxException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -141,18 +138,18 @@ public class Workbench implements IWorkbench,
 
 		resourceUtility = new ResourceUtility(packageAdmin);
 
-		final IEclipseContext mainContext = EclipseContextFactory.create("globalContext", UIContextScheduler.instance);
+		final IEclipseContext mainContext = EclipseContextFactory.create(
+				"globalContext", UIContextScheduler.instance); //$NON-NLS-1$
 
 		IConfigurationElement[] contributions = registry
-				.getConfigurationElementsFor("org.eclipse.e4.services");
+				.getConfigurationElementsFor("org.eclipse.e4.services"); //$NON-NLS-1$
 		for (IConfigurationElement contribution : contributions) {
-			IContributor contributor = contribution.getContributor();
-			Bundle bundle = getBundleForName(contributor.getName());
 			try {
 				for (IConfigurationElement serviceElement : contribution
-						.getChildren("service")) {
-					Object factory = contribution.createExecutableExtension("class");
-					String apiClassname = serviceElement.getAttribute("api");
+						.getChildren("service")) { //$NON-NLS-1$
+					Object factory = contribution
+							.createExecutableExtension("class"); //$NON-NLS-1$
+					String apiClassname = serviceElement.getAttribute("api"); //$NON-NLS-1$
 					mainContext.set(apiClassname, factory);
 				}
 			} catch (CoreException e) {
@@ -167,8 +164,8 @@ public class Workbench implements IWorkbench,
 		return mainContext;
 	}
 
-	private Application<WorkbenchWindow> createWorkbenchModel(String restoreFile,
-			URI workbenchDefinitionInstance) {
+	private Application<WorkbenchWindow> createWorkbenchModel(
+			String restoreFile, URI workbenchDefinitionInstance) {
 		boolean restore = false;// restoreFile != null;
 
 		URI uri = null;
@@ -179,14 +176,15 @@ public class Workbench implements IWorkbench,
 			resource.getContents().add((EObject) workbench);
 
 			// Should set up such things as initial perspective id here...
-			String initialPerspectiveId = "org.eclipse.e4.ui.workbench.fragment.testPerspective";
+			String initialPerspectiveId = "org.eclipse.e4.ui.workbench.fragment.testPerspective"; //$NON-NLS-1$
 			populateWBModel(workbench, workbenchDefinitionInstance,
 					initialPerspectiveId);
 		} else {
 			uri = URI.createFileURI(restoreFile);
 			try {
 				resource = new ResourceSetImpl().getResource(uri, true);
-				workbench = (Application<WorkbenchWindow>) resource.getContents().get(0);
+				workbench = (Application<WorkbenchWindow>) resource
+						.getContents().get(0);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -215,7 +213,7 @@ public class Workbench implements IWorkbench,
 			wbw.setHeight(1024);
 			wbw.setX(100);
 			wbw.setY(100);
-			wbw.setName("E4 Workbench Window [Java, Debug]");
+			wbw.setName("E4 Workbench Window [Java, Debug]"); //$NON-NLS-1$
 			wbw.setTrim(ApplicationFactory.eINSTANCE.createTrim());
 			Part<Part<?>> cp = ApplicationFactory.eINSTANCE.createPart();
 			wbw.getTrim().setTopTrim(cp);
@@ -226,23 +224,27 @@ public class Workbench implements IWorkbench,
 			cp = ApplicationFactory.eINSTANCE.createPart();
 			wbw.getTrim().setRightTrim(cp);
 
-//			Menu mainMenu = ApplicationFactory.eINSTANCE.createMenu();
-//			legacyHook.loadMenu(mainMenu);
-//			wbw.setMenu(mainMenu);
+			// Menu mainMenu = ApplicationFactory.eINSTANCE.createMenu();
+			// legacyHook.loadMenu(mainMenu);
+			// wbw.setMenu(mainMenu);
 
-			Perspective<?> persp = WorkbenchFactory.eINSTANCE.createPerspective();
+			Perspective<?> persp = WorkbenchFactory.eINSTANCE
+					.createPerspective();
 			persp.setId(initialPerspectiveId);
-			persp.setName("Java Perspective");
+			persp.setName("Java Perspective"); //$NON-NLS-1$
 			legacyHook.loadPerspective(persp);
 			wbw.getChildren().add(persp);
 			wbw.setActiveChild(persp);
 		} else {
 			Resource resource = new ResourceSetImpl().getResource(
 					initialWorkbenchDefinitionInstance, true);
-			Application<Window<Part<?>>> app = (Application<Window<Part<?>>>) resource.getContents().get(0);
-			
-			// temporary code - we are reading a new model but the code still assumes
-			// a WorkbenchWindow with a Perspective, so we need to copy the parts of the
+			Application<Window<Part<?>>> app = (Application<Window<Part<?>>>) resource
+					.getContents().get(0);
+
+			// temporary code - we are reading a new model but the code still
+			// assumes
+			// a WorkbenchWindow with a Perspective, so we need to copy the
+			// parts of the
 			// window into a perspective.
 			wbw = WorkbenchFactory.eINSTANCE.createWorkbenchWindow();
 			wbw.setWidth(app.getWindows().get(0).getWidth());
@@ -253,9 +255,11 @@ public class Workbench implements IWorkbench,
 			wbw.setToolBar(app.getWindows().get(0).getToolBar());
 			wbw.setTrim(ApplicationFactory.eINSTANCE.createTrim());
 			wbw.getHandlers().addAll(app.getWindows().get(0).getHandlers());
-			Perspective<Part<?>> perspective = WorkbenchFactory.eINSTANCE.createPerspective();
+			Perspective<Part<?>> perspective = WorkbenchFactory.eINSTANCE
+					.createPerspective();
 			wbw.getChildren().add(perspective);
-			perspective.getChildren().addAll(app.getWindows().get(0).getChildren());
+			perspective.getChildren().addAll(
+					app.getWindows().get(0).getChildren());
 
 			processPartContributions(resource, wbw);
 		}
@@ -264,10 +268,10 @@ public class Workbench implements IWorkbench,
 	}
 
 	private void processLanguages() {
-		languages = new HashMap<String,Object>();
+		languages = new HashMap<String, Object>();
 		IExtensionRegistry registry = InternalPlatform.getDefault()
 				.getRegistry();
-		String extId = "org.eclipse.e4.languages";
+		String extId = "org.eclipse.e4.languages"; //$NON-NLS-1$
 		IConfigurationElement[] languageElements = registry
 				.getConfigurationElementsFor(extId);
 		for (int i = 0; i < languageElements.length; i++) {
@@ -275,9 +279,9 @@ public class Workbench implements IWorkbench,
 			try {
 				languages
 						.put(
-								languageElement.getAttribute("name"),
+								languageElement.getAttribute("name"), //$NON-NLS-1$
 								languageElement
-										.createExecutableExtension("contributionFactory"));
+										.createExecutableExtension("contributionFactory")); //$NON-NLS-1$
 			} catch (InvalidRegistryObjectException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -291,21 +295,21 @@ public class Workbench implements IWorkbench,
 	private void processPartContributions(Resource resource, WorkbenchWindow wbw) {
 		IExtensionRegistry registry = InternalPlatform.getDefault()
 				.getRegistry();
-		String extId = "org.eclipse.e4.workbench.parts";
+		String extId = "org.eclipse.e4.workbench.parts"; //$NON-NLS-1$
 		IConfigurationElement[] parts = registry
 				.getConfigurationElementsFor(extId);
 
 		for (int i = 0; i < parts.length; i++) {
 			ContributedPart<?> part = ApplicationFactory.eINSTANCE
 					.createContributedPart();
-			part.setName(parts[i].getAttribute("label"));
-			part.setIconURI("platform:/plugin/"
-					+ parts[i].getContributor().getName() + "/"
-					+ parts[i].getAttribute("icon"));
-			part.setURI("platform:/plugin/"
-					+ parts[i].getContributor().getName() + "/"
-					+ parts[i].getAttribute("class"));
-			String parentId = parts[i].getAttribute("parentId");
+			part.setName(parts[i].getAttribute("label")); //$NON-NLS-1$
+			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
+					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
+					+ parts[i].getAttribute("icon")); //$NON-NLS-1$
+			part.setURI("platform:/plugin/" //$NON-NLS-1$
+					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
+					+ parts[i].getAttribute("class")); //$NON-NLS-1$
+			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$
 
 			Part parent = (Part) findObject(resource.getAllContents(), parentId);
 			if (parent != null) {
@@ -318,14 +322,15 @@ public class Workbench implements IWorkbench,
 	private void installLegacyHook() {
 		IExtensionRegistry registry = InternalPlatform.getDefault()
 				.getRegistry();
-		String extId = "org.eclipse.e4.workbench.legacy";
+		String extId = "org.eclipse.e4.workbench.legacy"; //$NON-NLS-1$
 		IConfigurationElement[] hooks = registry
 				.getConfigurationElementsFor(extId);
 
 		ILegacyHook impl = null;
 		if (hooks.length > 0) {
 			try {
-				impl = (ILegacyHook) hooks[0].createExecutableExtension("class");
+				impl = (ILegacyHook) hooks[0]
+						.createExecutableExtension("class"); //$NON-NLS-1$
 				legacyHook = impl;
 				legacyHook.init(this);
 			} catch (CoreException e) {
@@ -368,9 +373,8 @@ public class Workbench implements IWorkbench,
 		//
 		// });
 
-
 		// HACK!! test the modelService and imported functionality
-		String[] propIds = modelService.getPropIds(workbench);
+		modelService.getPropIds(workbench);
 	}
 
 	public int run() {
@@ -404,7 +408,7 @@ public class Workbench implements IWorkbench,
 		// below the Menu-Bar
 		// TODO is there a better method to find out the height of the title bar
 		int y = wbw.getY();
-		if (y == 0 && SWT.getPlatform().equals("carbon")) {
+		if (y == 0 && SWT.getPlatform().equals("carbon")) { //$NON-NLS-1$
 			y = 20;
 		}
 		appWindow.getShell().setBounds(wbw.getX(), y, wbw.getWidth(),
@@ -426,7 +430,7 @@ public class Workbench implements IWorkbench,
 
 		if (workbenchData != null && saveAndRestore && workbench != null) {
 			try {
-				System.err.println("Saving workbench: "
+				System.err.println("Saving workbench: " //$NON-NLS-1$
 						+ ((EObject) workbench).eResource().getURI());
 				// workbenchData.getParentFile().mkdirs();
 				// workbenchData.createNewFile();
@@ -452,15 +456,15 @@ public class Workbench implements IWorkbench,
 			// * Need to make the EP more declarative to avoid aggressive
 			// loading
 			IConfigurationElement[] factories = registry
-					.getConfigurationElementsFor("org.eclipse.e4.workbench.partfactory");
+					.getConfigurationElementsFor("org.eclipse.e4.workbench.partfactory"); //$NON-NLS-1$
 
 			// Sort the factories based on their dependence
 			// This is a hack, should be based on plug-in dependencies
 			int offset = 0;
 			for (int i = 0; i < factories.length; i++) {
-				String clsSpec = factories[i].getAttribute("class");
-				if (clsSpec.indexOf("Legacy") >= 0
-						|| clsSpec.indexOf("PartSash") >= 0) {
+				String clsSpec = factories[i].getAttribute("class"); //$NON-NLS-1$
+				if (clsSpec.indexOf("Legacy") >= 0 //$NON-NLS-1$
+						|| clsSpec.indexOf("PartSash") >= 0) { //$NON-NLS-1$
 					IConfigurationElement tmp = factories[offset];
 					factories[offset++] = factories[i];
 					factories[i] = tmp;
@@ -471,7 +475,7 @@ public class Workbench implements IWorkbench,
 				PartFactory factory = null;
 				try {
 					factory = (PartFactory) factories[i]
-							.createExecutableExtension("class");
+							.createExecutableExtension("class"); //$NON-NLS-1$
 				} catch (CoreException e) {
 					e.printStackTrace();
 				}
@@ -549,7 +553,7 @@ public class Workbench implements IWorkbench,
 			});
 
 			// Find the first satisfiable constructor
-			for (Constructor<?> next: toSort) {
+			for (Constructor<?> next : toSort) {
 				boolean satisfiable = true;
 
 				Class<?>[] params = next.getParameterTypes();
@@ -569,7 +573,7 @@ public class Workbench implements IWorkbench,
 
 		if (targetConstructor == null) {
 			throw new RuntimeException(
-					"could not find satisfiable constructor in class " + targetClass); //$NON-NLS-1$//$NON-NLS-2$
+					"could not find satisfiable constructor in class " + targetClass); //$NON-NLS-1$
 		}
 
 		Class<?>[] paramKeys = targetConstructor.getParameterTypes();
@@ -605,24 +609,22 @@ public class Workbench implements IWorkbench,
 	}
 
 	public boolean hasService(Class<?> api) {
-		if (api == ModelService.class
-				|| api == ResourceUtility.class) {
+		if (api == ModelService.class || api == ResourceUtility.class) {
 			return true;
 		}
 		return false;
 	}
 
-	public Object create(String uriString,
-			IEclipseContext context) {
+	public Object create(String uriString, IEclipseContext context) {
 		URI uri = URI.createURI(uriString);
 		Bundle bundle = getBundle(uri);
 		if (bundle != null) {
 			if (uri.segmentCount() > 3) {
 				String prefix = uri.segment(2);
 				IContributionFactorySpi factory = (IContributionFactorySpi) languages
-					.get(prefix);
+						.get(prefix);
 				StringBuffer resource = new StringBuffer(uri.segment(3));
-				for (int i=4; i<uri.segmentCount(); i++) {
+				for (int i = 4; i < uri.segmentCount(); i++) {
 					resource.append('/');
 					resource.append(uri.segment(i));
 				}
@@ -645,10 +647,9 @@ public class Workbench implements IWorkbench,
 		if (uri.segmentCount() > 3) {
 			String prefix = uri.segment(2);
 			IContributionFactorySpi factory = (IContributionFactorySpi) languages
-				.get(prefix);
+					.get(prefix);
 			return factory.call(object, methodName, context, defaultValue);
 		}
-		String className = uri.segment(1);
 
 		Method targetMethod = null;
 
@@ -734,14 +735,14 @@ public class Workbench implements IWorkbench,
 		}
 
 	}
-	
+
 	public Display getDisplay() {
 		return appWindow.getDisplay();
 	}
 
 	public void closeWindow(WorkbenchWindow workbenchWindow) {
-		//needs proper closing protocol
-		((Shell)workbenchWindow.getWidget()).close();
+		// needs proper closing protocol
+		((Shell) workbenchWindow.getWidget()).close();
 	}
 
 	public Shell getShell() {
