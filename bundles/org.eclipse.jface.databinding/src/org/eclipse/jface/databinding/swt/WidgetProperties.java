@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 256543, 213893, 262320
+ *     Matthew Hall - bugs 256543, 213893, 262320, 262946
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -63,7 +63,7 @@ import org.eclipse.jface.internal.databinding.swt.TextEditableProperty;
 import org.eclipse.jface.internal.databinding.swt.TextTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ToolItemTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.TrayItemTooltipTextProperty;
-import org.eclipse.jface.internal.databinding.swt.TreeItemTooltipTextProperty;
+import org.eclipse.jface.internal.databinding.swt.TreeColumnTooltipTextProperty;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
@@ -87,7 +87,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -458,13 +457,12 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the tooltip text of a
 	 * {@link CTabItem}, {@link Control}, {@link TabItem}, {@link TableColumn},
-	 * {@link ToolItem}, {@link TrayItem}, {@link TreeColumn} or
-	 * {@link TreeItem}.
+	 * {@link ToolItem}, {@link TrayItem} or {@link TreeColumn}.
 	 * 
 	 * @return a value property for observing the tooltip text of a
 	 *         {@link CTabItem}, {@link Control}, {@link TabItem},
-	 *         {@link TableColumn}, {@link ToolItem}, {@link TrayItem},
-	 *         {@link TreeColumn} or {@link TreeItem}.
+	 *         {@link TableColumn}, {@link ToolItem}, {@link TrayItem} or
+	 *         {@link TreeColumn}.
 	 */
 	public static IValueProperty tooltipText() {
 		return new DelegatingValueProperty(String.class) {
@@ -474,7 +472,7 @@ public class WidgetProperties {
 			private IValueProperty tableColumn = new TableColumnTooltipTextProperty();
 			private IValueProperty toolItem = new ToolItemTooltipTextProperty();
 			private IValueProperty trayItem = new TrayItemTooltipTextProperty();
-			private IValueProperty treeItem = new TreeItemTooltipTextProperty();
+			private IValueProperty treeColumn = new TreeColumnTooltipTextProperty();
 
 			protected IValueProperty doGetDelegate(Object source) {
 				if (source instanceof CTabItem)
@@ -489,8 +487,8 @@ public class WidgetProperties {
 					return toolItem;
 				if (source instanceof TrayItem)
 					return trayItem;
-				if (source instanceof TreeItem)
-					return treeItem;
+				if (source instanceof TreeColumn)
+					return treeColumn;
 				throw notSupported(source);
 			}
 		};

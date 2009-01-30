@@ -14,7 +14,7 @@
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
- *                    246103, 249992, 256150, 256543, 262269, 175735
+ *                    246103, 249992, 256150, 256543, 262269, 175735, 262946
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -147,6 +147,7 @@ import org.eclipse.core.tests.internal.databinding.validation.StringToLongValida
 import org.eclipse.core.tests.internal.databinding.validation.StringToShortValidatorTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
+import org.eclipse.jface.tests.databinding.swt.WidgetPropertiesTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableListTreeContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
@@ -371,6 +372,7 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.jface.tests.databinding.swt
 		addTestSuite(SWTObservablesTest.class);
+		addTestSuite(WidgetPropertiesTest.class);
 
 		// org.eclipse.jface.tests.databinding.viewers
 		addTestSuite(ObservableListTreeContentProviderTest.class);

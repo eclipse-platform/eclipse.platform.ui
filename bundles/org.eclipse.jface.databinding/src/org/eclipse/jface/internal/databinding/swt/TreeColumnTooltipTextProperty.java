@@ -7,26 +7,27 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262946
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
 
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * @since 3.3
  * 
  */
-public class TreeItemTooltipTextProperty extends WidgetStringValueProperty {
+public class TreeColumnTooltipTextProperty extends WidgetStringValueProperty {
 	String doGetStringValue(Object source) {
-		return ((TreeItem) source).getText();
+		return ((TreeColumn) source).getToolTipText();
 	}
 
 	void doSetStringValue(Object source, String value) {
-		((TreeItem) source).setText(value == null ? "" : value); //$NON-NLS-1$
+		((TreeColumn) source).setToolTipText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	public String toString() {
-		return "TreeItem.tooltipText <String>"; //$NON-NLS-1$
+		return "TreeColumn.toolTipText <String>"; //$NON-NLS-1$
 	}
 }

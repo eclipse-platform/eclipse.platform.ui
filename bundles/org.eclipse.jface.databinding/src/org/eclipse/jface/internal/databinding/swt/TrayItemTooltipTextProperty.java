@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262946
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -19,14 +20,14 @@ import org.eclipse.swt.widgets.TrayItem;
  */
 public class TrayItemTooltipTextProperty extends WidgetStringValueProperty {
 	String doGetStringValue(Object source) {
-		return ((TrayItem) source).getText();
+		return ((TrayItem) source).getToolTipText();
 	}
 
 	void doSetStringValue(Object source, String value) {
-		((TrayItem) source).setText(value == null ? "" : value); //$NON-NLS-1$
+		((TrayItem) source).setToolTipText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	public String toString() {
-		return "TrayItem.tooltipText <String>"; //$NON-NLS-1$
+		return "TrayItem.toolTipText <String>"; //$NON-NLS-1$
 	}
 }

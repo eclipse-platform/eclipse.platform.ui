@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262946
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -19,14 +20,14 @@ import org.eclipse.swt.widgets.TabItem;
  */
 public class TabItemTooltipTextProperty extends WidgetStringValueProperty {
 	String doGetStringValue(Object source) {
-		return ((TabItem) source).getText();
+		return ((TabItem) source).getToolTipText();
 	}
 
 	void doSetStringValue(Object source, String value) {
-		((TabItem) source).setText(value == null ? "" : value); //$NON-NLS-1$
+		((TabItem) source).setToolTipText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	public String toString() {
-		return "TabItem.tooltipText <String>"; //$NON-NLS-1$
+		return "TabItem.toolTipText <String>"; //$NON-NLS-1$
 	}
 }

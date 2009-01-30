@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262946
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -19,14 +20,14 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class TableColumnTooltipTextProperty extends WidgetStringValueProperty {
 	String doGetStringValue(Object source) {
-		return ((TableColumn) source).getText();
+		return ((TableColumn) source).getToolTipText();
 	}
 
 	void doSetStringValue(Object source, String value) {
-		((TableColumn) source).setText(value == null ? "" : value); //$NON-NLS-1$
+		((TableColumn) source).setToolTipText(value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	public String toString() {
-		return "TableColumn.tooltipText <String>"; //$NON-NLS-1$
+		return "TableColumn.toolTipText <String>"; //$NON-NLS-1$
 	}
 }
