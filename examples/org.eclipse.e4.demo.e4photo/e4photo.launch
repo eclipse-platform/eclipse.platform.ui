@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
 <booleanAttribute key="append.args" value="true"/>
 <booleanAttribute key="askclear" value="true"/>
@@ -10,15 +10,16 @@
 <booleanAttribute key="clearwslog" value="false"/>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/e4photo"/>
 <booleanAttribute key="default" value="false"/>
-<stringAttribute key="deselected_workspace_plugins" value="org.eclipse.e4.ui.model.workbench,org.eclipse.e4.ui.services,org.eclipse.nebula.widgets.gallery,org.eclipse.e4.core.services,org.eclipse.e4.ui.workbench"/>
+<booleanAttribute key="default_auto_start" value="false"/>
+<intAttribute key="default_start_level" value="4"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <stringAttribute key="location" value="${workspace_loc}/../runtime-e4photo"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="org.eclipse.e4.demo.e4photo.product"/>
-<stringAttribute key="selected_target_plugins" value="com.ibm.icu,javax.servlet,org.eclipse.ant.core,org.eclipse.core.commands,org.eclipse.core.databinding,org.eclipse.core.databinding.beans,org.eclipse.core.expressions,org.eclipse.core.jobs,org.eclipse.core.runtime,org.eclipse.core.runtime.compatibility.auth,org.eclipse.core.runtime.compatibility.registry,org.eclipse.core.variables,org.eclipse.emf.common,org.eclipse.emf.databinding,org.eclipse.emf.ecore,org.eclipse.emf.ecore.xmi,org.eclipse.equinox.app,org.eclipse.equinox.common,org.eclipse.equinox.preferences,org.eclipse.equinox.registry,org.eclipse.jface,org.eclipse.jface.databinding,org.eclipse.osgi,org.eclipse.osgi.services,org.eclipse.swt,org.eclipse.swt.gtk.linux.x86"/>
-<stringAttribute key="selected_workspace_plugins" value="org.eclipse.core.filesystem,org.eclipse.e4.demo.e4photo,org.eclipse.e4.ui.services,org.eclipse.e4.ui.workbench,org.eclipse.core.resources.compatibility,org.eclipse.core.filesystem.linux.x86,org.eclipse.e4.ui.model.workbench,org.eclipse.nebula.widgets.gallery,org.eclipse.e4.core.services,org.eclipse.core.resources,org.eclipse.core.contenttype"/>
+<stringAttribute key="selected_target_plugins" value="org.eclipse.jface.databinding@default:default,org.eclipse.core.variables@default:default,org.eclipse.emf.ecore@default:default,org.eclipse.osgi@default:default,org.eclipse.core.resources@default:default,org.eclipse.equinox.registry@default:default,org.eclipse.osgi.services@default:default,org.eclipse.emf.common@default:default,org.eclipse.core.runtime.compatibility.registry@default:false,org.eclipse.core.expressions@default:default,org.eclipse.emf.databinding@default:default,org.eclipse.core.commands@default:default,org.eclipse.core.databinding.beans@default:default,org.eclipse.equinox.common@default:default,org.eclipse.swt.win32.win32.x86@default:false,org.eclipse.equinox.preferences@default:default,org.eclipse.core.runtime@default:true,org.eclipse.equinox.app@default:default,org.eclipse.team.core@default:default,org.eclipse.core.databinding@default:default,org.eclipse.ant.core@default:default,javax.servlet@default:default,org.eclipse.swt@default:default,org.eclipse.core.resources.compatibility@default:false,com.ibm.icu@default:default,org.eclipse.core.runtime.compatibility.auth@default:default,org.eclipse.jface@default:default,org.eclipse.core.filesystem.win32.x86@default:false,org.eclipse.core.resources.win32.x86@default:false,org.eclipse.core.jobs@default:default,org.eclipse.core.contenttype@default:default,org.eclipse.core.filesystem@default:default,org.eclipse.emf.ecore.xmi@default:default"/>
+<stringAttribute key="selected_workspace_plugins" value="org.eclipse.nebula.widgets.gallery@default:default,org.eclipse.e4.demo.e4photo@default:default,org.eclipse.e4.core.services@default:default,org.eclipse.e4.ui.model.workbench@default:default,org.eclipse.e4.ui.services@default:default,org.eclipse.e4.ui.workbench@default:default"/>
 <booleanAttribute key="show_selected_only" value="false"/>
 <stringAttribute key="templateConfig" value="${target_home}/configuration/config.ini"/>
 <booleanAttribute key="tracing" value="false"/>
