@@ -100,8 +100,8 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 * @deprecated default placement of the working set group has been removed.
 	 *             If you wish to use the working set block please call
 	 *             {@link #createWorkingSetGroup(Composite, IStructuredSelection, String[])}
-	 *             in your overriden {@link #createControl(Composite)}
-	 *             implementation. This method will be removed before 3.4 ships.
+	 *             in your overridden {@link #createControl(Composite)}
+	 *             implementation.
 	 * @since 3.4
 	 */
 	public WizardNewProjectCreationPage(String pageName,
