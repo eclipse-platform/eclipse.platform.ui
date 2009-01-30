@@ -73,5 +73,18 @@
             class="org.eclipse.e4.workbench.ui.renderers.swt.StackModelFactory">
       </factory>
    </extension>
+   <extension
+         id="application"
+         name="Workbench Application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.e4.workbench.ui.internal.WorkbenchApplication">
+         </run>
+      </application>
+   </extension>
 
 </plugin>

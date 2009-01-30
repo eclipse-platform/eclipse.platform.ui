@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/Application" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../org.eclipse.e4.ui.model.workbench/model/Application.ecore">
+  <windows x="100" y="100" width="800" height="600">
+    <menu>
+      <items xsi:type="application:MenuItem" name="File">
+        <menu>
+          <items xsi:type="application:MenuItem" id="" name="Do Nothing"/>
+          <items xsi:type="application:MenuItem" iconURI="" name="---" separator="true"/>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" command="//@command.0"/>
+        </menu>
+      </items>
+      <items xsi:type="application:MenuItem" name="Edit">
+        <menu>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" command="//@command.0"/>
+        </menu>
+      </items>
+      <items xsi:type="application:MenuItem" name="Help">
+        <menu>
+          <items xsi:type="application:MenuItem" iconURI="" name="Exit" command="//@command.0"/>
+        </menu>
+      </items>
+    </menu>
+    <children policy="VerticalComposite">
+      <toolBar>
+        <items xsi:type="application:ToolBarItem" name="Do Nothing"/>
+      </toolBar>
+      <children xsi:type="application:SashForm" policy="HorizontalSash">
+        <children xsi:type="application:SashForm" policy="VerticalSash">
+          <children xsi:type="application:Stack">
+            <children xsi:type="application:ContributedPart" name="Library" tooltip="" URI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.workbench.ui.internal.parts.SampleView"/>
+          </children>
+        </children>
+        <children xsi:type="application:SashForm" policy="VerticalSash">
+          <children xsi:type="application:ContributedPart" name="Preview" URI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.workbench.ui.internal.parts.SampleView"/>
+          <children xsi:type="application:Stack">
+            <children xsi:type="application:ContributedPart" name="Thumbnails" URI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.workbench.ui.internal.parts.SampleView"/>
+            <children xsi:type="application:ContributedPart" name="Exif" tooltip="" URI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.workbench.ui.internal.parts.SampleView"/>
+          </children>
+          <weights>70</weights>
+          <weights>30</weights>
+        </children>
+        <weights>30</weights>
+        <weights>70</weights>
+      </children>
+    </children>
+    <handlers URI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.workbench.ui.internal.ExitHandler" command="//@command.0"/>
+  </windows>
+  <command id="org.eclipse.e4.ui.workbench.exit" name="Exit"/>
+</application:Application>

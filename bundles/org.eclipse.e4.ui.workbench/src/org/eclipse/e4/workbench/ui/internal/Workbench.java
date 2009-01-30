@@ -160,6 +160,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		mainContext.set(IWorkbench.class.getName(), this);
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(ResourceUtility.class.getName(), resourceUtility);
+		mainContext.set(IExtensionRegistry.class.getName(), registry);
 
 		return mainContext;
 	}

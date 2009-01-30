@@ -23,3 +23,4 @@ Export-Package: org.eclipse.e4.workbench.modeling,
  org.eclipse.e4.workbench.ui.internal;x-internal:=true,
  org.eclipse.e4.workbench.ui.renderers.swt,
  org.eclipse.e4.workbench.ui.utils
+Bundle-Activator: org.eclipse.e4.workbench.ui.internal.Activator
