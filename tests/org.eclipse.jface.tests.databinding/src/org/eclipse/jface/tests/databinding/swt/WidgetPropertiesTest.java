@@ -181,14 +181,19 @@ public class WidgetPropertiesTest extends AbstractSWTTestCase {
 	public void testTooltipText_ObserveTrayItem() {
 		Tray tray = shell.getDisplay().getSystemTray();
 		TrayItem item = new TrayItem(tray, SWT.NONE);
-		item.setToolTipText(string1);
 
-		IObservableValue observable = WidgetProperties.tooltipText().observe(
-				item);
-		assertEquals(string1, observable.getValue());
+		try {
+			item.setToolTipText(string1);
 
-		observable.setValue(string2);
-		assertEquals(string2, item.getToolTipText());
+			IObservableValue observable = WidgetProperties.tooltipText()
+					.observe(item);
+			assertEquals(string1, observable.getValue());
+
+			observable.setValue(string2);
+			assertEquals(string2, item.getToolTipText());
+		} finally {
+			item.dispose(); // cleanup
+		}
 	}
 
 	public void testTooltipText_ObserveTreeColumn() {
