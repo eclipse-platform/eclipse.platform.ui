@@ -24,7 +24,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.Policy;
-import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorPluginDropAction;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
@@ -55,7 +54,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 
 	private final INavigatorContentService contentService;
 
-	private final NavigatorDnDService dndService;
+	private final INavigatorDnDService dndService;
 
 	/**
 	 * Create a DropAdapter that handles a drop based on the given content
@@ -70,7 +69,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			StructuredViewer aStructuredViewer) {
 		super(aStructuredViewer);
 		contentService = aContentService;
-		dndService = (NavigatorDnDService) contentService.getDnDService();
+		dndService = contentService.getDnDService();
 	}
 
 	/**

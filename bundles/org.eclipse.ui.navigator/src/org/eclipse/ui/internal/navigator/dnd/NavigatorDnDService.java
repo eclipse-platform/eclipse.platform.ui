@@ -20,7 +20,6 @@ import java.util.Set;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.extensions.CommonDragAssistantDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
@@ -45,7 +44,7 @@ public class NavigatorDnDService implements INavigatorDnDService {
 
 	private static final CommonDropAdapterAssistant[] NO_ASSISTANTS = new CommonDropAdapterAssistant[0];
 
-	private NavigatorContentService contentService;
+	private INavigatorContentService contentService;
 
 	private CommonDragAdapterAssistant[] dragAssistants;
 
@@ -56,7 +55,7 @@ public class NavigatorDnDService implements INavigatorDnDService {
 	 * @param aContentService
 	 *            The associated content service
 	 */
-	public NavigatorDnDService(NavigatorContentService aContentService) {
+	public NavigatorDnDService(INavigatorContentService aContentService) {
 		contentService = aContentService;
 	}
 
