@@ -117,12 +117,6 @@ public final class ProjectExplorer extends CommonNavigator {
 				result = ((IWorkingSet) element).getLabel();
 			} else {
 				result = super.getFrameToolTipText(element);
-				// Big hack to get around bug 262606, the JavaModel object is
-				// not handled by the Java label provider, when the bug is 
-				// fixed properly in JDT UI this can be removed  28 Jan 09 FRU
-				if (result.startsWith("Error: no label provider for Java Model")) { //$NON-NLS-1$
-					result = WorkbenchNavigatorMessages.ProjectExplorerPart_workspace;
-				}
 			}
 		} else {
 			IPath path = ((IResource) element).getFullPath();
