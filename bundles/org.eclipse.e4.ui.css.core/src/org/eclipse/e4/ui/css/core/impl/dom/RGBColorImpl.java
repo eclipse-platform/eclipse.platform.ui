@@ -79,7 +79,7 @@ public class RGBColorImpl extends CSSValueImpl implements RGBColor, Serializable
 	 * @see org.w3c.dom.css.CSSValue#getCssText()
 	 */
 	public String getCssText() {
-		//TODO no idea if this is the right shape of an answer
-		return red.getCssText() + green.getCssText() + blue.getCssText();
+		return "rgb(" + red.getCssText() + ", " + green.getCssText() + ", "
+				+ blue.getCssText() + ")";
 	}
 }

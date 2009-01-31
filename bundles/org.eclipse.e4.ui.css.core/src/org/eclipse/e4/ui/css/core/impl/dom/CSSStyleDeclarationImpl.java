@@ -160,22 +160,6 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 		}
 		return propertyList;
 	}
-
-	/**
-	 * Return the selector for this style declaration
-	 */
-	public Selector getSelector() {
-		if(parentRule == null)
-			return null;
-		if(parentRule instanceof ExtendedCSSRule) {
-			ExtendedCSSRule extendedRule = (ExtendedCSSRule) parentRule;
-			SelectorList selectors = extendedRule.getSelectorList();
-			//we assume there's only the one
-			if( selectors.getLength() >= 1 )
-				return selectors.item( 0 );
-		}
-		return null;
-	}	
 	
 	protected void setReadOnly(boolean readOnly) {
 		//TODO ViewCSS.getComputedStyle() should provide a read only access to the computed values
