@@ -8,12 +8,14 @@ import org.eclipse.e4.ui.tests.css.core.parser.FontFaceRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.MediaRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.RGBColorImplTest;
 import org.eclipse.e4.ui.tests.css.core.parser.StyleRuleTest;
+import org.eclipse.e4.ui.tests.css.core.parser.ViewCSSTest;
 
 public class CssCoreTestSuite extends TestSuite {
 
 	public static Test suite() {
 		return new CssCoreTestSuite();
 	}
+
 	public CssCoreTestSuite() {
 		// $JUnit-BEGIN$
 		addTestSuite(CascadeTest.class);
@@ -21,6 +23,7 @@ public class CssCoreTestSuite extends TestSuite {
 		addTestSuite(MediaRulesTest.class);
 		addTestSuite(RGBColorImplTest.class);
 		addTestSuite(StyleRuleTest.class);
+		addTestSuite(ViewCSSTest.class);
 		// $JUnit-END$
 	}
 }

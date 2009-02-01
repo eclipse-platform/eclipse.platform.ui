@@ -8,8 +8,8 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.e4.ui.css.core.impl.dom;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +27,7 @@ import org.w3c.dom.css.DocumentCSS;
 import org.w3c.dom.css.ViewCSS;
 import org.w3c.dom.stylesheets.StyleSheetList;
 import org.w3c.dom.views.DocumentView;
+
 
 /**
  * {@link ViewCSS} implementation used to compute {@link CSSStyleDeclaration}.
@@ -71,9 +72,10 @@ public class ViewCSSImpl implements ViewCSS {
 	public CSSStyleDeclaration getComputedStyle(CSSStyleSheet styleSheet,
 			Element elt, String pseudoElt) {
 		List styleDeclarations = null;
-		CSSStyleDeclaration firstStyleDeclaration = null;
+		StyleWrapper firstStyleDeclaration = null;
 		CSSRuleList ruleList = styleSheet.getCssRules();
 		int length = ruleList.getLength();
+		int position = 0;
 		for (int i = 0; i < length; i++) {
 			CSSRule rule = ruleList.item(i);
 			switch (rule.getType()) {
@@ -87,12 +89,17 @@ public class ViewCSSImpl implements ViewCSS {
 					for (int j = 0; j < l; j++) {
 						Selector selector = (Selector) selectorList.item(j);
 						if (selector instanceof ExtendedSelector) {
-							if (((ExtendedSelector) selector).match(elt,
-									pseudoElt))
-								if (firstStyleDeclaration == null)
-									firstStyleDeclaration = styleRule
-											.getStyle();
-								else {
+							ExtendedSelector extendedSelector = (ExtendedSelector) selector;
+							if (extendedSelector.match(elt, pseudoElt)) {
+								CSSStyleDeclaration style = styleRule
+										.getStyle();
+								int specificity = extendedSelector
+										.getSpecificity();
+								StyleWrapper wrapper = new StyleWrapper(style,
+										specificity, position++);
+								if (firstStyleDeclaration == null) {
+									firstStyleDeclaration = wrapper;
+								} else {
 									// There is several Style Declarations which
 									// match the current element
 									if (styleDeclarations == null) {
@@ -100,8 +107,9 @@ public class ViewCSSImpl implements ViewCSS {
 										styleDeclarations
 												.add(firstStyleDeclaration);
 									}
-									styleDeclarations.add(styleRule.getStyle());
+									styleDeclarations.add(wrapper);
 								}
+							}
 						} else {
 							// TODO : selector is not batik ExtendedSelector,
 							// Manage this case...
@@ -119,6 +127,9 @@ public class ViewCSSImpl implements ViewCSS {
 			// the element, merge the CSS Property value.
 			return new CSSComputedStyleImpl(styleDeclarations);
 		}
-		return firstStyleDeclaration;
+		if (firstStyleDeclaration != null) {
+			return firstStyleDeclaration.style;
+		}
+		return null;
 	}
 }
