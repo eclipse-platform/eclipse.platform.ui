@@ -22,7 +22,7 @@
     </menu>
     <children policy="VerticalComposite">
       <toolBar>
-        <items xsi:type="application:ToolBarItem" name="Do Nothing"/>
+        <items xsi:type="application:ToolBarItem" name="You Are Seeing The Default Application.xmi"/>
       </toolBar>
       <children xsi:type="application:SashForm" policy="HorizontalSash">
         <children xsi:type="application:SashForm" policy="VerticalSash">

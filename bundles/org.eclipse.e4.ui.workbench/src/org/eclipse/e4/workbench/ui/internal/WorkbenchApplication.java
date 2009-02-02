@@ -12,6 +12,8 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.WorkbenchFactory;
@@ -47,9 +49,13 @@ public class WorkbenchApplication implements IApplication {
 		String appURI = "/org.eclipse.e4.ui.workbench/Application.xmi"; //$NON-NLS-1$
 		String[] args = (String[]) applicationContext.getArguments().get(
 				"application.args"); //$NON-NLS-1$
-		if (args.length > 0) {
-			if (args[0].equals("-applicationXMI")) { //$NON-NLS-1$
-				appURI = args[1];
+		IProduct product = Platform.getProduct();
+		if (args.length > 0 && args[0].equals("-applicationXMI")) { //$NON-NLS-1$
+			appURI = args[1];
+		} else if (product != null) {
+			String path = product.getProperty("applicationXMI"); //$NON-NLS-1$
+			if (path != null) {
+				appURI = path;
 			}
 		}
 		final URI initialWorkbenchDefinitionInstance = URI
