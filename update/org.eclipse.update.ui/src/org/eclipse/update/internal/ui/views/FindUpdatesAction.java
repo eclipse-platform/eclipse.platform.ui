@@ -70,6 +70,8 @@ public class FindUpdatesAction extends Action {
 				return;
 			if (window.isProgressCanceled())
 				setCanceled(true);
+			if (totalWork <= 0)
+				return;
 			String perc = ((int) (workSoFar * 100.0) / totalWork) + ""; //$NON-NLS-1$
 			final String message = NLS.bind(UpdateUIMessages.FindUpdatesAction_trackedProgress, new String[] {
 					name, subname, perc });
