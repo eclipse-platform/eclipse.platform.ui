@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.team.examples.filesystem.ui;
 
 import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -64,7 +65,7 @@ public class NonSyncModelMergeOperation extends ModelMergeOperation {
 					RemoteResourceMappingContext.FILE_CONTENTS_REQUIRED, new SubProgressMonitor(monitor, 75));
 			// What for the context to asynchronously update the diff tree
 			try {
-				Platform.getJobManager().join(context, new SubProgressMonitor(monitor, 25));
+				Job.getJobManager().join(context, new SubProgressMonitor(monitor, 25));
 			} catch (InterruptedException e) {
 				// Ignore
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.examples.pessimistic.ui;
  
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -19,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.examples.pessimistic.PessimisticFilesystemProvider;
+import org.eclipse.ui.IActionDelegate;
 
 /**
  * Adds the selected resources and their parent resources to
@@ -47,8 +50,7 @@ public class AddToControlAction extends PessimisticProviderAction {
 		if (!resourceSet.isEmpty()) {
 			final Map byProject= sortByProject(resourceSet);
 			IRunnableWithProgress runnable= new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) {
 					for (Iterator i= byProject.keySet().iterator(); i.hasNext();) {
 						IProject project= (IProject) i.next();
 						PessimisticFilesystemProvider provider= getProvider(project);

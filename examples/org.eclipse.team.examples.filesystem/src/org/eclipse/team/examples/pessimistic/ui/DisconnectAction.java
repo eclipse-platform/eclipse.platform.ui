@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.examples.pessimistic.ui;
  
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -22,6 +26,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.examples.pessimistic.PessimisticFilesystemProvider;
 import org.eclipse.team.examples.pessimistic.PessimisticFilesystemProviderPlugin;
+import org.eclipse.ui.IActionDelegate;
 
 public class DisconnectAction extends PessimisticProviderAction {
 	/**
@@ -46,8 +51,7 @@ public class DisconnectAction extends PessimisticProviderAction {
 		}
 		if (!projects.isEmpty()) {
 			IRunnableWithProgress runnable= new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) {
 					IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 						public void run(IProgressMonitor monitor)
 							throws CoreException {

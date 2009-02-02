@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,13 +30,13 @@ import org.eclipse.ui.actions.ActionDelegate;
 
 public class ShowHistoryAction extends ActionDelegate implements IObjectActionDelegate {
 
-	private IStructuredSelection fSelection;
+	IStructuredSelection fSelection;
 
 	public void run(IAction action) {
 		final Shell shell = Display.getDefault().getActiveShell();
 		try {
 			new ProgressMonitorDialog(shell).run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) {
 					final IResource resource = (IResource) fSelection.getFirstElement();
 					Runnable r = new Runnable() {
 						public void run() {
@@ -48,7 +48,9 @@ public class ShowHistoryAction extends ActionDelegate implements IObjectActionDe
 				}
 			});
 		} catch (InvocationTargetException exception) {
+			// ignore
 		} catch (InterruptedException exception) {
+			// ignore
 		}
 	}
 
@@ -59,6 +61,6 @@ public class ShowHistoryAction extends ActionDelegate implements IObjectActionDe
 	}
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		
+		// do nothing
 	}
 }

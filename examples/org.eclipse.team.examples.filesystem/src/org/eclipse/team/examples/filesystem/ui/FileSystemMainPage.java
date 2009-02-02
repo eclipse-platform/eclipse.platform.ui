@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -281,19 +281,18 @@ public class FileSystemMainPage extends WizardPage {
 	 * Validates the contents of the editable fields and set page completion 
 	 * and error messages appropriately.
 	 */
-	private void validateFields() {
+	void validateFields() {
 		String location = locationCombo.getText();
 		if (location.length() == 0) {
 			setErrorMessage(null);
 			setPageComplete(false);
 			return;
-		} else {
-			File file = new File(location);
-			if(!file.exists() || !file.isDirectory()) {
-				setErrorMessage(Policy.bind("FileSystemMainPage.notValidLocation")); //$NON-NLS-1$
-				setPageComplete(false);
-				return;				
-			}			
+		}
+		File file = new File(location);
+		if(!file.exists() || !file.isDirectory()) {
+			setErrorMessage(Policy.bind("FileSystemMainPage.notValidLocation")); //$NON-NLS-1$
+			setPageComplete(false);
+			return;				
 		}
 		setErrorMessage(null);
 		setPageComplete(true);

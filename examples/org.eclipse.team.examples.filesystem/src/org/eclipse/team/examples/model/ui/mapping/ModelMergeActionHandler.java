@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class ModelMergeActionHandler extends MergeActionHandler {
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.ui.mapping.SynchronizationOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 			// We need to perform special handling for any MOE file whose parent MOD is not included in the merge
 			try {
 				IMergeContext context = (IMergeContext)getContext();

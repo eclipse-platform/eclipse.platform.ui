@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ import org.eclipse.ui.progress.IProgressService;
 public class OpenFileSystemRevisionAction extends BaseSelectionListenerAction {
 
 	private IStructuredSelection selection;
-	private HistoryPage page;
+	HistoryPage page;
 
 	public OpenFileSystemRevisionAction(String text) {
 		super(text);
@@ -58,7 +58,7 @@ public class OpenFileSystemRevisionAction extends BaseSelectionListenerAction {
 				MessageDialog.openError(page.getSite().getShell(), "Deleted Revision", "Can't open a deleted revision");
 			} else {
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
 						IStorage file;
 						try {
 							file = revision.getStorage(monitor);
@@ -83,7 +83,9 @@ public class OpenFileSystemRevisionAction extends BaseSelectionListenerAction {
 				try {
 					progressService.run(false, false, runnable);
 				} catch (InvocationTargetException e) {
+					// ignore
 				} catch (InterruptedException e) {
+					// ignore
 				}
 			}
 
@@ -98,7 +100,7 @@ public class OpenFileSystemRevisionAction extends BaseSelectionListenerAction {
 			try {
 				type = Platform.getContentTypeManager().findContentTypeFor(contents, fileName);
 			} catch (IOException e) {
-
+				// ignore
 			}
 		}
 		if (type == null) {
@@ -141,7 +143,7 @@ public class OpenFileSystemRevisionAction extends BaseSelectionListenerAction {
 		return true;
 	}
 
-	private boolean editorAlreadyOpenOnContents(FileSystemRevisionEditorInput input) {
+	boolean editorAlreadyOpenOnContents(FileSystemRevisionEditorInput input) {
 		IEditorReference[] editorRefs = page.getSite().getPage().getEditorReferences();
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(false);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -38,13 +37,14 @@ public class FileSystemFileRevision extends FileRevision {
 		return remoteFile.lastModified();
 	}
 
-	public IStorage getStorage(IProgressMonitor monitor) throws CoreException {
+	public IStorage getStorage(IProgressMonitor monitor) {
 		return new IStorage() {
 
-			public InputStream getContents() throws CoreException {
+			public InputStream getContents() {
 				try {
 					return new FileInputStream(remoteFile);
 				} catch (FileNotFoundException e) {
+					// ignore
 				}
 
 				return null;
@@ -73,7 +73,7 @@ public class FileSystemFileRevision extends FileRevision {
 		return false;
 	}
 
-	public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
+	public IFileRevision withAllProperties(IProgressMonitor monitor) {
 		return null;
 	}
 

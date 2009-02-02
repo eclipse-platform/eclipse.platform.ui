@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,16 +46,13 @@ public class PessimisticDecorator extends LabelProvider implements ILabelDecorat
 		if (provider.isControlled(resource)) {
 			if (provider.isCheckedout(resource)) {
 				return ">" + text;
-			} else {
-				return text;
 			}
-		} else {
-			if (provider.isIgnored(resource)) {
-				return "[ignored] " + text;
-			} else {
-				return "(not controlled) " + text;
-			}
+			return text;
 		}
+		if (provider.isIgnored(resource)) {
+			return "[ignored] " + text;
+		}
+		return "(not controlled) " + text;
 	}
 
 	/*

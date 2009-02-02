@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * The <code>PessimisticModificationValidator</code> is an
@@ -241,7 +241,7 @@ public class PessimisticModificationValidator
 						dialog.setTitle("Check out resources");
 						dialog.setContainerMode(true);
 						dialog.setBlockOnOpen(true);
-						dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+						dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 						dialog.setExpandedElements(resourceArray);
 						dialog.setInitialSelections(resourceArray);
 						dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());

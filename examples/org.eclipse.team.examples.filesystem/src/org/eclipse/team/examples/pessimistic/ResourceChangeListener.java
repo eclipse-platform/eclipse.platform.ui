@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,35 @@
  *******************************************************************************/
 package org.eclipse.team.examples.pessimistic;
  
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * The <code>ResourceChangeListener</code> listens for resource changes 
@@ -51,7 +68,7 @@ public class ResourceChangeListener implements IResourceDeltaVisitor, IResourceC
 	 * </ul>
 	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(IResourceDelta)
 	 */
-	public boolean visit(IResourceDelta delta) throws CoreException {
+	public boolean visit(IResourceDelta delta) {
 		IResource resource= delta.getResource();
 		if (resource != null) {
 			IProject project= resource.getProject();
@@ -113,7 +130,7 @@ public class ResourceChangeListener implements IResourceDeltaVisitor, IResourceC
 
 		if (!fRemoved.isEmpty() || !fAdded.isEmpty()) {
 			final IWorkspaceRunnable workspaceRunnable= new IWorkspaceRunnable() {
-				public void run(final IProgressMonitor monitor) throws CoreException {
+				public void run(final IProgressMonitor monitor) {
 					if (!fRemoved.isEmpty()) {
 						remove(monitor);
 					}
@@ -175,7 +192,7 @@ public class ResourceChangeListener implements IResourceDeltaVisitor, IResourceC
 							dialog.setTitle("Add resources to control");
 							dialog.setContainerMode(true);
 							dialog.setBlockOnOpen(true);
-							dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+							dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 							Object[] resourceArray= resources.toArray();
 							dialog.setExpandedElements(resourceArray);
 							dialog.setInitialSelections(resourceArray);

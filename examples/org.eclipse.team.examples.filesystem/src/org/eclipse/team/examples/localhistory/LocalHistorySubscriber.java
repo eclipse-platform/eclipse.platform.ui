@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class LocalHistorySubscriber extends Subscriber {
 		return "Local History Subscriber"; //$NON-NLS-1$
 	}
 
-	public boolean isSupervised(IResource resource) throws TeamException {
+	public boolean isSupervised(IResource resource) {
 		// all resources in the workspace can potentially have resource history
 		return true;
 	}
@@ -78,6 +78,6 @@ public class LocalHistorySubscriber extends Subscriber {
 		return comparator;
 	}
 
-	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) {
 	}
 }

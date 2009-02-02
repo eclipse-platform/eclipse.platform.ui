@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,13 @@
 package org.eclipse.team.examples.model.mapping;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.examples.model.*;
+import org.eclipse.team.examples.model.ModelContainer;
+import org.eclipse.team.examples.model.ModelObject;
+import org.eclipse.team.examples.model.ModelResource;
 
 public class ModelContainerResourceMapping extends ModelResourceMapping {
 
@@ -26,7 +29,7 @@ public class ModelContainerResourceMapping extends ModelResourceMapping {
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getTraversals(org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context,
-			IProgressMonitor monitor) throws CoreException {
+			IProgressMonitor monitor) {
 		return new ResourceTraversal[] { 
 				new ResourceTraversal(new IResource[] { 
 						getResource()

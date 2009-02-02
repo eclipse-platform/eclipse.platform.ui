@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class ProjectSetSerializer implements IProjectSetSerializer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.IProjectSetSerializer#asReference(org.eclipse.core.resources.IProject[], java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public String[] asReference(IProject[] providerProjects, Object context, IProgressMonitor monitor) throws TeamException {
+	public String[] asReference(IProject[] providerProjects, Object context, IProgressMonitor monitor) {
 		Assert.isTrue(context instanceof Shell);
 		List refs = new ArrayList();
 		for (int i = 0; i < providerProjects.length; i++) {
@@ -45,7 +45,7 @@ public class ProjectSetSerializer implements IProjectSetSerializer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.IProjectSetSerializer#addToWorkspace(java.lang.String[], java.lang.String, java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IProject[] addToWorkspace(String[] referenceStrings, String filename, Object context, IProgressMonitor monitor) throws TeamException {
+	public IProject[] addToWorkspace(String[] referenceStrings, String filename, Object context, IProgressMonitor monitor) {
 		Assert.isTrue(context instanceof Shell);
 		List projects = new ArrayList();
 		for (int i = 0; i < referenceStrings.length; i++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 	 * The cache of resources that are currently controlled.
 	 * The cache is a map of parent resource -> set of controlled children.
 	 */
-	private Map fControlledResources;
+	Map fControlledResources;
 	
 	/**
 	 * Creates a new provider, required for team repository extension.
@@ -203,9 +203,8 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 		if (child != null) {
 			if (child.getType() == IResource.FILE) {
 				return (IFile)child;
-			} else {
-				child.delete(true, monitor);
 			}
+			child.delete(true, monitor);
 		}
 		IFile controlFile= container.getFile(new Path(CONTROL_FILE_NAME));
 		monitor.beginTask("Creating control file " + controlFile, 2);
@@ -220,13 +219,13 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 	 * Reads the contents of a control file, answering the set of
 	 * resources that was specified in the file.
 	 */	
-	private Set readControlFile(IFile controlFile) {
+	Set readControlFile(IFile controlFile) {
 		Set controlledResources= new HashSet(1);
 		if (controlFile.exists()) {
 			InputStream in= null;
 			try {
 				try {
-					in= ((IFile)controlFile).getContents(true);
+					in= controlFile.getContents(true);
 				} catch (CoreException e) {
 					PessimisticFilesystemProviderPlugin.getInstance().logError(e, "Could not open stream on control file: " + controlFile);
 				}
@@ -370,7 +369,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 		fControlledResources.put(project.getParent(), set);
 		try {
 			getProject().accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) throws CoreException {
+				public boolean visit(IResource resource) {
 					if (resource.getType() == IResource.FILE) {
 						if (CONTROL_FILE_NAME.equals(resource.getName())) {
 							Set controlledResources= readControlFile((IFile)resource);
@@ -405,7 +404,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 		}
 		final Set modified= new HashSet(1);
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) {
 				monitor.beginTask("Checking in resources", 1000);
 				for(int i= 0; i < resources.length; i++) {
 					IResource resource= resources[i];
@@ -445,7 +444,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 		}
 		final Set modified= new HashSet(1);
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) {
 				monitor.beginTask("Unchecking in resources", 1000);
 				for(int i= 0; i < resources.length; i++) {
 					IResource resource= resources[i];
@@ -482,7 +481,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 		}
 		final Set modified= new HashSet(1);
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) {
 				monitor.beginTask("Checking out resources", 1000);
 				for(int i= 0; i < resources.length; i++) {
 					IResource resource= resources[i];
@@ -580,6 +579,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 					try {
 						appendText((IFile)resource, getRandomSnippet(), false);
 					} catch (IOException e1) {
+						// ignore
 					}
 				} else {
 					resource.touch(null);
@@ -662,7 +662,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 					try {
 						ResourcesPlugin.getWorkspace().run(
 							new IWorkspaceRunnable() {
-								public void run(IProgressMonitor monitor) throws CoreException {
+								public void run(IProgressMonitor monitor) {
 								}
 							}, 
 							null);
@@ -686,7 +686,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 	private Collection getSubtreeMembers(IResource resource) {
 		final Set resources= new HashSet(1);
 		IResourceVisitor visitor= new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				switch (resource.getType()) {
 					case IResource.PROJECT:
 					case IResource.FOLDER:
