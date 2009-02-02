@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -194,6 +194,7 @@ public class Client {
 			try {
 				description = Misc.readString(in);
 			} catch (IOException e) {
+				// ignore
 			} finally {
 				in.close();
 			}
@@ -651,7 +652,7 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] host_
 	BigInteger host_n = new BigInteger(1, host_key_public_modulus);
 	if (!new KnownHosts().verifyKey(host, host_key_bits, host_e, host_n)) {
 		throw new CVSAuthenticationException(CVSSSHMessages.Client_hostIdChanged, CVSAuthenticationException.NO_RETRY); 
-	};
+	}
 	byte[] result;
 	if (new BigInteger(1,server_key_public_modulus).compareTo(host_n) == -1) {
 		result = Misc.encryptRSAPkcs1(session_key_xored, server_key_public_exponent, server_key_public_modulus);
