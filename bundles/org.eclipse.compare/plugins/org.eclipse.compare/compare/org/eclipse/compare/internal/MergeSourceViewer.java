@@ -835,7 +835,7 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 	
 	private void addSave(IMenuManager menu) {
 		ICommandService commandService = (ICommandService) fContainer.getWorkbenchPart().getSite().getService(ICommandService.class);
-		final Command command = commandService.getCommand("org.eclipse.ui.file.save");
+		final Command command = commandService.getCommand("org.eclipse.ui.file.save"); //$NON-NLS-1$
 		
 		final IHandler handler = command.getHandler();
 		if (handler != null) {
