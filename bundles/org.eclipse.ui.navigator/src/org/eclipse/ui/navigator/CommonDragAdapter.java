@@ -113,6 +113,9 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		try {
 			// Workaround for 1GEUS9V
 			DragSource dragSource = (DragSource) event.widget;
+			if (Policy.DEBUG_DND) {
+				System.out.println("CommonDragAdapter.dragStart source: " + dragSource); //$NON-NLS-1$
+			}
 			Control control = dragSource.getControl();
 			if (control == control.getDisplay().getFocusControl()) {
 				ISelection selection = provider.getSelection();
@@ -148,7 +151,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 
 		if (Policy.DEBUG_DND) {
 			System.out
-					.println("CommonDragAdapter.dragSetData (begin): event" + event + " selection=" + selection); //$NON-NLS-1$ //$NON-NLS-2$
+					.println("CommonDragAdapter.dragSetData: event" + event + " selection=" + selection); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		if (LocalSelectionTransfer.getTransfer()
@@ -157,14 +160,14 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 
 			if (Policy.DEBUG_DND) {
 				System.out
-						.println("CommonDragAdapter.dragSetData set LocalSelectionTransfer"); //$NON-NLS-1$
+						.println("CommonDragAdapter.dragSetData set LocalSelectionTransfer: " + event.data); //$NON-NLS-1$
 			}
 		} else if (PluginTransfer.getInstance().isSupportedType(event.dataType)) {
 			event.data = NavigatorPluginDropAction
 					.createTransferData(contentService);
 			if (Policy.DEBUG_DND) {
 				System.out
-						.println("CommonDragAdapter.dragSetData set PluginTransfer"); //$NON-NLS-1$
+						.println("CommonDragAdapter.dragSetData set PluginTransfer: " + event.data); //$NON-NLS-1$
 			}
 		} else if (selection instanceof IStructuredSelection) {
 			if (Policy.DEBUG_DND) {
@@ -176,6 +179,10 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 			CommonDragAdapterAssistant[] assistants = dndService
 					.getCommonDragAssistants();
 			for (int i = 0; i < assistants.length; i++) {
+				if (Policy.DEBUG_DND) {
+					System.out
+							.println("CommonDragAdapter.dragSetData assistant: " + assistants[i]); //$NON-NLS-1$
+				}
 
 				Transfer[] supportedTransferTypes = assistants[i]
 						.getSupportedTransferTypes();
@@ -185,10 +192,14 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 						try {
 							if (Policy.DEBUG_DND) {
 								System.out
-										.println("CommonDragAdapter.dragSetData set assistant transfer type"); //$NON-NLS-1$
+										.println("CommonDragAdapter.dragSetData supported xfer type"); //$NON-NLS-1$
 							}
 							if(assistants[i].setDragData(event,
 									(IStructuredSelection) selection)) {
+								if (Policy.DEBUG_DND) {
+									System.out
+											.println("CommonDragAdapter.dragSetData set data " + event.data); //$NON-NLS-1$
+								}
 								return;
 							}
 						} catch (RuntimeException re) {
@@ -199,14 +210,18 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 				}
 			}
 
+			if (Policy.DEBUG_DND) {
+				System.out
+						.println("CommonDragAdapter.dragSetData FAILED no assistant handled it"); //$NON-NLS-1$
+			}
 			event.doit = false;
 
 		} else {
+			if (Policy.DEBUG_DND) {
+				System.out
+						.println("CommonDragAdapter.dragSetData FAILED can't identify transfer type"); //$NON-NLS-1$
+			}
 			event.doit = false;
-		}
-
-		if (Policy.DEBUG_DND) {
-			System.out.println("CommonDragAdapter.dragSetData (end): " + event); //$NON-NLS-1$
 		}
 	}
 	 
@@ -218,7 +233,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 	public void dragFinished(DragSourceEvent event) {
 
 		if (Policy.DEBUG_DND) {
-			System.out.println("CommonDragAdapter.dragFinished()."); //$NON-NLS-1$
+			System.out.println("CommonDragAdapter.dragFinished(): " + event); //$NON-NLS-1$
 		}
 
 		LocalSelectionTransfer.getTransfer().setSelection(null);

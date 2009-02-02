@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import java.io.ByteArrayInputStream;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -33,21 +29,19 @@ import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
-import org.eclipse.ui.tests.navigator.util.TestWorkspace;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class WorkingSetTest extends NavigatorTestBase {
 
 	public WorkingSetTest() {
 		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
-		_initTestData = false;
 	}
 
 	// Bug 157877 when using empty window working set, it should show all
 	public void testEmptyWindowWorkingSet() throws Exception {
-		TestWorkspace.init();
 
 		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
-				.getActionProvider(contentService, _actionService,
+				.getActionProvider(_contentService, _actionService,
 						WorkingSetActionProvider.class);
 
 		IWorkingSet workingSet = PlatformUI.getWorkbench()
@@ -61,7 +55,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 				workingSet);
 		l.propertyChange(event);
 
-		TreeItem[] items = viewer.getTree().getItems();
+		TreeItem[] items = _viewer.getTree().getItems();
 		assertTrue("There should be some items.", items.length > 0);
 		assertEquals(null, ((ProjectExplorer) _commonNavigator)
 				.getWorkingSetLabel());
@@ -71,14 +65,10 @@ public class WorkingSetTest extends NavigatorTestBase {
 	// but their children are
 	public void testMissingProjectsInWorkingSet() throws Exception {
 
-		IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
-		p1.create(null);
-		p1.open(null);
-		IFile f1 = p1.getFile("f1");
-		f1.create(new ByteArrayInputStream(new byte[] {}), true, null);
+		IFile f1 = _p1.getFile("f1");
 
 		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
-				.getActionProvider(contentService, _actionService,
+				.getActionProvider(_contentService, _actionService,
 						WorkingSetActionProvider.class);
 
 		IWorkingSet workingSet = new WorkingSet("ws1", "ws1",
@@ -97,11 +87,11 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		// DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
-		TreeItem[] items = viewer.getTree().getItems();
+		TreeItem[] items = _viewer.getTree().getItems();
 		// The bug is here where the first item is a IFile, not the enclosing
 		// project
 		assertTrue("First item needs to be project", items[0].getData().equals(
-				p1));
+				_p1));
 		assertEquals("ws1", ((ProjectExplorer) _commonNavigator)
 				.getWorkingSetLabel());
 	}
@@ -110,24 +100,18 @@ public class WorkingSetTest extends NavigatorTestBase {
 	// using the window working set)
 	public void testTopLevelWorkingSet() throws Exception {
 
-		IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
-		p1.create(null);
-		p1.open(null);
-		IFile f1 = p1.getFile("f1");
-		f1.create(new ByteArrayInputStream(new byte[] {}), true, null);
-
 		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
-				.getActionProvider(contentService, _actionService,
+				.getActionProvider(_contentService, _actionService,
 						WorkingSetActionProvider.class);
 
-		IExtensionStateModel extensionStateModel = contentService
+		IExtensionStateModel extensionStateModel = _contentService
 				.findStateModel(WorkingSetsContentProvider.EXTENSION_ID);
 
 		extensionStateModel.setBooleanProperty(
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
 
 		IWorkingSet workingSet = new WorkingSet("ws1", "ws1",
-				new IAdaptable[] { p1 });
+				new IAdaptable[] { _p1 });
 
 		IPropertyChangeListener l = provider.getFilterChangeListener();
 		PropertyChangeEvent event = new PropertyChangeEvent(this,
@@ -137,7 +121,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		// DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
-		TreeItem[] items = viewer.getTree().getItems();
+		TreeItem[] items = _viewer.getTree().getItems();
 		// The bug is here where the first item is a IFile, not the enclosing
 		// project
 		assertTrue("First item needs to be working set", items[0].getData()
@@ -150,26 +134,20 @@ public class WorkingSetTest extends NavigatorTestBase {
 	// as top level and not
 	public void testTopLevelChange() throws Exception {
 
-		IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
-		p1.create(null);
-		p1.open(null);
-		IFile f1 = p1.getFile("f1");
-		f1.create(new ByteArrayInputStream(new byte[] {}), true, null);
-
-		IExtensionStateModel extensionStateModel = contentService
+		IExtensionStateModel extensionStateModel = _contentService
 				.findStateModel(WorkingSetsContentProvider.EXTENSION_ID);
 
 		// Force the content provider to be loaded so that it responds to the
 		// working set events
-		INavigatorContentExtension ce = contentService
+		INavigatorContentExtension ce = _contentService
 				.getContentExtensionById(WorkingSetsContentProvider.EXTENSION_ID);
 		ce.getContentProvider();
 
 		IWorkingSet workingSet = new WorkingSet("ws1", "ws1",
-				new IAdaptable[] { p1 });
+				new IAdaptable[] { _p1 });
 
 		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
-				.getActionProvider(contentService, _actionService,
+				.getActionProvider(_contentService, _actionService,
 						WorkingSetActionProvider.class);
 		IPropertyChangeListener l = provider.getFilterChangeListener();
 		PropertyChangeEvent event = new PropertyChangeEvent(this,
@@ -186,7 +164,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
 		refreshViewer();
 
-		TreeItem[] items = viewer.getTree().getItems();
+		TreeItem[] items = _viewer.getTree().getItems();
 
 		assertTrue("First item needs to be working set", items[0].getData()
 				.equals(workingSet));
@@ -195,45 +173,38 @@ public class WorkingSetTest extends NavigatorTestBase {
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, false);
 		refreshViewer();
 
-		items = viewer.getTree().getItems();
+		items = _viewer.getTree().getItems();
 		assertTrue("First item needs to be project", items[0].getData().equals(
-				p1));
+				_p1));
 
 		extensionStateModel.setBooleanProperty(
 				WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
 		refreshViewer();
 
-		items = viewer.getTree().getItems();
+		items = _viewer.getTree().getItems();
 		assertTrue("First item needs to be working set", items[0].getData()
 				.equals(workingSet));
 	}
 
 	public void testMultipleWorkingSets() throws Exception {
 
-		IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
-		p1.create(null);
-		p1.open(null);
-		IProject p2 = ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
-		p2.create(null);
-		p2.open(null);
-
 		// Force the content provider to be loaded so that it responds to the
 		// working set events
-		INavigatorContentExtension ce = contentService
+		INavigatorContentExtension ce = _contentService
 				.getContentExtensionById(WorkingSetsContentProvider.EXTENSION_ID);
 		ce.getContentProvider();
 
 		IWorkingSet workingSet1 = new WorkingSet("ws1", "ws1",
-				new IAdaptable[] { p1 });
+				new IAdaptable[] { _p1 });
 		IWorkingSet workingSet2 = new WorkingSet("ws2", "ws2",
-				new IAdaptable[] { p1 });
+				new IAdaptable[] { _p1 });
 
 		AggregateWorkingSet agWorkingSet = new AggregateWorkingSet("AgWs",
 				"Ag Working Set",
 				new IWorkingSet[] { workingSet1, workingSet2 });
 
 		WorkingSetActionProvider provider = (WorkingSetActionProvider) TestAccessHelper
-				.getActionProvider(contentService, _actionService,
+				.getActionProvider(_contentService, _actionService,
 						WorkingSetActionProvider.class);
 
 		IPropertyChangeListener l = provider.getFilterChangeListener();

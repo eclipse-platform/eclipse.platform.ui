@@ -28,6 +28,7 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActionService;
+import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
@@ -48,15 +49,23 @@ public class NavigatorTestBase extends TestCase {
 
 	protected String _navigatorInstanceId;
 
-	protected Set expectedChildren = new HashSet();
+	protected Set _expectedChildren = new HashSet();
 
-	protected IProject project;
+	protected IProject _project;
+	protected IProject _p1;
+	protected IProject _p2;
 
-	protected CommonViewer viewer;
+	protected static final int _p1Ind = 0;
+	protected static final int _p2Ind = 1;
+	protected static final int _projectInd = 2;
+	
+	protected static int _projectCount;
+	
+	protected CommonViewer _viewer;
 
 	protected CommonNavigator _commonNavigator;
 
-	protected INavigatorContentService contentService;
+	protected INavigatorContentService _contentService;
 	protected NavigatorActionService _actionService;
 
 	protected boolean _initTestData = true;
@@ -75,13 +84,20 @@ public class NavigatorTestBase extends TestCase {
 			TestWorkspace.init();
 
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			project = root.getProject("Test"); //$NON-NLS-1$
+			_project = root.getProject("Test"); //$NON-NLS-1$
 
-			expectedChildren.add(project.getFolder("src")); //$NON-NLS-1$
-			expectedChildren.add(project.getFolder("bin")); //$NON-NLS-1$
-			expectedChildren.add(project.getFile(".project")); //$NON-NLS-1$
-			expectedChildren.add(project.getFile(".classpath")); //$NON-NLS-1$ 
-			expectedChildren.add(project.getFile("model.properties")); //$NON-NLS-1$
+			_expectedChildren.add(_project.getFolder("src")); //$NON-NLS-1$
+			_expectedChildren.add(_project.getFolder("bin")); //$NON-NLS-1$
+			_expectedChildren.add(_project.getFile(".project")); //$NON-NLS-1$
+			_expectedChildren.add(_project.getFile(".classpath")); //$NON-NLS-1$ 
+			_expectedChildren.add(_project.getFile("model.properties")); //$NON-NLS-1$
+			
+			_p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
+			_p1.open(null);
+			_p2= ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
+			_p2.open(null);
+			_projectCount = 3;
+			
 		}
 
 		EditorTestHelper.showView(_navigatorInstanceId, true);
@@ -93,13 +109,13 @@ public class NavigatorTestBase extends TestCase {
 		_commonNavigator = (CommonNavigator) activePage
 				.findView(_navigatorInstanceId);
 		_commonNavigator.setFocus();
-		viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
+		_viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
 
-		contentService = viewer.getNavigatorContentService();
+		_contentService = _viewer.getNavigatorContentService();
 		_actionService = _commonNavigator.getNavigatorActionService();
 
 		IUndoableOperation updateFilters = new UpdateActiveFiltersOperation(
-				viewer, new String[0], true);
+				_viewer, new String[0], true);
 		updateFilters.execute(null, null);
 	}
 
@@ -116,10 +132,10 @@ public class NavigatorTestBase extends TestCase {
 	// Need this to workaround a problem of the DecoratingStyledCellLabelProvider. 
 	// The method returns early because there is a (background) decoration pending.
 	protected void refreshViewer() {
-		TreeItem[] rootItems = viewer.getTree().getItems();
+		TreeItem[] rootItems = _viewer.getTree().getItems();
 		if (rootItems.length > 0)
 			rootItems[0].setText("");
-		viewer.refresh();
+		_viewer.refresh();
 	}
 
 }

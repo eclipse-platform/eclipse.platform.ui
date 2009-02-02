@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderGreen;
 
@@ -28,15 +29,15 @@ public class OverrideTest extends NavigatorTestBase {
 	public void testSimpleResFirst() throws Exception {
 
 		if (!false) {
-			contentService.bindExtensions(new String[] { TEST_CONTENT1,
+			_contentService.bindExtensions(new String[] { TEST_CONTENT1,
 					TEST_OVERRIDE1 }, false);
-			contentService.getActivationService().activateExtensions(
+			_contentService.getActivationService().activateExtensions(
 					new String[] { TEST_OVERRIDE1, TEST_CONTENT1 }, true);
 		}
 
 		refreshViewer();
 
-		TreeItem[] rootItems = viewer.getTree().getItems();
+		TreeItem[] rootItems = _viewer.getTree().getItems();
 
 		if (DEBUG) {
 			DisplayHelper.sleep(Display.getCurrent(), 10000000);
@@ -52,14 +53,14 @@ public class OverrideTest extends NavigatorTestBase {
 	public void testSimpleResLast() throws Exception {
 
 		if (!false) {
-			contentService.bindExtensions(new String[] { TEST_CONTENT2,
+			_contentService.bindExtensions(new String[] { TEST_CONTENT2,
 					TEST_OVERRIDE2 }, false);
-			contentService.getActivationService().activateExtensions(
+			_contentService.getActivationService().activateExtensions(
 					new String[] { TEST_CONTENT2, TEST_OVERRIDE2 }, true);
 		}
 
 		refreshViewer();
-		TreeItem[] rootItems = viewer.getTree().getItems();
+		TreeItem[] rootItems = _viewer.getTree().getItems();
 		if (!rootItems[0].getText().startsWith("Cyan"))
 			fail("Wrong text: " + rootItems[0].getText());
 		assertEquals(TestLabelProviderCyan.getTestColor(), rootItems[0]

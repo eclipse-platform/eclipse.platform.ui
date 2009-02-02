@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.harness.util;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -41,8 +40,6 @@ import org.eclipse.ui.WorkbenchException;
  * @since 3.1
  */
 public class EditorTestHelper {
-	
- 
 	
 	public static final String TEXT_EDITOR_ID= "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 	
@@ -97,9 +94,7 @@ public class EditorTestHelper {
 	}
 	
 	public static void runEventQueue(Display display) {
-		while (display.readAndDispatch()) {
-			// do nothing
-		}
+		while (display.readAndDispatch()) {}
 	}
 	
 	/**
@@ -157,10 +152,8 @@ public class EditorTestHelper {
 		return window != null ? window.getShell().getDisplay() : null;
 	} 
 	
-	public static void joinBackgroundActivities() throws CoreException {
+	public static void joinBackgroundActivities() {
 		// Join Building
-		Logger.global.entering("EditorTestHelper", "joinBackgroundActivities"); //$NON-NLS-1$ //$NON-NLS-2$
-		Logger.global.finer("join builder"); //$NON-NLS-1$
 		boolean interrupted= true;
 		while (interrupted) {
 			try {
@@ -172,11 +165,9 @@ public class EditorTestHelper {
 		} 
 		// Join jobs
 		joinJobs(0, 0, 500);
-		Logger.global.exiting("EditorTestHelper", "joinBackgroundActivities"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean joinJobs(long minTime, long maxTime, long intervalTime) {
-		Logger.global.entering("EditorTestHelper", "joinJobs"); //$NON-NLS-1$ //$NON-NLS-2$
 		runEventQueue(minTime);
 		
 		DisplayHelper helper= new DisplayHelper() {
@@ -185,7 +176,6 @@ public class EditorTestHelper {
 			}
 		};
 		boolean quiet= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : Long.MAX_VALUE, intervalTime);
-		Logger.global.exiting("EditorTestHelper", "joinJobs", new Boolean(quiet)); //$NON-NLS-1$ //$NON-NLS-2$
 		return quiet;
 	}
 	
@@ -204,7 +194,6 @@ public class EditorTestHelper {
 			Job job= jobs[i];
 			int state= job.getState();
 			if (state == Job.RUNNING || state == Job.WAITING) {
-				Logger.global.finest(job.getName());
 				return false;
 			}
 		}

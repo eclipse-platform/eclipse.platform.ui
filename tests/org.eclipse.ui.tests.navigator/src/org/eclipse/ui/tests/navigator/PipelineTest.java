@@ -28,9 +28,9 @@ public class PipelineTest extends NavigatorTestBase {
 
 		assertEquals(
 				"There should be no visible extensions for the pipeline viewer.",
-				0, contentService.getVisibleExtensionIds().length);
+				0, _contentService.getVisibleExtensionIds().length);
 
-		contentService.bindExtensions(new String[] {
+		_contentService.bindExtensions(new String[] {
 				COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT },
 				false);
 
@@ -38,33 +38,33 @@ public class PipelineTest extends NavigatorTestBase {
 		// is not included in the executing bundles (which it normally is)
 		assertEquals(
 				"There should be two visible extensions for the pipeline viewer.",
-				2, contentService.getVisibleExtensionIds().length);
+				2, _contentService.getVisibleExtensionIds().length);
 
-		contentService.getActivationService().activateExtensions(
+		_contentService.getActivationService().activateExtensions(
 				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
 						COMMON_NAVIGATOR_JAVA_EXT }, true);
 
 		refreshViewer();
 
 		// we do this to force the rendering of the children of items[0]
-		viewer.setSelection(
-				new StructuredSelection(project.getFile(".project")), true); //$NON-NLS-1$
+		_viewer.setSelection(
+				new StructuredSelection(_project.getFile(".project")), true); //$NON-NLS-1$
 
-		TreeItem[] rootItems = viewer.getTree().getItems();
+		TreeItem[] rootItems = _viewer.getTree().getItems();
 
-		assertEquals("There should be one item.", 1, rootItems.length); //$NON-NLS-1$		
+		assertEquals("There should be one item.", _projectCount, rootItems.length); //$NON-NLS-1$		
 
 		assertTrue(
 				"The root object should be an IJavaProject, which is IAdaptable.", rootItems[0].getData() instanceof IAdaptable); //$NON-NLS-1$
 
-		IProject adaptedProject = (IProject) ((IAdaptable) rootItems[0]
+		IProject adaptedProject = (IProject) ((IAdaptable) rootItems[_projectInd]
 				.getData()).getAdapter(IProject.class);
-		assertEquals(project, adaptedProject);
+		assertEquals(_project, adaptedProject);
 
-		IFolder sourceFolder = project.getFolder(new Path("src"));
-		viewer.add(project, sourceFolder);
+		IFolder sourceFolder = _project.getFolder(new Path("src"));
+		_viewer.add(_project, sourceFolder);
 
-		TreeItem[] projectChildren = rootItems[0].getItems();
+		TreeItem[] projectChildren = rootItems[_projectInd].getItems();
 
 		assertTrue("There should be some items.", projectChildren.length > 0); //$NON-NLS-1$
 
@@ -76,11 +76,12 @@ public class PipelineTest extends NavigatorTestBase {
 		// a new project without a Java nature should add without an issue.
 		IProject newProject = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject("New Project");
-		viewer.add(viewer.getInput(), newProject);
+		_viewer.add(_viewer.getInput(), newProject);
 
-		rootItems = viewer.getTree().getItems();
+		rootItems = _viewer.getTree().getItems();
 
-		assertEquals("There should be two items.", 2, rootItems.length); //$NON-NLS-1$
+		assertEquals("There should be " + (_projectCount + 1) + 
+				" items.", _projectCount + 1, rootItems.length);
 
 		boolean found = false;
 		for (int i = 0; i < rootItems.length && !found; i++) {

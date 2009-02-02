@@ -9,13 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.tests.navigator;
+package org.eclipse.ui.tests.harness.util;
 
 import junit.framework.Assert;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.TreeItem;
 
 
 /**
@@ -136,4 +138,53 @@ public class SWTEventHelper {
 		fgMouseButtonEvent.button= button;
 		postEvent(display, fgMouseButtonEvent, runEventQueue);
 	}
+
+
+	public static void performTreeDnD(TreeItem startItem, TreeItem dropItem) {
+		Rectangle boundsStart, boundsEnd;
+
+		int fudge = 3;
+		int gestureSize = 10;
+
+		boundsStart = Display.getCurrent().map(startItem.getParent(), null,
+				startItem.getBounds());
+		boundsEnd = Display.getCurrent().map(dropItem.getParent(), null,
+				dropItem.getBounds());
+
+		int xstart = boundsStart.x + fudge;
+		int ystart = boundsStart.y + fudge;
+		int xend = boundsEnd.x + fudge;
+		int yend = boundsEnd.y + fudge;
+
+		SWTEventHelper.mouseMoveEvent(Display.getCurrent(), xstart, ystart,
+				false);
+		SWTEventHelper.mouseDownEvent(Display.getCurrent(), 1, false);
+
+		// Make it see a drag gesture
+		SWTEventHelper.mouseMoveEvent(Display.getCurrent(), xstart
+				+ gestureSize, ystart, true);
+
+		while (xstart != xend) {
+			SWTEventHelper.mouseMoveEvent(Display.getCurrent(), xstart, ystart,
+					true);
+			if (xstart < xend)
+				xstart++;
+			else
+				xstart--;
+		}
+
+		while (ystart != yend) {
+			SWTEventHelper.mouseMoveEvent(Display.getCurrent(), xstart, ystart,
+					false);
+			if (ystart < yend)
+				ystart++;
+			else
+				ystart--;
+		}
+
+		SWTEventHelper.mouseMoveEvent(Display.getCurrent(), xend, yend, true);
+		SWTEventHelper.mouseUpEvent(Display.getCurrent(), 1, true);
+	}
+
+
 }

@@ -28,6 +28,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonNavigator;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * A test to see if created projects are reflected in Project Explorer

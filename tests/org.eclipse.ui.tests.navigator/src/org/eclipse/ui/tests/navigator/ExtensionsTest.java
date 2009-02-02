@@ -14,6 +14,7 @@ package org.eclipse.ui.tests.navigator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.navigator.filters.CommonFilterSelectionDialog;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class ExtensionsTest extends NavigatorTestBase {
 	
@@ -37,7 +38,7 @@ public class ExtensionsTest extends NavigatorTestBase {
 
 	// Bug 185561 when hideAvailableExtensionsTab is true, everything gone
 	public void testHideAvailableExtensions() throws Exception {
-		assertEquals(1, _commonNavigator.getCommonViewer().getTree()
+		assertEquals(3, _commonNavigator.getCommonViewer().getTree()
 				.getItemCount());
 
 		// Just showing the filters dialog upsets the apple cart
@@ -45,7 +46,7 @@ public class ExtensionsTest extends NavigatorTestBase {
 		cfDialog.create();
 		cfDialog.finish();
 
-		assertEquals(1, _commonNavigator.getCommonViewer().getTree()
+		assertEquals(_projectCount, _commonNavigator.getCommonViewer().getTree()
 				.getItemCount());
 
 		if (DEBUG)

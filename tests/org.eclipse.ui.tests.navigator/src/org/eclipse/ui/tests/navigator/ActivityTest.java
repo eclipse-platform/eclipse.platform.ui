@@ -62,8 +62,8 @@ public class ActivityTest extends NavigatorTestBase {
 	// Bug 217801 make sure category filtering works with common wizards
 	public void testCategoryWizard() throws Exception {
 
-		IStructuredSelection sel = new StructuredSelection(project);
-		viewer.setSelection(sel);
+		IStructuredSelection sel = new StructuredSelection(_project);
+		_viewer.setSelection(sel);
 
 		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench().getActivitySupport();
 

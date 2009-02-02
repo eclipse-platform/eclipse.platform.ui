@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
@@ -33,13 +31,9 @@ public class SorterTest extends NavigatorTestBase {
 
 		TestResourceContentProvider._returnBadObject = true;
 
-		IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
-		p1.create(null);
-		p1.open(null);
-
-		contentService.bindExtensions(new String[] { TEST_SORTER_CONTENT },
+		_contentService.bindExtensions(new String[] { TEST_SORTER_CONTENT },
 				false);
-		contentService.getActivationService().activateExtensions(
+		_contentService.getActivationService().activateExtensions(
 				new String[] { TEST_SORTER_CONTENT }, true);
 
 		refreshViewer();
@@ -54,11 +48,11 @@ public class SorterTest extends NavigatorTestBase {
 		NavigatorPlugin.getDefault().getLog().addLogListener(ll);
 
 		// Gets an NPE because the sorter can't find the object
-		viewer.expandAll();
+		_viewer.expandAll();
 
 		NavigatorPlugin.getDefault().getLog().removeLogListener(ll);
 
-		assertEquals(4, _statusCount);
+		assertEquals(6, _statusCount);
 		assertTrue(_status.getMessage().indexOf("Cannot find nav") > -1);
 		assertTrue(_status.getMessage().indexOf("P/Test") > -1);
 	}
