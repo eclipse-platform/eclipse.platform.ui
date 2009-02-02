@@ -161,7 +161,7 @@
                label="%CompareWithEachOtherAction.label"
                menubarPath="compareWithMenu/compareWithGroup"
                overrideActionId="compareWithEachOther"
-               tooltip="CompareWithEachOtherAction.tooltip">
+               tooltip="%CompareWithEachOtherAction.tooltip">
          </action>
       </objectContribution>
       <objectContribution
