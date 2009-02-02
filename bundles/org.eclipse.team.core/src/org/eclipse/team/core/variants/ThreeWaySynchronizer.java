@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.subscribers.BatchingLock;
@@ -39,7 +38,7 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 
 	private static final byte[] IGNORED_BYTES = "i".getBytes(); //$NON-NLS-1$
 	
-	private ILock lock = Platform.getJobManager().newLock();
+	private ILock lock = Job.getJobManager().newLock();
 	private BatchingLock batchingLock = new BatchingLock();
 	private ResourceVariantByteStore cache;
 	private Set listeners = new HashSet();
@@ -272,6 +271,7 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 	 * Return whether the given resource has sync bytes in the synchronizer.
 	 * @param resource the local resource
 	 * @return whether there are sync bytes cached for the local resources.
+	 * @throws TeamException 
 	 */
 	public boolean hasSyncBytes(IResource resource) throws TeamException {
 		return internalGetSyncBytes(resource) != null;
@@ -401,7 +401,7 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 		// Notify the listeners safely so all will receive notification
 		for (int i = 0; i < allListeners.length; i++) {
 			final ISynchronizerChangeListener listener = allListeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// don't log the exception....it is already being logged in Platform#run
 				}
