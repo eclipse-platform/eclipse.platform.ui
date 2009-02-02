@@ -55,23 +55,15 @@
       </factory>
    </extension>
    <extension
-         id="app"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-         <run
-               class="org.eclipse.e4.demo.e4photo.Application">
-         </run>
-      </application>
-   </extension>
-   <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="org.eclipse.e4.demo.e4photo.app"
+            application="org.eclipse.e4.ui.workbench.application"
             name="e4 photo demo">
+         <property
+               name="appName"
+               value="e4 photo demo">
+         </property>
       </product>
    </extension>
 

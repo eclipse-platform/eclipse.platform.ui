@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.4"?>
+<?pde version="3.5"?>
 
-<product name="e4 photo demo" id="org.eclipse.e4.demo.e4photo.product" application="org.eclipse.e4.demo.e4photo.id1" version="1.0" useFeatures="false">
+<product name="e4 photo demo" id="org.eclipse.e4.demo.e4photo.product" application="org.eclipse.e4.ui.workbench.application" version="1.0" useFeatures="false">
 
    <configIni use="default">
    </configIni>
@@ -12,5 +12,6 @@
 
    <plugins>
    </plugins>
+
 
 </product>
