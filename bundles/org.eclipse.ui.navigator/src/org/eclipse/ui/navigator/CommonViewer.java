@@ -142,8 +142,7 @@ public class CommonViewer extends TreeViewer {
 	 */
 	protected void initDragAndDrop() {
 
-		/* Handle Drag and Drop */
-		int operations = DND.DROP_COPY | DND.DROP_MOVE;
+		int operations = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
 
 		CommonDragAdapter dragAdapter = new CommonDragAdapter(contentService,
 				this);
