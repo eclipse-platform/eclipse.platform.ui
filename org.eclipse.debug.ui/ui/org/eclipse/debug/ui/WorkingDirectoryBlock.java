@@ -15,6 +15,7 @@ package org.eclipse.debug.ui;
 
 import java.io.File;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -226,7 +227,8 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 		        IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 			    try {
                     path = manager.performStringSubstitution(path, false);
-                    IContainer[] containers = root.findContainersForLocation(new Path(path));
+                    IPath uriPath = new Path(path).makeAbsolute();
+                    IContainer[] containers = root.findContainersForLocationURI(URIUtil.toURI(uriPath));
                     if (containers.length > 0) {
                         res = containers[0];
                     }
