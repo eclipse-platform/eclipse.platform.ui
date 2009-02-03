@@ -2769,13 +2769,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 		  preference store
 	 */
 	protected void setPreferenceStore(IPreferenceStore store) {
-		if (fPreferenceStore != null)
+		if (fPreferenceStore != null) {
 			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
+			fPreferenceStore.removePropertyChangeListener(fFontPropertyChangeListener);
+		}
 
 		fPreferenceStore= store;
 
-		if (fPreferenceStore != null)
+		if (fPreferenceStore != null) {
 			fPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
+			fPreferenceStore.addPropertyChangeListener(fFontPropertyChangeListener);
+		}
 	}
 
 	/*
@@ -4244,6 +4248,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (fFontPropertyChangeListener != null) {
 			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
+			if (fPreferenceStore != null)
+				fPreferenceStore.removePropertyChangeListener(fFontPropertyChangeListener);
 			fFontPropertyChangeListener= null;
 		}
 
@@ -4415,7 +4421,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Returns the property preference key for the editor font.
-	 *
+	 * <p>
+	 * If the editor is defined with a <code>symbolicFontName </code> then this name is returned and
+	 * the font is looked up in the JFace registry. Otherwise, {@link JFaceResources#TEXT_FONT}
+	 * is returned and the font is looked up in this editor's preference store.
+	 * </p>
+	 * 
 	 * @return a String with the key
 	 * @since 2.1
 	 */
