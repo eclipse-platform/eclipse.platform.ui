@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,9 @@ package org.eclipse.ui.internal.intro.impl.model.viewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroIdElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroAnchor;
 import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.IntroExtensionContent;
 import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
@@ -22,6 +24,8 @@ import org.eclipse.ui.internal.intro.impl.model.IntroHTML;
 import org.eclipse.ui.internal.intro.impl.model.IntroImage;
 import org.eclipse.ui.internal.intro.impl.model.IntroInclude;
 import org.eclipse.ui.internal.intro.impl.model.IntroLink;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroPageTitle;
 import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
 import org.eclipse.ui.internal.intro.impl.model.IntroSeparator;
 import org.eclipse.ui.internal.intro.impl.model.IntroText;
@@ -77,7 +81,7 @@ public class IntroModelLabelProvider extends LabelProvider {
         int elementType = introElement.getType();
         switch (elementType) {
         case AbstractIntroElement.GROUP:
-            label = "GROUP: " + ((IntroGroup) introElement).getLabel(); //$NON-NLS-1$
+            label = "GROUP: " + ((IntroGroup) introElement).getId(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.LINK:
             label = "LINK: " + ((IntroLink) introElement).getLabel(); //$NON-NLS-1$
@@ -103,7 +107,7 @@ public class IntroModelLabelProvider extends LabelProvider {
             break;
         case AbstractIntroElement.HOME_PAGE:
             label = "HOME PAGE: " //$NON-NLS-1$
-                    + ((AbstractIntroPage) introElement).getTitle();
+                    + ((AbstractIntroPage) introElement).getId();
             break;
         case AbstractIntroElement.PRESENTATION:
             label = "PRESENTATION: " //$NON-NLS-1$
@@ -117,6 +121,14 @@ public class IntroModelLabelProvider extends LabelProvider {
         case AbstractIntroElement.CONTAINER_EXTENSION:
             label = "Unresolved ConfigExtension: " //$NON-NLS-1$
                     + ((IntroExtensionContent) introElement).getPath();
+            break; 
+        case AbstractIntroElement.ANCHOR:
+            label = "ANCHOR: " //$NON-NLS-1$
+                    + getPath(introElement.getParent(), ((IntroAnchor) introElement).getId()); 
+            break;
+        case AbstractIntroElement.PAGE_TITLE:
+            label = "Title: " //$NON-NLS-1$
+                    + ((IntroPageTitle) introElement).getTitle();
             break;
         default:
             label = super.getText(element);
@@ -124,5 +136,17 @@ public class IntroModelLabelProvider extends LabelProvider {
         }
         return label;
     }
+
+	private String getPath(AbstractIntroElement introElement, String suffix) {
+		if (introElement == null || introElement instanceof IntroModelRoot) {
+			return suffix;
+		}
+		String newSuffix = suffix;
+		if (introElement instanceof AbstractIntroIdElement) {
+			newSuffix = ((AbstractIntroIdElement)introElement).getId() + '/' + suffix;
+		}
+		return getPath(introElement.getParent(), newSuffix);
+
+	}
 
 }
