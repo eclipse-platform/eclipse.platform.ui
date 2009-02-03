@@ -533,31 +533,29 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
     		ArrayList pendingCopy = new ArrayList();
     		StringBuffer buffer = null;
     		boolean consoleClosed = false;
-    		while (pendingPartitions.size() > 0) {
-    			synchronized(pendingPartitions) {
-    				pendingCopy.addAll(pendingPartitions);
-    				pendingPartitions.clear();
-    				fBuffer = 0;
-    				pendingPartitions.notifyAll();
-    			}
-    			// determine buffer size
-    			int size = 0;
-    			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
-    				PendingPartition pp = (PendingPartition) i.next();
-    				if (pp != consoleClosedPartition) { 
-    					size+= pp.text.length();
-    				} 
-    			}
-    			buffer = new StringBuffer(size);
-    			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
-    				PendingPartition pp = (PendingPartition) i.next();
-    				if (pp != consoleClosedPartition) { 
-    					buffer.append(pp.text);
-    				} else {
-    					consoleClosed = true;
-    				}
-    			}
-    		}
+			synchronized(pendingPartitions) {
+				pendingCopy.addAll(pendingPartitions);
+				pendingPartitions.clear();
+				fBuffer = 0;
+				pendingPartitions.notifyAll();
+			}
+			// determine buffer size
+			int size = 0;
+			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
+				PendingPartition pp = (PendingPartition) i.next();
+				if (pp != consoleClosedPartition) { 
+					size+= pp.text.length();
+				} 
+			}
+			buffer = new StringBuffer(size);
+			for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
+				PendingPartition pp = (PendingPartition) i.next();
+				if (pp != consoleClosedPartition) { 
+					buffer.append(pp.text);
+				} else {
+					consoleClosed = true;
+				}
+			}
 
     		if (connected) {
     			setUpdateInProgress(true);
