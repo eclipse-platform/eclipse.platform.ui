@@ -4423,8 +4423,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Returns the property preference key for the editor font.
 	 * <p>
 	 * If the editor is defined with a <code>symbolicFontName </code> then this name is returned and
-	 * the font is looked up in the JFace registry. Otherwise, {@link JFaceResources#TEXT_FONT}
-	 * is returned and the font is looked up in this editor's preference store.
+	 * the font is looked up in the JFace resource registry. Otherwise,
+	 * {@link JFaceResources#TEXT_FONT} is returned and the font is looked up in this editor's
+	 * preference store.
 	 * </p>
 	 * 
 	 * @return a String with the key
