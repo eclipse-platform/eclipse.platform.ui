@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Teddy Walker <teddy.walker@googlemail.com> 
+ *     Teddy Walker <teddy.walker@googlemail.com>
  *     	- Bug 188056 [Preferences] PreferencePages have to less indent in PreferenceDialog
  *******************************************************************************/
 package org.eclipse.jface.preference;
@@ -84,7 +84,7 @@ import org.eclipse.swt.widgets.Tree;
 public class PreferenceDialog extends TrayDialog implements IPreferencePageContainer, IPageChangeProvider {
 	/**
 	 * Layout for the page container.
-	 *  
+	 * 
 	 */
 	private class PageLayout extends Layout {
 		public Point computeSize(Composite composite, int wHint, int hHint, boolean force) {
@@ -261,9 +261,15 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 							return;
 						}
 					}
+
+
 				});
 			}
 		}
+		
+		// Give subclasses the choice to save the state of the preference pages if needed
+		handleSave();
+
 		setReturnCode(CANCEL);
 		close();
 	}
@@ -451,7 +457,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	}
 
 	/**
-	 * Create the sash with right control on the right. Note 
+	 * Create the sash with right control on the right. Note
 	 * that this method assumes GridData for the layout data
 	 * of the rightControl.
 	 * @param composite
@@ -837,10 +843,10 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 						((IPersistentPreferenceStore) store).save();
 					} catch (IOException e) {
 						String message =JFaceResources.format(
-                                "PreferenceDialog.saveErrorMessage", new Object[] { page.getTitle(), e.getMessage() }); //$NON-NLS-1$ 
+                                "PreferenceDialog.saveErrorMessage", new Object[] { page.getTitle(), e.getMessage() }); //$NON-NLS-1$
 			            Policy.getStatusHandler().show(
 			                    new Status(IStatus.ERROR, Policy.JFACE, message, e),
-			                    JFaceResources.getString("PreferenceDialog.saveErrorTitle")); //$NON-NLS-1$                              			                   
+			                    JFaceResources.getString("PreferenceDialog.saveErrorTitle")); //$NON-NLS-1$
 										
 					}
 				}
@@ -969,7 +975,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
                 Policy.getStatusHandler().show(
                         new Status(IStatus.ERROR, Policy.JFACE, message, e),
-                        JFaceResources.getString("Error")); //$NON-NLS-1$                                                             
+                        JFaceResources.getString("Error")); //$NON-NLS-1$
 
 			}
 		});
@@ -1380,7 +1386,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				// we were not previously showing an error
 				showingError = true;
 			}
-		}  
+		}
 		messageArea.updateText(message,messageType);
 	}
 
@@ -1515,7 +1521,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
                 }
             });
         }
-    }	
+    }
     
     /*
      * (non-Javadoc)
