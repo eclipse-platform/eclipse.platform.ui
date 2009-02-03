@@ -117,11 +117,12 @@ public class LockManager {
 	 * This thread has just acquired a lock.  Update graph.
 	 */
 	void addLockThread(Thread thread, ISchedulingRule lock) {
-		if (locks == null)
+		DeadlockDetector tempLocks = locks;
+		if (tempLocks == null)
 			return;
 		try {
-			synchronized (locks) {
-				locks.lockAcquired(thread, lock);
+			synchronized (tempLocks) {
+				tempLocks.lockAcquired(thread, lock);
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
@@ -132,12 +133,13 @@ public class LockManager {
 	 * This thread has just been refused a lock.  Update graph and check for deadlock.
 	 */
 	void addLockWaitThread(Thread thread, ISchedulingRule lock) {
-		if (locks == null)
+		DeadlockDetector tempLocks = locks;
+		if (tempLocks == null)
 			return;
 		try {
 			Deadlock found = null;
-			synchronized (locks) {
-				found = locks.lockWaitStart(thread, lock);
+			synchronized (tempLocks) {
+				found = tempLocks.lockWaitStart(thread, lock);
 			}
 			if (found == null)
 				return;
@@ -208,10 +210,11 @@ public class LockManager {
 		Thread current = Thread.currentThread();
 		if (current instanceof Worker)
 			return true;
-		if (locks == null)
+		DeadlockDetector tempLocks = locks;
+		if (tempLocks == null)
 			return false;
-		synchronized (locks) {
-			return locks.contains(Thread.currentThread());
+		synchronized (tempLocks) {
+			return tempLocks.contains(Thread.currentThread());
 		}
 	}
 
@@ -226,11 +229,12 @@ public class LockManager {
 	 * Releases all the acquires that were called on the given rule. Needs to be called only once.
 	 */
 	void removeLockCompletely(Thread thread, ISchedulingRule rule) {
-		if (locks == null)
+		DeadlockDetector tempLocks = locks;
+		if (tempLocks == null)
 			return;
 		try {
-			synchronized (locks) {
-				locks.lockReleasedCompletely(thread, rule);
+			synchronized (tempLocks) {
+				tempLocks.lockReleasedCompletely(thread, rule);
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
@@ -241,9 +245,12 @@ public class LockManager {
 	 * This thread has just released a lock.  Update graph.
 	 */
 	void removeLockThread(Thread thread, ISchedulingRule lock) {
+		DeadlockDetector tempLocks = locks;
+		if (tempLocks == null)
+			return;
 		try {
-			synchronized (locks) {
-				locks.lockReleased(thread, lock);
+			synchronized (tempLocks) {
+				tempLocks.lockReleased(thread, lock);
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
@@ -254,9 +261,12 @@ public class LockManager {
 	 * This thread has just stopped waiting for a lock. Update graph.
 	 */
 	void removeLockWaitThread(Thread thread, ISchedulingRule lock) {
+		DeadlockDetector tempLocks = locks;
+		if (tempLocks == null)
+			return;
 		try {
-			synchronized (locks) {
-				locks.lockWaitStop(thread, lock);
+			synchronized (tempLocks) {
+				tempLocks.lockWaitStop(thread, lock);
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
