@@ -325,7 +325,35 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * Context provider
 	 */
 	private TreeViewerContextProvider fTreeViewerDebugContextProvider;
-	
+
+	/**
+	 * The PageBookView, which is a base class of this class does not make it 
+	 * easy to control which page is currently active.  It is intended that the 
+	 * page book pages are associated with workbench parts, and the parts are 
+	 * in turn associated with PageRec records.  
+	 * <p>
+	 * PageRec is needed in order to properly active a page book page, by 
+	 * calling showPageRec(), so in this class we need to add some hooks in
+	 * order to obtain the page record for the tree viewer page and the 
+	 * breadcrumb page.</p><p> 
+	 * For the default page, we override the showPageRec() 
+	 * to determine if the default page is being shown and if it is, we save
+	 * its record for later use.  showPageRec() is always called for the default
+	 * page after it is created.  For the breadcrumb page, we use the page book
+	 * view mechanism to create the page based on a workbench part, but we have 
+	 * to create a dummy part in order for this to work.
+	 * </p>    
+	 * 
+	 * @see #createPartControl(Composite)
+	 * @see BreadcrumbWorkbenchPart
+	 * @eee #doCreatePage(IWorkbenchPart)
+	 * @see #isImportant(IWorkbenchPart)
+	 * @see #autoSelectViewPage(Composite)
+	 * @see #showTreeViewerPage()
+	 * @see #showBreadcrumbPage()
+	 */
+	PageRec fDefaultPageRec = null;
+
 	private ISelectionChangedListener fTreeViewerSelectionChangedListener = new ISelectionChangedListener() {
 	    public void selectionChanged(SelectionChangedEvent event) {
 	        fTreeViewerDebugContextProvider.activate(event.getSelection());
@@ -435,16 +463,22 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		action.dispose();
 	}
 	
+	/**
+	 * Override the default implementation to create the breadcrumb page.
+	 * 
+	 * @since 3.5
+	 * @see #fDefaultPageRec
+	 */	
 	public void createPartControl(final Composite parent) {
 	    super.createPartControl(parent);
 
 	    getSite().getSelectionProvider().addSelectionChangedListener(this);
 	    
 	    ((IPageBookViewPage)getDefaultPage()).getSite().setSelectionProvider(getViewer());
-	    
-	    fBreadcrumbPage = new BreadcrumbPage();
-        fBreadcrumbPage.createControl(getPageBook());
-        initPage(fBreadcrumbPage);
+
+	    // Call the PageBookView part listener to indirectly create the breadcrumb page.
+	    // This call eventually calls doCreatePage() implemented below.
+	    partActivated(new BreadcrumbWorkbenchPart(getSite()));
         
         fContextProviderProxy = new ContextProviderProxy(
             new IDebugContextProvider[] {fTreeViewerDebugContextProvider, fBreadcrumbPage.getContextProvider()});
@@ -457,16 +491,91 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
                 if (parent.isDisposed()) {
                     return;
                 }
-                int breadcrumbHeight = fBreadcrumbPage.getHeight();
-                if (parent.getClientArea().height < breadcrumbHeight + 5) {
-                    getPageBook().showPage(fBreadcrumbPage.getControl());
-                    fContextProviderProxy.setActiveProvider(fBreadcrumbPage.getContextProvider());
-                } else {
-                    showViewer();
-                    fContextProviderProxy.setActiveProvider(fTreeViewerDebugContextProvider);
-                }
+                autoSelectViewPage(parent);
             }
         });
+	}
+	
+    /**
+     * Override the default implementation to create the breadcrumb page.
+     * 
+     * @since 3.5
+     * @see #fDefaultPageRec
+     */ 
+	protected PageRec doCreatePage(IWorkbenchPart part) {
+	    if (part instanceof BreadcrumbWorkbenchPart) {
+	        fBreadcrumbPage = new BreadcrumbPage();
+	        fBreadcrumbPage.createControl(getPageBook());
+	        initPage(fBreadcrumbPage);
+	        return new PageRec(part, fBreadcrumbPage);
+	    }
+	    return null;
+	}
+	
+    /**
+     * Override the default implementation to create the breadcrumb page.
+     * 
+     * @since 3.5
+     * @see #fDefaultPageRec
+     */ 
+	protected boolean isImportant(IWorkbenchPart part) {
+	    return part instanceof BreadcrumbWorkbenchPart;
+	}
+
+    /**
+     * Override the default implementation to gain access at the default
+     * page record.
+     * 
+     * @since 3.5
+     * @see #fDefaultPageRec
+     */ 
+	protected void showPageRec(PageRec pageRec) {
+	    if (pageRec.page == getDefaultPage()) {
+	        fDefaultPageRec = pageRec;
+	    }
+	        
+	    super.showPageRec(pageRec);
+	}
+	    
+
+    /**
+     * Based on the current view size, select the active view page 
+     * (tree viewer vs. breadcrumb).
+     * 
+     * @param parent View pane control.
+     */
+    private void autoSelectViewPage(Composite parent) {
+        int breadcrumbHeight = fBreadcrumbPage.getHeight();
+        if (parent.getClientArea().height < breadcrumbHeight + 5) {
+            showBreadcrumbPage();
+        } else {
+            showTreeViewerPage();
+        }
+    }
+    
+    /**
+     * Shows the tree viewer in the Debug view.
+     */
+	void showTreeViewerPage() {
+	    if (fDefaultPageRec != null) {
+            showPageRec(fDefaultPageRec);
+            fContextProviderProxy.setActiveProvider(fTreeViewerDebugContextProvider);
+	    }
+	}
+
+	/**
+	 * Shows the breadcrumb in the Debug view.
+	 */
+	void showBreadcrumbPage() {
+        PageRec rec = getPageRec(fBreadcrumbPage);
+        if (!fBreadcrumbPage.equals(getCurrentPage()) && rec != null) {
+            showPageRec(rec);
+            fBreadcrumbPage.fCrumb.debugContextChanged(new DebugContextEvent(
+                fTreeViewerDebugContextProvider, 
+                fTreeViewerDebugContextProvider.getActiveContext(), 
+                DebugContextEvent.ACTIVATED));
+            fContextProviderProxy.setActiveProvider(fBreadcrumbPage.getContextProvider());
+        }
 	}
 	
 	/* (non-Javadoc)
