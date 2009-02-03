@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -274,16 +274,18 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 */
 	private Button createButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.PUSH);
-		GridData data = new GridData();
-		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		button.setLayoutData(data);
 		button.setFont(parent.getFont());
 		button.setText(label);
 		button.setEnabled(false);
 		button.addSelectionListener(buttonListener);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		button.setLayoutData(data);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		return button;
 	}
-
+	
 	/* (non-Javadoc)
 	 * Method declared on PreferencePage.
 	 */
@@ -787,19 +789,25 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		newButton.setEnabled(true);
 		Table builderTable= viewer.getTable();
 		TableItem[] items = builderTable.getSelection();
-		boolean validSelection= items != null && items.length > 0;
-		boolean enableEdit= validSelection;
-		boolean enableRemove= validSelection;
-		boolean enableUp= validSelection;
-		boolean enableDown= validSelection;
-		if (validSelection) {
+		boolean enableEdit = false;
+		boolean enableRemove = false;
+		boolean enableUp = false;
+		boolean enableDown = false;
+		if(items != null) {
+			boolean validSelection =  items.length > 0;
+			enableEdit = validSelection;
+			enableRemove = validSelection;
+			enableUp = validSelection;
+			enableDown = validSelection;
 			if (items.length > 1) {
 				enableEdit= false;
 			}
 			int indices[]= builderTable.getSelectionIndices();
 			int max = builderTable.getItemCount();
-			enableUp= indices[0] != 0;
-			enableDown= indices[indices.length - 1] < max - 1;
+			if(indices.length > 0) {
+				enableUp = indices[0] != 0;
+				enableDown = indices[indices.length - 1] < max - 1;
+			}
 			for (int i = 0; i < items.length; i++) {
 				TableItem item = items[i];
 				Object data= item.getData();
@@ -1158,10 +1166,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				}
 				Map oldArgs= oldCommand.getArguments();
 				Map newArgs= newCommand.getArguments();
-				if (oldArgs == null && newArgs != null) {
-					return true;
-				}
-				if (oldArgs == null && newArgs == null) {
+				if (oldArgs == null) {
+					if(newArgs != null) {
+						return true;
+					}
 					continue;
 				}
 				if(oldArgs.size() != newArgs.size()) {
