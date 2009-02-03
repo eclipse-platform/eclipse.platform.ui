@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 263413
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
 
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.jface.databinding.viewers.ViewerValueProperty;
 import org.eclipse.jface.viewers.Viewer;
 
 /**

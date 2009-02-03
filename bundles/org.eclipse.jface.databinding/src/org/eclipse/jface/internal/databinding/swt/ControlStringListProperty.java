@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 195222, 251611
+ *     Matthew Hall - bugs 195222, 251611, 263413
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.jface.databinding.swt.WidgetListProperty;
 import org.eclipse.swt.widgets.Control;
 
 /**

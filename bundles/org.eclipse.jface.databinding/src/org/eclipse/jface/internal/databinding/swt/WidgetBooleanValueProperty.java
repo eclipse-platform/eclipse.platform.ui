@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 263413
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
+
+import org.eclipse.jface.databinding.swt.WidgetValueProperty;
 
 /**
  * @since 3.3

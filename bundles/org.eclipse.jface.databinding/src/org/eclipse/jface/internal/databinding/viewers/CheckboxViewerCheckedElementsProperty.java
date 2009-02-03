@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 195222, 259380
+ *     Matthew Hall - bugs 195222, 259380, 263413
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.jface.databinding.viewers.ViewerSetProperty;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckable;
