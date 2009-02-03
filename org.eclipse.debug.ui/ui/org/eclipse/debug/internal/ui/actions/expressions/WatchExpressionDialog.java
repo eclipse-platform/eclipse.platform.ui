@@ -15,12 +15,16 @@ import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.StatusInfo;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
@@ -31,8 +35,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.actions.TextViewerAction;
 
 /**
  * Dialog for edit watch expression.
@@ -107,6 +114,35 @@ public class WatchExpressionDialog extends StatusDialog {
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		control.setLayoutData(gd);
 		fSnippetViewer.getDocument().set(fWatchExpression.getExpressionText());
+
+		// actions
+		final TextViewerAction cutAction = new TextViewerAction(fSnippetViewer, ITextOperationTarget.CUT);
+		cutAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+		cutAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
+		cutAction.setText(ActionMessages.WatchExpressionDialogMenu_0);
+		final TextViewerAction copyAction = new TextViewerAction(fSnippetViewer, ITextOperationTarget.COPY);
+		copyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		copyAction.setText(ActionMessages.WatchExpressionDialogMenu_1);
+		final TextViewerAction pasteAction = new TextViewerAction(fSnippetViewer, ITextOperationTarget.PASTE);
+		pasteAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		pasteAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+		pasteAction.setText(ActionMessages.WatchExpressionDialogMenu_2);
+
+		// context menu
+		MenuManager menuManager = new MenuManager();
+		menuManager.add(cutAction);
+		menuManager.add(copyAction);
+		menuManager.add(pasteAction);
+		menuManager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				cutAction.update();
+				copyAction.update();
+				pasteAction.update();
+			}
+		});
+		Menu menu = menuManager.createContextMenu(fSnippetViewer.getTextWidget());
+		fSnippetViewer.getTextWidget().setMenu(menu);
 
 		// enable checkbox
 		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);

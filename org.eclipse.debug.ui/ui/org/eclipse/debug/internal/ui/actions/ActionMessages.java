@@ -145,6 +145,9 @@ public class ActionMessages extends NLS {
     public static String WatchExpressionDialog_2;
     public static String WatchExpressionDialog_3;
     public static String WatchExpressionDialog_4;
+	public static String WatchExpressionDialogMenu_0;
+	public static String WatchExpressionDialogMenu_1;
+	public static String WatchExpressionDialogMenu_2;
     public static String WatchAction_0;
     public static String WatchAction_1;
     
