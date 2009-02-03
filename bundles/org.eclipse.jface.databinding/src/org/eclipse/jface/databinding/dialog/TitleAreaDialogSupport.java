@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *        (through WizardPageSupport.java)
  *     Matthew Hall - initial API and implementation (bug 239900)
+ *     Ben Vitale <bvitale3002@yahoo.com> - bug 263100
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.dialog;
@@ -53,13 +54,13 @@ public class TitleAreaDialogSupport {
 	 * Upon any validation result change, the dialog's error message will be
 	 * updated according to the current validation result.
 	 * 
-	 * @param wizardPage
+	 * @param dialog
 	 * @param dbc
-	 * @return an instance of WizardPageSupport
+	 * @return an instance of TitleAreaDialogSupport
 	 */
-	public static TitleAreaDialogSupport create(TitleAreaDialog wizardPage,
+	public static TitleAreaDialogSupport create(TitleAreaDialog dialog,
 			DataBindingContext dbc) {
-		return new TitleAreaDialogSupport(wizardPage, dbc);
+		return new TitleAreaDialogSupport(dialog, dbc);
 	}
 
 	private TitleAreaDialog dialog;
