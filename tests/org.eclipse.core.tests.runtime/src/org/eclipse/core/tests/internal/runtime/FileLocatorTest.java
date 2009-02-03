@@ -103,7 +103,7 @@ public class FileLocatorTest extends TestCase {
 	private Bundle getHostBundle(URL url) {
 		String host = url.getHost();
 		int dot = host.indexOf('.');
-		Long hostId = Long.decode(dot < 0 ? host : host.substring(dot + 1));
+		Long hostId = Long.decode(dot < 0 ? host : host.substring(0, dot));
 		assertNotNull(hostId);
 		return RuntimeTestsPlugin.getContext().getBundle(hostId.longValue());
 	}
