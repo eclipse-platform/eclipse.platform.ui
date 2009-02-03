@@ -1,11 +1,11 @@
 package org.eclipse.e4.workbench.ui;
 
-import org.eclipse.e4.ui.model.application.Command;
-import org.eclipse.e4.ui.model.application.Handler;
+import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MHandler;
 
 /**
  *
  */
 public interface IHandlerService {
-	public Handler getHandler(Command command);
+	public MHandler getHandler(MCommand command);
 }

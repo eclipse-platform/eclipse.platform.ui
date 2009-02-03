@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui;
 
-import org.eclipse.e4.ui.model.application.Application;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 
 public interface IWorkbench {
@@ -18,5 +18,5 @@ public interface IWorkbench {
 	public void close();
 	
 	public ResourceUtility getResourceUtility();
-	public Application getModelElement();
+	public MApplication getModelElement();
 }

@@ -17,8 +17,8 @@ import java.util.List;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.Handler;
-import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
@@ -42,7 +42,7 @@ public class PartRenderer {
 		partFactories.add(factory);
 	}
 	
-	public Object createGui(Part element) {
+	public Object createGui(MPart element) {
 		if (!element.isVisible())
 			return null;
 		
@@ -62,8 +62,8 @@ public class PartRenderer {
 			factory.postProcess(element);
 			
 			// Now that we have a widget let the parent know
-			if (element.getParent() instanceof Part) {
-				Part parentElement = (Part) element.getParent();
+			if (element.getParent() instanceof MPart) {
+				MPart parentElement = (MPart) element.getParent();
 				PartFactory parentFactory = getFactoryFor(parentElement);
 				parentFactory.childAdded(parentElement, element);
 			}
@@ -72,7 +72,7 @@ public class PartRenderer {
 		return newWidget;
 	}
 
-	protected Object createWidget(Part element) {
+	protected Object createWidget(MPart element) {
 		// Iterate through the factories until one actually creates the widget
 		for (Iterator iterator = partFactories.iterator(); iterator.hasNext();) {
 			PartFactory factory = (PartFactory) iterator.next();
@@ -99,29 +99,29 @@ public class PartRenderer {
 		return null;
 	}
 
-	protected void processHandlers(Part<?> element) {
-		for (Handler contributedHandler : element.getHandlers()) {
+	protected void processHandlers(MPart<?> element) {
+		for (MHandler contributedHandler : element.getHandlers()) {
 			contributedHandler.setObject(contributionFactory.create(
 					contributedHandler.getURI(), context));
 		}
 	}
 	
 	/**
-	 * Manages the relationship between a Part<?> and its rendered Widget.
+	 * Manages the relationship between a MPart<?> and its rendered Widget.
 	 * 
-	 *    Part<?>.getWidget().getData(OWNING_ME) == Part<?>
+	 *    MPart<?>.getWidget().getData(OWNING_ME) == MPart<?>
 	 *    
 	 * @param element The UI element
 	 * @param widget The widget
 	 */
-//	public void bindWidget(Part<?> me, Widget widget) {
+//	public void bindWidget(MPart<?> me, Widget widget) {
 //		me.setWidget(widget);
 //		widget.setData(OWNING_ME, me);
 //		
 //		hookControllerLogic(me, widget);
 //	}
 
-	private void hookControllerLogic(final Part<?> element) {
+	private void hookControllerLogic(final MPart<?> element) {
 		// Delegate widget specific hook-up to the creating factory
 		PartFactory factory = (PartFactory) getFactoryFor(element);
 		if (factory != null)
@@ -131,14 +131,14 @@ public class PartRenderer {
         ((EObject)element).eAdapters().add(new AdapterImpl() {
         	@Override
         	public void notifyChanged(Notification msg) {
-        		if (ApplicationPackage.Literals.PART__CHILDREN.equals(msg.getFeature())
+        		if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg.getFeature())
         			 && msg.getEventType() == Notification.ADD) {
-            			Part parent = (Part) msg.getNotifier();
+            			MPart parent = (MPart) msg.getNotifier();
             			PartFactory parentFactory = getFactoryFor(parent);
             			if (parentFactory == null)
             				return;
             			
-        				Part added = (Part) msg.getNewValue();
+        				MPart added = (MPart) msg.getNewValue();
         				parentFactory.childAdded(parent, added);
         		}
         	}
@@ -148,25 +148,25 @@ public class PartRenderer {
         ((EObject)element).eAdapters().add(new AdapterImpl() {
         	@Override
         	public void notifyChanged(Notification msg) {
-        		if (ApplicationPackage.Literals.PART__CHILDREN.equals(msg.getFeature())
+        		if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg.getFeature())
         			 && msg.getEventType() == Notification.REMOVE) {
-            			Part<?> parent = (Part<?>) msg.getNotifier();
+            			MPart<?> parent = (MPart<?>) msg.getNotifier();
             			PartFactory parentFactory = getFactoryFor(parent);
             			if (parentFactory == null)
             				return;
             			
-        				Part<?> removed = (Part<?>) msg.getOldValue();
+        				MPart<?> removed = (MPart<?>) msg.getOldValue();
         				parentFactory.childRemoved(parent, removed);
         		}
         	}
         });
 	}
 
-	protected void setFactoryFor(Part element, PartFactory factory) {
+	protected void setFactoryFor(MPart element, PartFactory factory) {
 		element.setOwner(factory);
 	}
 	
-	protected PartFactory getFactoryFor(Part element) {
+	protected PartFactory getFactoryFor(MPart element) {
 		return (PartFactory) element.getOwner();
 	}
 }

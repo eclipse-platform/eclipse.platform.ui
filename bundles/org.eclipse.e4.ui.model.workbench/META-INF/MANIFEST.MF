@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.e4.ui.model.workbench;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-ClassPath: .
-Bundle-Activator: org.eclipse.e4.ui.model.workbench.WorkbenchModelActivator$Implementation
+Bundle-Activator: org.eclipse.e4.ui.model.workbench.MWorkbenchModelActivator$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

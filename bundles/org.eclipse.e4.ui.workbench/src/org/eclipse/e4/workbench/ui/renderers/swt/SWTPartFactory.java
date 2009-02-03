@@ -1,11 +1,12 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.Command;
-import org.eclipse.e4.ui.model.application.HandledItem;
-import org.eclipse.e4.ui.model.application.Handler;
-import org.eclipse.e4.ui.model.application.Menu;
-import org.eclipse.e4.ui.model.application.ToolBarItem;
+import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MHandledItem;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.services.ISelectionService;
 import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.swt.SWT;
@@ -26,7 +27,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		super();
 	}
 
-	public void createMenu(Object widgetObject, Menu menu) {
+	public void createMenu(Object widgetObject, MMenu menu) {
 		Widget widget = (Widget) widgetObject;
 		org.eclipse.swt.widgets.Menu swtMenu;
 		if (widget instanceof MenuItem) {
@@ -45,25 +46,24 @@ public abstract class SWTPartFactory extends PartFactory {
 					"The widget must be MenuItem, Decorations, or Control but is: " //$NON-NLS-1$
 							+ widgetObject);
 		}
-		for (org.eclipse.e4.ui.model.application.MenuItem menuItem : menu
-				.getItems()) {
+		for (MMenuItem menuItem : menu.getItems()) {
 			createMenuItem(swtMenu, menuItem);
 		}
 	}
 
 	public void createToolBar(Object widgetObject,
-			org.eclipse.e4.ui.model.application.ToolBar toolbar) {
+			org.eclipse.e4.ui.model.application.MToolBar toolbar) {
 		Composite composite = (Composite) widgetObject;
 		org.eclipse.swt.widgets.ToolBar swtToolBar = new ToolBar(composite,
 				SWT.FLAT | SWT.NO_FOCUS);
-		for (ToolBarItem toolBarItem : toolbar.getItems()) {
+		for (MToolBarItem toolBarItem : toolbar.getItems()) {
 			createToolBarItem(swtToolBar, toolBarItem);
 		}
 	}
 
-	private static Handler getHandler(Display display, HandledItem item) {
-		Handler h = null;
-		Command command = item.getCommand();
+	private static MHandler getHandler(Display display, MHandledItem item) {
+		MHandler h = null;
+		MCommand command = item.getCommand();
 		if (command == null) {
 			return h;
 		}
@@ -83,7 +83,7 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	private void createToolBarItem(ToolBar swtMenu,
-			final org.eclipse.e4.ui.model.application.ToolBarItem toolBarItem) {
+			final org.eclipse.e4.ui.model.application.MToolBarItem toolBarItem) {
 		int style = SWT.PUSH;
 		final ToolItem newToolItem = new ToolItem(swtMenu, style);
 		newToolItem.setText(toolBarItem.getName());
@@ -118,9 +118,9 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	protected Object canExecuteItem(final IEclipseContext context,
-			Display display, final HandledItem item,
+			Display display, final MHandledItem item,
 			final ISelectionService selectionService) {
-		Handler h = getHandler(display, item);
+		MHandler h = getHandler(display, item);
 		if (h==null) {
 			return Boolean.TRUE;
 		}
@@ -131,9 +131,9 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	protected void executeItem(final IEclipseContext context,
-			Display display, final HandledItem item,
+			Display display, final MHandledItem item,
 			final ISelectionService selectionService) {
-		Handler h = getHandler(display, item);
+		MHandler h = getHandler(display, item);
 		if (h==null) {
 			return;
 		}
@@ -142,13 +142,13 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	private void createMenuItem(final org.eclipse.swt.widgets.Menu parentMenu,
-			final HandledItem handledItem) {
+			final MHandledItem handledItem) {
 		int style = SWT.PUSH;
-		if (handledItem instanceof org.eclipse.e4.ui.model.application.MenuItem) {
-			if (((org.eclipse.e4.ui.model.application.MenuItem) handledItem)
+		if (handledItem instanceof MMenuItem) {
+			if (((MMenuItem) handledItem)
 					.isSeparator()) {
 				style = SWT.SEPARATOR;
-			} else if (((org.eclipse.e4.ui.model.application.MenuItem) handledItem)
+			} else if (((MMenuItem) handledItem)
 					.getMenu() != null) {
 				style = SWT.CASCADE;
 			}

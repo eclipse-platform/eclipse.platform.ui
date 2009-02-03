@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ApplicationElement;
-import org.eclipse.e4.ui.model.application.Item;
-import org.eclipse.e4.ui.model.application.ItemPart;
-import org.eclipse.e4.ui.model.application.Menu;
-import org.eclipse.e4.ui.model.application.Part;
-import org.eclipse.e4.ui.model.application.ToolBar;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MItem;
+import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -42,9 +42,9 @@ public abstract class PartFactory {
 		this.context = context;
 	}
 	
-	public abstract Object createWidget(Part<?> element);
+	public abstract Object createWidget(MPart<?> element);
 
-	public <P extends Part<?>> void processContents(Part<P> me) {
+	public <P extends MPart<?>> void processContents(MPart<P> me) {
 		Widget parentWidget = getParentWidget(me);
 		if (parentWidget == null)
 			return;
@@ -54,54 +54,54 @@ public abstract class PartFactory {
 		if (parts != null) {
 			for (Iterator<P> childIter = parts.iterator(); childIter
 					.hasNext();) {
-				Part<?> childME = childIter.next();
+				MPart<?> childME = childIter.next();
 				renderer.createGui(childME);
 			}
 		}
 	}
 	
-	public void postProcess(Part<?> childME) {
+	public void postProcess(MPart<?> childME) {
 	}
 
-	public void bindWidget(Part<?> me, Object widget) {
+	public void bindWidget(MPart<?> me, Object widget) {
 		me.setWidget(widget);
 		((Widget)widget).setData(OWNING_ME, me);
 	}
 
-	protected Widget getParentWidget(Part<?> element) {
-		return (element.getParent() instanceof Part) ?
-				(Widget) ((Part<?>)(element.getParent())).getWidget() : null;
+	protected Widget getParentWidget(MPart<?> element) {
+		return (element.getParent() instanceof MPart) ?
+				(Widget) ((MPart<?>)(element.getParent())).getWidget() : null;
 	}
 	
-	public void disposeWidget(Part<?> part) {
+	public void disposeWidget(MPart<?> part) {
 		Widget curWidget = (Widget) part.getWidget();
 		part.setWidget(null);
 		if (curWidget != null)
 			curWidget.dispose();
 	}
 
-	public void hookControllerLogic(final Part<?> me) {
+	public void hookControllerLogic(final MPart<?> me) {
 		Widget widget = (Widget) me.getWidget();
 		
 		// Clean up if the widget is disposed
 		widget.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				Part<?> model = (Part<?>) e.widget.getData(OWNING_ME);
+				MPart<?> model = (MPart<?>) e.widget.getData(OWNING_ME);
 				model.setWidget(null);
 			}
 		});
 		
 		// add an accessibility listener (not sure if this is in the wrong place (factory?)
-		if (widget instanceof Control && me instanceof ItemPart<?>) {
+		if (widget instanceof Control && me instanceof MItemPart<?>) {
         	((Control)widget).getAccessible().addAccessibleListener(new AccessibleAdapter() {
             	public void getName(AccessibleEvent e) {
-            		e.result = ((ItemPart<?>)me).getName();
+            		e.result = ((MItemPart<?>)me).getName();
             	}
             });
 		}
 	}
 
-	public void childAdded(Part<?> parentElement, Part<?> element) {
+	public void childAdded(MPart<?> parentElement, MPart<?> element) {
 		// Ensure the child's widget is under the new parent
 		if (parentElement.getWidget() instanceof Composite
 				&& element.getWidget() instanceof Control) {
@@ -111,12 +111,12 @@ public abstract class PartFactory {
 		}
 	}
 
-	public void childRemoved(Part<?> parentElement, Part<?> child) {
+	public void childRemoved(MPart<?> parentElement, MPart<?> child) {
 	}
 	
-	protected Image getImage(ApplicationElement element) {
-		if (element instanceof Item) {
-			String iconURI = ((Item) element).getIconURI();
+	protected Image getImage(MApplicationElement element) {
+		if (element instanceof MItem) {
+			String iconURI = ((MItem) element).getIconURI();
 			if (iconURI != null && !iconURI.equals("null")) { //$NON-NLS-1$
 				ResourceUtility resUtils = (ResourceUtility) context
 						.get(ResourceUtility.class.getName());
@@ -128,9 +128,9 @@ public abstract class PartFactory {
 		return null;
 	}
 
-	public void createMenu(Object widgetObject, Menu menu) {
+	public void createMenu(Object widgetObject, MMenu menu) {
 	}
 
-	public void createToolBar(Object widgetObject, ToolBar toolBar) {
+	public void createToolBar(Object widgetObject, MToolBar toolBar) {
 	}
 }

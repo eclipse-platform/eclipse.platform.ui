@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationAdapterFactory.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.application.util;
 
@@ -78,80 +78,80 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	protected ApplicationSwitch<Adapter> modelSwitch =
 		new ApplicationSwitch<Adapter>() {
 			@Override
-			public Adapter caseApplicationElement(ApplicationElement object) {
-				return createApplicationElementAdapter();
+			public Adapter caseMApplicationElement(MApplicationElement object) {
+				return createMApplicationElementAdapter();
 			}
 			@Override
-			public <W extends Window<?>> Adapter caseApplication(Application<W> object) {
-				return createApplicationAdapter();
+			public <W extends MWindow<?>> Adapter caseMApplication(MApplication<W> object) {
+				return createMApplicationAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter casePart(Part<P> object) {
-				return createPartAdapter();
+			public <P extends MPart<?>> Adapter caseMPart(MPart<P> object) {
+				return createMPartAdapter();
 			}
 			@Override
-			public Adapter caseStack(Stack object) {
-				return createStackAdapter();
+			public Adapter caseMStack(MStack object) {
+				return createMStackAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter caseSashForm(SashForm<P> object) {
-				return createSashFormAdapter();
+			public <P extends MPart<?>> Adapter caseMSashForm(MSashForm<P> object) {
+				return createMSashFormAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter caseContributedPart(ContributedPart<P> object) {
-				return createContributedPartAdapter();
+			public <P extends MPart<?>> Adapter caseMContributedPart(MContributedPart<P> object) {
+				return createMContributedPartAdapter();
 			}
 			@Override
-			public Adapter caseContribution(Contribution object) {
-				return createContributionAdapter();
+			public Adapter caseMContribution(MContribution object) {
+				return createMContributionAdapter();
 			}
 			@Override
-			public Adapter caseHandler(Handler object) {
-				return createHandlerAdapter();
+			public Adapter caseMHandler(MHandler object) {
+				return createMHandlerAdapter();
 			}
 			@Override
-			public Adapter caseItem(Item object) {
-				return createItemAdapter();
+			public Adapter caseMItem(MItem object) {
+				return createMItemAdapter();
 			}
 			@Override
-			public Adapter caseHandledItem(HandledItem object) {
-				return createHandledItemAdapter();
+			public Adapter caseMHandledItem(MHandledItem object) {
+				return createMHandledItemAdapter();
 			}
 			@Override
-			public Adapter caseMenuItem(MenuItem object) {
-				return createMenuItemAdapter();
+			public Adapter caseMMenuItem(MMenuItem object) {
+				return createMMenuItemAdapter();
 			}
 			@Override
-			public Adapter caseToolBarItem(ToolBarItem object) {
-				return createToolBarItemAdapter();
+			public Adapter caseMToolBarItem(MToolBarItem object) {
+				return createMToolBarItemAdapter();
 			}
 			@Override
-			public <I extends Item> Adapter caseItemContainer(ItemContainer<I> object) {
-				return createItemContainerAdapter();
+			public <I extends MItem> Adapter caseMItemContainer(MItemContainer<I> object) {
+				return createMItemContainerAdapter();
 			}
 			@Override
-			public Adapter caseMenu(Menu object) {
-				return createMenuAdapter();
+			public Adapter caseMMenu(MMenu object) {
+				return createMMenuAdapter();
 			}
 			@Override
-			public Adapter caseToolBar(ToolBar object) {
-				return createToolBarAdapter();
+			public Adapter caseMToolBar(MToolBar object) {
+				return createMToolBarAdapter();
 			}
 			@Override
-			public Adapter caseTrim(Trim object) {
-				return createTrimAdapter();
+			public Adapter caseMTrim(MTrim object) {
+				return createMTrimAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter caseItemPart(ItemPart<P> object) {
-				return createItemPartAdapter();
+			public <P extends MPart<?>> Adapter caseMItemPart(MItemPart<P> object) {
+				return createMItemPartAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter caseWindow(Window<P> object) {
-				return createWindowAdapter();
+			public <P extends MPart<?>> Adapter caseMWindow(MWindow<P> object) {
+				return createMWindowAdapter();
 			}
 			@Override
-			public Adapter caseCommand(Command object) {
-				return createCommandAdapter();
+			public Adapter caseMCommand(MCommand object) {
+				return createMCommandAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -174,268 +174,268 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ApplicationElement <em>Element</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>MApplication Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ApplicationElement
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
 	 * @generated
 	 */
-	public Adapter createApplicationElementAdapter() {
+	public Adapter createMApplicationElementAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Application <em>Application</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MApplication <em>MApplication</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Application
+	 * @see org.eclipse.e4.ui.model.application.MApplication
 	 * @generated
 	 */
-	public Adapter createApplicationAdapter() {
+	public Adapter createMApplicationAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Part <em>Part</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MPart <em>MPart</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Part
+	 * @see org.eclipse.e4.ui.model.application.MPart
 	 * @generated
 	 */
-	public Adapter createPartAdapter() {
+	public Adapter createMPartAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Stack <em>Stack</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MStack <em>MStack</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Stack
+	 * @see org.eclipse.e4.ui.model.application.MStack
 	 * @generated
 	 */
-	public Adapter createStackAdapter() {
+	public Adapter createMStackAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.SashForm <em>Sash Form</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MSashForm <em>MSash Form</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.SashForm
+	 * @see org.eclipse.e4.ui.model.application.MSashForm
 	 * @generated
 	 */
-	public Adapter createSashFormAdapter() {
+	public Adapter createMSashFormAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ContributedPart <em>Contributed Part</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MContributedPart <em>MContributed Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ContributedPart
+	 * @see org.eclipse.e4.ui.model.application.MContributedPart
 	 * @generated
 	 */
-	public Adapter createContributedPartAdapter() {
+	public Adapter createMContributedPartAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Contribution <em>Contribution</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MContribution <em>MContribution</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Contribution
+	 * @see org.eclipse.e4.ui.model.application.MContribution
 	 * @generated
 	 */
-	public Adapter createContributionAdapter() {
+	public Adapter createMContributionAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Handler <em>Handler</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandler <em>MHandler</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Handler
+	 * @see org.eclipse.e4.ui.model.application.MHandler
 	 * @generated
 	 */
-	public Adapter createHandlerAdapter() {
+	public Adapter createMHandlerAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Item <em>Item</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MItem <em>MItem</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Item
+	 * @see org.eclipse.e4.ui.model.application.MItem
 	 * @generated
 	 */
-	public Adapter createItemAdapter() {
+	public Adapter createMItemAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.HandledItem <em>Handled Item</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledItem <em>MHandled Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.HandledItem
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem
 	 * @generated
 	 */
-	public Adapter createHandledItemAdapter() {
+	public Adapter createMHandledItemAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MenuItem <em>Menu Item</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>MMenu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MenuItem
+	 * @see org.eclipse.e4.ui.model.application.MMenuItem
 	 * @generated
 	 */
-	public Adapter createMenuItemAdapter() {
+	public Adapter createMMenuItemAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ToolBarItem <em>Tool Bar Item</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MToolBarItem <em>MTool Bar Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ToolBarItem
+	 * @see org.eclipse.e4.ui.model.application.MToolBarItem
 	 * @generated
 	 */
-	public Adapter createToolBarItemAdapter() {
+	public Adapter createMToolBarItemAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ItemContainer <em>Item Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MItemContainer <em>MItem Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ItemContainer
+	 * @see org.eclipse.e4.ui.model.application.MItemContainer
 	 * @generated
 	 */
-	public Adapter createItemContainerAdapter() {
+	public Adapter createMItemContainerAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Menu <em>Menu</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MMenu <em>MMenu</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Menu
+	 * @see org.eclipse.e4.ui.model.application.MMenu
 	 * @generated
 	 */
-	public Adapter createMenuAdapter() {
+	public Adapter createMMenuAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ToolBar <em>Tool Bar</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MToolBar <em>MTool Bar</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ToolBar
+	 * @see org.eclipse.e4.ui.model.application.MToolBar
 	 * @generated
 	 */
-	public Adapter createToolBarAdapter() {
+	public Adapter createMToolBarAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Trim <em>Trim</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTrim <em>MTrim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Trim
+	 * @see org.eclipse.e4.ui.model.application.MTrim
 	 * @generated
 	 */
-	public Adapter createTrimAdapter() {
+	public Adapter createMTrimAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ItemPart <em>Item Part</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MItemPart <em>MItem Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ItemPart
+	 * @see org.eclipse.e4.ui.model.application.MItemPart
 	 * @generated
 	 */
-	public Adapter createItemPartAdapter() {
+	public Adapter createMItemPartAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Window <em>Window</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MWindow <em>MWindow</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Window
+	 * @see org.eclipse.e4.ui.model.application.MWindow
 	 * @generated
 	 */
-	public Adapter createWindowAdapter() {
+	public Adapter createMWindowAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Command <em>Command</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MCommand <em>MCommand</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Command
+	 * @see org.eclipse.e4.ui.model.application.MCommand
 	 * @generated
 	 */
-	public Adapter createCommandAdapter() {
+	public Adapter createMCommandAdapter() {
 		return null;
 	}
 

@@ -4,7 +4,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2008 IBM Corporation and others.&#xD;&#xA;All rights reserved. This program and the accompanying materials&#xD;&#xA;are made available under the terms of the Eclipse Public License v1.0&#xD;&#xA;which accompanies this distribution, and is available at&#xD;&#xA;http://www.eclipse.org/legal/epl-v10.html&#xD;&#xA;&#xD;&#xA;Contributors:&#xD;&#xA;     IBM Corporation - initial API and implementation"
     modelDirectory="/org.eclipse.e4.ui.model.workbench/src" editDirectory="/org.eclipse.e4.ui.model.provider.workbench/src"
     editorDirectory="/org.eclipse.e4.ui.model.ui.workbench/src" modelPluginID="org.eclipse.e4.ui.model.workbench"
-    modelName="Workbench" modelPluginClass="org.eclipse.e4.ui.model.workbench.WorkbenchModelActivator"
+    modelName="Workbench" modelPluginClass="org.eclipse.e4.ui.model.workbench.MWorkbenchModelActivator"
     editPluginClass="org.eclipse.e4.ui.model.provider.workbench.WorkbenchModelProviderActivator"
     editorPluginClass="org.eclipse.e4.ui.model.ui.workbench.WorkbenchModelUIActivator"
     nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.FlatEObjectImpl"

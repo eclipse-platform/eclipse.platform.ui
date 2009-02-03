@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationSwitch.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.application.util;
 
@@ -93,154 +93,154 @@ public class ApplicationSwitch<T> {
 	 */
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case ApplicationPackage.APPLICATION_ELEMENT: {
-				ApplicationElement applicationElement = (ApplicationElement)theEObject;
-				T result = caseApplicationElement(applicationElement);
+			case ApplicationPackage.MAPPLICATION_ELEMENT: {
+				MApplicationElement mApplicationElement = (MApplicationElement)theEObject;
+				T result = caseMApplicationElement(mApplicationElement);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.APPLICATION: {
-				Application<?> application = (Application<?>)theEObject;
-				T result = caseApplication(application);
-				if (result == null) result = caseApplicationElement(application);
+			case ApplicationPackage.MAPPLICATION: {
+				MApplication<?> mApplication = (MApplication<?>)theEObject;
+				T result = caseMApplication(mApplication);
+				if (result == null) result = caseMApplicationElement(mApplication);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.PART: {
-				Part<?> part = (Part<?>)theEObject;
-				T result = casePart(part);
-				if (result == null) result = caseApplicationElement(part);
+			case ApplicationPackage.MPART: {
+				MPart<?> mPart = (MPart<?>)theEObject;
+				T result = caseMPart(mPart);
+				if (result == null) result = caseMApplicationElement(mPart);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.STACK: {
-				Stack stack = (Stack)theEObject;
-				T result = caseStack(stack);
-				if (result == null) result = casePart(stack);
-				if (result == null) result = caseApplicationElement(stack);
+			case ApplicationPackage.MSTACK: {
+				MStack mStack = (MStack)theEObject;
+				T result = caseMStack(mStack);
+				if (result == null) result = caseMPart(mStack);
+				if (result == null) result = caseMApplicationElement(mStack);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.SASH_FORM: {
-				SashForm<?> sashForm = (SashForm<?>)theEObject;
-				T result = caseSashForm(sashForm);
-				if (result == null) result = casePart(sashForm);
-				if (result == null) result = caseApplicationElement(sashForm);
+			case ApplicationPackage.MSASH_FORM: {
+				MSashForm<?> mSashForm = (MSashForm<?>)theEObject;
+				T result = caseMSashForm(mSashForm);
+				if (result == null) result = caseMPart(mSashForm);
+				if (result == null) result = caseMApplicationElement(mSashForm);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.CONTRIBUTED_PART: {
-				ContributedPart<?> contributedPart = (ContributedPart<?>)theEObject;
-				T result = caseContributedPart(contributedPart);
-				if (result == null) result = caseItemPart(contributedPart);
-				if (result == null) result = caseContribution(contributedPart);
-				if (result == null) result = casePart(contributedPart);
-				if (result == null) result = caseItem(contributedPart);
-				if (result == null) result = caseApplicationElement(contributedPart);
+			case ApplicationPackage.MCONTRIBUTED_PART: {
+				MContributedPart<?> mContributedPart = (MContributedPart<?>)theEObject;
+				T result = caseMContributedPart(mContributedPart);
+				if (result == null) result = caseMItemPart(mContributedPart);
+				if (result == null) result = caseMContribution(mContributedPart);
+				if (result == null) result = caseMPart(mContributedPart);
+				if (result == null) result = caseMItem(mContributedPart);
+				if (result == null) result = caseMApplicationElement(mContributedPart);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.CONTRIBUTION: {
-				Contribution contribution = (Contribution)theEObject;
-				T result = caseContribution(contribution);
-				if (result == null) result = caseApplicationElement(contribution);
+			case ApplicationPackage.MCONTRIBUTION: {
+				MContribution mContribution = (MContribution)theEObject;
+				T result = caseMContribution(mContribution);
+				if (result == null) result = caseMApplicationElement(mContribution);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.HANDLER: {
-				Handler handler = (Handler)theEObject;
-				T result = caseHandler(handler);
-				if (result == null) result = caseContribution(handler);
-				if (result == null) result = caseApplicationElement(handler);
+			case ApplicationPackage.MHANDLER: {
+				MHandler mHandler = (MHandler)theEObject;
+				T result = caseMHandler(mHandler);
+				if (result == null) result = caseMContribution(mHandler);
+				if (result == null) result = caseMApplicationElement(mHandler);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.ITEM: {
-				Item item = (Item)theEObject;
-				T result = caseItem(item);
-				if (result == null) result = caseApplicationElement(item);
+			case ApplicationPackage.MITEM: {
+				MItem mItem = (MItem)theEObject;
+				T result = caseMItem(mItem);
+				if (result == null) result = caseMApplicationElement(mItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.HANDLED_ITEM: {
-				HandledItem handledItem = (HandledItem)theEObject;
-				T result = caseHandledItem(handledItem);
-				if (result == null) result = caseItem(handledItem);
-				if (result == null) result = caseApplicationElement(handledItem);
+			case ApplicationPackage.MHANDLED_ITEM: {
+				MHandledItem mHandledItem = (MHandledItem)theEObject;
+				T result = caseMHandledItem(mHandledItem);
+				if (result == null) result = caseMItem(mHandledItem);
+				if (result == null) result = caseMApplicationElement(mHandledItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.MENU_ITEM: {
-				MenuItem menuItem = (MenuItem)theEObject;
-				T result = caseMenuItem(menuItem);
-				if (result == null) result = caseHandledItem(menuItem);
-				if (result == null) result = caseItem(menuItem);
-				if (result == null) result = caseApplicationElement(menuItem);
+			case ApplicationPackage.MMENU_ITEM: {
+				MMenuItem mMenuItem = (MMenuItem)theEObject;
+				T result = caseMMenuItem(mMenuItem);
+				if (result == null) result = caseMHandledItem(mMenuItem);
+				if (result == null) result = caseMItem(mMenuItem);
+				if (result == null) result = caseMApplicationElement(mMenuItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.TOOL_BAR_ITEM: {
-				ToolBarItem toolBarItem = (ToolBarItem)theEObject;
-				T result = caseToolBarItem(toolBarItem);
-				if (result == null) result = caseHandledItem(toolBarItem);
-				if (result == null) result = caseItem(toolBarItem);
-				if (result == null) result = caseApplicationElement(toolBarItem);
+			case ApplicationPackage.MTOOL_BAR_ITEM: {
+				MToolBarItem mToolBarItem = (MToolBarItem)theEObject;
+				T result = caseMToolBarItem(mToolBarItem);
+				if (result == null) result = caseMHandledItem(mToolBarItem);
+				if (result == null) result = caseMItem(mToolBarItem);
+				if (result == null) result = caseMApplicationElement(mToolBarItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.ITEM_CONTAINER: {
-				ItemContainer<?> itemContainer = (ItemContainer<?>)theEObject;
-				T result = caseItemContainer(itemContainer);
-				if (result == null) result = caseApplicationElement(itemContainer);
+			case ApplicationPackage.MITEM_CONTAINER: {
+				MItemContainer<?> mItemContainer = (MItemContainer<?>)theEObject;
+				T result = caseMItemContainer(mItemContainer);
+				if (result == null) result = caseMApplicationElement(mItemContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.MENU: {
-				Menu menu = (Menu)theEObject;
-				T result = caseMenu(menu);
-				if (result == null) result = caseItemContainer(menu);
-				if (result == null) result = caseApplicationElement(menu);
+			case ApplicationPackage.MMENU: {
+				MMenu mMenu = (MMenu)theEObject;
+				T result = caseMMenu(mMenu);
+				if (result == null) result = caseMItemContainer(mMenu);
+				if (result == null) result = caseMApplicationElement(mMenu);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.TOOL_BAR: {
-				ToolBar toolBar = (ToolBar)theEObject;
-				T result = caseToolBar(toolBar);
-				if (result == null) result = caseItemContainer(toolBar);
-				if (result == null) result = caseApplicationElement(toolBar);
+			case ApplicationPackage.MTOOL_BAR: {
+				MToolBar mToolBar = (MToolBar)theEObject;
+				T result = caseMToolBar(mToolBar);
+				if (result == null) result = caseMItemContainer(mToolBar);
+				if (result == null) result = caseMApplicationElement(mToolBar);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.TRIM: {
-				Trim trim = (Trim)theEObject;
-				T result = caseTrim(trim);
-				if (result == null) result = caseApplicationElement(trim);
+			case ApplicationPackage.MTRIM: {
+				MTrim mTrim = (MTrim)theEObject;
+				T result = caseMTrim(mTrim);
+				if (result == null) result = caseMApplicationElement(mTrim);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.ITEM_PART: {
-				ItemPart<?> itemPart = (ItemPart<?>)theEObject;
-				T result = caseItemPart(itemPart);
-				if (result == null) result = casePart(itemPart);
-				if (result == null) result = caseItem(itemPart);
-				if (result == null) result = caseApplicationElement(itemPart);
+			case ApplicationPackage.MITEM_PART: {
+				MItemPart<?> mItemPart = (MItemPart<?>)theEObject;
+				T result = caseMItemPart(mItemPart);
+				if (result == null) result = caseMPart(mItemPart);
+				if (result == null) result = caseMItem(mItemPart);
+				if (result == null) result = caseMApplicationElement(mItemPart);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.WINDOW: {
-				Window<?> window = (Window<?>)theEObject;
-				T result = caseWindow(window);
-				if (result == null) result = caseItemPart(window);
-				if (result == null) result = casePart(window);
-				if (result == null) result = caseItem(window);
-				if (result == null) result = caseApplicationElement(window);
+			case ApplicationPackage.MWINDOW: {
+				MWindow<?> mWindow = (MWindow<?>)theEObject;
+				T result = caseMWindow(mWindow);
+				if (result == null) result = caseMItemPart(mWindow);
+				if (result == null) result = caseMPart(mWindow);
+				if (result == null) result = caseMItem(mWindow);
+				if (result == null) result = caseMApplicationElement(mWindow);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.COMMAND: {
-				Command command = (Command)theEObject;
-				T result = caseCommand(command);
-				if (result == null) result = caseApplicationElement(command);
+			case ApplicationPackage.MCOMMAND: {
+				MCommand mCommand = (MCommand)theEObject;
+				T result = caseMCommand(mCommand);
+				if (result == null) result = caseMApplicationElement(mCommand);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -249,287 +249,287 @@ public class ApplicationSwitch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MApplication Element</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MApplication Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseApplicationElement(ApplicationElement object) {
+	public T caseMApplicationElement(MApplicationElement object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Application</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MApplication</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Application</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MApplication</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <W extends Window<?>> T caseApplication(Application<W> object) {
+	public <W extends MWindow<?>> T caseMApplication(MApplication<W> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Part</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MPart</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Part</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MPart</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T casePart(Part<P> object) {
+	public <P extends MPart<?>> T caseMPart(MPart<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Stack</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MStack</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Stack</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MStack</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseStack(Stack object) {
+	public T caseMStack(MStack object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Sash Form</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MSash Form</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Sash Form</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MSash Form</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T caseSashForm(SashForm<P> object) {
+	public <P extends MPart<?>> T caseMSashForm(MSashForm<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Contributed Part</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MContributed Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Contributed Part</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MContributed Part</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T caseContributedPart(ContributedPart<P> object) {
+	public <P extends MPart<?>> T caseMContributedPart(MContributedPart<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Contribution</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MContribution</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MContribution</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseContribution(Contribution object) {
+	public T caseMContribution(MContribution object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Handler</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MHandler</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Handler</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MHandler</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseHandler(Handler object) {
+	public T caseMHandler(MHandler object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Item</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MItem</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Item</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MItem</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseItem(Item object) {
+	public T caseMItem(MItem object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Handled Item</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MHandled Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Handled Item</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MHandled Item</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseHandledItem(HandledItem object) {
+	public T caseMHandledItem(MHandledItem object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Menu Item</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MMenu Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Menu Item</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MMenu Item</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseMenuItem(MenuItem object) {
+	public T caseMMenuItem(MMenuItem object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar Item</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MTool Bar Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Item</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MTool Bar Item</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseToolBarItem(ToolBarItem object) {
+	public T caseMToolBarItem(MToolBarItem object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Item Container</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MItem Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Item Container</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MItem Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <I extends Item> T caseItemContainer(ItemContainer<I> object) {
+	public <I extends MItem> T caseMItemContainer(MItemContainer<I> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Menu</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MMenu</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Menu</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MMenu</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseMenu(Menu object) {
+	public T caseMMenu(MMenu object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MTool Bar</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Tool Bar</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MTool Bar</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseToolBar(ToolBar object) {
+	public T caseMToolBar(MToolBar object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Trim</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MTrim</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Trim</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MTrim</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseTrim(Trim object) {
+	public T caseMTrim(MTrim object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Item Part</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MItem Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Item Part</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MItem Part</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T caseItemPart(ItemPart<P> object) {
+	public <P extends MPart<?>> T caseMItemPart(MItemPart<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Window</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MWindow</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Window</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MWindow</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T caseWindow(Window<P> object) {
+	public <P extends MPart<?>> T caseMWindow(MWindow<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Command</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MCommand</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Command</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MCommand</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseCommand(Command object) {
+	public T caseMCommand(MCommand object) {
 		return null;
 	}
 

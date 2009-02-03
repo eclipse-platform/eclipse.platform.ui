@@ -3,47 +3,47 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="workbench"
     nsURI="http://www.eclipse.org/ui/2008/Workbench" nsPrefix="workbench">
-  <eClassifiers xsi:type="ecore:EClass" name="WorkbenchWindow">
+  <eClassifiers xsi:type="ecore:EClass" name="MWorkbenchWindow">
     <eStructuralFeatures xsi:type="ecore:EReference" name="sharedParts" upperBound="-1"
         containment="true">
-      <eGenericType eClassifier="ecore:EClass Application.ecore#//Part">
+      <eGenericType eClassifier="ecore:EClass Application.ecore#//MPart">
         <eTypeArguments/>
       </eGenericType>
     </eStructuralFeatures>
-    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//Window">
-      <eTypeArguments eClassifier="#//Perspective">
+    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//MWindow">
+      <eTypeArguments eClassifier="#//MPerspective">
         <eTypeArguments/>
       </eTypeArguments>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ProxyPart" abstract="true">
+  <eClassifiers xsi:type="ecore:EClass" name="MProxyPart" abstract="true">
     <eTypeParameters name="P">
-      <eBounds eClassifier="ecore:EClass Application.ecore#//Part">
+      <eBounds eClassifier="ecore:EClass Application.ecore#//MPart">
         <eTypeArguments/>
       </eBounds>
     </eTypeParameters>
     <eStructuralFeatures xsi:type="ecore:EReference" name="part">
-      <eGenericType eClassifier="ecore:EClass Application.ecore#//Part">
+      <eGenericType eClassifier="ecore:EClass Application.ecore#//MPart">
         <eTypeArguments/>
       </eGenericType>
     </eStructuralFeatures>
-    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//Part">
-      <eTypeArguments eTypeParameter="#//ProxyPart/P"/>
+    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//MPart">
+      <eTypeArguments eTypeParameter="#//MProxyPart/P"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Perspective">
+  <eClassifiers xsi:type="ecore:EClass" name="MPerspective">
     <eTypeParameters name="P">
-      <eBounds eClassifier="ecore:EClass Application.ecore#//Part">
+      <eBounds eClassifier="ecore:EClass Application.ecore#//MPart">
         <eTypeArguments/>
       </eBounds>
     </eTypeParameters>
-    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//ItemPart">
-      <eTypeArguments eTypeParameter="#//Perspective/P"/>
+    <eGenericSuperTypes eClassifier="ecore:EClass Application.ecore#//MItemPart">
+      <eTypeArguments eTypeParameter="#//MPerspective/P"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="WorkbenchModel">
+  <eClassifiers xsi:type="ecore:EClass" name="MWorkbench">
     <eStructuralFeatures xsi:type="ecore:EReference" name="wbWindows" upperBound="-1"
-        eType="#//WorkbenchWindow" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="curWBW" eType="#//WorkbenchWindow"/>
+        eType="#//MWorkbenchWindow" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="curWBW" eType="#//MWorkbenchWindow"/>
   </eClassifiers>
 </ecore:EPackage>

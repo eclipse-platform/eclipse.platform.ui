@@ -8,11 +8,11 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchFactoryImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.internal.workbench;
 
-import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.MPart;
 
 import org.eclipse.e4.ui.model.workbench.*;
 
@@ -68,9 +68,9 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case WorkbenchPackage.WORKBENCH_WINDOW: return createWorkbenchWindow();
-			case WorkbenchPackage.PERSPECTIVE: return createPerspective();
-			case WorkbenchPackage.WORKBENCH_MODEL: return createWorkbenchModel();
+			case WorkbenchPackage.MWORKBENCH_WINDOW: return createMWorkbenchWindow();
+			case WorkbenchPackage.MPERSPECTIVE: return createMPerspective();
+			case WorkbenchPackage.MWORKBENCH: return createMWorkbench();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -81,9 +81,9 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WorkbenchWindow createWorkbenchWindow() {
-		WorkbenchWindowImpl workbenchWindow = new WorkbenchWindowImpl();
-		return workbenchWindow;
+	public MWorkbenchWindow createMWorkbenchWindow() {
+		MWorkbenchWindowImpl mWorkbenchWindow = new MWorkbenchWindowImpl();
+		return mWorkbenchWindow;
 	}
 
 	/**
@@ -91,9 +91,9 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <P extends Part<?>> Perspective<P> createPerspective() {
-		PerspectiveImpl<P> perspective = new PerspectiveImpl<P>();
-		return perspective;
+	public <P extends MPart<?>> MPerspective<P> createMPerspective() {
+		MPerspectiveImpl<P> mPerspective = new MPerspectiveImpl<P>();
+		return mPerspective;
 	}
 
 	/**
@@ -101,9 +101,9 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WorkbenchModel createWorkbenchModel() {
-		WorkbenchModelImpl workbenchModel = new WorkbenchModelImpl();
-		return workbenchModel;
+	public MWorkbench createMWorkbench() {
+		MWorkbenchImpl mWorkbench = new MWorkbenchImpl();
+		return mWorkbench;
 	}
 
 	/**

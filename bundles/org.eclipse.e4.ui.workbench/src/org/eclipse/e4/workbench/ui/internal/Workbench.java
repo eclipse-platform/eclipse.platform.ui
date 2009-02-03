@@ -34,16 +34,16 @@ import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.Application;
-import org.eclipse.e4.ui.model.application.ApplicationElement;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.ContributedPart;
-import org.eclipse.e4.ui.model.application.Part;
-import org.eclipse.e4.ui.model.application.Window;
-import org.eclipse.e4.ui.model.workbench.Perspective;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
-import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
 import org.eclipse.e4.workbench.modeling.ModelService;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
@@ -69,7 +69,7 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 public class Workbench implements IWorkbench, IContributionFactory {
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
-	private Application<WorkbenchWindow> workbench;
+	private MApplication<MWorkbenchWindow> workbench;
 	private ResourceUtility resourceUtility;
 	private static final boolean saveAndRestore = true;
 	private File workbenchData;
@@ -165,7 +165,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		return mainContext;
 	}
 
-	private Application<WorkbenchWindow> createWorkbenchModel(
+	private MApplication<MWorkbenchWindow> createWorkbenchModel(
 			String restoreFile, URI workbenchDefinitionInstance) {
 		boolean restore = false;// restoreFile != null;
 
@@ -173,7 +173,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		Resource resource = null;
 		if (!restore) {
 			resource = new XMIResourceImpl();
-			workbench = ApplicationFactory.eINSTANCE.createApplication();
+			workbench = ApplicationFactory.eINSTANCE.createMApplication();
 			resource.getContents().add((EObject) workbench);
 
 			// Should set up such things as initial perspective id here...
@@ -184,7 +184,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 			uri = URI.createFileURI(restoreFile);
 			try {
 				resource = new ResourceSetImpl().getResource(uri, true);
-				workbench = (Application<WorkbenchWindow>) resource
+				workbench = (MApplication<MWorkbenchWindow>) resource
 						.getContents().get(0);
 
 			} catch (Exception e) {
@@ -200,64 +200,63 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		return workbench;
 	}
 
-	private void populateWBModel(Application<WorkbenchWindow> wb,
+	private void populateWBModel(MApplication<MWorkbenchWindow> wb,
 			URI initialWorkbenchDefinitionInstance, String initialPerspectiveId) {
 
 		// Install any registered legacy hook
 		installLegacyHook();
 
-		WorkbenchWindow wbw;
+		MWorkbenchWindow wbw;
 
 		if (legacyHook != null) {
-			wbw = WorkbenchFactory.eINSTANCE.createWorkbenchWindow();
+			wbw = WorkbenchFactory.eINSTANCE.createMWorkbenchWindow();
 			wbw.setWidth(1280);
 			wbw.setHeight(1024);
 			wbw.setX(100);
 			wbw.setY(100);
-			wbw.setName("E4 Workbench Window [Java, Debug]"); //$NON-NLS-1$
-			wbw.setTrim(ApplicationFactory.eINSTANCE.createTrim());
-			Part<Part<?>> cp = ApplicationFactory.eINSTANCE.createPart();
+			wbw.setName("E4 Workbench MWindow [Java, Debug]"); //$NON-NLS-1$
+			wbw.setTrim(ApplicationFactory.eINSTANCE.createMTrim());
+			MPart<MPart<?>> cp = ApplicationFactory.eINSTANCE.createMPart();
 			wbw.getTrim().setTopTrim(cp);
-			cp = ApplicationFactory.eINSTANCE.createPart();
+			cp = ApplicationFactory.eINSTANCE.createMPart();
 			wbw.getTrim().setBottomTrim(cp);
-			cp = ApplicationFactory.eINSTANCE.createPart();
+			cp = ApplicationFactory.eINSTANCE.createMPart();
 			wbw.getTrim().setLeftTrim(cp);
-			cp = ApplicationFactory.eINSTANCE.createPart();
+			cp = ApplicationFactory.eINSTANCE.createMPart();
 			wbw.getTrim().setRightTrim(cp);
 
-			// Menu mainMenu = ApplicationFactory.eINSTANCE.createMenu();
+			// MMenu mainMenu = MApplicationFactory.eINSTANCE.createMenu();
 			// legacyHook.loadMenu(mainMenu);
 			// wbw.setMenu(mainMenu);
 
-			Perspective<?> persp = WorkbenchFactory.eINSTANCE
-					.createPerspective();
+			MPerspective<?> persp = WorkbenchFactory.eINSTANCE.createMPerspective();
 			persp.setId(initialPerspectiveId);
-			persp.setName("Java Perspective"); //$NON-NLS-1$
+			persp.setName("Java MPerspective"); //$NON-NLS-1$
 			legacyHook.loadPerspective(persp);
 			wbw.getChildren().add(persp);
 			wbw.setActiveChild(persp);
 		} else {
 			Resource resource = new ResourceSetImpl().getResource(
 					initialWorkbenchDefinitionInstance, true);
-			Application<Window<Part<?>>> app = (Application<Window<Part<?>>>) resource
+			MApplication<MWindow<MPart<?>>> app = (MApplication<MWindow<MPart<?>>>) resource
 					.getContents().get(0);
 
 			// temporary code - we are reading a new model but the code still
 			// assumes
-			// a WorkbenchWindow with a Perspective, so we need to copy the
+			// a MWorkbenchWindow with a MPerspective, so we need to copy the
 			// parts of the
 			// window into a perspective.
-			wbw = WorkbenchFactory.eINSTANCE.createWorkbenchWindow();
+			wbw = WorkbenchFactory.eINSTANCE.createMWorkbenchWindow();
 			wbw.setWidth(app.getWindows().get(0).getWidth());
 			wbw.setHeight(app.getWindows().get(0).getHeight());
 			wbw.setX(app.getWindows().get(0).getX());
 			wbw.setY(app.getWindows().get(0).getY());
 			wbw.setMenu(app.getWindows().get(0).getMenu());
 			wbw.setToolBar(app.getWindows().get(0).getToolBar());
-			wbw.setTrim(ApplicationFactory.eINSTANCE.createTrim());
+			wbw.setTrim(ApplicationFactory.eINSTANCE.createMTrim());
 			wbw.getHandlers().addAll(app.getWindows().get(0).getHandlers());
-			Perspective<Part<?>> perspective = WorkbenchFactory.eINSTANCE
-					.createPerspective();
+			MPerspective<MPart<?>> perspective = WorkbenchFactory.eINSTANCE
+					.createMPerspective();
 			wbw.getChildren().add(perspective);
 			perspective.getChildren().addAll(
 					app.getWindows().get(0).getChildren());
@@ -293,7 +292,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		}
 	}
 
-	private void processPartContributions(Resource resource, WorkbenchWindow wbw) {
+	private void processPartContributions(Resource resource, MWorkbenchWindow wbw) {
 		IExtensionRegistry registry = InternalPlatform.getDefault()
 				.getRegistry();
 		String extId = "org.eclipse.e4.workbench.parts"; //$NON-NLS-1$
@@ -301,8 +300,8 @@ public class Workbench implements IWorkbench, IContributionFactory {
 				.getConfigurationElementsFor(extId);
 
 		for (int i = 0; i < parts.length; i++) {
-			ContributedPart<?> part = ApplicationFactory.eINSTANCE
-					.createContributedPart();
+			MContributedPart<?> part = ApplicationFactory.eINSTANCE
+					.createMContributedPart();
 			part.setName(parts[i].getAttribute("label")); //$NON-NLS-1$
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
@@ -312,7 +311,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 					+ parts[i].getAttribute("class")); //$NON-NLS-1$
 			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$
 
-			Part parent = (Part) findObject(resource.getAllContents(), parentId);
+			MPart parent = (MPart) findObject(resource.getAllContents(), parentId);
 			if (parent != null) {
 				parent.getChildren().add(part);
 			}
@@ -344,7 +343,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 	private EObject findObject(TreeIterator<EObject> it, String id) {
 		while (it.hasNext()) {
 			EObject el = it.next();
-			if (el instanceof ApplicationElement) {
+			if (el instanceof MApplicationElement) {
 				if (el.eResource().getURIFragment(el).equals(id)) {
 					return el;
 				}
@@ -354,7 +353,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		return null;
 	}
 
-	private void init(Application<WorkbenchWindow> workbench) {
+	private void init(MApplication<MWorkbenchWindow> workbench) {
 		// workbench.addAdapter(new EContentAdapter() {
 		//
 		// @Override
@@ -398,7 +397,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		// });
 
 		// appWindow.createPartControl(null);
-		WorkbenchWindow wbw = workbench.getWindows().get(0);
+		MWorkbenchWindow wbw = workbench.getWindows().get(0);
 		createGUI(wbw);
 
 		rv = 0;
@@ -406,7 +405,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		appWindow.open();
 		// A position of 0 is not possible on OS-X because then the title-bar is
 		// hidden
-		// below the Menu-Bar
+		// below the MMenu-Bar
 		// TODO is there a better method to find out the height of the title bar
 		int y = wbw.getY();
 		if (y == 0 && SWT.getPlatform().equals("carbon")) { //$NON-NLS-1$
@@ -448,7 +447,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		return rv;
 	}
 
-	private void createGUI(WorkbenchWindow workbenchWindow) {
+	private void createGUI(MWorkbenchWindow workbenchWindow) {
 		if (renderer == null) {
 			renderer = new PartRenderer((IContributionFactory) this,
 					globalContext);
@@ -595,7 +594,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		return resourceUtility;
 	}
 
-	public Application<WorkbenchWindow> getModelElement() {
+	public MApplication<MWorkbenchWindow> getModelElement() {
 		return workbench;
 	}
 
@@ -741,7 +740,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		return appWindow.getDisplay();
 	}
 
-	public void closeWindow(WorkbenchWindow workbenchWindow) {
+	public void closeWindow(MWorkbenchWindow workbenchWindow) {
 		// needs proper closing protocol
 		((Shell) workbenchWindow.getWidget()).close();
 	}

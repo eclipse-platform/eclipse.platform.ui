@@ -20,7 +20,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.workbench.modeling,
  org.eclipse.e4.workbench.ui,
  org.eclipse.e4.workbench.ui.behaviors,
- org.eclipse.e4.workbench.ui.internal;x-internal:=true,
+ org.eclipse.e4.workbench.ui.internal;x-friends:="org.eclipse.e4.ui.workbench.fragment",
  org.eclipse.e4.workbench.ui.renderers.swt,
  org.eclipse.e4.workbench.ui.utils
 Bundle-Activator: org.eclipse.e4.workbench.ui.internal.Activator

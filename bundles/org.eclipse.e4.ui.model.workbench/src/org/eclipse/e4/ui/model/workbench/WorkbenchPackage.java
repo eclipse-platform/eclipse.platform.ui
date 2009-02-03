@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackage.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -75,14 +75,14 @@ public interface WorkbenchPackage extends EPackage {
 	WorkbenchPackage eINSTANCE = org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.WorkbenchWindowImpl <em>Window</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.MWorkbenchWindowImpl <em>MWorkbench Window</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchWindowImpl
-	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getWorkbenchWindow()
+	 * @see org.eclipse.e4.ui.model.internal.workbench.MWorkbenchWindowImpl
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMWorkbenchWindow()
 	 * @generated
 	 */
-	int WORKBENCH_WINDOW = 0;
+	int MWORKBENCH_WINDOW = 0;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -91,7 +91,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__OWNER = ApplicationPackage.WINDOW__OWNER;
+	int MWORKBENCH_WINDOW__OWNER = ApplicationPackage.MWINDOW__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -100,7 +100,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__ID = ApplicationPackage.WINDOW__ID;
+	int MWORKBENCH_WINDOW__ID = ApplicationPackage.MWINDOW__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -109,7 +109,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__MENU = ApplicationPackage.WINDOW__MENU;
+	int MWORKBENCH_WINDOW__MENU = ApplicationPackage.MWINDOW__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -118,7 +118,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__TOOL_BAR = ApplicationPackage.WINDOW__TOOL_BAR;
+	int MWORKBENCH_WINDOW__TOOL_BAR = ApplicationPackage.MWINDOW__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -127,7 +127,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__POLICY = ApplicationPackage.WINDOW__POLICY;
+	int MWORKBENCH_WINDOW__POLICY = ApplicationPackage.MWINDOW__POLICY;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -136,7 +136,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__CHILDREN = ApplicationPackage.WINDOW__CHILDREN;
+	int MWORKBENCH_WINDOW__CHILDREN = ApplicationPackage.MWINDOW__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -145,7 +145,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__ACTIVE_CHILD = ApplicationPackage.WINDOW__ACTIVE_CHILD;
+	int MWORKBENCH_WINDOW__ACTIVE_CHILD = ApplicationPackage.MWINDOW__ACTIVE_CHILD;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -154,7 +154,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__HANDLERS = ApplicationPackage.WINDOW__HANDLERS;
+	int MWORKBENCH_WINDOW__HANDLERS = ApplicationPackage.MWINDOW__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -163,7 +163,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__TRIM = ApplicationPackage.WINDOW__TRIM;
+	int MWORKBENCH_WINDOW__TRIM = ApplicationPackage.MWINDOW__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -172,7 +172,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__WIDGET = ApplicationPackage.WINDOW__WIDGET;
+	int MWORKBENCH_WINDOW__WIDGET = ApplicationPackage.MWINDOW__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -181,7 +181,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__PARENT = ApplicationPackage.WINDOW__PARENT;
+	int MWORKBENCH_WINDOW__PARENT = ApplicationPackage.MWINDOW__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -190,7 +190,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__VISIBLE = ApplicationPackage.WINDOW__VISIBLE;
+	int MWORKBENCH_WINDOW__VISIBLE = ApplicationPackage.MWINDOW__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -199,7 +199,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__ICON_URI = ApplicationPackage.WINDOW__ICON_URI;
+	int MWORKBENCH_WINDOW__ICON_URI = ApplicationPackage.MWINDOW__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -208,7 +208,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__NAME = ApplicationPackage.WINDOW__NAME;
+	int MWORKBENCH_WINDOW__NAME = ApplicationPackage.MWINDOW__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -217,7 +217,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__TOOLTIP = ApplicationPackage.WINDOW__TOOLTIP;
+	int MWORKBENCH_WINDOW__TOOLTIP = ApplicationPackage.MWINDOW__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>X</b></em>' attribute.
@@ -226,7 +226,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__X = ApplicationPackage.WINDOW__X;
+	int MWORKBENCH_WINDOW__X = ApplicationPackage.MWINDOW__X;
 
 	/**
 	 * The feature id for the '<em><b>Y</b></em>' attribute.
@@ -235,7 +235,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__Y = ApplicationPackage.WINDOW__Y;
+	int MWORKBENCH_WINDOW__Y = ApplicationPackage.MWINDOW__Y;
 
 	/**
 	 * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -244,7 +244,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__WIDTH = ApplicationPackage.WINDOW__WIDTH;
+	int MWORKBENCH_WINDOW__WIDTH = ApplicationPackage.MWINDOW__WIDTH;
 
 	/**
 	 * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -253,7 +253,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__HEIGHT = ApplicationPackage.WINDOW__HEIGHT;
+	int MWORKBENCH_WINDOW__HEIGHT = ApplicationPackage.MWINDOW__HEIGHT;
 
 	/**
 	 * The feature id for the '<em><b>Shared Parts</b></em>' containment reference list.
@@ -262,26 +262,26 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW__SHARED_PARTS = ApplicationPackage.WINDOW_FEATURE_COUNT + 0;
+	int MWORKBENCH_WINDOW__SHARED_PARTS = ApplicationPackage.MWINDOW_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Window</em>' class.
+	 * The number of structural features of the '<em>MWorkbench Window</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_WINDOW_FEATURE_COUNT = ApplicationPackage.WINDOW_FEATURE_COUNT + 1;
+	int MWORKBENCH_WINDOW_FEATURE_COUNT = ApplicationPackage.MWINDOW_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.ProxyPartImpl <em>Proxy Part</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.MProxyPartImpl <em>MProxy Part</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.workbench.ProxyPartImpl
-	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getProxyPart()
+	 * @see org.eclipse.e4.ui.model.internal.workbench.MProxyPartImpl
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMProxyPart()
 	 * @generated
 	 */
-	int PROXY_PART = 1;
+	int MPROXY_PART = 1;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -290,7 +290,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__OWNER = ApplicationPackage.PART__OWNER;
+	int MPROXY_PART__OWNER = ApplicationPackage.MPART__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -299,7 +299,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__ID = ApplicationPackage.PART__ID;
+	int MPROXY_PART__ID = ApplicationPackage.MPART__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -308,7 +308,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__MENU = ApplicationPackage.PART__MENU;
+	int MPROXY_PART__MENU = ApplicationPackage.MPART__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -317,7 +317,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__TOOL_BAR = ApplicationPackage.PART__TOOL_BAR;
+	int MPROXY_PART__TOOL_BAR = ApplicationPackage.MPART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -326,7 +326,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__POLICY = ApplicationPackage.PART__POLICY;
+	int MPROXY_PART__POLICY = ApplicationPackage.MPART__POLICY;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -335,7 +335,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__CHILDREN = ApplicationPackage.PART__CHILDREN;
+	int MPROXY_PART__CHILDREN = ApplicationPackage.MPART__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -344,7 +344,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__ACTIVE_CHILD = ApplicationPackage.PART__ACTIVE_CHILD;
+	int MPROXY_PART__ACTIVE_CHILD = ApplicationPackage.MPART__ACTIVE_CHILD;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -353,7 +353,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__HANDLERS = ApplicationPackage.PART__HANDLERS;
+	int MPROXY_PART__HANDLERS = ApplicationPackage.MPART__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -362,7 +362,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__TRIM = ApplicationPackage.PART__TRIM;
+	int MPROXY_PART__TRIM = ApplicationPackage.MPART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -371,7 +371,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__WIDGET = ApplicationPackage.PART__WIDGET;
+	int MPROXY_PART__WIDGET = ApplicationPackage.MPART__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -380,7 +380,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__PARENT = ApplicationPackage.PART__PARENT;
+	int MPROXY_PART__PARENT = ApplicationPackage.MPART__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -389,7 +389,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__VISIBLE = ApplicationPackage.PART__VISIBLE;
+	int MPROXY_PART__VISIBLE = ApplicationPackage.MPART__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Part</b></em>' reference.
@@ -398,26 +398,26 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART__PART = ApplicationPackage.PART_FEATURE_COUNT + 0;
+	int MPROXY_PART__PART = ApplicationPackage.MPART_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Proxy Part</em>' class.
+	 * The number of structural features of the '<em>MProxy Part</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROXY_PART_FEATURE_COUNT = ApplicationPackage.PART_FEATURE_COUNT + 1;
+	int MPROXY_PART_FEATURE_COUNT = ApplicationPackage.MPART_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.PerspectiveImpl <em>Perspective</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.MPerspectiveImpl <em>MPerspective</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.workbench.PerspectiveImpl
-	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getPerspective()
+	 * @see org.eclipse.e4.ui.model.internal.workbench.MPerspectiveImpl
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMPerspective()
 	 * @generated
 	 */
-	int PERSPECTIVE = 2;
+	int MPERSPECTIVE = 2;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -426,7 +426,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__OWNER = ApplicationPackage.ITEM_PART__OWNER;
+	int MPERSPECTIVE__OWNER = ApplicationPackage.MITEM_PART__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -435,7 +435,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__ID = ApplicationPackage.ITEM_PART__ID;
+	int MPERSPECTIVE__ID = ApplicationPackage.MITEM_PART__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -444,7 +444,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__MENU = ApplicationPackage.ITEM_PART__MENU;
+	int MPERSPECTIVE__MENU = ApplicationPackage.MITEM_PART__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -453,7 +453,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__TOOL_BAR = ApplicationPackage.ITEM_PART__TOOL_BAR;
+	int MPERSPECTIVE__TOOL_BAR = ApplicationPackage.MITEM_PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -462,7 +462,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__POLICY = ApplicationPackage.ITEM_PART__POLICY;
+	int MPERSPECTIVE__POLICY = ApplicationPackage.MITEM_PART__POLICY;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -471,7 +471,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__CHILDREN = ApplicationPackage.ITEM_PART__CHILDREN;
+	int MPERSPECTIVE__CHILDREN = ApplicationPackage.MITEM_PART__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -480,7 +480,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__ACTIVE_CHILD = ApplicationPackage.ITEM_PART__ACTIVE_CHILD;
+	int MPERSPECTIVE__ACTIVE_CHILD = ApplicationPackage.MITEM_PART__ACTIVE_CHILD;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -489,7 +489,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__HANDLERS = ApplicationPackage.ITEM_PART__HANDLERS;
+	int MPERSPECTIVE__HANDLERS = ApplicationPackage.MITEM_PART__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -498,7 +498,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__TRIM = ApplicationPackage.ITEM_PART__TRIM;
+	int MPERSPECTIVE__TRIM = ApplicationPackage.MITEM_PART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -507,7 +507,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__WIDGET = ApplicationPackage.ITEM_PART__WIDGET;
+	int MPERSPECTIVE__WIDGET = ApplicationPackage.MITEM_PART__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -516,7 +516,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__PARENT = ApplicationPackage.ITEM_PART__PARENT;
+	int MPERSPECTIVE__PARENT = ApplicationPackage.MITEM_PART__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -525,7 +525,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__VISIBLE = ApplicationPackage.ITEM_PART__VISIBLE;
+	int MPERSPECTIVE__VISIBLE = ApplicationPackage.MITEM_PART__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -534,7 +534,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__ICON_URI = ApplicationPackage.ITEM_PART__ICON_URI;
+	int MPERSPECTIVE__ICON_URI = ApplicationPackage.MITEM_PART__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -543,7 +543,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__NAME = ApplicationPackage.ITEM_PART__NAME;
+	int MPERSPECTIVE__NAME = ApplicationPackage.MITEM_PART__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -552,27 +552,26 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__TOOLTIP = ApplicationPackage.ITEM_PART__TOOLTIP;
+	int MPERSPECTIVE__TOOLTIP = ApplicationPackage.MITEM_PART__TOOLTIP;
 
 	/**
-	 * The number of structural features of the '<em>Perspective</em>' class.
+	 * The number of structural features of the '<em>MPerspective</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE_FEATURE_COUNT = ApplicationPackage.ITEM_PART_FEATURE_COUNT + 0;
-
+	int MPERSPECTIVE_FEATURE_COUNT = ApplicationPackage.MITEM_PART_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.WorkbenchModelImpl <em>Model</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.MWorkbenchImpl <em>MWorkbench</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchModelImpl
-	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getWorkbenchModel()
+	 * @see org.eclipse.e4.ui.model.internal.workbench.MWorkbenchImpl
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMWorkbench()
 	 * @generated
 	 */
-	int WORKBENCH_MODEL = 3;
+	int MWORKBENCH = 3;
 
 	/**
 	 * The feature id for the '<em><b>Wb Windows</b></em>' containment reference list.
@@ -581,7 +580,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_MODEL__WB_WINDOWS = 0;
+	int MWORKBENCH__WB_WINDOWS = 0;
 
 	/**
 	 * The feature id for the '<em><b>Cur WBW</b></em>' reference.
@@ -590,101 +589,101 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_MODEL__CUR_WBW = 1;
+	int MWORKBENCH__CUR_WBW = 1;
 
 	/**
-	 * The number of structural features of the '<em>Model</em>' class.
+	 * The number of structural features of the '<em>MWorkbench</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WORKBENCH_MODEL_FEATURE_COUNT = 2;
+	int MWORKBENCH_FEATURE_COUNT = 2;
 
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.WorkbenchWindow <em>Window</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.MWorkbenchWindow <em>MWorkbench Window</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Window</em>'.
-	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchWindow
+	 * @return the meta object for class '<em>MWorkbench Window</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.MWorkbenchWindow
 	 * @generated
 	 */
-	EClass getWorkbenchWindow();
+	EClass getMWorkbenchWindow();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.workbench.WorkbenchWindow#getSharedParts <em>Shared Parts</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.workbench.MWorkbenchWindow#getSharedParts <em>Shared Parts</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference list '<em>Shared Parts</em>'.
-	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchWindow#getSharedParts()
-	 * @see #getWorkbenchWindow()
+	 * @see org.eclipse.e4.ui.model.workbench.MWorkbenchWindow#getSharedParts()
+	 * @see #getMWorkbenchWindow()
 	 * @generated
 	 */
-	EReference getWorkbenchWindow_SharedParts();
+	EReference getMWorkbenchWindow_SharedParts();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.ProxyPart <em>Proxy Part</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.MProxyPart <em>MProxy Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Proxy Part</em>'.
-	 * @see org.eclipse.e4.ui.model.workbench.ProxyPart
+	 * @return the meta object for class '<em>MProxy Part</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.MProxyPart
 	 * @generated
 	 */
-	EClass getProxyPart();
+	EClass getMProxyPart();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.workbench.ProxyPart#getPart <em>Part</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.workbench.MProxyPart#getPart <em>Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference '<em>Part</em>'.
-	 * @see org.eclipse.e4.ui.model.workbench.ProxyPart#getPart()
-	 * @see #getProxyPart()
+	 * @see org.eclipse.e4.ui.model.workbench.MProxyPart#getPart()
+	 * @see #getMProxyPart()
 	 * @generated
 	 */
-	EReference getProxyPart_Part();
+	EReference getMProxyPart_Part();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.Perspective <em>Perspective</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.MPerspective <em>MPerspective</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Perspective</em>'.
-	 * @see org.eclipse.e4.ui.model.workbench.Perspective
+	 * @return the meta object for class '<em>MPerspective</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.MPerspective
 	 * @generated
 	 */
-	EClass getPerspective();
+	EClass getMPerspective();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.WorkbenchModel <em>Model</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.MWorkbench <em>MWorkbench</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Model</em>'.
-	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchModel
+	 * @return the meta object for class '<em>MWorkbench</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.MWorkbench
 	 * @generated
 	 */
-	EClass getWorkbenchModel();
+	EClass getMWorkbench();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.workbench.WorkbenchModel#getWbWindows <em>Wb Windows</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.workbench.MWorkbench#getWbWindows <em>Wb Windows</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference list '<em>Wb Windows</em>'.
-	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchModel#getWbWindows()
-	 * @see #getWorkbenchModel()
+	 * @see org.eclipse.e4.ui.model.workbench.MWorkbench#getWbWindows()
+	 * @see #getMWorkbench()
 	 * @generated
 	 */
-	EReference getWorkbenchModel_WbWindows();
+	EReference getMWorkbench_WbWindows();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.workbench.WorkbenchModel#getCurWBW <em>Cur WBW</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.workbench.MWorkbench#getCurWBW <em>Cur WBW</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference '<em>Cur WBW</em>'.
-	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchModel#getCurWBW()
-	 * @see #getWorkbenchModel()
+	 * @see org.eclipse.e4.ui.model.workbench.MWorkbench#getCurWBW()
+	 * @see #getMWorkbench()
 	 * @generated
 	 */
-	EReference getWorkbenchModel_CurWBW();
+	EReference getMWorkbench_CurWBW();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -709,14 +708,14 @@ public interface WorkbenchPackage extends EPackage {
 	 */
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.WorkbenchWindowImpl <em>Window</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.MWorkbenchWindowImpl <em>MWorkbench Window</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchWindowImpl
-		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getWorkbenchWindow()
+		 * @see org.eclipse.e4.ui.model.internal.workbench.MWorkbenchWindowImpl
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMWorkbenchWindow()
 		 * @generated
 		 */
-		EClass WORKBENCH_WINDOW = eINSTANCE.getWorkbenchWindow();
+		EClass MWORKBENCH_WINDOW = eINSTANCE.getMWorkbenchWindow();
 
 		/**
 		 * The meta object literal for the '<em><b>Shared Parts</b></em>' containment reference list feature.
@@ -724,17 +723,17 @@ public interface WorkbenchPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference WORKBENCH_WINDOW__SHARED_PARTS = eINSTANCE.getWorkbenchWindow_SharedParts();
+		EReference MWORKBENCH_WINDOW__SHARED_PARTS = eINSTANCE.getMWorkbenchWindow_SharedParts();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.ProxyPartImpl <em>Proxy Part</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.MProxyPartImpl <em>MProxy Part</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.workbench.ProxyPartImpl
-		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getProxyPart()
+		 * @see org.eclipse.e4.ui.model.internal.workbench.MProxyPartImpl
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMProxyPart()
 		 * @generated
 		 */
-		EClass PROXY_PART = eINSTANCE.getProxyPart();
+		EClass MPROXY_PART = eINSTANCE.getMProxyPart();
 
 		/**
 		 * The meta object literal for the '<em><b>Part</b></em>' reference feature.
@@ -742,27 +741,27 @@ public interface WorkbenchPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PROXY_PART__PART = eINSTANCE.getProxyPart_Part();
+		EReference MPROXY_PART__PART = eINSTANCE.getMProxyPart_Part();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.PerspectiveImpl <em>Perspective</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.MPerspectiveImpl <em>MPerspective</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.workbench.PerspectiveImpl
-		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getPerspective()
+		 * @see org.eclipse.e4.ui.model.internal.workbench.MPerspectiveImpl
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMPerspective()
 		 * @generated
 		 */
-		EClass PERSPECTIVE = eINSTANCE.getPerspective();
+		EClass MPERSPECTIVE = eINSTANCE.getMPerspective();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.WorkbenchModelImpl <em>Model</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.MWorkbenchImpl <em>MWorkbench</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchModelImpl
-		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getWorkbenchModel()
+		 * @see org.eclipse.e4.ui.model.internal.workbench.MWorkbenchImpl
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMWorkbench()
 		 * @generated
 		 */
-		EClass WORKBENCH_MODEL = eINSTANCE.getWorkbenchModel();
+		EClass MWORKBENCH = eINSTANCE.getMWorkbench();
 
 		/**
 		 * The meta object literal for the '<em><b>Wb Windows</b></em>' containment reference list feature.
@@ -770,7 +769,7 @@ public interface WorkbenchPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference WORKBENCH_MODEL__WB_WINDOWS = eINSTANCE.getWorkbenchModel_WbWindows();
+		EReference MWORKBENCH__WB_WINDOWS = eINSTANCE.getMWorkbench_WbWindows();
 
 		/**
 		 * The meta object literal for the '<em><b>Cur WBW</b></em>' reference feature.
@@ -778,7 +777,7 @@ public interface WorkbenchPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference WORKBENCH_MODEL__CUR_WBW = eINSTANCE.getWorkbenchModel_CurWBW();
+		EReference MWORKBENCH__CUR_WBW = eINSTANCE.getMWorkbench_CurWBW();
 
 	}
 

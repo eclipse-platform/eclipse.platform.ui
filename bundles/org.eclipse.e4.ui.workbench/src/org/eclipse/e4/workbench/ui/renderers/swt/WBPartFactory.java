@@ -4,9 +4,9 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.Part;
-import org.eclipse.e4.ui.model.workbench.Perspective;
-import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
 import org.eclipse.emf.common.notify.Notification;
@@ -26,20 +26,20 @@ import org.eclipse.swt.widgets.Widget;
 
 public class WBPartFactory extends SWTPartFactory {
 
-	public Object createWidget(Part<?> part) {
+	public Object createWidget(MPart<?> part) {
 		final Widget newWidget;
 	
-		if (part instanceof WorkbenchWindow) {
+		if (part instanceof MWorkbenchWindow) {
 			Shell wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
 			TrimmedLayout tl = new TrimmedLayout(wbwShell);
 			wbwShell.setLayout(tl);
-			if (((WorkbenchWindow) part).getName() != null)
-				wbwShell.setText(((WorkbenchWindow) part).getName());
+			if (((MWorkbenchWindow) part).getName() != null)
+				wbwShell.setText(((MWorkbenchWindow) part).getName());
 	
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
 			final IHandlerService hs = new PartHandlerService(part);
-			IEclipseContext localContext = EclipseContextFactory.create("WorkbenchWindow", context, UIContextScheduler.instance); //$NON-NLS-1$
+			IEclipseContext localContext = EclipseContextFactory.create("MWorkbenchWindow", context, UIContextScheduler.instance); //$NON-NLS-1$
 			localContext.set(IHandlerService.class.getName(), hs);
 			wbwShell.setData("LOCATOR", localContext); //$NON-NLS-1$
 		} else {
@@ -50,32 +50,32 @@ public class WBPartFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public <P extends Part<?>> void processContents(Part<P> me) {
-		if (me instanceof WorkbenchWindow) {
-			WorkbenchWindow wbwModel = (WorkbenchWindow) me;
+	public <P extends MPart<?>> void processContents(MPart<P> me) {
+		if (me instanceof MWorkbenchWindow) {
+			MWorkbenchWindow wbwModel = (MWorkbenchWindow) me;
 			Shell wbwShell = (Shell) wbwModel.getWidget();
 			TrimmedLayout tl = (TrimmedLayout) wbwShell.getLayout();
 	
-			// Trim
-			Part<?> topTrim = wbwModel.getTrim().getTopTrim();
+			// MTrim
+			MPart<?> topTrim = wbwModel.getTrim().getTopTrim();
 			if (topTrim != null) {
 				bindWidget(topTrim, tl.top);
 				topTrim.setOwner(this);
 				super.processContents(topTrim);
 			}
-			Part<?> bottomTrim = wbwModel.getTrim().getBottomTrim();
+			MPart<?> bottomTrim = wbwModel.getTrim().getBottomTrim();
 			if (bottomTrim != null) {
 				bindWidget(bottomTrim, tl.bottom);
 				bottomTrim.setOwner(this);
 				super.processContents(bottomTrim);
 			}
-			Part<?> leftTrim = wbwModel.getTrim().getLeftTrim();
+			MPart<?> leftTrim = wbwModel.getTrim().getLeftTrim();
 			if (leftTrim != null) {
 				bindWidget(leftTrim, tl.left);
 				leftTrim.setOwner(this);
 				super.processContents(leftTrim);
 			}
-			Part<?> rightTrim = wbwModel.getTrim().getRightTrim();
+			MPart<?> rightTrim = wbwModel.getTrim().getRightTrim();
 			if (rightTrim != null) {
 				bindWidget(rightTrim, tl.right);
 				rightTrim.setOwner(this);
@@ -83,7 +83,7 @@ public class WBPartFactory extends SWTPartFactory {
 			}
 	
 			// Client Area
-			Perspective<?> persp = wbwModel.getChildren().get(0);
+			MPerspective<?> persp = wbwModel.getChildren().get(0);
 			bindWidget(persp, tl.center);
 			persp.setOwner(this);
 			super.processContents(persp);
@@ -94,14 +94,14 @@ public class WBPartFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public void hookControllerLogic(Part<?> me) {
+	public void hookControllerLogic(MPart<?> me) {
 		super.hookControllerLogic(me);
 	
 		Widget widget = (Widget) me.getWidget();
 	
 		// Set up the text binding...perhaps should catch exceptions?
 		IObservableValue emfTextObs = EMFObservables.observeValue((EObject) me,
-				ApplicationPackage.Literals.ITEM__NAME);
+				ApplicationPackage.Literals.MITEM__NAME);
 		if (widget instanceof Control && !(widget instanceof Composite)) {
 			ISWTObservableValue uiTextObs = SWTObservables
 					.observeText((Control) widget);
@@ -114,7 +114,7 @@ public class WBPartFactory extends SWTPartFactory {
 	
 		// Set up the tool tip binding...perhaps should catch exceptions?
 		IObservableValue emfTTipObs = EMFObservables.observeValue((EObject) me,
-				ApplicationPackage.Literals.ITEM__TOOLTIP);
+				ApplicationPackage.Literals.MITEM__TOOLTIP);
 		if (widget instanceof Control) {
 			ISWTObservableValue uiTTipObs = SWTObservables
 					.observeTooltipText((Control) widget);
@@ -130,8 +130,8 @@ public class WBPartFactory extends SWTPartFactory {
 		((EObject) me).eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				Part<?> sm = (Part<?>) msg.getNotifier();
-				if (ApplicationPackage.Literals.ITEM__ICON_URI.equals(msg
+				MPart<?> sm = (MPart<?>) msg.getNotifier();
+				if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
 						.getFeature())) {
 					Widget widget = (Widget) sm.getWidget();
 					if (widget instanceof org.eclipse.swt.widgets.Item) {

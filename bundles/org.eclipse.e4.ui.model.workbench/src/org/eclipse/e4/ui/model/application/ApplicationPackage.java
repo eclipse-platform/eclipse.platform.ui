@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.3 2008/12/04 20:52:58 emoffatt Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -74,14 +74,14 @@ public interface ApplicationPackage extends EPackage {
 	ApplicationPackage eINSTANCE = org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ApplicationElementImpl <em>Element</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MApplicationElementImpl <em>MApplication Element</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationElementImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getApplicationElement()
+	 * @see org.eclipse.e4.ui.model.internal.application.MApplicationElementImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMApplicationElement()
 	 * @generated
 	 */
-	int APPLICATION_ELEMENT = 0;
+	int MAPPLICATION_ELEMENT = 0;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -90,7 +90,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_ELEMENT__OWNER = 0;
+	int MAPPLICATION_ELEMENT__OWNER = 0;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -99,26 +99,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_ELEMENT__ID = 1;
+	int MAPPLICATION_ELEMENT__ID = 1;
 
 	/**
-	 * The number of structural features of the '<em>Element</em>' class.
+	 * The number of structural features of the '<em>MApplication Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_ELEMENT_FEATURE_COUNT = 2;
+	int MAPPLICATION_ELEMENT_FEATURE_COUNT = 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ApplicationImpl <em>Application</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MApplicationImpl <em>MApplication</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getApplication()
+	 * @see org.eclipse.e4.ui.model.internal.application.MApplicationImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMApplication()
 	 * @generated
 	 */
-	int APPLICATION = 1;
+	int MAPPLICATION = 1;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -127,7 +127,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__OWNER = APPLICATION_ELEMENT__OWNER;
+	int MAPPLICATION__OWNER = MAPPLICATION_ELEMENT__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -136,7 +136,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__ID = APPLICATION_ELEMENT__ID;
+	int MAPPLICATION__ID = MAPPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
@@ -145,7 +145,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__WINDOWS = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MAPPLICATION__WINDOWS = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' containment reference list.
@@ -154,26 +154,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__COMMAND = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MAPPLICATION__COMMAND = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The number of structural features of the '<em>Application</em>' class.
+	 * The number of structural features of the '<em>MApplication</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MAPPLICATION_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.PartImpl <em>Part</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MPartImpl <em>MPart</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.PartImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getPart()
+	 * @see org.eclipse.e4.ui.model.internal.application.MPartImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMPart()
 	 * @generated
 	 */
-	int PART = 2;
+	int MPART = 2;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -182,7 +182,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__OWNER = APPLICATION_ELEMENT__OWNER;
+	int MPART__OWNER = MAPPLICATION_ELEMENT__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -191,7 +191,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__ID = APPLICATION_ELEMENT__ID;
+	int MPART__ID = MAPPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -200,7 +200,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__MENU = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MPART__MENU = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -209,7 +209,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__TOOL_BAR = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MPART__TOOL_BAR = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -218,7 +218,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__POLICY = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MPART__POLICY = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -227,7 +227,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int MPART__CHILDREN = MAPPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -236,7 +236,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__ACTIVE_CHILD = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int MPART__ACTIVE_CHILD = MAPPLICATION_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -245,7 +245,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__HANDLERS = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+	int MPART__HANDLERS = MAPPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -254,7 +254,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__TRIM = APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+	int MPART__TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -263,7 +263,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__WIDGET = APPLICATION_ELEMENT_FEATURE_COUNT + 7;
+	int MPART__WIDGET = MAPPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -272,7 +272,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 8;
+	int MPART__PARENT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -281,26 +281,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+	int MPART__VISIBLE = MAPPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
-	 * The number of structural features of the '<em>Part</em>' class.
+	 * The number of structural features of the '<em>MPart</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	int MPART_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.StackImpl <em>Stack</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MStackImpl <em>MStack</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.StackImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getStack()
+	 * @see org.eclipse.e4.ui.model.internal.application.MStackImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMStack()
 	 * @generated
 	 */
-	int STACK = 3;
+	int MSTACK = 3;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -309,7 +309,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__OWNER = PART__OWNER;
+	int MSTACK__OWNER = MPART__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -318,7 +318,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__ID = PART__ID;
+	int MSTACK__ID = MPART__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -327,7 +327,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__MENU = PART__MENU;
+	int MSTACK__MENU = MPART__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -336,7 +336,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__TOOL_BAR = PART__TOOL_BAR;
+	int MSTACK__TOOL_BAR = MPART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -345,7 +345,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__POLICY = PART__POLICY;
+	int MSTACK__POLICY = MPART__POLICY;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -354,7 +354,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__CHILDREN = PART__CHILDREN;
+	int MSTACK__CHILDREN = MPART__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -363,7 +363,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__ACTIVE_CHILD = PART__ACTIVE_CHILD;
+	int MSTACK__ACTIVE_CHILD = MPART__ACTIVE_CHILD;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -372,7 +372,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__HANDLERS = PART__HANDLERS;
+	int MSTACK__HANDLERS = MPART__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -381,7 +381,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__TRIM = PART__TRIM;
+	int MSTACK__TRIM = MPART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -390,7 +390,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__WIDGET = PART__WIDGET;
+	int MSTACK__WIDGET = MPART__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -399,7 +399,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__PARENT = PART__PARENT;
+	int MSTACK__PARENT = MPART__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -408,26 +408,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STACK__VISIBLE = PART__VISIBLE;
+	int MSTACK__VISIBLE = MPART__VISIBLE;
 
 	/**
-	 * The number of structural features of the '<em>Stack</em>' class.
+	 * The number of structural features of the '<em>MStack</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STACK_FEATURE_COUNT = PART_FEATURE_COUNT + 0;
+	int MSTACK_FEATURE_COUNT = MPART_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.SashFormImpl <em>Sash Form</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MSashFormImpl <em>MSash Form</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.SashFormImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getSashForm()
+	 * @see org.eclipse.e4.ui.model.internal.application.MSashFormImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMSashForm()
 	 * @generated
 	 */
-	int SASH_FORM = 4;
+	int MSASH_FORM = 4;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -436,7 +436,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__OWNER = PART__OWNER;
+	int MSASH_FORM__OWNER = MPART__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -445,7 +445,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__ID = PART__ID;
+	int MSASH_FORM__ID = MPART__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -454,7 +454,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__MENU = PART__MENU;
+	int MSASH_FORM__MENU = MPART__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -463,7 +463,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__TOOL_BAR = PART__TOOL_BAR;
+	int MSASH_FORM__TOOL_BAR = MPART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -472,7 +472,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__POLICY = PART__POLICY;
+	int MSASH_FORM__POLICY = MPART__POLICY;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -481,7 +481,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__CHILDREN = PART__CHILDREN;
+	int MSASH_FORM__CHILDREN = MPART__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -490,7 +490,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__ACTIVE_CHILD = PART__ACTIVE_CHILD;
+	int MSASH_FORM__ACTIVE_CHILD = MPART__ACTIVE_CHILD;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -499,7 +499,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__HANDLERS = PART__HANDLERS;
+	int MSASH_FORM__HANDLERS = MPART__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -508,7 +508,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__TRIM = PART__TRIM;
+	int MSASH_FORM__TRIM = MPART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -517,7 +517,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__WIDGET = PART__WIDGET;
+	int MSASH_FORM__WIDGET = MPART__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -526,7 +526,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__PARENT = PART__PARENT;
+	int MSASH_FORM__PARENT = MPART__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -535,7 +535,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__VISIBLE = PART__VISIBLE;
+	int MSASH_FORM__VISIBLE = MPART__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
@@ -544,26 +544,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM__WEIGHTS = PART_FEATURE_COUNT + 0;
+	int MSASH_FORM__WEIGHTS = MPART_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Sash Form</em>' class.
+	 * The number of structural features of the '<em>MSash Form</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SASH_FORM_FEATURE_COUNT = PART_FEATURE_COUNT + 1;
+	int MSASH_FORM_FEATURE_COUNT = MPART_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ItemPartImpl <em>Item Part</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MItemPartImpl <em>MItem Part</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ItemPartImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getItemPart()
+	 * @see org.eclipse.e4.ui.model.internal.application.MItemPartImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMItemPart()
 	 * @generated
 	 */
-	int ITEM_PART = 16;
+	int MITEM_PART = 16;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -572,7 +572,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__OWNER = PART__OWNER;
+	int MITEM_PART__OWNER = MPART__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -581,7 +581,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__ID = PART__ID;
+	int MITEM_PART__ID = MPART__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -590,7 +590,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__MENU = PART__MENU;
+	int MITEM_PART__MENU = MPART__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -599,7 +599,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__TOOL_BAR = PART__TOOL_BAR;
+	int MITEM_PART__TOOL_BAR = MPART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -608,7 +608,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__POLICY = PART__POLICY;
+	int MITEM_PART__POLICY = MPART__POLICY;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -617,7 +617,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__CHILDREN = PART__CHILDREN;
+	int MITEM_PART__CHILDREN = MPART__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -626,7 +626,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__ACTIVE_CHILD = PART__ACTIVE_CHILD;
+	int MITEM_PART__ACTIVE_CHILD = MPART__ACTIVE_CHILD;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -635,7 +635,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__HANDLERS = PART__HANDLERS;
+	int MITEM_PART__HANDLERS = MPART__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -644,7 +644,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__TRIM = PART__TRIM;
+	int MITEM_PART__TRIM = MPART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -653,7 +653,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__WIDGET = PART__WIDGET;
+	int MITEM_PART__WIDGET = MPART__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -662,7 +662,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__PARENT = PART__PARENT;
+	int MITEM_PART__PARENT = MPART__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -671,7 +671,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__VISIBLE = PART__VISIBLE;
+	int MITEM_PART__VISIBLE = MPART__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -680,7 +680,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__ICON_URI = PART_FEATURE_COUNT + 0;
+	int MITEM_PART__ICON_URI = MPART_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -689,7 +689,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__NAME = PART_FEATURE_COUNT + 1;
+	int MITEM_PART__NAME = MPART_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -698,26 +698,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART__TOOLTIP = PART_FEATURE_COUNT + 2;
+	int MITEM_PART__TOOLTIP = MPART_FEATURE_COUNT + 2;
 
 	/**
-	 * The number of structural features of the '<em>Item Part</em>' class.
+	 * The number of structural features of the '<em>MItem Part</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_PART_FEATURE_COUNT = PART_FEATURE_COUNT + 3;
+	int MITEM_PART_FEATURE_COUNT = MPART_FEATURE_COUNT + 3;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ContributedPartImpl <em>Contributed Part</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MContributedPartImpl <em>MContributed Part</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ContributedPartImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getContributedPart()
+	 * @see org.eclipse.e4.ui.model.internal.application.MContributedPartImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMContributedPart()
 	 * @generated
 	 */
-	int CONTRIBUTED_PART = 5;
+	int MCONTRIBUTED_PART = 5;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -726,7 +726,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__OWNER = ITEM_PART__OWNER;
+	int MCONTRIBUTED_PART__OWNER = MITEM_PART__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -735,7 +735,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__ID = ITEM_PART__ID;
+	int MCONTRIBUTED_PART__ID = MITEM_PART__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -744,7 +744,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__MENU = ITEM_PART__MENU;
+	int MCONTRIBUTED_PART__MENU = MITEM_PART__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -753,7 +753,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__TOOL_BAR = ITEM_PART__TOOL_BAR;
+	int MCONTRIBUTED_PART__TOOL_BAR = MITEM_PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -762,7 +762,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__POLICY = ITEM_PART__POLICY;
+	int MCONTRIBUTED_PART__POLICY = MITEM_PART__POLICY;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -771,7 +771,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__CHILDREN = ITEM_PART__CHILDREN;
+	int MCONTRIBUTED_PART__CHILDREN = MITEM_PART__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -780,7 +780,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__ACTIVE_CHILD = ITEM_PART__ACTIVE_CHILD;
+	int MCONTRIBUTED_PART__ACTIVE_CHILD = MITEM_PART__ACTIVE_CHILD;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -789,7 +789,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__HANDLERS = ITEM_PART__HANDLERS;
+	int MCONTRIBUTED_PART__HANDLERS = MITEM_PART__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -798,7 +798,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__TRIM = ITEM_PART__TRIM;
+	int MCONTRIBUTED_PART__TRIM = MITEM_PART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -807,7 +807,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__WIDGET = ITEM_PART__WIDGET;
+	int MCONTRIBUTED_PART__WIDGET = MITEM_PART__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -816,7 +816,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__PARENT = ITEM_PART__PARENT;
+	int MCONTRIBUTED_PART__PARENT = MITEM_PART__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -825,7 +825,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__VISIBLE = ITEM_PART__VISIBLE;
+	int MCONTRIBUTED_PART__VISIBLE = MITEM_PART__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -834,7 +834,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__ICON_URI = ITEM_PART__ICON_URI;
+	int MCONTRIBUTED_PART__ICON_URI = MITEM_PART__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -843,7 +843,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__NAME = ITEM_PART__NAME;
+	int MCONTRIBUTED_PART__NAME = MITEM_PART__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -852,7 +852,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__TOOLTIP = ITEM_PART__TOOLTIP;
+	int MCONTRIBUTED_PART__TOOLTIP = MITEM_PART__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>URI</b></em>' attribute.
@@ -861,7 +861,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__URI = ITEM_PART_FEATURE_COUNT + 0;
+	int MCONTRIBUTED_PART__URI = MITEM_PART_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
@@ -870,26 +870,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART__OBJECT = ITEM_PART_FEATURE_COUNT + 1;
+	int MCONTRIBUTED_PART__OBJECT = MITEM_PART_FEATURE_COUNT + 1;
 
 	/**
-	 * The number of structural features of the '<em>Contributed Part</em>' class.
+	 * The number of structural features of the '<em>MContributed Part</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTED_PART_FEATURE_COUNT = ITEM_PART_FEATURE_COUNT + 2;
+	int MCONTRIBUTED_PART_FEATURE_COUNT = MITEM_PART_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ContributionImpl <em>Contribution</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MContributionImpl <em>MContribution</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ContributionImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getContribution()
+	 * @see org.eclipse.e4.ui.model.internal.application.MContributionImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMContribution()
 	 * @generated
 	 */
-	int CONTRIBUTION = 6;
+	int MCONTRIBUTION = 6;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -898,7 +898,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTION__OWNER = APPLICATION_ELEMENT__OWNER;
+	int MCONTRIBUTION__OWNER = MAPPLICATION_ELEMENT__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -907,7 +907,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTION__ID = APPLICATION_ELEMENT__ID;
+	int MCONTRIBUTION__ID = MAPPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>URI</b></em>' attribute.
@@ -916,7 +916,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTION__URI = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MCONTRIBUTION__URI = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
@@ -925,26 +925,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTION__OBJECT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MCONTRIBUTION__OBJECT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The number of structural features of the '<em>Contribution</em>' class.
+	 * The number of structural features of the '<em>MContribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONTRIBUTION_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MCONTRIBUTION_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.HandlerImpl <em>Handler</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MHandlerImpl <em>MHandler</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.HandlerImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getHandler()
+	 * @see org.eclipse.e4.ui.model.internal.application.MHandlerImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMHandler()
 	 * @generated
 	 */
-	int HANDLER = 7;
+	int MHANDLER = 7;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -953,7 +953,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLER__OWNER = CONTRIBUTION__OWNER;
+	int MHANDLER__OWNER = MCONTRIBUTION__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -962,7 +962,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLER__ID = CONTRIBUTION__ID;
+	int MHANDLER__ID = MCONTRIBUTION__ID;
 
 	/**
 	 * The feature id for the '<em><b>URI</b></em>' attribute.
@@ -971,7 +971,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLER__URI = CONTRIBUTION__URI;
+	int MHANDLER__URI = MCONTRIBUTION__URI;
 
 	/**
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
@@ -980,7 +980,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLER__OBJECT = CONTRIBUTION__OBJECT;
+	int MHANDLER__OBJECT = MCONTRIBUTION__OBJECT;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -989,26 +989,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLER__COMMAND = CONTRIBUTION_FEATURE_COUNT + 0;
+	int MHANDLER__COMMAND = MCONTRIBUTION_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Handler</em>' class.
+	 * The number of structural features of the '<em>MHandler</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLER_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 1;
+	int MHANDLER_FEATURE_COUNT = MCONTRIBUTION_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ItemImpl <em>Item</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MItemImpl <em>MItem</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ItemImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getItem()
+	 * @see org.eclipse.e4.ui.model.internal.application.MItemImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMItem()
 	 * @generated
 	 */
-	int ITEM = 8;
+	int MITEM = 8;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1017,7 +1017,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__OWNER = APPLICATION_ELEMENT__OWNER;
+	int MITEM__OWNER = MAPPLICATION_ELEMENT__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1026,7 +1026,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__ID = APPLICATION_ELEMENT__ID;
+	int MITEM__ID = MAPPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1035,7 +1035,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__ICON_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MITEM__ICON_URI = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1044,7 +1044,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MITEM__NAME = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -1053,26 +1053,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__TOOLTIP = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MITEM__TOOLTIP = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The number of structural features of the '<em>Item</em>' class.
+	 * The number of structural features of the '<em>MItem</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int MITEM_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.HandledItemImpl <em>Handled Item</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl <em>MHandled Item</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.HandledItemImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getHandledItem()
+	 * @see org.eclipse.e4.ui.model.internal.application.MHandledItemImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMHandledItem()
 	 * @generated
 	 */
-	int HANDLED_ITEM = 9;
+	int MHANDLED_ITEM = 9;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1081,7 +1081,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__OWNER = ITEM__OWNER;
+	int MHANDLED_ITEM__OWNER = MITEM__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1090,7 +1090,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__ID = ITEM__ID;
+	int MHANDLED_ITEM__ID = MITEM__ID;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1099,7 +1099,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__ICON_URI = ITEM__ICON_URI;
+	int MHANDLED_ITEM__ICON_URI = MITEM__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1108,7 +1108,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__NAME = ITEM__NAME;
+	int MHANDLED_ITEM__NAME = MITEM__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -1117,7 +1117,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__TOOLTIP = ITEM__TOOLTIP;
+	int MHANDLED_ITEM__TOOLTIP = MITEM__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -1126,7 +1126,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__COMMAND = ITEM_FEATURE_COUNT + 0;
+	int MHANDLED_ITEM__COMMAND = MITEM_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -1135,26 +1135,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__MENU = ITEM_FEATURE_COUNT + 1;
+	int MHANDLED_ITEM__MENU = MITEM_FEATURE_COUNT + 1;
 
 	/**
-	 * The number of structural features of the '<em>Handled Item</em>' class.
+	 * The number of structural features of the '<em>MHandled Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
+	int MHANDLED_ITEM_FEATURE_COUNT = MITEM_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MenuItemImpl <em>Menu Item</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MMenuItemImpl <em>MMenu Item</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.MenuItemImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMenuItem()
+	 * @see org.eclipse.e4.ui.model.internal.application.MMenuItemImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMMenuItem()
 	 * @generated
 	 */
-	int MENU_ITEM = 10;
+	int MMENU_ITEM = 10;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1163,7 +1163,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__OWNER = HANDLED_ITEM__OWNER;
+	int MMENU_ITEM__OWNER = MHANDLED_ITEM__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1172,7 +1172,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__ID = HANDLED_ITEM__ID;
+	int MMENU_ITEM__ID = MHANDLED_ITEM__ID;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1181,7 +1181,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__ICON_URI = HANDLED_ITEM__ICON_URI;
+	int MMENU_ITEM__ICON_URI = MHANDLED_ITEM__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1190,7 +1190,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__NAME = HANDLED_ITEM__NAME;
+	int MMENU_ITEM__NAME = MHANDLED_ITEM__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -1199,7 +1199,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__TOOLTIP = HANDLED_ITEM__TOOLTIP;
+	int MMENU_ITEM__TOOLTIP = MHANDLED_ITEM__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -1208,7 +1208,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__COMMAND = HANDLED_ITEM__COMMAND;
+	int MMENU_ITEM__COMMAND = MHANDLED_ITEM__COMMAND;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -1217,7 +1217,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__MENU = HANDLED_ITEM__MENU;
+	int MMENU_ITEM__MENU = MHANDLED_ITEM__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
@@ -1226,26 +1226,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__SEPARATOR = HANDLED_ITEM_FEATURE_COUNT + 0;
+	int MMENU_ITEM__SEPARATOR = MHANDLED_ITEM_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Menu Item</em>' class.
+	 * The number of structural features of the '<em>MMenu Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM_FEATURE_COUNT = HANDLED_ITEM_FEATURE_COUNT + 1;
+	int MMENU_ITEM_FEATURE_COUNT = MHANDLED_ITEM_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ToolBarItemImpl <em>Tool Bar Item</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MToolBarItemImpl <em>MTool Bar Item</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ToolBarItemImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getToolBarItem()
+	 * @see org.eclipse.e4.ui.model.internal.application.MToolBarItemImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMToolBarItem()
 	 * @generated
 	 */
-	int TOOL_BAR_ITEM = 11;
+	int MTOOL_BAR_ITEM = 11;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1254,7 +1254,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__OWNER = HANDLED_ITEM__OWNER;
+	int MTOOL_BAR_ITEM__OWNER = MHANDLED_ITEM__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1263,7 +1263,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__ID = HANDLED_ITEM__ID;
+	int MTOOL_BAR_ITEM__ID = MHANDLED_ITEM__ID;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1272,7 +1272,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__ICON_URI = HANDLED_ITEM__ICON_URI;
+	int MTOOL_BAR_ITEM__ICON_URI = MHANDLED_ITEM__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1281,7 +1281,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__NAME = HANDLED_ITEM__NAME;
+	int MTOOL_BAR_ITEM__NAME = MHANDLED_ITEM__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -1290,7 +1290,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__TOOLTIP = HANDLED_ITEM__TOOLTIP;
+	int MTOOL_BAR_ITEM__TOOLTIP = MHANDLED_ITEM__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -1299,7 +1299,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__COMMAND = HANDLED_ITEM__COMMAND;
+	int MTOOL_BAR_ITEM__COMMAND = MHANDLED_ITEM__COMMAND;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -1308,26 +1308,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM__MENU = HANDLED_ITEM__MENU;
+	int MTOOL_BAR_ITEM__MENU = MHANDLED_ITEM__MENU;
 
 	/**
-	 * The number of structural features of the '<em>Tool Bar Item</em>' class.
+	 * The number of structural features of the '<em>MTool Bar Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_ITEM_FEATURE_COUNT = HANDLED_ITEM_FEATURE_COUNT + 0;
+	int MTOOL_BAR_ITEM_FEATURE_COUNT = MHANDLED_ITEM_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ItemContainerImpl <em>Item Container</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MItemContainerImpl <em>MItem Container</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ItemContainerImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getItemContainer()
+	 * @see org.eclipse.e4.ui.model.internal.application.MItemContainerImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMItemContainer()
 	 * @generated
 	 */
-	int ITEM_CONTAINER = 12;
+	int MITEM_CONTAINER = 12;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1336,7 +1336,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_CONTAINER__OWNER = APPLICATION_ELEMENT__OWNER;
+	int MITEM_CONTAINER__OWNER = MAPPLICATION_ELEMENT__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1345,7 +1345,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_CONTAINER__ID = APPLICATION_ELEMENT__ID;
+	int MITEM_CONTAINER__ID = MAPPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Items</b></em>' containment reference list.
@@ -1354,26 +1354,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_CONTAINER__ITEMS = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MITEM_CONTAINER__ITEMS = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Item Container</em>' class.
+	 * The number of structural features of the '<em>MItem Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_CONTAINER_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MITEM_CONTAINER_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MenuImpl <em>Menu</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MMenuImpl <em>MMenu</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.MenuImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMenu()
+	 * @see org.eclipse.e4.ui.model.internal.application.MMenuImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMMenu()
 	 * @generated
 	 */
-	int MENU = 13;
+	int MMENU = 13;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1382,7 +1382,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU__OWNER = ITEM_CONTAINER__OWNER;
+	int MMENU__OWNER = MITEM_CONTAINER__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1391,7 +1391,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU__ID = ITEM_CONTAINER__ID;
+	int MMENU__ID = MITEM_CONTAINER__ID;
 
 	/**
 	 * The feature id for the '<em><b>Items</b></em>' containment reference list.
@@ -1400,26 +1400,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MENU__ITEMS = ITEM_CONTAINER__ITEMS;
+	int MMENU__ITEMS = MITEM_CONTAINER__ITEMS;
 
 	/**
-	 * The number of structural features of the '<em>Menu</em>' class.
+	 * The number of structural features of the '<em>MMenu</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_FEATURE_COUNT = ITEM_CONTAINER_FEATURE_COUNT + 0;
+	int MMENU_FEATURE_COUNT = MITEM_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.ToolBarImpl <em>Tool Bar</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MToolBarImpl <em>MTool Bar</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.ToolBarImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getToolBar()
+	 * @see org.eclipse.e4.ui.model.internal.application.MToolBarImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMToolBar()
 	 * @generated
 	 */
-	int TOOL_BAR = 14;
+	int MTOOL_BAR = 14;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1428,7 +1428,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR__OWNER = ITEM_CONTAINER__OWNER;
+	int MTOOL_BAR__OWNER = MITEM_CONTAINER__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1437,7 +1437,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR__ID = ITEM_CONTAINER__ID;
+	int MTOOL_BAR__ID = MITEM_CONTAINER__ID;
 
 	/**
 	 * The feature id for the '<em><b>Items</b></em>' containment reference list.
@@ -1446,26 +1446,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR__ITEMS = ITEM_CONTAINER__ITEMS;
+	int MTOOL_BAR__ITEMS = MITEM_CONTAINER__ITEMS;
 
 	/**
-	 * The number of structural features of the '<em>Tool Bar</em>' class.
+	 * The number of structural features of the '<em>MTool Bar</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR_FEATURE_COUNT = ITEM_CONTAINER_FEATURE_COUNT + 0;
+	int MTOOL_BAR_FEATURE_COUNT = MITEM_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.TrimImpl <em>Trim</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MTrimImpl <em>MTrim</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.TrimImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getTrim()
+	 * @see org.eclipse.e4.ui.model.internal.application.MTrimImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMTrim()
 	 * @generated
 	 */
-	int TRIM = 15;
+	int MTRIM = 15;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1474,7 +1474,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM__OWNER = APPLICATION_ELEMENT__OWNER;
+	int MTRIM__OWNER = MAPPLICATION_ELEMENT__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1483,7 +1483,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM__ID = APPLICATION_ELEMENT__ID;
+	int MTRIM__ID = MAPPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Top Trim</b></em>' containment reference.
@@ -1492,7 +1492,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM__TOP_TRIM = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MTRIM__TOP_TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Left Trim</b></em>' containment reference.
@@ -1501,7 +1501,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM__LEFT_TRIM = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MTRIM__LEFT_TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Right Trim</b></em>' containment reference.
@@ -1510,7 +1510,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM__RIGHT_TRIM = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MTRIM__RIGHT_TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Bottom Trim</b></em>' containment reference.
@@ -1519,26 +1519,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM__BOTTOM_TRIM = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int MTRIM__BOTTOM_TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
-	 * The number of structural features of the '<em>Trim</em>' class.
+	 * The number of structural features of the '<em>MTrim</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int MTRIM_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.WindowImpl <em>Window</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MWindowImpl <em>MWindow</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.WindowImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getWindow()
+	 * @see org.eclipse.e4.ui.model.internal.application.MWindowImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMWindow()
 	 * @generated
 	 */
-	int WINDOW = 17;
+	int MWINDOW = 17;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1547,7 +1547,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__OWNER = ITEM_PART__OWNER;
+	int MWINDOW__OWNER = MITEM_PART__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1556,7 +1556,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__ID = ITEM_PART__ID;
+	int MWINDOW__ID = MITEM_PART__ID;
 
 	/**
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
@@ -1565,7 +1565,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__MENU = ITEM_PART__MENU;
+	int MWINDOW__MENU = MITEM_PART__MENU;
 
 	/**
 	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
@@ -1574,7 +1574,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__TOOL_BAR = ITEM_PART__TOOL_BAR;
+	int MWINDOW__TOOL_BAR = MITEM_PART__TOOL_BAR;
 
 	/**
 	 * The feature id for the '<em><b>Policy</b></em>' attribute.
@@ -1583,7 +1583,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__POLICY = ITEM_PART__POLICY;
+	int MWINDOW__POLICY = MITEM_PART__POLICY;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1592,7 +1592,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__CHILDREN = ITEM_PART__CHILDREN;
+	int MWINDOW__CHILDREN = MITEM_PART__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -1601,7 +1601,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__ACTIVE_CHILD = ITEM_PART__ACTIVE_CHILD;
+	int MWINDOW__ACTIVE_CHILD = MITEM_PART__ACTIVE_CHILD;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -1610,7 +1610,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__HANDLERS = ITEM_PART__HANDLERS;
+	int MWINDOW__HANDLERS = MITEM_PART__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
@@ -1619,7 +1619,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__TRIM = ITEM_PART__TRIM;
+	int MWINDOW__TRIM = MITEM_PART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1628,7 +1628,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__WIDGET = ITEM_PART__WIDGET;
+	int MWINDOW__WIDGET = MITEM_PART__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -1637,7 +1637,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__PARENT = ITEM_PART__PARENT;
+	int MWINDOW__PARENT = MITEM_PART__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1646,7 +1646,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__VISIBLE = ITEM_PART__VISIBLE;
+	int MWINDOW__VISIBLE = MITEM_PART__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1655,7 +1655,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__ICON_URI = ITEM_PART__ICON_URI;
+	int MWINDOW__ICON_URI = MITEM_PART__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1664,7 +1664,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__NAME = ITEM_PART__NAME;
+	int MWINDOW__NAME = MITEM_PART__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -1673,7 +1673,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__TOOLTIP = ITEM_PART__TOOLTIP;
+	int MWINDOW__TOOLTIP = MITEM_PART__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>X</b></em>' attribute.
@@ -1682,7 +1682,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__X = ITEM_PART_FEATURE_COUNT + 0;
+	int MWINDOW__X = MITEM_PART_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Y</b></em>' attribute.
@@ -1691,7 +1691,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__Y = ITEM_PART_FEATURE_COUNT + 1;
+	int MWINDOW__Y = MITEM_PART_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -1700,7 +1700,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__WIDTH = ITEM_PART_FEATURE_COUNT + 2;
+	int MWINDOW__WIDTH = MITEM_PART_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -1709,27 +1709,26 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__HEIGHT = ITEM_PART_FEATURE_COUNT + 3;
+	int MWINDOW__HEIGHT = MITEM_PART_FEATURE_COUNT + 3;
 
 	/**
-	 * The number of structural features of the '<em>Window</em>' class.
+	 * The number of structural features of the '<em>MWindow</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW_FEATURE_COUNT = ITEM_PART_FEATURE_COUNT + 4;
-
+	int MWINDOW_FEATURE_COUNT = MITEM_PART_FEATURE_COUNT + 4;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.CommandImpl <em>Command</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MCommandImpl <em>MCommand</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.CommandImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getCommand()
+	 * @see org.eclipse.e4.ui.model.internal.application.MCommandImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMCommand()
 	 * @generated
 	 */
-	int COMMAND = 18;
+	int MCOMMAND = 18;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1738,7 +1737,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMMAND__OWNER = APPLICATION_ELEMENT__OWNER;
+	int MCOMMAND__OWNER = MAPPLICATION_ELEMENT__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1747,7 +1746,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMMAND__ID = APPLICATION_ELEMENT__ID;
+	int MCOMMAND__ID = MAPPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1756,581 +1755,581 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMMAND__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MCOMMAND__NAME = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Command</em>' class.
+	 * The number of structural features of the '<em>MCommand</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMMAND_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MCOMMAND_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ApplicationElement <em>Element</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>MApplication Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Element</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ApplicationElement
+	 * @return the meta object for class '<em>MApplication Element</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
 	 * @generated
 	 */
-	EClass getApplicationElement();
+	EClass getMApplicationElement();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ApplicationElement#getOwner <em>Owner</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getOwner <em>Owner</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Owner</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ApplicationElement#getOwner()
-	 * @see #getApplicationElement()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getOwner()
+	 * @see #getMApplicationElement()
 	 * @generated
 	 */
-	EAttribute getApplicationElement_Owner();
+	EAttribute getMApplicationElement_Owner();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ApplicationElement#getId <em>Id</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getId <em>Id</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Id</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ApplicationElement#getId()
-	 * @see #getApplicationElement()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getId()
+	 * @see #getMApplicationElement()
 	 * @generated
 	 */
-	EAttribute getApplicationElement_Id();
+	EAttribute getMApplicationElement_Id();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Application <em>Application</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplication <em>MApplication</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Application</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Application
+	 * @return the meta object for class '<em>MApplication</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplication
 	 * @generated
 	 */
-	EClass getApplication();
+	EClass getMApplication();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.Application#getWindows <em>Windows</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MApplication#getWindows <em>Windows</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference list '<em>Windows</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Application#getWindows()
-	 * @see #getApplication()
+	 * @see org.eclipse.e4.ui.model.application.MApplication#getWindows()
+	 * @see #getMApplication()
 	 * @generated
 	 */
-	EReference getApplication_Windows();
+	EReference getMApplication_Windows();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.Application#getCommand <em>Command</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MApplication#getCommand <em>Command</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference list '<em>Command</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Application#getCommand()
-	 * @see #getApplication()
+	 * @see org.eclipse.e4.ui.model.application.MApplication#getCommand()
+	 * @see #getMApplication()
 	 * @generated
 	 */
-	EReference getApplication_Command();
+	EReference getMApplication_Command();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Part <em>Part</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPart <em>MPart</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Part</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part
+	 * @return the meta object for class '<em>MPart</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart
 	 * @generated
 	 */
-	EClass getPart();
+	EClass getMPart();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Part#getPolicy <em>Policy</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Policy</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getPolicy()
-	 * @see #getPart()
-	 * @generated
-	 */
-	EAttribute getPart_Policy();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.Part#getChildren <em>Children</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Children</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getChildren()
-	 * @see #getPart()
-	 * @generated
-	 */
-	EReference getPart_Children();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.Part#getActiveChild <em>Active Child</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Active Child</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getActiveChild()
-	 * @see #getPart()
-	 * @generated
-	 */
-	EReference getPart_ActiveChild();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.Part#getHandlers <em>Handlers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Handlers</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getHandlers()
-	 * @see #getPart()
-	 * @generated
-	 */
-	EReference getPart_Handlers();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.Part#getMenu <em>Menu</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MPart#getMenu <em>Menu</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getMenu()
-	 * @see #getPart()
+	 * @see org.eclipse.e4.ui.model.application.MPart#getMenu()
+	 * @see #getMPart()
 	 * @generated
 	 */
-	EReference getPart_Menu();
+	EReference getMPart_Menu();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.Part#getToolBar <em>Tool Bar</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MPart#getToolBar <em>Tool Bar</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Tool Bar</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getToolBar()
-	 * @see #getPart()
+	 * @see org.eclipse.e4.ui.model.application.MPart#getToolBar()
+	 * @see #getMPart()
 	 * @generated
 	 */
-	EReference getPart_ToolBar();
+	EReference getMPart_ToolBar();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.Part#getTrim <em>Trim</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MPart#getPolicy <em>Policy</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Policy</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#getPolicy()
+	 * @see #getMPart()
+	 * @generated
+	 */
+	EAttribute getMPart_Policy();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MPart#getChildren <em>Children</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Children</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#getChildren()
+	 * @see #getMPart()
+	 * @generated
+	 */
+	EReference getMPart_Children();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MPart#getActiveChild <em>Active Child</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Active Child</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#getActiveChild()
+	 * @see #getMPart()
+	 * @generated
+	 */
+	EReference getMPart_ActiveChild();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MPart#getHandlers <em>Handlers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Handlers</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#getHandlers()
+	 * @see #getMPart()
+	 * @generated
+	 */
+	EReference getMPart_Handlers();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MPart#getTrim <em>Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getTrim()
-	 * @see #getPart()
+	 * @see org.eclipse.e4.ui.model.application.MPart#getTrim()
+	 * @see #getMPart()
 	 * @generated
 	 */
-	EReference getPart_Trim();
+	EReference getMPart_Trim();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Part#getWidget <em>Widget</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MPart#getWidget <em>Widget</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Widget</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getWidget()
-	 * @see #getPart()
+	 * @see org.eclipse.e4.ui.model.application.MPart#getWidget()
+	 * @see #getMPart()
 	 * @generated
 	 */
-	EAttribute getPart_Widget();
+	EAttribute getMPart_Widget();
 
 	/**
-	 * Returns the meta object for the container reference '{@link org.eclipse.e4.ui.model.application.Part#getParent <em>Parent</em>}'.
+	 * Returns the meta object for the container reference '{@link org.eclipse.e4.ui.model.application.MPart#getParent <em>Parent</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the container reference '<em>Parent</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#getParent()
-	 * @see #getPart()
+	 * @see org.eclipse.e4.ui.model.application.MPart#getParent()
+	 * @see #getMPart()
 	 * @generated
 	 */
-	EReference getPart_Parent();
+	EReference getMPart_Parent();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Part#isVisible <em>Visible</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MPart#isVisible <em>Visible</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Visible</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Part#isVisible()
-	 * @see #getPart()
+	 * @see org.eclipse.e4.ui.model.application.MPart#isVisible()
+	 * @see #getMPart()
 	 * @generated
 	 */
-	EAttribute getPart_Visible();
+	EAttribute getMPart_Visible();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Stack <em>Stack</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MStack <em>MStack</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Stack</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Stack
+	 * @return the meta object for class '<em>MStack</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MStack
 	 * @generated
 	 */
-	EClass getStack();
+	EClass getMStack();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.SashForm <em>Sash Form</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MSashForm <em>MSash Form</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Sash Form</em>'.
-	 * @see org.eclipse.e4.ui.model.application.SashForm
+	 * @return the meta object for class '<em>MSash Form</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MSashForm
 	 * @generated
 	 */
-	EClass getSashForm();
+	EClass getMSashForm();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.SashForm#getWeights <em>Weights</em>}'.
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MSashForm#getWeights <em>Weights</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute list '<em>Weights</em>'.
-	 * @see org.eclipse.e4.ui.model.application.SashForm#getWeights()
-	 * @see #getSashForm()
+	 * @see org.eclipse.e4.ui.model.application.MSashForm#getWeights()
+	 * @see #getMSashForm()
 	 * @generated
 	 */
-	EAttribute getSashForm_Weights();
+	EAttribute getMSashForm_Weights();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ContributedPart <em>Contributed Part</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContributedPart <em>MContributed Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Contributed Part</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ContributedPart
+	 * @return the meta object for class '<em>MContributed Part</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContributedPart
 	 * @generated
 	 */
-	EClass getContributedPart();
+	EClass getMContributedPart();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Contribution <em>Contribution</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContribution <em>MContribution</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Contribution</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Contribution
+	 * @return the meta object for class '<em>MContribution</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContribution
 	 * @generated
 	 */
-	EClass getContribution();
+	EClass getMContribution();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Contribution#getURI <em>URI</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContribution#getURI <em>URI</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Contribution#getURI()
-	 * @see #getContribution()
+	 * @see org.eclipse.e4.ui.model.application.MContribution#getURI()
+	 * @see #getMContribution()
 	 * @generated
 	 */
-	EAttribute getContribution_URI();
+	EAttribute getMContribution_URI();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Contribution#getObject <em>Object</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContribution#getObject <em>Object</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Object</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Contribution#getObject()
-	 * @see #getContribution()
+	 * @see org.eclipse.e4.ui.model.application.MContribution#getObject()
+	 * @see #getMContribution()
 	 * @generated
 	 */
-	EAttribute getContribution_Object();
+	EAttribute getMContribution_Object();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Handler <em>Handler</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandler <em>MHandler</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Handler</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Handler
+	 * @return the meta object for class '<em>MHandler</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandler
 	 * @generated
 	 */
-	EClass getHandler();
+	EClass getMHandler();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.Handler#getCommand <em>Command</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MHandler#getCommand <em>Command</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference '<em>Command</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Handler#getCommand()
-	 * @see #getHandler()
+	 * @see org.eclipse.e4.ui.model.application.MHandler#getCommand()
+	 * @see #getMHandler()
 	 * @generated
 	 */
-	EReference getHandler_Command();
+	EReference getMHandler_Command();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Item <em>Item</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MItem <em>MItem</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Item
+	 * @return the meta object for class '<em>MItem</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MItem
 	 * @generated
 	 */
-	EClass getItem();
+	EClass getMItem();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Item#getIconURI <em>Icon URI</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#getIconURI <em>Icon URI</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Icon URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Item#getIconURI()
-	 * @see #getItem()
+	 * @see org.eclipse.e4.ui.model.application.MItem#getIconURI()
+	 * @see #getMItem()
 	 * @generated
 	 */
-	EAttribute getItem_IconURI();
+	EAttribute getMItem_IconURI();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Item#getName <em>Name</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Item#getName()
-	 * @see #getItem()
+	 * @see org.eclipse.e4.ui.model.application.MItem#getName()
+	 * @see #getMItem()
 	 * @generated
 	 */
-	EAttribute getItem_Name();
+	EAttribute getMItem_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Item#getTooltip <em>Tooltip</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#getTooltip <em>Tooltip</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Tooltip</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Item#getTooltip()
-	 * @see #getItem()
+	 * @see org.eclipse.e4.ui.model.application.MItem#getTooltip()
+	 * @see #getMItem()
 	 * @generated
 	 */
-	EAttribute getItem_Tooltip();
+	EAttribute getMItem_Tooltip();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.HandledItem <em>Handled Item</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandledItem <em>MHandled Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Handled Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.HandledItem
+	 * @return the meta object for class '<em>MHandled Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem
 	 * @generated
 	 */
-	EClass getHandledItem();
+	EClass getMHandledItem();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.HandledItem#getCommand <em>Command</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MHandledItem#getCommand <em>Command</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference '<em>Command</em>'.
-	 * @see org.eclipse.e4.ui.model.application.HandledItem#getCommand()
-	 * @see #getHandledItem()
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem#getCommand()
+	 * @see #getMHandledItem()
 	 * @generated
 	 */
-	EReference getHandledItem_Command();
+	EReference getMHandledItem_Command();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.HandledItem#getMenu <em>Menu</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MHandledItem#getMenu <em>Menu</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.HandledItem#getMenu()
-	 * @see #getHandledItem()
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem#getMenu()
+	 * @see #getMHandledItem()
 	 * @generated
 	 */
-	EReference getHandledItem_Menu();
+	EReference getMHandledItem_Menu();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MenuItem <em>Menu Item</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>MMenu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Menu Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MenuItem
+	 * @return the meta object for class '<em>MMenu Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MMenuItem
 	 * @generated
 	 */
-	EClass getMenuItem();
+	EClass getMMenuItem();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MenuItem#isSeparator <em>Separator</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MMenuItem#isSeparator <em>Separator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Separator</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MenuItem#isSeparator()
-	 * @see #getMenuItem()
+	 * @see org.eclipse.e4.ui.model.application.MMenuItem#isSeparator()
+	 * @see #getMMenuItem()
 	 * @generated
 	 */
-	EAttribute getMenuItem_Separator();
+	EAttribute getMMenuItem_Separator();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ToolBarItem <em>Tool Bar Item</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MToolBarItem <em>MTool Bar Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Tool Bar Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ToolBarItem
+	 * @return the meta object for class '<em>MTool Bar Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MToolBarItem
 	 * @generated
 	 */
-	EClass getToolBarItem();
+	EClass getMToolBarItem();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ItemContainer <em>Item Container</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MItemContainer <em>MItem Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Item Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ItemContainer
+	 * @return the meta object for class '<em>MItem Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MItemContainer
 	 * @generated
 	 */
-	EClass getItemContainer();
+	EClass getMItemContainer();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ItemContainer#getItems <em>Items</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MItemContainer#getItems <em>Items</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference list '<em>Items</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ItemContainer#getItems()
-	 * @see #getItemContainer()
+	 * @see org.eclipse.e4.ui.model.application.MItemContainer#getItems()
+	 * @see #getMItemContainer()
 	 * @generated
 	 */
-	EReference getItemContainer_Items();
+	EReference getMItemContainer_Items();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Menu <em>Menu</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenu <em>MMenu</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Menu
+	 * @return the meta object for class '<em>MMenu</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MMenu
 	 * @generated
 	 */
-	EClass getMenu();
+	EClass getMMenu();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ToolBar <em>Tool Bar</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MToolBar <em>MTool Bar</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Tool Bar</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ToolBar
+	 * @return the meta object for class '<em>MTool Bar</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MToolBar
 	 * @generated
 	 */
-	EClass getToolBar();
+	EClass getMToolBar();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Trim <em>Trim</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTrim <em>MTrim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Trim
+	 * @return the meta object for class '<em>MTrim</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrim
 	 * @generated
 	 */
-	EClass getTrim();
+	EClass getMTrim();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.Trim#getTopTrim <em>Top Trim</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrim#getTopTrim <em>Top Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Top Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Trim#getTopTrim()
-	 * @see #getTrim()
+	 * @see org.eclipse.e4.ui.model.application.MTrim#getTopTrim()
+	 * @see #getMTrim()
 	 * @generated
 	 */
-	EReference getTrim_TopTrim();
+	EReference getMTrim_TopTrim();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.Trim#getLeftTrim <em>Left Trim</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrim#getLeftTrim <em>Left Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Left Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Trim#getLeftTrim()
-	 * @see #getTrim()
+	 * @see org.eclipse.e4.ui.model.application.MTrim#getLeftTrim()
+	 * @see #getMTrim()
 	 * @generated
 	 */
-	EReference getTrim_LeftTrim();
+	EReference getMTrim_LeftTrim();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.Trim#getRightTrim <em>Right Trim</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrim#getRightTrim <em>Right Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Right Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Trim#getRightTrim()
-	 * @see #getTrim()
+	 * @see org.eclipse.e4.ui.model.application.MTrim#getRightTrim()
+	 * @see #getMTrim()
 	 * @generated
 	 */
-	EReference getTrim_RightTrim();
+	EReference getMTrim_RightTrim();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.Trim#getBottomTrim <em>Bottom Trim</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrim#getBottomTrim <em>Bottom Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Bottom Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Trim#getBottomTrim()
-	 * @see #getTrim()
+	 * @see org.eclipse.e4.ui.model.application.MTrim#getBottomTrim()
+	 * @see #getMTrim()
 	 * @generated
 	 */
-	EReference getTrim_BottomTrim();
+	EReference getMTrim_BottomTrim();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ItemPart <em>Item Part</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MItemPart <em>MItem Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Item Part</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ItemPart
+	 * @return the meta object for class '<em>MItem Part</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MItemPart
 	 * @generated
 	 */
-	EClass getItemPart();
+	EClass getMItemPart();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Window <em>Window</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MWindow <em>MWindow</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Window</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Window
+	 * @return the meta object for class '<em>MWindow</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindow
 	 * @generated
 	 */
-	EClass getWindow();
+	EClass getMWindow();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Window#getX <em>X</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getX <em>X</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>X</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Window#getX()
-	 * @see #getWindow()
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getX()
+	 * @see #getMWindow()
 	 * @generated
 	 */
-	EAttribute getWindow_X();
+	EAttribute getMWindow_X();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Window#getY <em>Y</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getY <em>Y</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Y</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Window#getY()
-	 * @see #getWindow()
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getY()
+	 * @see #getMWindow()
 	 * @generated
 	 */
-	EAttribute getWindow_Y();
+	EAttribute getMWindow_Y();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Window#getWidth <em>Width</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getWidth <em>Width</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Width</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Window#getWidth()
-	 * @see #getWindow()
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getWidth()
+	 * @see #getMWindow()
 	 * @generated
 	 */
-	EAttribute getWindow_Width();
+	EAttribute getMWindow_Width();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Window#getHeight <em>Height</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getHeight <em>Height</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Height</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Window#getHeight()
-	 * @see #getWindow()
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getHeight()
+	 * @see #getMWindow()
 	 * @generated
 	 */
-	EAttribute getWindow_Height();
+	EAttribute getMWindow_Height();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.Command <em>Command</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MCommand <em>MCommand</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Command</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Command
+	 * @return the meta object for class '<em>MCommand</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MCommand
 	 * @generated
 	 */
-	EClass getCommand();
+	EClass getMCommand();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.Command#getName <em>Name</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MCommand#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.eclipse.e4.ui.model.application.Command#getName()
-	 * @see #getCommand()
+	 * @see org.eclipse.e4.ui.model.application.MCommand#getName()
+	 * @see #getMCommand()
 	 * @generated
 	 */
-	EAttribute getCommand_Name();
+	EAttribute getMCommand_Name();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2355,14 +2354,14 @@ public interface ApplicationPackage extends EPackage {
 	 */
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ApplicationElementImpl <em>Element</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MApplicationElementImpl <em>MApplication Element</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationElementImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getApplicationElement()
+		 * @see org.eclipse.e4.ui.model.internal.application.MApplicationElementImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMApplicationElement()
 		 * @generated
 		 */
-		EClass APPLICATION_ELEMENT = eINSTANCE.getApplicationElement();
+		EClass MAPPLICATION_ELEMENT = eINSTANCE.getMApplicationElement();
 
 		/**
 		 * The meta object literal for the '<em><b>Owner</b></em>' attribute feature.
@@ -2370,7 +2369,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute APPLICATION_ELEMENT__OWNER = eINSTANCE.getApplicationElement_Owner();
+		EAttribute MAPPLICATION_ELEMENT__OWNER = eINSTANCE.getMApplicationElement_Owner();
 
 		/**
 		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
@@ -2378,17 +2377,17 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute APPLICATION_ELEMENT__ID = eINSTANCE.getApplicationElement_Id();
+		EAttribute MAPPLICATION_ELEMENT__ID = eINSTANCE.getMApplicationElement_Id();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ApplicationImpl <em>Application</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MApplicationImpl <em>MApplication</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getApplication()
+		 * @see org.eclipse.e4.ui.model.internal.application.MApplicationImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMApplication()
 		 * @generated
 		 */
-		EClass APPLICATION = eINSTANCE.getApplication();
+		EClass MAPPLICATION = eINSTANCE.getMApplication();
 
 		/**
 		 * The meta object literal for the '<em><b>Windows</b></em>' containment reference list feature.
@@ -2396,7 +2395,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference APPLICATION__WINDOWS = eINSTANCE.getApplication_Windows();
+		EReference MAPPLICATION__WINDOWS = eINSTANCE.getMApplication_Windows();
 
 		/**
 		 * The meta object literal for the '<em><b>Command</b></em>' containment reference list feature.
@@ -2404,49 +2403,17 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference APPLICATION__COMMAND = eINSTANCE.getApplication_Command();
+		EReference MAPPLICATION__COMMAND = eINSTANCE.getMApplication_Command();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.PartImpl <em>Part</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MPartImpl <em>MPart</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.PartImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getPart()
+		 * @see org.eclipse.e4.ui.model.internal.application.MPartImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMPart()
 		 * @generated
 		 */
-		EClass PART = eINSTANCE.getPart();
-
-		/**
-		 * The meta object literal for the '<em><b>Policy</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute PART__POLICY = eINSTANCE.getPart_Policy();
-
-		/**
-		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PART__CHILDREN = eINSTANCE.getPart_Children();
-
-		/**
-		 * The meta object literal for the '<em><b>Active Child</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PART__ACTIVE_CHILD = eINSTANCE.getPart_ActiveChild();
-
-		/**
-		 * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PART__HANDLERS = eINSTANCE.getPart_Handlers();
+		EClass MPART = eINSTANCE.getMPart();
 
 		/**
 		 * The meta object literal for the '<em><b>Menu</b></em>' containment reference feature.
@@ -2454,7 +2421,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PART__MENU = eINSTANCE.getPart_Menu();
+		EReference MPART__MENU = eINSTANCE.getMPart_Menu();
 
 		/**
 		 * The meta object literal for the '<em><b>Tool Bar</b></em>' containment reference feature.
@@ -2462,7 +2429,39 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PART__TOOL_BAR = eINSTANCE.getPart_ToolBar();
+		EReference MPART__TOOL_BAR = eINSTANCE.getMPart_ToolBar();
+
+		/**
+		 * The meta object literal for the '<em><b>Policy</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MPART__POLICY = eINSTANCE.getMPart_Policy();
+
+		/**
+		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MPART__CHILDREN = eINSTANCE.getMPart_Children();
+
+		/**
+		 * The meta object literal for the '<em><b>Active Child</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MPART__ACTIVE_CHILD = eINSTANCE.getMPart_ActiveChild();
+
+		/**
+		 * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MPART__HANDLERS = eINSTANCE.getMPart_Handlers();
 
 		/**
 		 * The meta object literal for the '<em><b>Trim</b></em>' containment reference feature.
@@ -2470,7 +2469,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PART__TRIM = eINSTANCE.getPart_Trim();
+		EReference MPART__TRIM = eINSTANCE.getMPart_Trim();
 
 		/**
 		 * The meta object literal for the '<em><b>Widget</b></em>' attribute feature.
@@ -2478,7 +2477,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute PART__WIDGET = eINSTANCE.getPart_Widget();
+		EAttribute MPART__WIDGET = eINSTANCE.getMPart_Widget();
 
 		/**
 		 * The meta object literal for the '<em><b>Parent</b></em>' container reference feature.
@@ -2486,7 +2485,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PART__PARENT = eINSTANCE.getPart_Parent();
+		EReference MPART__PARENT = eINSTANCE.getMPart_Parent();
 
 		/**
 		 * The meta object literal for the '<em><b>Visible</b></em>' attribute feature.
@@ -2494,27 +2493,27 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute PART__VISIBLE = eINSTANCE.getPart_Visible();
+		EAttribute MPART__VISIBLE = eINSTANCE.getMPart_Visible();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.StackImpl <em>Stack</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MStackImpl <em>MStack</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.StackImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getStack()
+		 * @see org.eclipse.e4.ui.model.internal.application.MStackImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMStack()
 		 * @generated
 		 */
-		EClass STACK = eINSTANCE.getStack();
+		EClass MSTACK = eINSTANCE.getMStack();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.SashFormImpl <em>Sash Form</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MSashFormImpl <em>MSash Form</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.SashFormImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getSashForm()
+		 * @see org.eclipse.e4.ui.model.internal.application.MSashFormImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMSashForm()
 		 * @generated
 		 */
-		EClass SASH_FORM = eINSTANCE.getSashForm();
+		EClass MSASH_FORM = eINSTANCE.getMSashForm();
 
 		/**
 		 * The meta object literal for the '<em><b>Weights</b></em>' attribute list feature.
@@ -2522,27 +2521,27 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute SASH_FORM__WEIGHTS = eINSTANCE.getSashForm_Weights();
+		EAttribute MSASH_FORM__WEIGHTS = eINSTANCE.getMSashForm_Weights();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ContributedPartImpl <em>Contributed Part</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MContributedPartImpl <em>MContributed Part</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ContributedPartImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getContributedPart()
+		 * @see org.eclipse.e4.ui.model.internal.application.MContributedPartImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMContributedPart()
 		 * @generated
 		 */
-		EClass CONTRIBUTED_PART = eINSTANCE.getContributedPart();
+		EClass MCONTRIBUTED_PART = eINSTANCE.getMContributedPart();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ContributionImpl <em>Contribution</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MContributionImpl <em>MContribution</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ContributionImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getContribution()
+		 * @see org.eclipse.e4.ui.model.internal.application.MContributionImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMContribution()
 		 * @generated
 		 */
-		EClass CONTRIBUTION = eINSTANCE.getContribution();
+		EClass MCONTRIBUTION = eINSTANCE.getMContribution();
 
 		/**
 		 * The meta object literal for the '<em><b>URI</b></em>' attribute feature.
@@ -2550,7 +2549,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CONTRIBUTION__URI = eINSTANCE.getContribution_URI();
+		EAttribute MCONTRIBUTION__URI = eINSTANCE.getMContribution_URI();
 
 		/**
 		 * The meta object literal for the '<em><b>Object</b></em>' attribute feature.
@@ -2558,17 +2557,17 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CONTRIBUTION__OBJECT = eINSTANCE.getContribution_Object();
+		EAttribute MCONTRIBUTION__OBJECT = eINSTANCE.getMContribution_Object();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.HandlerImpl <em>Handler</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MHandlerImpl <em>MHandler</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.HandlerImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getHandler()
+		 * @see org.eclipse.e4.ui.model.internal.application.MHandlerImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMHandler()
 		 * @generated
 		 */
-		EClass HANDLER = eINSTANCE.getHandler();
+		EClass MHANDLER = eINSTANCE.getMHandler();
 
 		/**
 		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
@@ -2576,17 +2575,17 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference HANDLER__COMMAND = eINSTANCE.getHandler_Command();
+		EReference MHANDLER__COMMAND = eINSTANCE.getMHandler_Command();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ItemImpl <em>Item</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MItemImpl <em>MItem</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ItemImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getItem()
+		 * @see org.eclipse.e4.ui.model.internal.application.MItemImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMItem()
 		 * @generated
 		 */
-		EClass ITEM = eINSTANCE.getItem();
+		EClass MITEM = eINSTANCE.getMItem();
 
 		/**
 		 * The meta object literal for the '<em><b>Icon URI</b></em>' attribute feature.
@@ -2594,7 +2593,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ITEM__ICON_URI = eINSTANCE.getItem_IconURI();
+		EAttribute MITEM__ICON_URI = eINSTANCE.getMItem_IconURI();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -2602,7 +2601,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ITEM__NAME = eINSTANCE.getItem_Name();
+		EAttribute MITEM__NAME = eINSTANCE.getMItem_Name();
 
 		/**
 		 * The meta object literal for the '<em><b>Tooltip</b></em>' attribute feature.
@@ -2610,17 +2609,17 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ITEM__TOOLTIP = eINSTANCE.getItem_Tooltip();
+		EAttribute MITEM__TOOLTIP = eINSTANCE.getMItem_Tooltip();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.HandledItemImpl <em>Handled Item</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl <em>MHandled Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.HandledItemImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getHandledItem()
+		 * @see org.eclipse.e4.ui.model.internal.application.MHandledItemImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMHandledItem()
 		 * @generated
 		 */
-		EClass HANDLED_ITEM = eINSTANCE.getHandledItem();
+		EClass MHANDLED_ITEM = eINSTANCE.getMHandledItem();
 
 		/**
 		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
@@ -2628,7 +2627,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference HANDLED_ITEM__COMMAND = eINSTANCE.getHandledItem_Command();
+		EReference MHANDLED_ITEM__COMMAND = eINSTANCE.getMHandledItem_Command();
 
 		/**
 		 * The meta object literal for the '<em><b>Menu</b></em>' containment reference feature.
@@ -2636,17 +2635,17 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference HANDLED_ITEM__MENU = eINSTANCE.getHandledItem_Menu();
+		EReference MHANDLED_ITEM__MENU = eINSTANCE.getMHandledItem_Menu();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MenuItemImpl <em>Menu Item</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MMenuItemImpl <em>MMenu Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.MenuItemImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMenuItem()
+		 * @see org.eclipse.e4.ui.model.internal.application.MMenuItemImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMMenuItem()
 		 * @generated
 		 */
-		EClass MENU_ITEM = eINSTANCE.getMenuItem();
+		EClass MMENU_ITEM = eINSTANCE.getMMenuItem();
 
 		/**
 		 * The meta object literal for the '<em><b>Separator</b></em>' attribute feature.
@@ -2654,27 +2653,27 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute MENU_ITEM__SEPARATOR = eINSTANCE.getMenuItem_Separator();
+		EAttribute MMENU_ITEM__SEPARATOR = eINSTANCE.getMMenuItem_Separator();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ToolBarItemImpl <em>Tool Bar Item</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MToolBarItemImpl <em>MTool Bar Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ToolBarItemImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getToolBarItem()
+		 * @see org.eclipse.e4.ui.model.internal.application.MToolBarItemImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMToolBarItem()
 		 * @generated
 		 */
-		EClass TOOL_BAR_ITEM = eINSTANCE.getToolBarItem();
+		EClass MTOOL_BAR_ITEM = eINSTANCE.getMToolBarItem();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ItemContainerImpl <em>Item Container</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MItemContainerImpl <em>MItem Container</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ItemContainerImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getItemContainer()
+		 * @see org.eclipse.e4.ui.model.internal.application.MItemContainerImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMItemContainer()
 		 * @generated
 		 */
-		EClass ITEM_CONTAINER = eINSTANCE.getItemContainer();
+		EClass MITEM_CONTAINER = eINSTANCE.getMItemContainer();
 
 		/**
 		 * The meta object literal for the '<em><b>Items</b></em>' containment reference list feature.
@@ -2682,37 +2681,37 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ITEM_CONTAINER__ITEMS = eINSTANCE.getItemContainer_Items();
+		EReference MITEM_CONTAINER__ITEMS = eINSTANCE.getMItemContainer_Items();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MenuImpl <em>Menu</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MMenuImpl <em>MMenu</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.MenuImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMenu()
+		 * @see org.eclipse.e4.ui.model.internal.application.MMenuImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMMenu()
 		 * @generated
 		 */
-		EClass MENU = eINSTANCE.getMenu();
+		EClass MMENU = eINSTANCE.getMMenu();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ToolBarImpl <em>Tool Bar</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MToolBarImpl <em>MTool Bar</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ToolBarImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getToolBar()
+		 * @see org.eclipse.e4.ui.model.internal.application.MToolBarImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMToolBar()
 		 * @generated
 		 */
-		EClass TOOL_BAR = eINSTANCE.getToolBar();
+		EClass MTOOL_BAR = eINSTANCE.getMToolBar();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.TrimImpl <em>Trim</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MTrimImpl <em>MTrim</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.TrimImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getTrim()
+		 * @see org.eclipse.e4.ui.model.internal.application.MTrimImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMTrim()
 		 * @generated
 		 */
-		EClass TRIM = eINSTANCE.getTrim();
+		EClass MTRIM = eINSTANCE.getMTrim();
 
 		/**
 		 * The meta object literal for the '<em><b>Top Trim</b></em>' containment reference feature.
@@ -2720,7 +2719,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference TRIM__TOP_TRIM = eINSTANCE.getTrim_TopTrim();
+		EReference MTRIM__TOP_TRIM = eINSTANCE.getMTrim_TopTrim();
 
 		/**
 		 * The meta object literal for the '<em><b>Left Trim</b></em>' containment reference feature.
@@ -2728,7 +2727,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference TRIM__LEFT_TRIM = eINSTANCE.getTrim_LeftTrim();
+		EReference MTRIM__LEFT_TRIM = eINSTANCE.getMTrim_LeftTrim();
 
 		/**
 		 * The meta object literal for the '<em><b>Right Trim</b></em>' containment reference feature.
@@ -2736,7 +2735,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference TRIM__RIGHT_TRIM = eINSTANCE.getTrim_RightTrim();
+		EReference MTRIM__RIGHT_TRIM = eINSTANCE.getMTrim_RightTrim();
 
 		/**
 		 * The meta object literal for the '<em><b>Bottom Trim</b></em>' containment reference feature.
@@ -2744,27 +2743,27 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference TRIM__BOTTOM_TRIM = eINSTANCE.getTrim_BottomTrim();
+		EReference MTRIM__BOTTOM_TRIM = eINSTANCE.getMTrim_BottomTrim();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.ItemPartImpl <em>Item Part</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MItemPartImpl <em>MItem Part</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.ItemPartImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getItemPart()
+		 * @see org.eclipse.e4.ui.model.internal.application.MItemPartImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMItemPart()
 		 * @generated
 		 */
-		EClass ITEM_PART = eINSTANCE.getItemPart();
+		EClass MITEM_PART = eINSTANCE.getMItemPart();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.WindowImpl <em>Window</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MWindowImpl <em>MWindow</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.WindowImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getWindow()
+		 * @see org.eclipse.e4.ui.model.internal.application.MWindowImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMWindow()
 		 * @generated
 		 */
-		EClass WINDOW = eINSTANCE.getWindow();
+		EClass MWINDOW = eINSTANCE.getMWindow();
 
 		/**
 		 * The meta object literal for the '<em><b>X</b></em>' attribute feature.
@@ -2772,7 +2771,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute WINDOW__X = eINSTANCE.getWindow_X();
+		EAttribute MWINDOW__X = eINSTANCE.getMWindow_X();
 
 		/**
 		 * The meta object literal for the '<em><b>Y</b></em>' attribute feature.
@@ -2780,7 +2779,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute WINDOW__Y = eINSTANCE.getWindow_Y();
+		EAttribute MWINDOW__Y = eINSTANCE.getMWindow_Y();
 
 		/**
 		 * The meta object literal for the '<em><b>Width</b></em>' attribute feature.
@@ -2788,7 +2787,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute WINDOW__WIDTH = eINSTANCE.getWindow_Width();
+		EAttribute MWINDOW__WIDTH = eINSTANCE.getMWindow_Width();
 
 		/**
 		 * The meta object literal for the '<em><b>Height</b></em>' attribute feature.
@@ -2796,17 +2795,17 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute WINDOW__HEIGHT = eINSTANCE.getWindow_Height();
+		EAttribute MWINDOW__HEIGHT = eINSTANCE.getMWindow_Height();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.CommandImpl <em>Command</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MCommandImpl <em>MCommand</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.CommandImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getCommand()
+		 * @see org.eclipse.e4.ui.model.internal.application.MCommandImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMCommand()
 		 * @generated
 		 */
-		EClass COMMAND = eINSTANCE.getCommand();
+		EClass MCOMMAND = eINSTANCE.getMCommand();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -2814,7 +2813,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute COMMAND__NAME = eINSTANCE.getCommand_Name();
+		EAttribute MCOMMAND__NAME = eINSTANCE.getMCommand_Name();
 
 	}
 

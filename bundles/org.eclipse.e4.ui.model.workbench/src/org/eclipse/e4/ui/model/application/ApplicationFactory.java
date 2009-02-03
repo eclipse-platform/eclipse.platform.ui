@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationFactory.java,v 1.1 2008/11/11 18:19:12 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -32,139 +32,139 @@ public interface ApplicationFactory extends EFactory {
 	ApplicationFactory eINSTANCE = org.eclipse.e4.ui.model.internal.application.ApplicationFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Application</em>'.
+	 * Returns a new object of class '<em>MApplication</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Application</em>'.
+	 * @return a new object of class '<em>MApplication</em>'.
 	 * @generated
 	 */
-	<W extends Window<?>> Application<W> createApplication();
+	<W extends MWindow<?>> MApplication<W> createMApplication();
 
 	/**
-	 * Returns a new object of class '<em>Part</em>'.
+	 * Returns a new object of class '<em>MPart</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Part</em>'.
+	 * @return a new object of class '<em>MPart</em>'.
 	 * @generated
 	 */
-	<P extends Part<?>> Part<P> createPart();
+	<P extends MPart<?>> MPart<P> createMPart();
 
 	/**
-	 * Returns a new object of class '<em>Stack</em>'.
+	 * Returns a new object of class '<em>MStack</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Stack</em>'.
+	 * @return a new object of class '<em>MStack</em>'.
 	 * @generated
 	 */
-	Stack createStack();
+	MStack createMStack();
 
 	/**
-	 * Returns a new object of class '<em>Sash Form</em>'.
+	 * Returns a new object of class '<em>MSash Form</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Sash Form</em>'.
+	 * @return a new object of class '<em>MSash Form</em>'.
 	 * @generated
 	 */
-	<P extends Part<?>> SashForm<P> createSashForm();
+	<P extends MPart<?>> MSashForm<P> createMSashForm();
 
 	/**
-	 * Returns a new object of class '<em>Contributed Part</em>'.
+	 * Returns a new object of class '<em>MContributed Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Contributed Part</em>'.
+	 * @return a new object of class '<em>MContributed Part</em>'.
 	 * @generated
 	 */
-	<P extends Part<?>> ContributedPart<P> createContributedPart();
+	<P extends MPart<?>> MContributedPart<P> createMContributedPart();
 
 	/**
-	 * Returns a new object of class '<em>Handler</em>'.
+	 * Returns a new object of class '<em>MHandler</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Handler</em>'.
+	 * @return a new object of class '<em>MHandler</em>'.
 	 * @generated
 	 */
-	Handler createHandler();
+	MHandler createMHandler();
 
 	/**
-	 * Returns a new object of class '<em>Handled Item</em>'.
+	 * Returns a new object of class '<em>MHandled Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Handled Item</em>'.
+	 * @return a new object of class '<em>MHandled Item</em>'.
 	 * @generated
 	 */
-	HandledItem createHandledItem();
+	MHandledItem createMHandledItem();
 
 	/**
-	 * Returns a new object of class '<em>Menu Item</em>'.
+	 * Returns a new object of class '<em>MMenu Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Menu Item</em>'.
+	 * @return a new object of class '<em>MMenu Item</em>'.
 	 * @generated
 	 */
-	MenuItem createMenuItem();
+	MMenuItem createMMenuItem();
 
 	/**
-	 * Returns a new object of class '<em>Tool Bar Item</em>'.
+	 * Returns a new object of class '<em>MTool Bar Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Tool Bar Item</em>'.
+	 * @return a new object of class '<em>MTool Bar Item</em>'.
 	 * @generated
 	 */
-	ToolBarItem createToolBarItem();
+	MToolBarItem createMToolBarItem();
 
 	/**
-	 * Returns a new object of class '<em>Menu</em>'.
+	 * Returns a new object of class '<em>MMenu</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Menu</em>'.
+	 * @return a new object of class '<em>MMenu</em>'.
 	 * @generated
 	 */
-	Menu createMenu();
+	MMenu createMMenu();
 
 	/**
-	 * Returns a new object of class '<em>Tool Bar</em>'.
+	 * Returns a new object of class '<em>MTool Bar</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Tool Bar</em>'.
+	 * @return a new object of class '<em>MTool Bar</em>'.
 	 * @generated
 	 */
-	ToolBar createToolBar();
+	MToolBar createMToolBar();
 
 	/**
-	 * Returns a new object of class '<em>Trim</em>'.
+	 * Returns a new object of class '<em>MTrim</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Trim</em>'.
+	 * @return a new object of class '<em>MTrim</em>'.
 	 * @generated
 	 */
-	Trim createTrim();
+	MTrim createMTrim();
 
 	/**
-	 * Returns a new object of class '<em>Item Part</em>'.
+	 * Returns a new object of class '<em>MItem Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Item Part</em>'.
+	 * @return a new object of class '<em>MItem Part</em>'.
 	 * @generated
 	 */
-	<P extends Part<?>> ItemPart<P> createItemPart();
+	<P extends MPart<?>> MItemPart<P> createMItemPart();
 
 	/**
-	 * Returns a new object of class '<em>Window</em>'.
+	 * Returns a new object of class '<em>MWindow</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Window</em>'.
+	 * @return a new object of class '<em>MWindow</em>'.
 	 * @generated
 	 */
-	<P extends Part<?>> Window<P> createWindow();
+	<P extends MPart<?>> MWindow<P> createMWindow();
 
 	/**
-	 * Returns a new object of class '<em>Command</em>'.
+	 * Returns a new object of class '<em>MCommand</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Command</em>'.
+	 * @return a new object of class '<em>MCommand</em>'.
 	 * @generated
 	 */
-	Command createCommand();
+	MCommand createMCommand();
 
 	/**
 	 * Returns the package supported by this factory.

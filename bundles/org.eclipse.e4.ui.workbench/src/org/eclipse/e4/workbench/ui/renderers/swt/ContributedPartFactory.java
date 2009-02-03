@@ -6,8 +6,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ContributedPart;
-import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.ISelectionService;
 import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
@@ -29,15 +29,15 @@ public class ContributedPartFactory extends SWTPartFactory {
 		this.contributionFactory = contributionFactory;
 	}
 
-	public Object createWidget(final Part part) {
+	public Object createWidget(final MPart part) {
 		Widget parentWidget = getParentWidget(part);
 		Widget newWidget = null;
 
-		if (part instanceof ContributedPart) {
+		if (part instanceof MContributedPart) {
 			final Composite newComposite = new Composite((Composite) parentWidget, SWT.NONE);
 			newWidget = newComposite;
 			bindWidget(part, newWidget);
-			ContributedPart contributedPart = (ContributedPart) part;
+			MContributedPart contributedPart = (MContributedPart) part;
 			final IHandlerService hs = new PartHandlerService(part);
 			IEclipseContext localContext = EclipseContextFactory.create("ContributedPart", context, UIContextScheduler.instance); //$NON-NLS-1$
 			newComposite.setData("LOCATOR", localContext); //$NON-NLS-1$

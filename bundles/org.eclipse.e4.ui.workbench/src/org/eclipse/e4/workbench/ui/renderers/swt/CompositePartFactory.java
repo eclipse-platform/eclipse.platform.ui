@@ -1,6 +1,6 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -18,12 +18,12 @@ public class CompositePartFactory extends SWTPartFactory {
 		super();
 	}
 
-	public Object createWidget(Part part) {
+	public Object createWidget(MPart part) {
 		final Widget parentWidget = getParentWidget(part);
 		
 		Widget newWidget = null;
-		if (part instanceof Part<?>) {
-			Part<?> compositeModel = (Part<?>) part;
+		if (part instanceof MPart<?>) {
+			MPart<?> compositeModel = (MPart<?>) part;
 			String policy = compositeModel.getPolicy();
 			if (policy!=null && (policy.equals("HorizontalComposite") //$NON-NLS-1$
 					|| policy.equals("VerticalComposite"))) { //$NON-NLS-1$
@@ -37,7 +37,7 @@ public class CompositePartFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public void postProcess(Part<?> part) {
+	public void postProcess(MPart<?> part) {
 		super.postProcess(part);
 		
 		if (part.getPolicy() != null && part.getPolicy().endsWith("Composite")) { //$NON-NLS-1$

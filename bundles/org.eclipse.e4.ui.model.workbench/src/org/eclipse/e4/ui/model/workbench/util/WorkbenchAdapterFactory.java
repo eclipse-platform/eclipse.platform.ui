@@ -8,15 +8,15 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchAdapterFactory.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.workbench.util;
 
-import org.eclipse.e4.ui.model.application.ApplicationElement;
-import org.eclipse.e4.ui.model.application.Item;
-import org.eclipse.e4.ui.model.application.ItemPart;
-import org.eclipse.e4.ui.model.application.Part;
-import org.eclipse.e4.ui.model.application.Window;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MItem;
+import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
 
 import org.eclipse.e4.ui.model.workbench.*;
 
@@ -84,40 +84,40 @@ public class WorkbenchAdapterFactory extends AdapterFactoryImpl {
 	protected WorkbenchSwitch<Adapter> modelSwitch =
 		new WorkbenchSwitch<Adapter>() {
 			@Override
-			public Adapter caseWorkbenchWindow(WorkbenchWindow object) {
-				return createWorkbenchWindowAdapter();
+			public Adapter caseMWorkbenchWindow(MWorkbenchWindow object) {
+				return createMWorkbenchWindowAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter caseProxyPart(ProxyPart<P> object) {
-				return createProxyPartAdapter();
+			public <P extends MPart<?>> Adapter caseMProxyPart(MProxyPart<P> object) {
+				return createMProxyPartAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter casePerspective(Perspective<P> object) {
-				return createPerspectiveAdapter();
+			public <P extends MPart<?>> Adapter caseMPerspective(MPerspective<P> object) {
+				return createMPerspectiveAdapter();
 			}
 			@Override
-			public Adapter caseWorkbenchModel(WorkbenchModel object) {
-				return createWorkbenchModelAdapter();
+			public Adapter caseMWorkbench(MWorkbench object) {
+				return createMWorkbenchAdapter();
 			}
 			@Override
-			public Adapter caseApplicationElement(ApplicationElement object) {
-				return createApplicationElementAdapter();
+			public Adapter caseMApplicationElement(MApplicationElement object) {
+				return createMApplicationElementAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter casePart(Part<P> object) {
-				return createPartAdapter();
+			public <P extends MPart<?>> Adapter caseMPart(MPart<P> object) {
+				return createMPartAdapter();
 			}
 			@Override
-			public Adapter caseItem(Item object) {
-				return createItemAdapter();
+			public Adapter caseMItem(MItem object) {
+				return createMItemAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter caseItemPart(ItemPart<P> object) {
-				return createItemPartAdapter();
+			public <P extends MPart<?>> Adapter caseMItemPart(MItemPart<P> object) {
+				return createMItemPartAdapter();
 			}
 			@Override
-			public <P extends Part<?>> Adapter caseWindow(Window<P> object) {
-				return createWindowAdapter();
+			public <P extends MPart<?>> Adapter caseMWindow(MWindow<P> object) {
+				return createMWindowAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -140,128 +140,128 @@ public class WorkbenchAdapterFactory extends AdapterFactoryImpl {
 
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.WorkbenchWindow <em>Window</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.MWorkbenchWindow <em>MWorkbench Window</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchWindow
+	 * @see org.eclipse.e4.ui.model.workbench.MWorkbenchWindow
 	 * @generated
 	 */
-	public Adapter createWorkbenchWindowAdapter() {
+	public Adapter createMWorkbenchWindowAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.ProxyPart <em>Proxy Part</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.MProxyPart <em>MProxy Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.workbench.ProxyPart
+	 * @see org.eclipse.e4.ui.model.workbench.MProxyPart
 	 * @generated
 	 */
-	public Adapter createProxyPartAdapter() {
+	public Adapter createMProxyPartAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.Perspective <em>Perspective</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.MPerspective <em>MPerspective</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.workbench.Perspective
+	 * @see org.eclipse.e4.ui.model.workbench.MPerspective
 	 * @generated
 	 */
-	public Adapter createPerspectiveAdapter() {
+	public Adapter createMPerspectiveAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.WorkbenchModel <em>Model</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.MWorkbench <em>MWorkbench</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.workbench.WorkbenchModel
+	 * @see org.eclipse.e4.ui.model.workbench.MWorkbench
 	 * @generated
 	 */
-	public Adapter createWorkbenchModelAdapter() {
+	public Adapter createMWorkbenchAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ApplicationElement <em>Element</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>MApplication Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ApplicationElement
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
 	 * @generated
 	 */
-	public Adapter createApplicationElementAdapter() {
+	public Adapter createMApplicationElementAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Part <em>Part</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MPart <em>MPart</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Part
+	 * @see org.eclipse.e4.ui.model.application.MPart
 	 * @generated
 	 */
-	public Adapter createPartAdapter() {
+	public Adapter createMPartAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Item <em>Item</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MItem <em>MItem</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Item
+	 * @see org.eclipse.e4.ui.model.application.MItem
 	 * @generated
 	 */
-	public Adapter createItemAdapter() {
+	public Adapter createMItemAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ItemPart <em>Item Part</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MItemPart <em>MItem Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ItemPart
+	 * @see org.eclipse.e4.ui.model.application.MItemPart
 	 * @generated
 	 */
-	public Adapter createItemPartAdapter() {
+	public Adapter createMItemPartAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.Window <em>Window</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MWindow <em>MWindow</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.Window
+	 * @see org.eclipse.e4.ui.model.application.MWindow
 	 * @generated
 	 */
-	public Adapter createWindowAdapter() {
+	public Adapter createMWindowAdapter() {
 		return null;
 	}
 

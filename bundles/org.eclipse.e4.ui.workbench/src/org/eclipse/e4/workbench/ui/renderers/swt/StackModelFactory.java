@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.ItemPart;
-import org.eclipse.e4.ui.model.application.Part;
-import org.eclipse.e4.ui.model.application.Stack;
+import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -29,10 +29,10 @@ public class StackModelFactory extends SWTPartFactory {
 		super();
 	}
 
-	public Object createWidget(Part<?> part) {
+	public Object createWidget(MPart<?> part) {
 		Widget newWidget = null;
 
-		if (!(part instanceof Stack))
+		if (!(part instanceof MStack))
 			return null;
 
 		Widget parentWidget = getParentWidget(part);
@@ -49,22 +49,22 @@ public class StackModelFactory extends SWTPartFactory {
 		return newWidget;
 	}
 
-	public void postProcess(Part<?> part) {
-		if (!(part instanceof Stack))
+	public void postProcess(MPart<?> part) {
+		if (!(part instanceof MStack))
 			return;
 
 		CTabFolder ctf = (CTabFolder) part.getWidget();
 		CTabItem[] items = ctf.getItems();
-		Part<?> selPart = ((Stack) part).getActiveChild();
+		MPart<?> selPart = ((MStack) part).getActiveChild();
 
 		// If there's none defined then pick the first
 		if (selPart == null && part.getChildren().size() > 0) {
-			((Stack) part).setActiveChild((ItemPart<?>) part.getChildren().get(
+			((MStack) part).setActiveChild((MItemPart<?>) part.getChildren().get(
 					0));
-			// selPart = (Part) part.getChildren().get(0);
+			// selPart = (MPart) part.getChildren().get(0);
 		} else {
 			for (int i = 0; i < items.length; i++) {
-				Part<?> me = (Part<?>) items[i].getData(OWNING_ME);
+				MPart<?> me = (MPart<?>) items[i].getData(OWNING_ME);
 				if (selPart == me)
 					ctf.setSelection(items[i]);
 			}
@@ -72,11 +72,11 @@ public class StackModelFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public void childAdded(Part<?> parentElement, Part<?> element) {
+	public void childAdded(MPart<?> parentElement, MPart<?> element) {
 		super.childAdded(parentElement, element);
 
-		if (element instanceof ItemPart<?>) {
-			ItemPart<?> itemPart = (ItemPart<?>) element;
+		if (element instanceof MItemPart<?>) {
+			MItemPart<?> itemPart = (MItemPart<?>) element;
 			CTabFolder ctf = (CTabFolder) parentElement.getWidget();
 			int createFlags = 0;
 
@@ -104,7 +104,7 @@ public class StackModelFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public <P extends Part<?>> void processContents(Part<P> me) {
+	public <P extends MPart<?>> void processContents(MPart<P> me) {
 		Widget parentWidget = getParentWidget(me);
 		if (parentWidget == null)
 			return;
@@ -113,14 +113,14 @@ public class StackModelFactory extends SWTPartFactory {
 		// themselves; they get rendered when the tab gets selected
 		List<P> parts = me.getChildren();
 		if (parts != null) {
-			for (Part<?> childME : parts) {
+			for (MPart<?> childME : parts) {
 				if (childME.isVisible())
 					childAdded(me, childME);
 			}
 		}
 	}
 
-	private CTabItem findItemForPart(Part<?> folder, Part<?> part) {
+	private CTabItem findItemForPart(MPart<?> folder, MPart<?> part) {
 		CTabFolder ctf = (CTabFolder) folder.getWidget();
 		if (ctf == null)
 			return null;
@@ -133,18 +133,18 @@ public class StackModelFactory extends SWTPartFactory {
 		return null;
 	}
 
-	private void hookChildControllerLogic(final Part<?> parentElement,
-			final Part<?> childElement, CTabItem cti) {
+	private void hookChildControllerLogic(final MPart<?> parentElement,
+			final MPart<?> childElement, CTabItem cti) {
 		// Handle label changes
 		IObservableValue textObs = EMFObservables.observeValue(
 				(EObject) childElement,
-				ApplicationPackage.Literals.ITEM__NAME);
+				ApplicationPackage.Literals.MITEM__NAME);
 		ISWTObservableValue uiObs = SWTObservables.observeText(cti);
 		dbc.bindValue(uiObs, textObs, null, null);
 
 		IObservableValue emfTTipObs = EMFObservables.observeValue(
 				(EObject) childElement,
-				ApplicationPackage.Literals.ITEM__TOOLTIP);
+				ApplicationPackage.Literals.MITEM__TOOLTIP);
 		ISWTObservableValue uiTTipObs = SWTObservables.observeTooltipText(cti);
 		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
 
@@ -152,8 +152,8 @@ public class StackModelFactory extends SWTPartFactory {
 		((EObject) childElement).eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				Part<?> sm = (Part<?>) msg.getNotifier();
-				if (ApplicationPackage.Literals.ITEM__ICON_URI.equals(msg
+				MPart<?> sm = (MPart<?>) msg.getNotifier();
+				if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
 						.getFeature())) {
 					CTabItem item = findItemForPart(parentElement, sm);
 					if (item != null) {
@@ -167,10 +167,10 @@ public class StackModelFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public void childRemoved(Part<?> parentElement, Part<?> child) {
+	public void childRemoved(MPart<?> parentElement, MPart<?> child) {
 		super.childRemoved(parentElement, child);
 
-		parentElement.getWidget();
+		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
 		CTabItem oldItem = findItemForPart(parentElement, child);
 		if (oldItem != null) {
 			oldItem.setControl(null); // prevent the widget from being disposed
@@ -179,20 +179,20 @@ public class StackModelFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public void hookControllerLogic(final Part<?> me) {
+	public void hookControllerLogic(final MPart<?> me) {
 		super.hookControllerLogic(me);
 
-		final Stack sm = (Stack) me;
+		final MStack sm = (MStack) me;
 		// synch up the selection state
 
-		// Match the selected TabItem to its Part
+		// Match the selected TabItem to its MPart
 		CTabFolder ctf = (CTabFolder) me.getWidget();
 		ctf.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				ItemPart<?> newPart = (ItemPart<?>) e.item.getData(OWNING_ME);
+				MItemPart<?> newPart = (MItemPart<?>) e.item.getData(OWNING_ME);
 				if (sm.getActiveChild() != newPart)
 					sm.setActiveChild(newPart);
 			}
@@ -201,11 +201,11 @@ public class StackModelFactory extends SWTPartFactory {
 		((EObject) me).eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.PART__ACTIVE_CHILD.equals(msg
+				if (ApplicationPackage.Literals.MPART__ACTIVE_CHILD.equals(msg
 						.getFeature())) {
-					Stack sm = (Stack) msg.getNotifier();
-					Part<?> selPart = sm.getActiveChild();
-					CTabFolder ctf = (CTabFolder) ((Stack) msg.getNotifier())
+					MStack sm = (MStack) msg.getNotifier();
+					MPart<?> selPart = sm.getActiveChild();
+					CTabFolder ctf = (CTabFolder) ((MStack) msg.getNotifier())
 							.getWidget();
 					CTabItem item = findItemForPart(sm, selPart);
 					if (item != null) {

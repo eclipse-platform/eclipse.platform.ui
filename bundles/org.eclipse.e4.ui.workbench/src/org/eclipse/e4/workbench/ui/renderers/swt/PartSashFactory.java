@@ -3,7 +3,7 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -19,11 +19,11 @@ public class PartSashFactory extends SWTPartFactory {
 		super();
 	}
 
-	public Widget createWidget(Part<?> part) {
+	public Widget createWidget(MPart<?> part) {
 		Widget parentWidget = getParentWidget(part);
 
-		if (part instanceof org.eclipse.e4.ui.model.application.SashForm<?>) {
-			org.eclipse.e4.ui.model.application.SashForm<?> sashModel = (org.eclipse.e4.ui.model.application.SashForm<?>) part;
+		if (part instanceof org.eclipse.e4.ui.model.application.MSashForm<?>) {
+			org.eclipse.e4.ui.model.application.MSashForm<?> sashModel = (org.eclipse.e4.ui.model.application.MSashForm<?>) part;
 			int orientation = (sashModel.getPolicy() != null && sashModel
 					.getPolicy().startsWith("Horizontal")) ? SWT.HORIZONTAL //$NON-NLS-1$
 					: SWT.VERTICAL;
@@ -38,8 +38,8 @@ public class PartSashFactory extends SWTPartFactory {
 		return null;
 	}
 	
-	public void postProcess(Part<?> part) {
-		if (part instanceof org.eclipse.e4.ui.model.application.SashForm<?>) {
+	public void postProcess(MPart<?> part) {
+		if (part instanceof org.eclipse.e4.ui.model.application.MSashForm<?>) {
 			// do we have any children ?
 			EList<?> kids = part.getChildren();
 			if (kids.size() == 0)
@@ -47,8 +47,8 @@ public class PartSashFactory extends SWTPartFactory {
 			
 			// set the weights of the sashes
 			SashForm sashForm = (SashForm) part.getWidget();
-			org.eclipse.e4.ui.model.application.SashForm<?> sashPart =
-				(org.eclipse.e4.ui.model.application.SashForm<?>) part;
+			org.eclipse.e4.ui.model.application.MSashForm<?> sashPart =
+				(org.eclipse.e4.ui.model.application.MSashForm<?>) part;
 			List<Integer> weightList = sashPart.getWeights();
 			
 			// If it's not already initialized the set them all ==
@@ -91,7 +91,7 @@ public class PartSashFactory extends SWTPartFactory {
 			return;
 		
 		SashForm sf = (SashForm) ctrl.getParent();
-		org.eclipse.e4.ui.model.application.SashForm<?> sfm = (org.eclipse.e4.ui.model.application.SashForm<?>) sf.getData(OWNING_ME);
+		org.eclipse.e4.ui.model.application.MSashForm<?> sfm = (org.eclipse.e4.ui.model.application.MSashForm<?>) sf.getData(OWNING_ME);
 		int[] ctrlWeights = sf.getWeights();
 		EList<Integer> modelWeights = sfm.getWeights();
 		

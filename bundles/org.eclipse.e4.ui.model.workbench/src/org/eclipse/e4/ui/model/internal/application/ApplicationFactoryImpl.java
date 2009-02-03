@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationFactoryImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -66,21 +66,21 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case ApplicationPackage.APPLICATION: return createApplication();
-			case ApplicationPackage.PART: return createPart();
-			case ApplicationPackage.STACK: return createStack();
-			case ApplicationPackage.SASH_FORM: return createSashForm();
-			case ApplicationPackage.CONTRIBUTED_PART: return createContributedPart();
-			case ApplicationPackage.HANDLER: return createHandler();
-			case ApplicationPackage.HANDLED_ITEM: return createHandledItem();
-			case ApplicationPackage.MENU_ITEM: return createMenuItem();
-			case ApplicationPackage.TOOL_BAR_ITEM: return createToolBarItem();
-			case ApplicationPackage.MENU: return createMenu();
-			case ApplicationPackage.TOOL_BAR: return createToolBar();
-			case ApplicationPackage.TRIM: return createTrim();
-			case ApplicationPackage.ITEM_PART: return createItemPart();
-			case ApplicationPackage.WINDOW: return createWindow();
-			case ApplicationPackage.COMMAND: return createCommand();
+			case ApplicationPackage.MAPPLICATION: return createMApplication();
+			case ApplicationPackage.MPART: return createMPart();
+			case ApplicationPackage.MSTACK: return createMStack();
+			case ApplicationPackage.MSASH_FORM: return createMSashForm();
+			case ApplicationPackage.MCONTRIBUTED_PART: return createMContributedPart();
+			case ApplicationPackage.MHANDLER: return createMHandler();
+			case ApplicationPackage.MHANDLED_ITEM: return createMHandledItem();
+			case ApplicationPackage.MMENU_ITEM: return createMMenuItem();
+			case ApplicationPackage.MTOOL_BAR_ITEM: return createMToolBarItem();
+			case ApplicationPackage.MMENU: return createMMenu();
+			case ApplicationPackage.MTOOL_BAR: return createMToolBar();
+			case ApplicationPackage.MTRIM: return createMTrim();
+			case ApplicationPackage.MITEM_PART: return createMItemPart();
+			case ApplicationPackage.MWINDOW: return createMWindow();
+			case ApplicationPackage.MCOMMAND: return createMCommand();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -91,9 +91,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <W extends Window<?>> Application<W> createApplication() {
-		ApplicationImpl<W> application = new ApplicationImpl<W>();
-		return application;
+	public <W extends MWindow<?>> MApplication<W> createMApplication() {
+		MApplicationImpl<W> mApplication = new MApplicationImpl<W>();
+		return mApplication;
 	}
 
 	/**
@@ -101,9 +101,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <P extends Part<?>> Part<P> createPart() {
-		PartImpl<P> part = new PartImpl<P>();
-		return part;
+	public <P extends MPart<?>> MPart<P> createMPart() {
+		MPartImpl<P> mPart = new MPartImpl<P>();
+		return mPart;
 	}
 
 	/**
@@ -111,9 +111,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Stack createStack() {
-		StackImpl stack = new StackImpl();
-		return stack;
+	public MStack createMStack() {
+		MStackImpl mStack = new MStackImpl();
+		return mStack;
 	}
 
 	/**
@@ -121,9 +121,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <P extends Part<?>> SashForm<P> createSashForm() {
-		SashFormImpl<P> sashForm = new SashFormImpl<P>();
-		return sashForm;
+	public <P extends MPart<?>> MSashForm<P> createMSashForm() {
+		MSashFormImpl<P> mSashForm = new MSashFormImpl<P>();
+		return mSashForm;
 	}
 
 	/**
@@ -131,9 +131,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <P extends Part<?>> ContributedPart<P> createContributedPart() {
-		ContributedPartImpl<P> contributedPart = new ContributedPartImpl<P>();
-		return contributedPart;
+	public <P extends MPart<?>> MContributedPart<P> createMContributedPart() {
+		MContributedPartImpl<P> mContributedPart = new MContributedPartImpl<P>();
+		return mContributedPart;
 	}
 
 	/**
@@ -141,9 +141,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Handler createHandler() {
-		HandlerImpl handler = new HandlerImpl();
-		return handler;
+	public MHandler createMHandler() {
+		MHandlerImpl mHandler = new MHandlerImpl();
+		return mHandler;
 	}
 
 	/**
@@ -151,9 +151,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public HandledItem createHandledItem() {
-		HandledItemImpl handledItem = new HandledItemImpl();
-		return handledItem;
+	public MHandledItem createMHandledItem() {
+		MHandledItemImpl mHandledItem = new MHandledItemImpl();
+		return mHandledItem;
 	}
 
 	/**
@@ -161,9 +161,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MenuItem createMenuItem() {
-		MenuItemImpl menuItem = new MenuItemImpl();
-		return menuItem;
+	public MMenuItem createMMenuItem() {
+		MMenuItemImpl mMenuItem = new MMenuItemImpl();
+		return mMenuItem;
 	}
 
 	/**
@@ -171,9 +171,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ToolBarItem createToolBarItem() {
-		ToolBarItemImpl toolBarItem = new ToolBarItemImpl();
-		return toolBarItem;
+	public MToolBarItem createMToolBarItem() {
+		MToolBarItemImpl mToolBarItem = new MToolBarItemImpl();
+		return mToolBarItem;
 	}
 
 	/**
@@ -181,9 +181,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Menu createMenu() {
-		MenuImpl menu = new MenuImpl();
-		return menu;
+	public MMenu createMMenu() {
+		MMenuImpl mMenu = new MMenuImpl();
+		return mMenu;
 	}
 
 	/**
@@ -191,9 +191,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ToolBar createToolBar() {
-		ToolBarImpl toolBar = new ToolBarImpl();
-		return toolBar;
+	public MToolBar createMToolBar() {
+		MToolBarImpl mToolBar = new MToolBarImpl();
+		return mToolBar;
 	}
 
 	/**
@@ -201,9 +201,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Trim createTrim() {
-		TrimImpl trim = new TrimImpl();
-		return trim;
+	public MTrim createMTrim() {
+		MTrimImpl mTrim = new MTrimImpl();
+		return mTrim;
 	}
 
 	/**
@@ -211,9 +211,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <P extends Part<?>> ItemPart<P> createItemPart() {
-		ItemPartImpl<P> itemPart = new ItemPartImpl<P>();
-		return itemPart;
+	public <P extends MPart<?>> MItemPart<P> createMItemPart() {
+		MItemPartImpl<P> mItemPart = new MItemPartImpl<P>();
+		return mItemPart;
 	}
 
 	/**
@@ -221,9 +221,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <P extends Part<?>> Window<P> createWindow() {
-		WindowImpl<P> window = new WindowImpl<P>();
-		return window;
+	public <P extends MPart<?>> MWindow<P> createMWindow() {
+		MWindowImpl<P> mWindow = new MWindowImpl<P>();
+		return mWindow;
 	}
 
 	/**
@@ -231,9 +231,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Command createCommand() {
-		CommandImpl command = new CommandImpl();
-		return command;
+	public MCommand createMCommand() {
+		MCommandImpl mCommand = new MCommandImpl();
+		return mCommand;
 	}
 
 	/**

@@ -8,11 +8,11 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchFactory.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.workbench;
 
-import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.MPart;
 
 import org.eclipse.emf.ecore.EFactory;
 
@@ -34,31 +34,31 @@ public interface WorkbenchFactory extends EFactory {
 	WorkbenchFactory eINSTANCE = org.eclipse.e4.ui.model.internal.workbench.WorkbenchFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Window</em>'.
+	 * Returns a new object of class '<em>MWorkbench Window</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Window</em>'.
+	 * @return a new object of class '<em>MWorkbench Window</em>'.
 	 * @generated
 	 */
-	WorkbenchWindow createWorkbenchWindow();
+	MWorkbenchWindow createMWorkbenchWindow();
 
 	/**
-	 * Returns a new object of class '<em>Perspective</em>'.
+	 * Returns a new object of class '<em>MPerspective</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Perspective</em>'.
+	 * @return a new object of class '<em>MPerspective</em>'.
 	 * @generated
 	 */
-	<P extends Part<?>> Perspective<P> createPerspective();
+	<P extends MPart<?>> MPerspective<P> createMPerspective();
 
 	/**
-	 * Returns a new object of class '<em>Model</em>'.
+	 * Returns a new object of class '<em>MWorkbench</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Model</em>'.
+	 * @return a new object of class '<em>MWorkbench</em>'.
 	 * @generated
 	 */
-	WorkbenchModel createWorkbenchModel();
+	MWorkbench createMWorkbench();
 
 	/**
 	 * Returns the package supported by this factory.

@@ -8,17 +8,17 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchSwitch.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.workbench.util;
 
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.ApplicationElement;
-import org.eclipse.e4.ui.model.application.Item;
-import org.eclipse.e4.ui.model.application.ItemPart;
-import org.eclipse.e4.ui.model.application.Part;
-import org.eclipse.e4.ui.model.application.Window;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MItem;
+import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
 
 import org.eclipse.e4.ui.model.workbench.*;
 
@@ -99,38 +99,38 @@ public class WorkbenchSwitch<T> {
 	 */
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case WorkbenchPackage.WORKBENCH_WINDOW: {
-				WorkbenchWindow workbenchWindow = (WorkbenchWindow)theEObject;
-				T result = caseWorkbenchWindow(workbenchWindow);
-				if (result == null) result = caseWindow(workbenchWindow);
-				if (result == null) result = caseItemPart(workbenchWindow);
-				if (result == null) result = casePart(workbenchWindow);
-				if (result == null) result = caseItem(workbenchWindow);
-				if (result == null) result = caseApplicationElement(workbenchWindow);
+			case WorkbenchPackage.MWORKBENCH_WINDOW: {
+				MWorkbenchWindow mWorkbenchWindow = (MWorkbenchWindow)theEObject;
+				T result = caseMWorkbenchWindow(mWorkbenchWindow);
+				if (result == null) result = caseMWindow(mWorkbenchWindow);
+				if (result == null) result = caseMItemPart(mWorkbenchWindow);
+				if (result == null) result = caseMPart(mWorkbenchWindow);
+				if (result == null) result = caseMItem(mWorkbenchWindow);
+				if (result == null) result = caseMApplicationElement(mWorkbenchWindow);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case WorkbenchPackage.PROXY_PART: {
-				ProxyPart<?> proxyPart = (ProxyPart<?>)theEObject;
-				T result = caseProxyPart(proxyPart);
-				if (result == null) result = casePart(proxyPart);
-				if (result == null) result = caseApplicationElement(proxyPart);
+			case WorkbenchPackage.MPROXY_PART: {
+				MProxyPart<?> mProxyPart = (MProxyPart<?>)theEObject;
+				T result = caseMProxyPart(mProxyPart);
+				if (result == null) result = caseMPart(mProxyPart);
+				if (result == null) result = caseMApplicationElement(mProxyPart);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case WorkbenchPackage.PERSPECTIVE: {
-				Perspective<?> perspective = (Perspective<?>)theEObject;
-				T result = casePerspective(perspective);
-				if (result == null) result = caseItemPart(perspective);
-				if (result == null) result = casePart(perspective);
-				if (result == null) result = caseItem(perspective);
-				if (result == null) result = caseApplicationElement(perspective);
+			case WorkbenchPackage.MPERSPECTIVE: {
+				MPerspective<?> mPerspective = (MPerspective<?>)theEObject;
+				T result = caseMPerspective(mPerspective);
+				if (result == null) result = caseMItemPart(mPerspective);
+				if (result == null) result = caseMPart(mPerspective);
+				if (result == null) result = caseMItem(mPerspective);
+				if (result == null) result = caseMApplicationElement(mPerspective);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case WorkbenchPackage.WORKBENCH_MODEL: {
-				WorkbenchModel workbenchModel = (WorkbenchModel)theEObject;
-				T result = caseWorkbenchModel(workbenchModel);
+			case WorkbenchPackage.MWORKBENCH: {
+				MWorkbench mWorkbench = (MWorkbench)theEObject;
+				T result = caseMWorkbench(mWorkbench);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -139,137 +139,137 @@ public class WorkbenchSwitch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Window</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MWorkbench Window</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Window</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MWorkbench Window</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseWorkbenchWindow(WorkbenchWindow object) {
+	public T caseMWorkbenchWindow(MWorkbenchWindow object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Proxy Part</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MProxy Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Proxy Part</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MProxy Part</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T caseProxyPart(ProxyPart<P> object) {
+	public <P extends MPart<?>> T caseMProxyPart(MProxyPart<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Perspective</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MPerspective</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Perspective</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MPerspective</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T casePerspective(Perspective<P> object) {
+	public <P extends MPart<?>> T caseMPerspective(MPerspective<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MWorkbench</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Model</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MWorkbench</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseWorkbenchModel(WorkbenchModel object) {
+	public T caseMWorkbench(MWorkbench object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MApplication Element</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MApplication Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseApplicationElement(ApplicationElement object) {
+	public T caseMApplicationElement(MApplicationElement object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Part</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MPart</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Part</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MPart</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T casePart(Part<P> object) {
+	public <P extends MPart<?>> T caseMPart(MPart<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Item</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MItem</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Item</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MItem</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseItem(Item object) {
+	public T caseMItem(MItem object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Item Part</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MItem Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Item Part</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MItem Part</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T caseItemPart(ItemPart<P> object) {
+	public <P extends MPart<?>> T caseMItemPart(MItemPart<P> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Window</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MWindow</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Window</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MWindow</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends Part<?>> T caseWindow(Window<P> object) {
+	public <P extends MPart<?>> T caseMWindow(MWindow<P> object) {
 		return null;
 	}
 

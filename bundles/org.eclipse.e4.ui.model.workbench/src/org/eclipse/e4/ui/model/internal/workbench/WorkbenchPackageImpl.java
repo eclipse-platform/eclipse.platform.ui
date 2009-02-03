@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackageImpl.java,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
+ * $Id$
  */
 package org.eclipse.e4.ui.model.internal.workbench;
 
@@ -16,12 +16,12 @@ import org.eclipse.e4.ui.model.application.ApplicationPackage;
 
 import org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl;
 
-import org.eclipse.e4.ui.model.workbench.Perspective;
-import org.eclipse.e4.ui.model.workbench.ProxyPart;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.workbench.MProxyPart;
+import org.eclipse.e4.ui.model.workbench.MWorkbench;
+import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
-import org.eclipse.e4.ui.model.workbench.WorkbenchModel;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
-import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EGenericType;
@@ -43,28 +43,28 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass workbenchWindowEClass = null;
+	private EClass mWorkbenchWindowEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass proxyPartEClass = null;
+	private EClass mProxyPartEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass perspectiveEClass = null;
+	private EClass mPerspectiveEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass workbenchModelEClass = null;
+	private EClass mWorkbenchEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -144,8 +144,8 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getWorkbenchWindow() {
-		return workbenchWindowEClass;
+	public EClass getMWorkbenchWindow() {
+		return mWorkbenchWindowEClass;
 	}
 
 	/**
@@ -153,8 +153,8 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getWorkbenchWindow_SharedParts() {
-		return (EReference)workbenchWindowEClass.getEStructuralFeatures().get(0);
+	public EReference getMWorkbenchWindow_SharedParts() {
+		return (EReference)mWorkbenchWindowEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -162,8 +162,8 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getProxyPart() {
-		return proxyPartEClass;
+	public EClass getMProxyPart() {
+		return mProxyPartEClass;
 	}
 
 	/**
@@ -171,8 +171,8 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getProxyPart_Part() {
-		return (EReference)proxyPartEClass.getEStructuralFeatures().get(0);
+	public EReference getMProxyPart_Part() {
+		return (EReference)mProxyPartEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -180,8 +180,8 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getPerspective() {
-		return perspectiveEClass;
+	public EClass getMPerspective() {
+		return mPerspectiveEClass;
 	}
 
 	/**
@@ -189,8 +189,8 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getWorkbenchModel() {
-		return workbenchModelEClass;
+	public EClass getMWorkbench() {
+		return mWorkbenchEClass;
 	}
 
 	/**
@@ -198,8 +198,8 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getWorkbenchModel_WbWindows() {
-		return (EReference)workbenchModelEClass.getEStructuralFeatures().get(0);
+	public EReference getMWorkbench_WbWindows() {
+		return (EReference)mWorkbenchEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -207,8 +207,8 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getWorkbenchModel_CurWBW() {
-		return (EReference)workbenchModelEClass.getEStructuralFeatures().get(1);
+	public EReference getMWorkbench_CurWBW() {
+		return (EReference)mWorkbenchEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -239,17 +239,17 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 		isCreated = true;
 
 		// Create classes and their features
-		workbenchWindowEClass = createEClass(WORKBENCH_WINDOW);
-		createEReference(workbenchWindowEClass, WORKBENCH_WINDOW__SHARED_PARTS);
+		mWorkbenchWindowEClass = createEClass(MWORKBENCH_WINDOW);
+		createEReference(mWorkbenchWindowEClass, MWORKBENCH_WINDOW__SHARED_PARTS);
 
-		proxyPartEClass = createEClass(PROXY_PART);
-		createEReference(proxyPartEClass, PROXY_PART__PART);
+		mProxyPartEClass = createEClass(MPROXY_PART);
+		createEReference(mProxyPartEClass, MPROXY_PART__PART);
 
-		perspectiveEClass = createEClass(PERSPECTIVE);
+		mPerspectiveEClass = createEClass(MPERSPECTIVE);
 
-		workbenchModelEClass = createEClass(WORKBENCH_MODEL);
-		createEReference(workbenchModelEClass, WORKBENCH_MODEL__WB_WINDOWS);
-		createEReference(workbenchModelEClass, WORKBENCH_MODEL__CUR_WBW);
+		mWorkbenchEClass = createEClass(MWORKBENCH);
+		createEReference(mWorkbenchEClass, MWORKBENCH__WB_WINDOWS);
+		createEReference(mWorkbenchEClass, MWORKBENCH__CUR_WBW);
 	}
 
 	/**
@@ -279,53 +279,53 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 		ApplicationPackage theApplicationPackage = (ApplicationPackage)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackage.eNS_URI);
 
 		// Create type parameters
-		ETypeParameter proxyPartEClass_P = addETypeParameter(proxyPartEClass, "P"); //$NON-NLS-1$
-		ETypeParameter perspectiveEClass_P = addETypeParameter(perspectiveEClass, "P"); //$NON-NLS-1$
+		ETypeParameter mProxyPartEClass_P = addETypeParameter(mProxyPartEClass, "P"); //$NON-NLS-1$
+		ETypeParameter mPerspectiveEClass_P = addETypeParameter(mPerspectiveEClass, "P"); //$NON-NLS-1$
 
 		// Set bounds for type parameters
-		EGenericType g1 = createEGenericType(theApplicationPackage.getPart());
+		EGenericType g1 = createEGenericType(theApplicationPackage.getMPart());
 		EGenericType g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
-		proxyPartEClass_P.getEBounds().add(g1);
-		g1 = createEGenericType(theApplicationPackage.getPart());
+		mProxyPartEClass_P.getEBounds().add(g1);
+		g1 = createEGenericType(theApplicationPackage.getMPart());
 		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
-		perspectiveEClass_P.getEBounds().add(g1);
+		mPerspectiveEClass_P.getEBounds().add(g1);
 
 		// Add supertypes to classes
-		g1 = createEGenericType(theApplicationPackage.getWindow());
-		g2 = createEGenericType(this.getPerspective());
+		g1 = createEGenericType(theApplicationPackage.getMWindow());
+		g2 = createEGenericType(this.getMPerspective());
 		g1.getETypeArguments().add(g2);
 		EGenericType g3 = createEGenericType();
 		g2.getETypeArguments().add(g3);
-		workbenchWindowEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theApplicationPackage.getPart());
-		g2 = createEGenericType(proxyPartEClass_P);
+		mWorkbenchWindowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theApplicationPackage.getMPart());
+		g2 = createEGenericType(mProxyPartEClass_P);
 		g1.getETypeArguments().add(g2);
-		proxyPartEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theApplicationPackage.getItemPart());
-		g2 = createEGenericType(perspectiveEClass_P);
+		mProxyPartEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theApplicationPackage.getMItemPart());
+		g2 = createEGenericType(mPerspectiveEClass_P);
 		g1.getETypeArguments().add(g2);
-		perspectiveEClass.getEGenericSuperTypes().add(g1);
+		mPerspectiveEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(workbenchWindowEClass, WorkbenchWindow.class, "WorkbenchWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		g1 = createEGenericType(theApplicationPackage.getPart());
+		initEClass(mWorkbenchWindowEClass, MWorkbenchWindow.class, "MWorkbenchWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		g1 = createEGenericType(theApplicationPackage.getMPart());
 		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
-		initEReference(getWorkbenchWindow_SharedParts(), g1, null, "sharedParts", null, 0, -1, WorkbenchWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getMWorkbenchWindow_SharedParts(), g1, null, "sharedParts", null, 0, -1, MWorkbenchWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(proxyPartEClass, ProxyPart.class, "ProxyPart", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		g1 = createEGenericType(theApplicationPackage.getPart());
+		initEClass(mProxyPartEClass, MProxyPart.class, "MProxyPart", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		g1 = createEGenericType(theApplicationPackage.getMPart());
 		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
-		initEReference(getProxyPart_Part(), g1, null, "part", null, 0, 1, ProxyPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getMProxyPart_Part(), g1, null, "part", null, 0, 1, MProxyPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(perspectiveEClass, Perspective.class, "Perspective", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(mPerspectiveEClass, MPerspective.class, "MPerspective", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
-		initEClass(workbenchModelEClass, WorkbenchModel.class, "WorkbenchModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getWorkbenchModel_WbWindows(), this.getWorkbenchWindow(), null, "wbWindows", null, 0, -1, WorkbenchModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getWorkbenchModel_CurWBW(), this.getWorkbenchWindow(), null, "curWBW", null, 0, 1, WorkbenchModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(mWorkbenchEClass, MWorkbench.class, "MWorkbench", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getMWorkbench_WbWindows(), this.getMWorkbenchWindow(), null, "wbWindows", null, 0, -1, MWorkbench.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getMWorkbench_CurWBW(), this.getMWorkbenchWindow(), null, "curWBW", null, 0, 1, MWorkbench.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Create resource
 		createResource(eNS_URI);
