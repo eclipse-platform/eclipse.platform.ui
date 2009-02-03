@@ -50,6 +50,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorPipelineService.java" type="org.eclipse.ui.navigator.INavigatorPipelineService">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorPipelineService"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/navigator/CommonViewer.java" type="org.eclipse.ui.navigator.CommonViewer">
         <filter id="643842064">
             <message_arguments>
@@ -58,11 +65,10 @@
                 <message_argument value="getFrameList()"/>
             </message_arguments>
         </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorPipelineService.java" type="org.eclipse.ui.navigator.INavigatorPipelineService">
-        <filter id="403853384">
+        <filter id="571473929">
             <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorPipelineService"/>
+                <message_argument value="TreeViewer"/>
+                <message_argument value="CommonViewer"/>
             </message_arguments>
         </filter>
     </resource>
