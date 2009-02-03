@@ -262,7 +262,7 @@ class BreadcrumbItemDetails {
 		Color background;
 		Color foreground;
 
-		if (fSelected && fHasFocus) {
+		if (fSelected) {
 			background= Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 			foreground= Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		} else {
@@ -379,14 +379,12 @@ class BreadcrumbItemDetails {
 			public void focusGained(FocusEvent e) {
 				if (!fHasFocus) {
 					fHasFocus= true;
-					updateSelection();
 				}
 			}
 
 			public void focusLost(FocusEvent e) {
 				if (fHasFocus) {
 					fHasFocus= false;
-					updateSelection();
 				}
 			}
 		});
