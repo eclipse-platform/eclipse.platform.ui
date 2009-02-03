@@ -175,7 +175,8 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             if (fBreadcrumbSelection != null && !fBreadcrumbSelection.isEmpty()) {
                 return fBreadcrumbSelection;
             } else {
-                return fTreeViewerContextProvider.getActiveContext();
+                ISelection treeViewerSelection = fTreeViewerContextProvider.getActiveContext();
+                return treeViewerSelection != null ? treeViewerSelection : StructuredSelection.EMPTY;
             }
         }
         
@@ -214,7 +215,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
     protected void deactivateBreadcrumb() {
         if (fViewer.isDropDownOpen()) {
             Shell shell = fViewer.getDropDownShell();
-            if (shell != null) {
+            if (shell != null && !shell.isDisposed()) {
                 shell.close();
             }
         }
@@ -290,9 +291,14 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
     }
 
     public void debugContextChanged(DebugContextEvent event) {
-        fBreadcrumbInput = new Input(getPathForSelection(event.getContext())); 
-        setInput(getCurrentInput());
-        refresh();
+        if (fView.isBreadcrumbVisible()) {
+            fBreadcrumbInput = new Input(getPathForSelection(event.getContext())); 
+            if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
+                setInput(getCurrentInput());
+            } else {
+                refresh();
+            }
+        }
     }
     
     public void labelUpdateStarted(ILabelUpdate update) {
@@ -317,7 +323,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             refresh = fRefreshBreadcrumb;
             fRefreshBreadcrumb = false;
         }
-        if (refresh) {
+        if (fView.isBreadcrumbVisible() && refresh) {
             new UIJob(fViewer.getControl().getDisplay(), "refresh breadcrumb") { //$NON-NLS-1$
                 { setSystem(true); }
                 public IStatus runInUIThread(IProgressMonitor monitor) {
