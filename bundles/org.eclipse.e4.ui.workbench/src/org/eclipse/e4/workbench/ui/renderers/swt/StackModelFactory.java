@@ -170,7 +170,6 @@ public class StackModelFactory extends SWTPartFactory {
 	public void childRemoved(MPart<?> parentElement, MPart<?> child) {
 		super.childRemoved(parentElement, child);
 
-		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
 		CTabItem oldItem = findItemForPart(parentElement, child);
 		if (oldItem != null) {
 			oldItem.setControl(null); // prevent the widget from being disposed
