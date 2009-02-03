@@ -185,7 +185,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 					return;
 
 				shell= fParent.getViewer().getDropDownShell();
-				if (shell != null)
+				if (shell != null && !shell.isDisposed())
 					shell.close();
 
 				showMenu();
@@ -545,7 +545,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
     }
 
     public void close() {
-        fShell.close();
+        if (fShell != null && !fShell.isDisposed()) {
+            fShell.close();
+        }
     }
     
     public void notifySelection(ISelection selection) {
@@ -553,7 +555,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
     }
     
     public void updateSize() {
-        if (!fShell.isDisposed()) {
+        if (fShell != null && !fShell.isDisposed()) {
             resizeShell(fShell);
         }
     }
