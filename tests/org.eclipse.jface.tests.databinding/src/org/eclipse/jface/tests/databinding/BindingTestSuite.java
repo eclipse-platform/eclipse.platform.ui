@@ -14,7 +14,8 @@
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
- *                    246103, 249992, 256150, 256543, 262269, 175735, 262946
+ *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
+ *                    255734
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -36,6 +37,8 @@ import org.eclipse.core.tests.databinding.beans.PojoObservablesTest;
 import org.eclipse.core.tests.databinding.conversion.NumberToStringConverterTest;
 import org.eclipse.core.tests.databinding.conversion.StringToNumberConverterTest;
 import org.eclipse.core.tests.databinding.observable.AbstractObservableTest;
+import org.eclipse.core.tests.databinding.observable.ChangeSupportTest;
+import org.eclipse.core.tests.databinding.observable.DecoratingObservableTest;
 import org.eclipse.core.tests.databinding.observable.DiffsTest;
 import org.eclipse.core.tests.databinding.observable.Diffs_ListDiffTests;
 import org.eclipse.core.tests.databinding.observable.ObservableTrackerTest;
@@ -233,6 +236,8 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.core.tests.databinding.observable
 		addTest(AbstractObservableTest.suite());
+		addTestSuite(ChangeSupportTest.class);
+		addTestSuite(DecoratingObservableTest.class);
 		addTestSuite(Diffs_ListDiffTests.class);
 		addTestSuite(DiffsTest.class);
 		addTestSuite(ObservablesTest.class);

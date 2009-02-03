@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 118516
+ *     Matthew Hall - bugs 118516, 255734
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -61,20 +61,11 @@ import org.eclipse.core.runtime.ListenerList;
 			}
 			listenerTypes[length] = listenerType;
 			listenerLists[length] = new ListenerList();
-			boolean hadListeners = hasListeners();
-			listenerLists[length].add(listener);
-			if (!hadListeners) {
-				this.firstListenerAdded();
-			}
-			return;
+			listenerTypeIndex = length;
 		}
-		ListenerList listenerList = listenerLists[listenerTypeIndex];
-		boolean hadListeners = true;
-		if (listenerList.size() == 0) {
-			hadListeners = hasListeners();
-		}
-		listenerList.add(listener);
-		if (!hadListeners) {
+		boolean hadListeners = hasListeners();
+		listenerLists[listenerTypeIndex].add(listener);
+		if (!hadListeners && hasListeners()) {
 			firstListenerAdded();
 		}
 	}
@@ -87,9 +78,10 @@ import org.eclipse.core.runtime.ListenerList;
 			IObservablesListener listener) {
 		int listenerTypeIndex = findListenerTypeIndex(listenerType);
 		if (listenerTypeIndex != -1) {
+			boolean hadListeners = hasListeners();
 			listenerLists[listenerTypeIndex].remove(listener);
 			if (listenerLists[listenerTypeIndex].size() == 0) {
-				if (!hasListeners()) {
+				if (hadListeners && !hasListeners()) {
 					this.lastListenerRemoved();
 				}
 			}
@@ -97,14 +89,11 @@ import org.eclipse.core.runtime.ListenerList;
 	}
 
 	protected boolean hasListeners() {
-		if (listenerTypes == null) {
-			return false;
-		}
-		for (int i = 0; i < listenerTypes.length; i++) {
-			if (listenerLists[i].size() > 0) {
-				return true;
-			}
-		}
+		if (listenerTypes != null)
+			for (int i = 0; i < listenerTypes.length; i++)
+				if (listenerTypes[i] != DisposeEvent.TYPE)
+					if (listenerLists[i].size() > 0)
+						return true;
 		return false;
 	}
 

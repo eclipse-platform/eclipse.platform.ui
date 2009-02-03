@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bugs 208332, 213145
+ *     Matthew Hall - bugs 208332, 213145, 255734
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable;
@@ -17,6 +17,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.AbstractObservable;
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
@@ -190,6 +192,39 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 				observable.fireChange();
 			}
 		});
+	}
+
+	public void testAddDisposeListener_HasListenersFalse() {
+		IDisposeListener disposeListener = new IDisposeListener() {
+			public void handleDispose(DisposeEvent staleEvent) {
+			}
+		};
+		IStaleListener staleListener = new IStaleListener() {
+			public void handleStale(StaleEvent staleEvent) {
+			}
+		};
+
+		assertFalse(observable.hasListeners());
+
+		observable.addDisposeListener(disposeListener);
+		assertFalse(observable.hasListeners());
+		assertFalse(observable.firstListenerAdded);
+		assertFalse(observable.lastListenerRemoved);
+
+		observable.addStaleListener(staleListener);
+		assertTrue(observable.hasListeners());
+		assertTrue(observable.firstListenerAdded);
+		assertFalse(observable.lastListenerRemoved);
+
+		observable.removeDisposeListener(disposeListener);
+		assertTrue(observable.hasListeners());
+		assertTrue(observable.firstListenerAdded);
+		assertFalse(observable.lastListenerRemoved);
+
+		observable.removeStaleListener(staleListener);
+		assertFalse(observable.hasListeners());
+		assertTrue(observable.firstListenerAdded);
+		assertTrue(observable.lastListenerRemoved);
 	}
 
 	private class StaleListener implements IStaleListener {

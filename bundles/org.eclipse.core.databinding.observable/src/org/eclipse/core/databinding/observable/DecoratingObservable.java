@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237718)
- *     Matthew Hall - but 246626
+ *     Matthew Hall - bugs 246626, 255734
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -43,6 +43,11 @@ public class DecoratingObservable extends AbstractObservable implements
 		super(decorated.getRealm());
 		this.decorated = decorated;
 		this.disposedDecoratedOnDispose = disposeDecoratedOnDispose;
+		decorated.addDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent staleEvent) {
+				dispose();
+			}
+		});
 	}
 
 	public IObservable getDecorated() {
