@@ -53,7 +53,7 @@
       </menuContribution>
       <menuContribution
              locationURI="menu:help?after=additions">
-       <menu label="%updateMenu.label">
+       <menu id="org.eclipse.update.ui.updateMenu" label="%updateMenu.label">
                <command
                      commandId="org.eclipse.ui.update.findAndInstallUpdates"
                      helpContextId="org.eclipse.update.ui.newUpdates"
