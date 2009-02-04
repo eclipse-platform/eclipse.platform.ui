@@ -2,7 +2,6 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MMenu;
@@ -30,12 +29,12 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	protected void activate(MPart part) {
-		System.out.print("Activating"); //$NON-NLS-1$
-		if (part instanceof MContributedPart) {
-			System.out.println(": " + ((MContributedPart) part).getName()); //$NON-NLS-1$
-		} else {
-			System.out.println(" part without name"); //$NON-NLS-1$
-		}
+		//System.out.print("Activating"); //$NON-NLS-1$
+		//if (part instanceof MContributedPart) {
+		//	System.out.println(": " + ((MContributedPart) part).getName()); //$NON-NLS-1$
+		//} else {
+		//	System.out.println(" part without name"); //$NON-NLS-1$
+		//}
 		internalActivate(part, getContext(part));
 	}
 
@@ -45,7 +44,7 @@ public abstract class SWTPartFactory extends PartFactory {
 			parent.setActiveChild(part);
 			IEclipseContext parentContext = getContext(parent);
 			if (parentContext != null) {
-				if (context != null) {
+				if (context != null && context != parentContext) {
 					parentContext.set(IServiceConstants.ACTIVE_CHILD, context);
 				}
 				context = parentContext;
