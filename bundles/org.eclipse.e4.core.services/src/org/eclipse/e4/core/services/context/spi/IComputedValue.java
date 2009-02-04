@@ -16,6 +16,6 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 
 public interface IComputedValue {
 	
-	public Object compute(IEclipseContext context);
+	public Object compute(IEclipseContext context, String[] arguments);
 
 }

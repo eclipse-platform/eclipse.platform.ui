@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class EclipseContext implements IEclipseContext {
 	private IEclipseContextStrategy strategy;
 
 	// XXX replace with variable on bundle-specific class
-	public static final boolean DEBUG = false;
+	public static boolean DEBUG = true;
 
 	static ThreadLocal currentComputation = new ThreadLocal();
 
@@ -84,29 +85,73 @@ public class EclipseContext implements IEclipseContext {
 			runnable.run();
 	}
 
+	public Object getLocal(String name) {
+		return internalGet(this, name, null, true);
+	}
+	
 	public Object get(String name) {
-		return internalGet(this, name);
+		return internalGet(this, name, null, false);
+	}
+	
+	public Object get(String name, String[] arguments) {
+		return internalGet(this, name, arguments, false);
+	}
+	
+	static class LookupKey {
+		String name;
+		String [] arguments;
+		public LookupKey(String name, String[] arguments) {
+			this.name = name;
+			this.arguments = arguments;
+		}
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + Arrays.hashCode(arguments);
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			return result;
+		}
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			LookupKey other = (LookupKey) obj;
+			if (!Arrays.equals(arguments, other.arguments))
+				return false;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			return true;
+		}
 	}
 
-	protected Object internalGet(EclipseContext originatingContext, String name) {
+	protected Object internalGet(EclipseContext originatingContext, String name, String[] arguments, boolean local) {
 		trackAccess(name);
+		LookupKey lookupKey = new LookupKey(name, arguments);
+		if (this == originatingContext) {
+			ValueComputation valueComputation = (ValueComputation) localValueComputations.get(lookupKey);
+			if (valueComputation != null) {
+				return valueComputation.get(arguments);
+			}
+		}
 		Object result = localValues.get(name);
 		if (result != null) {
 			if (result instanceof IComputedValue) {
 				if (EclipseContext.DEBUG) System.out.println("creating new value computation for " + name + " in " + this + " from " + originatingContext);
 				ValueComputation valueComputation = new ValueComputation(
 						this, originatingContext, name, ((IComputedValue) result));
-				originatingContext.localValueComputations.put(name, valueComputation);
-				result = valueComputation.get();
+				originatingContext.localValueComputations.put(lookupKey, valueComputation);
+				result = valueComputation.get(arguments);
 			}
 			return result;
 		}
-		ValueComputation valueComputation = (ValueComputation) localValueComputations.get(name);
-		if (valueComputation != null) {
-			return valueComputation.get();
-		}
-		if (parent != null) {
-			return ((EclipseContext) parent).internalGet(originatingContext, name); // XXX IEclipseContext
+		if (!local && parent != null) {
+			return ((EclipseContext) parent).internalGet(originatingContext, name, arguments, local); // XXX IEclipseContext
 		}
 		return null;
 	}
@@ -132,7 +177,7 @@ public class EclipseContext implements IEclipseContext {
 
 	public void runAndTrack(final Runnable runnable, String name) {
 		TrackableComputation computation = new TrackableComputation(runnable, name);
-		computation.run();
+		schedule(computation);
 	}
 
 	public void set(String name, IComputedValue computedValue) {

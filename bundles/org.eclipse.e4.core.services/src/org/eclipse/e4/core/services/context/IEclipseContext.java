@@ -15,8 +15,12 @@ import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
 public interface IEclipseContext {
 
+	public Object getLocal(String name);
+	
 	public Object get(String name);
 	
+	public Object get(String name, String[] arguments);
+
 	public void set(String name, Object value);
 	
 	public void unset(String name);

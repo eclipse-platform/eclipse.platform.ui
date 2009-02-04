@@ -40,7 +40,7 @@ public class ValueComputation extends Computation {
 		this.originatingContext.invalidate(this.name);
 	}
 
-	final Object get() {
+	final Object get(String[] arguments) {
 		if (valid) {
 			return cachedValue;
 		}
@@ -48,7 +48,7 @@ public class ValueComputation extends Computation {
 				.get();  // XXX IEclipseContext
 		EclipseContext.currentComputation.set(this);  // XXX IEclipseContext
 		try {
-			cachedValue = computedValue.compute(originatingContext);
+			cachedValue = computedValue.compute(originatingContext, arguments);
 			valid = true;
 		} finally {
 			EclipseContext.currentComputation.set(oldComputation);  // XXX IEclipseContext
