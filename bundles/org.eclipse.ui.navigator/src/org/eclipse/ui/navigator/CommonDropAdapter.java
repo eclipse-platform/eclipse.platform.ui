@@ -19,7 +19,6 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
@@ -70,6 +69,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		super(aStructuredViewer);
 		contentService = aContentService;
 		dndService = contentService.getDnDService();
+		setFeedbackEnabled(false);
 	}
 
 	/**
@@ -303,34 +303,5 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		return super.getCurrentTransfer();
 	}
 	
-    /**
-     * Returns the position of the given event's coordinates relative to its target.
-     * The position is determined to be before, after, or on the item, based on
-     * some threshold value.
-     *
-     * @param event the event
-     * @return one of the <code>LOCATION_* </code>constants defined in this class
-     */
-    protected int determineLocation(DropTargetEvent event) {
-        if (!(event.item instanceof Item)) {
-            return LOCATION_NONE;
-        }
-//        Item item = (Item) event.item;
-        Point coordinates = new Point(event.x, event.y);
-        coordinates = getViewer().getControl().toControl(coordinates);
-//        if (item != null) {
-//            Rectangle bounds = getBounds(item);
-//            if (bounds == null) {
-//                return LOCATION_NONE;
-//            }
-//            if ((coordinates.y - bounds.y) < 5) {
-//                return LOCATION_BEFORE;
-//            }
-//            if ((bounds.y + bounds.height - coordinates.y) < 5) {
-//                return LOCATION_AFTER;
-//            }
-//        }
-        return LOCATION_ON;
-    }
 
 }
