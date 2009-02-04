@@ -87,6 +87,9 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 		fSourceLookupPanel.performApply(configuration);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
+	 */
 	public String getId() {
 	    return "org.eclipse.debug.ui.sourceLookupTab"; //$NON-NLS-1$
 	}
