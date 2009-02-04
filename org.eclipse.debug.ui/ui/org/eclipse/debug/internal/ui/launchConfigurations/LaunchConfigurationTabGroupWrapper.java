@@ -62,7 +62,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 			for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
 				LaunchConfigurationTabExtension launchConfigurationTabExtension = (LaunchConfigurationTabExtension)iterator.next();
 				String relativeTab = launchConfigurationTabExtension.getRelativeTabId();
-				if (idSet.contains(relativeTab)) {
+				if (relativeTab == null || idSet.contains(relativeTab)) {
 					iterator.remove();
 					return launchConfigurationTabExtension.getTab();
 				}
@@ -169,7 +169,10 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 				if(ext.length > 0) {
 					TabCollector collector = new TabCollector(Arrays.asList(fGroup.getTabs()), Arrays.asList(ext));
 					while(collector.hasNext()) {
-						fTabs.add(collector.next());
+					    Object next = collector.next();
+					    if (next != null) {
+					        fTabs.add(next);
+					    }
 					}
 				}
 				else {

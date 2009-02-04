@@ -83,7 +83,7 @@
          <attribute name="after" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the id of the tab that this tab should appear immediately after in the left to right arrangement of tabs
+                  Specifies the id of the tab that this tab should appear immediately after in the left to right arrangement of tabs.  The ID specified here should match the value returned by org.eclipse.debug.ui.AbstractLaunchConfigurationTab.getID(), which may be different than the ID specified in the tab declaration of this extension point. 
                </documentation>
             </annotation>
          </attribute>
