@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 		fComposite.setLayout(rowLayout);
 
 		fMessage= new Label(fComposite, SWT.WRAP);
-		fMessage.setData(CompareUI.COMPARE_VIEWER_TITLE, Utilities.getString(fBundle, "title")); //$NON-NLS-1$
+		fComposite.setData(CompareUI.COMPARE_VIEWER_TITLE, Utilities.getString(fBundle, "title")); //$NON-NLS-1$
 		
 		fLeftIsLocal= Utilities.getBoolean(cc, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 		
