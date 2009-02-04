@@ -57,7 +57,7 @@ public class EclipseContext implements IEclipseContext {
 	private IEclipseContextStrategy strategy;
 
 	// XXX replace with variable on bundle-specific class
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 
 	static ThreadLocal currentComputation = new ThreadLocal();
 
