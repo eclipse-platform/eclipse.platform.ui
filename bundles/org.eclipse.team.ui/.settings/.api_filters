@@ -8,4 +8,18 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/team/ui/synchronize/SubscriberParticipant.java" type="org.eclipse.team.ui.synchronize.SubscriberParticipant">
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.ui.synchronize.SubscriberParticipant"/>
+                <message_argument value="setRefreshSchedule(SubscriberRefreshSchedule)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.ui.synchronize.SubscriberParticipant"/>
+                <message_argument value="getRefreshSchedule()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

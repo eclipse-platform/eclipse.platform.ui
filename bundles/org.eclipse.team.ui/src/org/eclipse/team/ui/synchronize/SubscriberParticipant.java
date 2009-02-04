@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -338,8 +338,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		return collector;
 	}
 	
-	/*(non-Javadoc)
-	 * Not to be called by clients.
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
 		if (refreshSchedule != schedule) {
@@ -352,8 +352,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
         firePropertyChange(this, AbstractSynchronizeParticipant.P_SCHEDULED, schedule, schedule);
 	}
 	
-	/* (non-Javadoc)
-	 * Not to be called by clients.
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public SubscriberRefreshSchedule getRefreshSchedule() {
 		return refreshSchedule;
