@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,12 +168,13 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 	}
 
 	/**
-	 * Returns the optional title argument that has been set with <code>setTitelArgument</code>
-	 * or <code>null</code> if no optional title argument has been set.
-	 * <p>
-	 * Note: this method is for internal use only. Clients should not call this method.
+	 * Returns the optional title argument that has been set with
+	 * <code>setTitelArgument</code> or <code>null</code> if no optional title
+	 * argument has been set.
 	 * 
 	 * @return the optional title argument or <code>null</code>
+	 * @noreference This method is for internal use only. Clients should not
+	 *              call this method.
 	 */
 	public String getTitleArgument() {
 		return fTitleArgument;
@@ -278,9 +279,11 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 	
 	/**
 	 * Sets an additional and optional argument for the pane's title.
-	 * Note: this method is for internal use only. Clients should not call this method.
-	 *  
-	 * @param argument an optional argument for the pane's title
+	 * 
+	 * @param argument
+	 *            an optional argument for the pane's title
+	 * @noreference This method is for internal use only. Clients should not
+	 *              call this method.
 	 */
 	public void setTitleArgument(String argument) {
 		fTitleArgument= argument;
