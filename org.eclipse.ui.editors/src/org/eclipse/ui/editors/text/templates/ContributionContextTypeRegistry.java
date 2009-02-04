@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,59 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	private static final String CONTEXT_TYPE_ID= "contextTypeId"; //$NON-NLS-1$
 	private static final String DESCRIPTION= "description"; //$NON-NLS-1$
 	private static final String TYPE= "type"; //$NON-NLS-1$
+	private static final String REGISTRY= "contextTypeRegistry"; //$NON-NLS-1$
+	private static final String REGISTRY_ID= "registryId"; //$NON-NLS-1$
+
+
+	/**
+	 * Creates a new context type registry and registers all context types contributed for the given
+	 * registry ID.
+	 * 
+	 * @param registryId the registry ID
+	 * @since 3.5
+	 */
+	public ContributionContextTypeRegistry(String registryId) {
+		readRegistry(registryId);
+	}
+
+	/**
+	 * Creates a new context type registry.
+	 * <p>
+	 * Clients need to enable the desired context types by calling {@link #addContextType(String)}.
+	 * </p>
+	 */
+	public ContributionContextTypeRegistry() {
+	}
+
+	/**
+	 * Registers all context types contributed for the given registry ID.
+	 * 
+	 * @param registryId the registry ID
+	 * @since 3.5
+	 */
+	private void readRegistry(String registryId) {
+		Assert.isNotNull(registryId);
+
+		IConfigurationElement[] extensions= getTemplateExtensions();
+
+		for (int i= 0; i < extensions.length; i++) {
+			if (extensions[i].getName().equals(REGISTRY)) {
+				String id= extensions[i].getAttribute(ID);
+				if (registryId.equals(id)) {
+					for (int j= 0; j < extensions.length; j++) {
+						if (extensions[j].getName().equals(CONTEXT_TYPE)) {
+							if (registryId.equals(extensions[j].getAttribute(REGISTRY_ID)))
+								addContextType(extensions[j].getAttribute(ID));
+						}
+					}
+					return;
+				}
+
+			}
+		}
+
+		Assert.isTrue(false, "invalid registry id"); //$NON-NLS-1$
+	}
 
 	/**
 	 * Tries to create a context type given an id. If there is already a context

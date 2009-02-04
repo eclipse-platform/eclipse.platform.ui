@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.editors">
+<schema targetNamespace="org.eclipse.ui.editors" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui.editors" id="templates" name="Editor Template"/>
@@ -13,7 +13,7 @@
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name"/>
+            <meta.element labelAttribute="name" />
          </appInfo>
       </annotation>
       <complexType>
@@ -22,6 +22,7 @@
             <element ref="resolver" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="contextType" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="include" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contextTypeRegistry" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -84,6 +85,16 @@
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="registryId" type="string">
+            <annotation>
+               <documentation>
+                  the id for which context type registry this context type is automatically registered. Since 3.5.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.templates/contextTypeRegistry/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -279,6 +290,23 @@ then the translations must go into:
       </complexType>
    </element>
 
+   <element name="contextTypeRegistry">
+      <annotation>
+         <documentation>
+            Defines a registry for context types. Context types which define a &apos;registryId&apos; are automatically added to this registry. Since 3.5.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  the id of this registry
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -334,7 +362,6 @@ then the translations must go into:
       </documentation>
    </annotation>
 
-
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -349,7 +376,7 @@ then the translations must go into:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2008 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2009 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
