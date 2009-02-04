@@ -76,7 +76,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *    The workspace is closed for change during  notification of these events.
  *   </li>
  *   <li>
- *    Before-the-fact reports of the impending refresh of a single project. 
+ *    Before-the-fact reports of the impending refresh of a single project or the workspace. 
  *    Event type is <code>PRE_REFRESH</code> and the <code>getSource</code>
  *    method returns the scope of the refresh (either the workspace or a single project).
  *    If the event is fired by a project refresh the <code>getResource</code>
