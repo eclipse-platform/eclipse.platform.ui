@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -118,6 +119,24 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 	
+    /**
+     * Preferred launch delegate preference name.  
+     * <p>
+     * Prior to 3.5 this preferred launch delegates for all launch 
+     * configuration types were serialized into a single XML string
+     * and stored in this preference.  
+     * </p>
+     * <p>
+     * Since 3.5, the preferred launch delegates are stored in a separate 
+     * preference for each launch configuration type.  The name of this 
+     * preference is composed of the prefix, followed by a slash, followed by 
+     * the launch configuration type id.  The values contain a set of launch 
+     * delegates, delimited by a semi-colon, and each delegate entry contains 
+     * the delegate ID, followed by a comma, followed by comma-delimited 
+     * launch modes.
+     * 
+     * @since 3.3
+     */
 	protected static final String PREF_PREFERRED_DELEGATES = DebugPlugin.getUniqueIdentifier() + ".PREFERRED_DELEGATES"; //$NON-NLS-1$
 	
 	/**
@@ -1541,29 +1560,19 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					Element element = null;
 					String typeid = null;
 					Set modeset = null;
-					List modesets = null;
-					LaunchDelegate[] extensions = null;
-					ILaunchDelegate delegate = null;
 					for(int i = 0; i < nodes.getLength(); i++) {
 						element = (Element) nodes.item(i);
+						String delegateid = element.getAttribute(IConfigurationElementConstants.ID); 
 						typeid = element.getAttribute(IConfigurationElementConstants.TYPE_ID);
-						extensions = getLaunchDelegates(typeid);
-						for(int j = 0; j < extensions.length; j++) {
-							if(element.getAttribute(IConfigurationElementConstants.ID).equals(extensions[j].getId())) { 
-								modesets = extensions[j].getModes();
-								String[] modes = element.getAttribute(IConfigurationElementConstants.MODES).split(","); //$NON-NLS-1$
-								modeset = new HashSet(Arrays.asList(modes));
-								if(modesets.contains(modeset)) {
-									delegate = extensions[j]; 
-									break;
-								}
-							}
+                        String[] modes = element.getAttribute(IConfigurationElementConstants.MODES).split(","); //$NON-NLS-1$
+                        modeset = new HashSet(Arrays.asList(modes));
+						LaunchDelegate delegate = getLaunchDelegateExtension(typeid, delegateid, modeset);
+						if (delegate != null) {
+    						//take type id, modeset, delegate and create entry
+    						if(!IInternalDebugCoreConstants.EMPTY_STRING.equals(typeid) & modeset != null) {
+    							fPreferredDelegates.add(new PreferredDelegate(delegate, typeid, modeset));
+    						}
 						}
-						//take type id, modeset, delegate and create entry
-						if(delegate != null & !IInternalDebugCoreConstants.EMPTY_STRING.equals(typeid) & modeset != null) {
-							fPreferredDelegates.add(new PreferredDelegate(delegate, typeid, modeset));
-						}
-						delegate = null;
 					}
 				}
 				catch (CoreException e) {DebugPlugin.log(e);} 
@@ -1580,6 +1589,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.3
 	 */
 	protected ILaunchDelegate getPreferredDelegate(String typeid, Set modes) {
+	    // Retrieve preferred delegates using legacy mechanism for backward 
+	    // compatibility.
 		initializePreferredDelegates();
 		PreferredDelegate pd = null;
 		for(Iterator iter = fPreferredDelegates.iterator(); iter.hasNext();) {
@@ -1588,7 +1599,54 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				return pd.getDelegate();
 			}
 		}
+
+		// @since 3.5
+		// If the legacy mechanism didn't work, try the new preference name for 
+		// the given launch type.  
+        Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
+        String preferred = prefs.getString(LaunchManager.PREF_PREFERRED_DELEGATES + '/' + typeid);
+        if (preferred != null && preferred.length() != 0) {
+            StringTokenizer tokenizer = new StringTokenizer(preferred, ";"); //$NON-NLS-1$
+            while(tokenizer.hasMoreTokens()) {
+                StringTokenizer tokenizer2 = new StringTokenizer(tokenizer.nextToken(), ","); //$NON-NLS-1$
+                String delegateId = tokenizer2.nextToken();
+                HashSet modeset = new HashSet();
+                while(tokenizer2.hasMoreTokens()) {
+                    modeset.add(tokenizer2.nextToken());
+                }
+                LaunchDelegate delegate = getLaunchDelegateExtension(typeid, delegateId, modeset);
+                if (delegate != null && modeset.equals(modes)) {
+                    return delegate;
+                }
+            }
+            
+        }
 		return null;
+	}
+	
+	/**
+	 * Returns the launch delegate extension that matches the given type, delegate ID, and
+	 * set of modes.
+	 * 
+	 * @param typeId Launch configuration type.
+	 * @param id Launch delegate ID.
+	 * @param modeset Set of modes that the launch delegate applies to. 
+	 * @return The launch delegate matching the specified parameters, or 
+	 * <code>null</code> if not found.
+	 * 
+	 * @since 3.5
+	 */
+	private LaunchDelegate getLaunchDelegateExtension(String typeId, String id, Set modeset) {
+        LaunchDelegate[] extensions = getLaunchDelegates(typeId);
+        for(int j = 0; j < extensions.length; j++) {
+            if(id.equals(extensions[j].getId())) { 
+                List modesets = extensions[j].getModes();
+                if(modesets.contains(modeset)) {
+                    return extensions[j];
+                }
+            }
+        }
+        return null;
 	}
 	
 	/**
@@ -2271,51 +2329,41 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.3
 	 */
 	private void persistPreferredLaunchDelegates() {
-		Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
-		try {
-			Document doc = DebugPlugin.newDocument();
-			Element root = doc.createElement(IConfigurationElementConstants.PREFERRED_DELEGATES);
-			doc.appendChild(root);
-			ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
-			Map preferred = null;
-			Element child = null;
-			ILaunchDelegate delegate = null;
-			Set modes = null;
-			String modestr = IInternalDebugCoreConstants.EMPTY_STRING;
-			for(int i = 0; i < types.length; i++) {
-				preferred = ((LaunchConfigurationType)types[i]).getPreferredDelegates();
-				if(preferred != null && preferred.size() > 0) {
-					for(Iterator iter = preferred.keySet().iterator(); iter.hasNext();) {
-						modes = (Set) iter.next();
-						delegate = (ILaunchDelegate) preferred.get(modes);
-						if(delegate != null) {
-							child = doc.createElement(IConfigurationElementConstants.DELEGATE);
-							child.setAttribute(IConfigurationElementConstants.ID, delegate.getId());
-							child.setAttribute(IConfigurationElementConstants.TYPE_ID, types[i].getIdentifier());
-							for(Iterator iter2 = modes.iterator(); iter2.hasNext();) {
-								modestr += iter2.next();
-								if(iter2.hasNext()) {
-									modestr += ","; //$NON-NLS-1$
-								}
-							}
-							child.setAttribute(IConfigurationElementConstants.MODES, modestr);
-							modestr = IInternalDebugCoreConstants.EMPTY_STRING;
-							root.appendChild(child);
-						}
-					}
-				}
-			}
-			String pref = null;
-			if(root.hasChildNodes()) {
-				pref = serializeDocument(doc);
-			}
-			if(pref != null) {
-				prefs.setValue(PREF_PREFERRED_DELEGATES, pref);
-			}
-		} 
-		catch (CoreException e) {DebugPlugin.log(e);}
-		catch (IOException ioe) {DebugPlugin.log(ioe);}
-		catch (TransformerException te) {DebugPlugin.log(te);}
+        Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
+        ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
+        Map preferred = null;
+        ILaunchDelegate delegate = null;
+        Set modes = null;
+        for(int i = 0; i < types.length; i++) {
+            String preferenceName = PREF_PREFERRED_DELEGATES + '/' + types[i].getIdentifier();
+            preferred = ((LaunchConfigurationType)types[i]).getPreferredDelegates();
+            if(preferred != null && preferred.size() > 0) {
+                StringBuffer str = new StringBuffer();
+                for(Iterator iter = preferred.keySet().iterator(); iter.hasNext();) {
+                    modes = (Set) iter.next();
+                    delegate = (ILaunchDelegate) preferred.get(modes);
+                    if(delegate != null) {
+                        str.append(delegate.getId());
+                        str.append(',');
+                        for(Iterator iter2 = modes.iterator(); iter2.hasNext();) {
+                            str.append(iter2.next());
+                            if(iter2.hasNext()) {
+                                str.append(',');
+                            }
+                        }
+                        if (iter.hasNext()) {
+                            str.append(';');
+                        }
+                    }
+                }
+                prefs.setValue(preferenceName, str.toString());
+            } else {
+                prefs.setToDefault(preferenceName);
+            }
+        }
+
+        // Reset the legacy preference string.
+        prefs.setToDefault(PREF_PREFERRED_DELEGATES);
 	}
 	
 	/**
