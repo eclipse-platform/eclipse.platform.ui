@@ -22,6 +22,7 @@ public class ValueComputation extends Computation {
 	boolean valid;
 	IComputedValue computedValue;
 	EclipseContext originatingContext; // XXX IEclipseContext
+	private boolean computing; // cycle detection
 	
 	public ValueComputation(IEclipseContext context, IEclipseContext originatingContext, String name,
 			IComputedValue computedValue) {
@@ -29,6 +30,24 @@ public class ValueComputation extends Computation {
 		this.originatingContext = (EclipseContext) originatingContext;
 		this.name = name;
 		this.computedValue = computedValue;
+	}
+	
+	static class CycleException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+		private final String cycleMessage;
+
+		CycleException(String cycleMessage) {
+			super("cycle while computing value");
+			this.cycleMessage = cycleMessage;
+		}
+		
+		String getCycleMessage() {
+			return cycleMessage;
+		}
+		
+		public String toString() {
+			return "\n" + cycleMessage + "\n";
+		}
 	}
 
 	final protected void doClear() {
@@ -44,13 +63,20 @@ public class ValueComputation extends Computation {
 		if (valid) {
 			return cachedValue;
 		}
+		if (this.computing) {
+			throw new CycleException(this.toString());
+		}
 		Computation oldComputation = (Computation) EclipseContext.currentComputation
 				.get();  // XXX IEclipseContext
 		EclipseContext.currentComputation.set(this);  // XXX IEclipseContext
+		computing = true;
 		try {
 			cachedValue = computedValue.compute(originatingContext, arguments);
 			valid = true;
+		} catch(CycleException ex) {
+			throw new CycleException(ex.getCycleMessage() + "\n" + this.toString());
 		} finally {
+			computing = false;
 			EclipseContext.currentComputation.set(oldComputation);  // XXX IEclipseContext
 		}
 		startListening();
