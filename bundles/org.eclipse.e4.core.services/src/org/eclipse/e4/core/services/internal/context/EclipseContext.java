@@ -32,9 +32,9 @@ public class EclipseContext implements IEclipseContext {
 			this.name = name;
 		}
 
-		final protected void doHandleInvalid(EclipseContext context) {
+		final protected void doHandleInvalid(IEclipseContext context) {
 			if (EclipseContext.DEBUG) System.out.println("scheduling " + toString());
-			context.schedule(this);
+			((EclipseContext)context).schedule(this); // XXX conversion: should be IEclipseContext
 		}
 
 		public void run() {
