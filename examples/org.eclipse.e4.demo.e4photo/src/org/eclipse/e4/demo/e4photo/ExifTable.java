@@ -9,7 +9,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.ui.services.ISelectionService;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -25,7 +26,7 @@ public class ExifTable implements IHasInput {
 
 	private WritableList inputList;
 
-	public ExifTable(Composite parent, final ISelectionService selectionService) {
+	public ExifTable(Composite parent, final IEclipseContext outputContext) {
 		parent.setLayout(new FillLayout());
 
 		TableViewer viewer = new TableViewer(parent, SWT.SINGLE
@@ -53,7 +54,7 @@ public class ExifTable implements IHasInput {
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				selectionService.setValue(event.getSelection());
+				outputContext.set(IServiceConstants.SELECTION, event.getSelection());
 			}
 		});
 

@@ -44,11 +44,10 @@ import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
-import org.eclipse.e4.workbench.modeling.ModelService;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.IWorkbench;
-import org.eclipse.e4.workbench.ui.SelectionServiceValue;
 import org.eclipse.e4.workbench.ui.renderers.swt.ContributedPartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.PartRenderer;
@@ -78,7 +77,6 @@ public class Workbench implements IWorkbench, IContributionFactory {
 	private final IExtensionRegistry registry;
 	private final PackageAdmin packageAdmin;
 	private ResourceSetImpl resourceSet;
-	private ModelService modelService;
 
 	public IEclipseContext getContext() {
 		return globalContext;
@@ -135,8 +133,6 @@ public class Workbench implements IWorkbench, IContributionFactory {
 
 	private IEclipseContext createContext() {
 		// Initialize Services
-		modelService = new ModelService(Platform.getAdapterManager());
-
 		resourceUtility = new ResourceUtility(packageAdmin);
 
 		final IEclipseContext mainContext = EclipseContextFactory.create(
@@ -162,7 +158,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(ResourceUtility.class.getName(), resourceUtility);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
-		mainContext.set("selectionService", new SelectionServiceValue(mainContext)); //$NON-NLS-1$
+		mainContext.set(IServiceConstants.SELECTION, new ActiveChildOutputValue(IServiceConstants.SELECTION));
 
 		return mainContext;
 	}
@@ -356,49 +352,9 @@ public class Workbench implements IWorkbench, IContributionFactory {
 	}
 
 	private void init(MApplication<MWorkbenchWindow> workbench) {
-		// workbench.addAdapter(new EContentAdapter() {
-		//
-		// @Override
-		// public void notifyChanged(Notification notification) {
-		// super.notifyChanged(notification);
-		//
-		// if (notification.getEventType() == Notification.ADD
-		// && notification.getNewValue() instanceof EclipseElement) {
-		// WorkbenchPart<?> part = findPart((EclipseElement) notification
-		// .getNewValue());
-		// WorkbenchPart<?> newParent = findPart((EclipseElement) notification
-		// .getNotifier());
-		// if (part != null && newParent != null)
-		// part.setParent(newParent);
-		// }
-		// }
-		//
-		// });
-
-		// HACK!! test the modelService and imported functionality
-		modelService.getPropIds(workbench);
 	}
 
 	public int run() {
-		// appWindow = new WorkbenchWindowPart(this,
-		// workbench.getWindows().get(0));
-		// appWindow.createPartControl(null, new IServiceLocator() {
-		// public Object getService(Class api) {
-		// if (api == ResourceUtility.class) {
-		// return resourceUtility;
-		// }
-		// return serviceLocator.getService(api);
-		// }
-		//
-		// public boolean hasService(Class api) {
-		// if (api == ResourceUtility.class) {
-		// return true;
-		// }
-		// return serviceLocator.hasService(api);
-		// }
-		// });
-
-		// appWindow.createPartControl(null);
 		MWorkbenchWindow wbw = workbench.getWindows().get(0);
 		createGUI(wbw);
 
@@ -590,31 +546,6 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public ResourceUtility getResourceUtility() {
-		return resourceUtility;
-	}
-
-	public MApplication<MWorkbenchWindow> getModelElement() {
-		return workbench;
-	}
-
-	public Object getService(Class<?> api) {
-		if (api == ModelService.class) {
-			return modelService;
-		}
-		if (api == ResourceUtility.class) {
-			return resourceUtility;
-		}
-		return null;
-	}
-
-	public boolean hasService(Class<?> api) {
-		if (api == ModelService.class || api == ResourceUtility.class) {
-			return true;
-		}
-		return false;
 	}
 
 	public Object create(String uriString, IEclipseContext context) {

@@ -2,12 +2,14 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
-import org.eclipse.e4.ui.services.ISelectionService;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -23,8 +25,51 @@ import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartFactory extends PartFactory {
 
+	/**
+	 * 
+	 */
+	private static final String LOCATOR = "LOCATOR"; //$NON-NLS-1$
+
 	public SWTPartFactory() {
 		super();
+	}
+	
+	static IEclipseContext getContext(MPart part) {
+		Widget widget = (Widget) part.getWidget();
+		return widget == null ? null : getContext(widget);
+	}
+	
+	static IEclipseContext getContext(Widget widget) {
+		return (IEclipseContext) widget.getData(LOCATOR);
+	}
+	
+	public static void associate(Widget widget, IEclipseContext context) {
+		widget.setData(LOCATOR, context);
+	}
+	
+	static protected void activate(MPart part) {
+		System.out.print("Activating"); //$NON-NLS-1$
+		if (part instanceof MContributedPart) {
+			System.out.println(": " + ((MContributedPart)part).getName()); //$NON-NLS-1$
+		} else {
+			System.out.println(" part without name"); //$NON-NLS-1$
+		}
+		internalActivate(part, getContext(part));
+	}
+
+	private static void internalActivate(MPart part, IEclipseContext context) {
+		MPart parent = part.getParent();
+		if (parent != null) {
+			parent.setActiveChild(part);
+			IEclipseContext parentContext = getContext(parent);
+			if (parentContext != null) {
+				if (context != null) {
+					parentContext.set(IServiceConstants.ACTIVE_CHILD, context);
+				}
+				context = parentContext;
+			}
+			internalActivate(parent, context);
+		}
 	}
 
 	public void createMenu(Object widgetObject, MMenu menu) {
@@ -90,15 +135,13 @@ public abstract class SWTPartFactory extends PartFactory {
 		newToolItem.setToolTipText(toolBarItem.getTooltip());
 		newToolItem.setImage(getImage(toolBarItem));
 		if (toolBarItem.getCommand() != null) {
-			final ISelectionService selectionService = (ISelectionService) context
-				.get(ISelectionService.class.getName());
 			newToolItem.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					Object result = canExecuteItem(context, newToolItem
-							.getDisplay(), toolBarItem, selectionService);
+							.getDisplay(), toolBarItem);
 					if (Boolean.TRUE.equals(result)) {
 						executeItem(context, newToolItem.getDisplay(),
-								toolBarItem, selectionService);
+								toolBarItem);
 					}
 				}
 			});
@@ -108,7 +151,7 @@ public abstract class SWTPartFactory extends PartFactory {
 						return;
 					}
 					Object result = canExecuteItem(context, newToolItem
-							.getDisplay(), toolBarItem, selectionService);
+							.getDisplay(), toolBarItem);
 					((ToolItem) newToolItem).setEnabled(Boolean.TRUE
 							.equals(result));
 					newToolItem.getDisplay().timerExec(100, this);
@@ -118,8 +161,7 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	protected Object canExecuteItem(final IEclipseContext context,
-			Display display, final MHandledItem item,
-			final ISelectionService selectionService) {
+			Display display, final MHandledItem item) {
 		MHandler h = getHandler(display, item);
 		if (h==null) {
 			return Boolean.TRUE;
@@ -131,8 +173,7 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	protected void executeItem(final IEclipseContext context,
-			Display display, final MHandledItem item,
-			final ISelectionService selectionService) {
+			Display display, final MHandledItem item) {
 		MHandler h = getHandler(display, item);
 		if (h==null) {
 			return;
@@ -166,15 +207,13 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 
 		if (handledItem.getCommand() != null) {
-			final ISelectionService selectionService = (ISelectionService) context
-					.get(ISelectionService.class.getName());
 			newMenuItem.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					Object result = canExecuteItem(context, newMenuItem
-							.getDisplay(), handledItem, selectionService);
+							.getDisplay(), handledItem);
 					if (Boolean.TRUE.equals(result)) {
 						executeItem(context, newMenuItem.getDisplay(),
-								handledItem, selectionService);
+								handledItem);
 					}
 				}
 			});
@@ -185,7 +224,7 @@ public abstract class SWTPartFactory extends PartFactory {
 						return;
 					}
 					Object result = canExecuteItem(context, newMenuItem
-							.getDisplay(), handledItem, selectionService);
+							.getDisplay(), handledItem);
 
 					((MenuItem) newMenuItem).setEnabled(Boolean.TRUE
 							.equals(result));

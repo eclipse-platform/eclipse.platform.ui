@@ -7,6 +7,7 @@ import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
 import org.eclipse.emf.common.notify.Notification;
@@ -41,7 +42,8 @@ public class WBPartFactory extends SWTPartFactory {
 			final IHandlerService hs = new PartHandlerService(part);
 			IEclipseContext localContext = EclipseContextFactory.create("MWorkbenchWindow", context, UIContextScheduler.instance); //$NON-NLS-1$
 			localContext.set(IHandlerService.class.getName(), hs);
-			wbwShell.setData("LOCATOR", localContext); //$NON-NLS-1$
+			associate(wbwShell, localContext);
+			context.set(IServiceConstants.ACTIVE_CHILD, localContext);
 		} else {
 			newWidget = null;
 		}

@@ -8,7 +8,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IBackgroundRunner;
-import org.eclipse.e4.ui.services.ISelectionService;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
@@ -29,35 +30,37 @@ public class Thumbnails implements IHasInput {
 
 	private Gallery gallery;
 	private GalleryItem group;
-	private final ISelectionService selectionService;
+	private final IEclipseContext outputContext;
 	private final IBackgroundRunner backgroundRunner;
+	private IContainer input;
 
-	public Thumbnails(Composite parent, ISelectionService selectionService, IBackgroundRunner backgroundRunner) {
-		this.selectionService = selectionService;
+	public Thumbnails(Composite parent, final IEclipseContext outputContext,
+			IBackgroundRunner backgroundRunner) {
+		this.outputContext = outputContext;
 		this.backgroundRunner = backgroundRunner;
 		parent.setLayout(new FillLayout());
 		gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
 		gallery.setData("id", "thumbnails");
 
-		Image itemImage = new Image(parent.getDisplay(), Program.findProgram(
-				"jpg").getImageData());
+		Image itemImage = new Image(parent.getDisplay(), Program.findProgram("jpg")
+				.getImageData());
 
 		gallery.setGroupRenderer(new NoGroupRenderer());
 
 		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
 		ir.setShowLabels(false);
 		ir.setDropShadowsSize(0);
-//		ir.setSelectionBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		// ir.setSelectionBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 
 		gallery.setItemRenderer(ir);
 
 		group = new GalleryItem(gallery, SWT.NONE);
 		group.setExpanded(true);
-		
-		gallery.addSelectionListener(new SelectionAdapter(){
+
+		gallery.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Object data = e.item.getData();
-				Thumbnails.this.selectionService.setValue(data);
+				outputContext.set(IServiceConstants.SELECTION, data);
 			}
 		});
 
@@ -66,7 +69,7 @@ public class Thumbnails implements IHasInput {
 	public Class getInputType() {
 		return IContainer.class;
 	}
-	
+
 	private Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
 		double widthRatio = (double) originalX / (double) maxX;
 		double heightRatio = (double) originalY / (double) maxY;
@@ -79,33 +82,37 @@ public class Thumbnails implements IHasInput {
 		return new Point(newWidth, newHeight);
 	}
 
-
 	public void setInput(Object input) {
 		if (input == null) {
 			return;
 		}
 		if (input instanceof IFile)
-			input = ((IFile)input).getParent();
+			input = ((IFile) input).getParent();
 		// XXX compare with previous input; if same container then skip
-		// XXX this is actually be nice to have handled at the context level: create child context 
+		// XXX this is actually be nice to have handled at the context level:
+		// create child context
 		// that has "input" being a container
-		
-		try {
-			IContainer container = (IContainer) input;
-			IResource[] members;
-			members = container.members();
-			gallery.removeAll();
-			group = new GalleryItem(gallery, SWT.NONE);
-			group.setExpanded(true);
-			for (int i = 0; i < members.length; i++) {
-				IResource resource = members[i];
-				if (resource.getType() == IResource.FILE) {
-					addImage((IFile) resource);
+
+		if (input != this.input) {
+			this.input = (IContainer) input;
+
+			try {
+				IContainer container = (IContainer) input;
+				IResource[] members;
+				members = container.members();
+				gallery.removeAll();
+				group = new GalleryItem(gallery, SWT.NONE);
+				group.setExpanded(true);
+				for (int i = 0; i < members.length; i++) {
+					IResource resource = members[i];
+					if (resource.getType() == IResource.FILE) {
+						addImage((IFile) resource);
+					}
 				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -117,16 +124,17 @@ public class Thumbnails implements IHasInput {
 					contents = file.getContents();
 					try {
 						ImageData imageData = new ImageData(contents);
-						
-						Point size = getBestSize(imageData.width, imageData.height, 100, 100);
-					
+
+						Point size = getBestSize(imageData.width, imageData.height, 100,
+								100);
+
 						ImageData scaled = imageData.scaledTo(size.x, size.y);
 						GalleryItem item = new GalleryItem(group, SWT.NONE);
 						item.setText(file.getName());
 						Image image = new Image(gallery.getDisplay(), scaled);
 						item.setImage(image);
 						item.setData(file);
-						gallery.redraw();	
+						gallery.redraw();
 					} catch (SWTException ex) {
 					} finally {
 						try {

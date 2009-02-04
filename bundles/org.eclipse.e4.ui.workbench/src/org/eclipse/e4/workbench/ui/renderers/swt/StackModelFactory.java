@@ -182,9 +182,7 @@ public class StackModelFactory extends SWTPartFactory {
 		super.hookControllerLogic(me);
 
 		final MStack sm = (MStack) me;
-		// synch up the selection state
-
-		// Match the selected TabItem to its MPart
+		// Match the selected TabItem to its Part
 		CTabFolder ctf = (CTabFolder) me.getWidget();
 		ctf.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -192,8 +190,9 @@ public class StackModelFactory extends SWTPartFactory {
 
 			public void widgetSelected(SelectionEvent e) {
 				MItemPart<?> newPart = (MItemPart<?>) e.item.getData(OWNING_ME);
-				if (sm.getActiveChild() != newPart)
-					sm.setActiveChild(newPart);
+				if (sm.getActiveChild() != newPart) {
+					activate(newPart);
+				}
 			}
 		});
 

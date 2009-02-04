@@ -5,7 +5,7 @@ import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
 public class RealmValue implements IComputedValue {
 
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String[] arguments) {
 		return new LockRealm();
 	}
 

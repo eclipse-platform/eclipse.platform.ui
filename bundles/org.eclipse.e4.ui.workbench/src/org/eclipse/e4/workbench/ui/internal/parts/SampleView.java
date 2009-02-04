@@ -14,7 +14,8 @@ package org.eclipse.e4.workbench.ui.internal.parts;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.e4.ui.services.ISelectionService;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -36,15 +37,14 @@ public class SampleView {
 	 * @param parent
 	 * @param selectionService
 	 */
-	public SampleView(Composite parent,
-			final ISelectionService selectionService,
+	public SampleView(Composite parent, final IEclipseContext outputContext,
 			final IExtensionRegistry registry) {
 		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		viewer.getTree().setData("class", "navigator"); //$NON-NLS-1$ //$NON-NLS-2$
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				selectionService.setValue(event.getSelection());
+				outputContext.set(IServiceConstants.SELECTION, event.getSelection());
 			}
 		});
 		viewer.setContentProvider(new ITreeContentProvider() {
