@@ -16,7 +16,7 @@ import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
 public class ProgressMonitorValue implements IComputedValue {
 
-	public Object compute(IEclipseContext context, String[] arguments) {
+	public Object compute(IEclipseContext context, Object[] arguments) {
 		return new NullProgressMonitor();
 	}
 

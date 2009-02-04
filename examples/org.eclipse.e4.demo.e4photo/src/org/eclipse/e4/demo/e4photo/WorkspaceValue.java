@@ -6,7 +6,7 @@ import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
 public class WorkspaceValue implements IComputedValue {
 
-	public Object compute(IEclipseContext context, String[] arguments) {
+	public Object compute(IEclipseContext context, Object[] arguments) {
 		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_AUTO_REFRESH, true);
 		return ResourcesPlugin.getWorkspace();
 	}

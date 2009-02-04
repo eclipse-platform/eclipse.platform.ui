@@ -1,12 +1,11 @@
 package org.eclipse.e4.demo.e4photo;
 
-import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class Location implements IHasInput {
+public class Location {
 
 	private Browser browser;
 	private Composite browserParent;
@@ -17,13 +16,7 @@ public class Location implements IHasInput {
 		browserParent = parent;
 	}
 
-	public Class getInputType() {
-		return Exif.class;
-	}
-
-	public void setInput(Object input) {
-		if (!(input instanceof Exif))
-				return;
+	public void setInput(Exif input) {
 		Exif exif = (Exif) input;
 
 		// Create Browser widget only when we have content to show

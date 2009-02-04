@@ -2,6 +2,8 @@ package org.eclipse.e4.demo.e4photo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -10,7 +12,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IBackgroundRunner;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
 import org.eclipse.nebula.widgets.gallery.GalleryItem;
@@ -26,13 +27,14 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 
-public class Thumbnails implements IHasInput {
+public class Thumbnails {
 
 	private Gallery gallery;
 	private GalleryItem group;
 	private final IEclipseContext outputContext;
 	private final IBackgroundRunner backgroundRunner;
 	private IContainer input;
+	private volatile Runnable runnable;
 
 	public Thumbnails(Composite parent, final IEclipseContext outputContext,
 			IBackgroundRunner backgroundRunner) {
@@ -66,10 +68,6 @@ public class Thumbnails implements IHasInput {
 
 	}
 
-	public Class getInputType() {
-		return IContainer.class;
-	}
-
 	private Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
 		double widthRatio = (double) originalX / (double) maxX;
 		double heightRatio = (double) originalY / (double) maxY;
@@ -82,19 +80,16 @@ public class Thumbnails implements IHasInput {
 		return new Point(newWidth, newHeight);
 	}
 
-	public void setInput(Object input) {
+	public void setInput(IContainer input) {
 		if (input == null) {
 			return;
 		}
-		if (input instanceof IFile)
-			input = ((IFile) input).getParent();
-		// XXX compare with previous input; if same container then skip
-		// XXX this is actually be nice to have handled at the context level:
-		// create child context
-		// that has "input" being a container
 
+		// XXX checking if the same would be nice to have handled at the context
+		// level:
 		if (input != this.input) {
 			this.input = (IContainer) input;
+			this.runnable = null;
 
 			try {
 				IContainer container = (IContainer) input;
@@ -103,12 +98,27 @@ public class Thumbnails implements IHasInput {
 				gallery.removeAll();
 				group = new GalleryItem(gallery, SWT.NONE);
 				group.setExpanded(true);
+				final List images = new ArrayList();
 				for (int i = 0; i < members.length; i++) {
 					IResource resource = members[i];
 					if (resource.getType() == IResource.FILE) {
-						addImage((IFile) resource);
+						images.add(resource);
 					}
 				}
+				final int[] counter = { 0 };
+				runnable = new Runnable() {
+					public void run() {
+						if (runnable != this) {
+							return;
+						}
+						addImage((IFile) images.get(counter[0]++));
+						if (gallery != null && !gallery.isDisposed()
+								&& counter[0] < images.size()) {
+							gallery.getDisplay().asyncExec(this);
+						}
+					}
+				};
+				gallery.getDisplay().asyncExec(runnable);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -117,38 +127,34 @@ public class Thumbnails implements IHasInput {
 	}
 
 	private void addImage(final IFile file) {
-		gallery.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				InputStream contents;
+		// XXX we are reading the image data in the UI thread but shouldn't. 
+		InputStream contents;
+		try {
+			contents = file.getContents();
+			try {
+				ImageData imageData = new ImageData(contents);
+
+				Point size = getBestSize(imageData.width, imageData.height, 100, 100);
+
+				ImageData scaled = imageData.scaledTo(size.x, size.y);
+				GalleryItem item = new GalleryItem(group, SWT.NONE);
+				item.setText(file.getName());
+				Image image = new Image(gallery.getDisplay(), scaled);
+				item.setImage(image);
+				item.setData(file);
+				gallery.redraw();
+			} catch (SWTException ex) {
+			} finally {
 				try {
-					contents = file.getContents();
-					try {
-						ImageData imageData = new ImageData(contents);
-
-						Point size = getBestSize(imageData.width, imageData.height, 100,
-								100);
-
-						ImageData scaled = imageData.scaledTo(size.x, size.y);
-						GalleryItem item = new GalleryItem(group, SWT.NONE);
-						item.setText(file.getName());
-						Image image = new Image(gallery.getDisplay(), scaled);
-						item.setImage(image);
-						item.setData(file);
-						gallery.redraw();
-					} catch (SWTException ex) {
-					} finally {
-						try {
-							contents.close();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				} catch (CoreException e1) {
+					contents.close();
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					e.printStackTrace();
 				}
 			}
-		});
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 }

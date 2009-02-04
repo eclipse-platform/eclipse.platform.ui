@@ -9,7 +9,6 @@ import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -22,7 +21,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class Preview implements IHasInput {
+public class Preview {
 
 	private static int topImageMargin = 16;
 	private static int bottomImageMargin = 16;
@@ -131,18 +130,13 @@ public class Preview implements IHasInput {
 		});
 	}
 
-	public Class getInputType() {
-		return IFile.class;
-	}
 
-	public void setInput(final Object input) {
-		if (input instanceof IFile) {
-			bgRealm.asyncExec(new Runnable() {
-				public void run() {
-					inputFile.setValue(input);
-				}
-			});
-		}
+	public void setInput(final IFile input) {
+		bgRealm.asyncExec(new Runnable() {
+			public void run() {
+				inputFile.setValue(input);
+			}
+		});
 	}
 
 	private Point getBestSize(int originalX, int originalY, int maxX, int maxY) {

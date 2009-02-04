@@ -21,7 +21,7 @@ import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
 public class BackgroundRunnerValue implements IComputedValue {
 
-	public Object compute(IEclipseContext context, String[] arguments) {
+	public Object compute(IEclipseContext context, Object[] arguments) {
 		return new IBackgroundRunner() {
 			public void schedule(long delay, String name,
 					final IRunnableWithProgress runnable) {

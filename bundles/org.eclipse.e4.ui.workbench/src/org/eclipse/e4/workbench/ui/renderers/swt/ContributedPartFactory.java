@@ -1,16 +1,14 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IHandlerService;
-import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -57,27 +55,7 @@ public class ContributedPartFactory extends SWTPartFactory {
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			Object newPart = contributionFactory.create(contributedPart.getURI(),
 					localContext);
-			if (newPart instanceof IHasInput) {
-				final IHasInput hasInput = (IHasInput) newPart;
-				localContext.runAndTrack(new Runnable() {
-					public void run() {
-						Class adapterType = hasInput.getInputType();
-						Object newInput = null;
-						Object newValue = localContext.get(IServiceConstants.SELECTION);
-						if (newValue instanceof IStructuredSelection) {
-							newValue = ((IStructuredSelection) newValue)
-									.getFirstElement();
-						}
-						if (adapterType.isInstance(newValue)) {
-							newInput = newValue;
-						} else if (newValue != null) {
-							newInput = Platform.getAdapterManager().loadAdapter(newValue,
-									adapterType.getName());
-						}
-						hasInput.setInput(newInput);
-					}
-				}, "selection-updater"); //$NON-NLS-1$ 
-			}
+			ContextInjectionFactory.inject(newPart, localContext);
 		}
 
 		return newWidget;

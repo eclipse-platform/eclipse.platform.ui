@@ -11,7 +11,7 @@ public final class ActiveChildOutputValue implements IComputedValue {
 		this.attr = attr;
 	}
 
-	public Object compute(IEclipseContext context, String[] arguments) {
+	public Object compute(IEclipseContext context, Object[] arguments) {
 		IEclipseContext childContext = (IEclipseContext) context
 				.getLocal(IServiceConstants.ACTIVE_CHILD);
 		if (childContext != null) {

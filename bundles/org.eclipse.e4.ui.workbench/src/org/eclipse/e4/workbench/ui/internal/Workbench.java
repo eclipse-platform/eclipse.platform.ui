@@ -34,6 +34,7 @@ import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IComputedValue;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -59,6 +60,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -159,6 +161,30 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		mainContext.set(ResourceUtility.class.getName(), resourceUtility);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
 		mainContext.set(IServiceConstants.SELECTION, new ActiveChildOutputValue(IServiceConstants.SELECTION));
+		mainContext.set(IServiceConstants.INPUT, new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+							Class adapterType = null;
+							if (arguments.length > 0 && arguments[0] instanceof Class) {
+								adapterType = (Class) arguments[0];
+							}
+							Object newInput = null;
+							Object newValue = mainContext.get(IServiceConstants.SELECTION);
+							if (newValue instanceof IStructuredSelection) {
+								newValue = ((IStructuredSelection) newValue)
+										.getFirstElement();
+							}
+							if (adapterType == null || adapterType.isInstance(newValue)) {
+								newInput = newValue;
+							} else if (newValue != null && adapterType != null) {
+								Object adapted = Platform.getAdapterManager().loadAdapter(newValue,
+										adapterType.getName());
+								if (adapted != null) {
+									newInput = adapted;
+								}
+							}
+							return newInput;
+			}
+		});
 
 		return mainContext;
 	}

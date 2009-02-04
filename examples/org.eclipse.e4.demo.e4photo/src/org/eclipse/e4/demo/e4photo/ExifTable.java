@@ -11,7 +11,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -22,7 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class ExifTable implements IHasInput {
+public class ExifTable {
 
 	private WritableList inputList;
 
@@ -66,17 +65,11 @@ public class ExifTable implements IHasInput {
 		viewer.setInput(inputList);
 	}
 
-	public Class getInputType() {
-		return IContainer.class;
-	}
-
-	public void setInput(Object input) {
+	public void setInput(IContainer input) {
 		if (input == null) {
 			return;
 		}
-		if (!(input instanceof IContainer))
-			return;
-		// XXX same as Thumbnails - handle selection at the context
+
 		inputList.clear();
 		try {
 			IResource[] members = ((IContainer) input).members();
