@@ -11,18 +11,11 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IComputedValue;
-import org.eclipse.e4.core.services.context.spi.IEclipseContextScheduler;
-import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
+import org.eclipse.e4.core.services.context.spi.*;
 
-public class EclipseContext implements IEclipseContext {
+public class EclipseContext extends AbstractContext {
 
 	static class TrackableComputation extends Computation implements Runnable {
 		Runnable runnable;
@@ -178,10 +171,6 @@ public class EclipseContext implements IEclipseContext {
 	public void runAndTrack(final Runnable runnable, String name) {
 		TrackableComputation computation = new TrackableComputation(runnable, name);
 		schedule(computation);
-	}
-
-	public void set(String name, IComputedValue computedValue) {
-		set(name, (Object) computedValue);
 	}
 
 	public void set(String name, Object value) {

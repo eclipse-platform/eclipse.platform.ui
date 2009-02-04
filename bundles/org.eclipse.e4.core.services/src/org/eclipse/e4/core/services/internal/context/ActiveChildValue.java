@@ -14,7 +14,13 @@ package org.eclipse.e4.core.services.internal.context;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
-// TBD find a better place for this
+/**
+ * A computed value that delegates lookup to a child context.
+ * TODO: There might be different bundles with their own notion of "active child",
+ * so to make this more reusable the "activeChild" constant should likely be pulled
+ * out and live in the UI ("activeChildControl" or some such), allowing others to store 
+ * their own notion of child under a different key.
+ */
 public final class ActiveChildValue implements IComputedValue {
 	private final String attr;
 
