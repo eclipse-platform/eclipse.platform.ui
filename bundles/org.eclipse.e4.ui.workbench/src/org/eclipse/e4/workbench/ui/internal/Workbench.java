@@ -330,7 +330,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 				impl = (ILegacyHook) hooks[0]
 						.createExecutableExtension("class"); //$NON-NLS-1$
 				legacyHook = impl;
-				legacyHook.init(this);
+				legacyHook.init(this, workbench);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
