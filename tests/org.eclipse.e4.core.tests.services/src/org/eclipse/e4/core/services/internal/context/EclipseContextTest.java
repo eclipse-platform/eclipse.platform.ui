@@ -34,10 +34,8 @@ public class EclipseContextTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.parentContext = EclipseContextFactory
-				.create(getName() + "-parent");
-		this.context = EclipseContextFactory.create(getName(), parentContext,
-				null);
+		this.parentContext = EclipseContextFactory.create(getName() + "-parent");
+		this.context = EclipseContextFactory.create(getName(), parentContext, null);
 	}
 
 	public void testGetLocal() {
