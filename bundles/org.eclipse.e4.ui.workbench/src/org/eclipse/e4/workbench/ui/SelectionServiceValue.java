@@ -10,38 +10,49 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui;
 
-import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IComputedValue;
 import org.eclipse.e4.ui.services.ISelectionService;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-public class SelectionServiceValue implements IComputedValue {
-	static class SelectionWritableValue extends WritableValue implements
-			ISelectionService {
+public class SelectionServiceValue implements ISelectionService {
 
-		public Object getSelection(Class api) {
-			Object value = getValue();
-			if (api.isInstance(value)) {
-				return value;
-			}
+	private Object currentSelection;
+	
+	private IEclipseContext context;
+	
+	public SelectionServiceValue(IEclipseContext context) {
+		this.context = context;
+	}
 
-			if (value instanceof IStructuredSelection) {
-				value = ((IStructuredSelection) value).getFirstElement();
-			}
-			if (api.isInstance(value)) {
-				return value;
-			} else if (value != null) {
-				return Platform.getAdapterManager().loadAdapter(value,
-						api.getName());
-			}
-			return null;
+	/* (non-Javadoc)
+	 * @see org.eclipse.e4.ui.services.ISelectionService#getSelection(java.lang.Class)
+	 */
+	public Object getSelection(Class api) {
+		Object value = currentSelection;
+		if (api.isInstance(value)) {
+			return value;
 		}
+		if (value instanceof IStructuredSelection) {
+			value = ((IStructuredSelection) value).getFirstElement();
+		}
+		if (api.isInstance(value)) {
+			return value;
+		} else if (value != null) {
+			return Platform.getAdapterManager().loadAdapter(value,
+					api.getName());
+		}
+		return null;
 	}
 
-	public Object compute(IEclipseContext context) {
-		return new SelectionWritableValue();
+	/* (non-Javadoc)
+	 * @see org.eclipse.e4.ui.services.ISelectionService#setSelection(java.lang.Object)
+	 */
+	public void setValue(Object value) {
+		currentSelection = value;
+		// XXX below is not a good generic solution, just a temporary patch
+		if (value instanceof IStructuredSelection)
+			value = ((IStructuredSelection) value).getFirstElement();
+		context.set("input", value); //$NON-NLS-1$
 	}
-
 }

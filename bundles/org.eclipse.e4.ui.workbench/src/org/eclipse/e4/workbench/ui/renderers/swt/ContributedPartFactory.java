@@ -1,18 +1,13 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.services.ISelectionService;
 import org.eclipse.e4.workbench.ui.IHandlerService;
-import org.eclipse.e4.workbench.ui.behaviors.IHasInput;
 import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
@@ -43,27 +38,9 @@ public class ContributedPartFactory extends SWTPartFactory {
 			newComposite.setData("LOCATOR", localContext); //$NON-NLS-1$
 			localContext.set(Composite.class.getName(), newComposite);
 			localContext.set(IHandlerService.class.getName(), hs);
+			// XXX remove context as constructor argument and rely on injection only
 			Object newPart = contributionFactory.create(contributedPart.getURI(), localContext);
-			if (newPart instanceof IHasInput) {
-				final IHasInput hasInput = (IHasInput) newPart;
-				ISelectionService selectionService = (ISelectionService) context.get(ISelectionService.class.getName());
-				selectionService.addValueChangeListener(new IValueChangeListener(){
-					public void handleValueChange(ValueChangeEvent event) {
-						Class adapterType = hasInput.getInputType();
-						Object newInput = null;
-						Object newValue = event.diff.getNewValue();
-						if (newValue instanceof IStructuredSelection) {
-							newValue = ((IStructuredSelection) newValue).getFirstElement();
-						}
-						if (adapterType.isInstance(newValue)) {
-							newInput = newValue;
-						} else if (newValue != null) {
-							newInput = Platform.getAdapterManager().loadAdapter(newValue, adapterType.getName());
-						}
-						hasInput.setInput(newInput);
-					}
-				});
-			}
+			ContextInjectionFactory.inject(newPart, localContext);
 		}
 
 		return newWidget;

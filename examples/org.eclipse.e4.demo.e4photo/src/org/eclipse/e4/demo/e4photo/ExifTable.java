@@ -73,6 +73,9 @@ public class ExifTable implements IHasInput {
 		if (input == null) {
 			return;
 		}
+		if (!(input instanceof IContainer))
+			return;
+		// XXX same as Thumbnails - handle selection at the context
 		inputList.clear();
 		try {
 			IResource[] members = ((IContainer) input).members();

@@ -84,6 +84,12 @@ public class Thumbnails implements IHasInput {
 		if (input == null) {
 			return;
 		}
+		if (input instanceof IFile)
+			input = ((IFile)input).getParent();
+		// XXX compare with previous input; if same container then skip
+		// XXX this is actually be nice to have handled at the context level: create child context 
+		// that has "input" being a container
+		
 		try {
 			IContainer container = (IContainer) input;
 			IResource[] members;

@@ -48,6 +48,7 @@ import org.eclipse.e4.workbench.modeling.ModelService;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.e4.workbench.ui.SelectionServiceValue;
 import org.eclipse.e4.workbench.ui.renderers.swt.ContributedPartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.PartRenderer;
@@ -161,6 +162,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(ResourceUtility.class.getName(), resourceUtility);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
+		mainContext.set("selectionService", new SelectionServiceValue(mainContext)); //$NON-NLS-1$
 
 		return mainContext;
 	}

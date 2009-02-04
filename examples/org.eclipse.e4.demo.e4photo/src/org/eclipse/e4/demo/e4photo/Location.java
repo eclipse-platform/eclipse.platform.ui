@@ -22,6 +22,8 @@ public class Location implements IHasInput {
 	}
 
 	public void setInput(Object input) {
+		if (!(input instanceof Exif))
+				return;
 		Exif exif = (Exif) input;
 
 		// Create Browser widget only when we have content to show

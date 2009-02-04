@@ -19,12 +19,15 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IEclipseContextAware;
 import org.eclipse.e4.ui.services.ISelectionService;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -32,9 +35,13 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class Library implements IDisposable {
+public class Library implements IDisposable, IEclipseContextAware {
 
 	Map<IContainer, IObservableSet> observableSets = new HashMap<IContainer, IObservableSet>();
+	
+	private IEclipseContext myContext;
+	
+	private ISelectionService eclipseSelectionService;
 
 	private IResourceChangeListener listener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
@@ -82,7 +89,7 @@ public class Library implements IDisposable {
 
 	static int counter;
 
-	public Library(Composite parent, final IWorkspace workspace, final ISelectionService selectionService) {
+	public Library(Composite parent, final IWorkspace workspace) { //, final ISelectionService selectionService) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		this.workspace = workspace;
 		workspace.addResourceChangeListener(listener);
@@ -92,7 +99,9 @@ public class Library implements IDisposable {
 		
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {
-				selectionService.setValue(event.getSelection());
+				if (eclipseSelectionService == null)
+					return;
+				eclipseSelectionService.setValue(event.getSelection());
 			}
 		});
 		IObservableFactory setFactory = new IObservableFactory() {
@@ -165,5 +174,13 @@ public class Library implements IDisposable {
 	
 	public void dispose() {
 		workspace.removeResourceChangeListener(listener);
+	}
+
+	public void contextDisposed(IEclipseContext context) {
+		myContext = null;
+	}
+
+	public void contextSet(IEclipseContext context) {
+		myContext = context;
 	}
 }

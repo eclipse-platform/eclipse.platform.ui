@@ -136,11 +136,13 @@ public class Preview implements IHasInput {
 	}
 
 	public void setInput(final Object input) {
-		bgRealm.asyncExec(new Runnable() {
-			public void run() {
-				inputFile.setValue(input);
-			}
-		});
+		if (input instanceof IFile) {
+			bgRealm.asyncExec(new Runnable() {
+				public void run() {
+					inputFile.setValue(input);
+				}
+			});
+		}
 	}
 
 	private Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
