@@ -40,7 +40,7 @@ public class ValueComputation extends Computation {
 		this.originatingContext.invalidate(this.name);
 	}
 
-	final Object get(String[] arguments) {
+	final Object get(Object[] arguments) {
 		if (valid) {
 			return cachedValue;
 		}

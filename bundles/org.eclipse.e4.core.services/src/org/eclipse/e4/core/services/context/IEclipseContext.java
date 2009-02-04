@@ -43,13 +43,13 @@ public interface IEclipseContext {
 	 */
 	public Object get(String name);
 	
-	public Object get(String name, String[] arguments);
+	public Object get(String name, Object[] arguments);
 
 	/**
 	 * Sets a value to be associated with a given name in this context. The value may
 	 * be an arbitrary object, or it may be a {@link ComputedValue}. In the case of 
 	 * a computed value, subsequent invocations of {@link #get(String)} with the
-	 * same name will invoke {@link IComputedValue#compute(IEclipseContext, String[])} if
+	 * same name will invoke {@link IComputedValue#compute(IEclipseContext, Object[])} if
 	 * required to obtain the value.
 	 * 
 	 * @param name The name to store a value for

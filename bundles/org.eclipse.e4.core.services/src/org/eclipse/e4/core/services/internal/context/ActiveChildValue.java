@@ -28,7 +28,7 @@ public final class ActiveChildValue implements IComputedValue {
 		this.attr = attr;
 	}
 
-	public Object compute(IEclipseContext context, String[] arguments) {
+	public Object compute(IEclipseContext context, Object[] arguments) {
 		if (context.isSet("activeChild")) {
 			IEclipseContext childContext = (IEclipseContext) context.get("activeChild");
 			return childContext.get(attr);

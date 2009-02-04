@@ -21,7 +21,7 @@ public class AbstractContext implements IEclipseContext {
 		return null;
 	}
 
-	public Object get(String name, String[] arguments) {
+	public Object get(String name, Object[] arguments) {
 		return null;
 	}
 

@@ -79,9 +79,12 @@ public class ContextInjectionImpl implements IJavaInjection {
 				if (!candidateName.startsWith(SET_METHOD_PREFIX))
 					return;
 				String key = internalCase(candidateName.substring(SET_METHOD_PREFIX.length()));
-				if (!context.isSet(key)) // check explicitly to differentiate from null's
-					return; 
-				Object value = context.get(key);
+				Class[] parameterTypes = method.getParameterTypes();
+				String[] parameterTypesAsString = new String[parameterTypes.length];
+				for (int i = 0; i < parameterTypes.length; i++) {
+					parameterTypesAsString[i] = parameterTypes[i].getName();
+				}
+				Object value = context.get(key, parameterTypesAsString);
 				setMethod(userObject, method, value);
 			}
 		};

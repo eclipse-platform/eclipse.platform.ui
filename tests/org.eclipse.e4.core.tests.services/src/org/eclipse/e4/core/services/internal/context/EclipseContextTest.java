@@ -9,7 +9,7 @@ import org.eclipse.e4.core.services.context.spi.IComputedValue;
 public class EclipseContextTest extends TestCase {
 
 	private static class ConcatFunction implements IComputedValue {
-		public Object compute(IEclipseContext context, String[] arguments) {
+		public Object compute(IEclipseContext context, Object[] arguments) {
 			String separator = (String) context.get("separator");
 			StringBuffer result = new StringBuffer();
 			for (int i = 0; i < arguments.length; i++) {
@@ -23,7 +23,7 @@ public class EclipseContextTest extends TestCase {
 	}
 
 	private static class ComputedValueBar implements IComputedValue {
-		public Object compute(IEclipseContext context, String[] arguments) {
+		public Object compute(IEclipseContext context, Object[] arguments) {
 			return context.get("bar");
 		}
 	}
@@ -94,7 +94,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(3, runCounter);
 		assertEquals(null, value[0]);
 		context.set("foo", new IComputedValue() {
-			public Object compute(IEclipseContext context, String[] arguments) {
+			public Object compute(IEclipseContext context, Object[] arguments) {
 				return context.get("bar");
 			}
 		});

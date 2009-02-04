@@ -86,14 +86,14 @@ public class EclipseContext extends AbstractContext {
 		return internalGet(this, name, null, false);
 	}
 	
-	public Object get(String name, String[] arguments) {
+	public Object get(String name, Object[] arguments) {
 		return internalGet(this, name, arguments, false);
 	}
 	
 	static class LookupKey {
 		String name;
-		String [] arguments;
-		public LookupKey(String name, String[] arguments) {
+		Object [] arguments;
+		public LookupKey(String name, Object[] arguments) {
 			this.name = name;
 			this.arguments = arguments;
 		}
@@ -103,7 +103,7 @@ public class EclipseContext extends AbstractContext {
 			result = prime * result;
 			if (arguments != null) {
 				for (int i = 0; i < arguments.length; i++) {
-					String arg = arguments[i];
+					Object arg = arguments[i];
 					result = prime * result + (arg == null ? 0 : arg.hashCode());
 				}
 			}
@@ -129,7 +129,7 @@ public class EclipseContext extends AbstractContext {
 		}
 	}
 
-	protected Object internalGet(EclipseContext originatingContext, String name, String[] arguments, boolean local) {
+	protected Object internalGet(EclipseContext originatingContext, String name, Object[] arguments, boolean local) {
 		trackAccess(name);
 		LookupKey lookupKey = new LookupKey(name, arguments);
 		if (this == originatingContext) {
@@ -170,7 +170,7 @@ public class EclipseContext extends AbstractContext {
 		return value != null;
 	}
 
-	public boolean isSetLocally(String name) {
+	private boolean isSetLocally(String name) {
 		return localValues.containsKey(name);
 	}
 
