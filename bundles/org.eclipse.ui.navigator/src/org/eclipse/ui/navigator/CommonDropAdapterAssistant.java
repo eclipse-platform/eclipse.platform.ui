@@ -14,7 +14,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
@@ -86,6 +88,10 @@ public abstract class CommonDropAdapterAssistant {
 
 	private INavigatorContentService contentService;
 
+	private DropTargetEvent _currentEvent;
+
+	private CommonDropAdapter _dropAdapter;
+	
 	/**
 	 * Perform any necessary initialization using the
 	 * {@link INavigatorContentService}.
@@ -100,6 +106,7 @@ public abstract class CommonDropAdapterAssistant {
 		doInit();
 	}
 
+	
 	/**
 	 * Override to perform any one-time initialization.
 	 */
@@ -130,6 +137,22 @@ public abstract class CommonDropAdapterAssistant {
 
 	/**
 	 * Carry out the DND operation.
+	 * 
+	 * <p>
+	 * Note: Contrary to the SWT {@link DropTargetListener} specification, you
+	 * <i>must</i> make sure that the aDropTargetEvent.detail is not set to
+	 * DND.DROP_MOVE unless actual work is required in the
+	 * {@link DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)}
+	 * to complete the operation (for example removing the moved file). In
+	 * particular for the LocalSelectionTransfer case, DND.DROP_MOVE cannot be
+	 * used as it will cause incorrect behavior in some existing drag handlers.
+	 * 
+	 * In case of move operations where no action is required on the source side
+	 * (e.g. LocalSelectionTransfer) you must set aDropTargetEvent.detail to
+	 * DND.DROP_NONE to signal this to the drag source. Even though the SWT
+	 * specification says this is canceling the drop, it is not really doing so,
+	 * it is only preventing the DND.DROP_MOVE from being passed through to the
+	 * dragFinished() method.
 	 * 
 	 * @param aDropAdapter
 	 *            The Drop Adapter contains information that has already been
@@ -215,5 +238,53 @@ public abstract class CommonDropAdapterAssistant {
 	protected final Shell getShell() {
 		return ((NavigatorContentService) contentService).getShell();
 	}
+
+	/**
+	 * Sets the current {@link DropTargetEvent}.
+	 * 
+	 * This is used to make the event available to the client methods of this class.
+	 * 
+	 * @param event
+	 *            the new event.
+	 * 
+	 * @since 3.4
+	 */
+	void setCurrentEvent(DropTargetEvent event) {
+		_currentEvent = event;
+	}
+
+	/**
+	 * Returns the current {@link DropTargetEvent}.
+	 * 
+	 * @return event the current DropTargetEvent.
+	 * 
+	 * @since 3.4
+	 */
+	public DropTargetEvent getCurrentEvent() {
+		return _currentEvent;
+	}
+	
+    /**
+     * Sets the {@Link CommonDropAdapter}.
+     * @param dropAdapter 
+     *
+     * @noreference
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     */
+	public void setCommonDropAdapter(CommonDropAdapter dropAdapter) {
+		_dropAdapter = dropAdapter;
+	}
+	
+    /**
+     * Returns the {@Link CommonDropAdapter}.
+     *
+     * @return the CommonDropAdapter.
+     * 
+     * @since 3.4
+     *
+     */
+    protected CommonDropAdapter getCommonDropAdapter() {
+        return _dropAdapter;
+    }
 
 }

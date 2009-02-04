@@ -23,6 +23,7 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.internal.navigator.extensions.CommonDragAssistantDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
+import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorDnDService;
@@ -47,6 +48,8 @@ public class NavigatorDnDService implements INavigatorDnDService {
 	private INavigatorContentService contentService;
 
 	private CommonDragAdapterAssistant[] dragAssistants;
+	
+	private CommonDropAdapter dropAdapter;
 
 	private final Map dropAssistants = new HashMap();
 
@@ -59,6 +62,15 @@ public class NavigatorDnDService implements INavigatorDnDService {
 		contentService = aContentService;
 	}
 
+	/**
+	 * @param da
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void setDropAdaptor(CommonDropAdapter da) {
+		dropAdapter = da;
+	}
+	
 	public synchronized CommonDragAdapterAssistant[] getCommonDragAssistants() {
 
 		if (dragAssistants == null) 
@@ -168,6 +180,7 @@ public class NavigatorDnDService implements INavigatorDnDService {
 				dropAssistants.put(descriptor, (asst = descriptor
 						.createDropAssistant()));
 				asst.init(contentService);
+				asst.setCommonDropAdapter(dropAdapter);
 			}
 		}
 		return asst;

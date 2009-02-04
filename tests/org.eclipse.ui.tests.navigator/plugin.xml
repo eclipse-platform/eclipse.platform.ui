@@ -202,6 +202,29 @@
          </enablement>
       </actionProvider>
       <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testDropCopy" 
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+   			labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"			
+            name="Change drop to copy (from move)"
+            priority="highest">
+         <enablement>
+            <adapt
+                  type="org.eclipse.core.resources.IResource">
+            </adapt>
+         </enablement>
+         <dropAssistant
+               class="org.eclipse.ui.tests.navigator.extension.TestCopyDropAssistant"
+               id="testCopyDropAssistant">
+           <possibleDropTargets>
+              <or>
+                 <adapt type="org.eclipse.core.resources.IProject"/>
+                 <adapt type="org.eclipse.core.resources.IFolder"/>
+                 <adapt type="org.eclipse.core.resources.IFile"/>
+              </or>
+           </possibleDropTargets>
+         </dropAssistant> 
+	  </navigatorContent>      
+      <navigatorContent 
             id="org.eclipse.ui.tests.navigator.testHasChildren" 
             name="Dat File Content Extension"
             contentProvider="org.eclipse.ui.tests.navigator.extension.DatContentProvider"

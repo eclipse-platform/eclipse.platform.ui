@@ -47,6 +47,8 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testOverride2";
 	public static final String TEST_SORTER_CONTENT = "org.eclipse.ui.tests.navigator.testSorterContent";
 
+	public static final String TEST_DROP_COPY_CONTENT = "org.eclipse.ui.tests.navigator.testDropCopy";
+	
 	protected String _navigatorInstanceId;
 
 	protected Set _expectedChildren = new HashSet();
@@ -110,6 +112,8 @@ public class NavigatorTestBase extends TestCase {
 				.findView(_navigatorInstanceId);
 		_commonNavigator.setFocus();
 		_viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
+		
+		refreshViewer();
 
 		_contentService = _viewer.getNavigatorContentService();
 		_actionService = _commonNavigator.getNavigatorActionService();

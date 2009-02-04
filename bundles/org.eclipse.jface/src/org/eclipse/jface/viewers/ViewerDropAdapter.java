@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -77,10 +78,17 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
     private int currentOperation = DND.DROP_NONE;
 
     /**
-     * The last valid operation.
+     * The last valid operation.  We need to remember the last good operation
+     * in the case where the current operation temporarily is not valid (drag over
+     * someplace you can't drop).  
      */
-    private int lastValidOperation = DND.DROP_NONE;
-
+    private int lastValidOperation;
+    
+    /**
+     * The current DropTargetEvent, used only during validateDrop()
+     */
+    private DropTargetEvent currentEvent;
+    
     /**
      * The data item currently under the mouse.
      */
@@ -173,17 +181,19 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      * that it is still enabled.
      */
     private void doDropValidation(DropTargetEvent event) {
-        //update last valid operation
-        if (event.detail != DND.DROP_NONE) {
-            lastValidOperation = event.detail;
-        }
-        //valid drop and set event detail accordingly
-        if (validateDrop(currentTarget, event.detail, event.currentDataType)) {
-            currentOperation = lastValidOperation;
-        } else {
+    	//always remember what was previously requested
+    	if (event.detail != DND.DROP_NONE)
+    		lastValidOperation = event.detail;
+    	
+    	currentOperation = lastValidOperation;
+
+    	//the client may change the currentOperation inside of here
+        currentEvent = event;
+        if (!validateDrop(currentTarget, currentOperation, event.currentDataType)) {
             currentOperation = DND.DROP_NONE;
         }
         event.detail = currentOperation;
+        currentEvent = null;
     }
 
     /* (non-Javadoc)
@@ -213,7 +223,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      * that it is still enabled.
      */
     public void dragOver(DropTargetEvent event) {
-        //use newly revealed item as target if scrolling occurs
+    	//use newly revealed item as target if scrolling occurs
         Object target = determineTarget(event);
 
         //set the location feedback
@@ -234,12 +244,16 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      */
     public void drop(DropTargetEvent event) {
         currentLocation = determineLocation(event);
+    	currentEvent = event;
 
         //perform the drop behavior
         if (!performDrop(event.data)) {
             event.detail = DND.DROP_NONE;
         }
-        currentOperation = event.detail;
+        
+        //reset for next time
+        currentOperation = DND.DROP_NONE;
+        currentEvent = null;
     }
 
     /* (non-Javadoc)
@@ -247,9 +261,11 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      * Last chance for the action to disable itself
      */
     public void dropAccept(DropTargetEvent event) {
-        if (!validateDrop(currentTarget, event.detail, event.currentDataType)) {
-            event.detail = DND.DROP_NONE;
+    	currentEvent = event;
+    	if (!validateDrop(currentTarget, event.detail, event.currentDataType)) {
+            currentOperation = event.detail = DND.DROP_NONE;
         }
+    	currentEvent = null;
     }
 
     /**
@@ -301,6 +317,19 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         return currentTarget;
     }
 
+    /**
+     * Returns the current {@link DropTargetEvent}.
+     * 
+     * This may be called only inside of the {@link #validateDrop(Object, int, TransferData)} 
+     * or {@link #performDrop(Object)} methods.
+     * @return the DropTargetEvent
+     * @since 3.5
+     */
+    protected DropTargetEvent getCurrentEvent() {
+    	Assert.isTrue(currentEvent != null);
+    	return currentEvent;
+    }
+    
     /**
      * Returns whether visible insertion feedback should be presented to the user.
      * <p>
@@ -371,6 +400,27 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      *   <code>false</code> otherwise
      */
     public abstract boolean performDrop(Object data);
+
+	/**
+	 * Sets the current operation.
+	 * 
+	 * This maybe called only from within a
+	 * {@link #validateDrop(Object, int, TransferData)} method
+	 * 
+	 * 
+	 * @param operation
+	 *            the operation to set to be current.
+	 * 
+	 * @see DND#DROP_COPY
+	 * @see DND#DROP_MOVE
+	 * @see DND#DROP_LINK
+	 * @see DND#DROP_NONE
+	 * 
+	 * @since 3.5
+	 */
+	protected void setCurrentOperation(int operation) {
+		currentOperation = operation;
+	}
 
     /* (non-Javadoc)
      * Method declared on DropTargetAdapter.

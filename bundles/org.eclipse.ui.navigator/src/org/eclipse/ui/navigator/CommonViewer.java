@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.navigator.ContributorTrackingSet;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorDecoratingLabelProvider;
 import org.eclipse.ui.internal.navigator.NavigatorPipelineService;
+import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.framelist.FrameList;
 
 /**
@@ -148,12 +149,14 @@ public class CommonViewer extends TreeViewer {
 				this);
 		addDragSupport(operations, dragAdapter.getSupportedDragTransfers(),
 				dragAdapter);
-
+		
 		CommonDropAdapter dropAdapter = new CommonDropAdapter(contentService,
 				this);
 		addDropSupport(operations, dropAdapter.getSupportedDropTransfers(),
 				dropAdapter);
 
+		NavigatorDnDService dnd = (NavigatorDnDService)contentService.getDnDService();
+		dnd.setDropAdaptor(dropAdapter);
 	}
 
 	/*

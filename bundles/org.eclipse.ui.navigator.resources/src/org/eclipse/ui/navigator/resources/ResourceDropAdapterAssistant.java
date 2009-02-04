@@ -36,6 +36,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
+import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.navigator.CommonDropAdapter;
@@ -57,7 +58,6 @@ import org.eclipse.ui.part.ResourceTransfer;
  */ 
 public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 
-	private static final boolean DEBUG = false;
 	private static final IResource[] NO_RESOURCES = new IResource[0];
 
 	/*
@@ -125,14 +125,14 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				} else {
 					CopyFilesAndFoldersOperation operation;
 					if (aDropOperation == DND.DROP_COPY) {
-						if (DEBUG) {
+						if (Policy.DEBUG_DND) {
 							System.out
 									.println("ResourceDropAdapterAssistant.validateDrop validating COPY."); //$NON-NLS-1$
 						}
 	
 						operation = new CopyFilesAndFoldersOperation(getShell());
 					} else {
-						if (DEBUG) {
+						if (Policy.DEBUG_DND) {
 							System.out
 									.println("ResourceDropAdapterAssistant.validateDrop validating MOVE."); //$NON-NLS-1$
 						}
@@ -172,7 +172,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 	public IStatus handleDrop(CommonDropAdapter aDropAdapter,
 			DropTargetEvent aDropTargetEvent, Object aTarget) {
 
-		if (DEBUG) {
+		if (Policy.DEBUG_DND) {
 			System.out
 					.println("ResourceDropAdapterAssistant.handleDrop (begin)"); //$NON-NLS-1$
 		}
@@ -188,6 +188,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(
 				currentTransfer)) {
 			resources = getSelectedResources();
+			aDropTargetEvent.detail = DND.DROP_NONE;
 		} else if (ResourceTransfer.getInstance().isSupportedType(
 				currentTransfer)) {
 			resources = (IResource[]) aDropTargetEvent.data;
@@ -197,14 +198,14 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			status = performFileDrop(aDropAdapter, aDropTargetEvent.data);
 		} else if (resources != null && resources.length > 0) {
 			if (aDropAdapter.getCurrentOperation() == DND.DROP_COPY) {
-				if (DEBUG) {
+				if (Policy.DEBUG_DND) {
 					System.out
 							.println("ResourceDropAdapterAssistant.handleDrop executing COPY."); //$NON-NLS-1$
 				}
 				status = performResourceCopy(aDropAdapter, getShell(),
 						resources);
 			} else {
-				if (DEBUG) {
+				if (Policy.DEBUG_DND) {
 					System.out
 							.println("ResourceDropAdapterAssistant.handleDrop executing MOVE."); //$NON-NLS-1$
 				}

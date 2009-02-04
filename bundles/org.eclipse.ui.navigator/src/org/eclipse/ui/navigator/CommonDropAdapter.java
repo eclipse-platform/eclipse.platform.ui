@@ -54,7 +54,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	private final INavigatorContentService contentService;
 
 	private final INavigatorDnDService dndService;
-
+	
 	/**
 	 * Create a DropAdapter that handles a drop based on the given content
 	 * service and selection provider.
@@ -138,52 +138,50 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PluginDropAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
-	public void drop(DropTargetEvent event) {
+	public boolean performDrop(Object data) {
+		DropTargetEvent event = getCurrentEvent();
 		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDropAdapter.drop (begin): " + event); //$NON-NLS-1$
 		}
+		Object target = getCurrentTarget() != null ? 
+				getCurrentTarget() : getViewer().getInput();
+
 		// Must validate the drop here because on some platforms (Linux, Mac) the event 
 		// is not populated with the correct currentDataType until the drop actually
 		// happens, and validateDrop sets the currentTransfer based on that.  The 
 		// call to validateDrop in dragAccept is too early.
-		validateDrop(getCurrentTarget(), getCurrentOperation(), event.currentDataType);
+		validateDrop(target, getCurrentOperation(), event.currentDataType);
 		if (PluginTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			super.drop(event);
-		} else {
+			return true;
+		}
+		
+		if (Policy.DEBUG_DND) {
+			System.out.println("CommonDropAdapter.drop target: " + target + " op: " + getCurrentOperation()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		CommonDropAdapterAssistant[] assistants = dndService.findCommonDropAdapterAssistants(target,
+				getCurrentTransfer());
 
-			Object target = getCurrentTarget() != null ? 
-							getCurrentTarget() : getViewer().getInput();
-							
-			if (Policy.DEBUG_DND) {
-				System.out.println("CommonDropAdapter.drop target: " + target + " op: " + getCurrentOperation()); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			CommonDropAdapterAssistant[] assistants = dndService
-				.findCommonDropAdapterAssistants(target, getCurrentTransfer());
+		IStatus valid = null;
+		for (int i = 0; i < assistants.length; i++) {
+			try {
 
-			IStatus valid = null;
-			for (int i = 0; i < assistants.length; i++) {
-				try {
- 
-					valid = assistants[i].validateDrop(getCurrentTarget(),
-							getCurrentOperation(), getCurrentTransfer());
-					if (valid != null && valid.isOK()) {
-						if (Policy.DEBUG_DND) {
-							System.out.println("CommonDropAdapter.drop assistant selected: " + assistants[i]); //$NON-NLS-1$
-						}
-						assistants[i].handleDrop(this, event,
-								getCurrentTarget());
-						return;
-					} 
-				} catch (Throwable t) {
-					NavigatorPlugin.logError(0, t.getMessage(), t);
+				assistants[i].setCurrentEvent(event);
+				valid = assistants[i].validateDrop(target, getCurrentOperation(), getCurrentTransfer());
+				if (valid != null && valid.isOK()) {
+					if (Policy.DEBUG_DND) {
+						System.out
+								.println("CommonDropAdapter.drop assistant selected: " + assistants[i] + " op: " + event.detail); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					assistants[i].handleDrop(this, event, target);
+					return true;
 				}
+			} catch (Throwable t) {
+				NavigatorPlugin.logError(0, t.getMessage(), t);
 			}
 		}
+
+		return false;
 	}
 
 	/*
@@ -196,7 +194,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			TransferData theTransferData) {
 
 		if (Policy.DEBUG_DND) {
-			System.out.println("CommonDropAdapter.validateDrop (begin)"); //$NON-NLS-1$
+			System.out.println("CommonDropAdapter.validateDrop (begin) operation: " + theDropOperation); //$NON-NLS-1$
 		}
 
 		boolean result = false;
@@ -205,8 +203,11 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 
 		if (super.validateDrop(aDropTarget, theDropOperation, theTransferData)) {
 			result = true; 
+			if (Policy.DEBUG_DND) {
+				System.out
+						.println("CommonDropAdapter.validateDrop valid for plugin transfer"); //$NON-NLS-1$
+			}
 		} else {
-
 			Object target = aDropTarget != null ? aDropTarget : getViewer().getInput();
 			if (Policy.DEBUG_DND) { 
 				System.out.println("CommonDropAdapter.validateDrop target: " + target); //$NON-NLS-1$
@@ -222,6 +223,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 							.println("CommonDropAdapter.validateDrop checking assistant: \""+assistants[i]); //$NON-NLS-1$
 				}					
 				try { 
+					assistants[i].setCurrentEvent(getCurrentEvent());
 					valid = assistants[i].validateDrop(target,
 							theDropOperation, theTransferData); 
 				} catch (Throwable t) {
@@ -237,7 +239,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 				}
 				if (Policy.DEBUG_DND) { 
 					System.out
-							.println("CommonDropAdapter.validateDrop NOT valid: " + (valid != null ? (valid.getSeverity() + ": " + valid.getMessage()) : "" + result)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+							.println("CommonDropAdapter.validateDrop NOT valid: " + (valid != null ? (valid.getSeverity() + ": " + valid.getMessage()) : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 				}					
 			}
 		}
@@ -283,6 +285,15 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 */
 	public int getCurrentOperation() {
 		return super.getCurrentOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#setCurrentOperation(int)
+	 */
+	public void setCurrentOperation(int operation) {
+		super.setCurrentOperation(operation);
 	}
 
 	/*

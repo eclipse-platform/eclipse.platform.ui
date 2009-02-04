@@ -2,6 +2,14 @@ Some notes about the CNF in attempt to understand things.
 
 30 Nov 08 FRU
 
+Documentation notes:
+
+There is some good text potentially for the docs in:
+
+https://bugs.eclipse.org/bugs/show_bug.cgi?id=195595
+
+
+
 Navigator Content
 
 The purpose of the navigatorContent extension (NCE) is to bind a content provider
