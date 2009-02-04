@@ -206,6 +206,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			}
 			if (page == tagPage) {
 				if (aboutToShow) {
+					remoteFolder = null; // reset
+					getRemoteFolder(); // initialize remoteFolder
 					populateSyncPage(true /* remote exists */);
 				}
 				return syncPage;
