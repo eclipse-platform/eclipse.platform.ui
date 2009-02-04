@@ -68,6 +68,10 @@
                name="applicationXMI"
                value="org.eclipse.e4.demo.e4photo/Application.xmi">
          </property>
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/org.eclipse.e4.demo.e4photo/css/e4photo.css">
+         </property>
       </product>
    </extension>
 

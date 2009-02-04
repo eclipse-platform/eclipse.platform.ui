@@ -1,0 +1,80 @@
+CTabFolder {
+	font: Verdana 12px;
+	color: #808080;
+	background-color: #ffffff;
+}
+
+CTabFolder:selected {
+	color: #666666;
+	background-color: #f4f4f4;
+}
+
+#library {
+	background-color: #f4f4f4;
+}
+
+CTabFolder Composite {
+	background-color: #f4f4f4;
+}
+
+#preview {
+	color: #e5e5e5;
+	background-color: #ffffff;
+}
+
+GalleryItem {
+	background-color:#98cbbc;
+}
+
+GalleryItem.placeholder {
+	background-color:#e5e5e5;
+}
+
+GalleryItem:selected {
+	background-color: #ff884c;
+}
+
+Gallery {
+	background-color: #f4f4f4;
+}
+
+
+#location {
+	background-color: #f4f4f4;
+}
+
+ToolBar {
+	color: #666666;
+	font: Verdana 8px;
+	background-color: #fffff3;
+}
+
+ToolItem {
+	color: #666666;
+	background-color: #fffff3;
+}
+	
+SashForm {
+	background-color: white;
+}
+
+Text {
+	font: Verdana 8px;
+}      
+
+Label {
+	font: Verdana 8px;
+}
+
+Tree {
+	font: Verdana 8px;
+	color: #666666;
+}
+
+Composite {
+	background-color: #ffffff;
+}
+
+Shell {
+	background-color: #ffffff;
+}

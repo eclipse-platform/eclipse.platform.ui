@@ -11,7 +11,9 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
@@ -42,11 +44,11 @@ public class WorkbenchApplication implements IApplication {
 			throws Exception {
 		this.context = Activator.getContext();
 
-		Display display = new Display();
+		final Display display = new Display();
 		final WorkbenchFactory workbenchFactory = new WorkbenchFactory(
 				getInstanceLocation(), getBundleAdmin(), RegistryFactory
 						.getRegistry());
-		String appURI = "/org.eclipse.e4.ui.workbench/Application.xmi"; //$NON-NLS-1$
+		String appURI = null;
 		String[] args = (String[]) applicationContext.getArguments().get(
 				"application.args"); //$NON-NLS-1$
 		IProduct product = Platform.getProduct();
@@ -58,12 +60,17 @@ public class WorkbenchApplication implements IApplication {
 				appURI = path;
 			}
 		}
+		final String cssURI = product == null? null:product.getProperty("applicationCSS"); //$NON-NLS-1$;
+		Assert.isNotNull(appURI, "-applicationXMI argument missing"); //$NON-NLS-1$
 		final URI initialWorkbenchDefinitionInstance = URI
 				.createPlatformPluginURI(appURI, true);
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				try {
+					if (cssURI != null) {
+						WorkbenchStylingSupport.initializeStyling(display, cssURI);
+					}
 					IWorkbench wb = workbenchFactory
 							.create(initialWorkbenchDefinitionInstance);
 					wb.run();
@@ -78,9 +85,8 @@ public class WorkbenchApplication implements IApplication {
 		});
 		return IApplication.EXIT_OK;
 	}
-
+	
 	public void stop() {
-
 	}
 
 	public Location getInstanceLocation() {
