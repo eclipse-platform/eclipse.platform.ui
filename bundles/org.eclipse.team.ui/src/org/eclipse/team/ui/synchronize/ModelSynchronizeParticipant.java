@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,7 +104,7 @@ public class ModelSynchronizeParticipant extends
 	
 	private SynchronizationContext context;
 	private boolean mergingEnabled = true;
-	protected SubscriberRefreshSchedule refreshSchedule;
+	private SubscriberRefreshSchedule refreshSchedule;
 	private String description;
 	private SaveableComparison activeSaveable;
 	private PreferenceStore preferences = new PreferenceStore() {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.team.ui" version="2">
+    <resource path="src/org/eclipse/team/ui/synchronize/ModelSynchronizeParticipant.java" type="org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant">
+        <filter id="388018290">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant"/>
+                <message_argument value="refreshSchedule"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
