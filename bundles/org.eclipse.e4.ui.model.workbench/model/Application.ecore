@@ -56,6 +56,8 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         changeable="false" transient="true" defaultValueLiteral="true" derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
+        transient="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MStack">
     <eGenericSuperTypes eClassifier="#//MPart">
@@ -179,4 +181,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="MCommand" eSuperTypes="#//MApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="IEclipseContext" instanceClassName="org.eclipse.e4.core.services.context.IEclipseContext"
+      serializable="false"/>
 </ecore:EPackage>

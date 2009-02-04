@@ -31,6 +31,7 @@ public class WBPartFactory extends SWTPartFactory {
 		final Widget newWidget;
 	
 		if (part instanceof MWorkbenchWindow) {
+			IEclipseContext parentContext = getContextForParent(part);
 			Shell wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
 			TrimmedLayout tl = new TrimmedLayout(wbwShell);
 			wbwShell.setLayout(tl);
@@ -40,10 +41,10 @@ public class WBPartFactory extends SWTPartFactory {
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
 			final IHandlerService hs = new PartHandlerService(part);
-			IEclipseContext localContext = EclipseContextFactory.create("MWorkbenchWindow", context, UIContextScheduler.instance); //$NON-NLS-1$
+			IEclipseContext localContext = EclipseContextFactory.create("MWorkbenchWindow", parentContext, UIContextScheduler.instance); //$NON-NLS-1$
+			part.setContext(localContext);
 			localContext.set(IHandlerService.class.getName(), hs);
-			associate(wbwShell, localContext);
-			context.set(IServiceConstants.ACTIVE_CHILD, localContext);
+			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 		} else {
 			newWidget = null;
 		}

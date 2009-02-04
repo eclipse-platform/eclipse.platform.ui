@@ -16,5 +16,6 @@ Export-Package: org.eclipse.e4.ui.model.application,
  org.eclipse.e4.ui.model.workbench.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.emf.ecore.xmi;visibility:=reexport
+ org.eclipse.emf.ecore.xmi;visibility:=reexport,
+ org.eclipse.e4.core.services;bundle-version="0.9.0"
 Bundle-ActivationPolicy: lazy

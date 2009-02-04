@@ -8,10 +8,11 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MPart.java,v 1.1 2009/02/03 14:25:34 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -32,6 +33,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#isVisible <em>Visible</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getContext <em>Context</em>}</li>
  * </ul>
  * </p>
  *
@@ -272,5 +274,31 @@ public interface MPart<P extends MPart<?>> extends MApplicationElement {
 	 * @generated
 	 */
 	boolean isVisible();
+
+	/**
+	 * Returns the value of the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Context</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Context</em>' attribute.
+	 * @see #setContext(IEclipseContext)
+	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMPart_Context()
+	 * @model dataType="org.eclipse.e4.ui.model.application.IEclipseContext" transient="true"
+	 * @generated
+	 */
+	IEclipseContext getContext();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MPart#getContext <em>Context</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Context</em>' attribute.
+	 * @see #getContext()
+	 * @generated
+	 */
+	void setContext(IEclipseContext value);
 
 } // MPart

@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchPackage.java,v 1.3 2009/02/03 14:25:37 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -191,6 +191,15 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int MWORKBENCH_WINDOW__VISIBLE = ApplicationPackage.MWINDOW__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MWORKBENCH_WINDOW__CONTEXT = ApplicationPackage.MWINDOW__CONTEXT;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -392,6 +401,15 @@ public interface WorkbenchPackage extends EPackage {
 	int MPROXY_PART__VISIBLE = ApplicationPackage.MPART__VISIBLE;
 
 	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPROXY_PART__CONTEXT = ApplicationPackage.MPART__CONTEXT;
+
+	/**
 	 * The feature id for the '<em><b>Part</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -526,6 +544,15 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int MPERSPECTIVE__VISIBLE = ApplicationPackage.MITEM_PART__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPERSPECTIVE__CONTEXT = ApplicationPackage.MITEM_PART__CONTEXT;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.

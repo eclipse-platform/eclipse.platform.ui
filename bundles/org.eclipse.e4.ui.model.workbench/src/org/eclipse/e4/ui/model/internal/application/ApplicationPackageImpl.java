@@ -8,10 +8,11 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationPackageImpl.java,v 1.5 2009/02/03 14:25:36 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -40,6 +41,7 @@ import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -186,6 +188,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * @generated
 	 */
 	private EClass mCommandEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iEclipseContextEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -411,6 +420,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 */
 	public EAttribute getMPart_Visible() {
 		return (EAttribute)mPartEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMPart_Context() {
+		return (EAttribute)mPartEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -742,6 +760,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getIEclipseContext() {
+		return iEclipseContextEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ApplicationFactory getApplicationFactory() {
 		return (ApplicationFactory)getEFactoryInstance();
 	}
@@ -784,6 +811,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		createEAttribute(mPartEClass, MPART__WIDGET);
 		createEReference(mPartEClass, MPART__PARENT);
 		createEAttribute(mPartEClass, MPART__VISIBLE);
+		createEAttribute(mPartEClass, MPART__CONTEXT);
 
 		mStackEClass = createEClass(MSTACK);
 
@@ -836,6 +864,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		mCommandEClass = createEClass(MCOMMAND);
 		createEAttribute(mCommandEClass, MCOMMAND__NAME);
+
+		// Create data types
+		iEclipseContextEDataType = createEDataType(IECLIPSE_CONTEXT);
 	}
 
 	/**
@@ -971,6 +1002,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		g1.getETypeArguments().add(g2);
 		initEReference(getMPart_Parent(), g1, this.getMPart_Children(), "parent", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getMPart_Visible(), ecorePackage.getEBoolean(), "visible", "true", 0, 1, MPart.class, IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEAttribute(getMPart_Context(), this.getIEclipseContext(), "context", null, 0, 1, MPart.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(mStackEClass, MStack.class, "MStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -1036,6 +1068,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		initEClass(mCommandEClass, MCommand.class, "MCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getMCommand_Name(), ecorePackage.getEString(), "name", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		// Initialize data types
+		initEDataType(iEclipseContextEDataType, IEclipseContext.class, "IEclipseContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		// Create resource
 		createResource(eNS_URI);

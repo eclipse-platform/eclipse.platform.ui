@@ -8,12 +8,13 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationPackage.java,v 1.5 2009/02/03 14:25:34 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -284,13 +285,22 @@ public interface ApplicationPackage extends EPackage {
 	int MPART__VISIBLE = MAPPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPART__CONTEXT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 10;
+
+	/**
 	 * The number of structural features of the '<em>MPart</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MPART_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	int MPART_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MStackImpl <em>MStack</em>}' class.
@@ -409,6 +419,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MSTACK__VISIBLE = MPART__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MSTACK__CONTEXT = MPART__CONTEXT;
 
 	/**
 	 * The number of structural features of the '<em>MStack</em>' class.
@@ -536,6 +555,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MSASH_FORM__VISIBLE = MPART__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MSASH_FORM__CONTEXT = MPART__CONTEXT;
 
 	/**
 	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
@@ -672,6 +700,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MITEM_PART__VISIBLE = MPART__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MITEM_PART__CONTEXT = MPART__CONTEXT;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -826,6 +863,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MCONTRIBUTED_PART__VISIBLE = MITEM_PART__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MCONTRIBUTED_PART__CONTEXT = MITEM_PART__CONTEXT;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1649,6 +1695,15 @@ public interface ApplicationPackage extends EPackage {
 	int MWINDOW__VISIBLE = MITEM_PART__VISIBLE;
 
 	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MWINDOW__CONTEXT = MITEM_PART__CONTEXT;
+
+	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1765,6 +1820,17 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MCOMMAND_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+
+	/**
+	 * The meta object id for the '<em>IEclipse Context</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.core.services.context.IEclipseContext
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getIEclipseContext()
+	 * @generated
+	 */
+	int IECLIPSE_CONTEXT = 19;
 
 
 	/**
@@ -1950,6 +2016,17 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getMPart_Visible();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MPart#getContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#getContext()
+	 * @see #getMPart()
+	 * @generated
+	 */
+	EAttribute getMPart_Context();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MStack <em>MStack</em>}'.
@@ -2332,6 +2409,17 @@ public interface ApplicationPackage extends EPackage {
 	EAttribute getMCommand_Name();
 
 	/**
+	 * Returns the meta object for data type '{@link org.eclipse.e4.core.services.context.IEclipseContext <em>IEclipse Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IEclipse Context</em>'.
+	 * @see org.eclipse.e4.core.services.context.IEclipseContext
+	 * @model instanceClass="org.eclipse.e4.core.services.context.IEclipseContext" serializeable="false"
+	 * @generated
+	 */
+	EDataType getIEclipseContext();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2494,6 +2582,14 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MPART__VISIBLE = eINSTANCE.getMPart_Visible();
+
+		/**
+		 * The meta object literal for the '<em><b>Context</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MPART__CONTEXT = eINSTANCE.getMPart_Context();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MStackImpl <em>MStack</em>}' class.
@@ -2814,6 +2910,16 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MCOMMAND__NAME = eINSTANCE.getMCommand_Name();
+
+		/**
+		 * The meta object literal for the '<em>IEclipse Context</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.core.services.context.IEclipseContext
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getIEclipseContext()
+		 * @generated
+		 */
+		EDataType IECLIPSE_CONTEXT = eINSTANCE.getIEclipseContext();
 
 	}
 

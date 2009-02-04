@@ -8,12 +8,13 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MPartImpl.java,v 1.1 2009/02/03 14:25:36 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
 import java.util.Collection;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MMenu;
@@ -53,6 +54,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#isVisible <em>Visible</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getContext <em>Context</em>}</li>
  * </ul>
  * </p>
  *
@@ -178,6 +180,26 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 	 * @ordered
 	 */
 	protected static final int VISIBLE_EFLAG = 1 << 8;
+
+	/**
+	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContext()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final IEclipseContext CONTEXT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContext() <em>Context</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContext()
+	 * @generated
+	 * @ordered
+	 */
+	protected IEclipseContext context = CONTEXT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -488,6 +510,27 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public IEclipseContext getContext() {
+		return context;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContext(IEclipseContext newContext) {
+		IEclipseContext oldContext = context;
+		context = newContext;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.MPART__CONTEXT, oldContext, context));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -569,6 +612,8 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 				return getParent();
 			case ApplicationPackage.MPART__VISIBLE:
 				return isVisible();
+			case ApplicationPackage.MPART__CONTEXT:
+				return getContext();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -611,6 +656,9 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 			case ApplicationPackage.MPART__PARENT:
 				setParent((MPart<?>)newValue);
 				return;
+			case ApplicationPackage.MPART__CONTEXT:
+				setContext((IEclipseContext)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -650,6 +698,9 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 			case ApplicationPackage.MPART__PARENT:
 				setParent((MPart<?>)null);
 				return;
+			case ApplicationPackage.MPART__CONTEXT:
+				setContext(CONTEXT_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -682,6 +733,8 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 				return getParent() != null;
 			case ApplicationPackage.MPART__VISIBLE:
 				return ((eFlags & VISIBLE_EFLAG) != 0) != VISIBLE_EDEFAULT;
+			case ApplicationPackage.MPART__CONTEXT:
+				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -702,6 +755,8 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 		result.append(widget);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append((eFlags & VISIBLE_EFLAG) != 0);
+		result.append(", context: "); //$NON-NLS-1$
+		result.append(context);
 		result.append(')');
 		return result.toString();
 	}

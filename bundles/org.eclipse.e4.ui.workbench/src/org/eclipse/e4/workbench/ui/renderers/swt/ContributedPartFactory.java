@@ -29,8 +29,9 @@ public class ContributedPartFactory extends SWTPartFactory {
 		this.contributionFactory = contributionFactory;
 	}
 
-	public Object createWidget(final MPart part) {
+	public Object createWidget(final MPart<?> part) {
 		Widget parentWidget = getParentWidget(part);
+		IEclipseContext parentContext = getContextForParent(part);
 		Widget newWidget = null;
 
 		if (part instanceof MContributedPart) {
@@ -40,11 +41,11 @@ public class ContributedPartFactory extends SWTPartFactory {
 			bindWidget(part, newWidget);
 			final MContributedPart contributedPart = (MContributedPart) part;
 			final IHandlerService hs = new PartHandlerService(part);
-			IEclipseContext localContext = EclipseContextFactory.create(
-					"ContributedPart", context, UIContextScheduler.instance); //$NON-NLS-1$
+			final IEclipseContext localContext = EclipseContextFactory.create(
+					"ContributedPart", parentContext, UIContextScheduler.instance); //$NON-NLS-1$
 			IEclipseContext outputContext = EclipseContextFactory.create(
 					"ContributedPart-output", null, UIContextScheduler.instance); //$NON-NLS-1$
-			associate(newComposite, localContext);
+			contributedPart.setContext(localContext);
 			localContext.set(Composite.class.getName(), newComposite);
 			localContext.set(IHandlerService.class.getName(), hs);
 			newComposite.addListener(SWT.Activate, new Listener() {
@@ -58,11 +59,11 @@ public class ContributedPartFactory extends SWTPartFactory {
 					localContext);
 			if (newPart instanceof IHasInput) {
 				final IHasInput hasInput = (IHasInput) newPart;
-				context.runAndTrack(new Runnable() {
+				localContext.runAndTrack(new Runnable() {
 					public void run() {
 						Class adapterType = hasInput.getInputType();
 						Object newInput = null;
-						Object newValue = context.get(IServiceConstants.SELECTION);
+						Object newValue = localContext.get(IServiceConstants.SELECTION);
 						if (newValue instanceof IStructuredSelection) {
 							newValue = ((IStructuredSelection) newValue)
 									.getFirstElement();
