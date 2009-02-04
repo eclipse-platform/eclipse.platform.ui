@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Services Plug-in
+Bundle-Name: Core Services Test Plug-in
 Bundle-SymbolicName: org.eclipse.e4.core.tests.services
-Bundle-Version: 1.0.0
+Bundle-Version: 0.9.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.junit;bundle-version="3.8.2",
  org.eclipse.e4.core.services;bundle-version="0.9.0"
