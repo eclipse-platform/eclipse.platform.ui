@@ -100,7 +100,11 @@ public class EclipseContext extends AbstractContext {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + Arrays.hashCode(arguments);
+			result = prime * result;
+			for (int i = 0; i < arguments.length; i++) {
+				String arg = arguments[i];
+				result = prime * result + (arg == null ? 0 : arg.hashCode());
+			}
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			return result;
 		}
