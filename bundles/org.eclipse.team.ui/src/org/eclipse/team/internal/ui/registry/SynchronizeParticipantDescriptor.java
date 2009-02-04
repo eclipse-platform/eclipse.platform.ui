@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,9 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 
 	/**
 	 * Create a new ViewDescriptor for an extension.
+	 * @param e the configuration element for an extension
+	 * @param desc the view's description
+	 * @throws CoreException if loading the view descriptor from the registry fails
 	 */
 	public SynchronizeParticipantDescriptor(IConfigurationElement e, String desc) throws CoreException {
 		configElement = e;
@@ -80,7 +83,7 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 	}
 	
 	/**
-	 * load a view descriptor from the registry.
+	 * Loads a view descriptor from the registry.
 	 */
 	private void loadFromExtension() throws CoreException {
 		String identifier = configElement.getAttribute(ATT_ID);
@@ -94,7 +97,7 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		}
 		// Sanity check.
 		if ((label == null) || (className == null) || (identifier == null)) {
-			throw new CoreException(new Status(IStatus.ERROR, configElement.getNamespace(), 0, "Invalid extension (missing label or class name): " + identifier, //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, configElement.getNamespaceIdentifier(), 0, "Invalid extension (missing label or class name): " + identifier, //$NON-NLS-1$
 					null));
 		}
 		id = identifier;
