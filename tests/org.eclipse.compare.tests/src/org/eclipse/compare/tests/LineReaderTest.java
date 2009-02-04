@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,19 @@
 package org.eclipse.compare.tests;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
-
-import org.eclipse.compare.internal.core.patch.LineReader;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.eclipse.compare.internal.core.patch.LineReader;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class LineReaderTest extends TestCase {
 
@@ -54,8 +59,18 @@ public class LineReaderTest extends TestCase {
 	}
 
 	private BufferedReader getReader(String name) {
-		InputStream resourceAsStream= getClass().getResourceAsStream("linereaderdata/" + name); //$NON-NLS-1$
-		InputStreamReader reader2= new InputStreamReader(resourceAsStream);
-		return new BufferedReader(reader2);
+		IPath path = new Path("linereaderdata/" + name);
+		URL url;
+		try {
+			url = new URL(CompareTestPlugin.getDefault().getBundle().getEntry("/"), path.toString());
+			InputStream resourceAsStream = url.openStream();
+			InputStreamReader reader2 = new InputStreamReader(resourceAsStream);
+			return new BufferedReader(reader2);
+		} catch (MalformedURLException e) {
+			fail(e.getMessage());
+		} catch (IOException e) {
+			fail(e.getMessage());
+		}
+		return null;
 	}
 }
