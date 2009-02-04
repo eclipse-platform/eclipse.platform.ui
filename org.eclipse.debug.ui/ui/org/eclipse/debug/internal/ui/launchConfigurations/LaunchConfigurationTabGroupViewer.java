@@ -483,7 +483,10 @@ public class LaunchConfigurationTabGroupViewer {
 		if (tabs != null) {
 			// update the working copy from the active tab
 			boolean newwc = !getWorkingCopy().isDirty();
-			getActiveTab().performApply(getWorkingCopy());
+			ILaunchConfigurationTab tab = getActiveTab();
+			if (tab != null) {
+			    tab.performApply(getWorkingCopy());
+			}
 			if((fOriginal instanceof ILaunchConfigurationWorkingCopy) && newwc) {
 				try {
 					ILaunchConfigurationWorkingCopy copy = getWorkingCopy();
@@ -824,7 +827,9 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 		//set the default tab as the first one
-		setActiveTab(tabs[0]);
+		if (tabs.length > 0) {
+		    setActiveTab(tabs[0]);
+		}
 		// select same tab as before, if possible
 		for (int i = 0; i < tabs.length; i++) {
 			if (tabs[i].getClass().equals(tabKind)) {
