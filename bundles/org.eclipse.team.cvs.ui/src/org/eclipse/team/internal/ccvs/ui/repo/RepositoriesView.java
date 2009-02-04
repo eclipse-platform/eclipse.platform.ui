@@ -58,13 +58,17 @@ public class RepositoriesView extends RemoteViewPart {
 	private PropertyDialogAction propertiesAction;
 	private RemoveRootAction removeRootAction;
 	private RemoveDateTagAction removeDateTagAction;
+	private RepositoriesFilterAction repositoriesFilterAction;
+	private IAction toggleFilterAction;
 	
 	private RepositoriesSortingActionGroup repositoriesSortingActionGroup;
 	private IDialogSettings dialogSettings;
 	private static final String SELECTED_ORDER_BY = "selectedOrderBy"; //$NON-NLS-1$
 	private static final String SELECTED_SORTING_ORDER = "selectedSortingOrder"; //$NON-NLS-1$
 	private RepositoryComparator savedComparator;
-	
+	private RepositoriesFilter repositoriesFilter;
+	private static final String FILTER_SHOW_MODULES = "filterShowModules"; //$NON-NLS-1$
+
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(final ICVSRepositoryLocation root) {
 			getViewer().getControl().getDisplay().asyncExec(new Runnable() {
@@ -160,6 +164,9 @@ public class RepositoriesView extends RemoteViewPart {
 			savedComparator = new RepositoryComparator(
 					RepositoryComparator.ORDER_BY_LABEL, true);
 		}
+		
+		if (dialogSettings.get(FILTER_SHOW_MODULES) != null && !dialogSettings.get(FILTER_SHOW_MODULES).equals("")) //$NON-NLS-1$
+			repositoriesFilter = new RepositoriesFilter(dialogSettings.getBoolean(FILTER_SHOW_MODULES));
 	}
 
 	/**
@@ -252,6 +259,32 @@ public class RepositoriesView extends RemoteViewPart {
 				savedComparator);
 		
 		super.contributeActions();
+		
+		toggleFilterAction = new Action(CVSUIMessages.RepositoriesView_NoFilter){
+			public void run(){
+				if (repositoriesFilter != null)
+					getViewer().removeFilter(repositoriesFilter);
+					repositoriesFilter = null;
+					toggleFilterAction.setEnabled(false);
+					repositoriesFilterAction.setFilter(repositoriesFilter);
+			}
+		};
+		toggleFilterAction.setEnabled(repositoriesFilter != null);
+		
+		//Create the filter action
+		repositoriesFilterAction = new RepositoriesFilterAction(this);
+		repositoriesFilterAction.setText(CVSUIMessages.RepositoriesView_FilterOn);
+		repositoriesFilterAction.init(getViewer());
+		repositoriesFilterAction.setFilter(repositoriesFilter);
+		repositoriesFilterAction.setToolTipText(CVSUIMessages.RepositoriesView_FilterRepositoriesTooltip);
+		repositoriesFilterAction.setImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY));
+		
+		IMenuManager actionBarsMenu = bars.getMenuManager();
+		if (actionBarsMenu != null){
+			actionBarsMenu.add(new Separator());
+			actionBarsMenu.add(repositoriesFilterAction);
+			actionBarsMenu.add(toggleFilterAction);
+		}
 	}
 	
 	private void saveSelectedComparator(RepositoryComparator selectedComparator) {
@@ -324,6 +357,8 @@ public class RepositoriesView extends RemoteViewPart {
 		// We need to set comparator on the viewer, in order to modify it by
 		// repositoriesSortingActionGroup in the future. It's the same object
 		getViewer().setComparator(savedComparator);
+		if (repositoriesFilter != null)
+			getViewer().addFilter(repositoriesFilter);
 		getRepositoriesSortingActionGroup().fillActionBars(getViewSite().getActionBars());
 	}
 	
@@ -331,6 +366,10 @@ public class RepositoriesView extends RemoteViewPart {
 	 * @see WorkbenchPart#dispose
 	 */
 	public void dispose() {
+		if (repositoriesFilter != null)
+			dialogSettings.put(FILTER_SHOW_MODULES, repositoriesFilter.isShowModules());
+		else
+			dialogSettings.put(FILTER_SHOW_MODULES, (String) null);
 		CVSUIPlugin.getPlugin().getRepositoryManager().removeRepositoryListener(listener);
         if (getRepositoriesSortingActionGroup() != null) {
             getRepositoriesSortingActionGroup().dispose();
@@ -439,6 +478,14 @@ public class RepositoriesView extends RemoteViewPart {
 		removeAction.setEnabled(removeRootAction.isEnabled() || removeDateTagAction.isEnabled());
         
         repositoryDragSourceListener.updateSelection(selection);
+	}
+	
+	public void showFilter(RepositoriesFilter filter) {
+		if (repositoriesFilter != null)
+			getViewer().removeFilter(repositoriesFilter);
+		repositoriesFilter = filter;
+		getViewer().addFilter(filter);
+		toggleFilterAction.setEnabled(true);
 	}
     
 }

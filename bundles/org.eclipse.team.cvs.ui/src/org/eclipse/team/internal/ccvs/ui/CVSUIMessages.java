@@ -26,7 +26,6 @@ public class CVSUIMessages extends NLS {
 	// Contributors:
 	//     IBM Corporation - initial API and implementation
 	//
-	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
@@ -575,7 +574,14 @@ public class CVSUIMessages extends NLS {
 	public static String RepositoriesView_OneItemSelected;
 	public static String RepositoriesView_ResourceInRepository;
 	public static String RepositoriesView_CannotGetRevision;
+	public static String RepositoriesView_NoFilter;
+	public static String RepositoriesView_FilterOn;
+	public static String RepositoriesView_FilterRepositoriesTooltip;
 	public static String RemoteViewPart_workingSetToolTip;
+	
+	public static String RepositoryFilterDialog_title;
+	public static String RepositoryFilterDialog_message;
+	public static String RepositoryFilterDialog_showModules;
 
 	public static String ResourcePropertiesPage_status;
 	public static String ResourcePropertiesPage_notManaged;
@@ -1187,4 +1193,6 @@ public class CVSUIMessages extends NLS {
 	public static String NewLocationWizard_4;
 	public static String ClipboardDiffOperation_Clipboard;
 	public static String CVSAction_doNotShowThisAgain;
+	
+
 }
