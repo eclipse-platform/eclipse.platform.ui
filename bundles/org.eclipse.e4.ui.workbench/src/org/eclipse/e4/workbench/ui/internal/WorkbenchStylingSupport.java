@@ -12,12 +12,11 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
-import org.eclipse.e4.ui.css.nebula.engine.CSSNebulaEngineImpl;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -25,24 +24,33 @@ import org.eclipse.swt.widgets.Display;
  */
 public class WorkbenchStylingSupport {
 
-	static CSSEngine initializeStyling(Display display, String cssURI) {
+	static void initializeStyling(Display display, String cssURI) {
 		// Instantiate SWT CSS Engine
-		CSSEngine engine = new CSSNebulaEngineImpl(display, true);
-		engine.setErrorHandler(new CSSErrorHandler() {
-			public void error(Exception e) {
-				e.printStackTrace();
-			}
-		});
-		
 		try {
+			Class engineClass = Class
+					.forName("org.eclipse.e4.ui.css.nebula.engine.CSSNebulaEngineImpl"); //$NON-NLS-1$
+			Constructor ctor = engineClass.getConstructor(new Class[] { Display.class,
+					Boolean.TYPE });
+			Object engine = ctor.newInstance(new Object[] { display, Boolean.TRUE });
+			Class errorHandlerClass = Class
+					.forName("org.eclipse.e4.ui.css.core.engine.CSSErrorHandler"); //$NON-NLS-1$
+			Method setErrorHandler = engineClass.getMethod(
+					"setErrorHandler", new Class[] { errorHandlerClass }); //$NON-NLS-1$
+			Class errorHandlerImplClass = Class
+					.forName("org.eclipse.e4.ui.css.core.impl.engine.CSSErrorHandlerImpl"); //$NON-NLS-1$
+			setErrorHandler.invoke(engine, new Object[] { errorHandlerImplClass
+					.newInstance() });
+
 			URL url = FileLocator.resolve(new URL(cssURI.toString()));
 			InputStream stream = url.openStream();
-			engine.parseStyleSheet(stream);	
+
+			Method parseStyleSheet = engineClass.getMethod(
+					"parseStyleSheet", new Class[] { InputStream.class }); //$NON-NLS-1$
+			parseStyleSheet.invoke(engine, new Object[] { stream });
 			stream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			System.err.println("Warning - could not initialize CSS styling (but the applicationCSS property has a value) : " + e.toString()); //$NON-NLS-1$
 		}
-		return engine;
 	}
 
 }
