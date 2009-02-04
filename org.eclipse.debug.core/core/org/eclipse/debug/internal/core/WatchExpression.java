@@ -106,7 +106,9 @@ public class WatchExpression implements IWatchExpression {
 	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(org.eclipse.debug.core.model.IDebugElement)
 	 */
 	public void setExpressionContext(IDebugElement context) {
-		fCurrentContext= context;
+		synchronized (this) {
+			fCurrentContext= context;
+		}
 		if (context == null) {
 			setResult(null);
 			return;
@@ -125,7 +127,9 @@ public class WatchExpression implements IWatchExpression {
 	 * @param result result of a watch expression
 	 */
 	public void setResult(IWatchExpressionResult result) {
-		fResult= result;
+		synchronized (this) {
+			fResult= result;
+		}
 		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.CONTENT));
 	}
 
@@ -158,7 +162,7 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IExpression#getValue()
 	 */
-	public IValue getValue() {
+	public synchronized IValue getValue() {
 		if (fResult == null) {
 			return null;
 		}
@@ -186,8 +190,14 @@ public class WatchExpression implements IWatchExpression {
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	public String getModelIdentifier() {
-		if (fCurrentContext != null) {
-			return fCurrentContext.getModelIdentifier();
+		synchronized (this) {
+			IValue value = getValue();
+			if (value != null) {
+				return value.getModelIdentifier();
+			}
+			if (fCurrentContext != null) {
+				return fCurrentContext.getModelIdentifier();
+			}			
 		}
 		return DebugPlugin.getUniqueIdentifier();
 	}
