@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1088,6 +1088,8 @@ public class CVSUIMessages extends NLS {
 	public static String DateTagDialog_3;
 	public static String DateTagDialog_4;
 	public static String DateTagDialog_5;
+	public static String DateTagDialog_6;
+	public static String DateTagDialog_7;	
 	public static String LogEntryCacheUpdateHandler_0;
 	public static String LogEntryCacheUpdateHandler_1;
 	public static String LogEntryCacheUpdateHandler_2;

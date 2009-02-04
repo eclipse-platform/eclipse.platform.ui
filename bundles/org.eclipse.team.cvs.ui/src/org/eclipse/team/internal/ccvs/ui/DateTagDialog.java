@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -196,6 +196,15 @@ public class DateTagDialog extends TrayDialog {
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			dateEntered = privateGetDate();
+			if (dateEntered.after(Calendar.getInstance().getTime())) {
+				MessageDialog dialog = new MessageDialog(getShell(),
+						CVSUIMessages.DateTagDialog_6, null,
+						CVSUIMessages.DateTagDialog_7, MessageDialog.WARNING,
+						new String[] { IDialogConstants.YES_LABEL,
+								IDialogConstants.NO_LABEL, }, 1);
+				if (dialog.open() == 1)
+					return;
+			}
 		}
 		super.buttonPressed(buttonId);
 	}
