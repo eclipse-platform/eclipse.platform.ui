@@ -91,7 +91,7 @@
          <attribute name="registryId" type="string">
             <annotation>
                <documentation>
-                  the id for which context type registry this context type is automatically registered. Since 3.5.
+                  the id of the context type registry where this context type is automatically registered. Since 3.5.
                </documentation>
                <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.templates/contextTypeRegistry/@id"/>
@@ -293,7 +293,7 @@ then the translations must go into:
    <element name="contextTypeRegistry">
       <annotation>
          <documentation>
-            Defines a registry for context types. Context types which define a &apos;registryId&apos; are automatically added to this registry. Since 3.5.
+            Defines a registry for context types. Context types which define a &apos;registryId&apos; are automatically added to the registry which is created by &lt;code&gt;new org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry(registryId)&lt;/code&gt;. Since 3.5.
          </documentation>
       </annotation>
       <complexType>
