@@ -21,6 +21,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 public class StackModelFactory extends SWTPartFactory {
@@ -193,6 +195,17 @@ public class StackModelFactory extends SWTPartFactory {
 				if (sm.getActiveChild() != newPart) {
 					activate(newPart);
 				}
+			}
+		});
+		
+		// Detect activation...picks up cases where the user clicks on the
+		// (already active) tab
+		ctf.addListener(SWT.Activate, new Listener() {
+			public void handleEvent(Event event) {
+				CTabFolder ctf = (CTabFolder) event.widget;
+				MStack stack = (MStack) ctf.getData(OWNING_ME);
+				MItemPart<?> part = stack.getActiveChild();
+				activate(part);
 			}
 		});
 
