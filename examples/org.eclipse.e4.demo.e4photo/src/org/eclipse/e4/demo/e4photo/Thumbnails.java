@@ -11,8 +11,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IBackgroundRunner;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
 import org.eclipse.nebula.widgets.gallery.GalleryItem;
@@ -36,11 +36,13 @@ public class Thumbnails {
 	private final IBackgroundRunner backgroundRunner;
 	private IContainer input;
 	private volatile Runnable runnable;
+	private final IStylingEngine stylingEngine;
 
 	public Thumbnails(Composite parent, final IEclipseContext outputContext,
-			IBackgroundRunner backgroundRunner) {
+			IBackgroundRunner backgroundRunner, IStylingEngine stylingEngine) {
 		this.outputContext = outputContext;
 		this.backgroundRunner = backgroundRunner;
+		this.stylingEngine = stylingEngine;
 		parent.setLayout(new FillLayout());
 		gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
 		gallery.setData("org.eclipse.e4.ui.css.id", "thumbnails");
@@ -149,10 +151,7 @@ public class Thumbnails {
 				item.setImage(image);
 				item.setData(file);
 				
-				//Required for bug #260406
-				CSSSWTEngineImpl engine = (CSSSWTEngineImpl) gallery.getDisplay().getData("org.eclipse.e4.ui.css.core.engine");
-				if(engine != null)
-					engine.applyStyles(item, true);
+				stylingEngine.setId(item, null);
 		
 				gallery.redraw();
 			} catch (SWTException ex) {
