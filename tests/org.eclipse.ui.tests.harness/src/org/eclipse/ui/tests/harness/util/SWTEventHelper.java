@@ -18,9 +18,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.1
@@ -163,21 +165,40 @@ public class SWTEventHelper {
 	private static boolean _dragDetected;
 
 	// Returns true if it worked
-	public static boolean performTreeDnD(TreeItem startItem, TreeItem dropItem) {
+	public static boolean performDnD(Widget startItem, Widget dropItem) {
 
-		startItem.getParent().addDragDetectListener(new DragDetectListener() {
+		Control startControl = null;
+		
+		Rectangle boundsStart = null, boundsEnd = null;
+
+		if (startItem instanceof TreeItem) {
+			startControl = ((TreeItem) startItem).getParent();
+			boundsStart = ((TreeItem)startItem).getBounds();
+		} else if (startItem instanceof Control) {
+			startControl = (Control) startItem;
+			boundsStart = startControl.getBounds();
+		}
+		
+		if (dropItem instanceof TreeItem) {
+			boundsEnd = ((TreeItem)dropItem).getBounds();
+		} else if (dropItem instanceof Control) {
+			boundsEnd = ((Control)dropItem).getBounds();
+		}
+		
+		startControl.addDragDetectListener(new DragDetectListener() {
 			public void dragDetected(DragDetectEvent e) {
 				_dragDetected = true;
 			}
 		});
 
+		
 		int count = 0;
 		_dragDetected = false;
 
 		// On some platforms (Windows and Mac), drag desture detection does not
 		// always happen
 		while (!_dragDetected && ++count < 4) {
-			performTreeDnDInteral(startItem, dropItem);
+			performDnDInternal(boundsStart, boundsEnd);
 			if (!_dragDetected) {
 				if (count < 4)
 					System.out.println("WARNING: DnD failed - drag gesture not detected retrying");
@@ -192,17 +213,11 @@ public class SWTEventHelper {
 		return _dragDetected;
 	}
 
-	public static void performTreeDnDInteral(TreeItem startItem,
-			TreeItem dropItem) {
-		Rectangle boundsStart, boundsEnd;
+	public static void performDnDInternal(Rectangle boundsStart,
+			Rectangle boundsEnd) {
 
 		int fudge = 0;
 		int gestureSize = 10;
-
-		boundsStart = Display.getCurrent().map(startItem.getParent(), null,
-				startItem.getBounds());
-		boundsEnd = Display.getCurrent().map(dropItem.getParent(), null,
-				dropItem.getBounds());
 
 		int xstart = boundsStart.x + fudge;
 		int ystart = boundsStart.y + fudge;

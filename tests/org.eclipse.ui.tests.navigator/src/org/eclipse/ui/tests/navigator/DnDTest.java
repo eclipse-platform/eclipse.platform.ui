@@ -10,18 +10,24 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
 
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.SWTEventHelper;
+import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
 
 public class DnDTest extends NavigatorTestBase {
 
 	public DnDTest() {
-		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
+		_navigatorInstanceId = TEST_VIEWER;
 	}
 
 	protected void setUp() throws Exception {
@@ -39,19 +45,15 @@ public class DnDTest extends NavigatorTestBase {
 		_viewer.setSelection(new StructuredSelection(_p1.getFolder("f1")
 				.getFile("file1.txt")));
 
-		//DisplayHelper.sleep(Display.getCurrent(), 100);
-		
-		
-		if (false)
-			DisplayHelper.sleep(Display.getCurrent(), 100000000);
-		
+		// DisplayHelper.sleep(Display.getCurrent(), 100);
+
 		TreeItem[] items = _viewer.getTree().getItems();
 
 		// p1/f1/file1.txt
 		TreeItem start = items[_p1Ind].getItem(0).getItem(0);
 		// p1/f2
 		TreeItem end = items[_p1Ind].getItem(1);
-		if (!SWTEventHelper.performTreeDnD(start, end)) {
+		if (!SWTEventHelper.performDnD(start, end)) {
 			System.out.println("Drag and drop failed - test invalid");
 			return;
 		}
@@ -65,6 +67,40 @@ public class DnDTest extends NavigatorTestBase {
 
 		assertFalse(_p1.getFolder("f1").getFile("file1.txt").exists());
 		assertTrue(_p1.getFolder("f2").getFile("file1.txt").exists());
+
+	}
+
+	// bug 185569 CommonDragAdapter should provide ways for
+	// CommonDragAdapterAssistant
+	// to perform clean up after drag has finished
+	public void testResourceDrag() throws Exception {
+		_viewer.expandToLevel(_p1, 3);
+
+		IFile file = _p1.getFolder("f1").getFile("file1.txt");
+
+		// Need to set the selection because the Dnd stuff is not doing it
+		_viewer.setSelection(new StructuredSelection(file));
+
+		// Want to drag this item to an editor so that the ResourceTransferType is
+		// used
+		IWorkbenchPage activePage = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+		TextEditor editorPart = (TextEditor) IDE.openEditor(activePage, file);
+
+		Control end = (Control) editorPart.getAdapter(Control.class);
+		
+		TreeItem[] items = _viewer.getTree().getItems();
+
+		// p1/f1/file1.txt
+		TreeItem start = items[_p1Ind].getItem(0).getItem(0);
+
+		if (!SWTEventHelper.performDnD(start, end)) {
+			System.out.println("Drag and drop failed - test invalid");
+			return;
+		}
+
+		assertNotNull(TestDragAssistant._finishedEvent);
+		assertNotNull(TestDragAssistant._finishedSelection);
 	}
 
 	// Bug 261060 Add capability of setting drag operation
@@ -84,32 +120,26 @@ public class DnDTest extends NavigatorTestBase {
 
 		DisplayHelper.sleep(Display.getCurrent(), 100);
 
-		if (false)
-			DisplayHelper.sleep(Display.getCurrent(), 1000000);
-		
 		TreeItem[] items = _viewer.getTree().getItems();
 
 		// .project is at index 0
 		int firstFolder = 1;
-		
+
 		// p1/f1/file1.txt
 		TreeItem start = items[_p1Ind].getItem(firstFolder).getItem(0);
-		
+
 		// p1/f2
 		TreeItem end = items[_p1Ind].getItem(firstFolder + 1);
-		if (!SWTEventHelper.performTreeDnD(start, end)) {
+		if (!SWTEventHelper.performDnD(start, end)) {
 			System.out.println("Drag and drop failed - test invalid");
 			return;
 		}
 
 		_viewer.expandToLevel(_p1, 3);
 
-		if (false)
-			DisplayHelper.sleep(Display.getCurrent(), 1000000);
-		
 		// This is copied not moved
 		assertEquals(_p1.getFolder("f1").getFile("file1.txt"), items[_p1Ind]
-		                                             				.getItem(firstFolder).getItem(0).getData());
+				.getItem(firstFolder).getItem(0).getData());
 		assertEquals(_p1.getFolder("f1").getFile("file2.txt"), items[_p1Ind]
 				.getItem(firstFolder).getItem(1).getData());
 		assertEquals(_p1.getFolder("f2").getFile("file1.txt"), items[_p1Ind]
@@ -118,6 +148,5 @@ public class DnDTest extends NavigatorTestBase {
 		assertTrue(_p1.getFolder("f1").getFile("file1.txt").exists());
 		assertTrue(_p1.getFolder("f2").getFile("file1.txt").exists());
 	}
-
 
 }

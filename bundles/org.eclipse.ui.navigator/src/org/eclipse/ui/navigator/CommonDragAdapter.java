@@ -52,6 +52,8 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 
 	private final ISelectionProvider provider;
 
+	private CommonDragAdapterAssistant setDataAssistant;
+	
 	/**
 	 * Create a DragAdapter that drives the configuration of the drag data.
 	 * 
@@ -200,6 +202,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 									System.out
 											.println("CommonDragAdapter.dragSetData set data " + event.data); //$NON-NLS-1$
 								}
+								setDataAssistant = assistants[i];
 								return;
 							}
 						} catch (RuntimeException re) {
@@ -235,6 +238,13 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDragAdapter.dragFinished(): " + event); //$NON-NLS-1$
 		}
+
+		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
+
+		if (event.doit && selection instanceof IStructuredSelection && setDataAssistant != null)
+			setDataAssistant.dragFinished(event, (IStructuredSelection) selection);
+			
+		setDataAssistant = null;
 
 		LocalSelectionTransfer.getTransfer().setSelection(null);
 

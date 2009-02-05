@@ -24,10 +24,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
 import org.eclipse.ui.navigator.INavigatorDnDService;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * Clients may reference this class in the <b>dragAssistant</b> element of a
@@ -40,16 +40,15 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
  * </p>
  * 
  * @since 3.2
+ * @noextend This class is not intended to be subclassed by clients.
  * 
  */
-public final class ResourceDragAdapterAssistant extends
+public class ResourceDragAdapterAssistant extends
 		CommonDragAdapterAssistant {
-
-	private static final boolean DEBUG = false;
 
 	private static final Transfer[] SUPPORTED_TRANSFERS = new Transfer[] {
 			ResourceTransfer.getInstance(),
-			LocalSelectionTransfer.getInstance(), FileTransfer.getInstance() };
+			FileTransfer.getInstance() };
 
 	private static final Class IRESOURCE_TYPE = IResource.class;
 
@@ -71,21 +70,11 @@ public final class ResourceDragAdapterAssistant extends
 	public boolean setDragData(DragSourceEvent anEvent,
 			IStructuredSelection aSelection) {
 
-		if (LocalSelectionTransfer.getInstance().isSupportedType(
-				anEvent.dataType)) {
-			anEvent.data = aSelection;
-			if (DEBUG) {
-				System.out
-						.println("ResourceDragAdapterAssistant.dragSetData set LocalSelectionTransfer"); //$NON-NLS-1$
-			}
-			return true;
-		}
-
 		IResource[] resources = getSelectedResources(aSelection);
 		if (resources.length > 0) {
 			if (ResourceTransfer.getInstance().isSupportedType(anEvent.dataType)) {
 				anEvent.data = resources;
-				if (DEBUG) {
+				if (Policy.DEBUG_DND) {
 					System.out
 							.println("ResourceDragAdapterAssistant.dragSetData set ResourceTransfer"); //$NON-NLS-1$
 				}
@@ -114,7 +103,7 @@ public final class ResourceDragAdapterAssistant extends
 					}
 					anEvent.data = fileNames;
 		
-					if (DEBUG)
+					if (Policy.DEBUG_DND)
 						System.out
 								.println("ResourceDragAdapterAssistant.dragSetData set FileTransfer"); //$NON-NLS-1$
 					return true;

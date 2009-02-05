@@ -340,22 +340,15 @@
             </actionExtension> 
          </includes>
       </viewerContentBinding>
-      
-      <!-- For testing -->
-      <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
-         <includes>
-            <contentExtension pattern="org.eclipse.ui.tests.navigator.testContent"/> 
-            <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
-         </includes>
-      </viewerContentBinding>
+
       <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
          <includes>
             <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
-            <actionExtension pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider"/>
+            <actionExtension pattern="org.eclipse.ui.navigator.resources.*"/>
          </includes>
       </viewerActionBinding>
       <dragAssistant
-            class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
+            class="org.eclipse.ui.tests.navigator.extension.TestDragAssistant"
             viewerId="org.eclipse.ui.tests.navigator.TestView"/>
       <viewer
             viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
@@ -366,7 +359,7 @@
          </options>
           <popupMenu
                 allowsPlatformContributions="true"
-                id="org.eclipse.ui.navigator.ProjectExplorer#PopupMenu"/>  
+                id="org.eclipse.ui.tests.navigator.TestView#PopupMenu"/>  
       </viewer>
       <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
           <includes>

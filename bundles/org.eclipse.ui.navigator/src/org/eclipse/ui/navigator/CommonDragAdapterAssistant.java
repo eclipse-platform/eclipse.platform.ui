@@ -14,6 +14,7 @@ package org.eclipse.ui.navigator;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Event;
@@ -95,6 +96,25 @@ public abstract class CommonDragAdapterAssistant {
 	public abstract boolean setDragData(DragSourceEvent anEvent,
 			IStructuredSelection aSelection);
 
+	/**
+	 * 
+	 * Allows the drag assistant to do any necessary cleanup after the drop operation
+	 * is done. This is called at {@link DragSourceListener#dragFinished(DragSourceEvent)} 
+	 * time.  This is called on the same assistant that was called for the set data.
+	 * 
+	 * @param anEvent
+	 *            The event object should have its {@link Event#data} field set
+	 *            to a value that matches a supported {@link TransferData} type.
+	 * @param aSelection
+	 *            The current selection from the viewer.
+	 * 
+	 * @since 3.4
+	 */
+	public void dragFinished(DragSourceEvent anEvent,
+			IStructuredSelection aSelection) {
+		// May be subclassed
+	}
+	
 	/**
 	 * Accept and remember the content service this assistant is associated
 	 * with.

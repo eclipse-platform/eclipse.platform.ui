@@ -43,12 +43,14 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT = "org.eclipse.ui.tests.navigator.testContent";
 	public static final String TEST_CONTENT1 = "org.eclipse.ui.tests.navigator.testOverriddenContent1";
 	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testOverriddenContent2";
-	public static final String TEST_OVERRIDE1= "org.eclipse.ui.tests.navigator.testOverride1";
+	public static final String TEST_OVERRIDE1 = "org.eclipse.ui.tests.navigator.testOverride1";
 	public static final String TEST_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testOverride2";
 	public static final String TEST_SORTER_CONTENT = "org.eclipse.ui.tests.navigator.testSorterContent";
 
 	public static final String TEST_DROP_COPY_CONTENT = "org.eclipse.ui.tests.navigator.testDropCopy";
-	
+
+	public static final String TEST_VIEWER = "org.eclipse.ui.tests.navigator.TestView";
+
 	protected String _navigatorInstanceId;
 
 	protected Set _expectedChildren = new HashSet();
@@ -60,9 +62,9 @@ public class NavigatorTestBase extends TestCase {
 	protected static final int _p1Ind = 0;
 	protected static final int _p2Ind = 1;
 	protected static final int _projectInd = 2;
-	
+
 	protected static int _projectCount;
-	
+
 	protected CommonViewer _viewer;
 
 	protected CommonNavigator _commonNavigator;
@@ -80,9 +82,9 @@ public class NavigatorTestBase extends TestCase {
 		}
 
 		TestResourceContentProvider.resetTest();
-		
-		if (_initTestData) {
 
+		if (_initTestData) {
+			clearAll();
 			TestWorkspace.init();
 
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -93,13 +95,12 @@ public class NavigatorTestBase extends TestCase {
 			_expectedChildren.add(_project.getFile(".project")); //$NON-NLS-1$
 			_expectedChildren.add(_project.getFile(".classpath")); //$NON-NLS-1$ 
 			_expectedChildren.add(_project.getFile("model.properties")); //$NON-NLS-1$
-			
+
 			_p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
 			_p1.open(null);
-			_p2= ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
+			_p2 = ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
 			_p2.open(null);
 			_projectCount = 3;
-			
 		}
 
 		EditorTestHelper.showView(_navigatorInstanceId, true);
@@ -111,8 +112,9 @@ public class NavigatorTestBase extends TestCase {
 		_commonNavigator = (CommonNavigator) activePage
 				.findView(_navigatorInstanceId);
 		_commonNavigator.setFocus();
-		_viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
-		
+		_viewer = (CommonViewer) _commonNavigator
+				.getAdapter(CommonViewer.class);
+
 		refreshViewer();
 
 		_contentService = _viewer.getNavigatorContentService();
@@ -124,17 +126,23 @@ public class NavigatorTestBase extends TestCase {
 	}
 
 	protected void tearDown() throws Exception {
+		clearAll();
+		// Hide it, we want a new one each time
+		EditorTestHelper.showView(_navigatorInstanceId, false);
+	}
+
+	protected void clearAll() throws Exception {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
 				.getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			projects[i].delete(true, null);
 		}
-		// Hide it, we want a new one each time
-		EditorTestHelper.showView(_navigatorInstanceId, false);
 	}
-	
-	// Need this to workaround a problem of the DecoratingStyledCellLabelProvider. 
-	// The method returns early because there is a (background) decoration pending.
+
+	// Need this to workaround a problem of the
+	// DecoratingStyledCellLabelProvider.
+	// The method returns early because there is a (background) decoration
+	// pending.
 	protected void refreshViewer() {
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 		if (rootItems.length > 0)

@@ -23,12 +23,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class ActivityTest extends NavigatorTestBase {
 
 	public ActivityTest() {
-		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
+		_navigatorInstanceId = TEST_VIEWER;
 	}
 
 	protected static final String ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
@@ -65,6 +64,8 @@ public class ActivityTest extends NavigatorTestBase {
 		IStructuredSelection sel = new StructuredSelection(_project);
 		_viewer.setSelection(sel);
 
+		//DisplayHelper.sleep(100000);
+		
 		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench().getActivitySupport();
 
 		assertFalse(verifyMenu(sel, "Test CNF"));
