@@ -25,13 +25,17 @@ CTabFolder.active:selected {
 	background-color: #f4f4f4;
 }
 
-CTabFolder Gallery GalleryItem {
+CTabFolder {
 	background-color: #f4f4f4;
 }
 
 #preview {
 	color: #e5e5e5;
 	background-color: #ffffff;
+}
+
+Gallery {
+	background-color: #f4f4f4;
 }
 
 GalleryItem:selected {
