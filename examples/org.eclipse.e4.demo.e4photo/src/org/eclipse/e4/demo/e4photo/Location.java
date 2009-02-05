@@ -12,7 +12,7 @@ public class Location {
 
 	public Location(Composite parent) {
 		parent.setLayout(new FillLayout());
-		parent.setData("id", "location");
+		parent.setData("org.eclipse.e4.ui.css.id", "location");
 		browserParent = parent;
 	}
 

@@ -88,8 +88,8 @@ public class Library implements IDisposable {
 		this.workspace = workspace;
 		workspace.addResourceChangeListener(listener);
 		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.getTree().setData("id", "library");
-		viewer.getTree().setData("class", "navigator");
+		viewer.getTree().setData("org.eclipse.e4.ui.css.id", "library");
+		viewer.getTree().setData("org.eclipse.e4.ui.css.CssClassName", "navigator");
 		
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {

@@ -42,7 +42,7 @@ public class Thumbnails {
 		this.backgroundRunner = backgroundRunner;
 		parent.setLayout(new FillLayout());
 		gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
-		gallery.setData("id", "thumbnails");
+		gallery.setData("org.eclipse.e4.ui.css.id", "thumbnails");
 
 		Image itemImage = new Image(parent.getDisplay(), Program.findProgram("jpg")
 				.getImageData());
@@ -52,7 +52,6 @@ public class Thumbnails {
 		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
 		ir.setShowLabels(false);
 		ir.setDropShadowsSize(0);
-		// ir.setSelectionBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 
 		gallery.setItemRenderer(ir);
 

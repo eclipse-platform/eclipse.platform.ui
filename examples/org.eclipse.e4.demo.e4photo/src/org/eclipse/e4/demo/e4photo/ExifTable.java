@@ -33,8 +33,8 @@ public class ExifTable {
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
 
-		viewer.getTable().setData("id", "exif");
-		viewer.getTable().setData("class", "properties");
+		viewer.getTable().setData("org.eclipse.e4.ui.css.id", "exif");
+		viewer.getTable().setData("org.eclipse.e4.ui.css.CssClassName", "properties");
 
 		String[] columnNames = new String[] { "name", "make", "model",
 				"orientation", "software", "timestamp", "gpsLatitude",
