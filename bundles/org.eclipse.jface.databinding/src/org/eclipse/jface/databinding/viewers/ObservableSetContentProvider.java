@@ -70,12 +70,14 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 			Set additions = event.diff.getAdditions();
 
 			knownElements.addAll(additions);
-			realizedElements.removeAll(removals);
+			if (realizedElements != null)
+				realizedElements.removeAll(removals);
 
 			viewerUpdater.remove(removals.toArray());
 			viewerUpdater.add(additions.toArray());
 
-			realizedElements.addAll(additions);
+			if (realizedElements != null)
+				realizedElements.addAll(additions);
 			knownElements.removeAll(removals);
 		}
 	}
