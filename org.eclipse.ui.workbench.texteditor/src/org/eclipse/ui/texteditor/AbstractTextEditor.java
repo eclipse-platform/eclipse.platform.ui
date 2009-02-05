@@ -97,7 +97,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -3481,7 +3480,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fTextDragAndDropToken= null;
 				try {
 					fSelection= st.getSelection();
-					event.doit= isLocationSelected(st, new Point(event.x, event.y));
+					event.doit= isLocationSelected(new Point(event.x, event.y));
 
 					ISelection selection= selectionProvider.getSelection();
 					if (selection instanceof ITextSelection)
@@ -3492,13 +3491,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					event.doit= false;
 				}
 			}
-			
-			private boolean isLocationSelected(StyledText widget, Point point) {
-				Point selection= widget.getSelection();
-				Point upperLeft= widget.getLocationAtOffset(selection.x);
-				Point lowerRight= widget.getLocationAtOffset(selection.y);
-				lowerRight.y += widget.getLineHeight(selection.y);
-				return Geometry.createRectangle(upperLeft, Geometry.subtract(lowerRight, upperLeft)).contains(point);
+
+			private boolean isLocationSelected(Point point) {
+				int offset= st.getOffsetAtLocation(point);
+				Point p= st.getLocationAtOffset(offset);
+				if (p.x > point.x)
+					offset--;
+				return offset >= fSelection.x && offset < fSelection.y;
 			}
 
 			public void dragSetData(DragSourceEvent event) {
