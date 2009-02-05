@@ -40,7 +40,6 @@ public class SorterTest extends NavigatorTestBase {
 		ILogListener ll = new ILogListener() {
 			public void logging(IStatus status, String plugin) {
 				_status = status;
-				System.out.println(status);
 				_statusCount++;
 			}
 		};
@@ -53,8 +52,26 @@ public class SorterTest extends NavigatorTestBase {
 		NavigatorPlugin.getDefault().getLog().removeLogListener(ll);
 
 		// Can vary depending on if the test is run standalone or with something
-		assertTrue(_statusCount == 6 || _statusCount == 9);
+		assertTrue("Status Count: " + _statusCount, _statusCount == 6 || _statusCount == 9);
 		assertTrue(_status.getMessage().indexOf("Cannot find nav") > -1);
 		assertTrue(_status.getMessage().indexOf("P/Test") > -1);
 	}
+
+	// bug 231855 [CommonNavigator] CommonViewerSorter does not support isSorterProperty method of ViewerComparator 
+	public void testSorterProperty() throws Exception {
+
+		_contentService.bindExtensions(new String[] { TEST_SORTER_CONTENT },
+				false);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_SORTER_CONTENT }, true);
+
+		refreshViewer();
+
+		// FIXME - this test does not actually hit the sorter property call,
+		// need to figure out how to do that.
+		_viewer.expandAll();
+
+	}
+
+
 }

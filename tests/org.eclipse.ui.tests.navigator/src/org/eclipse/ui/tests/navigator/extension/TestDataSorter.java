@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,14 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 public class TestDataSorter extends ViewerSorter {
 
+	public static String _sorterProperty;
+	public static Object _sorterElement;
+	
+	public static void resetTest() {
+		_sorterProperty = null;
+		_sorterElement = null;
+	}
+	
 	public TestDataSorter() {
 		super(); 
 	}
@@ -24,7 +32,7 @@ public class TestDataSorter extends ViewerSorter {
 	public TestDataSorter(Collator collator) {
 		super(collator); 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
@@ -45,4 +53,12 @@ public class TestDataSorter extends ViewerSorter {
 		return super.compare(viewer, e1, e2);
 	}
 
+	
+    public boolean isSorterProperty(Object element, String property) {
+    	_sorterProperty = property;
+    	_sorterElement = element;
+        return false;
+    }
+	
+	
 }

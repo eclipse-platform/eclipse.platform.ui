@@ -37,12 +37,6 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
  * A CommonViewerSorter may not be attached to more than one CommonViewer.
  * </p>
  * 
- * <p>
- * Clients may not extend this class.
- * </p>
- * 
- * 
- * 
  * @since 3.2
  * 
  */
@@ -163,5 +157,14 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		}
 		return null;
 	}
+	
+    public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
+		INavigatorContentDescriptor contentDesc = getSource(element);
+		ViewerSorter sorter = sorterService.findSorter(contentDesc, parentPath, element, null);
+		if (sorter != null)
+			return sorter.isSorterProperty(element, property);
+        return super.isSorterProperty(parentPath, element, property);
+    }
+	
 
 }

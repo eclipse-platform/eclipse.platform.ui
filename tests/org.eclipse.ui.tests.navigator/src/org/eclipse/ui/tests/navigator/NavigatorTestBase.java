@@ -29,6 +29,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActionService;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
+import org.eclipse.ui.tests.navigator.extension.TestDataSorter;
 import org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
@@ -82,6 +83,7 @@ public class NavigatorTestBase extends TestCase {
 		}
 
 		TestResourceContentProvider.resetTest();
+		TestDataSorter.resetTest();
 
 		if (_initTestData) {
 			clearAll();
