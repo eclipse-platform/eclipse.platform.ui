@@ -3,12 +3,14 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -41,13 +43,37 @@ public class StackModelFactory extends SWTPartFactory {
 
 		Widget parentWidget = getParentWidget(part);
 		if (parentWidget instanceof Composite) {
-			CTabFolder ctf = new CTabFolder((Composite) parentWidget,
+			IEclipseContext parentContext = getContextForParent(part);
+			final CTabFolder ctf = new CTabFolder((Composite) parentWidget,
 					SWT.BORDER);
 			bindWidget(part, ctf);
 			ctf.setVisible(true);
 			ctf.setSimple(false);
 			ctf.setTabHeight(20);
 			newWidget = ctf;
+			final IEclipseContext folderContext = EclipseContextFactory.create("TabFolder", //$NON-NLS-1$
+					parentContext, UIContextScheduler.instance);
+			part.setContext(folderContext);
+			final IEclipseContext toplevelContext = getToplevelContext(part);
+			final IStylingEngine engine = (IStylingEngine) folderContext.get(IStylingEngine.class.getName());
+			folderContext.runAndTrack(new Runnable() {
+				public void run() {
+					IEclipseContext currentActive = toplevelContext;
+					IEclipseContext child;
+					while (currentActive != folderContext
+							&& (child = (IEclipseContext) currentActive
+									.get("activeChild")) != null && child != currentActive) { //$NON-NLS-1$
+						currentActive = child;
+					}
+					// System.out.println(cti.getText() + " is now " + ((currentActive == tabItemContext) ? "active" : "inactive"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+					
+					if (currentActive == folderContext) {
+						engine.setClassname(ctf, "active"); //$NON-NLS-1$
+					} else {
+						engine.setClassname(ctf, "inactive"); //$NON-NLS-1$
+					}
+				}
+			}, ""); //$NON-NLS-1$
 		}
 
 		return newWidget;
@@ -152,25 +178,6 @@ public class StackModelFactory extends SWTPartFactory {
 		ISWTObservableValue uiTTipObs = SWTObservables.observeTooltipText(cti);
 		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
 		
-		final IEclipseContext toplevelContext = getToplevelContext(childElement);
-		final IEclipseContext tabItemContext = getContext(childElement);
-		final IStylingEngine engine = (IStylingEngine) tabItemContext.get(IStylingEngine.class.getName());
-		tabItemContext.runAndTrack(new Runnable() {
-			public void run() {
-				IEclipseContext currentActive = toplevelContext;
-				while (currentActive.get("activeChild") != null && currentActive.get("activeChild") != currentActive) { //$NON-NLS-1$ //$NON-NLS-2$
-					currentActive = (IEclipseContext) currentActive.get("activeChild"); //$NON-NLS-1$
-				}
-				// System.out.println(cti.getText() + " is now " + ((currentActive == tabItemContext) ? "active" : "inactive"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-				
-				if (currentActive == tabItemContext) {
-					engine.setClassname(cti.getParent(), "active"); //$NON-NLS-1$
-				} else {
-					engine.setClassname(cti.getParent(), "inactive"); //$NON-NLS-1$
-				}
-			}
-		}, ""); //$NON-NLS-1$
-
 		// Handle tab item image changes
 		((EObject) childElement).eAdapters().add(new AdapterImpl() {
 			@Override
