@@ -340,6 +340,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
 	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
 		if (refreshSchedule != schedule) {
@@ -354,6 +355,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
 	public SubscriberRefreshSchedule getRefreshSchedule() {
 		return refreshSchedule;
