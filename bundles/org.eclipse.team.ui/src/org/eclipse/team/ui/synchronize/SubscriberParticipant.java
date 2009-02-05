@@ -328,11 +328,15 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		getSubscriberSyncInfoCollector().reset();
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Return the <code>SubscriberSyncInfoCollector</code> for the participant.
-	 * This collector maintains the set of all out-of-sync resources for the subscriber.
+	 * This collector maintains the set of all out-of-sync resources for the
+	 * subscriber.
 	 * 
 	 * @return the <code>SubscriberSyncInfoCollector</code> for this participant
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
 	 */
 	public SubscriberSyncInfoCollector getSubscriberSyncInfoCollector() {
 		return collector;
