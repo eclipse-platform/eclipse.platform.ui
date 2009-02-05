@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -270,9 +270,11 @@ public class ExpandableComposite extends Canvas {
 					size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 					if (twidth < size.x + IGAP + tcsize.x) {
 						twidth -= IGAP;
-						if (textLabel instanceof Label)
-							size = FormUtil.computeWrapSize(new GC(textLabel), ((Label)textLabel).getText(), Math.round(twidth*(size.x/(float)(size.x+tcsize.x))));
-						else
+						if (textLabel instanceof Label) {
+							GC gc = new GC(textLabel);
+							size = FormUtil.computeWrapSize(gc, ((Label)textLabel).getText(), Math.round(twidth*(size.x/(float)(size.x+tcsize.x))));
+							gc.dispose();
+						} else
 							size = textLabelCache.computeSize(Math.round(twidth*(size.x/(float)(size.x+tcsize.x))), SWT.DEFAULT);
 						tcsize = textClientCache.computeSize(twidth-size.x, SWT.DEFAULT);
 					}
@@ -410,9 +412,11 @@ public class ExpandableComposite extends Canvas {
 					size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 					if (innertHint != SWT.DEFAULT && innertHint < size.x + IGAP + tcsize.x) {
 						innertHint -= IGAP;
-						if (textLabel instanceof Label)
-							size = FormUtil.computeWrapSize(new GC(textLabel), ((Label)textLabel).getText(), Math.round(innertHint*(size.x/(float)(size.x+tcsize.x))));
-						else
+						if (textLabel instanceof Label) {
+							GC gc = new GC(textLabel);
+							size = FormUtil.computeWrapSize(gc, ((Label)textLabel).getText(), Math.round(innertHint*(size.x/(float)(size.x+tcsize.x))));
+							gc.dispose();
+						} else
 							size = textLabelCache.computeSize(Math.round(innertHint*(size.x/(float)(size.x+tcsize.x))), SWT.DEFAULT);
 						tcsize = textClientCache.computeSize(innertHint-size.x, SWT.DEFAULT);
 					}
