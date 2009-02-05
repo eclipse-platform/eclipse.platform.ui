@@ -34,7 +34,22 @@ import org.eclipse.team.internal.core.subscribers.BatchingLock.ThreadInfo;
  * 
  * @since 3.0
  */
-public class ThreeWaySynchronizer implements IFlushOperation {
+public class ThreeWaySynchronizer {
+	
+	private IFlushOperation flushOperation = new IFlushOperation() {
+		/**
+		 * Callback which is invoked when the batching resource lock is released
+		 * or when a flush is requested (see beginBatching(IResource)).
+		 * 
+		 * @see BatchingLock#flush(IProgressMonitor)
+		 */
+		public void flush(ThreadInfo info, IProgressMonitor monitor)
+				throws TeamException {
+			if (info != null && !info.isEmpty()) {
+				broadcastSyncChanges(info.getChangedResources());
+			}
+		}
+	};
 
 	private static final byte[] IGNORED_BYTES = "i".getBytes(); //$NON-NLS-1$
 	
@@ -378,19 +393,6 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 			monitor.done();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * 
-	 * Callback which is invoked when the batching resource lock is released 
-	 * or when a flush is requested (see beginBatching(IResource)).
-	 * 
-	 * @see org.eclipse.team.internal.ftp.deployment.BatchingLock.IFlushOperation#flush(org.eclipse.team.internal.ftp.deployment.BatchingLock.ThreadInfo, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void flush(ThreadInfo info, IProgressMonitor monitor) throws TeamException {
-		if (info != null && !info.isEmpty()) {
-			broadcastSyncChanges(info.getChangedResources());
-		}
-	}
 
 	private void broadcastSyncChanges(final IResource[] resources) {
 		ISynchronizerChangeListener[] allListeners;
@@ -493,7 +495,7 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 	 * is the rule obtained by the lock. It may differ from the provided rule.
 	 */
 	private ISchedulingRule beginBatching(ISchedulingRule resourceRule, IProgressMonitor monitor) {
-		return batchingLock.acquire(resourceRule, this /* IFlushOperation */, monitor);
+		return batchingLock.acquire(resourceRule, flushOperation /* IFlushOperation */, monitor);
 	}
 	
 	/*
