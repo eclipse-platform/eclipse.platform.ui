@@ -80,15 +80,19 @@ public class Thumbnails {
 		return new Point(newWidth, newHeight);
 	}
 
-	public void setInput(IContainer input) {
-		if (input == null) {
+	public void setInput(IResource selection) {
+		if (selection == null)
 			return;
-		}
+		IContainer newInput;
+		if (selection instanceof IContainer)
+			newInput = (IContainer)selection;
+		else
+			newInput = selection.getParent();
 
 		// XXX checking if the same would be nice to have handled at the context
 		// level:
-		if (input != this.input) {
-			this.input = (IContainer) input;
+		if (newInput != this.input) {
+			this.input = newInput;
 			this.runnable = null;
 
 			try {
@@ -105,6 +109,8 @@ public class Thumbnails {
 						images.add(resource);
 					}
 				}
+				if (images.size() == 0)
+					return;
 				final int[] counter = { 0 };
 				runnable = new Runnable() {
 					public void run() {

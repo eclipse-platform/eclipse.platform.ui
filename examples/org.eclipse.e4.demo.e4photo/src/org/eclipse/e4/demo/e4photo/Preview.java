@@ -9,6 +9,7 @@ import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -54,6 +55,8 @@ public class Preview {
 					contents = file.getContents();
 					try {
 						return new ImageData(contents);
+					}catch (SWTException e) {
+						// expected - most likely unsupported file format
 					} finally {
 						contents.close();
 					}
@@ -79,13 +82,14 @@ public class Preview {
 		};
 		scaledImageData.addChangeListener(new IChangeListener() {
 			public void handleChange(ChangeEvent event) {
+				ImageData imageData = (ImageData) scaledImageData.getValue();
+				if (imageData == null)
+					return;
 				if (currentImage != null) {
 					currentImage.dispose();
 					currentImage = null;
 				}
-				ImageData imageData = (ImageData) scaledImageData.getValue();
-				currentImage = imageData == null ? null : new Image(
-						parent.getDisplay(), imageData);
+				currentImage = new Image(parent.getDisplay(), imageData);
 				parent.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						parent.redraw();

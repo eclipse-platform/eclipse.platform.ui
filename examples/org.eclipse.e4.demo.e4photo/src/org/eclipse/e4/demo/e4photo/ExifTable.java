@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 public class ExifTable {
 
 	private WritableList inputList;
+	private IContainer input;
 
 	public ExifTable(Composite parent, final IEclipseContext outputContext) {
 		parent.setLayout(new FillLayout());
@@ -65,14 +66,21 @@ public class ExifTable {
 		viewer.setInput(inputList);
 	}
 
-	public void setInput(IContainer input) {
-		if (input == null) {
+	public void setInput(IResource selection) {
+		if (selection == null)
 			return;
-		}
-
+		IContainer newInput;
+		if (selection instanceof IContainer)
+			newInput = (IContainer)selection;
+		else
+			newInput = selection.getParent();
+		if (newInput == input)
+			return;
+		input = newInput;
+			
 		inputList.clear();
 		try {
-			IResource[] members = ((IContainer) input).members();
+			IResource[] members = input.members();
 			for (int i = 0; i < members.length; i++) {
 				IResource resource = members[i];
 				if (resource.getType() == IResource.FILE) {
