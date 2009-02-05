@@ -90,6 +90,21 @@ public abstract class DisplayHelper {
 	 * <code>Display.sleep()</code> is never invoked.
 	 * </p>
 	 * 
+	 * @param millis the timeout in milliseconds
+	 */
+	public static void sleep(long millis) {
+		sleep(Display.getCurrent(), millis);
+	}
+	
+	/**
+	 * Call {@link Display#sleep()} and run the event loop until the given
+	 * timeout has elapsed.
+	 * <p>
+	 * If <code>timeout &lt; 0</code>, nothing happens. If
+	 * <code>timeout == 0</code>, the event loop is driven exactly once, but
+	 * <code>Display.sleep()</code> is never invoked.
+	 * </p>
+	 * 
 	 * @param display the display to run the event loop of
 	 * @param millis the timeout in milliseconds
 	 */
