@@ -7,19 +7,18 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 173735)
+ *     Matthew Hall - bug 262407
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.value;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.DuplexingObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.jface.util.Util;
 
 /**
  * @since 1.0
@@ -56,20 +55,8 @@ public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void test_getValue() throws Exception {
-		observable = new DuplexingObservableValue(list) {
-			protected Object coalesceElements(Collection elements) {
-				Iterator it = elements.iterator();
-				if (!it.hasNext())
-					return null;
-				Object first = it.next();
-				while (it.hasNext()) {
-					Object next = it.next();
-					if (!Util.equals(first, next))
-						return "<Multiple Values>";
-				}
-				return first;
-			}
-		};
+		observable = DuplexingObservableValue.withDefaults(list, null,
+				"<Multiple Values>");
 		assertNull(observable.getValue());
 		list.add("42");
 		assertEquals("Value should be \"42\"", "42", observable.getValue());

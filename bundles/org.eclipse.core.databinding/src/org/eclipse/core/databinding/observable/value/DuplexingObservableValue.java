@@ -7,22 +7,56 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 175735)
+ *     Matthew Hall - bug 262407
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.2
  */
 public abstract class DuplexingObservableValue extends AbstractObservableValue {
+	/**
+	 * Returns a DuplexingObservableValue implementation with predefined values
+	 * to use if the list is empty or contains multiple different values.
+	 * 
+	 * @param target
+	 *            the observable list
+	 * @param emptyValue
+	 *            the value to use when the target list is empty
+	 * @param multiValue
+	 *            the value to use when the target list contains multiple values
+	 *            that are not equivalent to eachother.
+	 * @return a DuplexingObservableValue implementation with predefined values
+	 *         to use if the list is empty or contains multiple different
+	 *         values.
+	 */
+	public static DuplexingObservableValue withDefaults(IObservableList target,
+			final Object emptyValue, final Object multiValue) {
+		return new DuplexingObservableValue(target) {
+			protected Object coalesceElements(Collection elements) {
+				if (elements.isEmpty())
+					return emptyValue;
+				Iterator it = elements.iterator();
+				Object first = it.next();
+				while (it.hasNext())
+					if (!Util.equals(first, it.next()))
+						return multiValue;
+				return first;
+			}
+		};
+	}
+
 	private IObservableList target;
 	private final Object valueType;
 

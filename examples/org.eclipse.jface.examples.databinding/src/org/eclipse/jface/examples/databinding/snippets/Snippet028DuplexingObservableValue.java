@@ -7,14 +7,13 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 175735)
+ *     Matthew Hall - bug 262407
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -28,7 +27,6 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -286,36 +284,20 @@ public class Snippet028DuplexingObservableValue {
 		IObservableList selections = ViewerProperties.multipleSelection()
 				.observe(viewer);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(title),
-				new StringDuplexingObservableValue(BeanProperties
-						.value("title").observeDetail(selections)));
+				DuplexingObservableValue.withDefaults(BeanProperties.value(
+						"title").observeDetail(selections), "",
+						"<Multiple titles>"));
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(releaseDate),
-				new StringDuplexingObservableValue(BeanProperties.value(
-						"releaseDate").observeDetail(selections)));
+				DuplexingObservableValue.withDefaults(BeanProperties.value(
+						"releaseDate").observeDetail(selections), "",
+						"<Multiple dates>"));
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(director),
-				new StringDuplexingObservableValue(BeanProperties.value(
-						"director").observeDetail(selections)));
+				DuplexingObservableValue.withDefaults(BeanProperties.value(
+						"director").observeDetail(selections), "",
+						"<Multiple directors>"));
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(writer),
-				new StringDuplexingObservableValue(BeanProperties.value(
-						"writer").observeDetail(selections)));
-	}
-
-	private static class StringDuplexingObservableValue extends
-			DuplexingObservableValue {
-
-		public StringDuplexingObservableValue(IObservableList target) {
-			super(target);
-		}
-
-		protected Object coalesceElements(Collection elements) {
-			Iterator it = elements.iterator();
-			if (!it.hasNext())
-				return "";
-			Object first = it.next();
-			while (it.hasNext()) {
-				if (!Util.equals(first, it.next()))
-					return "<Multiple values>";
-			}
-			return first;
-		}
+				DuplexingObservableValue.withDefaults(BeanProperties.value(
+						"writer").observeDetail(selections), "",
+						"<Multiple writers>"));
 	}
 }
