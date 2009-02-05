@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Boris Bokowski - initial API and implementation (bug 218269)
- *     Matthew Hall - bug 218269
+ *     Matthew Hall - bugs 218269, 146906
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -15,6 +15,7 @@ package org.eclipse.core.databinding;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * A validation status provider tracks the state of zero or more target
@@ -29,23 +30,28 @@ public abstract class ValidationStatusProvider {
 	protected boolean disposed = false;
 
 	/**
-	 * @return an observable value containing the current validation status
+	 * @return an {@link IObservableValue}&lt; {@link IStatus} &gt; containing
+	 *         the current validation status
 	 */
 	public abstract IObservableValue getValidationStatus();
 
 	/**
-	 * Returns the list of target observables (if any) that are being tracked by
-	 * this validation status provider.
+	 * Returns an {@link IObservableList} &lt; {@link IObservable} &gt;
+	 * containing the target observables (if any) that are being tracked by this
+	 * validation status provider.
 	 * 
-	 * @return an observable list of target {@link IObservable}s (may be empty)
+	 * @return an {@link IObservableList} &lt; {@link IObservable} &gt; (may be
+	 *         empty)
 	 */
 	public abstract IObservableList getTargets();
 
 	/**
-	 * Returns the model observables (if any) that are being tracked by this
+	 * Returns an {@link IObservableList} &lt; {@link IObservable} &gt;
+	 * containing the model observables (if any) that are being tracked by this
 	 * validation status provider.
 	 * 
-	 * @return an observable list of model {@link IObservable}s (may be empty)
+	 * @return an {@link IObservableList} &lt; {@link IObservable} &gt; (may be
+	 *         empty)
 	 */
 	public abstract IObservableList getModels();
 

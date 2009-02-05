@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 159539, 140644, 159940, 116920, 159768
- *     Matthew Hall - bugs 118516, 124684, 218269, 260329, 252732
+ *     Matthew Hall - bugs 118516, 124684, 218269, 260329, 252732, 146906
  *     Boris Bokowski - bug 218269
  *******************************************************************************/
 package org.eclipse.core.databinding;
@@ -367,20 +367,24 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an unmodifiable observable list with elements of type
-	 * {@link Binding}, ordered by time of addition.
+	 * Returns an unmodifiable {@link IObservableList} &lt; {@link Binding} &gt;
+	 * of all bindings in order by time of addition.
 	 * 
-	 * @return the observable list containing all bindings
+	 * @return an unmodifiable {@link IObservableList} &lt; {@link Binding} &gt;
+	 *         of all bindings
 	 */
 	public final IObservableList getBindings() {
 		return unmodifiableBindings;
 	}
 
 	/**
-	 * Returns an unmodifiable observable list with elements of type
-	 * {@link ValidationStatusProvider}, ordered by time of addition.
+	 * Returns an unmodifiable an unmodifiable {@link IObservableList} &lt;
+	 * {@link ValidationStatusProvider} &gt; of all validation status providers
+	 * in order by time of addition.
 	 * 
-	 * @return the observable list containing all bindings
+	 * @return an unmodifiable {@link IObservableList} &lt;
+	 *         {@link ValidationStatusProvider} &gt; of all validation status
+	 *         providers
 	 * @since 1.1
 	 */
 	public final IObservableList getValidationStatusProviders() {
@@ -388,10 +392,10 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an observable map from bindings (type: {@link Binding}) to
-	 * statuses (type: {@link IStatus}). The keys of the map are the bindings
-	 * returned by {@link #getBindings()}, and the values are the current
-	 * validaion status objects for each binding.
+	 * Returns an {@link IObservableMap} &lt; {@link Binding}, {@link IStatus}
+	 * &gt; mapping from bindings to current validation statuses. The keys of the
+	 * map are the bindings returned by {@link #getBindings()}, and the values
+	 * are the current IStatus objects for each binding.
 	 * 
 	 * @return the observable map from bindings to status objects.
 	 * 

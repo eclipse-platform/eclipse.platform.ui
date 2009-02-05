@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 159768
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 218269, 254524
+ *     Matthew Hall - bug 218269, 254524, 146906
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -21,7 +21,6 @@ import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
  * This abstract class represents a binding between a model and a target. Newly
@@ -93,11 +92,6 @@ public abstract class Binding extends ValidationStatusProvider {
 	protected abstract void postInit();
 
 	/**
-	 * @return an observable value containing the current validation status
-	 */
-	public abstract IObservableValue getValidationStatus();
-
-	/**
 	 * Updates the model's state from the target's state at the next reasonable
 	 * opportunity. There is no guarantee that the state will have been updated
 	 * by the time this call returns.
@@ -155,30 +149,28 @@ public abstract class Binding extends ValidationStatusProvider {
 	}
 
 	/**
-	 * @return target observable
+	 * Returns the target observable
+	 * 
+	 * @return the target observable
 	 */
 	public IObservable getTarget() {
 		return target;
 	}
 
-	/**
-	 * @since 1.1
-	 */
 	public IObservableList getTargets() {
 		return Observables.staticObservableList(context.getValidationRealm(),
 				Collections.singletonList(target));
 	}
 
 	/**
-	 * @return model observable
+	 * Returns the model observable
+	 * 
+	 * @return the model observable
 	 */
 	public IObservable getModel() {
 		return model;
 	}
 
-	/**
-	 * @since 1.1
-	 */
 	public IObservableList getModels() {
 		return Observables.staticObservableList(context.getValidationRealm(),
 				Collections.singletonList(model));
