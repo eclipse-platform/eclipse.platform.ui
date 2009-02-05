@@ -132,11 +132,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		}
 
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((fContent == null) ? 0 : fContent.hashCode());
-			return result;
+			return getContent().hashCode();
 		}
 	}
 	
