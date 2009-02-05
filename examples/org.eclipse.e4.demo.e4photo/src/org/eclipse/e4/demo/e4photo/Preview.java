@@ -40,7 +40,7 @@ public class Preview {
 	
 	public Preview(final Composite parentComposite, Realm backgroundRealm) {
 		this.parent = parentComposite;
-		parent.setData("id", "preview");
+		parent.setData("org.eclipse.e4.ui.css.id", "preview");
 
 		this.bgRealm = backgroundRealm;
 		this.inputFile = new WritableValue(bgRealm);
