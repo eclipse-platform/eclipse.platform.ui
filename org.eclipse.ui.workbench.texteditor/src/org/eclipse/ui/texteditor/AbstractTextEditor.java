@@ -3493,6 +3493,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 
 			private boolean isLocationSelected(Point point) {
+				// FIXME: https://bugs.eclipse.org/bugs/show_bug.cgi?id=260922
+				if (isBlockSelectionModeEnabled())
+					return false;
+
 				int offset= st.getOffsetAtLocation(point);
 				Point p= st.getLocationAtOffset(offset);
 				if (p.x > point.x)
