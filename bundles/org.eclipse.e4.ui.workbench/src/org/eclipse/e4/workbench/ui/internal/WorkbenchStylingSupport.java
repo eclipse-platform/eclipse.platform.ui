@@ -12,26 +12,30 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 //import java.io.InputStream;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  *
  */
 public class WorkbenchStylingSupport {
 
-	static void initializeStyling(Display display, String cssURI) {
+	static void initializeStyling(Display display, String cssURI, IEclipseContext appContext) {
 		// Instantiate SWT CSS Engine
 		try {
 			Class engineClass = Class
 					.forName("org.eclipse.e4.ui.css.nebula.engine.CSSNebulaEngineImpl"); //$NON-NLS-1$
 			Constructor ctor = engineClass.getConstructor(new Class[] { Display.class,
 					Boolean.TYPE });
-			Object engine = ctor.newInstance(new Object[] { display, Boolean.TRUE });
+			final Object engine = ctor.newInstance(new Object[] { display, Boolean.TRUE });
 			display.setData("org.eclipse.e4.ui.css.core.engine", engine); //$NON-NLS-1$
 
 			Class errorHandlerClass = Class
@@ -46,11 +50,35 @@ public class WorkbenchStylingSupport {
 			URL url = FileLocator.resolve(new URL(cssURI.toString()));
 			display.setData("org.eclipse.e4.ui.css.core.cssURL", url); //$NON-NLS-1$		
 
-//			InputStream stream = url.openStream();
-//			Method parseStyleSheet = engineClass.getMethod(
-//					"parseStyleSheet", new Class[] { InputStream.class }); //$NON-NLS-1$
-//			parseStyleSheet.invoke(engine, new Object[] { stream });
-//			stream.close();
+			InputStream stream = url.openStream();
+			Method parseStyleSheet = engineClass.getMethod(
+					"parseStyleSheet", new Class[] { InputStream.class }); //$NON-NLS-1$
+			parseStyleSheet.invoke(engine, new Object[] { stream });
+			stream.close();
+
+			final Method applyStyles = engineClass.getMethod(
+					"applyStyles", new Class[] { Object.class, Boolean.TYPE }); //$NON-NLS-1$
+			appContext.set(IStylingEngine.class.getName(),
+					new IStylingEngine() {
+						public void setClassname(Object widget, String classname) {
+							((Widget)widget).setData("org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+							try {
+								applyStyles.invoke(engine, new Object[]{widget, Boolean.TRUE});
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+
+						public void setId(Object widget, String id) {
+							((Widget)widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+							try {
+								applyStyles.invoke(engine, new Object[]{widget, Boolean.TRUE});
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+
 		} catch (Throwable e) {
 			System.err.println("Warning - could not initialize CSS styling (but the applicationCSS property has a value) : " + e.toString()); //$NON-NLS-1$
 		}

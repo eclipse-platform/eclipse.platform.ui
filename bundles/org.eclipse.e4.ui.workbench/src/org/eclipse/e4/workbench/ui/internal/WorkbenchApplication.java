@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.WorkbenchFactory;
 import org.eclipse.emf.common.util.URI;
@@ -68,11 +70,12 @@ public class WorkbenchApplication implements IApplication {
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				try {
+					IEclipseContext appContext = EclipseContextFactory.create("application"); //$NON-NLS-1$
 					if (cssURI != null) {
-						WorkbenchStylingSupport.initializeStyling(display, cssURI);
+						WorkbenchStylingSupport.initializeStyling(display, cssURI, appContext);
 					}
 					IWorkbench wb = workbenchFactory
-							.create(initialWorkbenchDefinitionInstance);
+							.create(initialWorkbenchDefinitionInstance, appContext);
 					wb.run();
 				} catch (ThreadDeath th) {
 					throw th;

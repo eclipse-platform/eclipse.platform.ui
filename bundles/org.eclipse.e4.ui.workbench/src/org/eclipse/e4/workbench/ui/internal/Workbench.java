@@ -94,7 +94,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 	private IEclipseContext globalContext;
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
-			PackageAdmin packageAdmin, URI workbenchXmiURI) {
+			PackageAdmin packageAdmin, URI workbenchXmiURI, IEclipseContext applicationContext) {
 
 		exceptionHandler = new ExceptionHandler();
 		this.registry = registry;
@@ -124,7 +124,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 				WorkbenchPackage.eINSTANCE);
 
 		processLanguages();
-		globalContext = createContext();
+		globalContext = createContext(applicationContext);
 		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
 			createWorkbenchModel(workbenchData.getAbsolutePath(),
 					workbenchXmiURI);
@@ -133,12 +133,12 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		}
 	}
 
-	private IEclipseContext createContext() {
+	private IEclipseContext createContext(IEclipseContext applicationContext) {
 		// Initialize Services
 		resourceUtility = new ResourceUtility(packageAdmin);
 
 		final IEclipseContext mainContext = EclipseContextFactory.create(
-				"globalContext", UIContextScheduler.instance); //$NON-NLS-1$
+				"globalContext", applicationContext, UIContextScheduler.instance); //$NON-NLS-1$
 
 		IConfigurationElement[] contributions = registry
 				.getConfigurationElementsFor("org.eclipse.e4.services"); //$NON-NLS-1$

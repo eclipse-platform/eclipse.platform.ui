@@ -3,10 +3,12 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -83,7 +85,7 @@ public class StackModelFactory extends SWTPartFactory {
 			int createFlags = 0;
 
 			// if(element instanceof View && ((View)element).isCloseable())
-			createFlags = createFlags | SWT.CLOSE;
+			//createFlags = createFlags | SWT.CLOSE;
 
 			CTabItem cti = findItemForPart(parentElement, element);
 			if (cti == null)
@@ -136,7 +138,7 @@ public class StackModelFactory extends SWTPartFactory {
 	}
 
 	private void hookChildControllerLogic(final MPart<?> parentElement,
-			final MPart<?> childElement, CTabItem cti) {
+			final MPart<?> childElement, final CTabItem cti) {
 		// Handle label changes
 		IObservableValue textObs = EMFObservables.observeValue(
 				(EObject) childElement,
@@ -149,6 +151,25 @@ public class StackModelFactory extends SWTPartFactory {
 				ApplicationPackage.Literals.MITEM__TOOLTIP);
 		ISWTObservableValue uiTTipObs = SWTObservables.observeTooltipText(cti);
 		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
+		
+		final IEclipseContext toplevelContext = getToplevelContext(childElement);
+		final IEclipseContext tabItemContext = getContext(childElement);
+		final IStylingEngine engine = (IStylingEngine) tabItemContext.get(IStylingEngine.class.getName());
+		tabItemContext.runAndTrack(new Runnable() {
+			public void run() {
+				IEclipseContext currentActive = toplevelContext;
+				while (currentActive.get("activeChild") != null && currentActive.get("activeChild") != currentActive) { //$NON-NLS-1$ //$NON-NLS-2$
+					currentActive = (IEclipseContext) currentActive.get("activeChild"); //$NON-NLS-1$
+				}
+				// System.out.println(cti.getText() + " is now " + ((currentActive == tabItemContext) ? "active" : "inactive"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+				
+				if (currentActive == tabItemContext) {
+					engine.setClassname(cti.getParent(), "active"); //$NON-NLS-1$
+				} else {
+					engine.setClassname(cti.getParent(), "inactive"); //$NON-NLS-1$
+				}
+			}
+		}, ""); //$NON-NLS-1$
 
 		// Handle tab item image changes
 		((EObject) childElement).eAdapters().add(new AdapterImpl() {

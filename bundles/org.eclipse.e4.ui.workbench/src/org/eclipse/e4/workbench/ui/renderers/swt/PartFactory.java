@@ -174,4 +174,15 @@ public abstract class PartFactory {
 		}
 		return getContextForParent(part);
 	}
+
+	protected IEclipseContext getToplevelContext(MPart<?> part) {
+		IEclipseContext result = null;
+		if (part.getParent() != null) {
+			result = getToplevelContext(part.getParent());
+		}
+		if (result == null) {
+			result = part.getContext();
+		}
+		return result;
+	}
 }

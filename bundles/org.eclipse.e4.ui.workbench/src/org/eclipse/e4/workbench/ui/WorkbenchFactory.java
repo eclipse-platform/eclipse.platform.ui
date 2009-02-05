@@ -12,6 +12,7 @@
 package org.eclipse.e4.workbench.ui;
 
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -29,7 +30,9 @@ public class WorkbenchFactory {
 		this.registry = registry;
 	}
 
-	public IWorkbench create(URI initialWorkbenchDefinitionInstance) {
-		return new Workbench(location, registry, packageAdmin, initialWorkbenchDefinitionInstance);
+	public IWorkbench create(URI initialWorkbenchDefinitionInstance,
+			IEclipseContext applicationContext) {
+		return new Workbench(location, registry, packageAdmin,
+				initialWorkbenchDefinitionInstance, applicationContext);
 	}
 }
