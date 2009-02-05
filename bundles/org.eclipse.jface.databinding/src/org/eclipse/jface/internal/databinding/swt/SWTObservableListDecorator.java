@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation
+ *     Matthew Hall - bug 190881
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -43,7 +44,7 @@ public class SWTObservableListDecorator extends DecoratingObservableList
 		}
 	};
 
-	public void dispose() {
+	public synchronized void dispose() {
 		this.widget = null;
 		super.dispose();
 	}

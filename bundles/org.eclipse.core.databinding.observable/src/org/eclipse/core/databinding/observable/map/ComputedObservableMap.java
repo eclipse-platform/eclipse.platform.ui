@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 241585, 247394, 226289, 194734
+ *     Matthew Hall - bugs 241585, 247394, 226289, 194734, 190881
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -175,10 +175,16 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 		fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue, newValue));
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	public Object getKeyType() {
 		return keySet.getElementType();
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	public Object getValueType() {
 		return valueType;
 	}

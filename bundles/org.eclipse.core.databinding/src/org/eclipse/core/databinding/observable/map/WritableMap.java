@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bugs 184830, 233306, 226289
+ *     Matthew Hall - bugs 184830, 233306, 226289, 190881
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -81,10 +81,16 @@ public class WritableMap extends ObservableMap {
 		this.valueType = valueType;
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	public Object getKeyType() {
 		return keyType;
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	public Object getValueType() {
 		return valueType;
 	}

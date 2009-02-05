@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 256543
+ *     Matthew Hall - bug 256543, 190881
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -131,7 +131,7 @@ public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
 		return decorated.isStale();
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		if (decorated != null) {
 			decorated.dispose();
 			decorated = null;

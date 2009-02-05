@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 233306, 226289
+ *     Matthew Hall - bug 233306, 226289, 190881
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.map;
 
@@ -294,10 +294,16 @@ public class CompositeMap extends ObservableMap {
 		}
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	public Object getKeyType() {
 		return firstMap.getKeyType();
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	public Object getValueType() {
 		return secondMap.getValueType();
 	}
