@@ -1,12 +1,24 @@
 CTabFolder {
 	font: Verdana 8px;
-	color: #808080;
+	color: #666666;
 	background-color: #ffffff;
+	font: normal;
 }
 
 CTabFolder:selected {
-	color: #666666;
 	background-color: #f4f4f4;
+	font: normal;
+}
+
+CTabFolder.active {
+	background-color: #ffffff;
+	font: normal;
+}
+
+CTabFolder.active:selected {
+	color: #ff5500;
+	background-color: #f4f4f4;
+	font: bold;
 }
 
 #library {
