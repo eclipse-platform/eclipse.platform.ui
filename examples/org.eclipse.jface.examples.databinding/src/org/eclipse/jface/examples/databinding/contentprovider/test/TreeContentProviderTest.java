@@ -7,17 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 263693
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.core.internal.databinding.observable.tree.IUnorderedTreeProvider;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.provisional.viewers.UnorderedTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -119,8 +121,8 @@ public class TreeContentProviderTest {
 		// SimpleNodes as top-level nodes, and sets of randomly generated
 		// Doubles below each
 		// SimpleNode.
-		IUnorderedTreeProvider treeProvider = new IUnorderedTreeProvider() {
-			public IObservableSet createChildSet(Object element) {
+		IObservableFactory childrenFactory = new IObservableFactory() {
+			public IObservable createObservable(Object element) {
 				// If the parent is the root node, return the union of some
 				// randomly-generated
 				// nodes and some hardcoded nodes
@@ -150,11 +152,6 @@ public class TreeContentProviderTest {
 				// Otherwise the node is a Double, which will have no children
 				return null;
 			}
-
-			public Realm getRealm() {
-				// TODO Auto-generated method stub
-				return null;
-			}
 		};
 
 		// Label provider for the tree
@@ -179,8 +176,8 @@ public class TreeContentProviderTest {
 
 		// UpdatableTreeContentProvider converts an ITreeProvider into a
 		// standard JFace content provider
-		UnorderedTreeContentProvider contentProvider = new UnorderedTreeContentProvider(
-				treeProvider, "pending...", false);
+		ObservableSetTreeContentProvider contentProvider = new ObservableSetTreeContentProvider(
+				childrenFactory, null);
 
 		tree.setContentProvider(contentProvider);
 		tree.setLabelProvider(labelProvider);

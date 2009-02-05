@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bugs 226765, 239015, 222991
+ *     Matthew Hall - bugs 226765, 239015, 222991, 263693
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -483,7 +483,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 			if (element != null) {
 				elementNodes.remove(element);
 			}
-			if (children != null) {
+			if (children != null && !children.isDisposed()) {
 				for (Iterator iterator = children.iterator(); iterator
 						.hasNext();) {
 					TreeNode child = getExistingNode(iterator.next());

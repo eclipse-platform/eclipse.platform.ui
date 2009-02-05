@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 263693
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -35,6 +36,7 @@ import org.eclipse.core.databinding.observable.map.MapDiff;
  * 
  * @since 1.0
  * 
+ * @deprecated This class is deprecated.
  */
 public class MappedSet extends ObservableSet {
 

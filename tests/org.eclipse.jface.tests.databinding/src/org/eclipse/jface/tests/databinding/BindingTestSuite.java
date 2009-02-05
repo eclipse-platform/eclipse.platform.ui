@@ -15,7 +15,7 @@
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
  *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
- *                    255734
+ *                    255734, 263693
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -79,7 +79,6 @@ import org.eclipse.core.tests.internal.databinding.BindingStatusTest;
 import org.eclipse.core.tests.internal.databinding.IdentityMapTest;
 import org.eclipse.core.tests.internal.databinding.IdentitySetTest;
 import org.eclipse.core.tests.internal.databinding.QueueTest;
-import org.eclipse.core.tests.internal.databinding.RandomAccessListIteratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableListDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableSetDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.beans.BeanObservableValueDecoratorTest;
@@ -288,7 +287,6 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(BindingStatusTest.class);
 		addTestSuite(IdentityMapTest.class);
 		addTestSuite(IdentitySetTest.class);
-		addTestSuite(RandomAccessListIteratorTest.class);
 		addTestSuite(QueueTest.class);
 
 		// org.eclipse.core.tests.internal.databinding.conversion
