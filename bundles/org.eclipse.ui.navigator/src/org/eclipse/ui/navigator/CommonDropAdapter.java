@@ -194,7 +194,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			TransferData theTransferData) {
 
 		if (Policy.DEBUG_DND) {
-			System.out.println("CommonDropAdapter.validateDrop (begin) operation: " + theDropOperation); //$NON-NLS-1$
+			System.out.println("CommonDropAdapter.validateDrop (begin) operation: " + theDropOperation + " target: " + aDropTarget); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		boolean result = false;
