@@ -11,7 +11,7 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.io.InputStream;
+//import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -32,6 +32,8 @@ public class WorkbenchStylingSupport {
 			Constructor ctor = engineClass.getConstructor(new Class[] { Display.class,
 					Boolean.TYPE });
 			Object engine = ctor.newInstance(new Object[] { display, Boolean.TRUE });
+			display.setData("org.eclipse.e4.ui.css.core.engine", engine); //$NON-NLS-1$
+
 			Class errorHandlerClass = Class
 					.forName("org.eclipse.e4.ui.css.core.engine.CSSErrorHandler"); //$NON-NLS-1$
 			Method setErrorHandler = engineClass.getMethod(
@@ -42,12 +44,13 @@ public class WorkbenchStylingSupport {
 					.newInstance() });
 
 			URL url = FileLocator.resolve(new URL(cssURI.toString()));
-			InputStream stream = url.openStream();
+			display.setData("org.eclipse.e4.ui.css.core.cssURL", url); //$NON-NLS-1$		
 
-			Method parseStyleSheet = engineClass.getMethod(
-					"parseStyleSheet", new Class[] { InputStream.class }); //$NON-NLS-1$
-			parseStyleSheet.invoke(engine, new Object[] { stream });
-			stream.close();
+//			InputStream stream = url.openStream();
+//			Method parseStyleSheet = engineClass.getMethod(
+//					"parseStyleSheet", new Class[] { InputStream.class }); //$NON-NLS-1$
+//			parseStyleSheet.invoke(engine, new Object[] { stream });
+//			stream.close();
 		} catch (Throwable e) {
 			System.err.println("Warning - could not initialize CSS styling (but the applicationCSS property has a value) : " + e.toString()); //$NON-NLS-1$
 		}

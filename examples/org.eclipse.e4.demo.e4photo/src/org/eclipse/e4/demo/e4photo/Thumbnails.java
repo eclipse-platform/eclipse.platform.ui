@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IBackgroundRunner;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
@@ -141,6 +142,12 @@ public class Thumbnails {
 				Image image = new Image(gallery.getDisplay(), scaled);
 				item.setImage(image);
 				item.setData(file);
+				
+				//Required for bug #260406
+				CSSSWTEngineImpl engine = (CSSSWTEngineImpl) gallery.getDisplay().getData("org.eclipse.e4.ui.css.core.engine");
+				if(engine != null)
+					engine.applyStyles(item, true);
+		
 				gallery.redraw();
 			} catch (SWTException ex) {
 			} finally {
