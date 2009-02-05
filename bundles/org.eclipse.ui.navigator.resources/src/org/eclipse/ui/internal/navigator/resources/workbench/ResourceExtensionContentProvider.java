@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,19 +17,17 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * @since 3.2
  */
 public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
@@ -68,7 +66,20 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		return element instanceof IContainer && super.hasChildren(element);
+		try {
+			if (element instanceof IContainer) {
+				IContainer c = (IContainer) element;
+				if (!c.isAccessible())
+					return false;
+				return c.members().length > 0;
+			}
+		} catch (CoreException ex) {
+			WorkbenchNavigatorPlugin.getDefault().getLog().log(
+					new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, 0, ex.getMessage(), ex));
+			return false;
+		}
+
+		return super.hasChildren(element);
 	}
 	
 	/* (non-Javadoc)
