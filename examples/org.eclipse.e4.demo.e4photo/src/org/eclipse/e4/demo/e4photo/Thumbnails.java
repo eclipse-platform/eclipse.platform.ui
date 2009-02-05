@@ -151,6 +151,7 @@ public class Thumbnails {
 				item.setImage(image);
 				item.setData(file);
 				
+				// Workaround until bug 260406 is fixed:
 				stylingEngine.setId(item, null);
 		
 				gallery.redraw();
