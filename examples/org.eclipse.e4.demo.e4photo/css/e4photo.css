@@ -1,5 +1,5 @@
 CTabFolder {
-	font: Verdana 12px;
+	font: Verdana 8px;
 	color: #808080;
 	background-color: #ffffff;
 }
@@ -13,7 +13,7 @@ CTabFolder:selected {
 	background-color: #f4f4f4;
 }
 
-CTabFolder Composite {
+CTabFolder Gallery GalleryItem {
 	background-color: #f4f4f4;
 }
 
@@ -22,20 +22,8 @@ CTabFolder Composite {
 	background-color: #ffffff;
 }
 
-GalleryItem {
-	background-color:#98cbbc;
-}
-
-GalleryItem.placeholder {
-	background-color:#e5e5e5;
-}
-
 GalleryItem:selected {
 	background-color: #ff884c;
-}
-
-Gallery {
-	background-color: #f4f4f4;
 }
 
 
@@ -71,10 +59,6 @@ Tree {
 	color: #666666;
 }
 
-Composite {
-	background-color: #ffffff;
-}
-
-Shell {
+Composite Shell {
 	background-color: #ffffff;
 }
