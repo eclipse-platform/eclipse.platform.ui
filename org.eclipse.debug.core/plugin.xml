@@ -106,6 +106,51 @@
             name="workspace_loc"
             resolver="org.eclipse.debug.internal.core.variables.WorkspaceResolver">
       </variable>      
+      <variable
+            name="project_loc"
+            description="%project_loc.description"
+            resolver="org.eclipse.debug.internal.core.variables.ProjectResolver">
+      </variable>
+      <variable
+            name="project_path"
+            description="%project_path.description"
+            resolver="org.eclipse.debug.internal.core.variables.ProjectResolver">
+      </variable>
+      <variable
+            name="project_name"
+            description="%project_name.description"
+            resolver="org.eclipse.debug.internal.core.variables.ProjectResolver">
+      </variable>
+      <variable
+            name="resource_loc"
+            description="%resource_loc.description"
+            resolver="org.eclipse.debug.internal.core.variables.ResourceResolver">
+      </variable>
+      <variable
+            name="resource_path"
+            description="%resource_path.description"
+            resolver="org.eclipse.debug.internal.core.variables.ResourceResolver">
+      </variable>
+      <variable
+            name="resource_name"
+            description="%resource_name.description"
+            resolver="org.eclipse.debug.internal.core.variables.ResourceResolver">
+      </variable>
+      <variable
+            name="container_loc"
+            description="%container_loc.description"
+            resolver="org.eclipse.debug.internal.core.variables.ContainerResolver">
+      </variable>
+      <variable
+            name="container_path"
+            description="%container_path.description"
+            resolver="org.eclipse.debug.internal.core.variables.ContainerResolver">
+      </variable>
+      <variable
+            name="container_name"
+            description="%container_name.description"
+            resolver="org.eclipse.debug.internal.core.variables.ContainerResolver">
+      </variable>      
    </extension>
    
 <!-- ====================== -->

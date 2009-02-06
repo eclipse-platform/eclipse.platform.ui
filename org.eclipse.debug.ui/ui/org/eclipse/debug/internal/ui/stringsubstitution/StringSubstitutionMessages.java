@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -36,11 +36,9 @@ public class StringSubstitutionMessages extends NLS {
 	public static String RefreshTab_40;
 	public static String RefreshTab_42;
 
-	public static String ResourceResolver_6;
-	public static String ResourceResolver_7;
-	public static String ResourceResolver_8;
-
 	public static String ResourceSelector_0;
+
+	public static String SelectedResourceResolver_0;
 
 	public static String StringPromptExpander_0;
 

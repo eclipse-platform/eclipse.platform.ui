@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.stringsubstitution;
+package org.eclipse.debug.internal.core.variables;
 
 import java.io.File;
 import java.net.URI;
@@ -24,15 +24,17 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.core.DebugPlugin;
 
 import com.ibm.icu.text.MessageFormat;
 
 /**
  * Common function of variable resolvers.
+ * Moved to debug core in 3.5, existed in debug.iu since 3.0.
  * 
- * @since 3.0
+ * @since 3.5
  */
 public class ResourceResolver implements IDynamicVariableResolver {
 
@@ -52,7 +54,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 				return translateToValue(resource, variable);
 			}
 		}
-		abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_6, new String[]{getReferenceExpression(variable, argument)}), null);				 
+		abort(MessageFormat.format(Messages.ResourceResolver_0, new String[]{getReferenceExpression(variable, argument)}), null);
 		return null;
 	}
 	
@@ -106,22 +108,29 @@ public class ResourceResolver implements IDynamicVariableResolver {
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, message, exception));
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception));
 	}
 	
 	/**
-	 * Returns the selected resource.
+	 * Returns the selected resource. Uses the ${selected_resource_path} variable
+	 * to determine the selected resource. This variable is provided by the debug.ui
+	 * plug-in. Selected resource resolution is only available when the debug.ui
+	 * plug-in is present.
 	 * 
 	 * @param variable variable referencing a resource
 	 * @return selected resource
 	 * @throws CoreException if there is no selection
 	 */
 	protected IResource getSelectedResource(IDynamicVariable variable) throws CoreException {
-		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
-		if (resource == null) {
-			abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_7, new String[]{getReferenceExpression(variable, null)}), null); 
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		try {
+			String pathString = manager.performStringSubstitution("${selected_resource_path}"); //$NON-NLS-1$
+			return ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(pathString));
+		} catch (CoreException e) {
+			// unable to resolve a selection
 		}
-		return resource;	
+		abort(MessageFormat.format(Messages.ResourceResolver_1, new String[]{getReferenceExpression(variable, null)}), null);
+		return null;	
 	}
 
 	/**
@@ -152,7 +161,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 		} else if (name.endsWith("_name")) { //$NON-NLS-1$
 			return resource.getName();
 		}
-		abort(MessageFormat.format(StringSubstitutionMessages.ResourceResolver_8, new String[]{getReferenceExpression(variable, null)}), null); 
+		abort(MessageFormat.format(Messages.ResourceResolver_2, new String[]{getReferenceExpression(variable, null)}), null);
 		return null;
 	}
 

@@ -2023,51 +2023,6 @@ M4 = Platform-specific fourth key
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
-            name="project_loc"
-            description="%project_loc.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver">
-      </variable>
-      <variable
-            name="project_path"
-            description="%project_path.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver">
-      </variable>
-      <variable
-            name="project_name"
-            description="%project_name.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver">
-      </variable>
-      <variable
-            name="resource_loc"
-            description="%resource_loc.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver">
-      </variable>
-      <variable
-            name="resource_path"
-            description="%resource_path.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver">
-      </variable>
-      <variable
-            name="resource_name"
-            description="%resource_name.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver">
-      </variable>
-      <variable
-            name="container_loc"
-            description="%container_loc.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver">
-      </variable>
-      <variable
-            name="container_path"
-            description="%container_path.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver">
-      </variable>
-      <variable
-            name="container_name"
-            description="%container_name.description"
-            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver">
-      </variable>
-      <variable
             name="string_prompt"
             description="%string_prompt.description"
             resolver="org.eclipse.debug.internal.ui.stringsubstitution.StringPrompt">
@@ -2092,6 +2047,21 @@ M4 = Platform-specific fourth key
             description="%selected_text.description"
             resolver="org.eclipse.debug.internal.ui.stringsubstitution.SelectedTextResolver">
       </variable>
+      <variable
+            name="selected_resource_loc"
+            description="%selected_resource_loc.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceResolver">
+      </variable>
+      <variable
+            name="selected_resource_path"
+            description="%selected_resource_path.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceResolver">
+      </variable>
+      <variable
+            name="selected_resource_name"
+            description="%selected_resource_name.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceResolver">
+      </variable>      
    </extension>
 <!-- String Variable Presentations -->
    <extension
