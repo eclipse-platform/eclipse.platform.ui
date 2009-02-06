@@ -304,12 +304,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		try {
 			int charStart = frame.getCharStart();
 			if (charStart >= 0) {
-				int length = 0;
-				int charEnd = frame.getCharEnd();
-				if (charEnd > 0) {
-					length = charEnd - charStart;
-				}
-				editor.selectAndReveal(charStart, length);
+				editor.selectAndReveal(charStart, 0);
 				return;
 			}
 			int lineNumber = frame.getLineNumber();
