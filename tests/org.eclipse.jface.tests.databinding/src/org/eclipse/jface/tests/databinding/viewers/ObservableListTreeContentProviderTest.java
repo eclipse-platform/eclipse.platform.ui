@@ -7,16 +7,19 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
+ *     Matthew Hall - bug 263956
  *******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.viewers;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -103,6 +106,59 @@ public class ObservableListTreeContentProviderTest extends
 		element.mutate();
 		children.remove(element);
 		assertEquals(0, tree.getItemCount());
+	}
+
+	public void testInputChanged_ClearsKnownElements() {
+		input = new Object();
+		final Object input2 = new Object();
+		
+		final IObservableList children = new WritableList();
+		final IObservableList children2 = new WritableList();
+		initContentProvider(new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				if (target == input)
+					return children;
+				if (target == input2)
+					return children2;
+				return null;
+			}
+		});
+
+		Object element = new Object();
+		children.add(element);
+
+		IObservableSet knownElements = contentProvider.getKnownElements();
+		assertEquals(Collections.singleton(element), knownElements);
+		viewer.setInput(input2);
+		assertEquals(Collections.EMPTY_SET, knownElements);
+	}
+
+	public void testInputChanged_ClearsRealizedElements() {
+		input = new Object();
+		final Object input2 = new Object();
+		
+		final IObservableList children = new WritableList();
+		final IObservableList children2 = new WritableList();
+		initContentProvider(new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				if (target == input)
+					return children;
+				if (target == input2)
+					return children2;
+				return null;
+			}
+		});
+
+		// Realized elements must be allocated before adding the element
+		// otherwise we'd have to spin the event loop to see the new element
+		IObservableSet realizedElements = contentProvider.getRealizedElements();
+
+		Object element = new Object();
+		children.add(element);
+
+		assertEquals(Collections.singleton(element), realizedElements);
+		viewer.setInput(input2);
+		assertEquals(Collections.EMPTY_SET, realizedElements);
 	}
 
 	static class Mutable {

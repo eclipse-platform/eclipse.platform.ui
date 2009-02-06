@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bugs 226765, 239015, 222991, 263693
+ *     Matthew Hall - bugs 226765, 239015, 222991, 263693, 263956
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -138,6 +138,10 @@ public abstract class ObservableCollectionTreeContentProvider implements
 		}
 
 		setViewer(viewer);
+
+		knownElements.clear();
+		if (realizedElements != null)
+			realizedElements.clear();
 	}
 
 	private void setViewer(Viewer viewer) {

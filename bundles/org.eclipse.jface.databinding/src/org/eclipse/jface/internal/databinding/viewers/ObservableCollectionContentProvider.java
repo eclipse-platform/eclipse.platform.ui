@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
- *     Matthew Hall - bugs 226765, 222991, 238296
+ *     Matthew Hall - bugs 226765, 222991, 238296, 263956
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -182,6 +182,10 @@ public abstract class ObservableCollectionContentProvider implements
 			removeCollectionChangeListener(observableCollection);
 			observableCollection = null;
 		}
+
+		knownElements.clear();
+		if (realizedElements != null)
+			realizedElements.clear();
 
 		if (input != null) {
 			checkInput(input);

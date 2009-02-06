@@ -150,6 +150,7 @@ import org.eclipse.core.tests.internal.databinding.validation.StringToShortValid
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
 import org.eclipse.jface.tests.databinding.swt.WidgetPropertiesTest;
+import org.eclipse.jface.tests.databinding.viewers.ObservableListContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableListTreeContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
@@ -378,6 +379,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(WidgetPropertiesTest.class);
 
 		// org.eclipse.jface.tests.databinding.viewers
+		addTestSuite(ObservableListContentProviderTest.class);
 		addTestSuite(ObservableListTreeContentProviderTest.class);
 		addTestSuite(ObservableMapLabelProviderTest.class);
 		addTestSuite(ObservableSetContentProviderTest.class);
