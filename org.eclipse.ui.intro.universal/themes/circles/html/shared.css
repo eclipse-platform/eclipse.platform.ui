@@ -391,7 +391,8 @@ body, .page {
 #navigation-links a#samples:hover img,
 #navigation-links a#samples:active img,
 #navigation-links a#samples:focus img { 
-	background-image : url(../graphics/icons/ctool/sa_nav_hover.gif); 
+	background-image : url(../graphics/icons/ctool/sa_nav_hover.gif); 	
+	left: -1px;
 }
 
 #navigation-links a#whatsnew img { 
@@ -401,6 +402,7 @@ body, .page {
 #navigation-links a#whatsnew:focus img,
 #navigation-links a#whatsnew:active img { 
 	background-image : url(../graphics/icons/ctool/wn_nav_hover.gif); 
+	left: -1px;
 }
 
 #navigation-links a#migrate img { 
@@ -410,6 +412,7 @@ body, .page {
 #navigation-links a#migrate:focus img,
 #navigation-links a#migrate:active img { 
 	background-image : url(../graphics/icons/ctool/mi_nav_hover.gif); 
+	left: -1px;
 }
 
 #navigation-links a#webresources img { 
@@ -419,6 +422,7 @@ body, .page {
 #navigation-links a#webresources:focus img,
 #navigation-links a#webresources:active img { 
 	background-image : url(../graphics/icons/ctool/wr_nav_hover.gif); 
+	left: -1px;
 }
 
 #navigation-links a#workbench {
@@ -439,6 +443,7 @@ body, .page {
 	background-image : url(../graphics/icons/ctool/wb_nav_hover.gif); 
 	width : 51px;
 	height : 64px;
+	left: -1px;
 }
 
 #action-links a.high-contrast img,
