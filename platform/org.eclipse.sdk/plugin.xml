@@ -190,6 +190,26 @@
       <defaultEnablement
             id="org.eclipse.team.cvs">
       </defaultEnablement>
+       <activity
+             description="%activity.ant.desc"
+             id="org.eclipse.antDevelopment"
+             name="%activity.ant">
+       </activity>
+       <activityPatternBinding
+             activityId="org.eclipse.antDevelopment"
+             pattern="org\.eclipse\.ant\.ui/.*">
+       </activityPatternBinding>
+       <activityPatternBinding
+             activityId="org.eclipse.antDevelopment"
+             pattern="org\.eclipse\.ui\.externaltools/.*">
+       </activityPatternBinding>
+       <categoryActivityBinding
+             activityId="org.eclipse.antDevelopment"
+             categoryId="org.eclipse.categories.developmentCategory">
+       </categoryActivityBinding>
+       <defaultEnablement
+             id="org.eclipse.antDevelopment">
+       </defaultEnablement>
    </extension>
    
    <extension
