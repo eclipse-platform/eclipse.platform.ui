@@ -265,7 +265,7 @@ public abstract class CommonDropAdapterAssistant {
 	}
 	
     /**
-     * Sets the {@Link CommonDropAdapter}.
+     * Sets the {@link CommonDropAdapter}.
      * @param dropAdapter 
      *
      * @noreference
@@ -276,7 +276,7 @@ public abstract class CommonDropAdapterAssistant {
 	}
 	
     /**
-     * Returns the {@Link CommonDropAdapter}.
+     * Returns the {@link CommonDropAdapter}.
      *
      * @return the CommonDropAdapter.
      * 
