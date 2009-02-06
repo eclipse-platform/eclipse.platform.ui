@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
 
-import org.eclipse.debug.examples.core.protocol.PDAEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAEvent;
 
 /**
  * Listeners are notified of events occurring in a PDA program
@@ -26,10 +26,10 @@ import org.eclipse.debug.examples.core.protocol.PDAEvent;
  * @see org.eclipse.debug.examples.core.protocol.PDAExited
  * @see org.eclipse.debug.examples.core.protocol.PDASuspended
  * @see org.eclipse.debug.examples.core.protocol.PDAResumed
- * @see org.eclipse.debug.examples.core.protocol.PDAUnimplementedInstructionEvent
- * @see org.eclipse.debug.examples.core.protocol.PDARegisterData
- * @see org.eclipse.debug.examples.core.protocol.PDANoSuchLabelEvent
- * @see org.eclipse.debug.examples.core.protocol.PDAEvalResultEvent
+ * @see org.eclipse.debug.examples.core.pda.protocol.PDAUnimplementedInstructionEvent
+ * @see org.eclipse.debug.examples.core.pda.protocol.PDARegisterData
+ * @see org.eclipse.debug.examples.core.pda.protocol.PDANoSuchLabelEvent
+ * @see org.eclipse.debug.examples.core.pda.protocol.PDAEvalResultEvent
  */
 public interface IPDAEventListener {
 	

@@ -18,7 +18,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.examples.core.protocol.PDAFrameData;
+import org.eclipse.debug.examples.core.pda.protocol.PDAFrameData;
 
 /**
  * PDA stack frame.

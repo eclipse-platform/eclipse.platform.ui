@@ -17,9 +17,9 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.examples.core.protocol.PDACommandResult;
-import org.eclipse.debug.examples.core.protocol.PDASetVarCommand;
-import org.eclipse.debug.examples.core.protocol.PDAVarCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDACommandResult;
+import org.eclipse.debug.examples.core.pda.protocol.PDASetVarCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVarCommand;
 
 /**
  * A variable in a PDA stack frame

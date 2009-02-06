@@ -23,12 +23,12 @@ import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 import org.eclipse.debug.examples.core.pda.model.IPDAEventListener;
 import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
 import org.eclipse.debug.examples.core.pda.model.PDAThread;
-import org.eclipse.debug.examples.core.protocol.PDAClearBreakpointCommand;
-import org.eclipse.debug.examples.core.protocol.PDAEvent;
-import org.eclipse.debug.examples.core.protocol.PDARunControlEvent;
-import org.eclipse.debug.examples.core.protocol.PDASetBreakpointCommand;
-import org.eclipse.debug.examples.core.protocol.PDASuspendedEvent;
-import org.eclipse.debug.examples.core.protocol.PDAVMSuspendedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAClearBreakpointCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDAEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDARunControlEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDASetBreakpointCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDASuspendedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendedEvent;
 
 
 /**

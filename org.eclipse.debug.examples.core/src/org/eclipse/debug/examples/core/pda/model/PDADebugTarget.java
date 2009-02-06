@@ -47,19 +47,19 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 import org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint;
 import org.eclipse.debug.examples.core.pda.breakpoints.PDARunToLineBreakpoint;
-import org.eclipse.debug.examples.core.protocol.PDACommand;
-import org.eclipse.debug.examples.core.protocol.PDACommandResult;
-import org.eclipse.debug.examples.core.protocol.PDAEvent;
-import org.eclipse.debug.examples.core.protocol.PDAEventStopCommand;
-import org.eclipse.debug.examples.core.protocol.PDAExitedEvent;
-import org.eclipse.debug.examples.core.protocol.PDAStartedEvent;
-import org.eclipse.debug.examples.core.protocol.PDATerminateCommand;
-import org.eclipse.debug.examples.core.protocol.PDAVMResumeCommand;
-import org.eclipse.debug.examples.core.protocol.PDAVMResumedEvent;
-import org.eclipse.debug.examples.core.protocol.PDAVMStartedEvent;
-import org.eclipse.debug.examples.core.protocol.PDAVMSuspendCommand;
-import org.eclipse.debug.examples.core.protocol.PDAVMSuspendedEvent;
-import org.eclipse.debug.examples.core.protocol.PDAVMTerminatedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDACommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDACommandResult;
+import org.eclipse.debug.examples.core.pda.protocol.PDAEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAEventStopCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDAExitedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAStartedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDATerminateCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVMResumeCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVMResumedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVMStartedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVMTerminatedEvent;
 
 
 /**

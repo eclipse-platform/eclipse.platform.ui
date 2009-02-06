@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IWatchpoint;
 import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
-import org.eclipse.debug.examples.core.protocol.PDAEvent;
-import org.eclipse.debug.examples.core.protocol.PDARunControlEvent;
-import org.eclipse.debug.examples.core.protocol.PDASuspendedEvent;
-import org.eclipse.debug.examples.core.protocol.PDAVMSuspendedEvent;
-import org.eclipse.debug.examples.core.protocol.PDAWatchCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDAEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDARunControlEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDASuspendedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDAWatchCommand;
 
 
 /**

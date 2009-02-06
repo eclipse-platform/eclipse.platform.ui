@@ -15,8 +15,8 @@ package org.eclipse.debug.examples.core.pda.model;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.examples.core.protocol.PDAChildrenCommand;
-import org.eclipse.debug.examples.core.protocol.PDAListResult;
+import org.eclipse.debug.examples.core.pda.protocol.PDAChildrenCommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDAListResult;
 
 /**
  * Value of a PDA variable.

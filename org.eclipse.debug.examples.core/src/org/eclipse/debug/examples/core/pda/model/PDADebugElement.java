@@ -18,8 +18,8 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.DebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
-import org.eclipse.debug.examples.core.protocol.PDACommand;
-import org.eclipse.debug.examples.core.protocol.PDACommandResult;
+import org.eclipse.debug.examples.core.pda.protocol.PDACommand;
+import org.eclipse.debug.examples.core.pda.protocol.PDACommandResult;
 
 
 /**
@@ -50,38 +50,38 @@ public class PDADebugElement extends DebugElement {
      * @return reply
      * @throws DebugException if the request fails
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDATerminateCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAVMSuspendCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAVMResumeCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDATerminateCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAVMSuspendCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAVMResumeCommand
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDASuspendCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAResumeCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAStepCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDADropFrameCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDASuspendCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAResumeCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAStepCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDADropFrameCommand
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDASetBreakpointCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAClearBreakpointCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAWatchCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDASetBreakpointCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAClearBreakpointCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAWatchCommand
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDADataCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDASetDataCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAPopDataCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAPushDataCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDADataCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDASetDataCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAPopDataCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAPushDataCommand
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDAEvalCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAEvalCommand
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDAEventStopCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAEventStopCommand
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDAStackCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAStackDepthCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAFrameCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAStackCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAStackDepthCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAFrameCommand
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDASetVarCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAVarCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDAChildrenCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDASetVarCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAVarCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAChildrenCommand
      * 
-     * @see org.eclipse.debug.examples.core.protocol.PDAGroupsCommand
-     * @see org.eclipse.debug.examples.core.protocol.PDARegistersCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDAGroupsCommand
+     * @see org.eclipse.debug.examples.core.pda.protocol.PDARegistersCommand
      * 
      * @since 3.5
      */ 
