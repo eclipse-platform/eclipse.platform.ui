@@ -7,16 +7,27 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bugs 195222, 263868
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.map.IMapProperty;
+import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.internal.databinding.property.list.SelfListProperty;
+import org.eclipse.core.internal.databinding.property.map.SelfMapProperty;
+import org.eclipse.core.internal.databinding.property.set.SelfSetProperty;
+import org.eclipse.core.internal.databinding.property.value.SelfValueProperty;
 
 /**
  * Contains static methods to operate on or return IProperty objects.
@@ -67,5 +78,64 @@ public class Properties {
 		for (int i = 0; i < maps.length; i++)
 			maps[i] = properties[i].observeDetail(domainMap);
 		return maps;
+	}
+
+	/**
+	 * Returns a value property which takes the source object itself as the
+	 * property value. This property may be used to wrap an object in an
+	 * unmodifiable {@link IObservableValue}.
+	 * 
+	 * @param valueType
+	 *            the value type of the property
+	 * @return a value property which takes the source object itself as the
+	 *         property value.
+	 */
+	public static IValueProperty selfValue(final Object valueType) {
+		return new SelfValueProperty(valueType);
+	}
+
+	/**
+	 * Returns a list property which takes the source object (a {@link List}) as
+	 * the property list. This property may be used to wrap an arbitrary List
+	 * instance in an {@link IObservableList}.
+	 * 
+	 * @param elementType
+	 *            the element type of the property
+	 * @return a list property which takes the source object (a {@link List}) as
+	 *         the property list.
+	 */
+	public static IListProperty selfList(final Object elementType) {
+		return new SelfListProperty(elementType);
+	}
+
+	/**
+	 * Returns a set property which takes the source object (a {@link Set}) as
+	 * the property set. This property may be used to wrap an arbitrary Set
+	 * instance in an {@link IObservableSet}.
+	 * 
+	 * @param elementType
+	 *            the element type of the property
+	 * @return a set property which takes the source object (a {@link Set}) as
+	 *         the property set.
+	 */
+	public static ISetProperty selfSet(final Object elementType) {
+		return new SelfSetProperty(elementType);
+	}
+
+	/**
+	 * Returns a map property which takes the source object (a {@link Map}) as
+	 * the property map. This property may be used to wrap an arbitrary Map
+	 * instance in an {@link IObservableMap}.
+	 * 
+	 * @param keyType
+	 *            the key type of the property
+	 * @param valueType
+	 *            the value type of the property
+	 * @return a map property which takes the source object (a {@link Map} as
+	 *         the property map.
+	 */
+	public static IMapProperty selfMap(final Object keyType,
+			final Object valueType) {
+		return new SelfMapProperty(keyType, valueType);
 	}
 }
