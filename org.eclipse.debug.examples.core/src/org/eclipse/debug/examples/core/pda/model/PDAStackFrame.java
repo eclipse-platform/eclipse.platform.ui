@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.model;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -27,7 +28,7 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	private PDAThread fThread;
 	private String fName;
 	private int fPC;
-	private String fFileName;
+	private IPath fFilePath;
 	private int fId;
 	
 	/**
@@ -51,7 +52,7 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	 * @param data
 	 */
 	private void init(PDAFrameData data) {
-		fFileName = data.fFilePath.lastSegment();
+		fFilePath = data.fFilePath;
 		fPC = data.fPC + 1;
 		fName = data.fFunction;
 		IVariable[] vars = new IVariable[data.fVariables.length];
@@ -91,6 +92,7 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	public int getCharStart() throws DebugException {
 		return -1;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharEnd()
 	 */
@@ -214,7 +216,7 @@ public class PDAStackFrame extends PDADebugElement implements IStackFrame {
 	 * with
 	 */
 	public String getSourceName() {
-		return fFileName;
+		return fFilePath.lastSegment();
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
