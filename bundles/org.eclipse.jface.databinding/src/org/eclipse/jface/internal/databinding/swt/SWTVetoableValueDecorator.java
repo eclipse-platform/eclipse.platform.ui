@@ -7,21 +7,14 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 256543, 190881
+ *     Matthew Hall - bug 256543, 190881, 263691
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IDecoratingObservable;
-import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.core.databinding.observable.value.AbstractVetoableValue;
+import org.eclipse.core.databinding.observable.value.DecoratingVetoableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.swt.SWT;
@@ -33,26 +26,10 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.3
  * 
  */
-public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
-		ISWTObservableValue, IDecoratingObservable {
-
+public class SWTVetoableValueDecorator extends DecoratingVetoableValue
+		implements ISWTObservableValue {
 	private Widget widget;
 	private WidgetStringValueProperty property;
-	private IObservableValue decorated;
-	private boolean updating;
-
-	private IValueChangeListener valueListener = new IValueChangeListener() {
-		public void handleValueChange(ValueChangeEvent event) {
-			if (!updating)
-				fireValueChange(event.diff);
-		}
-	};
-
-	private IStaleListener staleListener = new IStaleListener() {
-		public void handleStale(StaleEvent staleEvent) {
-			fireStale();
-		}
-	};
 
 	private Listener verifyListener = new Listener() {
 		public void handleEvent(Event event) {
@@ -78,64 +55,27 @@ public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
 	 */
 	public SWTVetoableValueDecorator(Widget widget,
 			WidgetStringValueProperty property, IObservableValue decorated) {
-		super(decorated.getRealm());
+		super(decorated, true);
 		this.property = property;
-		this.decorated = decorated;
 		this.widget = widget;
 		Assert
 				.isTrue(decorated.getValueType().equals(String.class),
-						"SWTVetoableValueDecorator can only decorate observable values of String type"); //$NON-NLS-1$
+						"SWTVetoableValueDecorator can only decorate observable values of String value type"); //$NON-NLS-1$
 		widget.addListener(SWT.Dispose, disposeListener);
 	}
 
-	private void getterCalled() {
-		ObservableTracker.getterCalled(this);
-	}
-
 	protected void firstListenerAdded() {
-		decorated.addValueChangeListener(valueListener);
-		decorated.addStaleListener(staleListener);
+		super.firstListenerAdded();
 		widget.addListener(SWT.Verify, verifyListener);
 	}
 
 	protected void lastListenerRemoved() {
-		if (decorated != null) {
-			decorated.removeValueChangeListener(valueListener);
-			decorated.removeStaleListener(staleListener);
-		}
 		if (widget != null && !widget.isDisposed())
 			widget.removeListener(SWT.Verify, verifyListener);
-	}
-
-	protected void doSetApprovedValue(Object value) {
-		checkRealm();
-		updating = true;
-		try {
-			decorated.setValue(value);
-		} finally {
-			updating = false;
-		}
-	}
-
-	protected Object doGetValue() {
-		getterCalled();
-		return decorated.getValue();
-	}
-
-	public Object getValueType() {
-		return decorated.getValueType();
-	}
-
-	public boolean isStale() {
-		getterCalled();
-		return decorated.isStale();
+		super.lastListenerRemoved();
 	}
 
 	public synchronized void dispose() {
-		if (decorated != null) {
-			decorated.dispose();
-			decorated = null;
-		}
 		if (widget != null && !widget.isDisposed()) {
 			widget.removeListener(SWT.Verify, verifyListener);
 		}
@@ -145,9 +85,5 @@ public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
 
 	public Widget getWidget() {
 		return widget;
-	}
-
-	public IObservable getDecorated() {
-		return decorated;
 	}
 }

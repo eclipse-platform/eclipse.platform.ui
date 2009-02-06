@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Matthew Hall - bug 263691
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
@@ -87,9 +88,4 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 		fireEvent(event);
 		return !event.veto;
 	}
-
-	public synchronized void dispose() {
-		super.dispose();
-	}
-
 }

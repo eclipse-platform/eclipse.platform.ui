@@ -1,68 +1,44 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2009 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164653
- *     Matthew Hall - bug 263691
- *******************************************************************************/
+ *     Matthew Hall - initial API and implementation (bug 263691)
+ ******************************************************************************/
+
 package org.eclipse.core.databinding.observable.value;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.internal.databinding.Util;
 
 /**
+ * An {@link IVetoableValue} decorator for an observable value.
  * 
- * <p>
- * This class is thread safe. All state accessing methods must be invoked from
- * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
- * listeners may be invoked from any thread.
- * </p>
- * @since 1.0
- * 
+ * @since 1.2
  */
-public abstract class AbstractVetoableValue extends AbstractObservableValue
+public class DecoratingVetoableValue extends DecoratingObservableValue
 		implements IVetoableValue {
-
 	/**
-	 * Creates a new vetoable value.
+	 * @param decorated
+	 * @param disposeDecoratedOnDispose
 	 */
-	public AbstractVetoableValue() {
-		this(Realm.getDefault());
+	public DecoratingVetoableValue(IObservableValue decorated,
+			boolean disposeDecoratedOnDispose) {
+		super(decorated, disposeDecoratedOnDispose);
 	}
 
-	/**
-	 * @param realm
-	 */
-	public AbstractVetoableValue(Realm realm) {
-		super(realm);
-	}
-
-	final protected void doSetValue(Object value) {
-		Object currentValue = doGetValue();
+	public void setValue(Object value) {
+		checkRealm();
+		Object currentValue = getValue();
 		ValueDiff diff = Diffs.createValueDiff(currentValue, value);
 		boolean okToProceed = fireValueChanging(diff);
 		if (!okToProceed) {
 			throw new ChangeVetoException("Change not permitted"); //$NON-NLS-1$
 		}
-		doSetApprovedValue(value);
-		
-		if (!Util.equals(diff.getOldValue(), diff.getNewValue())) {
-			fireValueChange(diff);
-		}
+		super.setValue(value);
 	}
-
-	/**
-	 * Sets the value. Invoked after performing veto checks.  Should not fire change events.
-	 * 
-	 * @param value
-	 */
-	protected abstract void doSetApprovedValue(Object value);
 
 	public synchronized void addValueChangingListener(
 			IValueChangingListener listener) {

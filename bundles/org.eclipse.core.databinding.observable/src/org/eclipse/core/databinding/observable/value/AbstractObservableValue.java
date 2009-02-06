@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bugs 208332, 263691
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -90,9 +90,5 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 	protected void fireChange() {
 		throw new RuntimeException(
 				"fireChange should not be called, use fireValueChange() instead"); //$NON-NLS-1$
-	}
-
-	public synchronized void dispose() {
-		super.dispose();
 	}
 }
