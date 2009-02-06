@@ -55,7 +55,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -1101,13 +1100,13 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		int idx = themeCombo.getSelectionIndex();
 		if (idx <= 0) {
-			Workbench.getInstance().getThemeManager().setCurrentTheme(
+			PlatformUI.getWorkbench().getThemeManager().setCurrentTheme(
 					IThemeManager.DEFAULT_THEME);
 			refreshThemeCombo(IThemeManager.DEFAULT_THEME);
 		} else {
 			IThemeDescriptor applyTheme = WorkbenchPlugin.getDefault()
 					.getThemeRegistry().getThemes()[idx - 1];
-			Workbench.getInstance().getThemeManager().setCurrentTheme(
+			PlatformUI.getWorkbench().getThemeManager().setCurrentTheme(
 					applyTheme.getId());
 			refreshThemeCombo(applyTheme.getId());
 		}

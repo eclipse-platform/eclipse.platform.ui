@@ -16,7 +16,7 @@ import java.util.HashSet;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
 import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -77,7 +77,7 @@ public class ViewPerformanceSuite extends TestSuite {
 	public static String[] getAllTestableViewIds() {
 		HashSet result = new HashSet();
 
-		IViewDescriptor[] descriptors = Workbench.getInstance()
+		IViewDescriptor[] descriptors = PlatformUI.getWorkbench()
 				.getViewRegistry().getViews();
 		for (int i = 0; i < descriptors.length; i++) {
 			IViewDescriptor descriptor = descriptors[i];

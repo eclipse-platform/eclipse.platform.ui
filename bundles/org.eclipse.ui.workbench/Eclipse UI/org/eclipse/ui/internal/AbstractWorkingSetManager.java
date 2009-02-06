@@ -658,7 +658,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		if (symbolicName == null)
 			return;
 		// If the workbench isn't running anymore simply return.
-		if (!Workbench.getInstance().isRunning()) {
+		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
 		

@@ -15,27 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.osgi.service.prefs.BackingStoreException;
-
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -55,7 +35,21 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -64,7 +58,6 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -73,6 +66,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Baseclass for preference dialogs that will show two tabs of preferences -
@@ -279,8 +273,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
 		treeViewer.setLabelProvider(new PreferenceBoldLabelProvider(
 				filteredTree));
-		IContributionService cs = (IContributionService) Workbench
-				.getInstance().getActiveWorkbenchWindow().getService(
+		IContributionService cs = (IContributionService) PlatformUI
+				.getWorkbench().getActiveWorkbenchWindow().getService(
 						IContributionService.class);
 		treeViewer.setComparator(cs.getComparatorFor(getContributionType()));
 		treeViewer.setContentProvider(new PreferenceContentProvider());

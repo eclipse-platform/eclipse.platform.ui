@@ -33,7 +33,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -202,7 +201,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 		// The next two methods make a number of UI calls, so we wrap the
 		// whole thing up in a syncExec.
 		final IStatus[] status = new IStatus[1];
-		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				// Compute the undoable or redoable status
 				status[0] = computeOperationStatus(operation, history, uiInfo,

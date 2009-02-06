@@ -25,6 +25,7 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
@@ -225,13 +226,13 @@ public final class KeyBindingService implements INestableKeyBindingService {
             // Update the contexts.
             nestedEnabledSubmissions = nestedService.getEnabledSubmissions();
             normalizeSites(nestedEnabledSubmissions);
-            Workbench.getInstance().getContextSupport().addEnabledSubmissions(
+            PlatformUI.getWorkbench().getContextSupport().addEnabledSubmissions(
                     nestedEnabledSubmissions);
 
             // Update the handlers.
             nestedHandlerSubmissions = nestedService.getHandlerSubmissions();
             normalizeSites(nestedHandlerSubmissions);
-            Workbench.getInstance().getCommandSupport().addHandlerSubmissions(
+            PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmissions(
                     nestedHandlerSubmissions);
         }
     }
@@ -262,7 +263,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
 
         } else if (activeService instanceof KeyBindingService) {
             // Remove all the nested context ids.
-            Workbench.getInstance().getContextSupport()
+        	PlatformUI.getWorkbench().getContextSupport()
                     .removeEnabledSubmissions(nestedEnabledSubmissions);
 
             /*
@@ -270,7 +271,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
              * weren't created by this instance (but by the nest instance), and
              * hence can't be disposed here.
              */
-            Workbench.getInstance().getCommandSupport()
+        	PlatformUI.getWorkbench().getCommandSupport()
                     .removeHandlerSubmissions(nestedHandlerSubmissions);
 
         }
@@ -293,8 +294,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
             deactivateNestedService();
             disposed = true;
 
-            Workbench
-                    .getInstance()
+            PlatformUI.getWorkbench()
                     .getContextSupport()
                     .removeEnabledSubmissions(new ArrayList(enabledSubmissions));
             enabledSubmissions.clear();
@@ -310,7 +310,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
                 ((HandlerSubmission) submissionItr.next()).getHandler()
                         .dispose();
             }
-            Workbench.getInstance().getCommandSupport()
+            PlatformUI.getWorkbench().getCommandSupport()
                     .removeHandlerSubmissions(submissions);
             handlerSubmissionsByCommandId.clear();
 
@@ -524,7 +524,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
                     parent.activateNestedService(this);
                 }
             } else {
-                Workbench.getInstance().getCommandSupport()
+            	PlatformUI.getWorkbench().getCommandSupport()
                         .addHandlerSubmission(handlerSubmission);
             }
         }
@@ -564,7 +564,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
             active = true;
             parent.deactivateNestedService();
         } else {
-            Workbench.getInstance().getContextSupport()
+        	PlatformUI.getWorkbench().getContextSupport()
                     .removeEnabledSubmissions(enabledSubmissions);
         }
         enabledSubmissions.clear();
@@ -584,7 +584,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
                 parent.activateNestedService(this);
             }
         } else {
-            Workbench.getInstance().getContextSupport().addEnabledSubmissions(
+        	PlatformUI.getWorkbench().getContextSupport().addEnabledSubmissions(
                     enabledSubmissions);
         }
     }
@@ -626,7 +626,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
                 }
             } else {
             	if (handlerSubmission != null) {
-                    Workbench.getInstance().getCommandSupport()
+            		PlatformUI.getWorkbench().getCommandSupport()
                             .removeHandlerSubmission(handlerSubmission);
                     handlerSubmission.getHandler().dispose();
                 }

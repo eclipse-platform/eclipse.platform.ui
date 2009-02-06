@@ -17,7 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.performance.layout.ComputeSizeTest;
 import org.eclipse.ui.tests.performance.layout.LayoutTest;
@@ -157,7 +157,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
     
     public static String[] getAllPerspectiveIds() {
         ArrayList result = new ArrayList();
-        IPerspectiveDescriptor[] perspectives = Workbench.getInstance().getPerspectiveRegistry().getPerspectives();
+        IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives();
         
         for (int i = 0; i < perspectives.length; i++) {
             IPerspectiveDescriptor descriptor = perspectives[i];

@@ -22,7 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -80,7 +80,7 @@ public final class LinearUndoViolationUserApprover extends
 				WorkbenchMessages.Operations_linearRedoViolation,
 				getTitle(part), operation.getLabel());
 		final boolean [] proceed = new boolean[1];
-		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				// Show a dialog.
 				part.setFocus();
@@ -131,7 +131,7 @@ public final class LinearUndoViolationUserApprover extends
 				WorkbenchMessages.Operations_linearUndoViolation,
 				getTitle(part), operation.getLabel());
 		final boolean [] proceed = new boolean[1];
-		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				// Show a dialog.
 				part.setFocus();

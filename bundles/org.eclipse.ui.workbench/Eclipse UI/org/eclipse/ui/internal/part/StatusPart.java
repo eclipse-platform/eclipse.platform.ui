@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -189,7 +189,7 @@ public class StatusPart {
     }
     
     private void createShowLogButton(Composite parent){
-		IViewDescriptor descriptor = Workbench.getInstance().getViewRegistry()
+		IViewDescriptor descriptor = PlatformUI.getWorkbench().getViewRegistry()
 				.find(LOG_VIEW_ID);
 		if (descriptor == null) {
 			return;
@@ -198,7 +198,7 @@ public class StatusPart {
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					Workbench.getInstance().getActiveWorkbenchWindow()
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 							.getActivePage().showView(LOG_VIEW_ID);
 				} catch (CoreException ce) {
 					StatusManager.getManager().handle(ce,

@@ -24,7 +24,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.util.Util;
 
@@ -209,7 +209,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		// a syncExec because operation approval notifications may come from
 		// a background thread.
 		final int[] answer = new int[1];
-		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				MessageDialog dialog = new MessageDialog(part.getSite().getShell(), title,
 						null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,

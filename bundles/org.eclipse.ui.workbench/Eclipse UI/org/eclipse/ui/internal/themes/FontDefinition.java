@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.themes;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The FontDefiniton is the representation of the fontDefinition
@@ -129,7 +129,7 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
         if (parsedValue == null) {
             parsedValue = JFaceResources.getFontRegistry().filterData(
                     StringConverter.asFontDataArray(value),
-                    Workbench.getInstance().getDisplay());
+                    PlatformUI.getWorkbench().getDisplay());
         }
 
         return parsedValue;
