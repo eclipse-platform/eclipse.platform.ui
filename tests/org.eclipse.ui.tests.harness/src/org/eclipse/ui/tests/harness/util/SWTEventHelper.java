@@ -173,16 +173,19 @@ public class SWTEventHelper {
 
 		if (startItem instanceof TreeItem) {
 			startControl = ((TreeItem) startItem).getParent();
-			boundsStart = ((TreeItem)startItem).getBounds();
+			boundsStart = Display.getCurrent().map(startControl, null,
+					((TreeItem)startItem).getBounds());
 		} else if (startItem instanceof Control) {
 			startControl = (Control) startItem;
-			boundsStart = startControl.getBounds();
+			boundsStart = Display.getCurrent().map(startControl, null, startControl.getBounds());
 		}
 		
 		if (dropItem instanceof TreeItem) {
-			boundsEnd = ((TreeItem)dropItem).getBounds();
+			boundsEnd = Display.getCurrent().map(((TreeItem)dropItem).getParent(), null,
+					((TreeItem)dropItem).getBounds());
 		} else if (dropItem instanceof Control) {
-			boundsEnd = ((Control)dropItem).getBounds();
+			boundsEnd = Display.getCurrent().map(((Control)dropItem), null,
+					((Control)dropItem).getBounds());
 		}
 		
 		startControl.addDragDetectListener(new DragDetectListener() {
