@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bugs 226765, 239015, 222991, 263693, 263956
+ *     Matthew Hall - bugs 226765, 239015, 222991, 263693, 263956, 226292
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -33,6 +33,7 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -158,6 +159,8 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	}
 
 	private static TreeViewerUpdater createViewerUpdater(Viewer viewer) {
+		if (viewer instanceof CheckboxTreeViewer)
+			return new CheckboxTreeViewerUpdater((CheckboxTreeViewer) viewer);
 		if (viewer instanceof AbstractTreeViewer)
 			return new TreeViewerUpdater((AbstractTreeViewer) viewer);
 		throw new IllegalArgumentException(

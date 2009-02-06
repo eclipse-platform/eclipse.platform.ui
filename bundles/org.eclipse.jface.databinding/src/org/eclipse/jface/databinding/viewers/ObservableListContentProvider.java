@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix in: 214355
- *     Matthew Hall - bugs 215531, 226765, 222991, 238296
+ *     Matthew Hall - bugs 215531, 226765, 222991, 238296, 226292
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -47,8 +47,15 @@ public class ObservableListContentProvider implements
 
 	private static class Impl extends ObservableCollectionContentProvider
 			implements IListChangeListener {
+		private Viewer viewer;
+
 		Impl(IViewerUpdater explicitViewerUpdater) {
 			super(explicitViewerUpdater);
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			this.viewer = viewer;
+			super.inputChanged(viewer, oldInput, newInput);
 		}
 
 		protected void checkInput(Object input) {
@@ -76,6 +83,7 @@ public class ObservableListContentProvider implements
 					.withComparer(comparer);
 			final Set knownElementRemovals = ViewerElementSet
 					.withComparer(comparer);
+			final boolean[] suspendRedraw = new boolean[] { false };
 			event.diff.accept(new ListDiffVisitor() {
 				public void handleAdd(int index, Object element) {
 					knownElementAdditions.add(element);
@@ -83,6 +91,18 @@ public class ObservableListContentProvider implements
 
 				public void handleRemove(int index, Object element) {
 					knownElementRemovals.add(element);
+				}
+
+				public void handleMove(int oldIndex, int newIndex,
+						Object element) {
+					suspendRedraw[0] = true;
+					super.handleMove(oldIndex, newIndex, element);
+				}
+
+				public void handleReplace(int index, Object oldElement,
+						Object newElement) {
+					suspendRedraw[0] = true;
+					super.handleReplace(index, oldElement, newElement);
 				}
 			});
 			knownElementAdditions.removeAll(knownElements);
@@ -93,25 +113,32 @@ public class ObservableListContentProvider implements
 				realizedElements.removeAll(knownElementRemovals);
 			}
 
-			event.diff.accept(new ListDiffVisitor() {
-				public void handleAdd(int index, Object element) {
-					viewerUpdater.insert(element, index);
-				}
+			if (suspendRedraw[0])
+				viewer.getControl().setRedraw(false);
+			try {
+				event.diff.accept(new ListDiffVisitor() {
+					public void handleAdd(int index, Object element) {
+						viewerUpdater.insert(element, index);
+					}
 
-				public void handleRemove(int index, Object element) {
-					viewerUpdater.remove(element, index);
-				}
+					public void handleRemove(int index, Object element) {
+						viewerUpdater.remove(element, index);
+					}
 
-				public void handleReplace(int index, Object oldElement,
-						Object newElement) {
-					viewerUpdater.replace(oldElement, newElement, index);
-				}
+					public void handleReplace(int index, Object oldElement,
+							Object newElement) {
+						viewerUpdater.replace(oldElement, newElement, index);
+					}
 
-				public void handleMove(int oldIndex, int newIndex,
-						Object element) {
-					viewerUpdater.move(element, oldIndex, newIndex);
-				}
-			});
+					public void handleMove(int oldIndex, int newIndex,
+							Object element) {
+						viewerUpdater.move(element, oldIndex, newIndex);
+					}
+				});
+			} finally {
+				if (suspendRedraw[0])
+					viewer.getControl().setRedraw(true);
+			}
 
 			if (realizedElements != null) {
 				realizedElements.addAll(knownElementAdditions);

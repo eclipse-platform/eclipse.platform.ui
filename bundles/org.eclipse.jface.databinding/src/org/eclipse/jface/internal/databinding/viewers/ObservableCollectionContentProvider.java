@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
- *     Matthew Hall - bugs 226765, 222991, 238296, 263956
+ *     Matthew Hall - bugs 226765, 222991, 238296, 263956, 226292
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -25,6 +25,7 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.IViewerUpdater;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTableViewer;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -171,6 +172,8 @@ public abstract class ObservableCollectionContentProvider implements
 			return explicitViewerUpdater;
 		if (viewer instanceof AbstractListViewer)
 			return new ListViewerUpdater((AbstractListViewer) viewer);
+		if (viewer instanceof CheckboxTableViewer)
+			return new CheckboxTableViewerUpdater((CheckboxTableViewer) viewer);
 		if (viewer instanceof AbstractTableViewer)
 			return new TableViewerUpdater((AbstractTableViewer) viewer);
 		throw new IllegalArgumentException(

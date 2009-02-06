@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bugs 226765, 230296
+ *     Matthew Hall - bugs 226765, 230296, 226292
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -80,7 +80,7 @@ public class TreeViewerUpdater {
 		}
 	}
 
-	private boolean isElementOrderPreserved() {
+	boolean isElementOrderPreserved() {
 		return viewer.getComparator() == null
 				&& viewer.getFilters().length == 0;
 	}

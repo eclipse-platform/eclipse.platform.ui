@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bugs 226765, 222991
+ *     Matthew Hall - bugs 226765, 222991, 226292
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -45,9 +45,16 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	private final ObservableCollectionTreeContentProvider impl;
 
 	private static class Impl extends ObservableCollectionTreeContentProvider {
+		private Viewer viewer;
+
 		public Impl(IObservableFactory listFactory,
 				TreeStructureAdvisor structureAdvisor) {
 			super(listFactory, structureAdvisor);
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			this.viewer = viewer;
+			super.inputChanged(viewer, oldInput, newInput);
 		}
 
 		private class ListChangeListener implements IListChangeListener {
@@ -66,6 +73,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 						.withComparer(comparer);
 				final Set localKnownElementRemovals = ViewerElementSet
 						.withComparer(comparer);
+				final boolean[] suspendRedraw = new boolean[] { false };
 				event.diff.accept(new ListDiffVisitor() {
 					public void handleAdd(int index, Object element) {
 						localKnownElementAdditions.add(element);
@@ -77,7 +85,14 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 
 					public void handleMove(int oldIndex, int newIndex,
 							Object element) {
-						// ignore
+						suspendRedraw[0] = true;
+						// does not affect known elements
+					}
+
+					public void handleReplace(int index, Object oldElement,
+							Object newElement) {
+						suspendRedraw[0] = true;
+						super.handleReplace(index, oldElement, newElement);
 					}
 				});
 				localKnownElementRemovals.removeAll(event.getObservableList());
@@ -101,27 +116,34 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 					getOrCreateNode(it.next()).addParent(parentElement);
 				}
 
-				event.diff.accept(new ListDiffVisitor() {
-					public void handleAdd(int index, Object child) {
-						viewerUpdater.insert(parentElement, child, index);
-					}
+				if (suspendRedraw[0])
+					viewer.getControl().setRedraw(false);
+				try {
+					event.diff.accept(new ListDiffVisitor() {
+						public void handleAdd(int index, Object child) {
+							viewerUpdater.insert(parentElement, child, index);
+						}
 
-					public void handleRemove(int index, Object child) {
-						viewerUpdater.remove(parentElement, child, index);
-					}
+						public void handleRemove(int index, Object child) {
+							viewerUpdater.remove(parentElement, child, index);
+						}
 
-					public void handleReplace(int index, Object oldChild,
-							Object newChild) {
-						viewerUpdater.replace(parentElement, oldChild,
-								newChild, index);
-					}
+						public void handleReplace(int index, Object oldChild,
+								Object newChild) {
+							viewerUpdater.replace(parentElement, oldChild,
+									newChild, index);
+						}
 
-					public void handleMove(int oldIndex, int newIndex,
-							Object child) {
-						viewerUpdater.move(parentElement, child, oldIndex,
-								newIndex);
-					}
-				});
+						public void handleMove(int oldIndex, int newIndex,
+								Object child) {
+							viewerUpdater.move(parentElement, child, oldIndex,
+									newIndex);
+						}
+					});
+				} finally {
+					if (suspendRedraw[0])
+						viewer.getControl().setRedraw(true);
+				}
 
 				for (Iterator it = localKnownElementRemovals.iterator(); it
 						.hasNext();) {
