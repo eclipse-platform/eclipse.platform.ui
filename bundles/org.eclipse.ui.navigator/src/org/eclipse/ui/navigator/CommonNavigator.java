@@ -120,8 +120,11 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * <p>
 	 * Used to track changes to the {@link #isLinkingEnabled}&nbsp;property.
 	 * </p>
+	 * 
+	 * Make sure this does not conflict with anything in IWorkbenchPartConstants.
+	 * 
 	 */
-	public static final int IS_LINKING_ENABLED_PROPERTY = 1;
+	public static final int IS_LINKING_ENABLED_PROPERTY = 0x10000;
 
 	private CommonViewer commonViewer;
 
