@@ -146,9 +146,13 @@ public class NavigatorTestBase extends TestCase {
 	// The method returns early because there is a (background) decoration
 	// pending.
 	protected void refreshViewer() {
-		TreeItem[] rootItems = _viewer.getTree().getItems();
-		if (rootItems.length > 0)
-			rootItems[0].setText("");
+		try {
+			TreeItem[] rootItems = _viewer.getTree().getItems();
+			if (rootItems.length > 0)
+				rootItems[0].setText("");
+		} catch (Exception ex) {
+			// Ignore
+		}
 		_viewer.refresh();
 	}
 
