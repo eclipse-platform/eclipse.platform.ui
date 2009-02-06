@@ -77,8 +77,14 @@ p .group-description {
 	font-size:90%; 
 }
 
-/* Link label prorties */
+/* Link label properties */
 #root #page-links a .link-label {
+	font-size : 110%;
+}
+
+#root #page-links a:active .link-label,
+#root #page-links a:focus .link-label,
+#root #page-links a:hover .link-label {
 	font-size : 12.5pt;
 }
 
