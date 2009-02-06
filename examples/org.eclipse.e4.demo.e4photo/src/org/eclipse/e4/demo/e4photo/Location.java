@@ -9,6 +9,7 @@ public class Location {
 
 	private Browser browser;
 	private Composite browserParent;
+	private Exif exif;
 
 	public Location(Composite parent) {
 		parent.setLayout(new FillLayout());
@@ -17,7 +18,10 @@ public class Location {
 	}
 
 	public void setInput(Exif input) {
-		Exif exif = (Exif) input;
+		if (input == null || this.exif == input) {
+			return;
+		}
+		this.exif = (Exif) input;
 
 		// Create Browser widget only when we have content to show
 		// so that we can control background color when there is no content
