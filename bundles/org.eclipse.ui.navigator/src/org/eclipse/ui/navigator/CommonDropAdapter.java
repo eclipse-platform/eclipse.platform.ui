@@ -287,10 +287,9 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		return super.getCurrentOperation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#setCurrentOperation(int)
+	 * @since 3.4
 	 */
 	public void setCurrentOperation(int operation) {
 		super.setCurrentOperation(operation);
