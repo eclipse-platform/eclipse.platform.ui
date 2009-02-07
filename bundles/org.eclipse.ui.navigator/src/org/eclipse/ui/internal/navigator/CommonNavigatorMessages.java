@@ -126,6 +126,10 @@ public class CommonNavigatorMessages extends NLS {
 
 	/** */
 	public static String CommonViewerSorter_NoContentExtensionForObject;
+	
+	/** */
+	public static String NavigatorActionService_problemSavingPreferences;
+	
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);

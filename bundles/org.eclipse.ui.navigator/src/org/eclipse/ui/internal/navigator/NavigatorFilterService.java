@@ -21,13 +21,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.navigator.filters.CommonFilterDescriptor;
 import org.eclipse.ui.internal.navigator.filters.CommonFilterDescriptorManager;
 import org.eclipse.ui.internal.navigator.filters.SkeletonViewerFilter;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.INavigatorFilterService;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * @since 3.2
@@ -64,12 +69,13 @@ public class NavigatorFilterService implements INavigatorFilterService {
 	private synchronized void restoreFilterActivation() {
 
 		try {
-			Preferences preferences = NavigatorPlugin.getDefault()
-					.getPluginPreferences();
+			IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(
+					InstanceScope.SCOPE);
+			IEclipsePreferences prefs = (IEclipsePreferences) root.node(NavigatorPlugin.PLUGIN_ID);
 
-			if (preferences.contains(getFilterActivationPreferenceKey())) {
-				String activatedFiltersPreferenceValue = preferences
-						.getString(getFilterActivationPreferenceKey());
+			if (prefs.get(getFilterActivationPreferenceKey(), null) != null) {
+				String activatedFiltersPreferenceValue = prefs
+						.get(getFilterActivationPreferenceKey(), null);
 				String[] activeFilterIds = activatedFiltersPreferenceValue
 						.split(DELIM);
 				for (int i = 0; i < activeFilterIds.length; i++) {
@@ -110,13 +116,18 @@ public class NavigatorFilterService implements INavigatorFilterService {
 							activeItr.next().toString()).append(DELIM);
 				}
 
-				Preferences preferences = NavigatorPlugin.getDefault()
-						.getPluginPreferences();
-
-				preferences.setValue(getFilterActivationPreferenceKey(),
-						activatedFiltersPreferenceValue.toString());
+				IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(
+						InstanceScope.SCOPE);
+				IEclipsePreferences prefs = (IEclipsePreferences) root.node(NavigatorPlugin.PLUGIN_ID);
+				prefs.put(getFilterActivationPreferenceKey(), activatedFiltersPreferenceValue.toString());
+			
+				try {
+					prefs.flush();
+				} catch (BackingStoreException e) {
+					IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, CommonNavigatorMessages.NavigatorActionService_problemSavingPreferences, e);
+					Platform.getLog(Platform.getBundle(NavigatorPlugin.PLUGIN_ID)).log(status);
+				}
 			}
-
 		} catch (RuntimeException e) {
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
