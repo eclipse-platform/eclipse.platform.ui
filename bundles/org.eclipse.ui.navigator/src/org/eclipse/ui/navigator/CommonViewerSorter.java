@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 /**
@@ -150,7 +151,35 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return categoryDelta;
 	}
 
-	private INavigatorContentDescriptor getSource(Object o) {
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ViewerComparator#isSorterProperty(java.lang.Object, java.lang.String)
+     */
+    public boolean isSorterProperty(Object element, String property) {
+    	// Have to get the parent path from the content provider
+    	NavigatorContentServiceContentProvider cp = (NavigatorContentServiceContentProvider) contentService.createCommonContentProvider();
+    	TreePath[] parentPaths = cp.getParents(element);
+    	for (int i = 0; i < parentPaths.length; i++) {
+    		if (isSorterProperty(parentPaths[i], element, property))
+    			return true;
+    	}
+    	return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.TreePathViewerSorter#isSorterProperty(org.eclipse.jface.viewers.TreePath, java.lang.Object, java.lang.String)
+     */
+    public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
+		INavigatorContentDescriptor contentDesc = getSource(element);
+		if (parentPath.getSegmentCount() == 0)
+			return false;
+		ViewerSorter sorter = sorterService.findSorter(contentDesc, parentPath.getLastSegment(), element, null);
+		if (sorter != null)
+			return sorter.isSorterProperty(element, property);
+        return false;
+    }
+
+    
+    private INavigatorContentDescriptor getSource(Object o) {
 		Set descriptors = contentService.findDescriptorsByTriggerPoint(o, NavigatorContentService.CONSIDER_OVERRIDES);
 		if (descriptors != null && descriptors.size() > 0) {
 			return (INavigatorContentDescriptor) descriptors.iterator().next();
@@ -158,13 +187,6 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return null;
 	}
 	
-    public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
-		INavigatorContentDescriptor contentDesc = getSource(element);
-		ViewerSorter sorter = sorterService.findSorter(contentDesc, parentPath, element, null);
-		if (sorter != null)
-			return sorter.isSorterProperty(element, property);
-        return super.isSorterProperty(parentPath, element, property);
-    }
 	
 
 }

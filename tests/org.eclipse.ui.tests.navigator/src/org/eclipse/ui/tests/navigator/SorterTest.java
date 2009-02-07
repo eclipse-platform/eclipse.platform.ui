@@ -14,6 +14,7 @@ package org.eclipse.ui.tests.navigator;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.tests.navigator.extension.TestDataSorter;
 import org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider;
 
 public class SorterTest extends NavigatorTestBase {
@@ -67,10 +68,11 @@ public class SorterTest extends NavigatorTestBase {
 
 		refreshViewer();
 
-		// FIXME - this test does not actually hit the sorter property call,
-		// need to figure out how to do that.
+		_viewer.update(_p1, new String[]{"prop1"});
 		_viewer.expandAll();
-
+		
+		assertEquals("prop1", TestDataSorter._sorterProperty);
+		assertEquals(_p1, TestDataSorter._sorterElement);
 	}
 
 
