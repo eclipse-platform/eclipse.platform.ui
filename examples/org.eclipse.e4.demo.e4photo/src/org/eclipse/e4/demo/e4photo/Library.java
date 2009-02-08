@@ -1,23 +1,14 @@
 package org.eclipse.e4.demo.e4photo;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.Observables;
-import org.eclipse.core.databinding.observable.Realm;
+import java.util.*;
+import org.eclipse.core.databinding.observable.*;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -25,13 +16,10 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class Library implements IDisposable {
 
@@ -86,7 +74,7 @@ public class Library implements IDisposable {
 	public Library(Composite parent, final IWorkspace workspace, final IEclipseContext outputContext) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		this.workspace = workspace;
-		workspace.addResourceChangeListener(listener);
+		initializeWorkspace();
 		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.getTree().setData("org.eclipse.e4.ui.css.id", "library");
 		
@@ -161,6 +149,18 @@ public class Library implements IDisposable {
 //		});
 
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
+	}
+
+	private void initializeWorkspace() {
+		workspace.addResourceChangeListener(listener);
+		IEclipsePreferences node = new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		node.putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, true);
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void dispose() {
