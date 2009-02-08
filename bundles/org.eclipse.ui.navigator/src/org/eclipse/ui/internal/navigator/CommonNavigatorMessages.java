@@ -128,7 +128,7 @@ public class CommonNavigatorMessages extends NLS {
 	public static String CommonViewerSorter_NoContentExtensionForObject;
 	
 	/** */
-	public static String NavigatorActionService_problemSavingPreferences;
+	public static String NavigatorContentService_problemSavingPreferences;
 	
 
 	static {

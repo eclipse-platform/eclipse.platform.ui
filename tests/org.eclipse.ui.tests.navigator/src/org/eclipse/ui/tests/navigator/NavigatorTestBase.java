@@ -15,7 +15,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,7 +22,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.navigator.filters.UpdateActiveFiltersOperation;
+import org.eclipse.ui.internal.navigator.NavigatorFilterService;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
@@ -121,10 +120,9 @@ public class NavigatorTestBase extends TestCase {
 
 		_contentService = _viewer.getNavigatorContentService();
 		_actionService = _commonNavigator.getNavigatorActionService();
+		
+		((NavigatorFilterService)_contentService.getFilterService()).resetFilterActivationState();
 
-		IUndoableOperation updateFilters = new UpdateActiveFiltersOperation(
-				_viewer, new String[0], true);
-		updateFilters.execute(null, null);
 	}
 
 	protected void tearDown() throws Exception {

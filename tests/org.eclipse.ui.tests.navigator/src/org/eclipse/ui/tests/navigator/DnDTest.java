@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.navigator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.ui.IWorkbenchPage;
@@ -45,8 +44,6 @@ public class DnDTest extends NavigatorTestBase {
 		_viewer.setSelection(new StructuredSelection(_p1.getFolder("f1")
 				.getFile("file1.txt")));
 
-		// DisplayHelper.sleep(Display.getCurrent(), 100);
-
 		TreeItem[] items = _viewer.getTree().getItems();
 
 		// p1/f1/file1.txt
@@ -59,6 +56,7 @@ public class DnDTest extends NavigatorTestBase {
 		}
 
 		_viewer.expandToLevel(_p1, 3);
+		items = _viewer.getTree().getItems();
 
 		assertEquals(_p1.getFolder("f1").getFile("file2.txt"), items[_p1Ind]
 				.getItem(0).getItem(0).getData());
@@ -118,12 +116,11 @@ public class DnDTest extends NavigatorTestBase {
 		_viewer.setSelection(new StructuredSelection(_p1.getFolder("f1")
 				.getFile("file1.txt")));
 
-		DisplayHelper.sleep(Display.getCurrent(), 100);
+		DisplayHelper.sleep(100);
 
 		TreeItem[] items = _viewer.getTree().getItems();
 
-		// .project is at index 0
-		int firstFolder = 1;
+		int firstFolder = 0;
 
 		// p1/f1/file1.txt
 		TreeItem start = items[_p1Ind].getItem(firstFolder).getItem(0);
@@ -135,13 +132,20 @@ public class DnDTest extends NavigatorTestBase {
 			return;
 		}
 
+		// Trying to make this test deterministic
+		refreshViewer();
+		DisplayHelper.sleep(100);
 		_viewer.expandToLevel(_p1, 3);
-
+		items = _viewer.getTree().getItems();
+		
 		// This is copied not moved
 		assertEquals(_p1.getFolder("f1").getFile("file1.txt"), items[_p1Ind]
 				.getItem(firstFolder).getItem(0).getData());
 		assertEquals(_p1.getFolder("f1").getFile("file2.txt"), items[_p1Ind]
 				.getItem(firstFolder).getItem(1).getData());
+		
+		// This line fails to see the firstFolder+1 unless all of that
+		// refreshing crap above is in
 		assertEquals(_p1.getFolder("f2").getFile("file1.txt"), items[_p1Ind]
 				.getItem(firstFolder + 1).getItem(0).getData());
 

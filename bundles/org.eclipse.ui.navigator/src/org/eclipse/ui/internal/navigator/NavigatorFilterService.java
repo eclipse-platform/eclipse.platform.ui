@@ -21,18 +21,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.navigator.filters.CommonFilterDescriptor;
 import org.eclipse.ui.internal.navigator.filters.CommonFilterDescriptorManager;
 import org.eclipse.ui.internal.navigator.filters.SkeletonViewerFilter;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.INavigatorFilterService;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * @since 3.2
@@ -69,9 +64,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 	private synchronized void restoreFilterActivation() {
 
 		try {
-			IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(
-					InstanceScope.SCOPE);
-			IEclipsePreferences prefs = (IEclipsePreferences) root.node(NavigatorPlugin.PLUGIN_ID);
+			IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
 
 			if (prefs.get(getFilterActivationPreferenceKey(), null) != null) {
 				String activatedFiltersPreferenceValue = prefs
@@ -104,34 +97,32 @@ public class NavigatorFilterService implements INavigatorFilterService {
 	 */
 	public void persistFilterActivationState() {
 
-		try {
-			synchronized (activeFilters) {
+		synchronized (activeFilters) {
 
-				/* by creating a StringBuffer with DELIM, we ensure the string is not empty when persisted.*/
-				StringBuffer activatedFiltersPreferenceValue = new StringBuffer(DELIM);
+			/*
+			 * by creating a StringBuffer with DELIM, we ensure the string is
+			 * not empty when persisted.
+			 */
+			StringBuffer activatedFiltersPreferenceValue = new StringBuffer(DELIM);
 
-				for (Iterator activeItr = activeFilters.iterator(); activeItr
-						.hasNext();) {
-					activatedFiltersPreferenceValue.append(
-							activeItr.next().toString()).append(DELIM);
-				}
-
-				IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(
-						InstanceScope.SCOPE);
-				IEclipsePreferences prefs = (IEclipsePreferences) root.node(NavigatorPlugin.PLUGIN_ID);
-				prefs.put(getFilterActivationPreferenceKey(), activatedFiltersPreferenceValue.toString());
-			
-				try {
-					prefs.flush();
-				} catch (BackingStoreException e) {
-					IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, CommonNavigatorMessages.NavigatorActionService_problemSavingPreferences, e);
-					Platform.getLog(Platform.getBundle(NavigatorPlugin.PLUGIN_ID)).log(status);
-				}
+			for (Iterator activeItr = activeFilters.iterator(); activeItr.hasNext();) {
+				activatedFiltersPreferenceValue.append(activeItr.next().toString()).append(DELIM);
 			}
-		} catch (RuntimeException e) {
-			NavigatorPlugin.logError(0, e.getMessage(), e);
+
+			IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
+			prefs.put(getFilterActivationPreferenceKey(), activatedFiltersPreferenceValue.toString());
+			NavigatorContentService.flushPreferences(prefs);
 		}
 
+	}
+	
+	/**
+	 * Used for the tests
+	 */
+	public void resetFilterActivationState() {
+		IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
+		prefs.remove(getFilterActivationPreferenceKey());
+		NavigatorContentService.flushPreferences(prefs);
 	}
 
 	/**

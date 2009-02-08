@@ -24,7 +24,12 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -55,6 +60,7 @@ import org.eclipse.ui.navigator.INavigatorPipelineService;
 import org.eclipse.ui.navigator.INavigatorSaveablesService;
 import org.eclipse.ui.navigator.INavigatorSorterService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * <p>
@@ -1181,5 +1187,26 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public Viewer getViewer() {
 		return structuredViewerManager.getViewer();
 	}
+
 	
+	/**
+	 * Get our preferences
+	 */
+	static IEclipsePreferences getPreferencesRoot() {
+		IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(
+				InstanceScope.SCOPE);
+		return (IEclipsePreferences) root.node(NavigatorPlugin.PLUGIN_ID);
+	}
+	
+	
+	static void flushPreferences(IEclipsePreferences prefs) {
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR,
+					CommonNavigatorMessages.NavigatorContentService_problemSavingPreferences, e);
+			Platform.getLog(Platform.getBundle(NavigatorPlugin.PLUGIN_ID)).log(status);
+		}
+	}
+
 }

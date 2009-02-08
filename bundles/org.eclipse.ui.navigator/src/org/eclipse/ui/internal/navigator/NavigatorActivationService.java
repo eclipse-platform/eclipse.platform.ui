@@ -19,19 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.navigator.IExtensionActivationListener;
 import org.eclipse.ui.navigator.INavigatorActivationService;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * 
@@ -41,7 +36,6 @@ import org.osgi.service.prefs.BackingStoreException;
  * then the extension will not be given opportunities to contribute
  * functionality to the given viewer. See {@link INavigatorContentService} for
  * more detail on what states are associated with a content extension.
- *  
  * 
  * @since 3.2
  */
@@ -199,9 +193,7 @@ public final class NavigatorActivationService implements
 	 * 
 	 */
 	public void persistExtensionActivations() {
-		IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(
-				InstanceScope.SCOPE);
-		IEclipsePreferences prefs = (IEclipsePreferences) root.node(NavigatorPlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
 		
 		//synchronized (activatedExtensions) {
 		synchronized (activatedExtensionsMap) {
@@ -222,13 +214,8 @@ public final class NavigatorActivationService implements
 			}
 			prefs.put(getPreferenceKey(), preferenceValue.toString());
 		}
-		
-		try {
-			prefs.flush();
-		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, CommonNavigatorMessages.NavigatorActionService_problemSavingPreferences, e);
-			Platform.getLog(Platform.getBundle(NavigatorPlugin.PLUGIN_ID)).log(status);
-		}
+
+		NavigatorContentService.flushPreferences(prefs);
 	}
 
 	/**
@@ -273,9 +260,7 @@ public final class NavigatorActivationService implements
 
 	private void revertExtensionActivations() {
 
-		IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(
-				InstanceScope.SCOPE);
-		IEclipsePreferences prefs = (IEclipsePreferences) root.node(NavigatorPlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
 
 		String activatedExtensionsString = prefs
 				.get(getPreferenceKey(), null);
