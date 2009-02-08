@@ -29,7 +29,7 @@ abstract class Computation {
 	}
 
 	private void stopListening() {
-		if (EclipseContext.DEBUG) System.out.println(toString() + " no longer listening");
+		if (EclipseContext.DEBUG) System.out.println(toString() + " no longer listening"); //$NON-NLS-1$
 		for (Iterator it = dependencies.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Entry) it.next();
 			EclipseContext context = (EclipseContext) entry.getKey(); // XXX IEclipseContex
@@ -53,7 +53,7 @@ abstract class Computation {
 	}
 
 	void startListening() {
-		if (EclipseContext.DEBUG) System.out.println(toString() + " now listening to: "
+		if (EclipseContext.DEBUG) System.out.println(toString() + " now listening to: " //$NON-NLS-1$
 				+ mapToString(dependencies));
 		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
 			EclipseContext c = (EclipseContext) it.next();  // XXX IEclipseContex
