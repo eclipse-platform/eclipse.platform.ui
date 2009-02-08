@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.IBackgroundRunner;
 import org.eclipse.e4.core.services.IRunnableWithProgress;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IComputedValue;
+import org.eclipse.e4.core.services.context.spi.ComputedValue;
 
-public class BackgroundRunnerValue implements IComputedValue {
+public class BackgroundRunnerValue extends ComputedValue {
 
 	public Object compute(IEclipseContext context, Object[] arguments) {
 		return new IBackgroundRunner() {
