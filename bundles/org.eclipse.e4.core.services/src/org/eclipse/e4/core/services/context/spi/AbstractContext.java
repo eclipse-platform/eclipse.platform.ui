@@ -22,15 +22,15 @@ public class AbstractContext implements IEclipseContext {
 	}
 
 	public Object get(String name, Object[] arguments) {
-		return null;
+		return get(name, null);
 	}
 
 	public Object getLocal(String name) {
 		return null;
 	}
 
-	public boolean isSet(String name) {
-		return false;
+	public boolean containsKey(String name) {
+		return get(name) == null;
 	}
 
 	public void runAndTrack(Runnable runnable, String name) {
@@ -39,10 +39,7 @@ public class AbstractContext implements IEclipseContext {
 	public void set(String name, Object value) {
 	}
 
-	public void set(String name, IComputedValue computedValue) {
-	}
-
-	public void unset(String name) {
+	public void remove(String name) {
 	}
 
 }

@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
+import java.lang.reflect.*;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IJavaInjection;
 
@@ -38,38 +35,38 @@ public class ContextInjectionImpl implements IJavaInjection {
 		// true if a field was set 
 		abstract void processField(Field field);
 	}
-	
+
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 	final static private Class[] contextNotifySignature = new Class[] {IEclipseContext.class};
-	
+
 	final protected String fieldPrefix;
 	final protected String setMethodPrefix;
 	final protected String setRemovePrefix;
-	
+
 	final protected int fieldPrefixLength;
 
 	public ContextInjectionImpl() {
 		this(FIELD_PREFIX, SET_METHOD_PREFIX, REMOVE_METHOD_PREFIX);
 	}
-	
+
 	public ContextInjectionImpl(String fieldPrefix, String setMethodPrefix, String setRemovePrefix) {
 		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix : FIELD_PREFIX;
 		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix : SET_METHOD_PREFIX;
 		this.setRemovePrefix = (setRemovePrefix != null) ? setRemovePrefix : REMOVE_METHOD_PREFIX;
-		
+
 		fieldPrefixLength = this.fieldPrefix.length();
 	}
 
-	public void injectInto( final Object userObject, final IEclipseContext context) {
-		
+	public void injectInto(final Object userObject, final IEclipseContext context) {
+
 		final Processor processor = new Processor(true /*setter*/) {
 			public void processField(Field field) {
 				String candidateName = field.getName();
 				if (!candidateName.startsWith(fieldPrefix))
 					return;
 				String key = internalCase(candidateName.substring(fieldPrefixLength));
-				if (!context.isSet(key)) // check explicitly to differentiate from null's
-					return; 
+				if (!context.containsKey(key)) // check explicitly to differentiate from null's
+					return;
 				Object value = context.get(key);
 				setField(userObject, field, value);
 			}
@@ -88,12 +85,13 @@ public class ContextInjectionImpl implements IJavaInjection {
 
 			public void run() {
 				walkClassHierarchy(userObject.getClass(), processor);
-			}} , "Java reflection injection"); 
-		
+			}
+		}, "Java reflection injection");
+
 		// trigger post-injection processing
 		notifyUserMethod(CONTEXT_SET_METHOD, userObject, context);
 	}
-	
+
 	protected void notifyUserObject(final IEclipseContext context, final Object userObject, final String serviceName, final Object value, boolean isSetter) {
 		final String methodPrefix = (isSetter) ? setMethodPrefix : setRemovePrefix;
 
@@ -121,7 +119,7 @@ public class ContextInjectionImpl implements IJavaInjection {
 
 		walkClassHierarchy(userObject.getClass(), processor);
 	}
-	
+
 	/**
 	 * For setters: we set fields first, them methods.
 	 * Otherwise, clear methods first, fields next 
@@ -155,7 +153,7 @@ public class ContextInjectionImpl implements IJavaInjection {
 			}
 		}
 	}
-	
+
 	protected String internalCase(String name) {
 		char firstChar = name.charAt(0);
 		if (!Character.isUpperCase(firstChar))
@@ -193,7 +191,7 @@ public class ContextInjectionImpl implements IJavaInjection {
 		}
 		return true;
 	}
-	
+
 	protected boolean setMethod(Object userObject, Method method, Object value) {
 		Class[] parameterTypes = method.getParameterTypes();
 		if (parameterTypes.length != 1)
@@ -251,7 +249,7 @@ public class ContextInjectionImpl implements IJavaInjection {
 				method.setAccessible(false);
 		}
 	}
-	
+
 	private void logWarning(Object destination, Exception e) {
 		System.out.println("Injection failed " + destination.toString());
 		if (e != null)
