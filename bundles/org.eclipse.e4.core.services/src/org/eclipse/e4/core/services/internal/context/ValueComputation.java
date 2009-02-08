@@ -11,8 +11,9 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.context.IComputedValue;
+
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
 
 public class ValueComputation extends Computation {
@@ -31,7 +32,7 @@ public class ValueComputation extends Computation {
 		this.name = name;
 		this.computedValue = computedValue;
 	}
-	
+
 	static class CycleException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
 		private final String cycleMessage;
