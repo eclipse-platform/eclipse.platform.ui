@@ -11,19 +11,11 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
- *
+ * A toy service implementation that prints a message.
  */
-public class ServicesTestSuite extends TestSuite {
-	public static Test suite() {
-		return new ServicesTestSuite();
-	}
+public interface PrintService {
+	public static final String SERVICE_NAME = PrintService.class.getName();
 
-	public ServicesTestSuite() {
-		addTestSuite(EclipseContextTest.class);
-		addTestSuite(ServiceContextTest.class);
-	}
+	public void print(String message);
 }

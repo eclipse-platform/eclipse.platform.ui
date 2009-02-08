@@ -11,19 +11,18 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  *
  */
-public class ServicesTestSuite extends TestSuite {
-	public static Test suite() {
-		return new ServicesTestSuite();
+public class StringPrintService implements PrintService {
+	private StringBuffer buf = new StringBuffer();
+
+	public void print(String message) {
+		buf.append(message);
 	}
 
-	public ServicesTestSuite() {
-		addTestSuite(EclipseContextTest.class);
-		addTestSuite(ServiceContextTest.class);
+	public String toString() {
+		return buf.toString();
 	}
+
 }
