@@ -13,45 +13,22 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IComputedValue;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
-import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
+import org.eclipse.e4.core.services.context.spi.ComputedValue;
+import org.eclipse.e4.ui.model.application.*;
+import org.eclipse.e4.ui.model.workbench.*;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
-import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.IExceptionHandler;
-import org.eclipse.e4.workbench.ui.ILegacyHook;
-import org.eclipse.e4.workbench.ui.IWorkbench;
-import org.eclipse.e4.workbench.ui.renderers.swt.ContributedPartFactory;
-import org.eclipse.e4.workbench.ui.renderers.swt.PartFactory;
-import org.eclipse.e4.workbench.ui.renderers.swt.PartRenderer;
+import org.eclipse.e4.workbench.ui.*;
+import org.eclipse.e4.workbench.ui.renderers.swt.*;
 import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -63,9 +40,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 
@@ -161,7 +136,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		mainContext.set(ResourceUtility.class.getName(), resourceUtility);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
 		mainContext.set(IServiceConstants.SELECTION, new ActiveChildOutputValue(IServiceConstants.SELECTION));
-		mainContext.set(IServiceConstants.INPUT, new IComputedValue() {
+		mainContext.set(IServiceConstants.INPUT, new ComputedValue() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 							Class adapterType = null;
 							if (arguments.length > 0 && arguments[0] instanceof Class) {
@@ -544,7 +519,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 				for (int i = 0; i < params.length && satisfiable; i++) {
 					Class<?> clazz = params[i];
 
-					if (!context.isSet(clazz.getName())) {
+					if (!context.containsKey(clazz.getName())) {
 						satisfiable = false;
 					}
 				}
@@ -661,7 +636,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 				for (int i = 0; i < params.length && satisfiable; i++) {
 					Class clazz = params[i];
 
-					if (!context.isSet(clazz.getName())) {
+					if (!context.containsKey(clazz.getName())) {
 						satisfiable = false;
 					}
 				}

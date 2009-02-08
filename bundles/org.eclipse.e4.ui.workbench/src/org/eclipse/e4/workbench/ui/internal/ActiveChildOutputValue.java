@@ -1,10 +1,10 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IComputedValue;
+import org.eclipse.e4.core.services.context.spi.ComputedValue;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
-public final class ActiveChildOutputValue implements IComputedValue {
+public final class ActiveChildOutputValue extends ComputedValue {
 	private final String attr;
 
 	public ActiveChildOutputValue(String attr) {
@@ -16,7 +16,7 @@ public final class ActiveChildOutputValue implements IComputedValue {
 				.getLocal(IServiceConstants.ACTIVE_CHILD);
 		if (childContext != null) {
 			return childContext.get(attr);
-		} else if (context.isSet(IServiceConstants.OUTPUTS)) {
+		} else if (context.containsKey(IServiceConstants.OUTPUTS)) {
 			IEclipseContext outputs = (IEclipseContext) context
 					.get(IServiceConstants.OUTPUTS);
 			return outputs.get(attr);
