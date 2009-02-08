@@ -70,7 +70,9 @@ public class WorkbenchApplication implements IApplication {
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				try {
-					IEclipseContext appContext = EclipseContextFactory.create("application"); //$NON-NLS-1$
+					//parent of the global workbench context is an OSGi service context that can provide OSGi services
+					IEclipseContext serviceContext = EclipseContextFactory.createServiceContext(Activator.getContext());
+					IEclipseContext appContext = EclipseContextFactory.create("application", serviceContext, null); //$NON-NLS-1$
 					if (cssURI != null) {
 						WorkbenchStylingSupport.initializeStyling(display, cssURI, appContext);
 					}
