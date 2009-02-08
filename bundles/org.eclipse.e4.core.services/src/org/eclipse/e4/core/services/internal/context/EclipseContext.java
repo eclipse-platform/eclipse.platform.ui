@@ -12,6 +12,7 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import java.util.*;
+import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.*;
 
@@ -27,8 +28,9 @@ public class EclipseContext extends AbstractContext {
 		}
 
 		final protected void doHandleInvalid(IEclipseContext context) {
-			if (EclipseContext.DEBUG) System.out.println("scheduling " + toString());
-			((EclipseContext)context).schedule(this); // XXX conversion: should be IEclipseContext
+			if (EclipseContext.DEBUG)
+				System.out.println("scheduling " + toString());
+			((EclipseContext) context).schedule(this); // XXX conversion: should be IEclipseContext
 		}
 
 		public void run() {
@@ -46,12 +48,19 @@ public class EclipseContext extends AbstractContext {
 			return name;
 		}
 	}
-	
+
+	private static final Object[] NO_ARGUMENTS = new Object[0];
+
 	private IEclipseContextStrategy strategy;
 
-	// XXX replace with variable on bundle-specific class
+	// TODO replace with variable on bundle-specific class
 	public static boolean DEBUG = false;
 
+	/**
+	 * TODO Can this really be static? Couldn't there be multiple computations ongoing
+	 * in a single thread? For example a computation could recursively cause
+	 * another context lookup and therefore a nested computation.
+	 */
 	static ThreadLocal currentComputation = new ThreadLocal();
 
 	Set listeners = new HashSet();
@@ -60,12 +69,11 @@ public class EclipseContext extends AbstractContext {
 	Map localValueComputations = new HashMap();
 
 	IEclipseContext parent;
-
-	private final String name;
+	private final String contextName;
 
 	public EclipseContext(IEclipseContext parent, String name, IEclipseContextStrategy strategy) {
 		this.parent = parent;
-		this.name = name;
+		this.contextName = name;
 		this.strategy = strategy;
 	}
 
@@ -81,22 +89,24 @@ public class EclipseContext extends AbstractContext {
 	public Object getLocal(String name) {
 		return internalGet(this, name, null, true);
 	}
-	
+
 	public Object get(String name) {
-		return internalGet(this, name, null, false);
+		return internalGet(this, name, NO_ARGUMENTS, false);
 	}
-	
+
 	public Object get(String name, Object[] arguments) {
 		return internalGet(this, name, arguments, false);
 	}
-	
+
 	static class LookupKey {
 		String name;
-		Object [] arguments;
+		Object[] arguments;
+
 		public LookupKey(String name, Object[] arguments) {
 			this.name = name;
 			this.arguments = arguments;
 		}
+
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
@@ -110,6 +120,7 @@ public class EclipseContext extends AbstractContext {
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			return result;
 		}
+
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
@@ -141,9 +152,9 @@ public class EclipseContext extends AbstractContext {
 		Object result = localValues.get(name);
 		if (result != null) {
 			if (result instanceof IComputedValue) {
-				if (EclipseContext.DEBUG) System.out.println("creating new value computation for " + name + " in " + this + " from " + originatingContext);
-				ValueComputation valueComputation = new ValueComputation(
-						this, originatingContext, name, ((IComputedValue) result));
+				if (EclipseContext.DEBUG)
+					System.out.println("creating new value computation for " + name + " in " + this + " from " + originatingContext);
+				ValueComputation valueComputation = new ValueComputation(this, originatingContext, name, ((IComputedValue) result));
 				originatingContext.localValueComputations.put(lookupKey, valueComputation);
 				result = valueComputation.get(arguments);
 			}
@@ -156,18 +167,17 @@ public class EclipseContext extends AbstractContext {
 	}
 
 	protected void invalidate(String name) {
-		if (EclipseContext.DEBUG) System.out.println("invalidating " + this.name + "," + name);
+		if (EclipseContext.DEBUG)
+			System.out.println("invalidating " + this.contextName + "," + name);
 		localValueComputations.remove(name);
-		Computation[] ls = (Computation[]) listeners
-				.toArray(new Computation[listeners.size()]);
+		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
 		for (int i = 0; i < ls.length; i++) {
 			ls[i].handleInvalid(this, name);
 		}
 	}
 
-	public boolean isSet(String name) {
-		Object value = get(name);
-		return value != null;
+	public boolean containsKey(String name) {
+		return isSetLocally(name) || (parent != null && parent.containsKey(name));
 	}
 
 	private boolean isSetLocally(String name) {
@@ -196,7 +206,7 @@ public class EclipseContext extends AbstractContext {
 		}
 	}
 
-	public void unset(String name) {
+	public void remove(String name) {
 		if (isSetLocally(name)) {
 			localValues.remove(name);
 			Object removed = localValueComputations.remove(name);
@@ -209,6 +219,6 @@ public class EclipseContext extends AbstractContext {
 	}
 
 	public String toString() {
-		return name;
+		return contextName;
 	}
 }
