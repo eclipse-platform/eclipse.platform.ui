@@ -9,14 +9,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/internal/navigator/resources/workbench/ResourceExtensionSorter.java" type="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionSorter">
-        <filter id="571473929">
-            <message_arguments>
-                <message_argument value="ResourceSorter"/>
-                <message_argument value="ResourceExtensionSorter"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ui/internal/navigator/resources/actions/WorkingSetActionProvider.java" type="org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider$WorkingSetManagerListener">
         <filter id="640712815">
             <message_arguments>
