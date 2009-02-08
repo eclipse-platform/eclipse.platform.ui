@@ -41,9 +41,9 @@ import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDEActionFactory;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
@@ -217,7 +217,7 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 								});
 							}
 						} catch (InvocationTargetException e) {
-							String msg = NLS.bind(IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass().getName(), e.getTargetException());
+							String msg = NLS.bind(WorkbenchNavigatorMessages.ResourceMgmtActionProvider_logTitle, getClass().getName(), e.getTargetException());
 							throw new CoreException(new Status(IStatus.ERROR, NavigatorPlugin.PLUGIN_ID, IStatus.ERROR, msg, e.getTargetException()));
 						} catch (InterruptedException e) {
 							return Status.CANCEL_STATUS;

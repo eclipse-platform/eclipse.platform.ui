@@ -41,6 +41,8 @@ public class WorkbenchNavigatorMessages extends NLS {
 
 	public static String MoveResourceAction_title;
 	public static String MoveResourceAction_checkMoveMessage;
+	
+	public static String ResourceMgmtActionProvider_logTitle;
 
 	public static String WorkingSetRootModeActionGroup_Top_Level_Element_;
 	public static String WorkingSetRootModeActionGroup_Project_;
