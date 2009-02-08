@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.context.spi;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
+
 import org.eclipse.e4.core.services.context.IEclipseContextAware;
 
 // XXX add conversion of dashes
@@ -72,7 +74,7 @@ public interface IJavaInjection {
 	 * Default prefix for the fields to be injected. 
 	 * <p>
 	 * For example, if the context has an object under the name "log", the object will be
-	 * injected into the field named "equinoxLog".
+	 * injected into the field named "eclipseLog".
 	 * </p> 
 	 */
 	public String FIELD_PREFIX = "eclipse"; //$NON-NLS-1$
@@ -103,7 +105,7 @@ public interface IJavaInjection {
 	 * </p><p>
 	 * For convenience the definition of this method is present in the {@link IEclipseContextAware} interface.
 	 * </p>
-	 * @see IEclipseContextAware#equinoxContextSet(IEquinoxContext)
+	 * @see IEclipseContextAware#contextSet(IEclipseContext)
 	 */
 	static public final String CONTEXT_SET_METHOD = "contextSet"; //$NON-NLS-1$
 
@@ -113,7 +115,7 @@ public interface IJavaInjection {
 	 * <p>
 	 * For convenience the definition of this method is present in the {@link IEclipseContextAware} interface.
 	 * </p>
-	 * @see IEclipseContextAware#equinoxContextDisposed(IEquinoxContext)
+	 * @see IEclipseContextAware#contextDisposed(IEclipseContext)
 	 */
 	static public final String CONTEXT_DISPOSED_METHOD = "contextDisposed"; //$NON-NLS-1$
 }
