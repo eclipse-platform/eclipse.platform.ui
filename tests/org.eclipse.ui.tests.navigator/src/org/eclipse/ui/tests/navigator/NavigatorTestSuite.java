@@ -35,7 +35,7 @@ public final class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(PipelineTest.class));
 		addTest(new TestSuite(OverrideTest.class));
 		addTest(new TestSuite(SorterTest.class));
-		addTest(new TestSuite(DnDTest.class));
+		//addTest(new TestSuite(DnDTest.class));
 		addTest(new TestSuite(PerformanceTest.class));
 	}
 
