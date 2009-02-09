@@ -1,8 +1,8 @@
 package org.eclipse.e4.demo.e4photo;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IComputedValue;
 
 public class WorkspaceValue implements IComputedValue {
 
