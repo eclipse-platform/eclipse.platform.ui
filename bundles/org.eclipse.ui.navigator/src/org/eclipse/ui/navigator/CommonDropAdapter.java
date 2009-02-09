@@ -92,14 +92,21 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public void dragEnter(DropTargetEvent event) {
-		super.dragEnter(event);
+
 		if (event.detail == DND.DROP_NONE)
 			return;
 		
+		if (Policy.DEBUG_DND) {
+			System.out.println("CommonDropAdapter.dragEnter: " + event); //$NON-NLS-1$
+		}
 		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(
 					event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i]; 
+				if (Policy.DEBUG_DND) {
+					System.out.println("CommonDropAdapter.dragEnter: local selection: " + event.currentDataType); //$NON-NLS-1$
+				}
+				super.dragEnter(event);
 				return;
 			}
 		}
@@ -108,6 +115,10 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			if (FileTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
 				event.detail = DND.DROP_COPY; 
+				if (Policy.DEBUG_DND) {
+					System.out.println("CommonDropAdapter.dragEnter: file: " + event.currentDataType); //$NON-NLS-1$
+				}
+				super.dragEnter(event);
 				return;
 			}
 		}
@@ -116,6 +127,10 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			if (PluginTransfer.getInstance()
 					.isSupportedType(event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i]; 
+				if (Policy.DEBUG_DND) {
+					System.out.println("CommonDropAdapter.dragEnter: plugin: " + event.currentDataType); //$NON-NLS-1$
+				}
+				super.dragEnter(event);
 				return;
 			}
 		}
@@ -194,7 +209,8 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			TransferData theTransferData) {
 
 		if (Policy.DEBUG_DND) {
-			System.out.println("CommonDropAdapter.validateDrop (begin) operation: " + theDropOperation + " target: " + aDropTarget); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("CommonDropAdapter.validateDrop (begin) operation: " + theDropOperation + " target: " + aDropTarget + " transferType: " + theTransferData.type); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			//new Exception().printStackTrace(System.out);
 		}
 
 		boolean result = false;
