@@ -260,7 +260,7 @@ public class DeferredTreeContentManager {
 			 * 
 			 * @param family
 			 *            The DeferredContentFamily that defines a potential
-			 *            ancestor of the current parent in a particualr
+			 *            ancestor of the current parent in a particular
 			 *            manager.
 			 * @param child
 			 *            The object to check against.
