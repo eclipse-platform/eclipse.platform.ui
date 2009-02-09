@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +30,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.navigator.CommonNavigatorFrameSource;
 import org.eclipse.ui.internal.navigator.ContributorTrackingSet;
@@ -67,6 +68,8 @@ public class CommonViewer extends TreeViewer {
 	private FrameList frameList;
 	
 	private CommonNavigator commonNavigator;
+
+	private ICommonViewerMapper _mapper;
 	
 	/**
 	 * <p>
@@ -106,11 +109,30 @@ public class CommonViewer extends TreeViewer {
 		setContentProvider(contentService.createCommonContentProvider());
 		setLabelProvider(new NavigatorDecoratingLabelProvider(contentService.createCommonLabelProvider()));
 		initDragAndDrop();
-
 	}
 
 	void setCommonNavigator(CommonNavigator navigator) {
 		commonNavigator = navigator;
+	}
+
+	/**
+	 * Sets the {@link ICommonViewerMapper} to work with this viewer.
+	 * 
+	 * @param mapper
+	 * @since 3.4
+	 */
+	public void setMapper(ICommonViewerMapper mapper) {
+		_mapper = mapper;
+	}
+	
+	/**
+	 * Gets the {@link ICommonViewerMapper} assigned to this viewer.
+	 * 
+	 * @return the mapper
+	 * @since 3.4
+	 */
+	public ICommonViewerMapper getMapper() {
+		return _mapper;
 	}
 	
 	/**
@@ -183,11 +205,19 @@ public class CommonViewer extends TreeViewer {
 
 		Object[] changed = event.getElements();
 		if (changed != null) {
-			List others = Arrays.asList(changed);
-			for (Iterator iter = others.iterator(); iter.hasNext();) {
-				if(iter.next() == null)
-					iter.remove(); 
-			} 
+			List others = new ArrayList();
+			for (int i = 0; i < changed.length; i++) {
+				if (changed[i] == null)
+					continue;
+				
+				if (_mapper != null) {
+					if (_mapper.handlesObject(changed[i])) {
+						_mapper.objectChanged(changed[i]);
+						continue;
+					}
+				}
+				others.add(changed[i]);
+			}
 			if (others.isEmpty()) {
 				return;
 			}
@@ -367,7 +397,47 @@ public class CommonViewer extends TreeViewer {
         });
     }
 
-	
+
+	/**
+	 * Update an item in the tree.
+	 * 
+	 * @param item the item in the tree to update
+	 * @since 3.4
+	 * 
+	 */
+	public void doUpdateItem(Widget item) {
+		doUpdateItem(item, item.getData(), true);
+	}
+
+	/*
+	 * @see StructuredViewer#mapElement(Object, Widget)
+	 */
+	protected void mapElement(Object element, Widget item) {
+		super.mapElement(element, item);
+		if (_mapper != null && item instanceof Item) {
+			_mapper.addToMap(element, (Item) item);
+		}
+	}
+
+	/*
+	 * @see StructuredViewer#unmapElement(Object, Widget)
+	 */
+	protected void unmapElement(Object element, Widget item) {
+		if (_mapper != null && item instanceof Item) {
+			_mapper.removeFromMap(element, (Item) item);
+		}
+		super.unmapElement(element, item);
+	}
+
+	/*
+	 * @see StructuredViewer#unmapAllElements()
+	 */
+	protected void unmapAllElements() {
+		if (_mapper != null)
+			_mapper.clearMap();
+		super.unmapAllElements();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setSelectionToWidget(java.util.List, boolean)
 	 */

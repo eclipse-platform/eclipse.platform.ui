@@ -22,21 +22,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.navigator.ICommonViewerMapper;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * A test to see if created projects are reflected in Project Explorer
  */
-public class CreateProjectTest extends NavigatorTestBase {
+public class PerformanceTest extends NavigatorTestBase {
 
-	private static final int NUM_OF_PROJECTS = 50; // number of projects to
-	private static final int NUM_OF_FILES = 1000; 
+	private int _numProjects = 50; // number of projects to
+	private int _numFiles = 1000;
 	private static final boolean DEBUG = false;
 
 	DecimalFormat _df = new DecimalFormat("000");
 
-	public CreateProjectTest() {
+	public PerformanceTest() {
 		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
 		_initTestData = false;
 	}
@@ -54,13 +55,13 @@ public class CreateProjectTest extends NavigatorTestBase {
 
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					for (int i = 0; i < NUM_OF_PROJECTS; i++) {
+					for (int i = 0; i < _numProjects; i++) {
 						String name = _df.format(i);
 						IProject p1 = ResourcesPlugin.getWorkspace().getRoot()
 								.getProject("p" + name);
 						p1.create(null);
 						p1.open(null);
-						IFile f1 = p1.getFile("f" + name);
+						IFile f1 = p1.getFile("f" + _df.format(0));
 						f1.create(new ByteArrayInputStream(new byte[] {}),
 								true, null);
 					}
@@ -72,6 +73,7 @@ public class CreateProjectTest extends NavigatorTestBase {
 			}
 		};
 
+		createJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		createJob.schedule();
 		createJob.join();
 
@@ -85,22 +87,16 @@ public class CreateProjectTest extends NavigatorTestBase {
 		if (DEBUG)
 			DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
-		assertEquals(NUM_OF_PROJECTS, numOfProjects);
+		assertEquals(_numProjects, numOfProjects);
 	}
-	
-	// bug 159828 deleting large number of projects takes too long
-	public void testCreateAndDeleteProjects() throws Exception {
-		createProjects();
-		
-		long start = System.currentTimeMillis();
 
+	protected void deleteProjects() throws Exception {
 		Job deleteJob = new Job("Delete Projects") {
 
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					DecimalFormat df = new DecimalFormat("000");
-					for (int i = 0; i < NUM_OF_PROJECTS; i++) {
-						String name = df.format(i);
+					for (int i = 0; i < _numProjects; i++) {
+						String name = _df.format(i);
 						IProject p1 = ResourcesPlugin.getWorkspace().getRoot()
 								.getProject("p" + name);
 						p1.delete(true, null);
@@ -113,38 +109,24 @@ public class CreateProjectTest extends NavigatorTestBase {
 			}
 		};
 
+		deleteJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		deleteJob.schedule();
 		deleteJob.join();
 
 		assertEquals(deleteJob.getResult(), Status.OK_STATUS);
 
-		System.out.println("Delete " + NUM_OF_PROJECTS + " Time: " + (System.currentTimeMillis() - start));
-
 		DisplayHelper.runEventLoop(Display.getCurrent(), 10);
-
-		int numOfProjects = _viewer.getTree().getItemCount();
-
-		if (DEBUG)
-			DisplayHelper.sleep(Display.getCurrent(), 10000000);
-
-		assertEquals(0, numOfProjects);
 	}
 
-	// bug 194209 updating lots of label providers does not scale well
-	public void testCreateAndTouchFiles() throws Exception {
-
-		final IProject p1 = ResourcesPlugin.getWorkspace().getRoot()
-		.getProject("p1");
-		p1.create(null);
-		p1.open(null);
-		
+	protected void createFiles(final IProject project, final int startNumber)
+			throws Exception {
 		Job createJob = new Job("Create Files") {
 
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					for (int i = 0; i < NUM_OF_FILES; i++) {
+					for (int i = startNumber; i < _numFiles; i++) {
 						String name = _df.format(i);
-						IFile f1 = p1.getFile("f" + name);
+						IFile f1 = project.getFile("f" + name);
 						f1.create(new ByteArrayInputStream(new byte[] {}),
 								true, null);
 					}
@@ -156,22 +138,18 @@ public class CreateProjectTest extends NavigatorTestBase {
 			}
 		};
 
+		createJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		createJob.schedule();
 		createJob.join();
 		assertEquals(createJob.getResult(), Status.OK_STATUS);
+	}
 
-		_viewer.collapseAll();
-		
-		if (DEBUG)
-			DisplayHelper.sleep(Display.getCurrent(), 10000000);
-		
-		long start = System.currentTimeMillis();
-		
+	protected void touchFiles(final IProject p1) throws Exception {
 		Job touchJob = new Job("Touch Files") {
 
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					for (int i = 0; i < NUM_OF_FILES; i++) {
+					for (int i = 0; i < _numFiles; i++) {
 						String name = _df.format(i);
 						IFile f1 = p1.getFile("f" + name);
 						f1.touch(null);
@@ -184,14 +162,120 @@ public class CreateProjectTest extends NavigatorTestBase {
 			}
 		};
 
+		touchJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
+		touchJob.schedule();
+		touchJob.join();
+		assertEquals(touchJob.getResult(), Status.OK_STATUS);
+	}
+
+	// bug 159828 deleting large number of projects takes too long
+	public void XXXtestCreateAndDeleteProjects() throws Exception {
+		createProjects();
+
+		long start = System.currentTimeMillis();
+		deleteProjects();
+		System.out.println("Delete " + _numProjects + " Time: "
+				+ (System.currentTimeMillis() - start));
+
+		DisplayHelper.runEventLoop(Display.getCurrent(), 10);
+
+		int numOfProjects = _viewer.getTree().getItemCount();
+
+		if (DEBUG)
+			DisplayHelper.sleep(Display.getCurrent(), 10000000);
+
+		assertEquals(0, numOfProjects);
+	}
+
+	public void XXXtestCreateAndTouchFiles() throws Exception {
+
+		final IProject p1 = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject("p1");
+		p1.create(null);
+		p1.open(null);
+
+		createFiles(p1, 0);
+
+		_viewer.collapseAll();
+
+		if (DEBUG)
+			DisplayHelper.sleep(Display.getCurrent(), 10000000);
+
+		long start = System.currentTimeMillis();
+
+		Job touchJob = new Job("Touch Files") {
+
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					for (int i = 0; i < _numFiles; i++) {
+						String name = _df.format(i);
+						IFile f1 = p1.getFile("f" + name);
+						f1.touch(null);
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					fail("Unexpected exception: " + ex);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+
+		touchJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		touchJob.schedule();
 		touchJob.join();
 		assertEquals(touchJob.getResult(), Status.OK_STATUS);
 
-		System.out.println("Touch " + NUM_OF_FILES + " Time: " + (System.currentTimeMillis() - start));
-
+		System.out.println("Touch " + _numFiles + " Time: "
+				+ (System.currentTimeMillis() - start));
 	}
-	
-	
-	
+
+	protected void createFilesForProjects() throws Exception {
+		for (int i = 0; i < _numProjects; i++) {
+			String name = _df.format(i);
+			IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject(
+					"p" + name);
+			createFiles(p1, 1);
+		}
+	}
+
+	// bug 194209 updating lots of label providers does not scale well
+	public void testLabelProviderMapping() throws Exception {
+
+		ICommonViewerMapper mapper = _viewer.getMapper();
+
+		_numProjects = 1;
+		_numFiles = 2000;
+
+		createProjects();
+		createFilesForProjects();
+
+		// Warm up
+		final IProject p1 = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject("p000");
+
+		p1.close(null);
+		
+		long start = System.currentTimeMillis();
+		_viewer.setMapper(null);
+		p1.open(null);
+		// Let the updates run
+		DisplayHelper.sleep(200);
+		
+		long createUnMappedTime = System.currentTimeMillis() - start;
+		System.out.println("Unmapped Time: " + createUnMappedTime);
+
+		p1.close(null);
+		DisplayHelper.sleep(200);
+		_viewer.setMapper(mapper);
+
+		start = System.currentTimeMillis();
+		p1.open(null);
+		// Let the updates run
+		DisplayHelper.sleep(200);
+		long createMappedTime = System.currentTimeMillis() - start;
+		System.out.println("Mapped Time: " + createMappedTime);
+
+		assertTrue(createMappedTime < createUnMappedTime / 2);
+	}
+
 }

@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -24,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.framelist.Frame;
 import org.eclipse.ui.internal.navigator.framelist.FrameList;
 import org.eclipse.ui.internal.navigator.framelist.TreeFrame;
+import org.eclipse.ui.internal.navigator.resources.ResourceToItemsMapper;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.navigator.CommonNavigator;
@@ -68,6 +70,13 @@ public final class ProjectExplorer extends CommonNavigator {
 	 */
 	private String workingSetLabel;
 
+	public void createPartControl(Composite aParent) {
+		super.createPartControl(aParent);
+		
+		if (!false)
+			getCommonViewer().setMapper(new ResourceToItemsMapper(getCommonViewer()));
+	}	
+	
 	/**
 	 * The superclass does not deal with the content description, handle it
 	 * here.

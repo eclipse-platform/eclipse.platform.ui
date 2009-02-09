@@ -14,6 +14,7 @@ package org.eclipse.ui.navigator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -109,6 +110,9 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablePart, ISaveablesSource, IShowInTarget {
  
+	private static final String PERF_CREATE_PART_CONTROL= "org.eclipse.ui.navigator/perf/explorer/createPartControl"; //$NON-NLS-1$
+
+	
 	private static final Class INAVIGATOR_CONTENT_SERVICE = INavigatorContentService.class;
 	private static final Class COMMON_VIEWER_CLASS = CommonViewer.class;
 	private static final Class ISHOW_IN_SOURCE_CLASS = IShowInSource.class;
@@ -157,6 +161,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite aParent) {
+
+		final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_PART_CONTROL, this);
+		stats.startRun();
 
 		commonViewer = createCommonViewer(aParent);	
 		commonViewer.setCommonNavigator(this);
@@ -222,7 +229,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 				firePropertyChange(PROP_DIRTY);
 			}});
 		
-	      PlatformUI.getWorkbench().getHelpSystem().setHelp(commonViewer.getControl(),  HELP_CONTEXT);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(commonViewer.getControl(),  HELP_CONTEXT);
+		
+		stats.endRun();
 	}
 
 	/**

@@ -6,7 +6,8 @@ Bundle-Version: 3.4.0.qualifier
 Bundle-Activator: org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.internal.navigator.resources.actions;x-internal:=true,
+Export-Package: org.eclipse.ui.internal.navigator.resources;x-internal:=true,
+ org.eclipse.ui.internal.navigator.resources.actions;x-internal:=true,
  org.eclipse.ui.internal.navigator.resources.plugin;x-internal:=true,
  org.eclipse.ui.internal.navigator.resources.workbench;x-internal:=true,
  org.eclipse.ui.internal.navigator.workingsets;x-internal:=true,
