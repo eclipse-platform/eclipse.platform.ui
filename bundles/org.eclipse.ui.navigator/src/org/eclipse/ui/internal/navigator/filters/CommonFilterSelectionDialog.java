@@ -133,6 +133,8 @@ public class CommonFilterSelectionDialog extends Dialog {
 			contentExtensionsTab
 					.addSelectionChangedListener(getSelectionListener());
 		}
+	
+		commonFiltersTab.setInitialFocus();
 		
 		return customizationsTabFolder;
 	}

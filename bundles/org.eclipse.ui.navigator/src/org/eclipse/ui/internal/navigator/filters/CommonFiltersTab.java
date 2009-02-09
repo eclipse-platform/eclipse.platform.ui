@@ -207,6 +207,10 @@ public class CommonFiltersTab extends CustomizationTab {
 		});
 	}
 
+	void setInitialFocus() {
+		filterText.forceFocus();
+	}
+	
 	private void textChanged() {
 		patternFilter.setPattern(filterText.getText());
 		getTableViewer().refresh();
