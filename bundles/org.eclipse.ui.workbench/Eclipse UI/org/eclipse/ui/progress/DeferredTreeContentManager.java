@@ -55,7 +55,7 @@ public class DeferredTreeContentManager {
 	/**
 	 * The DeferredContentFamily is a class used to keep track of a
 	 * manager-object pair so that only jobs scheduled by the receiver are
-	 * cancelled by the receiver.
+	 * canceled by the receiver.
 	 * 
 	 * @since 3.1
 	 * 
