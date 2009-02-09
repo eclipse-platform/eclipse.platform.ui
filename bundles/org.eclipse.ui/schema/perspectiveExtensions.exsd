@@ -289,9 +289,6 @@ If this attribute is not used, the view will be moveable, unless the perspective
 
 &lt;strong&gt;WARNING:&lt;/strong&gt; This is considered to be a &apos;Product level&apos; extension and should not be used in consumable plugins without great care.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -306,9 +303,6 @@ If this attribute is not used, the view will be moveable, unless the perspective
 
 &lt;strong&gt;WARNING:&lt;/strong&gt; This is considered to be a &apos;Product level&apos; extension and should not be used in consumable plugins without great care.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
