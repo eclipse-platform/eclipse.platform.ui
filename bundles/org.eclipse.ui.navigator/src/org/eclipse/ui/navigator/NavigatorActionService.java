@@ -355,9 +355,6 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 			anActionProvider.init(configuration);
 			anActionProvider.restoreState(memento);
 			anActionProvider.setContext(new ActionContext(StructuredSelection.EMPTY));
-			if (commonViewerSite instanceof ICommonViewerWorkbenchSite) {
-				anActionProvider.fillActionBars(((ICommonViewerWorkbenchSite) commonViewerSite).getActionBars());
-			}
 		}
 	}
 }
