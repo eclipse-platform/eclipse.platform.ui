@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 public class ProxySelector {
 
 	private static final String DIRECT_PROVIDER = "Direct"; //$NON-NLS-1$
-	private static final String ECLIPSE_PROVIDER = "Eclipse"; //$NON-NLS-1$
+	private static final String ECLIPSE_PROVIDER = "Manual"; //$NON-NLS-1$
 	private static final String NATIVE_PROVIDER = "Native"; //$NON-NLS-1$
 
 	public static String[] getProviders() {
