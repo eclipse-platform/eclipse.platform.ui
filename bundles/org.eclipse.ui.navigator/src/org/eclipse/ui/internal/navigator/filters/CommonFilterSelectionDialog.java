@@ -188,7 +188,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 	private void createDescriptionText(Composite composite) {
 
 		descriptionText = new Text(composite, SWT.WRAP | SWT.V_SCROLL
-				| SWT.BORDER);
+				| SWT.BORDER | SWT.READ_ONLY);
 		descriptionText.setFont(composite.getFont());
 		descriptionText.setBackground(composite.getBackground());
 		GridData descriptionTextGridData = new GridData(
