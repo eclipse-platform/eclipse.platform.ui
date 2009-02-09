@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -27,9 +27,9 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 public class FilterDialogSelectionListener implements ISelectionChangedListener {
 	
 	
-	private Text descriptionText;
+	private Label descriptionText;
 
-	protected FilterDialogSelectionListener(Text aDescriptionText) {
+	protected FilterDialogSelectionListener(Label aDescriptionText) {
 		descriptionText = aDescriptionText;
 
 	}

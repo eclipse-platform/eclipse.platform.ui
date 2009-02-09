@@ -33,8 +33,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -67,7 +67,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	private ContentExtensionsTab contentExtensionsTab;
 
-	private Text descriptionText;
+	private Label descriptionText;
 
 	private ISelectionChangedListener updateDescriptionSelectionListener; 
 
@@ -187,12 +187,10 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	private void createDescriptionText(Composite composite) {
 
-		descriptionText = new Text(composite, SWT.WRAP | SWT.V_SCROLL
-				| SWT.BORDER | SWT.READ_ONLY);
+		descriptionText = new Label(composite, SWT.WRAP);
 		descriptionText.setFont(composite.getFont());
 		descriptionText.setBackground(composite.getBackground());
-		GridData descriptionTextGridData = new GridData(
-				GridData.FILL_HORIZONTAL);
+		GridData descriptionTextGridData = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
 		descriptionTextGridData.heightHint = convertHeightInCharsToPixels(3);
 		descriptionText.setLayoutData(descriptionTextGridData);
 	}
