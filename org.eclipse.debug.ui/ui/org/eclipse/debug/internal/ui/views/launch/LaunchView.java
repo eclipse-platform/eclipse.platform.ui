@@ -144,6 +144,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
     
     private static final String TOGGLE_STEP_FILTERS = "toggle_step_filters"; //$NON-NLS-1$
 			
+    private static final int BREADCRUMB_TRIGGER_RANGE = 5; // pixels
+    
+    private static final int BREADCRUMB_STICKY_RANGE = 20; // pixels
+    
 	/**
 	 * Whether this view is in the active page of a perspective.
 	 */
@@ -546,9 +550,12 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
      */
     private void autoSelectViewPage(Composite parent) {
         int breadcrumbHeight = fBreadcrumbPage.getHeight();
-        if (parent.getClientArea().height < breadcrumbHeight + 5) {
+        if (parent.getClientArea().height < breadcrumbHeight + BREADCRUMB_TRIGGER_RANGE) {
             showBreadcrumbPage();
-        } else {
+        } 
+        else if (isBreadcrumbVisible() && 
+                 parent.getClientArea().height > breadcrumbHeight + BREADCRUMB_STICKY_RANGE) 
+        {
             showTreeViewerPage();
         }
     }
