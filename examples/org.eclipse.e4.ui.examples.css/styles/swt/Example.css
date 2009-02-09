@@ -18,7 +18,7 @@ Text {
 
 CTabFolder {
     color: darkblue;
-    background-color: #C0C0DF;
+    background-color: #D0D0E0;
 }
 CTabFolder:selected {
     color: white;
