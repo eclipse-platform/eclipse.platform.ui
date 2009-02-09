@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -282,8 +282,8 @@ body, .page {
 #navigation-links a.high-contrast img {
 	height: 32px;
 	width: 32px;
-	top: 5px;
-	left: 0px;
+	top: 5px !important;
+	left: 0px !important;
 }
 
 /*
@@ -431,6 +431,10 @@ body, .page {
 	text-align : left;
 }
 #navigation-links a#workbench .text { display : none; }
+
+#navigation-links a.high-contrast#workbench:hover img,
+#navigation-links a.high-contrast#workbench:focus img,
+#navigation-links a.high-contrast#workbench:active img,
 #navigation-links a#workbench img { 
 	background-image : url(../graphics/icons/ctool/wb_nav_32.gif); 
 	width : 32px; 
@@ -453,10 +457,12 @@ body, .page {
 	display: none !important;
 }
 
-#action-links a.high-contrast .link-label,
-#action-links a.high-contrast:hover .link-label,
-#action-links a.high-contrast:focus .link-label,
-#action-links a.high-contrast:active .link-label {
+#action-links a.high-contrast .link-label {
+	display: none;
+}
+
+#page-links a.high-contrast:focus .link-label,
+#page-links a.high-contrast:active .link-label {
 	display: block !important;
 	text-decoration: underline;
 	top : 5px;
