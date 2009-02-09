@@ -290,7 +290,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 						// preserve partially downloaded file
 						UpdateManagerUtils.mapLocalFileFragment(key, new FileFragment(localFile, bytesCopied));
 					}
-					if (monitor.isCanceled()) {
+					if (monitor != null && monitor.isCanceled()) {
 						String msg = Messages.Feature_InstallationCancelled;
 						throw new InstallAbortedException(msg, null);
 					} else {

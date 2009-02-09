@@ -171,7 +171,7 @@ public class Utilities {
 	public static void copy(InputStream is, OutputStream os, InstallMonitor monitor) throws IOException, InstallAbortedException {
 		long offset = UpdateManagerUtils.copy(is, os, monitor, 0);
 		if (offset != -1) {
-			if (monitor.isCanceled()) {
+			if (monitor != null && monitor.isCanceled()) {
 				String msg = Messages.Feature_InstallationCancelled; 
 				throw new InstallAbortedException(msg, null);
 			} else {
