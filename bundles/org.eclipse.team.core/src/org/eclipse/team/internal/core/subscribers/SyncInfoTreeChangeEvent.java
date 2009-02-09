@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,9 @@ package org.eclipse.team.internal.core.subscribers;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.synchronize.*;
 
-public class SyncInfoTreeChangeEvent extends SyncSetChangedEvent implements ISyncInfoTreeChangeEvent {
+public class SyncInfoTreeChangeEvent extends SyncInfoSetChangeEvent implements ISyncInfoTreeChangeEvent {
 
 	private Set removedSubtrees = new HashSet();
 	private Set addedSubtrees = new HashSet();

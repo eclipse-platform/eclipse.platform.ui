@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.synchronize;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -30,7 +23,6 @@ import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFil
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.subscribers.SyncInfoStatistics;
-import org.eclipse.team.internal.core.subscribers.SyncSetChangedEvent;
 
 /**
  * A dynamic collection of {@link SyncInfo} objects that provides
@@ -296,7 +288,7 @@ public class SyncInfoSet {
 
 	private Set listeners = Collections.synchronizedSet(new HashSet());
 
-	private SyncSetChangedEvent changes = createEmptyChangeEvent();
+	private SyncInfoSetChangeEvent changes = createEmptyChangeEvent();
 
 	/**
 	 * Add the given <code>SyncInfo</code> to the set. A change event will
@@ -353,8 +345,7 @@ public class SyncInfoSet {
 	public void remove(IResource resource) {
 		try {
 			beginInput();
-			SyncInfo info = internalRemove(resource);
-			getChangeEvent().removed(resource, info);
+			getChangeEvent().removed(resource);
 		} finally {
 			endInput(null);
 		}
@@ -548,15 +539,16 @@ public class SyncInfoSet {
 	 * Create an empty change event. Subclass may override to provided specialized event types
 	 * 
 	 * @return an empty change event
+	 * @since 3.5
 	 */
-	protected SyncSetChangedEvent createEmptyChangeEvent() {
-		return new SyncSetChangedEvent(this);
+	protected SyncInfoSetChangeEvent createEmptyChangeEvent() {
+		return new SyncInfoSetChangeEvent(this);
 	}
 
 	private void fireChanges(final IProgressMonitor monitor) {
 		// Only one thread at the time can enter the method, so the event we
 		// send is static
-		final SyncSetChangedEvent event = getChangeEvent();
+		final SyncInfoSetChangeEvent event = getChangeEvent();
 		resetChanges();
 			
 		// Ensure that the list of listeners is not changed while events are fired.
@@ -605,11 +597,15 @@ public class SyncInfoSet {
 	}
 
 	/**
-	 * Return the change event that is accumulating the changes to the set.
-	 * This can be called by subclasses to access the event.
+	 * Return the change event that is accumulating the changes to the set. This
+	 * can be called by subclasses to access the event.
+	 * 
 	 * @return Returns the changes.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 * @since 3.5
 	 */
-	protected SyncSetChangedEvent getChangeEvent() {
+	protected SyncInfoSetChangeEvent getChangeEvent() {
 		return changes;
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.subscribers;
+package org.eclipse.team.core.synchronize;
 
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.synchronize.*;
 
 /**
- * This event keeps track of the changes in a sync set
+ * This event keeps track of the changes in a {@link SyncInfoSet}
+ * 
+ * @see SyncInfoSet
+ * @since 3.5
  */
-public class SyncSetChangedEvent implements ISyncInfoSetChangeEvent {
+public class SyncInfoSetChangeEvent implements ISyncInfoSetChangeEvent {
 	
 	private SyncInfoSet set;
 	
@@ -33,7 +35,7 @@ public class SyncSetChangedEvent implements ISyncInfoSetChangeEvent {
 
 	private List errors = new ArrayList();
 
-	public SyncSetChangedEvent(SyncInfoSet set) {
+	public SyncInfoSetChangeEvent(SyncInfoSet set) {
 		super();
 		this.set = set;
 	}
@@ -48,7 +50,7 @@ public class SyncSetChangedEvent implements ISyncInfoSetChangeEvent {
 		}
 	}
 	
-	public void removed(IResource resource, SyncInfo info) {
+	public void removed(IResource resource) {
 		if (changedResources.containsKey(resource)) {
 			// No use in reporting the change since it has subsequently been removed
 			changedResources.remove(resource);

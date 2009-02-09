@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.core.Messages;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.subscribers.SyncInfoTreeChangeEvent;
-import org.eclipse.team.internal.core.subscribers.SyncSetChangedEvent;
 
 /**
  * Provides addition API for accessing the <code>SyncInfo</code> in the set through
@@ -153,11 +152,11 @@ public class SyncInfoTree extends SyncInfoSet {
 		return (SyncInfo[]) infos.toArray(new SyncInfo[infos.size()]);
 	}
 
-	/**
-	 * Overrides inherited method to provide an instance of
-	 * <code>ISyncInfoTreeChangeEvent</code>.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.SyncInfoSet#createEmptyChangeEvent()
 	 */
-	protected SyncSetChangedEvent createEmptyChangeEvent() {
+	protected SyncInfoSetChangeEvent createEmptyChangeEvent() {
 		return new SyncInfoTreeChangeEvent(this);
 	}
 

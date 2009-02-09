@@ -28,4 +28,26 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/team/core/synchronize/SyncInfoTree.java" type="org.eclipse.team.core.synchronize.SyncInfoTree">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.core.synchronize.SyncInfoTree"/>
+                <message_argument value="createEmptyChangeEvent()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/team/core/synchronize/SyncInfoSet.java" type="org.eclipse.team.core.synchronize.SyncInfoSet">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.core.synchronize.SyncInfoSet"/>
+                <message_argument value="getChangeEvent()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.core.synchronize.SyncInfoSet"/>
+                <message_argument value="createEmptyChangeEvent()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
