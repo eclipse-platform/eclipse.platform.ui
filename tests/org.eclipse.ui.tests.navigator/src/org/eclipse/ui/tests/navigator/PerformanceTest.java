@@ -288,7 +288,7 @@ public class PerformanceTest extends NavigatorTestBase {
 		long createMappedTime = System.currentTimeMillis() - start;
 		System.out.println("Mapped Time: " + createMappedTime);
 
-		assertTrue(createMappedTime < createUnMappedTime / 2);
+		assertTrue(createMappedTime < createUnMappedTime);
 	}
 
 }
