@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.navigator.ICommonViewerMapper;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 
 /**
  * A test to see if created projects are reflected in Project Explorer
@@ -169,22 +170,34 @@ public class PerformanceTest extends NavigatorTestBase {
 	}
 
 	// bug 159828 deleting large number of projects takes too long
-	public void XXXtestCreateAndDeleteProjects() throws Exception {
+	public void testCreateAndDeleteProjects() throws Exception {
+		
+		_numProjects = 100;
+		
 		createProjects();
+		
+		// Hide it
+		EditorTestHelper.showView(_navigatorInstanceId, false);
 
 		long start = System.currentTimeMillis();
 		deleteProjects();
-		System.out.println("Delete " + _numProjects + " Time: "
+		DisplayHelper.sleep(500);
+		System.out.println("No project explorer delete " + _numProjects + " Time: "
 				+ (System.currentTimeMillis() - start));
 
-		DisplayHelper.runEventLoop(Display.getCurrent(), 10);
+		showNavigator();
+		DisplayHelper.sleep(100);
+		createProjects();
+		DisplayHelper.sleep(200);
 
-		int numOfProjects = _viewer.getTree().getItemCount();
+		start = System.currentTimeMillis();
+		deleteProjects();
+		DisplayHelper.sleep(500);
+		System.out.println("Project explorer " + _numProjects + " Time: "
+				+ (System.currentTimeMillis() - start));
+		
+		DisplayHelper.sleep(500);
 
-		if (DEBUG)
-			DisplayHelper.sleep(Display.getCurrent(), 10000000);
-
-		assertEquals(0, numOfProjects);
 	}
 
 	public void XXXtestCreateAndTouchFiles() throws Exception {

@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.NavigatorFilterService;
 import org.eclipse.ui.navigator.CommonNavigator;
@@ -104,6 +105,17 @@ public class NavigatorTestBase extends TestCase {
 			_projectCount = 3;
 		}
 
+		showNavigator();
+		refreshViewer();
+
+		_contentService = _viewer.getNavigatorContentService();
+		_actionService = _commonNavigator.getNavigatorActionService();
+		
+		((NavigatorFilterService)_contentService.getFilterService()).resetFilterActivationState();
+
+	}
+
+	protected void showNavigator() throws PartInitException {
 		EditorTestHelper.showView(_navigatorInstanceId, true);
 
 		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench()
@@ -115,16 +127,8 @@ public class NavigatorTestBase extends TestCase {
 		_commonNavigator.setFocus();
 		_viewer = (CommonViewer) _commonNavigator
 				.getAdapter(CommonViewer.class);
-
-		refreshViewer();
-
-		_contentService = _viewer.getNavigatorContentService();
-		_actionService = _commonNavigator.getNavigatorActionService();
-		
-		((NavigatorFilterService)_contentService.getFilterService()).resetFilterActivationState();
-
 	}
-
+	
 	protected void tearDown() throws Exception {
 		clearAll();
 		// Hide it, we want a new one each time
