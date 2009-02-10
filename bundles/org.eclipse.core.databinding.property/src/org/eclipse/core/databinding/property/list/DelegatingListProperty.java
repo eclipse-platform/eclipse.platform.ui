@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
+ *     Matthew Hall - bug 264306
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.list;
@@ -48,7 +49,7 @@ public abstract class DelegatingListProperty extends ListProperty {
 	 */
 	public final IListProperty getDelegate(Object source) {
 		if (source == null)
-			return null;
+			return nullProperty;
 		IListProperty delegate = doGetDelegate(source);
 		if (delegate == null)
 			delegate = nullProperty;

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
+ *     Matthew Hall - bug 264306
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.set;
@@ -47,7 +48,7 @@ public abstract class DelegatingSetProperty extends SetProperty {
 	 */
 	protected final ISetProperty getDelegate(Object source) {
 		if (source == null)
-			return null;
+			return nullProperty;
 		ISetProperty delegate = doGetDelegate(source);
 		if (delegate == null)
 			delegate = nullProperty;

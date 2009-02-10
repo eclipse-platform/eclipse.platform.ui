@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
+ *     Matthew Hall - bug 264306
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.map;
@@ -49,7 +50,7 @@ public abstract class DelegatingMapProperty extends MapProperty {
 	 */
 	public final IMapProperty getDelegate(Object source) {
 		if (source == null)
-			return null;
+			return nullProperty;
 		IMapProperty delegate = doGetDelegate(source);
 		if (delegate == null)
 			delegate = nullProperty;

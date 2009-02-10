@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
+ *     Matthew Hall - bug 264306
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.value;
@@ -49,7 +50,7 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 	 */
 	public final IValueProperty getDelegate(Object source) {
 		if (source == null)
-			return null;
+			return nullProperty;
 		IValueProperty delegate = doGetDelegate(source);
 		if (delegate == null)
 			delegate = nullProperty;
