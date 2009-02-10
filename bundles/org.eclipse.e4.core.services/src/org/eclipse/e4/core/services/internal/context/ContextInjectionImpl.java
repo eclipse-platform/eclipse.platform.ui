@@ -23,10 +23,12 @@ public class ContextInjectionImpl implements IJavaInjection {
 
 	abstract private class Processor {
 
-		public boolean isSetter;
+		protected IEclipseContext context;
+		protected boolean isSetter;
 
-		public Processor(boolean isSetter) {
+		public Processor(IEclipseContext context, boolean isSetter) {
 			this.isSetter = isSetter;
+			this.context = context;
 		}
 
 		// true if a field was set 
@@ -34,6 +36,56 @@ public class ContextInjectionImpl implements IJavaInjection {
 
 		// true if a field was set 
 		abstract void processField(Field field);
+		
+		protected String findKey(String key) {
+			if (context.containsKey(key)) // priority goes to exact match
+				return key; 
+			// alternate capitalization of the first char if possible
+			String candidate = altKey(key);
+			if (candidate == null) // no alternative spellings
+				return null; 
+			if (context.containsKey(candidate))
+				return candidate; 
+			return null; // means "not set"; differentiate from null values
+		}
+		
+		protected boolean keyMatches(String key1, String key2) {
+			if (key1 == null && key2 == null)
+				return true;
+			if (key1 == null || key2 == null)
+				return false;
+			if (key1.equals(key2))
+				return true;
+			String candidate = altKey(key2);
+			if (candidate == null) // no alternative spellings
+				return false; 
+			return key1.equals(candidate);
+		}
+		
+		/**
+		 * Calculates alternative spelling of the key: "log" <-> "Log", if any.
+		 * Returns null if there is no alternate.
+		 */
+		protected String altKey(String key) {
+			if (key.length() == 0)
+				return null;
+			char firstChar = key.charAt(0);
+			String candidate = null;
+			if (Character.isUpperCase(firstChar)) {
+				firstChar = Character.toLowerCase(firstChar);
+				if (key.length() == 1)
+					candidate = Character.toString(firstChar);
+				else
+					candidate = Character.toString(firstChar) + key.substring(1);
+			} else if (Character.isLowerCase(firstChar)) {
+				firstChar = Character.toUpperCase(firstChar);
+					if (key.length() == 1)
+						candidate = Character.toString(firstChar);
+					else
+						candidate = Character.toString(firstChar) + key.substring(1);
+			}
+			return candidate;
+		}
 	}
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
@@ -59,13 +111,13 @@ public class ContextInjectionImpl implements IJavaInjection {
 
 	public void injectInto(final Object userObject, final IEclipseContext context) {
 
-		final Processor processor = new Processor(true /*setter*/) {
+		final Processor processor = new Processor(context, true /*setter*/) {
 			public void processField(Field field) {
 				String candidateName = field.getName();
 				if (!candidateName.startsWith(fieldPrefix))
 					return;
-				String key = internalCase(candidateName.substring(fieldPrefixLength));
-				if (!context.containsKey(key)) // check explicitly to differentiate from null's
+				String key = findKey(candidateName.substring(fieldPrefixLength));
+				if (key == null) // value not set in the context
 					return;
 				Object value = context.get(key);
 				setField(userObject, field, value);
@@ -75,7 +127,9 @@ public class ContextInjectionImpl implements IJavaInjection {
 				String candidateName = method.getName();
 				if (!candidateName.startsWith(SET_METHOD_PREFIX))
 					return;
-				String key = internalCase(candidateName.substring(SET_METHOD_PREFIX.length()));
+				final String key = findKey(candidateName.substring(SET_METHOD_PREFIX.length()));
+				if (key == null) // value not set in the context
+					return; 
 				Class[] parameterTypes = method.getParameterTypes();
 				Object value = context.get(key, parameterTypes);
 				setMethod(userObject, method, value);
@@ -95,13 +149,13 @@ public class ContextInjectionImpl implements IJavaInjection {
 	protected void notifyUserObject(final IEclipseContext context, final Object userObject, final String serviceName, final Object value, boolean isSetter) {
 		final String methodPrefix = (isSetter) ? setMethodPrefix : setRemovePrefix;
 
-		Processor processor = new Processor(isSetter) {
+		Processor processor = new Processor(context, isSetter) {
 			public void processField(Field field) {
 				String candidateName = field.getName();
 				if (!candidateName.startsWith(fieldPrefix))
 					return;
-				String key = internalCase(candidateName.substring(fieldPrefix.length()));
-				if (!key.equals(serviceName))
+				String candidate = candidateName.substring(fieldPrefix.length());
+				if (!keyMatches(serviceName, candidate))
 					return;
 				setField(userObject, field, (isSetter) ? value : null);
 			}
@@ -110,8 +164,8 @@ public class ContextInjectionImpl implements IJavaInjection {
 				String candidateName = method.getName();
 				if (!candidateName.startsWith(methodPrefix))
 					return;
-				String key = internalCase(candidateName.substring(methodPrefix.length()));
-				if (!key.equals(serviceName))
+				String candidate = candidateName.substring(methodPrefix.length());
+				if (!keyMatches(serviceName, candidate))
 					return;
 				setMethod(userObject, method, value);
 			}
