@@ -1092,7 +1092,17 @@
 	        sequence="CTRL+L"/>
    </extension>
    
-   	<extension
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <hiddenToolBarItem
+               id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly">
+         </hiddenToolBarItem>
+      </perspectiveExtension>
+   </extension>
+
+   <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
             label="%textEditorPresentationActionSet.label"
