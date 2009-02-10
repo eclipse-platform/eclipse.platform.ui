@@ -167,13 +167,11 @@ public class CommonViewer extends TreeViewer {
 
 		int operations = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
 
-		CommonDragAdapter dragAdapter = new CommonDragAdapter(contentService,
-				this);
+		CommonDragAdapter dragAdapter = createDragAdapter();
 		addDragSupport(operations, dragAdapter.getSupportedDragTransfers(),
 				dragAdapter);
 		
-		CommonDropAdapter dropAdapter = new CommonDropAdapter(contentService,
-				this);
+		CommonDropAdapter dropAdapter = createDropAdapter();
 		addDropSupport(operations, dropAdapter.getSupportedDropTransfers(),
 				dropAdapter);
 
@@ -181,6 +179,33 @@ public class CommonViewer extends TreeViewer {
 		dnd.setDropAdaptor(dropAdapter);
 	}
 
+	
+	/**
+	 * Creates the {@link CommonDragAdapter}, this is used to provide a subclass
+	 * if desired.
+	 * 
+	 * @return the CommonDragAdapter
+	 * 
+	 * @since 3.4
+	 */
+	protected CommonDragAdapter createDragAdapter() {
+		return new CommonDragAdapter(contentService, this);
+	}
+	
+	
+	/**
+	 * Creates the {@link CommonDropAdapter}, this is used to provide a subclass
+	 * if desired.
+	 * 
+	 * @return the CommonDropAdapter
+	 * 
+	 * @since 3.4
+	 */
+	protected CommonDropAdapter createDropAdapter() {
+		return new CommonDropAdapter(contentService, this);
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
