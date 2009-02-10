@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 263413
+ *     Matthew Hall - bugs 263413, 264286
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -32,11 +32,11 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @since 1.3
  */
-public abstract class ViewerValueProperty extends SimpleValueProperty {
+public abstract class ViewerValueProperty extends SimpleValueProperty implements
+		IViewerValueProperty {
 	public IObservableValue observe(Object source) {
 		if (source instanceof Viewer) {
-			return observe(SWTObservables.getRealm(((Viewer) source)
-					.getControl().getDisplay()), source);
+			return observe((Viewer) source);
 		}
 		return super.observe(source);
 	}
@@ -47,5 +47,14 @@ public abstract class ViewerValueProperty extends SimpleValueProperty {
 			observable = new ViewerObservableValueDecorator(observable,
 					(Viewer) source);
 		return observable;
+	}
+
+	public IViewerObservableValue observe(Viewer viewer) {
+		return (IViewerObservableValue) observe(SWTObservables.getRealm(viewer
+				.getControl().getDisplay()), viewer);
+	}
+
+	public IViewerObservableValue observeDelayed(int delay, Viewer viewer) {
+		return ViewersObservables.observeDelayedValue(delay, observe(viewer));
 	}
 }

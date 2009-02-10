@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 263413
+ *     Matthew Hall - bugs 263413, 264286
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -31,11 +31,11 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @since 1.3
  */
-public abstract class WidgetListProperty extends SimpleListProperty {
+public abstract class WidgetListProperty extends SimpleListProperty implements
+		IWidgetListProperty {
 	public IObservableList observe(Object source) {
 		if (source instanceof Widget) {
-			return observe(SWTObservables.getRealm(((Widget) source)
-					.getDisplay()), source);
+			return observe((Widget) source);
 		}
 		return super.observe(source);
 	}
@@ -43,5 +43,10 @@ public abstract class WidgetListProperty extends SimpleListProperty {
 	public IObservableList observe(Realm realm, Object source) {
 		return new SWTObservableListDecorator(super.observe(realm, source),
 				(Widget) source);
+	}
+
+	public ISWTObservableList observe(Widget widget) {
+		return (ISWTObservableList) observe(SWTObservables.getRealm(widget
+				.getDisplay()), widget);
 	}
 }

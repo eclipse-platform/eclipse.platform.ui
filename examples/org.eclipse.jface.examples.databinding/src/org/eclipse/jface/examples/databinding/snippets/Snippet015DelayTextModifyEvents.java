@@ -6,7 +6,7 @@
  * Contributors:
  * 		Matthew Hall - initial API and implementation (bug 180746)
  * 		Boris Bokowski, IBM - initial API and implementation
- *     Matthew Hall - bug 260329
+ *      Matthew Hall - bugs 260329, 264286
  ***********************************************************************************************************/
 package org.eclipse.jface.examples.databinding.snippets;
 
@@ -16,6 +16,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.FontDescriptor;
@@ -49,34 +50,35 @@ public class Snippet015DelayTextModifyEvents {
 
 		createLabel(shell, SWT.NONE, "1000ms delay");
 
-		final ISWTObservableValue delayed1 = SWTObservables.observeDelayedValue(200,
-				SWTObservables.observeText(text1, SWT.Modify));
-		final ISWTObservableValue delayed2 = SWTObservables.observeDelayedValue(1000,
-				SWTObservables.observeText(text2, SWT.Modify));
-		
+		final ISWTObservableValue delayed1 = WidgetProperties.text(SWT.Modify)
+				.observeDelayed(200, text1);
+		final ISWTObservableValue delayed2 = WidgetProperties.text(SWT.Modify)
+				.observeDelayed(1000, text2);
+
 		// (In a real application,you would want to dispose the resource manager
 		// when you are done with it)
-		ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
+		ResourceManager resourceManager = new LocalResourceManager(
+				JFaceResources.getResources());
 		final Font shellFont = shell.getFont();
-		final Font italicFont = resourceManager.createFont(FontDescriptor.createFrom(
-				shellFont).setStyle(SWT.ITALIC));
-		
+		final Font italicFont = resourceManager.createFont(FontDescriptor
+				.createFrom(shellFont).setStyle(SWT.ITALIC));
+
 		final IObservableValue stale1 = Observables.observeStale(delayed1);
 		new ControlUpdater(field2) {
 			protected void updateControl() {
-				boolean stale = ((Boolean)stale1.getValue()).booleanValue();
+				boolean stale = ((Boolean) stale1.getValue()).booleanValue();
 				field2.setFont(stale ? italicFont : shellFont);
 			}
 		};
-		
+
 		final IObservableValue stale2 = Observables.observeStale(delayed2);
 		new ControlUpdater(field1) {
 			protected void updateControl() {
-				boolean stale = ((Boolean)stale2.getValue()).booleanValue();
+				boolean stale = ((Boolean) stale2.getValue()).booleanValue();
 				field1.setFont(stale ? italicFont : shellFont);
 			}
 		};
-		
+
 		String info = "Pending changes are applied immediately if the observed control loses focus";
 		GridDataFactory.fillDefaults().span(3, 1).applyTo(
 				createLabel(shell, SWT.WRAP, info));

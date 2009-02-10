@@ -7,14 +7,14 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation
- *     Matthew Hall - bug 190881
+ *     Matthew Hall - bugs 190881, 264286
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.core.databinding.observable.list.DecoratingObservableList;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.jface.databinding.swt.ISWTObservable;
+import org.eclipse.jface.databinding.swt.ISWTObservableList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Widget;
  * 
  */
 public class SWTObservableListDecorator extends DecoratingObservableList
-		implements ISWTObservable {
+		implements ISWTObservableList {
 	private Widget widget;
 
 	/**

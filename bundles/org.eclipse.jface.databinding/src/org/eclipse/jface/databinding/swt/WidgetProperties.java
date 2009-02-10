@@ -7,29 +7,11 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 256543, 213893, 262320, 262946
+ *     Matthew Hall - bugs 256543, 213893, 262320, 262946, 264286
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
 
-import org.eclipse.core.databinding.property.list.DelegatingListProperty;
-import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
-import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.jface.internal.databinding.swt.ButtonImageProperty;
-import org.eclipse.jface.internal.databinding.swt.ButtonSelectionProperty;
-import org.eclipse.jface.internal.databinding.swt.ButtonTextProperty;
-import org.eclipse.jface.internal.databinding.swt.CComboItemsProperty;
-import org.eclipse.jface.internal.databinding.swt.CComboSelectionProperty;
-import org.eclipse.jface.internal.databinding.swt.CComboSingleSelectionIndexProperty;
-import org.eclipse.jface.internal.databinding.swt.CComboTextProperty;
-import org.eclipse.jface.internal.databinding.swt.CLabelImageProperty;
-import org.eclipse.jface.internal.databinding.swt.CLabelTextProperty;
-import org.eclipse.jface.internal.databinding.swt.CTabItemTooltipTextProperty;
-import org.eclipse.jface.internal.databinding.swt.ComboItemsProperty;
-import org.eclipse.jface.internal.databinding.swt.ComboSelectionProperty;
-import org.eclipse.jface.internal.databinding.swt.ComboSingleSelectionIndexProperty;
-import org.eclipse.jface.internal.databinding.swt.ComboTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlBackgroundProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlBoundsProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlEnabledProperty;
@@ -38,38 +20,22 @@ import org.eclipse.jface.internal.databinding.swt.ControlFontProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlForegroundProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlLocationProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlSizeProperty;
-import org.eclipse.jface.internal.databinding.swt.ControlTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlVisibleProperty;
-import org.eclipse.jface.internal.databinding.swt.ItemImageProperty;
-import org.eclipse.jface.internal.databinding.swt.ItemTextProperty;
-import org.eclipse.jface.internal.databinding.swt.LabelImageProperty;
-import org.eclipse.jface.internal.databinding.swt.LabelTextProperty;
-import org.eclipse.jface.internal.databinding.swt.LinkTextProperty;
-import org.eclipse.jface.internal.databinding.swt.ListItemsProperty;
-import org.eclipse.jface.internal.databinding.swt.ListSelectionProperty;
-import org.eclipse.jface.internal.databinding.swt.ListSingleSelectionIndexProperty;
-import org.eclipse.jface.internal.databinding.swt.ScaleMaximumProperty;
-import org.eclipse.jface.internal.databinding.swt.ScaleMinimumProperty;
-import org.eclipse.jface.internal.databinding.swt.ScaleSelectionProperty;
-import org.eclipse.jface.internal.databinding.swt.ShellTextProperty;
-import org.eclipse.jface.internal.databinding.swt.SpinnerMaximumProperty;
-import org.eclipse.jface.internal.databinding.swt.SpinnerMinimumProperty;
-import org.eclipse.jface.internal.databinding.swt.SpinnerSelectionProperty;
-import org.eclipse.jface.internal.databinding.swt.StyledTextTextProperty;
-import org.eclipse.jface.internal.databinding.swt.TabItemTooltipTextProperty;
-import org.eclipse.jface.internal.databinding.swt.TableColumnTooltipTextProperty;
-import org.eclipse.jface.internal.databinding.swt.TableSingleSelectionIndexProperty;
-import org.eclipse.jface.internal.databinding.swt.TextEditableProperty;
-import org.eclipse.jface.internal.databinding.swt.TextTextProperty;
-import org.eclipse.jface.internal.databinding.swt.ToolItemTooltipTextProperty;
-import org.eclipse.jface.internal.databinding.swt.TrayItemTooltipTextProperty;
-import org.eclipse.jface.internal.databinding.swt.TreeColumnTooltipTextProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetEditableProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetImageProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetItemsProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetMaximumProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetMinimumProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetSingleSelectionIndexProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetTextProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetTextWithEventsProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetTooltipTextProperty;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
@@ -95,11 +61,6 @@ import org.eclipse.swt.widgets.Widget;
  * @since 1.3
  */
 public class WidgetProperties {
-	private static RuntimeException notSupported(Object source) {
-		return new IllegalArgumentException(
-				"Widget [" + source.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
-	}
-
 	/**
 	 * Returns a value property for observing the background color of a
 	 * {@link Control}.
@@ -107,7 +68,7 @@ public class WidgetProperties {
 	 * @return a value property for observing the background color of a
 	 *         {@link Control}.
 	 */
-	public static IValueProperty background() {
+	public static IWidgetValueProperty background() {
 		return new ControlBackgroundProperty();
 	}
 
@@ -116,7 +77,7 @@ public class WidgetProperties {
 	 * 
 	 * @return a value property for observing the bounds of a {@link Control}.
 	 */
-	public static IValueProperty bounds() {
+	public static IWidgetValueProperty bounds() {
 		return new ControlBoundsProperty();
 	}
 
@@ -127,16 +88,8 @@ public class WidgetProperties {
 	 * @return a value property for observing the editable state of a
 	 *         {@link Text}.
 	 */
-	public static IValueProperty editable() {
-		return new DelegatingValueProperty(Boolean.TYPE) {
-			IValueProperty text = new TextEditableProperty();
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof Text)
-					return text;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty editable() {
+		return new WidgetEditableProperty();
 	}
 
 	/**
@@ -146,7 +99,7 @@ public class WidgetProperties {
 	 * @return a value property for observing the enablement state of a
 	 *         {@link Control}.
 	 */
-	public static IValueProperty enabled() {
+	public static IWidgetValueProperty enabled() {
 		return new ControlEnabledProperty();
 	}
 
@@ -157,7 +110,7 @@ public class WidgetProperties {
 	 * @return a value property for observing the focus state of a
 	 *         {@link Control}.
 	 */
-	public static IValueProperty focused() {
+	public static IWidgetValueProperty focused() {
 		return new ControlFocusedProperty();
 	}
 
@@ -166,7 +119,7 @@ public class WidgetProperties {
 	 * 
 	 * @return a value property for observing the font of a {@link Control}.
 	 */
-	public static IValueProperty font() {
+	public static IWidgetValueProperty font() {
 		return new ControlFontProperty();
 	}
 
@@ -177,7 +130,7 @@ public class WidgetProperties {
 	 * @return a value property for observing the foreground color of a
 	 *         {@link Control}.
 	 */
-	public static IValueProperty foreground() {
+	public static IWidgetValueProperty foreground() {
 		return new ControlForegroundProperty();
 	}
 
@@ -188,25 +141,8 @@ public class WidgetProperties {
 	 * @return a value property for observing the image of a {@link Button},
 	 *         {@link CLabel}, {@link Item} or {@link Label}.
 	 */
-	public static IValueProperty image() {
-		return new DelegatingValueProperty(Image.class) {
-			private IValueProperty button = new ButtonImageProperty();
-			private IValueProperty cLabel = new CLabelImageProperty();
-			private IValueProperty item = new ItemImageProperty();
-			private IValueProperty label = new LabelImageProperty();
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof Button)
-					return button;
-				if (source instanceof CLabel)
-					return cLabel;
-				if (source instanceof Item)
-					return item;
-				if (source instanceof Label)
-					return label;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty image() {
+		return new WidgetImageProperty();
 	}
 
 	/**
@@ -216,22 +152,8 @@ public class WidgetProperties {
 	 * @return a list property for observing the items of a {@link CCombo},
 	 *         {@link Combo} or {@link List}.
 	 */
-	public static IListProperty items() {
-		return new DelegatingListProperty(String.class) {
-			private IListProperty cCombo = new CComboItemsProperty();
-			private IListProperty combo = new ComboItemsProperty();
-			private IListProperty list = new ListItemsProperty();
-
-			protected IListProperty doGetDelegate(Object source) {
-				if (source instanceof CCombo)
-					return cCombo;
-				if (source instanceof Combo)
-					return combo;
-				if (source instanceof List)
-					return list;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetListProperty items() {
+		return new WidgetItemsProperty();
 	}
 
 	/**
@@ -239,7 +161,7 @@ public class WidgetProperties {
 	 * 
 	 * @return a value property for observing the location of a {@link Control}.
 	 */
-	public static IValueProperty location() {
+	public static IWidgetValueProperty location() {
 		return new ControlLocationProperty();
 	}
 
@@ -250,19 +172,8 @@ public class WidgetProperties {
 	 * @return a value property for observing the maximum value of a
 	 *         {@link Scale} or {@link Spinner}.
 	 */
-	public static IValueProperty maximum() {
-		return new DelegatingValueProperty(Integer.TYPE) {
-			private IValueProperty scale = new ScaleMaximumProperty();
-			private IValueProperty spinner = new SpinnerMaximumProperty();
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof Scale)
-					return scale;
-				if (source instanceof Spinner)
-					return spinner;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty maximum() {
+		return new WidgetMaximumProperty();
 	}
 
 	/**
@@ -272,19 +183,8 @@ public class WidgetProperties {
 	 * @return a value property for observing the minimum value of a
 	 *         {@link Scale} or {@link Spinner}.
 	 */
-	public static IValueProperty minimum() {
-		return new DelegatingValueProperty(Integer.TYPE) {
-			private IValueProperty scale = new ScaleMinimumProperty();
-			private IValueProperty spinner = new SpinnerMinimumProperty();
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof Scale)
-					return scale;
-				if (source instanceof Spinner)
-					return spinner;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty minimum() {
+		return new WidgetMinimumProperty();
 	}
 
 	/**
@@ -296,31 +196,8 @@ public class WidgetProperties {
 	 *         {@link Button}, {@link CCombo}, {@link Combo}, {@link List},
 	 *         {@link Scale} or {@link Spinner}.
 	 */
-	public static IValueProperty selection() {
-		return new DelegatingValueProperty() {
-			private IValueProperty button = new ButtonSelectionProperty();
-			private IValueProperty cCombo = new CComboSelectionProperty();
-			private IValueProperty combo = new ComboSelectionProperty();
-			private IValueProperty list = new ListSelectionProperty();
-			private IValueProperty scale = new ScaleSelectionProperty();
-			private IValueProperty spinner = new SpinnerSelectionProperty();
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof Button)
-					return button;
-				if (source instanceof CCombo)
-					return cCombo;
-				if (source instanceof Combo)
-					return combo;
-				if (source instanceof List)
-					return list;
-				if (source instanceof Scale)
-					return scale;
-				if (source instanceof Spinner)
-					return spinner;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty selection() {
+		return new WidgetSelectionProperty();
 	}
 
 	/**
@@ -329,25 +206,8 @@ public class WidgetProperties {
 	 * 
 	 * @return a value property for the single selection index of a SWT Combo.
 	 */
-	public static IValueProperty singleSelectionIndex() {
-		return new DelegatingValueProperty(Integer.TYPE) {
-			private IValueProperty cCombo = new CComboSingleSelectionIndexProperty();
-			private IValueProperty combo = new ComboSingleSelectionIndexProperty();
-			private IValueProperty list = new ListSingleSelectionIndexProperty();
-			private IValueProperty table = new TableSingleSelectionIndexProperty();
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof CCombo)
-					return cCombo;
-				if (source instanceof Combo)
-					return combo;
-				if (source instanceof List)
-					return list;
-				if (source instanceof Table)
-					return table;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty singleSelectionIndex() {
+		return new WidgetSingleSelectionIndexProperty();
 	}
 
 	/**
@@ -355,7 +215,7 @@ public class WidgetProperties {
 	 * 
 	 * @return a value property for observing the size of a {@link Control}.
 	 */
-	public static IValueProperty size() {
+	public static IWidgetValueProperty size() {
 		return new ControlSizeProperty();
 	}
 
@@ -370,43 +230,8 @@ public class WidgetProperties {
 	 *         {@link Label}, {@link Link}, {@link Shell}, {@link StyledText} or
 	 *         {@link Text}.
 	 */
-	public static IValueProperty text() {
-		return new DelegatingValueProperty(String.class) {
-			private IValueProperty button = new ButtonTextProperty();
-			private IValueProperty cCombo = new CComboTextProperty();
-			private IValueProperty cLabel = new CLabelTextProperty();
-			private IValueProperty combo = new ComboTextProperty();
-			private IValueProperty item = new ItemTextProperty();
-			private IValueProperty label = new LabelTextProperty();
-			private IValueProperty link = new LinkTextProperty();
-			private IValueProperty shell = new ShellTextProperty();
-			private IValueProperty styledText = new StyledTextTextProperty();
-			private IValueProperty text = new TextTextProperty();
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof Button)
-					return button;
-				if (source instanceof CCombo)
-					return cCombo;
-				if (source instanceof CLabel)
-					return cLabel;
-				if (source instanceof Combo)
-					return combo;
-				if (source instanceof Item)
-					return item;
-				if (source instanceof Label)
-					return label;
-				if (source instanceof Link)
-					return link;
-				if (source instanceof Shell)
-					return shell;
-				if (source instanceof StyledText)
-					return styledText;
-				if (source instanceof Text)
-					return text;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty text() {
+		return new WidgetTextProperty();
 	}
 
 	/**
@@ -421,7 +246,7 @@ public class WidgetProperties {
 	 * @return a value property for observing the text of a {@link StyledText}
 	 *         or {@link Text}.
 	 */
-	public static IValueProperty text(final int event) {
+	public static IWidgetValueProperty text(final int event) {
 		return text(new int[] { event });
 	}
 
@@ -437,21 +262,8 @@ public class WidgetProperties {
 	 * @return a value property for observing the text of a {@link StyledText}
 	 *         or {@link Text}.
 	 */
-	public static IValueProperty text(int[] events) {
-		final int[] events_ = (int[]) events.clone();
-		return new DelegatingValueProperty(String.class) {
-			private IValueProperty styledText = new StyledTextTextProperty(
-					events_);
-			private IValueProperty text = new TextTextProperty(events_);
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof StyledText)
-					return styledText;
-				if (source instanceof Text)
-					return text;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty text(int[] events) {
+		return new WidgetTextWithEventsProperty((int[]) events.clone());
 	}
 
 	/**
@@ -464,34 +276,8 @@ public class WidgetProperties {
 	 *         {@link TableColumn}, {@link ToolItem}, {@link TrayItem} or
 	 *         {@link TreeColumn}.
 	 */
-	public static IValueProperty tooltipText() {
-		return new DelegatingValueProperty(String.class) {
-			private IValueProperty cTabItem = new CTabItemTooltipTextProperty();
-			private IValueProperty control = new ControlTooltipTextProperty();
-			private IValueProperty tabItem = new TabItemTooltipTextProperty();
-			private IValueProperty tableColumn = new TableColumnTooltipTextProperty();
-			private IValueProperty toolItem = new ToolItemTooltipTextProperty();
-			private IValueProperty trayItem = new TrayItemTooltipTextProperty();
-			private IValueProperty treeColumn = new TreeColumnTooltipTextProperty();
-
-			protected IValueProperty doGetDelegate(Object source) {
-				if (source instanceof CTabItem)
-					return cTabItem;
-				if (source instanceof Control)
-					return control;
-				if (source instanceof TabItem)
-					return tabItem;
-				if (source instanceof TableColumn)
-					return tableColumn;
-				if (source instanceof ToolItem)
-					return toolItem;
-				if (source instanceof TrayItem)
-					return trayItem;
-				if (source instanceof TreeColumn)
-					return treeColumn;
-				throw notSupported(source);
-			}
-		};
+	public static IWidgetValueProperty tooltipText() {
+		return new WidgetTooltipTextProperty();
 	}
 
 	/**
@@ -501,7 +287,7 @@ public class WidgetProperties {
 	 * @return a value property for observing the visibility state of a
 	 *         {@link Control}.
 	 */
-	public static IValueProperty visible() {
+	public static IWidgetValueProperty visible() {
 		return new ControlVisibleProperty();
 	}
 }

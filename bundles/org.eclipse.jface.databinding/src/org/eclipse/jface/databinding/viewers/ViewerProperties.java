@@ -7,20 +7,15 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 264286
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
 
-import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.databinding.property.set.DelegatingSetProperty;
-import org.eclipse.core.databinding.property.set.ISetProperty;
-import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.jface.internal.databinding.viewers.CheckableCheckedElementsProperty;
-import org.eclipse.jface.internal.databinding.viewers.CheckboxTableViewerCheckedElementsProperty;
-import org.eclipse.jface.internal.databinding.viewers.CheckboxTreeViewerCheckedElementsProperty;
 import org.eclipse.jface.internal.databinding.viewers.SelectionProviderMultipleSelectionProperty;
 import org.eclipse.jface.internal.databinding.viewers.SelectionProviderSingleSelectionProperty;
 import org.eclipse.jface.internal.databinding.viewers.StructuredViewerFiltersProperty;
+import org.eclipse.jface.internal.databinding.viewers.ViewerCheckedElementsProperty;
 import org.eclipse.jface.internal.databinding.viewers.ViewerInputProperty;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -47,23 +42,8 @@ public class ViewerProperties {
 	 *         {@link CheckboxTableViewer}, {@link CheckboxTreeViewer} or
 	 *         {@link ICheckable}.
 	 */
-	public static ISetProperty checkedElements(final Object elementType) {
-		return new DelegatingSetProperty(elementType) {
-			ISetProperty checkable = new CheckableCheckedElementsProperty(
-					elementType);
-			ISetProperty checkboxTableViewer = new CheckboxTableViewerCheckedElementsProperty(
-					elementType);
-			ISetProperty checkboxTreeViewer = new CheckboxTreeViewerCheckedElementsProperty(
-					elementType);
-
-			protected ISetProperty doGetDelegate(Object source) {
-				if (source instanceof CheckboxTableViewer)
-					return checkboxTableViewer;
-				if (source instanceof CheckboxTreeViewer)
-					return checkboxTreeViewer;
-				return checkable;
-			}
-		};
+	public static IViewerSetProperty checkedElements(Object elementType) {
+		return new ViewerCheckedElementsProperty(elementType);
 	}
 
 	/**
@@ -73,7 +53,7 @@ public class ViewerProperties {
 	 * @return a value property for observing the input of a
 	 *         {@link StructuredViewer}.
 	 */
-	public static ISetProperty filters() {
+	public static IViewerSetProperty filters() {
 		return new StructuredViewerFiltersProperty();
 	}
 
@@ -82,7 +62,7 @@ public class ViewerProperties {
 	 * 
 	 * @return a value property for observing the input of a {@link Viewer}.
 	 */
-	public static IValueProperty input() {
+	public static IViewerValueProperty input() {
 		return new ViewerInputProperty();
 	}
 
@@ -93,7 +73,7 @@ public class ViewerProperties {
 	 * @return a list property for observing the multiple selection of an
 	 *         {@link ISelectionProvider}.
 	 */
-	public static IListProperty multipleSelection() {
+	public static IViewerListProperty multipleSelection() {
 		return new SelectionProviderMultipleSelectionProperty();
 	}
 
@@ -104,7 +84,7 @@ public class ViewerProperties {
 	 * @return a value property for observing the single selection of a
 	 *         {@link ISelectionProvider}.
 	 */
-	public static IValueProperty singleSelection() {
+	public static IViewerValueProperty singleSelection() {
 		return new SelectionProviderSingleSelectionProperty();
 	}
 }

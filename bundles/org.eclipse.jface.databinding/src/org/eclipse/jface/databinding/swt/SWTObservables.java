@@ -10,7 +10,7 @@
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
  *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734,
- *                    195222, 256543, 213893, 262320
+ *                    195222, 256543, 213893, 262320, 264286
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *     Tom Schindl - bug 246462
@@ -108,8 +108,7 @@ public class SWTObservables {
 	 *         control
 	 */
 	public static ISWTObservableValue observeEnabled(Control control) {
-		return (ISWTObservableValue) WidgetProperties.enabled()
-				.observe(control);
+		return WidgetProperties.enabled().observe(control);
 	}
 
 	/**
@@ -122,8 +121,7 @@ public class SWTObservables {
 	 *         control
 	 */
 	public static ISWTObservableValue observeVisible(Control control) {
-		return (ISWTObservableValue) WidgetProperties.visible()
-				.observe(control);
+		return WidgetProperties.visible().observe(control);
 	}
 
 	/**
@@ -145,8 +143,7 @@ public class SWTObservables {
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeTooltipText(Widget widget) {
-		return (ISWTObservableValue) WidgetProperties.tooltipText().observe(
-				widget);
+		return WidgetProperties.tooltipText().observe(widget);
 	}
 
 	/**
@@ -180,8 +177,7 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeSelection(Control control) {
-		return (ISWTObservableValue) WidgetProperties.selection().observe(
-				control);
+		return WidgetProperties.selection().observe(control);
 	}
 
 	/**
@@ -198,8 +194,7 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeMin(Control control) {
-		return (ISWTObservableValue) WidgetProperties.minimum()
-				.observe(control);
+		return WidgetProperties.minimum().observe(control);
 	}
 
 	/**
@@ -216,8 +211,7 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeMax(Control control) {
-		return (ISWTObservableValue) WidgetProperties.maximum()
-				.observe(control);
+		return WidgetProperties.maximum().observe(control);
 	}
 
 	/**
@@ -239,8 +233,7 @@ public class SWTObservables {
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeText(Control control, int[] events) {
-		return (ISWTObservableValue) WidgetProperties.text(events).observe(
-				control);
+		return WidgetProperties.text(events).observe(control);
 	}
 
 	/**
@@ -259,8 +252,7 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeText(Control control, int event) {
-		return (ISWTObservableValue) WidgetProperties.text(event).observe(
-				control);
+		return WidgetProperties.text(event).observe(control);
 	}
 
 	/**
@@ -287,7 +279,7 @@ public class SWTObservables {
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeText(Widget widget) {
-		return (ISWTObservableValue) WidgetProperties.text().observe(widget);
+		return WidgetProperties.text().observe(widget);
 	}
 
 	/**
@@ -331,7 +323,7 @@ public class SWTObservables {
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeImage(Widget widget) {
-		return (ISWTObservableValue) WidgetProperties.image().observe(widget);
+		return WidgetProperties.image().observe(widget);
 	}
 
 	/**
@@ -369,8 +361,7 @@ public class SWTObservables {
 	 */
 	public static ISWTObservableValue observeSingleSelectionIndex(
 			Control control) {
-		return (ISWTObservableValue) WidgetProperties.singleSelectionIndex()
-				.observe(control);
+		return WidgetProperties.singleSelectionIndex().observe(control);
 	}
 
 	/**
@@ -383,8 +374,7 @@ public class SWTObservables {
 	 *         control
 	 */
 	public static ISWTObservableValue observeForeground(Control control) {
-		return (ISWTObservableValue) WidgetProperties.foreground().observe(
-				control);
+		return WidgetProperties.foreground().observe(control);
 	}
 
 	/**
@@ -397,8 +387,7 @@ public class SWTObservables {
 	 *         control
 	 */
 	public static ISWTObservableValue observeBackground(Control control) {
-		return (ISWTObservableValue) WidgetProperties.background().observe(
-				control);
+		return WidgetProperties.background().observe(control);
 	}
 
 	/**
@@ -409,7 +398,7 @@ public class SWTObservables {
 	 * @return an observable value tracking the font of the given control
 	 */
 	public static ISWTObservableValue observeFont(Control control) {
-		return (ISWTObservableValue) WidgetProperties.font().observe(control);
+		return WidgetProperties.font().observe(control);
 	}
 
 	/**
@@ -421,7 +410,7 @@ public class SWTObservables {
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeSize(Control control) {
-		return (ISWTObservableValue) WidgetProperties.size().observe(control);
+		return WidgetProperties.size().observe(control);
 	}
 
 	/**
@@ -433,8 +422,7 @@ public class SWTObservables {
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeLocation(Control control) {
-		return (ISWTObservableValue) WidgetProperties.location().observe(
-				control);
+		return WidgetProperties.location().observe(control);
 	}
 
 	/**
@@ -446,8 +434,7 @@ public class SWTObservables {
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeFocus(Control control) {
-		return (ISWTObservableValue) WidgetProperties.focused()
-				.observe(control);
+		return WidgetProperties.focused().observe(control);
 	}
 
 	/**
@@ -459,7 +446,7 @@ public class SWTObservables {
 	 * @since 1.3
 	 */
 	public static ISWTObservableValue observeBounds(Control control) {
-		return (ISWTObservableValue) WidgetProperties.bounds().observe(control);
+		return WidgetProperties.bounds().observe(control);
 	}
 
 	/**
@@ -475,8 +462,7 @@ public class SWTObservables {
 	 *             if <code>control</code> type is unsupported
 	 */
 	public static ISWTObservableValue observeEditable(Control control) {
-		return (ISWTObservableValue) WidgetProperties.editable().observe(
-				control);
+		return WidgetProperties.editable().observe(control);
 	}
 
 	private static class DisplayRealm extends Realm {

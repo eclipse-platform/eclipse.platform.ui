@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 206839, 124684, 239302, 245647, 194734, 195222
+ *     Matthew Hall - bugs 206839, 124684, 239302, 245647, 194734, 195222,
+ *                    264286
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -31,10 +32,9 @@ import org.eclipse.jface.viewers.Viewer;
  * @since 1.1
  */
 public class ViewersObservables {
-	private static Object checkNull(Object obj) {
+	private static void checkNull(Object obj) {
 		if (obj == null)
 			throw new IllegalArgumentException();
-		return obj;
 	}
 
 	/**
@@ -77,8 +77,8 @@ public class ViewersObservables {
 	 */
 	public static IObservableValue observeSingleSelection(
 			ISelectionProvider selectionProvider) {
-		return ViewerProperties.singleSelection().observe(
-				checkNull(selectionProvider));
+		checkNull(selectionProvider);
+		return ViewerProperties.singleSelection().observe(selectionProvider);
 	}
 
 	/**
@@ -101,8 +101,8 @@ public class ViewersObservables {
 	 */
 	public static IObservableList observeMultiSelection(
 			ISelectionProvider selectionProvider) {
-		return ViewerProperties.multipleSelection().observe(
-				checkNull(selectionProvider));
+		checkNull(selectionProvider);
+		return ViewerProperties.multipleSelection().observe(selectionProvider);
 	}
 
 	/**
@@ -119,8 +119,8 @@ public class ViewersObservables {
 	 * @since 1.2
 	 */
 	public static IViewerObservableValue observeSingleSelection(Viewer viewer) {
-		return (IViewerObservableValue) ViewerProperties.singleSelection()
-				.observe(checkNull(viewer));
+		checkNull(viewer);
+		return ViewerProperties.singleSelection().observe(viewer);
 	}
 
 	/**
@@ -141,8 +141,8 @@ public class ViewersObservables {
 	 * @since 1.2
 	 */
 	public static IViewerObservableList observeMultiSelection(Viewer viewer) {
-		return (IViewerObservableList) ViewerProperties.multipleSelection()
-				.observe(checkNull(viewer));
+		checkNull(viewer);
+		return ViewerProperties.multipleSelection().observe(viewer);
 	}
 
 	/**
@@ -157,7 +157,8 @@ public class ViewersObservables {
 	 * @since 1.2
 	 */
 	public static IObservableValue observeInput(Viewer viewer) {
-		return ViewerProperties.input().observe(checkNull(viewer));
+		checkNull(viewer);
+		return ViewerProperties.input().observe(viewer);
 	}
 
 	/**
@@ -174,8 +175,8 @@ public class ViewersObservables {
 	 */
 	public static IObservableSet observeCheckedElements(ICheckable checkable,
 			Object elementType) {
-		return ViewerProperties.checkedElements(elementType).observe(
-				checkNull(checkable));
+		checkNull(checkable);
+		return ViewerProperties.checkedElements(elementType).observe(checkable);
 	}
 
 	/**
@@ -193,8 +194,8 @@ public class ViewersObservables {
 	 */
 	public static IViewerObservableSet observeCheckedElements(
 			CheckboxTableViewer viewer, Object elementType) {
-		return (IViewerObservableSet) ViewerProperties.checkedElements(
-				elementType).observe(checkNull(viewer));
+		checkNull(viewer);
+		return ViewerProperties.checkedElements(elementType).observe(viewer);
 	}
 
 	/**
@@ -212,8 +213,8 @@ public class ViewersObservables {
 	 */
 	public static IViewerObservableSet observeCheckedElements(
 			CheckboxTreeViewer viewer, Object elementType) {
-		return (IViewerObservableSet) ViewerProperties.checkedElements(
-				elementType).observe(checkNull(viewer));
+		checkNull(viewer);
+		return ViewerProperties.checkedElements(elementType).observe(viewer);
 	}
 
 	/**
@@ -234,7 +235,7 @@ public class ViewersObservables {
 	 * @since 1.3
 	 */
 	public static IViewerObservableSet observeFilters(StructuredViewer viewer) {
-		return (IViewerObservableSet) ViewerProperties.filters().observe(
-				checkNull(viewer));
+		checkNull(viewer);
+		return ViewerProperties.filters().observe(viewer);
 	}
 }

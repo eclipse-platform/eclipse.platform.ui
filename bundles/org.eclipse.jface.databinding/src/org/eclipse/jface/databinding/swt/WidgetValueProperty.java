@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 263413
+ *     Matthew Hall - bugs 263413, 264286
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -41,7 +41,8 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @since 1.3
  */
-public abstract class WidgetValueProperty extends SimpleValueProperty {
+public abstract class WidgetValueProperty extends SimpleValueProperty implements
+		IWidgetValueProperty {
 	private int[] events;
 
 	/**
@@ -119,8 +120,7 @@ public abstract class WidgetValueProperty extends SimpleValueProperty {
 
 	public IObservableValue observe(Object source) {
 		if (source instanceof Widget) {
-			return observe(SWTObservables.getRealm(((Widget) source)
-					.getDisplay()), source);
+			return observe((Widget) source);
 		}
 		return super.observe(source);
 	}
@@ -132,5 +132,14 @@ public abstract class WidgetValueProperty extends SimpleValueProperty {
 	protected ISWTObservableValue wrapObservable(IObservableValue observable,
 			Widget widget) {
 		return new SWTObservableValueDecorator(observable, widget);
+	}
+
+	public ISWTObservableValue observe(Widget widget) {
+		return (ISWTObservableValue) observe(SWTObservables.getRealm(widget
+				.getDisplay()), widget);
+	}
+
+	public ISWTObservableValue observeDelayed(int delay, Widget widget) {
+		return SWTObservables.observeDelayedValue(delay, observe(widget));
 	}
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation
- *     Matthew Hall - bug 263413
+ *     Matthew Hall - bugs 263413, 264286
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -32,11 +32,11 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @since 1.3
  */
-public abstract class ViewerListProperty extends SimpleListProperty {
+public abstract class ViewerListProperty extends SimpleListProperty implements
+		IViewerListProperty {
 	public IObservableList observe(Object source) {
 		if (source instanceof Viewer) {
-			return observe(SWTObservables.getRealm(((Viewer) source)
-					.getControl().getDisplay()), source);
+			return observe((Viewer) source);
 		}
 		return super.observe(source);
 	}
@@ -47,5 +47,10 @@ public abstract class ViewerListProperty extends SimpleListProperty {
 			observable = new ViewerObservableListDecorator(observable,
 					(Viewer) source);
 		return observable;
+	}
+
+	public IViewerObservableList observe(Viewer viewer) {
+		return (IViewerObservableList) observe(SWTObservables.getRealm(viewer
+				.getControl().getDisplay()), viewer);
 	}
 }
