@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 124684)
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -331,13 +331,8 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 				}
 			});
 
-			ObservableListContentProvider peopleContentProvider = new ObservableListContentProvider();
-			peopleViewer.setContentProvider(peopleContentProvider);
-			peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
-					BeansObservables.observeMaps(peopleContentProvider
-							.getKnownElements(), Person.class, new String[] {
-							"name", "friends" })));
-			peopleViewer.setInput(people);
+			ViewerSupport.bind(peopleViewer, people, BeanProperties.values(
+					Person.class, new String[] { "name", "friends" }));
 
 			final IObservableValue selectedPerson = ViewersObservables
 					.observeSingleSelection(peopleViewer);
@@ -353,15 +348,11 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 					.getTable()), personSelected);
 
 			dbc.bindValue(SWTObservables.observeText(personName, SWT.Modify),
-					BeansObservables.observeDetailValue(
-							selectedPerson, "name", String.class));
+					BeansObservables.observeDetailValue(selectedPerson, "name",
+							String.class));
 
-			ObservableListContentProvider friendsContentProvider = new ObservableListContentProvider();
-			friendsViewer.setContentProvider(friendsContentProvider);
-			friendsViewer.setLabelProvider(new ObservableMapLabelProvider(
-					BeansObservables.observeMap(friendsContentProvider
-							.getKnownElements(), Person.class, "name")));
-			friendsViewer.setInput(people);
+			ViewerSupport.bind(friendsViewer, people, BeanProperties.value(
+					Person.class, "name"));
 
 			dbc.bindSet(ViewersObservables.observeCheckedElements(
 					friendsViewer, Person.class), BeansObservables

@@ -8,7 +8,7 @@
  * Contributors:
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Tom Schindl - cell editing
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -19,15 +19,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -147,35 +146,35 @@ public class Snippet013TableViewerEditing {
 	 * 
 	 * @since 3.3
 	 */
-	private static class InlineEditingSupport extends ObservableValueEditingSupport {
+	private static class InlineEditingSupport extends
+			ObservableValueEditingSupport {
 		private CellEditor cellEditor;
-		
+
 		/**
 		 * @param viewer
 		 * @param dbc
 		 */
-		public InlineEditingSupport(ColumnViewer viewer,
-				DataBindingContext dbc) {
-			
+		public InlineEditingSupport(ColumnViewer viewer, DataBindingContext dbc) {
+
 			super(viewer, dbc);
 			cellEditor = new TextCellEditor((Composite) viewer.getControl());
 		}
-		
+
 		protected CellEditor getCellEditor(Object element) {
 			return cellEditor;
 		}
 
 		protected IObservableValue doCreateCellEditorObservable(
 				CellEditor cellEditor) {
-			
-			return SWTObservables.observeText(cellEditor
-					.getControl(), SWT.Modify);
+
+			return SWTObservables.observeText(cellEditor.getControl(),
+					SWT.Modify);
 		}
 
 		protected IObservableValue doCreateElementObservable(Object element,
 				ViewerCell cell) {
 			return BeansObservables.observeValue(element, "name");
-		}		
+		}
 	}
 
 	// The GUI view
@@ -220,20 +219,10 @@ public class Snippet013TableViewerEditing {
 					bindingContext));
 			column.getColumn().setWidth(100);
 
-			// Create a standard content provider
-			ObservableListContentProvider peopleViewerContentProvider = new ObservableListContentProvider();
-			peopleViewer.setContentProvider(peopleViewerContentProvider);
-
-			// And a standard label provider that maps columns
-			IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-					peopleViewerContentProvider.getKnownElements(),
-					Person.class, new String[] { "name" });
-			peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
-					attributeMaps));
-
-			// Now set the Viewer's input
-			peopleViewer.setInput(new WritableList(viewModel.getPeople(),
-					Person.class));
+			// Bind viewer to model
+			ViewerSupport.bind(peopleViewer, new WritableList(viewModel
+					.getPeople(), Person.class), BeanProperties.value(
+					Person.class, "name"));
 
 			// bind selectedCommitter label to the name of the current selection
 			IObservableValue selection = ViewersObservables

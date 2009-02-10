@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Coconut Palm Software, Inc. - Initial API and implementation
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -16,16 +16,14 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.CompositeMap;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -249,68 +247,33 @@ public class Snippet017TableViewerWithDerivedColumns {
 				}
 			});
 
-			// Create a standard content provider
-			ObservableListContentProvider peopleViewerContentProvider = new ObservableListContentProvider();
-			peopleViewer.setContentProvider(peopleViewerContentProvider);
+			// Bind viewers to model
+			ViewerSupport.bind(peopleViewer, viewModel.getPeople(),
+					BeanProperties.values(new String[] { "name", "mother.name",
+							"father.name", "mother.mother.name" }));
 
-			// And a standard label provider that maps columns
-			IObservableMap nameMap = BeansObservables.observeMap(
-					peopleViewerContentProvider.getKnownElements(),
-					Person.class, "name");
-			IObservableMap motherMap = BeansObservables.observeMap(
-					peopleViewerContentProvider.getKnownElements(),
-					Person.class, "mother");
-			IObservableMap fatherMap = BeansObservables.observeMap(
-					peopleViewerContentProvider.getKnownElements(),
-					Person.class, "father");
-			IObservableMap grandmotherMap = new CompositeMap(motherMap,
-					BeansObservables.setToMapFactory(Person.class, "mother"));
-			IObservableMap[] columnMaps = new IObservableMap[] {
-					nameMap,
-					new CompositeMap(motherMap, BeansObservables.setToMapFactory(
-							Person.class, "name")),
-					new CompositeMap(fatherMap, BeansObservables.setToMapFactory(
-							Person.class, "name")),
-					new CompositeMap(grandmotherMap, BeansObservables.setToMapFactory(
-							Person.class, "name")) };
-			peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
-					columnMaps));
-
-			// Now set the Viewer's input
-			peopleViewer.setInput(viewModel.getPeople());
-
+			// Bind viewer selection to detail fields
 			IObservableValue selection = ViewersObservables
 					.observeSingleSelection(peopleViewer);
-			bindingContext
-					.bindValue(
-							SWTObservables.observeText(nameText, SWT.Modify),
-							BeansObservables.observeDetailValue(
-									selection, "name", String.class));
+			bindingContext.bindValue(SWTObservables.observeText(nameText,
+					SWT.Modify), BeansObservables.observeDetailValue(selection,
+					"name", String.class));
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
-			ObservableListContentProvider motherComboContentProvider = new ObservableListContentProvider();
-			mothercomboViewer.setContentProvider(motherComboContentProvider);
-			mothercomboViewer.setLabelProvider(new ObservableMapLabelProvider(
-					BeansObservables.observeMap(motherComboContentProvider
-							.getKnownElements(), Person.class, "name")));
-			mothercomboViewer.setInput(viewModel.getPeople());
+			ViewerSupport.bind(mothercomboViewer, viewModel.getPeople(),
+					BeanProperties.value("name"));
 			bindingContext.bindValue(ViewersObservables
 					.observeSingleSelection(mothercomboViewer),
-					BeansObservables.observeDetailValue(
-							selection, "mother", Person.class));
+					BeansObservables.observeDetailValue(selection, "mother",
+							Person.class));
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
-			ObservableListContentProvider fatherComboContentProvider = new ObservableListContentProvider();
-			fatherComboViewer
-					.setContentProvider(fatherComboContentProvider);
-			fatherComboViewer.setLabelProvider(new ObservableMapLabelProvider(
-					BeansObservables.observeMap(fatherComboContentProvider
-							.getKnownElements(), Person.class, "name")));
-			fatherComboViewer.setInput(viewModel.getPeople());
+			ViewerSupport.bind(fatherComboViewer, viewModel.getPeople(),
+					BeanProperties.value("name"));
 			bindingContext.bindValue(ViewersObservables
 					.observeSingleSelection(fatherComboViewer),
-					BeansObservables.observeDetailValue(
-							selection, "father", Person.class));
+					BeansObservables.observeDetailValue(selection, "father",
+							Person.class));
 		}
 	}
 

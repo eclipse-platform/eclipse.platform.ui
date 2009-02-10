@@ -9,16 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 160000
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
@@ -63,14 +62,8 @@ public class ComboViewerScenario extends ScenariosTestCase {
 		// Bind the catalog's lodgings to the combo
 		IObservableList lodgings = BeansObservables.observeList(realm, catalog,
 				"lodgings");
-		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
-
-		IObservableMap attributeMap = BeansObservables.observeMap(
-				contentProvider.getKnownElements(), Lodging.class, "name");
-		comboViewer.setLabelProvider(new ObservableMapLabelProvider(
-				attributeMap));
-		comboViewer.setContentProvider(contentProvider);
-		comboViewer.setInput(lodgings);
+		ViewerSupport.bind(comboViewer, lodgings, BeanProperties.value(
+				Lodging.class, "name"));
 
 		// Verify that the combo's items are the lodgings
 		for (int i = 0; i < catalog.getLodgings().length; i++) {

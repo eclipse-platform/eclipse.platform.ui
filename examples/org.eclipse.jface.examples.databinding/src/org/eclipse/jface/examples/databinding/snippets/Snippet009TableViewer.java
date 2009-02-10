@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Coconut Palm Software, Inc. - Initial API and implementation
+ *     Matthew Hall - bug 260337
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -16,36 +17,43 @@ import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * Demonstrates binding a TableViewer to a collection.
  */
 public class Snippet009TableViewer {
 	public static void main(String[] args) {
-		ViewModel viewModel = new ViewModel();
-		Shell shell = new View(viewModel).createShell();
+		final Display display = Display.getDefault();
 
-		// The SWT event loop
-		Display display = Display.getCurrent();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+		// In an RCP application, the threading Realm will be set for you
+		// automatically by the Workbench. In an SWT application, you can do
+		// this once, wrpping your binding method call.
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+
+				ViewModel viewModel = new ViewModel();
+				Shell shell = new View(viewModel).createShell();
+
+				// The SWT event loop
+				while (!shell.isDisposed()) {
+					if (!display.readAndDispatch()) {
+						display.sleep();
+					}
+				}
 			}
-		}
+		});
 	}
 
 	// Minimal JavaBeans support
@@ -104,11 +112,12 @@ public class Snippet009TableViewer {
 	//
 	// Typically each View class has a corresponding ViewModel class.
 	// The ViewModel is responsible for getting the objects to edit from the
-	// data access tier. Since this snippet doesn't have any persistent objects 
+	// data access tier. Since this snippet doesn't have any persistent objects
 	// ro retrieve, this ViewModel just instantiates a model object to edit.
 	static class ViewModel {
 		// The model to bind
-		private List people = new LinkedList(); {
+		private List people = new LinkedList();
+		{
 			people.add(new Person("Steve Northover"));
 			people.add(new Person("Grant Gayed"));
 			people.add(new Person("Veronika Irvine"));
@@ -139,41 +148,20 @@ public class Snippet009TableViewer {
 			shell.setLayout(new FillLayout());
 			committers = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
 			committers.setLinesVisible(true);
-			
-			// Set up data binding. In an RCP application, the threading Realm
-			// will be set for you automatically by the Workbench. In an SWT
-			// application, you can do this once, wrpping your binding
-			// method call.
-			Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-				public void run() {
-					DataBindingContext bindingContext = new DataBindingContext();
-					bindGUI(bindingContext);
-				}
-			});
+			TableColumn column = new TableColumn(committers, SWT.NONE);
+
+			// Set up data binding.
+			TableViewer peopleViewer = new TableViewer(committers);
+			ViewerSupport.bind(peopleViewer, new WritableList(viewModel
+					.getPeople(), Person.class), BeanProperties.value(
+					Person.class, "name"));
+
+			column.pack();
 
 			// Open and return the Shell
 			shell.setSize(100, 300);
 			shell.open();
 			return shell;
-		}
-
-		protected void bindGUI(DataBindingContext bindingContext) {
-			// Since we're using a JFace Viewer, we do first wrap our Table...
-			TableViewer peopleViewer = new TableViewer(committers);
-			
-			// Create a standard content provider
-			ObservableListContentProvider peopleViewerContentProvider = 
-				new ObservableListContentProvider();
-			peopleViewer.setContentProvider(peopleViewerContentProvider);
-			
-			// And a standard label provider that maps columns
-			IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-					peopleViewerContentProvider.getKnownElements(), Person.class,
-					new String[] { "name" });
-			peopleViewer.setLabelProvider(new ObservableMapLabelProvider(attributeMaps));
-			
-			// Now set the Viewer's input
-			peopleViewer.setInput(new WritableList(viewModel.getPeople(), Person.class));
 		}
 	}
 

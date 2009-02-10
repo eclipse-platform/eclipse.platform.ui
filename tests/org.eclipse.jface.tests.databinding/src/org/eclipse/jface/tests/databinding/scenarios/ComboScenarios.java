@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 116920, 160000
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -19,15 +19,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
@@ -148,16 +147,8 @@ public class ComboScenarios extends ScenariosTestCase {
 	public void test_ROCombo_Scenario03_vanilla() {
 		IObservableList lodgings = BeansObservables.observeList(Realm
 				.getDefault(), catalog, "lodgings");
-		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
-
-		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-				contentProvider.getKnownElements(), Lodging.class,
-				new String[] { "name" });
-
-		// Bind the ComboViewer's content to the available lodging
-		cviewer.setContentProvider(contentProvider);
-		cviewer.setLabelProvider(new ObservableMapLabelProvider(attributeMaps));
-		cviewer.setInput(lodgings);
+		ViewerSupport.bind(cviewer, lodgings, BeanProperties.value(
+				Lodging.class, "name"));
 
 		Adventure skiAdventure = SampleData.WINTER_HOLIDAY; // selection will
 
@@ -201,15 +192,8 @@ public class ComboScenarios extends ScenariosTestCase {
 		// Bind the ComboViewer's content to the available lodging
 		IObservableList lodgings = BeansObservables.observeList(Realm
 				.getDefault(), catalog, "lodgings");
-		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
-
-		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-				contentProvider.getKnownElements(), Lodging.class,
-				new String[] { "name" });
-
-		cviewer.setContentProvider(contentProvider);
-		cviewer.setLabelProvider(new ObservableMapLabelProvider(attributeMaps));
-		cviewer.setInput(lodgings);
+		ViewerSupport.bind(cviewer, lodgings, BeanProperties.value(
+				Lodging.class, "name"));
 
 		// Ensure that cv's content now has the catalog's lodgings
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(cviewer)
@@ -382,15 +366,8 @@ public class ComboScenarios extends ScenariosTestCase {
 		// Bind the ComboViewer's content to the available lodging
 		IObservableList lodgings = BeansObservables.observeList(Realm
 				.getDefault(), catalog, "lodgings");
-		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
-
-		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-				contentProvider.getKnownElements(), Lodging.class,
-				new String[] { "name" });
-
-		cviewer.setContentProvider(contentProvider);
-		cviewer.setLabelProvider(new ObservableMapLabelProvider(attributeMaps));
-		cviewer.setInput(lodgings);
+		ViewerSupport.bind(cviewer, lodgings, BeanProperties.value(
+				Lodging.class, "name"));
 
 		// Ensure that cv's content now has the catalog's lodgings
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(cviewer)
@@ -401,17 +378,8 @@ public class ComboScenarios extends ScenariosTestCase {
 				getComboContent());
 
 		ComboViewer otherViewer = new ComboViewer(getComposite(), SWT.NONE);
-		lodgings = BeansObservables.observeList(Realm.getDefault(), catalog,
-				"lodgings");
-		contentProvider = new ObservableListContentProvider();
-
-		attributeMaps = BeansObservables.observeMaps(contentProvider
-				.getKnownElements(), Lodging.class, new String[] { "name" });
-
-		otherViewer.setContentProvider(contentProvider);
-		otherViewer.setLabelProvider(new ObservableMapLabelProvider(
-				attributeMaps));
-		otherViewer.setInput(lodgings);
+		ViewerSupport.bind(otherViewer, lodgings, BeanProperties.value(
+				Lodging.class, "name"));
 
 		// Ensure that cv's content now has the catalog's lodgings
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(otherViewer)
@@ -467,7 +435,8 @@ public class ComboScenarios extends ScenariosTestCase {
 		Account account = catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
-		IObservableValue comboSelection = SWTObservables.observeSelection(ccombo);
+		IObservableValue comboSelection = SWTObservables
+				.observeSelection(ccombo);
 		getDbc().bindValue(comboSelection,
 				BeansObservables.observeValue(account, "country"));
 
@@ -502,7 +471,8 @@ public class ComboScenarios extends ScenariosTestCase {
 		Account account = catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
-		IObservableValue comboSelection = SWTObservables.observeSelection(ccombo);
+		IObservableValue comboSelection = SWTObservables
+				.observeSelection(ccombo);
 		getDbc().bindValue(comboSelection,
 				BeansObservables.observeValue(account, "country"));
 
@@ -546,7 +516,8 @@ public class ComboScenarios extends ScenariosTestCase {
 		Account account = catalog.getAccounts()[0];
 
 		// simple Combo's selection bound to the Account's country property
-		IObservableValue listSelection = SWTObservables.observeSelection(swtlist);
+		IObservableValue listSelection = SWTObservables
+				.observeSelection(swtlist);
 		getDbc().bindValue(listSelection,
 				BeansObservables.observeValue(account, "country"));
 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.snippets;
 
@@ -17,14 +17,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -141,9 +141,9 @@ public class Snippet020TreeViewerWithSetFactory {
 				set.add(child);
 				parent.setSet(set);
 
-//				beanViewer.setSelection(new StructuredSelection(parent));
-//				beanText.selectAll();
-//				beanText.setFocus();
+				// beanViewer.setSelection(new StructuredSelection(parent));
+				// beanText.selectAll();
+				// beanText.setFocus();
 			}
 		});
 		addChildBeanButton.setText("Add Child");
@@ -159,7 +159,7 @@ public class Snippet020TreeViewerWithSetFactory {
 					parent = input;
 				else
 					parent = (Bean) parentItem.getData();
-				
+
 				Set set = new HashSet(parent.getSet());
 				set.remove(bean);
 				parent.setSet(set);
@@ -232,8 +232,8 @@ public class Snippet020TreeViewerWithSetFactory {
 		IObservableValue textTextObserveWidget = SWTObservables.observeText(
 				beanText, SWT.Modify);
 		IObservableValue treeViewerValueObserveDetailValue = BeansObservables
-				.observeDetailValue(treeViewerSelectionObserveSelection, "text",
-						String.class);
+				.observeDetailValue(treeViewerSelectionObserveSelection,
+						"text", String.class);
 		//
 		//
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -266,22 +266,16 @@ public class Snippet020TreeViewerWithSetFactory {
 				beanSelected);
 
 		clipboard = new WritableValue();
-		dbc.bindValue(SWTObservables.observeEnabled(copyButton),
-				beanSelected);
-		dbc.bindValue(SWTObservables.observeEnabled(pasteButton), new ComputedValue(Boolean.TYPE) {
-			protected Object calculate() {
-				return Boolean.valueOf(clipboard.getValue() != null);
-			}
-		});
+		dbc.bindValue(SWTObservables.observeEnabled(copyButton), beanSelected);
+		dbc.bindValue(SWTObservables.observeEnabled(pasteButton),
+				new ComputedValue(Boolean.TYPE) {
+					protected Object calculate() {
+						return Boolean.valueOf(clipboard.getValue() != null);
+					}
+				});
 
-		ObservableSetTreeContentProvider contentProvider = new ObservableSetTreeContentProvider(
-				BeansObservables.setFactory(Realm.getDefault(), "set",
-						Bean.class), null);
-		beanViewer.setContentProvider(contentProvider);
-		beanViewer.setLabelProvider(new ObservableMapLabelProvider(
-				BeansObservables.observeMap(contentProvider.getKnownElements(),
-						Bean.class, "text")));
-		beanViewer.setInput(input);
+		ViewerSupport.bind(beanViewer, input, BeanProperties.set("set",
+				Bean.class), BeanProperties.value(Bean.class, "text"));
 	}
 
 	static class Bean {
@@ -308,7 +302,8 @@ public class Snippet020TreeViewerWithSetFactory {
 		}
 
 		public void setText(String value) {
-			changeSupport.firePropertyChange("text", this.text, this.text = value);
+			changeSupport.firePropertyChange("text", this.text,
+					this.text = value);
 		}
 
 		public Set getSet() {

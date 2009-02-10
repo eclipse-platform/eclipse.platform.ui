@@ -7,27 +7,26 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 146397
+ *     Matthew Hall - bugs 146397, 260337
  *******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.viewers;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -65,16 +64,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		viewer = new TableViewer(shell);
 		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 
-		// Create a standard content provider
-		ObservableListContentProvider peopleViewerContentProvider = new ObservableListContentProvider();
-		viewer.setContentProvider(peopleViewerContentProvider);
-
-		// And a standard label provider that maps columns
-		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-				peopleViewerContentProvider.getKnownElements(), Bean.class,
-				new String[] { "value" });
-		viewer.setLabelProvider(new ObservableMapLabelProvider(attributeMaps));
-
 		editingSupport = new ObservableValueEditingSupportStub(viewer, dbc);
 		column.setEditingSupport(editingSupport);
 
@@ -82,7 +71,10 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		bean = new Bean();
 		bean.setValue("value");
 		input.add(bean);
-		viewer.setInput(input);
+
+		// Bind viewer to input
+		ViewerSupport.bind(viewer, input, BeanProperties.value(Bean.class,
+				"value"));
 	}
 
 	public void testInitializeCellEditorValue_OrderOfOperations()
@@ -169,11 +161,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 			editor = new TextCellEditor((Composite) viewer.getControl());
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport#canEdit(java.lang.Object)
-		 */
 		protected boolean canEdit(Object element) {
 			return super.canEdit(element);
 		}
@@ -190,11 +177,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 			events.append(event);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport#createCellEditorObservable(org.eclipse.jface.viewers.CellEditor)
-		 */
 		protected IObservableValue doCreateCellEditorObservable(
 				CellEditor cellEditor) {
 			event("createCellEditorObservable");
@@ -203,12 +185,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 					.observeText(cellEditor.getControl(), SWT.NONE));
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport#createElementObservable(java.lang.Object,
-		 *      org.eclipse.jface.viewers.ViewerCell)
-		 */
 		protected IObservableValue doCreateElementObservable(Object element,
 				ViewerCell cell) {
 			event("createElementObservable");
@@ -216,12 +192,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 					.observeValue(element, "value"));
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport#createBinding(org.eclipse.core.databinding.observable.value.IObservableValue,
-		 *      org.eclipse.core.databinding.observable.value.IObservableValue)
-		 */
 		protected Binding createBinding(IObservableValue target,
 				IObservableValue model) {
 			event("createBinding");
@@ -229,11 +199,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 			return binding = super.createBinding(target, model);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
-		 */
 		protected CellEditor getCellEditor(Object element) {
 			return editor;
 		}

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.snippets;
 
@@ -17,14 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -232,8 +232,8 @@ public class Snippet019TreeViewerWithListFactory {
 		IObservableValue textTextObserveWidget = SWTObservables.observeText(
 				beanText, SWT.Modify);
 		IObservableValue treeViewerValueObserveDetailValue = BeansObservables
-				.observeDetailValue(treeViewerSelectionObserveSelection, "text",
-						String.class);
+				.observeDetailValue(treeViewerSelectionObserveSelection,
+						"text", String.class);
 		//
 		//
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -274,14 +274,8 @@ public class Snippet019TreeViewerWithListFactory {
 					}
 				});
 
-		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
-				BeansObservables.listFactory(Realm.getDefault(), "list",
-						Bean.class), null);
-		beanViewer.setContentProvider(contentProvider);
-		beanViewer.setLabelProvider(new ObservableMapLabelProvider(
-				BeansObservables.observeMap(contentProvider.getKnownElements(),
-						Bean.class, "text")));
-		beanViewer.setInput(input);
+		ViewerSupport.bind(beanViewer, input, BeanProperties.list("list",
+				Bean.class), BeanProperties.value(Bean.class, "text"));
 	}
 
 	static class Bean {

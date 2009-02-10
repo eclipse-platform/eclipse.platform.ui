@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
- *     Matthew Hall - bug 261843
+ *     Matthew Hall - bugs 261843, 260337
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -22,21 +22,18 @@ import java.util.TreeSet;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.set.DelegatingSetProperty;
 import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -381,17 +378,8 @@ public class Snippet026AnonymousBeanProperties {
 			}
 		};
 
-		ObservableSetTreeContentProvider cp = new ObservableSetTreeContentProvider(
-				treeChildrenProperty.setFactory(), null);
-		contactViewer.setContentProvider(cp);
-
-		IObservableMap[] labelMaps = Properties.observeEach(cp
-				.getKnownElements(), BeanProperties.values(new String[] {
-				"name", "status" }));
-		contactViewer
-				.setLabelProvider(new ObservableMapLabelProvider(labelMaps));
-
-		contactViewer.setInput(model);
+		ViewerSupport.bind(contactViewer, model, treeChildrenProperty,
+				BeanProperties.values(new String[] { "name", "status" }));
 
 		contactViewer.expandAll();
 

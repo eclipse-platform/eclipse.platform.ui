@@ -8,17 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 116920, 160000
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
@@ -63,15 +62,8 @@ public class ListViewerScenario extends ScenariosTestCase {
 		// Bind the catalog's lodgings to the combo
 		IObservableList lodgings = BeansObservables.observeList(Realm
 				.getDefault(), catalog, "lodgings");
-		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
-
-		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-				contentProvider.getKnownElements(), Lodging.class,
-				new String[] { "name" });
-		listViewer.setContentProvider(contentProvider);
-		listViewer.setLabelProvider(new ObservableMapLabelProvider(
-				attributeMaps));
-		listViewer.setInput(lodgings);
+		ViewerSupport.bind(listViewer, lodgings, BeanProperties.value(
+				Lodging.class, "name"));
 
 		// Verify that the combo's items are the lodgings
 		for (int i = 0; i < catalog.getLodgings().length; i++) {

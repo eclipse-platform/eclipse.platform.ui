@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Coconut Palm Software, Inc. - Initial API and implementation
- *     Matthew Hall - bug 195222, 261843
+ *     Matthew Hall - bug 195222, 261843, 260337
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -21,16 +21,13 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -242,10 +239,11 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 				}
 			});
 
-			bindViewer(peopleViewer, viewModel.getPeople(), Person.class,
-					new String[] { "name", "mother.name", "father.name",
-							"mother.mother.name", "mother.father.name",
-							"father.mother.name", "father.father.name" });
+			ViewerSupport.bind(peopleViewer, viewModel.getPeople(),
+					BeanProperties.values(Person.class, new String[] { "name",
+							"mother.name", "father.name", "mother.mother.name",
+							"mother.father.name", "father.mother.name",
+							"father.father.name" }));
 
 			IObservableValue masterSelection = ViewerProperties
 					.singleSelection().observe(peopleViewer);
@@ -255,35 +253,20 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 							masterSelection));
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
-			bindViewer(mothercomboViewer, viewModel.getPeople(), Person.class,
-					"name");
+			ViewerSupport.bind(mothercomboViewer, viewModel.getPeople(),
+					BeanProperties.value(Person.class, "name"));
 
 			dbc.bindValue(ViewerProperties.singleSelection().observe(
 					mothercomboViewer), BeanProperties.value(Person.class,
 					"mother").observeDetail(masterSelection));
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
-			bindViewer(fatherComboViewer, viewModel.getPeople(), Person.class,
-					"name");
+			ViewerSupport.bind(fatherComboViewer, viewModel.getPeople(),
+					BeanProperties.value(Person.class, "name"));
 
 			dbc.bindValue(ViewerProperties.singleSelection().observe(
 					fatherComboViewer), BeanProperties.value(Person.class,
 					"father").observeDetail(masterSelection));
-		}
-
-		private void bindViewer(StructuredViewer viewer, IObservableList input,
-				Class beanClass, String propertyName) {
-			bindViewer(viewer, input, beanClass, new String[] { propertyName });
-		}
-
-		private void bindViewer(StructuredViewer viewer, IObservableList input,
-				Class beanClass, String[] propertyNames) {
-			ObservableListContentProvider cp = new ObservableListContentProvider();
-			viewer.setContentProvider(cp);
-			viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
-					.observeEach(cp.getKnownElements(), BeanProperties.values(
-							beanClass, propertyNames))));
-			viewer.setInput(input);
 		}
 	}
 }

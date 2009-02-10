@@ -8,7 +8,7 @@
  * Contributors:
  *     The Pampered Chef, Inc. - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -16,19 +16,14 @@ package org.eclipse.jface.examples.databinding.snippets;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
+import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
@@ -164,11 +159,9 @@ public class Snippet003UpdateComboBindUsingViewer {
 			System.out.println(viewModel.getText());
 
 			DataBindingContext dbc = new DataBindingContext();
-			IObservableList list = MasterDetailObservables.detailList(
-					BeansObservables.observeValue(viewModel, "choices"),
-					getListDetailFactory(), String.class);
-			viewer.setContentProvider(new ObservableListContentProvider());
-			viewer.setInput(list);
+			ViewerSupport.bind(viewer, BeansObservables.observeList(viewModel,
+					"choices", String.class), Properties
+					.selfValue(String.class));
 
 			dbc.bindValue(ViewersObservables.observeSingleSelection(viewer),
 					BeansObservables.observeValue(viewModel, "text"));
@@ -178,15 +171,5 @@ public class Snippet003UpdateComboBindUsingViewer {
 			shell.open();
 			return shell;
 		}
-	}
-
-	private static IObservableFactory getListDetailFactory() {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				WritableList list = WritableList.withElementType(String.class);
-				list.addAll((Collection) target);
-				return list;
-			}
-		};
 	}
 }

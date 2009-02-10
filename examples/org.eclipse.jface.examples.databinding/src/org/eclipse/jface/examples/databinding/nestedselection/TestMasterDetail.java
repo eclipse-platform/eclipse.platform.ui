@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 260337
  *******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.nestedselection;
@@ -16,13 +16,12 @@ package org.eclipse.jface.examples.databinding.nestedselection;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -30,8 +29,7 @@ import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.SimpleModel;
 import org.eclipse.jface.examples.databinding.model.SimpleOrder;
@@ -220,17 +218,9 @@ public class TestMasterDetail {
 		Realm realm = SWTObservables.getRealm(parent.getDisplay());
 
 		TableViewer peopleViewer = new TableViewer(personsTable);
-		ObservableListContentProvider peopleViewerContent = new ObservableListContentProvider();
-		peopleViewer.setContentProvider(peopleViewerContent);
-
-		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-				peopleViewerContent.getKnownElements(), SimplePerson.class,
-				new String[] { "name", "state" });
-		peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
-				attributeMaps));
-
-		peopleViewer.setInput(new WritableList(realm, model.getPersonList(),
-				SimpleModel.class));
+		ViewerSupport.bind(peopleViewer, new WritableList(realm, model
+				.getPersonList(), SimpleModel.class), BeanProperties.values(
+				SimplePerson.class, new String[] { "name", "state" }));
 
 		IObservableValue selectedPerson = ViewersObservables
 				.observeSingleSelection(peopleViewer);
@@ -264,38 +254,33 @@ public class TestMasterDetail {
 			}
 		};
 		Binding b = dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
-				BeansObservables.observeDetailValue(selectedPerson,
-						"name", String.class), new CustomUpdateValueStrategy()
+				BeansObservables.observeDetailValue(selectedPerson, "name",
+						String.class), new CustomUpdateValueStrategy()
 						.setConverter(upperCaseConverter).setAfterGetValidator(
 								vowelValidator), null);
 
-//		AggregateValidationStatus status = new AggregateValidationStatus(dbc
-//				.getBindings(), AggregateValidationStatus.MAX_SEVERITY);
-		dbc.bindValue(SWTObservables.observeText(validationStatus, SWT.NONE),
-				b.getValidationStatus(), null, new UpdateValueStrategy().setConverter(new ObjectToStringConverter()));
-		
+		// AggregateValidationStatus status = new AggregateValidationStatus(dbc
+		// .getBindings(), AggregateValidationStatus.MAX_SEVERITY);
+		dbc.bindValue(SWTObservables.observeText(validationStatus, SWT.NONE), b
+				.getValidationStatus(), null, new UpdateValueStrategy()
+				.setConverter(new ObjectToStringConverter()));
+
 		dbc.bindValue(SWTObservables.observeText(address, SWT.Modify),
-				BeansObservables.observeDetailValue(selectedPerson,
-						"address", String.class));
+				BeansObservables.observeDetailValue(selectedPerson, "address",
+						String.class));
 
 		dbc.bindValue(SWTObservables.observeText(city, SWT.Modify),
-				BeansObservables.observeDetailValue(selectedPerson,
-						"city", String.class));
+				BeansObservables.observeDetailValue(selectedPerson, "city",
+						String.class));
 
 		dbc.bindValue(SWTObservables.observeText(state, SWT.Modify),
-				BeansObservables.observeDetailValue(selectedPerson,
-						"state", String.class));
+				BeansObservables.observeDetailValue(selectedPerson, "state",
+						String.class));
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
-		ObservableListContentProvider ordersViewerContent = new ObservableListContentProvider();
-		ordersViewer.setContentProvider(ordersViewerContent);
-		ordersViewer.setLabelProvider(new ObservableMapLabelProvider(
-				BeansObservables.observeMaps(ordersViewerContent
-						.getKnownElements(), SimpleOrder.class, new String[] {
-						"orderNumber", "date" })));
-
-		IObservableList orders = BeansObservables.observeDetailList(
-				selectedPerson, "orders", SimpleOrder.class);
-		ordersViewer.setInput(orders);
+		ViewerSupport.bind(ordersViewer, BeansObservables.observeDetailList(
+				selectedPerson, "orders", SimpleOrder.class), BeanProperties
+				.values(SimpleOrder.class,
+						new String[] { "orderNumber", "date" }));
 	}
 }

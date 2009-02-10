@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 175735)
- *     Matthew Hall - bug 262407
+ *     Matthew Hall - bugs 262407, 260337
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -21,11 +21,9 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.DuplexingObservableValue;
-import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -266,13 +264,9 @@ public class Snippet028DuplexingObservableValue {
 		movies.add(new MovieInfo("Wanted", "June 27, 2008",
 				"Timur Bekmambetov", "Michael Brandt"));
 
-		ObservableListContentProvider cp = new ObservableListContentProvider();
-		viewer.setContentProvider(cp);
-		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
-				.observeEach(cp.getKnownElements(), BeanProperties
-						.values(new String[] { "title", "releaseDate",
-								"director", "writer" }))));
-		viewer.setInput(movies);
+		ViewerSupport.bind(viewer, movies, BeanProperties.values(
+				MovieInfo.class, new String[] { "title", "releaseDate",
+						"director", "writer" }));
 
 		// Select Batman Begins and The Dark Knight, which have the same
 		// director and writer

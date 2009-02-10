@@ -9,18 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 160000
+ *     Matthew Hall - bug 260337
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
@@ -99,15 +98,9 @@ public class TableScenarios extends ScenariosTestCase {
 		IObservableList list = new WritableList(new ArrayList(), Account.class);
 		list.addAll(Arrays.asList(accounts));
 
-		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
-		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
-				contentProvider.getKnownElements(), Account.class,
-				new String[] { "firstName", "lastName", "state" });
-
-		tableViewer.setContentProvider(contentProvider);
-		tableViewer.setLabelProvider(new ObservableMapLabelProvider(
-				attributeMaps));
-		tableViewer.setInput(list);
+		ViewerSupport.bind(tableViewer, list, BeanProperties.values(
+				Account.class,
+				new String[] { "firstName", "lastName", "state" }));
 
 		Table table = tableViewer.getTable();
 
@@ -429,23 +422,26 @@ public class TableScenarios extends ScenariosTestCase {
 	 * occurs on a per key basic for a TextCellEditor // Show that converters
 	 * work for table columns Account[] accounts = catalog.getAccounts();
 	 * Account firstAccount = accounts[0];
-	 * SampleData.getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
-	 * TableViewerDescription tableViewerDescription = new
-	 * TableViewerDescription(tableViewer);
+	 * SampleData.getSWTObservableFactory().setUpdateTime
+	 * (DataBindingContext.TIME_EARLY); TableViewerDescription
+	 * tableViewerDescription = new TableViewerDescription(tableViewer);
 	 * tableViewerDescription.addEditableColumn("lastName");
 	 * tableViewerDescription.addColumn("lastName");
 	 * getDbc().bind(tableViewerDescription,new Property(catalog, "accounts"),
 	 * null); // Verify that the first account is shown in the first row with
 	 * the last name correctly
 	 * assertEquals(tableViewer.getTable().getItem(0).getData(),firstAccount);
-	 * assertEquals(tableViewer.getTable().getItem(0).getText(0),firstAccount.getLastName());
-	 * assertEquals(tableViewer.getTable().getItem(0).getText(1),firstAccount.getLastName()); //
-	 * Create a cell editor over the first column
+	 * assertEquals
+	 * (tableViewer.getTable().getItem(0).getText(0),firstAccount.getLastName
+	 * ());
+	 * assertEquals(tableViewer.getTable().getItem(0).getText(1),firstAccount
+	 * .getLastName()); // Create a cell editor over the first column
 	 * tableViewer.editElement(firstAccount, 0); // Set the text property of the
 	 * cell editor which is now active over the "firstName" column CellEditor[]
 	 * cellEditors = tableViewer.getCellEditors(); TextCellEditor
 	 * lastNameCellEditor = (TextCellEditor) cellEditors[0];
 	 * ((Text)lastNameCellEditor.getControl()).setText("E"); // Verify that the
-	 * key press goes to the model assertEquals(firstAccount.getLastName(),"E"); }
+	 * key press goes to the model assertEquals(firstAccount.getLastName(),"E");
+	 * }
 	 */
 }
