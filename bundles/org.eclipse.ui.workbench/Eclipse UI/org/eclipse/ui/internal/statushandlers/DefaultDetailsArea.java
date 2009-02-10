@@ -196,7 +196,9 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	}
 
 	private void populateList(List list, IStatus status, int nesting) {
-		if (!status.matches(MASK)) {
+		if (!status.matches(MASK)
+				&& !(workbenchStatusDialog.getHandleOkStatuses() && status
+						.isOK())) {
 			return;
 		}
 		StringBuffer buffer = new StringBuffer();

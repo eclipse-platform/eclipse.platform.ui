@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -43,6 +44,8 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
 import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 
 public class StatusDialogManagerTest extends TestCase {
@@ -606,6 +609,55 @@ public class StatusDialogManagerTest extends TestCase {
 		} catch (NullPointerException npe){
 			fail();
 		}
+	}
+	// checking if the statuses are correctly ignored.
+	public void testOKStatus1() {
+		try {
+			wsdm.addStatusAdapter(new StatusAdapter(Status.OK_STATUS), false);
+			assertTrue(true);
+		} catch (NullPointerException npe) {
+			fail();
+		}
+		assertNull("Shell should not be created.", StatusDialogUtil
+				.getStatusShell());
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		assertEquals(
+				"Only one status should be visible (OK should be ignored)", 1,
+				wsdm.getStatusAdapters().size());
+	}
+	
+	public void testOKStatus2(){
+		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
+		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
+
+			protected void configureStatusDialog(
+					WorkbenchStatusDialogManager statusDialog) {
+				wsdm[0] = statusDialog;
+				super.configureStatusDialog(statusDialog);
+			}
+
+		};
+		weh.handle(new StatusAdapter(Status.OK_STATUS), StatusManager.SHOW);
+		assertEquals(1, wsdm[0].getStatusAdapters().size());
+	}
+	
+	public void testBug211933() {
+		MultiStatus multi = new MultiStatus("testplugin", 0, "message", null);
+		multi.add(new Status(IStatus.CANCEL, "testplugin", "message 1"));
+		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
+		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
+
+			protected void configureStatusDialog(
+					WorkbenchStatusDialogManager statusDialog) {
+				wsdm[0] = statusDialog;
+				super.configureStatusDialog(statusDialog);
+			}
+
+		};
+		StatusAdapter sa = new StatusAdapter(multi); 
+		weh.handle(sa, StatusManager.SHOW);
+		// be sure that non error status is passed to the dialog
+		assertTrue(wsdm[0].getStatusAdapters().contains(sa));
 	}
 
 	/**

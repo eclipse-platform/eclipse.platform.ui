@@ -21,6 +21,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -952,16 +953,19 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	 *         <code>false</code> otherwise
 	 * @see org.eclipse.core.runtime.IStatus#matches(int)
 	 */
-	private static boolean shouldDisplay(StatusAdapter statusAdapter, int mask) {
+	private boolean shouldAccept(StatusAdapter statusAdapter, int mask) {
 		IStatus status = statusAdapter.getStatus();
 		IStatus[] children = status.getChildren();
 		if (children == null || children.length == 0) {
-			return status.matches(mask);
+			return status.matches(mask) || (handleOKStatuses && status.isOK());
 		}
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].matches(mask)) {
 				return true;
 			}
+		}
+		if (handleOKStatuses && status.isOK()) {
+			return true;
 		}
 		return false;
 	}
@@ -1112,6 +1116,11 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	private ILabelDecorator messageDecorator;
 
 	/**
+	 * This fields indicates if OK statuses should be handled or ignored.
+	 */
+	private boolean handleOKStatuses = false;
+
+	/**
 	 * Creates workbench status dialog.
 	 * 
 	 * @param displayMask
@@ -1158,7 +1167,8 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	 *            the title of the dialog. If null, than default will be used.
 	 */
 	public WorkbenchStatusDialogManager(String dialogTitle) {
-		this(IStatus.INFO | IStatus.WARNING | IStatus.ERROR, dialogTitle);
+		this(IStatus.INFO | IStatus.WARNING | IStatus.ERROR | IStatus.CANCEL,
+				dialogTitle);
 	}
 
 	/**
@@ -1215,6 +1225,11 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 			WorkbenchPlugin.log(statusAdapter.getStatus());
 			return;
 		}
+		
+		// if statusAdapter does not match the mask, ignore it
+		if (!shouldAccept(statusAdapter, displayMask)) {
+			return;
+		}
 
 		// Add the error in the UI thread to ensure thread safety in the
 		// dialog
@@ -1223,8 +1238,7 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 			errors.add(statusAdapter);
 			modals.put(statusAdapter, new Boolean(modal));
 			// Delay prompting if the status adapter property is set
-			if (shouldPrompt(statusAdapter)
-					&& shouldDisplay(statusAdapter, displayMask)) {
+			if (shouldPrompt(statusAdapter)) {
 				// notify all interested parties that status adapters will be
 				// handled
 				StatusManager.getManager().fireNotification(
@@ -1589,7 +1603,9 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 				if (status.getSeverity() == IStatus.WARNING) {
 					return getWarningImage();
 				}
-				if (status.getSeverity() == IStatus.INFO) {
+				if (status.getSeverity() == IStatus.INFO
+						|| status.getSeverity() == IStatus.CANCEL
+						|| status.getSeverity() == IStatus.OK) {
 					return getInfoImage();
 				}
 			}
@@ -2382,5 +2398,37 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 			string = messageDecorator.decorateText(string, adapter);
 		}
 		return string;
+	}
+	
+	/**
+	 * This method allows for deciding how OK Statuses should be handled.
+	 * 
+	 * This method is not a part of API. It is public only for testing purposes.
+	 * 
+	 * @param handleOK
+	 *            <code>true</code> indicates that OK {@link Status}es will be
+	 *            handled in the same way as all other kinds. <code>false</code>
+	 *            means that they will be ignored. It is the default setting.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 * @since 3.5
+	 */
+	public void setHandleOKStatuses(boolean handleOK){
+		this.handleOKStatuses  = handleOK;
+	}
+	
+	/**
+	 * This method allows for checking how OK statuses are handled. It is not a
+	 * part of API.
+	 * 
+	 * @return <true> if OK statuses are handled, <false> if they are ignored.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 * @since 3.5
+	 */
+	public boolean getHandleOkStatuses(){
+		return handleOKStatuses;
 	}
 }
