@@ -74,10 +74,10 @@ public interface IJavaInjection {
 	 * Default prefix for the fields to be injected. 
 	 * <p>
 	 * For example, if the context has an object under the name "log", the object will be
-	 * injected into the field named "eclipseLog".
+	 * injected into the field named "diLog".
 	 * </p> 
 	 */
-	public String FIELD_PREFIX = "eclipse"; //$NON-NLS-1$
+	public String FIELD_PREFIX = "di"; //$NON-NLS-1$
 
 	/**
 	 * Default prefix for the methods to be injected. 

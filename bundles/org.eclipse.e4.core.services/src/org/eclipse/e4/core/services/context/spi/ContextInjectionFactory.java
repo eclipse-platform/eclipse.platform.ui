@@ -22,7 +22,7 @@ final public class ContextInjectionFactory {
 	}
 	
 	static public void inject(Object object, IEclipseContext context) {
-		inject(object, context, "", "", "");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		inject(object, context, null, null, null);
 	}
 	
 	static public void inject(Object object, IEclipseContext context, String fieldPrefix, String setMethodPrefix, String removeMethodPrefix) {
