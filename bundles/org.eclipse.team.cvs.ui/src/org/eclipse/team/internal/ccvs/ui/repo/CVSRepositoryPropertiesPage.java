@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.repo;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,6 +36,7 @@ import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -152,6 +151,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				allowCaching = allowCachingButton.getSelection();
 			}
 		});
+		
+		Link link = SWTUtils.createPreferenceLink(getShell(), composite, CVSUIMessages.ConfigurationWizardMainPage_9, CVSUIMessages.ConfigurationWizardMainPage_10);
+		link.setLayoutData(data);
 		
 		// Add some extra space
 		createLabel(composite, "", 3); //$NON-NLS-1$

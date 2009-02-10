@@ -16,16 +16,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class CVSUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.team.internal.ccvs.ui.messages";//$NON-NLS-1$
-	//
-	// Copyright (c) 2000, 2005 IBM Corporation and others.
-	// All rights reserved. This program and the accompanying materials
-	// are made available under the terms of the Eclipse Public License v1.0
-	// which accompanies this distribution, and is available at
-	// http://www.eclipse.org/legal/epl-v10.html
-	//
-	// Contributors:
-	//     IBM Corporation - initial API and implementation
-	//
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
@@ -57,8 +48,6 @@ public class CVSUIMessages extends NLS {
 	public static String CommitWizard_8;
 	public static String CommitWizard_9;
 	public static String ComparePreferencePage_8;
-	public static String ConfigurationWizardMainPage_7;
-	public static String ConfigurationWizardMainPage_8;
 	public static String CreatePatchAction_0;
 	public static String CreatePatchAction_1;
 	public static String CVSHistoryPage_CollapseAllAction;
@@ -395,12 +384,16 @@ public class CVSUIMessages extends NLS {
 	public static String ConfigurationWizardMainPage_password;
 	public static String ConfigurationWizardMainPage_host;
 	public static String ConfigurationWizardMainPage_0;
-	public static String ConfigurationWizardMainPage_5;
-	public static String ConfigurationWizardMainPage_6;
 	public static String ConfigurationWizardMainPage_1;
 	public static String ConfigurationWizardMainPage_2;
 	public static String ConfigurationWizardMainPage_3;
 	public static String ConfigurationWizardMainPage_4;
+	public static String ConfigurationWizardMainPage_5;
+	public static String ConfigurationWizardMainPage_6;
+	public static String ConfigurationWizardMainPage_7;
+	public static String ConfigurationWizardMainPage_8;
+	public static String ConfigurationWizardMainPage_9;
+	public static String ConfigurationWizardMainPage_10;
 	public static String ConfigurationWizardMainPage_useDefaultPort;
 	public static String ConfigurationWizardMainPage_usePort;
 	public static String ConfigurationWizardMainPage_repositoryPath;

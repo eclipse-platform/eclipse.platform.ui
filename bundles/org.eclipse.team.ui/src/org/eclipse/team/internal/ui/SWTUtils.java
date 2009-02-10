@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,25 @@
 
 package org.eclipse.team.internal.ui;
 
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+
+import com.ibm.icu.text.MessageFormat;
 
 
 
@@ -36,6 +46,50 @@ public class SWTUtils {
         final PreferenceLinkArea area = new PreferenceLinkArea(parent, SWT.NONE, pageId, text, container, null);
         return area;
 	}
+	
+	public static Link createPreferenceLink(final Shell shell, Composite parent, final String pageId, String message) {
+		return createPreferenceLink(shell, parent, pageId, new String[] {pageId}, message);
+	}
+	
+	public static Link createPreferenceLink(final Shell shell, Composite parent, final String pageId, final String[] displayIds, String message) {
+		Link link = new Link(parent, SWT.NONE);
+		link.setText(getLinkLabel(pageId, message));
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PreferenceDialog prefDialog = PreferencesUtil.createPreferenceDialogOn(shell, pageId, displayIds, null);
+				prefDialog.open();
+			}
+		});
+		return link;
+	}
+	
+	private static String getLinkLabel(String pageId, String message) {
+		IPreferenceNode node = getPreferenceNode(pageId);
+		if (node == null) {
+			return NLS.bind(TeamUIMessages.NotFound, pageId);
+		} else {
+			return MessageFormat.format(message, new String[] { node.getLabelText() });
+		}
+	}
+	
+    /**
+     * Get the preference node with pageId.
+     * 
+     * @param pageId
+     * @return IPreferenceNode
+     */
+    private static IPreferenceNode getPreferenceNode(String pageId) {
+        Iterator iterator = PlatformUI.getWorkbench().getPreferenceManager()
+                .getElements(PreferenceManager.PRE_ORDER).iterator();
+        while (iterator.hasNext()) {
+            IPreferenceNode next = (IPreferenceNode) iterator.next();
+            if (next.getId().equals(pageId)) {
+				return next;
+			}
+        }
+        return null;
+    }
+
 	
     public static GridData createGridData(int width, int height, boolean hFill, boolean vFill) {
         return createGridData(width, height, hFill ? SWT.FILL : SWT.BEGINNING, vFill ? SWT.FILL : SWT.CENTER, hFill, vFill);

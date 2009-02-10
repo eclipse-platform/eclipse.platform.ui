@@ -808,9 +808,6 @@
           id="org.eclipse.team.cvs.ui.cvs.decorator"
           label="%PreferenceKeywords.Decorator"/>
     <keyword
-          id="org.eclipse.team.cvs.ui.cvs.password"
-          label="%PreferenceKeywords.Password"/>
-    <keyword
           id="org.eclipse.team.cvs.ui.cvs.compare"
           label="%PreferenceKeywords.Compare"/>
     <keyword
@@ -888,16 +885,6 @@
             class="org.eclipse.team.internal.ccvs.ui.WatchEditPreferencePage"
             id="org.eclipse.team.cvs.ui.WatchEditPreferencePage">
             <keywordReference id="org.eclipse.team.cvs.ui.cvs.watch"/>
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="%PasswordManagementPreferencePage.name"
-            category="org.eclipse.team.cvs.ui.CVSPreferences"
-            class="org.eclipse.team.internal.ccvs.ui.PasswordManagementPreferencePage"
-            id="org.eclipse.team.cvs.ui.PasswordManagementPreferencePage">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs.password"/>
       </page>
    </extension>
       <extension

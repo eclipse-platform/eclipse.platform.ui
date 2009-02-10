@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.fieldassist.*;
-import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,8 +29,8 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * Wizard page for entering information about a CVS repository location.
@@ -271,24 +270,16 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			}
 		});
 		
-		Link extPrefLink = new Link(composite, SWT.NONE);
-		extPrefLink.setText(CVSUIMessages.ConfigurationWizardMainPage_7);
-		extPrefLink.addSelectionListener(new SelectionAdapter() {
+		Link link = SWTUtils.createPreferenceLink(getShell(), composite, CVSUIMessages.ConfigurationWizardMainPage_9, CVSUIMessages.ConfigurationWizardMainPage_10);
+		link.setLayoutData(data);
 		
-			public void widgetSelected(SelectionEvent e) {
-				PreferenceDialog prefDialog = PreferencesUtil.createPreferenceDialogOn(getShell(), 
-						"org.eclipse.team.cvs.ui.ExtMethodPreferencePage",  //$NON-NLS-1$
-						new String[] {
-							"org.eclipse.team.cvs.ui.cvs",  //$NON-NLS-1$
-							"org.eclipse.team.cvs.ui.ExtMethodPreferencePage",  //$NON-NLS-1$
-							"org.eclipse.jsch.ui.SSHPreferences",  //$NON-NLS-1$
-							"org.eclipse.ui.net.NetPreferences"},  //$NON-NLS-1$
-						null);
-				prefDialog.open();
-			}
-		
-		});
-		
+		SWTUtils.createPreferenceLink(getShell(), composite,
+				"org.eclipse.team.cvs.ui.ExtMethodPreferencePage", //$NON-NLS-1$
+				new String[] { "org.eclipse.team.cvs.ui.cvs", //$NON-NLS-1$
+						"org.eclipse.team.cvs.ui.ExtMethodPreferencePage", //$NON-NLS-1$
+						"org.eclipse.jsch.ui.SSHPreferences", //$NON-NLS-1$
+						"org.eclipse.ui.net.NetPreferences" }, //$NON-NLS-1$
+				CVSUIMessages.ConfigurationWizardMainPage_7);
 		
 		initializeValues();
 		updateWidgetEnablements();
@@ -297,6 +288,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		setControl(composite);
         Dialog.applyDialogFont(parent);
 	}
+	
 	/**
 	 * Utility method to create an editable combo box
 	 * 
