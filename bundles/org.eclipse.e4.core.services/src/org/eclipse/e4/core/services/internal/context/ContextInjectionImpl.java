@@ -112,35 +112,39 @@ public class ContextInjectionImpl implements IJavaInjection {
 	public void injectInto(final Object userObject, final IEclipseContext context) {
 
 		final Processor processor = new Processor(context, true /*setter*/) {
-			public void processField(Field field) {
-				String candidateName = field.getName();
+			public void processField(final Field field) {
+				final String candidateName = field.getName();
 				if (!candidateName.startsWith(fieldPrefix))
 					return;
-				String key = findKey(candidateName.substring(fieldPrefixLength));
-				if (key == null) // value not set in the context
-					return;
-				Object value = context.get(key);
-				setField(userObject, field, value);
+				context.runAndTrack(new Runnable() {
+					public void run() {
+						String key = findKey(candidateName.substring(fieldPrefixLength));
+						if (key == null) // value not set in the context
+							return;
+						Object value = context.get(key);
+						setField(userObject, field, value);
+					}
+				}, "Java reflection injection");
 			}
 
-			public void processMethod(Method method) {
-				String candidateName = method.getName();
+			public void processMethod(final Method method) {
+				final String candidateName = method.getName();
 				if (!candidateName.startsWith(SET_METHOD_PREFIX))
 					return;
-				final String key = findKey(candidateName.substring(SET_METHOD_PREFIX.length()));
-				if (key == null) // value not set in the context
-					return; 
-				Class[] parameterTypes = method.getParameterTypes();
-				Object value = context.get(key, parameterTypes);
-				setMethod(userObject, method, value);
+				context.runAndTrack(new Runnable() {
+					public void run() {
+						final String key = findKey(candidateName.substring(SET_METHOD_PREFIX.length()));
+						if (key == null) // value not set in the context
+							return; 
+						Class[] parameterTypes = method.getParameterTypes();
+						Object value = context.get(key, parameterTypes);
+						setMethod(userObject, method, value);
+					}
+				}, "Java reflection injection");
 			}
 		};
-		context.runAndTrack(new Runnable() {
-
-			public void run() {
-				walkClassHierarchy(userObject.getClass(), processor);
-			}
-		}, "Java reflection injection");
+		
+		walkClassHierarchy(userObject.getClass(), processor);
 
 		// trigger post-injection processing
 		notifyUserMethod(CONTEXT_SET_METHOD, userObject, context);

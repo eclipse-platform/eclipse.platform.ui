@@ -181,6 +181,7 @@ public class EclipseContext extends AbstractContext {
 	}
 
 	private boolean isSetLocally(String name) {
+		trackAccess(name);
 		return localValues.containsKey(name);
 	}
 
