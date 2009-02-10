@@ -711,13 +711,11 @@ class PropertySheetViewer extends Viewer {
             deactivateCellEditor();
         }
 
-        // get the new selection
-        TreeItem[] sel = new TreeItem[] { selection };
-        if (sel.length == 0) {
+        if (selection == null) {
             setMessage(null);
             setErrorMessage(null);
         } else {
-            Object object = sel[0].getData(); // assume single selection
+            Object object = selection.getData();
             if (object instanceof IPropertySheetEntry) {
                 // get the entry for this item
                 IPropertySheetEntry activeEntry = (IPropertySheetEntry) object;
@@ -726,7 +724,7 @@ class PropertySheetViewer extends Viewer {
                 setMessage(activeEntry.getDescription());
 
                 // activate a cell editor on the selection
-                activateCellEditor(sel[0]);
+                activateCellEditor(selection);
             }
         }
         entrySelectionChanged();
@@ -804,7 +802,8 @@ class PropertySheetViewer extends Viewer {
 			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetDefaultSelected(SelectionEvent e) {
-                handleSelect((TreeItem) e.item);
+				if (e.item instanceof TreeItem)
+					handleSelect((TreeItem) e.item);
             }
         });
         // Part2: handle single click activation of cell editor
