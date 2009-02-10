@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ovidio Mallo - bug 247741
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.map;
@@ -16,11 +17,10 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.map.IMapChangeListener;
-import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 
 /**
@@ -40,16 +40,7 @@ public class ObservableMapTest extends TestCase {
 	}
 
 	public void testDisposeMapChangeListeners() throws Exception {
-		class MapChangeListener implements IMapChangeListener {
-			int count;
-
-			public void handleMapChange(MapChangeEvent event) {
-				count++;
-			}
-		}
-
-		MapChangeListener listener = new MapChangeListener();
-		map.addMapChangeListener(listener);
+		MapChangeEventTracker listener = MapChangeEventTracker.observe(map);
 
 		assertEquals(0, listener.count);
 		map.fireMapChange(null);

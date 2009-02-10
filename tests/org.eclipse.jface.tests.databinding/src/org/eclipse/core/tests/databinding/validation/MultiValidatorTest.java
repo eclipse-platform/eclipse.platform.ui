@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Matthew Hall - bug 237884, 251003
- *     Ovidio Mallo - bugs 240590, 238909, 251003
+ *     Ovidio Mallo - bugs 240590, 238909, 251003, 247741
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.validation;
@@ -23,10 +23,8 @@ import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -39,6 +37,7 @@ import org.eclipse.core.internal.databinding.observable.ValidatedObservableValue
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
@@ -230,8 +229,8 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		ValueChangeEventTracker validationChangeCounter = ValueChangeEventTracker
 				.observe(validationStatus);
 
-		StaleCounter validationStaleCounter = new StaleCounter();
-		validationStatus.addStaleListener(validationStaleCounter);
+		StaleEventTracker validationStaleCounter = StaleEventTracker
+				.observe(validationStatus);
 
 		// Assert initial state.
 		assertFalse(validationStatus.isStale());
@@ -302,8 +301,8 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 		assertFalse(validationStatus.isStale());
 
-		StaleCounter validationStaleCounter = new StaleCounter();
-		validationStatus.addStaleListener(validationStaleCounter);
+		StaleEventTracker validationStaleCounter = StaleEventTracker
+				.observe(validationStatus);
 		assertEquals(0, validationStaleCounter.count);
 
 		// Setting the status of the non-stale dependency to null leads to the
@@ -413,14 +412,6 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		protected void fireChange() {
 			// TODO Auto-generated method stub
 			super.fireChange();
-		}
-	}
-
-	private static class StaleCounter implements IStaleListener {
-		int count;
-
-		public void handleStale(StaleEvent event) {
-			count++;
 		}
 	}
 }

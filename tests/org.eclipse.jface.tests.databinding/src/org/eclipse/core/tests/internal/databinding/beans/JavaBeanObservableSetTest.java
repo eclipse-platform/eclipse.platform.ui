@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734
+ *     Ovidio Mallo - bug 247741
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -30,8 +31,6 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
@@ -49,7 +48,7 @@ public class JavaBeanObservableSetTest extends TestCase {
 	private Bean bean;
 	private PropertyDescriptor propertyDescriptor;
 	private String propertyName;
-	private SetChangeListener listener;
+	private SetChangeEventTracker listener;
 
 	protected void setUp() throws Exception {
 		bean = new Bean();
@@ -61,7 +60,7 @@ public class JavaBeanObservableSetTest extends TestCase {
 				.observeSet(SWTObservables.getRealm(Display.getDefault()),
 						bean, propertyName, Bean.class);
 		beanObservable = (IBeanObservable) observableSet;
-		listener = new SetChangeListener();
+		listener = new SetChangeEventTracker();
 	}
 
 	public void testGetObserved() throws Exception {
@@ -78,7 +77,7 @@ public class JavaBeanObservableSetTest extends TestCase {
 	
 	public void testRegistersListenerAfterFirstListenerIsAdded() throws Exception {
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
-		observableSet.addSetChangeListener(new SetChangeListener());
+		observableSet.addSetChangeListener(new SetChangeEventTracker());
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
 		
@@ -136,13 +135,6 @@ public class JavaBeanObservableSetTest extends TestCase {
 				.getRemovals());
 		assertEquals(Collections.singleton("new"), tracker.event.diff
 				.getAdditions());
-	}
-
-	static class SetChangeListener implements ISetChangeListener {
-		int count;
-		public void handleSetChange(SetChangeEvent event) {
-			count++;
-		}
 	}
 
 	public static Test suite() {

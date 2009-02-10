@@ -9,6 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Matthew Hall - bugs 208332, 213145, 255734
+ *     Ovidio Mallo - bug 247741
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable;
@@ -30,6 +31,7 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCont
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -48,7 +50,7 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	public void testStaleListener() throws Exception {
 		assertFalse(observable.hasListeners());
 
-		StaleListener listener1 = new StaleListener();
+		StaleEventTracker listener1 = new StaleEventTracker();
 
 		assertFalse(observable.firstListenerAdded);
 		observable.addStaleListener(listener1);
@@ -61,10 +63,10 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		observable.fireStale();
 
 		assertEquals(1, listener1.count);
-		assertSame(observable, listener1.source);
+		assertSame(observable, listener1.event.getObservable());
 
 		// Add a second stale listener as 1 vs. 2 listener code is different.
-		StaleListener listener2 = new StaleListener();
+		StaleEventTracker listener2 = new StaleEventTracker();
 		assertEquals(0, listener2.count);
 		observable.addStaleListener(listener2);
 		observable.fireStale();
@@ -73,7 +75,7 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, listener2.count);
 
 		// Add a third stale listener as 2 vs. 3 or greater code is different.
-		StaleListener listener3 = new StaleListener();
+		StaleEventTracker listener3 = new StaleEventTracker();
 		observable.addStaleListener(listener3);
 		assertEquals(0, listener3.count);
 
@@ -141,7 +143,7 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 
 	public void testHasListenersWithChangeAndStaleListeners() throws Exception {
 		ChangeEventTracker changeListener = new ChangeEventTracker();
-		StaleListener staleListener = new StaleListener();
+		StaleEventTracker staleListener = new StaleEventTracker();
 
 		assertFalse(observable.hasListeners());
 		assertFalse(observable.firstListenerAdded);
@@ -225,16 +227,6 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		assertFalse(observable.hasListeners());
 		assertTrue(observable.firstListenerAdded);
 		assertTrue(observable.lastListenerRemoved);
-	}
-
-	private class StaleListener implements IStaleListener {
-		int count;
-		IObservable source;
-
-		public void handleStale(StaleEvent event) {
-			count++;
-			this.source = event.getObservable();
-		}
 	}
 
 	public static Test suite() {

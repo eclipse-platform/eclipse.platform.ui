@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 208332, 213145, 237718
+ *     Ovidio Mallo - bug 247741
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -18,25 +19,21 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
-import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 public class UnmodifiableObservableListTest extends
@@ -56,8 +53,8 @@ public class UnmodifiableObservableListTest extends
 	}
 
 	public void testFiresChangeEvents() throws Exception {
-		ChangeCounter mutableListener = new ChangeCounter();
-		ChangeCounter unmodifiableListener = new ChangeCounter();
+		ChangeEventTracker mutableListener = new ChangeEventTracker();
+		ChangeEventTracker unmodifiableListener = new ChangeEventTracker();
 
 		mutable.addChangeListener(mutableListener);
 		unmodifiable.addChangeListener(unmodifiableListener);
@@ -70,8 +67,8 @@ public class UnmodifiableObservableListTest extends
 	}
 
 	public void testFiresListChangeEvents() throws Exception {
-		ListChangeCounter mutableListener = new ListChangeCounter();
-		ListChangeCounter unmodifiableListener = new ListChangeCounter();
+		ListChangeEventTracker mutableListener = new ListChangeEventTracker();
+		ListChangeEventTracker unmodifiableListener = new ListChangeEventTracker();
 
 		mutable.addListChangeListener(mutableListener);
 		unmodifiable.addListChangeListener(unmodifiableListener);
@@ -82,27 +79,27 @@ public class UnmodifiableObservableListTest extends
 		String element = "3";
 		mutable.add(element);
 		assertEquals(1, mutableListener.count);
-		assertEquals(mutable, mutableListener.source);
-		assertEquals(1, mutableListener.diff.getDifferences().length);
+		assertEquals(mutable, mutableListener.event.getObservableList());
+		assertEquals(1, mutableListener.event.diff.getDifferences().length);
 
-		ListDiffEntry difference = mutableListener.diff.getDifferences()[0];
+		ListDiffEntry difference = mutableListener.event.diff.getDifferences()[0];
 		assertEquals(element, difference.getElement());
 		assertTrue(difference.isAddition());
 		assertEquals(3, mutable.size());
 
 		assertEquals(1, unmodifiableListener.count);
-		assertEquals(unmodifiable, unmodifiableListener.source);
-		assertEquals(1, unmodifiableListener.diff.getDifferences().length);
+		assertEquals(unmodifiable, unmodifiableListener.event.getObservableList());
+		assertEquals(1, unmodifiableListener.event.diff.getDifferences().length);
 
-		difference = unmodifiableListener.diff.getDifferences()[0];
+		difference = unmodifiableListener.event.diff.getDifferences()[0];
 		assertEquals(element, difference.getElement());
 		assertTrue(difference.isAddition());
 		assertEquals(3, unmodifiable.size());
 	}
 
 	public void testFiresStaleEvents() throws Exception {
-		StaleCounter mutableListener = new StaleCounter();
-		StaleCounter unmodifiableListener = new StaleCounter();
+		StaleEventTracker mutableListener = new StaleEventTracker();
+		StaleEventTracker unmodifiableListener = new StaleEventTracker();
 
 		mutable.addStaleListener(mutableListener);
 		unmodifiable.addStaleListener(unmodifiableListener);
@@ -111,10 +108,10 @@ public class UnmodifiableObservableListTest extends
 		assertEquals(0, unmodifiableListener.count);
 		mutable.setStale(true);
 		assertEquals(1, mutableListener.count);
-		assertEquals(mutable, mutableListener.source);
+		assertEquals(mutable, mutableListener.event.getObservable());
 		assertTrue(mutable.isStale());
 		assertEquals(1, unmodifiableListener.count);
-		assertEquals(unmodifiable, unmodifiableListener.source);
+		assertEquals(unmodifiable, unmodifiableListener.event.getObservable());
 		assertTrue(unmodifiable.isStale());
 	}
 
@@ -124,38 +121,6 @@ public class UnmodifiableObservableListTest extends
 		mutable.setStale(true);
 		assertTrue(mutable.isStale());
 		assertTrue(unmodifiable.isStale());
-	}
-
-	private static class StaleCounter implements IStaleListener {
-		int count;
-		IObservable source;
-
-		public void handleStale(StaleEvent event) {
-			count++;
-			this.source = event.getObservable();
-		}
-	}
-
-	private static class ChangeCounter implements IChangeListener {
-		int count;
-		IObservable source;
-
-		public void handleChange(ChangeEvent event) {
-			count++;
-			this.source = event.getObservable();
-		}
-	}
-
-	private static class ListChangeCounter implements IListChangeListener {
-		int count;
-		IObservableList source;
-		ListDiff diff;
-
-		public void handleListChange(ListChangeEvent event) {
-			count++;
-			this.source = event.getObservableList();
-			this.diff = event.diff;
-		}
 	}
 
 	private static class MutableObservableList extends ObservableList {

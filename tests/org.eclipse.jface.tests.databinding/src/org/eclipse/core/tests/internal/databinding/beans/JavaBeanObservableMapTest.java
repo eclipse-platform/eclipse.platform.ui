@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 213145, 241585, 246103, 194734
+ *     Ovidio Mallo - bug 247741
  *******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -26,10 +27,7 @@ import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.map.MapChangeEvent;
-import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
@@ -84,38 +82,38 @@ public class JavaBeanObservableMapTest extends TestCase {
 	public void testSetValueNotifications() throws Exception {
 		String oldValue = model1.getValue();
 		String newValue = model1.getValue() + model1.getValue();
-		MapChangeListener listener = new MapChangeListener();
+		MapChangeEventTracker listener = new MapChangeEventTracker();
 
 		map.addMapChangeListener(listener);
 		assertEquals(0, listener.count);
 		model1.setValue(newValue);
 		assertEquals(1, listener.count);
-		assertTrue(listener.diff.getChangedKeys().contains(model1));
-		assertEquals(newValue, listener.diff.getNewValue(model1));
-		assertEquals(oldValue, listener.diff.getOldValue(model1));
-		assertFalse(listener.diff.getAddedKeys().contains(model1));
-		assertFalse(listener.diff.getRemovedKeys().contains(model1));
+		assertTrue(listener.event.diff.getChangedKeys().contains(model1));
+		assertEquals(newValue, listener.event.diff.getNewValue(model1));
+		assertEquals(oldValue, listener.event.diff.getOldValue(model1));
+		assertFalse(listener.event.diff.getAddedKeys().contains(model1));
+		assertFalse(listener.event.diff.getRemovedKeys().contains(model1));
 	}
 
 	public void testPutValue() throws Exception {
 		String oldValue = model1.getValue();
 		String newValue = model1.getValue() + model1.getValue();
-		MapChangeListener listener = new MapChangeListener();
+		MapChangeEventTracker listener = new MapChangeEventTracker();
 		map.addMapChangeListener(listener);
 
 		assertEquals(0, listener.count);
 		map.put(model1, newValue);
 		assertEquals(1, listener.count);
 		assertEquals(newValue, model1.getValue());
-		assertEquals(oldValue, listener.diff.getOldValue(model1));
-		assertEquals(newValue, listener.diff.getNewValue(model1));
-		assertFalse(listener.diff.getAddedKeys().contains(model1));
-		assertTrue(listener.diff.getChangedKeys().contains(model1));
-		assertFalse(listener.diff.getRemovedKeys().contains(model1));
+		assertEquals(oldValue, listener.event.diff.getOldValue(model1));
+		assertEquals(newValue, listener.event.diff.getNewValue(model1));
+		assertFalse(listener.event.diff.getAddedKeys().contains(model1));
+		assertTrue(listener.event.diff.getChangedKeys().contains(model1));
+		assertFalse(listener.event.diff.getRemovedKeys().contains(model1));
 	}
 
 	public void testAddKey() throws Exception {
-		MapChangeListener listener = new MapChangeListener();
+		MapChangeEventTracker listener = new MapChangeEventTracker();
 		map.addMapChangeListener(listener);
 
 		Bean model3 = new Bean("3");
@@ -123,7 +121,7 @@ public class JavaBeanObservableMapTest extends TestCase {
 		assertEquals(0, listener.count);
 		set.add(model3);
 		assertEquals(1, listener.count);
-		assertTrue(listener.diff.getAddedKeys().contains(model3));
+		assertTrue(listener.event.diff.getAddedKeys().contains(model3));
 		assertEquals(model3.getValue(), map.get(model3));
 
 		String newValue = model3.getValue() + model3.getValue();
@@ -133,15 +131,15 @@ public class JavaBeanObservableMapTest extends TestCase {
 	}
 
 	public void testRemoveKey() throws Exception {
-		MapChangeListener listener = new MapChangeListener();
+		MapChangeEventTracker listener = new MapChangeEventTracker();
 		map.addMapChangeListener(listener);
 
 		assertEquals(0, listener.count);
 		set.remove(model1);
 		assertEquals(1, listener.count);
-		assertFalse(listener.diff.getAddedKeys().contains(model1));
-		assertFalse(listener.diff.getChangedKeys().contains(model1));
-		assertTrue(listener.diff.getRemovedKeys().contains(model1));
+		assertFalse(listener.event.diff.getAddedKeys().contains(model1));
+		assertFalse(listener.event.diff.getChangedKeys().contains(model1));
+		assertTrue(listener.event.diff.getRemovedKeys().contains(model1));
 		assertEquals(1, map.size());
 	}
 	
@@ -210,17 +208,6 @@ public class JavaBeanObservableMapTest extends TestCase {
 
 		assertEquals("old", tracker.event.diff.getOldValue(bean));
 		assertEquals("new", tracker.event.diff.getNewValue(bean));
-	}
-
-	private static class MapChangeListener implements IMapChangeListener {
-		int count;
-
-		MapDiff diff;
-
-		public void handleMapChange(MapChangeEvent event) {
-			count++;
-			this.diff = event.diff;
-		}
 	}
 
 	public static Test suite() {

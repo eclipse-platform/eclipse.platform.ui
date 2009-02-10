@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 219909)
  *     Matthew Hall - bug 213145
- *     Ovidio Mallo - bug 237163
+ *     Ovidio Mallo - bug 237163, 247741
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -18,15 +18,14 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableValue;
 import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -54,8 +53,8 @@ public class UnmodifiableObservableValueTest extends
 	}
 
 	public void testFiresStaleEvents() {
-		StaleCounter wrappedListener = new StaleCounter();
-		StaleCounter unmodifiableListener = new StaleCounter();
+		StaleEventTracker wrappedListener = new StaleEventTracker();
+		StaleEventTracker unmodifiableListener = new StaleEventTracker();
 
 		unmodifiable.wrappedValue.addStaleListener(wrappedListener);
 		unmodifiable.addStaleListener(unmodifiableListener);
@@ -64,10 +63,11 @@ public class UnmodifiableObservableValueTest extends
 		assertEquals(0, unmodifiableListener.count);
 		unmodifiable.wrappedValue.setStale(true);
 		assertEquals(1, wrappedListener.count);
-		assertEquals(unmodifiable.wrappedValue, wrappedListener.source);
+		assertEquals(unmodifiable.wrappedValue, wrappedListener.event
+				.getObservable());
 		assertTrue(unmodifiable.wrappedValue.isStale());
 		assertEquals(1, unmodifiableListener.count);
-		assertEquals(unmodifiable, unmodifiableListener.source);
+		assertEquals(unmodifiable, unmodifiableListener.event.getObservable());
 		assertTrue(unmodifiable.isStale());
 	}
 
@@ -77,16 +77,6 @@ public class UnmodifiableObservableValueTest extends
 		unmodifiable.wrappedValue.setStale(true);
 		assertTrue(unmodifiable.wrappedValue.isStale());
 		assertTrue(unmodifiable.isStale());
-	}
-
-	private static class StaleCounter implements IStaleListener {
-		int count;
-		IObservable source;
-
-		public void handleStale(StaleEvent event) {
-			count++;
-			source = event.getObservable();
-		}
 	}
 
 	private static class Delegate extends
