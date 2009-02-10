@@ -135,7 +135,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	private ActionGroup commonActionGroup;
 
-	private IMemento memento;
+	/**
+	 * To allow {@link #createCommonViewer(Composite)} to be subclassed
+	 * 
+	 * @since 3.4
+	 */
+	protected IMemento memento;
 
 	private boolean isLinkingEnabled = false;
 
@@ -444,23 +449,36 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	}
 
 	/**
-	 * <p>
-	 * Constructs and returns an instance of {@link CommonViewer}. The ID of
+	 * Creates and initializes an instance of {@link CommonViewer}. The ID of
 	 * the Eclipse view part will be used to create the viewer. The ID is
 	 * important as some extensions indicate they should only be used with a
 	 * particular viewer ID.
-	 * <p>
 	 * 
 	 * @param aParent
 	 *            A composite parent to contain the Common Viewer
 	 * @return An initialized instance of CommonViewer
 	 */
 	protected CommonViewer createCommonViewer(Composite aParent) {
-		CommonViewer aViewer = new CommonViewer(getViewSite().getId(), aParent,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		CommonViewer aViewer = createCommonViewerObject(aParent);
 		initListeners(aViewer);
 		aViewer.getNavigatorContentService().restoreState(memento);
 		return aViewer;
+	}
+
+	/**
+	 * Constructs and returns an instance of {@link CommonViewer}. The ID of
+	 * the Eclipse view part will be used to create the viewer.
+	 * 
+	 * Override this method if you want a subclass of the CommonViewer
+	 * 
+	 * @param aParent
+	 *            A composite parent to contain the CommonViewer
+	 * @return An instance of CommonViewer
+	 * @since 3.4
+	 */
+	protected CommonViewer createCommonViewerObject(Composite aParent) {
+		return new CommonViewer(getViewSite().getId(), aParent,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
 	/**
