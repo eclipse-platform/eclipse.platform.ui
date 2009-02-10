@@ -55,6 +55,8 @@ public class DnDTest extends NavigatorTestBase {
 			return;
 		}
 
+		System.out.println("DDDDDDDDDDDDDDDDDDDD");
+		
 		_viewer.expandToLevel(_p1, 3);
 		items = _viewer.getTree().getItems();
 

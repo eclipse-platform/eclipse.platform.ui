@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     rob.stryker@jboss.com - bug 243824 [CommonNavigator] lacks table / tree-table support
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
@@ -21,6 +22,7 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.swt.graphics.Color;
@@ -41,9 +43,9 @@ import org.eclipse.ui.PlatformUI;
  * colors are used, it is the responsibility of the wrapped label provider to fire the refresh.
  * </p>
  */
-public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelProvider implements IPropertyChangeListener, ILabelProvider {
+public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelProvider implements IPropertyChangeListener, ILabelProvider, ITableLabelProvider {
 
-	private static class StyledLabelProviderAdapter implements IStyledLabelProvider, IColorProvider, IFontProvider {
+	private static class StyledLabelProviderAdapter implements IStyledLabelProvider, ITableLabelProvider, IColorProvider, IFontProvider {
 
 		private final ILabelProvider provider;
 
@@ -127,6 +129,26 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 				return ((IFontProvider) provider).getFont(element);
 			}
 			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+			if (provider instanceof ITableLabelProvider) {
+				return ((ITableLabelProvider) provider).getColumnImage(element, columnIndex);
+			}
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			if (provider instanceof ITableLabelProvider) {
+				return ((ITableLabelProvider) provider).getColumnText(element, columnIndex);
+			}
+			return null;
 		}	
 	}
 	
@@ -198,5 +220,19 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 	 */
 	public String getText(Object element) {
 		return getStyledText(element).getString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+	 */
+	public Image getColumnImage(Object element, int columnIndex) {
+		return ((StyledLabelProviderAdapter)getStyledStringProvider()).getColumnImage(element, columnIndex);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+	 */
+	public String getColumnText(Object element, int columnIndex) {
+		return ((StyledLabelProviderAdapter)getStyledStringProvider()).getColumnText(element, columnIndex);
 	}
 }

@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -29,12 +31,18 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 
 public abstract class TestLabelProvider extends LabelProvider implements
 		ICommonLabelProvider, IDescriptionProvider, IColorProvider,
-		IFontProvider {
+		IFontProvider, IStyledLabelProvider {
 
 	private FontData boldFontData = new FontData();
 
 	private Font boldFont;
 
+	public static boolean _blank;
+	
+	public static void resetTest() {
+		_blank = false;
+	}
+	
 	public void init(ICommonContentExtensionSite aSite) {
 		boldFontData.setStyle(SWT.BOLD);
 		boldFont = new Font(Display.getDefault(), boldFontData);
@@ -52,6 +60,9 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public String getText(Object element) {
+		if (_blank)
+			return "";
+		
 		if (element instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) element;
 			return getColorName() + data.getName();
@@ -60,6 +71,12 @@ public abstract class TestLabelProvider extends LabelProvider implements
 			return getColorName() + ((IResource) element).getName();
 		}
 		return null;
+	}
+
+	public StyledString getStyledText(Object element) {
+		if (_blank)
+			return new StyledString("");
+		return new StyledString(getText(element));
 	}
 
 	public String getDescription(Object anElement) {

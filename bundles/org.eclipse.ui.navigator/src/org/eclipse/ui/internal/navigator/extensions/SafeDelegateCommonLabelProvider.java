@@ -1,13 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Corporation - initial API and implementation
- * Anton Leherbauer, Wind River - bug 146788
+ *     IBM Corporation - initial API and implementation
+ * 	   Anton Leherbauer, Wind River - bug 146788
+ *     rob.stryker@jboss.com - bug 243824 [CommonNavigator] lacks table / tree-table support
+ * 
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
@@ -15,6 +17,7 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreePathLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreePath;
@@ -31,7 +34,7 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 /**
  * @since 3.2
  */
-public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, IStyledLabelProvider {
+public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, ITableLabelProvider, IStyledLabelProvider {
 
 	private final ILabelProvider delegateLabelProvider;
 
@@ -120,6 +123,26 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return new StyledString(text);
 	}	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+	 */
+	public Image getColumnImage(Object element, int columnIndex) {
+		if (delegateLabelProvider instanceof ITableLabelProvider) {
+			return ((ITableLabelProvider)delegateLabelProvider).getColumnImage(element, columnIndex);
+		}
+		return getImage(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+	 */
+	public String getColumnText(Object element, int columnIndex) {
+		if (delegateLabelProvider instanceof ITableLabelProvider) {
+			return ((ITableLabelProvider)delegateLabelProvider).getColumnText(element, columnIndex);
+		}
+		return getText(element);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

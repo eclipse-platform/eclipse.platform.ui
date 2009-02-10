@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreePathLabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StyledString;
@@ -33,6 +34,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
@@ -59,7 +61,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @see org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider
  */
 public class NavigatorContentServiceLabelProvider extends EventManager
-		implements ILabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, ILabelProviderListener, IStyledLabelProvider {
+		implements ILabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, ITableLabelProvider, ILabelProviderListener, IStyledLabelProvider {
  
 	private final NavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
@@ -93,13 +95,16 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object anElement) {
+		return getColumnImage(anElement, -1);
+	}
 
-		Set contentExtensions = contentService.findContentExtensionsByTriggerPoint(anElement);
+	public Image getColumnImage(Object element, int columnIndex) {
+		Set contentExtensions = contentService.findContentExtensionsByTriggerPoint(element);
 		Image image = null; 
 		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && image == null; ) { 
-			image = findImage((NavigatorContentExtension) itr.next(), anElement);
+			image = findImage((NavigatorContentExtension) itr.next(), element, columnIndex);
 		}
-		return image;  
+		return image;
 	}
 
 	/**
@@ -107,7 +112,6 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * Return a String representation of anElement to be used as the display name in the tree
 	 * viewer.
 	 * </p>
-	 * {@inheritDoc}
 	 * 
 	 * @param anElement
 	 *            An element from the Tree Viewer 
@@ -115,14 +119,21 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object anElement) {
+		return getColumnText(anElement, -1);
+	}
+
+	public String getColumnText(Object anElement, int aColumn) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
 		String text = null;
 		for (int i = 0; i < labelProviders.length; i++) {
-			text = labelProviders[i].getText(anElement);
+			if (labelProviders[i] instanceof ITableLabelProvider && aColumn != -1)
+				text = ((ITableLabelProvider)labelProviders[i]).getColumnText(anElement, aColumn);
+			else
+				text = labelProviders[i].getText(anElement);
 			if (text != null)
 				return text;
 		}
-		return NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement);	
+		return NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement));	
 	}
 	
 	/* (non-Javadoc)
@@ -135,7 +146,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			if (labelProviders[i] instanceof IStyledLabelProvider) {
 				StyledString styledText= ((IStyledLabelProvider) labelProviders[i]).getStyledText(anElement);
 				// paranoia check for null, although null is not a valid return value for IStyledLabelProvider.getStyledText
-				if (styledText != null && styledText.length() > 0) {
+				if (styledText != null) {
 					return styledText;
 				}
 			} else {
@@ -145,7 +156,13 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 				}
 			}
 		}
-		return new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement));	
+		return new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement)));	
+	}
+	
+	private String makeSmallString(Object obj) {
+		String str = obj.toString();
+		int len = str.length();
+		return str.substring(0, len < 50 ? len : 49);
 	}
 	
 	
@@ -153,12 +170,17 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * Search for image and take overrides into account. 
 	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
 	 */
-	private Image findImage(NavigatorContentExtension foundExtension, Object anElement) { 
+	private Image findImage(NavigatorContentExtension foundExtension, Object anElement, int aColumn) { 
 		Image image = null;
 		INavigatorContentDescriptor foundDescriptor;  
-		image = foundExtension.getLabelProvider().getImage(anElement); 
-		if(image == null && (foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
-			return findImage(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
+		ICommonLabelProvider provider = foundExtension.getLabelProvider();
+		if (provider instanceof ITableLabelProvider && aColumn >= 0)
+			image = ((ITableLabelProvider)provider).getColumnImage(anElement, aColumn);
+		else
+			image = provider.getImage(anElement);
+
+		if (image == null && (foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
+			return findImage(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement, aColumn);
 		}  
 		return image;
 	}

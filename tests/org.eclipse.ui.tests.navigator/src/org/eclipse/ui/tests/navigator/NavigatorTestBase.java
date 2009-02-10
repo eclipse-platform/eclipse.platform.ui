@@ -30,6 +30,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActionService;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.navigator.extension.TestDataSorter;
+import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
 import org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
@@ -47,6 +48,8 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_OVERRIDE1 = "org.eclipse.ui.tests.navigator.testOverride1";
 	public static final String TEST_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testOverride2";
 	public static final String TEST_SORTER_CONTENT = "org.eclipse.ui.tests.navigator.testSorterContent";
+	public static final String TEST_CONTENT_REDLABEL = "org.eclipse.ui.tests.navigator.testContentRedLabel";
+	public static final String TEST_CONTENT_MISSINGLABEL = "org.eclipse.ui.tests.navigator.testContentMissingLabel";
 
 	public static final String TEST_DROP_COPY_CONTENT = "org.eclipse.ui.tests.navigator.testDropCopy";
 
@@ -84,6 +87,7 @@ public class NavigatorTestBase extends TestCase {
 
 		TestResourceContentProvider.resetTest();
 		TestDataSorter.resetTest();
+		TestLabelProvider.resetTest();
 
 		if (_initTestData) {
 			clearAll();
