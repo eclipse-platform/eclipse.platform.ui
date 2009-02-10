@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.internal.core.services.osgi;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.core.services.osgi.IServiceAliasRegistry;
 import org.osgi.framework.*;
@@ -26,23 +26,24 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  * registered with an {@link IServiceAliasRegistry}.
  */
 public class OSGiServiceContext extends EclipseContext implements IDisposable, ServiceTrackerCustomizer {
-	static class ServiceData {
+	class ServiceData {
+		//the service name
 		String name;
 
 		ServiceTracker tracker;
-		//the contexts using this service
-		final Set users = new HashSet();
+		//the contexts using this service (IEclipseContext -> null)
+		final Map users = new WeakHashMap();
 
 		ServiceData(String name) {
 			this.name = name;
 		}
 
 		public void addContext(EclipseContext originatingContext) {
-			users.add(new WeakReference(originatingContext));
+			users.put(originatingContext, null);
 		}
 	}
 
-	private BundleContext bundleContext;
+	private final BundleContext bundleContext;
 	/**
 	 * Map of String (service name) -> ServiceData
 	 */
@@ -56,8 +57,12 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 	public Object addingService(ServiceReference reference) {
 		String name = serviceName(reference);
 		Object newValue = bundleContext.getService(reference);
-		if (newValue != null)
-			set(name, newValue);
+		if (newValue == null)
+			return null;
+		//for performance we store the concrete service object with each context that requested it
+		ServiceData data = (ServiceData) services.get(name);
+		for (Iterator it = data.users.keySet().iterator(); it.hasNext();)
+			((IEclipseContext) it.next()).set(name, newValue);
 		return newValue;
 	}
 
@@ -69,12 +74,6 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 		synchronized (services) {
 			for (Iterator it = services.values().iterator(); it.hasNext();) {
 				ServiceData data = (ServiceData) it.next();
-				//remove any reference whose referent is gone
-				for (Iterator it2 = data.users.iterator(); it2.hasNext();) {
-					WeakReference ref = (WeakReference) it2.next();
-					if (ref.get() == null)
-						it2.remove();
-				}
 				//if there are no more references, discard the service
 				if (data.users.isEmpty()) {
 					data.tracker.close();
@@ -115,18 +114,22 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 			data.tracker.open();
 		}
 		data.addContext(originatingContext);
-		return super.internalGet(originatingContext, resolved, arguments, local);
+		return data.tracker.getService();
 	}
 
 	public void modifiedService(ServiceReference reference, Object service) {
 		String name = serviceName(reference);
-		set(name, service);
+		ServiceData data = (ServiceData) services.get(name);
+		for (Iterator it = data.users.keySet().iterator(); it.hasNext();)
+			((IEclipseContext) it.next()).set(name, service);
 	}
 
 	public void removedService(ServiceReference reference, Object service) {
 		String name = serviceName(reference);
 		//must set to null rather than removing so injection continues to work
-		set(name, null);
+		ServiceData data = (ServiceData) services.get(name);
+		for (Iterator it = data.users.keySet().iterator(); it.hasNext();)
+			((IEclipseContext) it.next()).set(name, null);
 		bundleContext.ungetService(reference);
 	}
 
