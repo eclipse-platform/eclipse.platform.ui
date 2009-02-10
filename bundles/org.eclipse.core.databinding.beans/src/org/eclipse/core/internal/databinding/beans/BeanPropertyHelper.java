@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Martin Frey <martin.frey@logica.com> - bug 256150
+ *     Matthew Hall - bug 264307
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -215,5 +216,30 @@ public class BeanPropertyHelper {
 			return getPropertyDescriptor((Class) observable.getValueType(),
 					propertyName);
 		return null;
+	}
+
+	/**
+	 * @param propertyDescriptor
+	 * @return String description of property descriptor
+	 */
+	public static String propertyName(PropertyDescriptor propertyDescriptor) {
+		Class beanClass = propertyDescriptor.getReadMethod()
+				.getDeclaringClass();
+		return shortClassName(beanClass)
+				+ "." + propertyDescriptor.getName() + ""; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * @param beanClass
+	 * @return class name excluding package
+	 */
+	public static String shortClassName(Class beanClass) {
+		if (beanClass == null)
+			return "?"; //$NON-NLS-1$
+		String className = beanClass.getName();
+		int lastDot = className.lastIndexOf('.');
+		if (lastDot != -1)
+			className = className.substring(lastDot + 1);
+		return className;
 	}
 }

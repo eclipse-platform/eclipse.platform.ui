@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
+ *     Matthew Hall - bug 264307
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -57,14 +58,13 @@ public class AnonymousBeanMapProperty extends DelegatingMapProperty {
 	}
 
 	public String toString() {
-		String s = "{{Generic Bean}}." + propertyName + "{:}"; //$NON-NLS-1$ //$NON-NLS-2$
-
+		String s = "?." + propertyName + "{:}"; //$NON-NLS-1$ //$NON-NLS-2$
 		Class keyType = (Class) getKeyType();
 		Class valueType = (Class) getValueType();
 		if (keyType != null || valueType != null) {
-			s += " <" + keyType + ", " + valueType + ">"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			s += " <" + BeanPropertyHelper.shortClassName(keyType) + ", " //$NON-NLS-1$//$NON-NLS-2$
+					+ BeanPropertyHelper.shortClassName(valueType) + ">"; //$NON-NLS-1$
 		}
-
 		return s;
 	}
 }

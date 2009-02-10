@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
+ *     Matthew Hall - bug 264307
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -55,12 +56,10 @@ public class AnonymousBeanSetProperty extends DelegatingSetProperty {
 	}
 
 	public String toString() {
-		String s = "{{Generic Bean}}." + propertyName + "{}"; //$NON-NLS-1$ //$NON-NLS-2$
-
+		String s = "?." + propertyName + "{}"; //$NON-NLS-1$ //$NON-NLS-2$
 		Class elementType = (Class) getElementType();
 		if (elementType != null)
-			s += " <" + elementType.getName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
-
+			s += "<" + BeanPropertyHelper.shortClassName(elementType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;
 	}
 }

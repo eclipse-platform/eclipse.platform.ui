@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 247997, 261843
+ *     Matthew Hall - bug 195222, 247997, 261843, 264307
  ******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -113,7 +113,7 @@ public class PojoProperties {
 		if (beanClass == null) {
 			propertyDescriptor = null;
 			property = new PojoValuePropertyDecorator(
-					new AnonymousPojoValueProperty(propertyName, valueType),
+					new AnonymousPojoValueProperty(propertyNames[0], valueType),
 					null);
 		} else {
 			propertyDescriptor = BeanPropertyHelper.getPropertyDescriptor(

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 195222)
+ *     Matthew Hall - bug 264307
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -86,5 +87,9 @@ public class BeanSetPropertyDecorator extends SetProperty implements
 	public IObservableSet observeDetail(IObservableValue master) {
 		return new BeanObservableSetDecorator(delegate.observeDetail(master),
 				propertyDescriptor);
+	}
+
+	public String toString() {
+		return delegate.toString();
 	}
 }

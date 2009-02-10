@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 195222)
+ *     Matthew Hall - bug 264307
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -148,5 +149,9 @@ public class PojoValuePropertyDecorator extends ValueProperty implements
 	public IObservableMap observeDetail(IObservableMap master) {
 		return new BeanObservableMapDecorator(delegate.observeDetail(master),
 				propertyDescriptor);
+	}
+
+	public String toString() {
+		return delegate.toString();
 	}
 }

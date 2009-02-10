@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 264307
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -90,13 +90,9 @@ public class PojoListProperty extends SimpleListProperty {
 	}
 
 	public String toString() {
-		Class beanClass = propertyDescriptor.getReadMethod()
-				.getDeclaringClass();
-		String propertyName = propertyDescriptor.getName();
-		String s = beanClass.getName() + "." + propertyName + "[]"; //$NON-NLS-1$ //$NON-NLS-2$
-
+		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "[]"; //$NON-NLS-1$
 		if (elementType != null)
-			s += " <" + elementType.getName() + ">"; //$NON-NLS-1$//$NON-NLS-2$
+			s += "<" + BeanPropertyHelper.shortClassName(elementType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;
 	}
 }

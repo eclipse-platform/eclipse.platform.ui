@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 247997, 261843
+ *     Matthew Hall - bug 195222, 247997, 261843, 264307
  ******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -110,7 +110,8 @@ public class BeanProperties {
 		IValueProperty property;
 		if (beanClass == null) {
 			propertyDescriptor = null;
-			property = new AnonymousBeanValueProperty(propertyName, valueType);
+			property = new AnonymousBeanValueProperty(propertyNames[0],
+					valueType);
 		} else {
 			propertyDescriptor = BeanPropertyHelper.getPropertyDescriptor(
 					beanClass, propertyNames[0]);

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 264307
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -109,14 +109,11 @@ public class BeanMapProperty extends SimpleMapProperty {
 	}
 
 	public String toString() {
-		Class beanClass = propertyDescriptor.getReadMethod()
-				.getDeclaringClass();
-		String propertyName = propertyDescriptor.getName();
-		String s = beanClass.getName() + "." + propertyName + "{:}"; //$NON-NLS-1$ //$NON-NLS-2$
+		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "{:}"; //$NON-NLS-1$
 
-		if (keyType != null || valueType != null) {
-			s += " <" + keyType + ", " + valueType + ">"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+		if (keyType != null || valueType != null)
+			s += "<" + BeanPropertyHelper.shortClassName(keyType) + ", " //$NON-NLS-1$ //$NON-NLS-2$
+					+ BeanPropertyHelper.shortClassName(valueType) + ">"; //$NON-NLS-1$
 		return s;
 	}
 }

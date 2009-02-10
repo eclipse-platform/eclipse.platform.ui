@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bugs 118516, 146397, 226289, 246103, 249526
+ *     Matthew Hall - bugs 118516, 146397, 226289, 246103, 249526, 264307
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.AssertionFailedException;
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
+ * 
  * @since 1.0
  */
 public abstract class AbstractObservableMap extends AbstractMap implements
@@ -181,7 +182,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	/**
-	 * Sets the stale state.  Must be invoked from the current realm.
+	 * Sets the stale state. Must be invoked from the current realm.
 	 * 
 	 * @param stale
 	 */
@@ -194,7 +195,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	/**
-	 * Fires stale events.  Must be invoked from current realm.
+	 * Fires stale events. Must be invoked from current realm.
 	 */
 	protected void fireStale() {
 		checkRealm();
@@ -202,7 +203,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	/**
-	 * Fires change events.  Must be invoked from current realm.
+	 * Fires change events. Must be invoked from current realm.
 	 */
 	protected void fireChange() {
 		checkRealm();
@@ -210,12 +211,13 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	/**
-	 * Fires map change events.  Must be invoked from current realm.
+	 * Fires map change events. Must be invoked from current realm.
 	 * 
 	 * @param diff
 	 */
 	protected void fireMapChange(MapDiff diff) {
 		checkRealm();
+		fireChange();
 		changeSupport.fireEvent(new MapChangeEvent(this, diff));
 	}
 

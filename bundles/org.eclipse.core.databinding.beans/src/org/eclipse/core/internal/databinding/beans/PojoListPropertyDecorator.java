@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 195222)
+ *     Matthew Hall - bug 264307
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -85,5 +86,9 @@ public class PojoListPropertyDecorator extends ListProperty implements
 	public IObservableList observeDetail(IObservableValue master) {
 		return new BeanObservableListDecorator(delegate.observeDetail(master),
 				propertyDescriptor);
+	}
+
+	public String toString() {
+		return delegate.toString();
 	}
 }
