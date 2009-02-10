@@ -1498,7 +1498,7 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 		titleArea.setLayout(layout);
 
 		titleImageLabel = new Label(titleArea, SWT.NONE);
-		titleImageLabel.setImage(getErrorImage());
+		titleImageLabel.setImage(getImage());
 		GridData layoutData = new GridData();
 		layoutData.verticalSpan = 2;
 		layoutData.verticalAlignment = SWT.TOP;
@@ -1561,15 +1561,6 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	}
 
 	/**
-	 * Return the <code>Image</code> to be used when displaying an error.
-	 * 
-	 * @return image the error image
-	 */
-	private Image getErrorImage() {
-		return getSWTImage(SWT.ICON_ERROR);
-	}
-
-	/**
 	 * Returns {@link IAction} associated with selected StatusAdapter.
 	 * 
 	 * @return {@link IAction} that is set as {@link StatusAdapter} property
@@ -1598,29 +1589,32 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	 */
 	private Image getImage() {
 		if (statusAdapter != null) {
-			IStatus status = statusAdapter.getStatus();
-			if (status != null) {
-				if (status.getSeverity() == IStatus.WARNING) {
-					return getWarningImage();
-				}
-				if (status.getSeverity() == IStatus.INFO
-						|| status.getSeverity() == IStatus.CANCEL
-						|| status.getSeverity() == IStatus.OK) {
-					return getInfoImage();
-				}
+			int severity = statusAdapter.getStatus().getSeverity();
+			switch (severity) {
+			case IStatus.OK:
+			case IStatus.INFO:
+			case IStatus.CANCEL:
+				return getSWTImage(SWT.ICON_INFORMATION);
+			case IStatus.WARNING:
+				return getSWTImage(SWT.ICON_WARNING);
+			default: /* IStatus.ERROR */
+				return getSWTImage(SWT.ICON_ERROR);
 			}
 		}
-		// If it was not a warning or an error then return the error image
-		return getErrorImage();
+		// should not never happen but if we do not know what is going on, then
+		// return error image.
+		return getSWTImage(SWT.ICON_ERROR);
 	}
 
 	/**
-	 * Return the <code>Image</code> to be used when displaying information.
+	 * Get an <code>Image</code> from the provide SWT image constant.
 	 * 
-	 * @return image the information image
+	 * @param imageID
+	 *            the SWT image constant
+	 * @return image the image
 	 */
-	private Image getInfoImage() {
-		return getSWTImage(SWT.ICON_INFORMATION);
+	private Image getSWTImage(final int imageID) {
+		return getShell().getDisplay().getSystemImage(imageID);
 	}
 
 	/**
@@ -1825,17 +1819,6 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	}
 
 	/**
-	 * Get an <code>Image</code> from the provide SWT image constant.
-	 * 
-	 * @param imageID
-	 *            the SWT image constant
-	 * @return image the image
-	 */
-	private Image getSWTImage(final int imageID) {
-		return getShell().getDisplay().getSystemImage(imageID);
-	}
-
-	/**
 	 * Return a viewer sorter for looking at the jobs.
 	 * 
 	 * @return ViewerSorter
@@ -1884,15 +1867,6 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 				return 0;
 			}
 		};
-	}
-
-	/**
-	 * Return the <code>Image</code> to be used when displaying a warning.
-	 * 
-	 * @return image the warning image
-	 */
-	private Image getWarningImage() {
-		return getSWTImage(SWT.ICON_WARNING);
 	}
 
 	/**
