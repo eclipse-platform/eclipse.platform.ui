@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.jface.action.IAction;
@@ -565,8 +564,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	/**
 	 * @return The initial input for the viewer. Defaults to
 	 *         getSite().getPage().getInput()
+	 * @since 3.4
 	 */
-	protected IAdaptable getInitialInput() {
+	protected Object getInitialInput() {
 		return getSite().getPage().getInput();
 	}
 
