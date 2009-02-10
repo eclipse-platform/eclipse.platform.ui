@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Remy Chi Jian Suen (Versant Corporation) - bug 255005
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
@@ -55,12 +56,14 @@ public class WorkbenchSiteProgressService implements
 
     private Object busyLock = new Object();
 
-    IJobChangeListener listener;
-
     IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[0];
 
     private Cursor waitCursor;
 
+    private int waitCursorJobCount;
+    
+    private Object waitCursorLock = new Object();
+    
     private SiteUpdateJob updateJob;
 
     /**
@@ -68,10 +71,8 @@ public class WorkbenchSiteProgressService implements
      */
 	private int busyCount = 0;
 
-    private class SiteUpdateJob extends WorkbenchJob {
+    public class SiteUpdateJob extends WorkbenchJob {
         private boolean busy;
-
-        private boolean useWaitCursor = false;
 
         Object lock = new Object();
 
@@ -114,13 +115,12 @@ public class WorkbenchSiteProgressService implements
 			}
             synchronized (lock) {
                 //Update cursors if we are doing that
-                if (useWaitCursor) {
-                    Cursor cursor = null;
-                    if (busy) {
-						cursor = getWaitCursor(control.getDisplay());
-					}
-                    control.setCursor(cursor);
-                }
+                Cursor cursor = null;
+                if (waitCursorJobCount !=0) {
+                	// at least one job which is running has requested for wait cursor
+					cursor = getWaitCursor(control.getDisplay());
+				}
+                control.setCursor(cursor);
                 site.getPane().setBusy(busy);
                 IWorkbenchPart part = site.getPart();
                  if (part instanceof WorkbenchPart) {
@@ -136,6 +136,7 @@ public class WorkbenchSiteProgressService implements
                 waitCursor = null;
             }
         }
+        
     }
 
     /**
@@ -185,7 +186,7 @@ public class WorkbenchSiteProgressService implements
      *      long, boolean)
      */
     public void schedule(Job job, long delay, boolean useHalfBusyCursor) {
-        job.addJobChangeListener(getJobChangeListener(job, useHalfBusyCursor));
+        job.addJobChangeListener(getJobChangeListener(useHalfBusyCursor));
         job.schedule(delay);
     }
 
@@ -224,32 +225,45 @@ public class WorkbenchSiteProgressService implements
      * @param useHalfBusyCursor
      * @return IJobChangeListener
      */
-    public IJobChangeListener getJobChangeListener(final Job job,
-            boolean useHalfBusyCursor) {
-        if (listener == null) {
-            updateJob.useWaitCursor = useHalfBusyCursor;
-            listener = new JobChangeAdapter() {
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-                 */
-                public void aboutToRun(IJobChangeEvent event) {
-                    incrementBusy(event.getJob());
-                }
+	public IJobChangeListener getJobChangeListener(final boolean useHalfBusyCursor) {
+		return new JobChangeAdapter() {
 
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-                 */
-                public void done(IJobChangeEvent event) {
-                    decrementBusy(event.getJob());
-                }
-            };
-        }
-        return listener;
-    }
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org
+			 * .eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void aboutToRun(IJobChangeEvent event) {
+				if (useHalfBusyCursor) {
+					synchronized (waitCursorLock) {
+						waitCursorJobCount++;
+					}
+				}
+				incrementBusy(event.getJob());
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse
+			 * .core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void done(IJobChangeEvent event) {
+				if (useHalfBusyCursor) {
+					synchronized (waitCursorLock) {
+						waitCursorJobCount--;
+					}
+				}
+
+				Job job = event.getJob();
+				decrementBusy(job);
+				job.removeJobChangeListener(this);
+			}
+		};
+	}
 
     /*
      * (non-Javadoc)
@@ -394,5 +408,15 @@ public class WorkbenchSiteProgressService implements
 		} else {
 			updateJob.cancel();
 		}
+	}
+	
+	/**
+	 * This method is made public only for the tests. 
+	 * Clients should not be using this method
+	 * 
+	 * @return the updateJob that updates the site
+	 */
+	public SiteUpdateJob getUpdateJob() {
+		return updateJob;
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen (Versant Corporation) - bug 255005
  *******************************************************************************/
 package org.eclipse.ui.tests.leaks;
 
@@ -16,15 +17,21 @@ import java.lang.ref.ReferenceQueue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.part.NullEditorInput;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -125,6 +132,82 @@ public class LeakTests extends UITestCase {
             ref.clear();
         }
     }
+
+	public void testBug255005ServiceLeak() throws Exception {
+		ReferenceQueue queue = new ReferenceQueue();
+		IViewPart view = fActivePage.showView(MockViewPart.ID);
+		assertNotNull(view);
+
+		// create a job to schedule
+		Job doNothingJob = new Job("Does Nothing") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+
+		// retrieve the progress service
+		IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) view
+				.getSite().getService(IWorkbenchSiteProgressService.class);
+		// schedule it
+		service.schedule(doNothingJob);
+
+		// create a reference for our service
+		Reference ref = createReference(queue, service);
+
+		// wait for the job  to complete
+		doNothingJob.join();
+
+		try {
+			// hide the view
+			fActivePage.hideView(view);
+			// remove our references
+			service = null;
+			view = null;
+			// check for leaks
+			checkRef(queue, ref);
+		} finally {
+			ref.clear();
+		}
+	}
+
+	public void testBug255005SiteLeak() throws Exception {
+		ReferenceQueue queue = new ReferenceQueue();
+		IViewPart view = fActivePage.showView(MockViewPart.ID);
+		assertNotNull(view);
+
+		// create a job to schedule
+		Job doNothingJob = new Job("Does Nothing") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+
+		// retrieve the progress service
+		IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) view
+				.getSite().getService(IWorkbenchSiteProgressService.class);
+		// schedule it
+		service.schedule(doNothingJob);
+
+		IWorkbenchPartSite site = view.getSite();
+		// create a reference for our site
+		Reference ref = createReference(queue, site);
+
+		// wait for the job  to complete
+		doNothingJob.join();
+
+		try {
+			// hide the view
+			fActivePage.hideView(view);
+			// remove our references
+			service = null;
+			site = null;
+			view = null;
+			// check for leaks
+			checkRef(queue, ref);
+		} finally {
+			ref.clear();
+		}
+	}
     
     public void testTextEditorContextMenu() throws Exception {
     	proj = FileUtil.createProject("testEditorLeaks");
