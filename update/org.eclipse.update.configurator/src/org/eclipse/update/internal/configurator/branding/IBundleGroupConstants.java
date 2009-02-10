@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.configurator.branding;
+
+import org.eclipse.update.configurator.IPlatformConfiguration.IFeatureEntry;
 
 /**
  * These constants define the set of properties that the UI expects to
@@ -46,4 +48,18 @@ public interface IBundleGroupConstants {
 	 * (optional).
 	 */
 	public static final String LICENSE_HREF = "licenseHref"; //$NON-NLS-1$
+	
+	/**
+	 * The id of the feature branding bundle.
+	 * @see IFeatureEntry#getFeaturePluginIdentifier()
+	 * @since 3.3
+	 */
+	public static final String FEATURE_PLUGIN_ID= "featurePluginId"; //$NON-NLS-1$
+
+	/**
+	 * The version of the feature branding bundle.
+	 * @see IFeatureEntry#getFeaturePluginVersion()
+	 * @since 3.3
+	 */
+	public static final String FEATURE_PLUGIN_VERSION= "featurePluginVersion"; //$NON-NLS-1$
 }
