@@ -562,6 +562,10 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	}
 
 	/**
+	 * Used to provide the initial input for the {@link CommonViewer}.  By default
+	 * getSite().getPage().getInput() is used.  Subclass this to return your desired
+	 * input.
+	 * 
 	 * @return The initial input for the viewer. Defaults to
 	 *         getSite().getPage().getInput()
 	 * @since 3.4
