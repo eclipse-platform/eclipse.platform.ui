@@ -101,7 +101,10 @@ public class URIUtilTest extends RuntimeTest {
 		if (WINDOWS) {
 			assertEquals("3.3", new URI("file:/c:/a/b"), URIUtil.fromString("file:c:/a/b"));
 			assertEquals("3.4", new URI("file:/c:/a/b"), URIUtil.fromString("file:c:\\a\\b"));
-			assertEquals("3.4", new URI("file:/c:/a/b"), URIUtil.fromString("file:/c:\\a\\b"));
+			assertEquals("3.5", new URI("file:/c:/a/b"), URIUtil.fromString("file:/c:\\a\\b"));
+			assertEquals("3.6", new URI("file:/a/b/c"), URIUtil.fromString("file:/a/b/c"));//bug 264101
+			//backslash
+			assertEquals("3.7", new URI("file:/a/b/c"), URIUtil.fromString("file:\\a\\b\\c"));//bug 264101
 		}
 
 		//encoded legal character
