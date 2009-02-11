@@ -21,6 +21,7 @@ package org.eclipse.core.resources;
  * @see IWorkspace#setDescription(IWorkspaceDescription)
  * @see IWorkspace#newProjectDescription(String)
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IWorkspaceDescription {
 	/**

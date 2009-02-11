@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * 
  * @see IWorkspace#getSynchronizer()
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISynchronizer {
 	/**

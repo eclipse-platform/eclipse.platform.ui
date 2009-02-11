@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,13 +24,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * This factory does not validate that the proposed operation is valid given the current
  * state of the resources and any other proposed changes. It only records the
  * delta that would result.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @see ResourceChangeValidator
  * @see ModelProvider
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IResourceChangeDescriptionFactory {
 

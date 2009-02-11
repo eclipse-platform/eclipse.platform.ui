@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.*;
  * @see org.eclipse.core.runtime.IStatus
  * @see ResourcesPlugin#PI_RESOURCES
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IResourceStatus extends IStatus {
 

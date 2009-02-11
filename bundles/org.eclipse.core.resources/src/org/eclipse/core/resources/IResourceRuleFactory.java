@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * @see org.eclipse.core.runtime.jobs.MultiRule#combine(ISchedulingRule, ISchedulingRule)
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IResourceRuleFactory {
 	/**

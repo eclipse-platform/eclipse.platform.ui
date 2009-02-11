@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.*;
  * @see IStorage
  * @see Platform#getAdapterManager()
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IFileState extends IEncodedStorage, IAdaptable {
 	/**
