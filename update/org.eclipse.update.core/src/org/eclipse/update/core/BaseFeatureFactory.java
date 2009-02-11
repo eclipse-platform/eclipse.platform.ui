@@ -42,6 +42,8 @@ import org.eclipse.update.core.model.URLEntryModel;
  * @see org.eclipse.update.core.IFeatureFactory
  * @see org.eclipse.update.core.model.FeatureModelFactory
  * @since 2.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public abstract class BaseFeatureFactory extends FeatureModelFactory implements IFeatureFactory {
 

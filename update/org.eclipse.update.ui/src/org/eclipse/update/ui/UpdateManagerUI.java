@@ -22,6 +22,7 @@ import org.eclipse.update.search.*;
  * Entry point into update manager UI.
  * Clients can use this class to launch the configuration manager window or the install wizard.
  * @since 3.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2.
  */
 public class UpdateManagerUI {
 

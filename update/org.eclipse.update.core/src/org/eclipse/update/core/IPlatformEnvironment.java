@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.*;
  * @see org.eclipse.update.core.PluginEntry
  * @see org.eclipse.update.core.FeatureContentProvider
  * @since 2.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public interface IPlatformEnvironment extends IAdaptable {
 

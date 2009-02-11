@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Plug-in dependency entry.
- * Describes a feture dependency on a particular plug-in. The dependency 
+ * Describes a feature dependency on a particular plug-in. The dependency 
  * can specify a specific plug-in version and a matching rule for 
  * satisfying the dependency.
  * <p>
@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * </p>
  * @see org.eclipse.update.core.Import
  * @since 2.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public interface IImport extends IAdaptable, IUpdateConstants, IPlatformEnvironment {
 

@@ -24,8 +24,9 @@ package org.eclipse.update.search;
  * (repeatedly) as the API evolves.
  * </p>
  * @since 3.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
-
 public interface IUpdateSearchCategory {
 /**
  * Returns the unique identifier of this search category.

@@ -35,8 +35,9 @@ import org.eclipse.update.core.model.*;
  * </p>
  * @see org.eclipse.update.core.BaseSiteFactory
  * @since 2.1
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
-
 public interface ISiteFactoryExtension {
 	/**
 	 * Returns a site defined by the supplied URL. 

@@ -28,6 +28,8 @@ import org.eclipse.update.internal.mirror.MirrorCommand;
  * (repeatedly) as the API evolves.
  * </p>
  * @since 3.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public class CmdLineArgs {
 	private HashMap options = new HashMap();

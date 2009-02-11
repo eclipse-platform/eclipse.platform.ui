@@ -32,6 +32,8 @@ import org.eclipse.update.core.model.*;
  * </p>
  * @see org.eclipse.update.core.Site
  * @since 2.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public interface ISite extends IAdaptable {
 

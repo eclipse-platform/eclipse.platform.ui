@@ -40,6 +40,8 @@ import org.eclipse.update.internal.core.*;
  * @see org.eclipse.update.core.ISite
  * @see org.eclipse.update.core.model.SiteModel
  * @since 2.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public class Site extends SiteModel implements ISiteWithMirrors {
 

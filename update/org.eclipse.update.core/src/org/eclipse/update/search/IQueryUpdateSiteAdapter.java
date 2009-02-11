@@ -12,7 +12,7 @@ package org.eclipse.update.search;
 
 /**
  * This interface is used for update site adapter used 
- * for specific query serches. It adds a mapping ID 
+ * for specific query searches. It adds a mapping ID 
  * that can be used when mapping file is specified.
  * If a matching mapping is found for this ID, 
  * the replacement URL found in the mapping file will be
@@ -24,6 +24,8 @@ package org.eclipse.update.search;
  * (repeatedly) as the API evolves.
  * </p>
  * @since 3.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public interface IQueryUpdateSiteAdapter extends IUpdateSiteAdapter {
 /**

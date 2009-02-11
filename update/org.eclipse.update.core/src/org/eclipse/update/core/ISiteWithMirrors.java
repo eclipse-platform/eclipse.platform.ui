@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.*;
  * The regular update site contains features (optionally groupped by categories), while
  * a mirrored site can define zero or more updates sites (mirrors) with the same content.
  * This allows users to pick their own update site, for performance purposes.
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public interface ISiteWithMirrors extends ISite {
 

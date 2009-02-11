@@ -29,6 +29,8 @@ import java.util.List;
  * </p>
  * @see org.eclipse.update.core.FeatureReference
  * @since 2.1
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public class SiteFeatureReferenceModel extends FeatureReference {
 

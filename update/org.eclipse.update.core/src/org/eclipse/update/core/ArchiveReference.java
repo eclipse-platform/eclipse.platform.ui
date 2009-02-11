@@ -26,6 +26,8 @@ import org.eclipse.update.core.model.ArchiveReferenceModel;
  * @see org.eclipse.update.core.IArchiveReference
  * @see org.eclipse.update.core.model.ArchiveReferenceModel
  * @since 2.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public class ArchiveReference
 	extends ArchiveReferenceModel

@@ -27,6 +27,8 @@ import org.eclipse.update.internal.core.*;
  * @see org.eclipse.update.core.IURLEntry
  * @see org.eclipse.update.core.model.URLEntryModel
  * @since 2.0
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2. This
+ * provisional API was never promoted to stable API, and may be removed from a future release of the platform.
  */
 public class URLEntry extends URLEntryModel implements IURLEntry {
 

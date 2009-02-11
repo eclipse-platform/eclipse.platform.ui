@@ -41,6 +41,7 @@ import org.eclipse.update.search.UpdateSearchRequest;
  * features, depending on how you construct it.
  * 
  * @since 3.1
+ * @deprecated The org.eclipse.update component has been replaced by Equinox p2.
  */
 public class UpdateJob extends Job {
 
