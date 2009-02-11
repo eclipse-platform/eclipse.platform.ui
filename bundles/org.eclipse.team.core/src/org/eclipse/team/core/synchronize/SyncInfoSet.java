@@ -345,6 +345,7 @@ public class SyncInfoSet {
 	public void remove(IResource resource) {
 		try {
 			beginInput();
+			internalRemove(resource);
 			getChangeEvent().removed(resource);
 		} finally {
 			endInput(null);
