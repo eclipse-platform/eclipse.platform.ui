@@ -137,6 +137,13 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED, true);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS, false);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES, false);
+		
+		/**
+		 * Debug view mode default
+		 * 
+		 * @since 3.5
+		 */
+        prefs.setDefault(IDebugPreferenceConstants.DEBUG_VIEW_MODE, IDebugPreferenceConstants.DEBUG_VIEW_MODE_AUTO);
 	}
 
 	/**

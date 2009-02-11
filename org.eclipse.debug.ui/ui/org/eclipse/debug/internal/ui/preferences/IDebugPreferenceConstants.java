@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -270,6 +270,13 @@ public interface IDebugPreferenceConstants {
 	 */
 	public static final String PREF_TABLE_RENDERING_POST_BUFFER_SIZE = "org.eclispe.debug.ui.memory.postBufferSize"; //$NON-NLS-1$
 
+    /**
+     * The layout mode in Debug view.
+     */
+    public static final String DEBUG_VIEW_MODE = "org.eclispe.debug.ui.Debug_view.mode"; //$NON-NLS-1$
+    public static final String DEBUG_VIEW_MODE_AUTO = "Debug_view.mode.auto"; //$NON-NLS-1$
+    public static final String DEBUG_VIEW_MODE_COMPACT = "Debug_view.mode.compact"; //$NON-NLS-1$
+    public static final String DEBUG_VIEW_MODE_FULL = "Debug_view.mode.full"; //$NON-NLS-1$
 }
 
 

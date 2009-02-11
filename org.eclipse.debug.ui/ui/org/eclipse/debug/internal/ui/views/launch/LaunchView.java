@@ -49,6 +49,7 @@ import org.eclipse.debug.internal.ui.commands.actions.TerminateAndRelaunchAction
 import org.eclipse.debug.internal.ui.commands.actions.TerminateAndRemoveAction;
 import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersAction;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer;
@@ -71,10 +72,13 @@ import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -92,6 +96,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
@@ -162,6 +167,21 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	private AddToFavoritesAction fAddToFavoritesAction = null;
 	private EditSourceLookupPathAction fEditSourceAction = null;
 	private LookupSourceAction fLookupAction = null;
+
+	/**
+	 * Current view mode (auto vs. breadcrumb, vs. tree view).  
+	 * 
+	 * @since 3.5
+	 */
+    private String fCurrentViewMode = IDebugPreferenceConstants.DEBUG_VIEW_MODE_AUTO;
+    
+    /**
+     * Actions for selecting the view mode (auto vs. breadcrumb, vs. tree view).
+     * 
+     * @since 3.5
+     */
+    private DebugViewModeAction[] fDebugViewModeActions;
+
 
 	/**
 	 * Page-book page for the breadcrumb viewer.  This page is activated in 
@@ -468,7 +488,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	}
 	
 	/**
-	 * Override the default implementation to create the breadcrumb page.
+ 	 * Override the default implementation to create the breadcrumb page.
 	 * 
 	 * @since 3.5
 	 * @see #fDefaultPageRec
@@ -487,7 +507,17 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         fContextProviderProxy = new ContextProviderProxy(
             new IDebugContextProvider[] {fTreeViewerDebugContextProvider, fBreadcrumbPage.getContextProvider()});
         DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextProvider(fContextProviderProxy);
+
+	    // Create and configure actions for selecting view mode.
+        createViewModeActions(parent);
+        IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
+        String mode = prefStore.getString(IDebugPreferenceConstants.DEBUG_VIEW_MODE);
+        setViewMode(mode, parent);
+        for (int i = 0; i < fDebugViewModeActions.length; i++) {
+            fDebugViewModeActions[i].setChecked(fDebugViewModeActions[i].getMode().equals(mode));
+        }
         
+        // Add a resize listener for the view to activate breadcrumb as needed. 
         parent.addControlListener(new ControlListener() {
             public void controlMoved(ControlEvent e) {
             }
@@ -495,7 +525,9 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
                 if (parent.isDisposed()) {
                     return;
                 }
-                autoSelectViewPage(parent);
+                if (IDebugPreferenceConstants.DEBUG_VIEW_MODE_AUTO.equals(fCurrentViewMode)) {
+                    autoSelectViewPage(parent);
+                }
             }
         });
 	}
@@ -539,43 +571,106 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	    }
 	        
 	    super.showPageRec(pageRec);
-	}
-	    
+	}	    
+
+	/**
+	 * Creates actions for controlling view mode.
+	 * 
+	 * @param parent The view's parent control used to calculate view size
+     * in auto mode.
+	 */
+    private void createViewModeActions(final Composite parent) {
+        IActionBars actionBars = getViewSite().getActionBars();
+        IMenuManager viewMenu = actionBars.getMenuManager();
+        
+        fDebugViewModeActions = new DebugViewModeAction[3];
+        fDebugViewModeActions[0] = new DebugViewModeAction(this, IDebugPreferenceConstants.DEBUG_VIEW_MODE_AUTO, parent);
+        fDebugViewModeActions[1] = new DebugViewModeAction(this, IDebugPreferenceConstants.DEBUG_VIEW_MODE_FULL, parent);
+        fDebugViewModeActions[2] = new DebugViewModeAction(this, IDebugPreferenceConstants.DEBUG_VIEW_MODE_COMPACT, parent);
+        viewMenu.add(new Separator());
+        final MenuManager modeSubmenu = new MenuManager(LaunchViewMessages.LaunchView_ViewModeMenu_label);
+        modeSubmenu.setRemoveAllWhenShown(true);
+        modeSubmenu.add(fDebugViewModeActions[0]);
+        modeSubmenu.add(fDebugViewModeActions[1]);
+        modeSubmenu.add(fDebugViewModeActions[2]);
+        viewMenu.add(modeSubmenu);
+        viewMenu.add(new Separator());
+        
+        modeSubmenu.addMenuListener(new IMenuListener() {
+            public void menuAboutToShow(IMenuManager manager) {
+                modeSubmenu.add(fDebugViewModeActions[0]);
+                modeSubmenu.add(fDebugViewModeActions[1]);
+                modeSubmenu.add(fDebugViewModeActions[2]);
+           }
+        });
+    }
+
+ 
+    /**
+     * Sets the current view mode.  If needed, the active view page is changed. 
+     * 
+     * @param mode New mode to set.
+     * @param parent The view's parent control used to calculate view size
+     * in auto mode.
+     * 
+     * @since 3.5
+     */
+    void setViewMode(String mode, Composite parent) {
+        if (fCurrentViewMode.equals(mode)) {
+            return;
+        }
+        
+        fCurrentViewMode = mode;
+        if (IDebugPreferenceConstants.DEBUG_VIEW_MODE_COMPACT.equals(mode)) {
+            showBreadcrumbPage();
+        } else if (IDebugPreferenceConstants.DEBUG_VIEW_MODE_FULL.equals(mode)) {
+            showTreeViewerPage();
+        } else {
+            autoSelectViewPage(parent);
+        }
+        DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugPreferenceConstants.DEBUG_VIEW_MODE, mode);
+    }
+
+   /**
+    * Based on the current view size, select the active view page 
+    * (tree viewer vs. breadcrumb).
+    * 
+    * @param parent View pane control.
+    * 
+    * @since 3.5
+    */
+   private void autoSelectViewPage(Composite parent) {
+       int breadcrumbHeight = fBreadcrumbPage.getHeight();
+       if (parent.getClientArea().height < breadcrumbHeight + BREADCRUMB_TRIGGER_RANGE) {
+           showBreadcrumbPage();
+       } 
+       else if (parent.getClientArea().height > breadcrumbHeight + BREADCRUMB_STICKY_RANGE) 
+       {
+           showTreeViewerPage();
+       }
+   }
+   
 
     /**
-     * Based on the current view size, select the active view page 
-     * (tree viewer vs. breadcrumb).
-     * 
-     * @param parent View pane control.
-     */
-    private void autoSelectViewPage(Composite parent) {
-        int breadcrumbHeight = fBreadcrumbPage.getHeight();
-        if (parent.getClientArea().height < breadcrumbHeight + BREADCRUMB_TRIGGER_RANGE) {
-            showBreadcrumbPage();
-        } 
-        else if (isBreadcrumbVisible() && 
-                 parent.getClientArea().height > breadcrumbHeight + BREADCRUMB_STICKY_RANGE) 
-        {
-            showTreeViewerPage();
-        }
-    }
-    
-    /**
      * Shows the tree viewer in the Debug view.
+     * 
+     * @since 3.5
      */
 	void showTreeViewerPage() {
-	    if (fDefaultPageRec != null) {
+	    if (fDefaultPageRec != null && !getDefaultPage().equals(getCurrentPage())) {
             showPageRec(fDefaultPageRec);
             fContextProviderProxy.setActiveProvider(fTreeViewerDebugContextProvider);
 	    }
 	}
 
 	/**
-	 * Shows the breadcrumb in the Debug view.
+ 	 * Shows the breadcrumb in the Debug view.
+ 	 * 
+ 	 * @since 3.5
 	 */
 	void showBreadcrumbPage() {
         PageRec rec = getPageRec(fBreadcrumbPage);
-        if (!fBreadcrumbPage.equals(getCurrentPage()) && rec != null) {
+        if (rec != null && !fBreadcrumbPage.equals(getCurrentPage())) {
             showPageRec(rec);
             fBreadcrumbPage.fCrumb.debugContextChanged(new DebugContextEvent(
                 fTreeViewerDebugContextProvider, 
@@ -1120,8 +1215,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	
     /**
      * Returns whether the breadcrumb viewer is currently visible in the view.
+     * 
+     * @since 3.5
      */
     boolean isBreadcrumbVisible() {
-        return fBreadcrumbPage.getControl().isVisible();
+        return fBreadcrumbPage.equals(getCurrentPage());
     }
 }

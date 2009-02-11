@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,9 @@ public interface IDebugHelpContextIds {
     public static final String HORIZONTAL_DETAIL_PANE_LAYOUT_ACTION = PREFIX + "horizontal_detail_pane_layout_action_context"; //$NON-NLS-1$
     public static final String VERTICAL_DETAIL_PANE_LAYOUT_ACTION = PREFIX + "vertical_detail_pane_layout_action_context"; //$NON-NLS-1$
     public static final String DETAIL_PANE_HIDDEN_LAYOUT_ACTION = PREFIX + "detail_pane_hidden_layout_action_context"; //$NON-NLS-1$
+    public static final String DEBUG_VIEW_MODE_AUTO_ACTION = PREFIX + "debug_view_mode_auto_action_context"; //$NON-NLS-1$
+    public static final String DEBUG_VIEW_MODE_FULL_ACTION = PREFIX + "debug_view_mode_full_action_context"; //$NON-NLS-1$
+    public static final String DEBUG_VIEW_MODE_COMPACT_ACTION = PREFIX + "debug_view_mode_compact_action_context"; //$NON-NLS-1$
     
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$
