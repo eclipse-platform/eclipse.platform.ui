@@ -79,12 +79,6 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(1, userObject.setObjectCalled);
 		assertNull(userObject.getStringViaMethod());
 		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
-
-		// dispose context
-// TBD we currently don't have dispose functionality
-//		context.dispose();
-//		assertNull(userObject.getContext());
-//		assertTrue(userObject.isDisposed());
 	}
 
 	/**
@@ -133,7 +127,8 @@ public class ContextDynamicTest extends TestCase {
 		// add check
 		assertNull(userObject.getInteger());
 		assertEquals(testString, userObject.getString());
-		assertEquals(1, userObject.setStringCalled);
+		// 2: the same setter method is called on set and remove
+		assertEquals(2, userObject.setStringCalled);
 		assertEquals(1, userObject.setObjectCalled);
 		assertNull(userObject.getStringViaMethod());
 		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
@@ -150,72 +145,7 @@ public class ContextDynamicTest extends TestCase {
 
 		// check post processing
 		assertTrue(userObject.isFinalized());
-
-		// check disposal
-		assertFalse(userObject.isDisposed());
-		// TBD we currently don't have dispose functionality
-//		context.dispose();
-//		assertTrue(userObject.isDisposed());
 	}
-
-	/**
-	 * Tests context being disposed using reflection
-	 */
-//	public synchronized void testDisposal() {
-//		// create context
-//		IEclipseContext context = EclipseContextFactory.create(null);
-//		ObjectContextAware userObject = new ObjectContextAware();
-//		ContextInjectionFactory.inject(userObject, context);
-//
-//		// check post processing
-//		assertTrue(userObject.isFinalized());
-//		assertFalse(userObject.isDisposed());
-//		assertEquals(context, userObject.getEquinoxContext());
-
-		// check disposal
-		// TBD we currently don't have dispose functionality
-//		context.dispose();
-//
-//		assertTrue(userObject.isDisposed());
-//		assertTrue(userObject.isFinalized());
-//		assertNull(userObject.getEquinoxContext());
-//	}
-
-	/**
-	 * Tests parent context being disposed
-	 */
-//	public synchronized void testDisposalParent() {
-		// create context
-		// TBD we currently don't have dispose functionality
-//		IEclipseContext parentContext = EclipseContextFactory.create(null);
-//		IEclipseContext context1 = parentContext.newChild(null);
-//		IEclipseContext context11 = context1.newChild(null);
-//		IEclipseContext context2 = parentContext.newChild(null);
-//
-//		ObjectBasic userObject1 = new ObjectBasic();
-//		ContextInjectionFactory.inject(userObject1, context1);
-//
-//		ObjectBasic userObject11 = new ObjectBasic();
-//		ContextInjectionFactory.inject(userObject11, context11);
-//
-//		ObjectBasic userObject2 = new ObjectBasic();
-//		ContextInjectionFactory.inject(userObject2, context2);
-//
-//		// check post processing
-//		assertTrue(userObject1.isFinalized());
-//		assertTrue(userObject11.isFinalized());
-//		assertTrue(userObject2.isFinalized());
-//
-//		assertFalse(userObject1.isDisposed());
-//		assertFalse(userObject11.isDisposed());
-//		assertFalse(userObject2.isDisposed());
-//
-//		// check disposal
-//		parentContext.dispose();
-//		assertTrue(userObject1.isDisposed());
-//		assertTrue(userObject11.isDisposed());
-//		assertTrue(userObject2.isDisposed());
-//	}
 
 	public static Test suite() {
 		return new TestSuite(ContextDynamicTest.class);

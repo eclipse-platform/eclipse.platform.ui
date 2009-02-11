@@ -26,5 +26,6 @@ public class ServicesTestSuite extends TestSuite {
 		addTestSuite(EclipseContextTest.class);
 		addTestSuite(ServiceContextTest.class);
 		addTestSuite(ContextInjectionTest.class);
+		addTestSuite(ContextDynamicTest.class);
 	}
 }

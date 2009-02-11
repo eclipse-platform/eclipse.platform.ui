@@ -22,11 +22,11 @@ final public class ContextInjectionFactory {
 	}
 	
 	static public void inject(Object object, IEclipseContext context) {
-		inject(object, context, null, null, null);
+		inject(object, context, null, null);
 	}
 	
-	static public void inject(Object object, IEclipseContext context, String fieldPrefix, String setMethodPrefix, String removeMethodPrefix) {
-		ContextInjectionImpl injector = new ContextInjectionImpl(fieldPrefix, setMethodPrefix, removeMethodPrefix);
+	static public void inject(Object object, IEclipseContext context, String fieldPrefix, String setMethodPrefix) {
+		ContextInjectionImpl injector = new ContextInjectionImpl(fieldPrefix, setMethodPrefix);
 		injector.injectInto(object, context);
 	}
 	
