@@ -236,7 +236,7 @@ public class FilteredTree extends Composite {
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook) {
 		super(parent, SWT.NONE);
 		this.parent = parent;
-		this.useNewLook = useNewLook;
+		this.useNewLook= useNewLook;
 		init(treeStyle, filter);
 	}
 
@@ -853,7 +853,7 @@ public class FilteredTree extends Composite {
 			});
 		}
 
-		GridData gridData= new GridData(SWT.FILL, useNewLook ? SWT.CENTER : SWT.BEGINNING, true, false);
+		GridData gridData= new GridData(SWT.FILL, SWT.CENTER, true, false);
 		// if the text widget supported cancel then it will have it's own
 		// integrated button. We can take all of the space.
 		if ((filterText.getStyle() & SWT.ICON_CANCEL) != 0)
