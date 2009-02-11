@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn - fix for Bug 230842
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
@@ -211,7 +212,9 @@ public class TocManager {
 						contribution.setLocale(contrib[j].getLocale());
 						contribution.setPrimary(contrib[j].isPrimary());
 						IToc toc = contrib[j].getToc();
-						contribution.setToc(toc instanceof Toc ? (Toc)toc : (Toc)UAElementFactory.newElement(toc));
+						Toc t = toc instanceof Toc ? (Toc)toc : (Toc)UAElementFactory.newElement(toc);
+						t.setLinkTo(contrib[j].getLinkTo());
+						contribution.setToc(t);
 						contributions.add(contribution);
 					}
 				}

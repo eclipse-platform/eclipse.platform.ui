@@ -436,6 +436,9 @@
              leafIcon="icons/sample3.gif"
              openIcon="icons/sample.gif">
        </tocIcon>
+      <tocProvider
+            class="org.eclipse.ua.tests.help.toc.UaTestTocProvider">
+      </tocProvider>
    </extension>
 
    <extension point= "org.eclipse.help.contentExtension"> 
