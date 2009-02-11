@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
@@ -73,11 +74,15 @@ public class PinEditorHandler extends AbstractHandler implements
 		if (window == null) {
 			return;
 		}
-		IEditorPart editor = window.getActivePage().getActiveEditor();
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return;
+		}
+		IEditorPart editor = page.getActiveEditor();
 		if (editor == null) {
 			return;
 		}
-		IWorkbenchPartReference ref = window.getActivePage().getReference(
+		IWorkbenchPartReference ref = page.getReference(
 				editor);
 		if (ref instanceof WorkbenchPartReference) {
 			WorkbenchPartReference concreteRef = (WorkbenchPartReference) ref;
