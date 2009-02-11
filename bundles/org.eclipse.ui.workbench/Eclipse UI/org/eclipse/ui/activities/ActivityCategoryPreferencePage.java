@@ -719,4 +719,14 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             strings.putAll(table);
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+     */
+    public void dispose() {
+    	if (workingCopy != null) {
+    		workingCopy.removeActivityManagerListener((CategoryLabelProvider)categoryViewer.getLabelProvider());
+    	}
+    	super.dispose();
+    }
 }
