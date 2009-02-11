@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -87,6 +88,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -97,6 +99,7 @@ import org.eclipse.ui.internal.statushandlers.DefaultDetailsArea;
 import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
+import org.eclipse.ui.views.IViewDescriptor;
 
 import com.ibm.icu.text.DateFormat;
 
@@ -142,7 +145,9 @@ import com.ibm.icu.text.DateFormat;
  * @since 3.5 implements {@link IShellProvider}
  */
 public class WorkbenchStatusDialogManager implements IShellProvider {
-
+	
+	private static final String LOG_VIEW_ID = "org.eclipse.pde.runtime.LogView"; //$NON-NLS-1$
+	
 	/**
 	 * The default status label provider.
 	 */
@@ -1064,6 +1069,12 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	 * This item is used to launch support tray
 	 */
 	private ToolItem launchTrayButton;
+	
+	/**
+	 * This fields contains indicator if link to ErrorLog view should be
+	 * present.
+	 */
+	private ToolItem showErrorLogButton;
 
 	/**
 	 * This flag indicates if the dialog is switching modality. For now it is
@@ -1119,6 +1130,8 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	 * This fields indicates if OK statuses should be handled or ignored.
 	 */
 	private boolean handleOKStatuses = false;
+
+	private boolean supportForErrorLog = false;
 
 	/**
 	 * Creates workbench status dialog.
@@ -1474,6 +1487,31 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 		toolItem.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				image.dispose();
+			}
+		});
+		return toolItem;
+	}
+
+	private ToolItem createShowErrorLogToolItem(IViewDescriptor descriptor) {
+		ToolItem toolItem = new ToolItem(toolBar, SWT.NONE);
+		toolItem.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					Workbench.getInstance().getActiveWorkbenchWindow()
+							.getActivePage().showView(LOG_VIEW_ID);
+				} catch (CoreException ce) {
+					StatusManager.getManager().handle(ce,
+							WorkbenchPlugin.PI_WORKBENCH);
+				}
+			}
+		});
+		final Image image = descriptor.getImageDescriptor().createImage();
+		toolItem.setImage(image);
+		toolItem.setToolTipText(WorkbenchMessages.ErrorLogUtil_ShowErrorLog);
+		toolItem.addDisposeListener(new DisposeListener(){
+			public void widgetDisposed(DisposeEvent e) {
+				image.dispose();
+				
 			}
 		});
 		return toolItem;
@@ -2256,8 +2294,27 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 				launchTrayButton = null;
 			}
 		}
+		IViewDescriptor descriptor = shouldDisplayLinkToErrorLog();
+		if (descriptor != null) {
+			if (showErrorLogButton == null || showErrorLogButton.isDisposed()) {
+				showErrorLogButton = createShowErrorLogToolItem(descriptor);
+			}
+		} else {
+			if (showErrorLogButton != null && !showErrorLogButton.isDisposed()) {
+				showErrorLogButton.dispose();
+			}
+		}
 		toolBar.getParent().layout();
 		toolBar.setEnabled(toolBar.getItemCount() > 0);
+	}
+
+	private IViewDescriptor shouldDisplayLinkToErrorLog(){
+		/* no support for error log */
+		if(!supportForErrorLog) {
+			return null;
+		}
+		/* view description */
+		return Workbench.getInstance().getViewRegistry().find(LOG_VIEW_ID);
 	}
 
 	/**
@@ -2404,5 +2461,22 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	 */
 	public boolean getHandleOkStatuses(){
 		return handleOKStatuses;
+	}
+
+	/**
+	 * This method allows for deciding if link to Error Log view should be
+	 * displayed on the error dialog.
+	 * 
+	 * @param supportForErrorLog
+	 *            <true> means that a link to error log should be accessible
+	 *            when error log view is present. <false> means that the link
+	 *            will be never shown. This is the default setting.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 * @since 3.5
+	 */
+	public void setSupportForErrorLog(boolean supportForErrorLog){
+		this.supportForErrorLog  = supportForErrorLog;
 	}
 }

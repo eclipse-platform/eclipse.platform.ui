@@ -120,6 +120,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 					statusDialogManager = new WorkbenchStatusDialogManager(null);
 					statusDialogManager.setShowSupport(true);
 					statusDialogManager.setHandleOKStatuses(true);
+					statusDialogManager.setSupportForErrorLog(true);
 					configureStatusDialog(statusDialogManager);
 				}
 			}
