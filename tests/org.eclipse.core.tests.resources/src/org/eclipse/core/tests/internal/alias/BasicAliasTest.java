@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.alias;
 
+import org.eclipse.core.runtime.CoreException;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
@@ -346,6 +348,57 @@ public class BasicAliasTest extends ResourceTest {
 		resources = aliasManager.computeAliases(p2, ((Project) p2).getStore());
 		assertEquals("7.0", 1, resources.length);
 		assertEquals("8.0", link2TempFolder, resources[0]);
+	}
+	
+	public void testBug258987() {
+		// Create the directory to which you will link. The directory needs a single file.
+		IFileStore dirStore = getTempStore();
+		try {
+			dirStore.mkdir(EFS.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		assertTrue("2.0", dirStore.fetchInfo().exists());
+		assertTrue("3.0", dirStore.fetchInfo().isDirectory());
+
+		IFileStore childStore = dirStore.getChild("child");
+		createFileInFileSystem(childStore);
+		assertTrue("4.0", childStore.fetchInfo().exists());
+
+		// Create and open the first project. Project links to the directory.
+		IProject project1 = ResourcesPlugin.getWorkspace().getRoot().getProject("project1");
+		IFolder folder1 = null;
+		try {
+			project1.create(getMonitor());
+			project1.open(getMonitor());
+			folder1 = project1.getFolder("subdir");
+			folder1.createLink(dirStore.toURI(), IResource.REPLACE, getMonitor());
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+
+		// Create and open the second project. It also links to the directory.
+		IProject project2 = ResourcesPlugin.getWorkspace().getRoot().getProject("project2");
+		IFolder folder2 = null;
+		try {
+			project2.create(getMonitor());
+			project2.open(getMonitor());
+			folder2 = project2.getFolder("subdir");
+			folder2.createLink(dirStore.toURI(), IResource.REPLACE, getMonitor());
+		} catch (CoreException e) {
+			fail("6.0", e);
+		}
+
+		// Close the second project.
+		try {
+			project2.close(getMonitor());
+		} catch (CoreException e) {
+			fail("7.0", e);
+		}
+
+		// Since project2 is closed, folder2 should not be an alias for folder1 anymore
+		IResource[] resources = ((Workspace) getWorkspace()).getAliasManager().computeAliases(folder1, ((Folder) folder1).getStore());
+		assertNull("8.0", resources);
 	}
 
 	public void testCloseOpenProject() {
