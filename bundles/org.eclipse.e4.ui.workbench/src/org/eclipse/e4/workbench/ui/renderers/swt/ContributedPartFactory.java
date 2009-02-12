@@ -56,6 +56,7 @@ public class ContributedPartFactory extends SWTPartFactory {
 			Object newPart = contributionFactory.create(contributedPart.getURI(),
 					localContext);
 			ContextInjectionFactory.inject(newPart, localContext);
+			contributedPart.setObject(newPart);
 		}
 
 		return newWidget;
