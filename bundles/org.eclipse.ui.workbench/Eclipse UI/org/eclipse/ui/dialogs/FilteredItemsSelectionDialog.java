@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import java.util.Set;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,6 +41,7 @@ import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -576,7 +578,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		menu.setVisible(true);
 	}
 
-    /** 
+    /**
      * Hook that allows to add actions to the context menu.
 	 * <p>
 	 * Subclasses may extend in order to add other actions.</p>
@@ -1680,7 +1682,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (selectionDecorator != null && isSelected(element)) {
 				String decorated = selectionDecorator.decorateText(string
 						.getString(), element);
-				return new StyledString(decorated);
+				return StyledCellLabelProvider.styleDecoratedString(string, decorated, null);
 				// no need to add colors when element is selected
 			}
 			return string;

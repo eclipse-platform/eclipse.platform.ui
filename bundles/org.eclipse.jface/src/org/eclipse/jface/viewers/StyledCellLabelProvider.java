@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -22,6 +21,10 @@ import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.viewers.StyledString.Styler;
 
 /**
  * A {@link StyledCellLabelProvider} supports styled labels by using owner
@@ -42,6 +45,8 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.4
  */
 public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
+
+
 
 	/**
 	 * Style constant for indicating that the styled colors are to be applied
@@ -270,7 +275,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			return;
 		
 		ViewerCell cell= getViewerCell(event, element);
-		boolean applyColors = useColors(event); // returns false because of bug 228376 
+		boolean applyColors = useColors(event); // returns false because of bug 228376
 		
 		TextLayout layout = getSharedTextLayout(event.display);
 		
@@ -327,7 +332,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 		
 		ViewerCell cell= getViewerCell(event, element);
 
-		boolean applyColors = useColors(event);
+		boolean applyColors= useColors(event);
 		
 		GC gc = event.gc;
 		// remember colors to restore the GC later
@@ -374,7 +379,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			
 			/* remove-begin if bug 228376 fixed */
 			if (!applyColors) {
-				// need to remove colors for selected elements: measure doesn't provide that information, see bug 228376 
+				// need to remove colors for selected elements: measure doesn't provide that information, see bug 228376
 				StyleRange[] styleRanges= cell.getStyleRanges();
 				if (styleRanges != null) {
 					for (int i= 0; i < styleRanges.length; i++) {
@@ -404,6 +409,36 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			gc.setForeground(oldForeground);
 			gc.setBackground(oldBackground);
 		}
+	}
+
+	/**
+	 * Applies the styles to a decorated string and returns it.
+	 * 
+	 * @param styledString the original styled string
+	 * @param decoratedString the decorated string
+	 * @param styler the styler to use for the decoration string
+	 * @return the styled decorated string or <code>null</code> for no styles
+	 * @since 3.5
+	 */
+	public static StyledString styleDecoratedString(StyledString styledString, String decoratedString, Styler styler) {
+		String label= styledString.getString();
+		int originalStart= decoratedString.indexOf(label);
+		if (originalStart == -1) {
+			return new StyledString(decoratedString); // the decorator did something wild
+		}
+
+		if (decoratedString.length() == label.length())
+			return styledString;
+
+		if (originalStart > 0) {
+			StyledString newString= new StyledString(decoratedString.substring(0, originalStart), styler);
+			newString.append(styledString);
+			styledString= newString;
+		}
+		if (decoratedString.length() > originalStart + label.length()) { // decorator appended something
+			return styledString.append(decoratedString.substring(originalStart + label.length()), styler);
+		}
+		return styledString; // no change
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -205,29 +205,8 @@ public class DecoratingStyledCellLabelProvider extends
 		if (decorated == null)
 			return styledString;
 
-		int originalStart = decorated.indexOf(label);
-		if (originalStart == -1) {
-			return new StyledString(decorated); // the decorator did
-														// something wild
-		}
-
-		if (decorated.length() == label.length())
-			return styledString;
-
 		Styler style = getDecorationStyle(element);
-		if (originalStart > 0) {
-			StyledString newString = new StyledString(decorated
-					.substring(0, originalStart), style);
-			newString.append(styledString);
-			styledString = newString;
-		}
-		if (decorated.length() > originalStart + label.length()) { // decorator
-																	// appended
-																	// something
-			return styledString.append(decorated.substring(originalStart
-					+ label.length()), style);
-		}
-		return styledString;
+		return StyledCellLabelProvider.styleDecoratedString(styledString, decorated, style);
 	}
 
 	/**
