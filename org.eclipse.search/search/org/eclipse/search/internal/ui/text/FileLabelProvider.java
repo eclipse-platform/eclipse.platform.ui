@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,9 @@ import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
-import org.eclipse.jface.viewers.StyledString.Styler;
 
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -102,7 +102,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 			StyledString str= new StyledString(name);
 			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), pathString });
 
-			decorateColoredString(str, decorated, StyledString.QUALIFIER_STYLER);
+			StyledCellLabelProvider.styleDecoratedString(str, decorated, StyledString.QUALIFIER_STYLER);
 			return getColoredLabelWithCounts(resource, str);
 		}
 
@@ -269,23 +269,6 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
 		fLabelProvider.addListener(listener);
-	}
-
-	private static StyledString decorateColoredString(StyledString string, String decorated, Styler color) {
-		String label= string.getString();
-		int originalStart= decorated.indexOf(label);
-		if (originalStart == -1) {
-			return new StyledString(decorated); // the decorator did something wild
-		}
-		if (originalStart > 0) {
-			StyledString newString= new StyledString(decorated.substring(0, originalStart), color);
-			newString.append(string);
-			string= newString;
-		}
-		if (decorated.length() > originalStart + label.length()) { // decorator appended something
-			return string.append(decorated.substring(originalStart + label.length()), color);
-		}
-		return string; // no change
 	}
 
 }
