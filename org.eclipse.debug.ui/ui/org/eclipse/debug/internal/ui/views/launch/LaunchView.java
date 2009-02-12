@@ -367,6 +367,9 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * view mechanism to create the page based on a workbench part, but we have 
 	 * to create a dummy part in order for this to work.
 	 * </p>    
+	 * <p>
+	 * See bug 262845 and 262870.
+	 * </p>
 	 * 
 	 * @see #createPartControl(Composite)
 	 * @see BreadcrumbWorkbenchPart
@@ -376,7 +379,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see #showTreeViewerPage()
 	 * @see #showBreadcrumbPage()
 	 */
-	PageRec fDefaultPageRec = null;
+	private PageRec fDefaultPageRec = null;
 
 	private ISelectionChangedListener fTreeViewerSelectionChangedListener = new ISelectionChangedListener() {
 	    public void selectionChanged(SelectionChangedEvent event) {
@@ -496,8 +499,15 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	public void createPartControl(final Composite parent) {
 	    super.createPartControl(parent);
 
+	    // Copy the global action handlers to the default page.
+	    setGlobalActionBarsToPage((IPageBookViewPage)getDefaultPage());
+
+	    // Add view as a selection listener to the site.
 	    getSite().getSelectionProvider().addSelectionChangedListener(this);
 	    
+	    // Set the tree viewer as the selection provider to the default page.  
+	    // The page book view handles switching the between page selection
+	    // providers as needed.
 	    ((IPageBookViewPage)getDefaultPage()).getSite().setSelectionProvider(getViewer());
 
 	    // Call the PageBookView part listener to indirectly create the breadcrumb page.
@@ -531,6 +541,24 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
             }
         });
 	}
+
+	/**
+	 * Copies the view's global action handlers created by createActions(), 
+	 * into the page site's action bars.  This is necessary because the page
+	 * book view resets the view site's global actions after each page switch
+	 * (see bug 264618).
+	 * 
+	 * @param page Page to copy the global actions into.
+	 * 
+	 * @since 3.5
+	 */
+	private void setGlobalActionBarsToPage(IPageBookViewPage page) {
+	    IActionBars pageActionBars = page.getSite().getActionBars();
+        // Set the view site action bars created by createActions() to the 
+        // default page site.
+        IActionBars bars = getViewSite().getActionBars();
+        pageActionBars.setGlobalActionHandler(FIND_ACTION, bars.getGlobalActionHandler(FIND_ACTION)); 
+	}
 	
     /**
      * Override the default implementation to create the breadcrumb page.
@@ -543,6 +571,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	        fBreadcrumbPage = new BreadcrumbPage();
 	        fBreadcrumbPage.createControl(getPageBook());
 	        initPage(fBreadcrumbPage);
+	        setGlobalActionBarsToPage(fBreadcrumbPage);
 	        return new PageRec(part, fBreadcrumbPage);
 	    }
 	    return null;
