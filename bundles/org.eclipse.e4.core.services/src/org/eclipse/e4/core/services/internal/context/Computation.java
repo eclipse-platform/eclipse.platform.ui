@@ -16,39 +16,38 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 abstract class Computation {
 	Map dependencies = new HashMap();
 
-	final void clear() {
+	final void clear(IEclipseContext context, String name) {
 		doClear();
-		stopListening();
+		stopListening(context, name);
 	}
 
-	private void stopListening() {
+	private void stopListening(IEclipseContext context, String name) {
 		if (EclipseContext.DEBUG) System.out.println(toString() + " no longer listening"); //$NON-NLS-1$
-		for (Iterator it = dependencies.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Entry) it.next();
-			EclipseContext context = (EclipseContext) entry.getKey(); // XXX IEclipseContex
-			context.listeners.remove(this);
+		
+		Set properties = (Set) dependencies.get(context);
+		if (properties != null) {
+			((EclipseContext)context).listeners.remove(this); // XXX IEclipseContext
+			properties.remove(name);
 		}
-		dependencies.clear();
 	}
 
 	protected void doClear() {
 	}
 
-	protected void doHandleInvalid(IEclipseContext context) {
+	protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
 	}
 
-	final void handleInvalid(IEclipseContext context, String name) {
+	final void handleInvalid(IEclipseContext context, String name, int eventType) {
 		Set names = (Set) dependencies.get(context);
 		if (names != null && names.contains(name)) {
-			clear();
-			doHandleInvalid(context);
+			clear(context, name);
+			doHandleInvalid(context, name, eventType);
 		}
 	}
 

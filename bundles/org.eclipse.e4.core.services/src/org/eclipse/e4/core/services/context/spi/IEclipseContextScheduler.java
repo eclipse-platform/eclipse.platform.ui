@@ -11,8 +11,18 @@
 
 package org.eclipse.e4.core.services.context.spi;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
+
 public interface IEclipseContextScheduler extends IEclipseContextStrategy {
 
 	public void schedule(Runnable runnable);
 
+	/**
+	 * This is the same method but for more involved listeners. It should pass in 
+	 * the context that has been changed, name of the changed service, and the arguments.
+	 * 
+	 * @return false: the runnable no longer valid and needs to be cleaned up from the list
+	 */
+	public boolean schedule(IEclipseContext context, IRunAndTrack runnable, String name, int eventType, Object[] args);
+	
 }

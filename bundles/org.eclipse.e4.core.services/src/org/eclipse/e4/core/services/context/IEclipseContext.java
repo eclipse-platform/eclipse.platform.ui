@@ -13,6 +13,7 @@ package org.eclipse.e4.core.services.context;
 
 import org.eclipse.e4.core.services.context.spi.AbstractContext;
 import org.eclipse.e4.core.services.context.spi.ComputedValue;
+import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 /**
  * A context is used to isolate application code from its dependencies on an application 
@@ -91,6 +92,7 @@ public interface IEclipseContext {
 
 	// TBD should this be a part of IEclipseContext or a separate convenience method?
 	public void runAndTrack(final Runnable runnable, String name);
+	public void runAndTrack(final IRunAndTrack runnable, Object[] args);
 
 	/**
 	 * Sets a value to be associated with a given name in this context. The value may

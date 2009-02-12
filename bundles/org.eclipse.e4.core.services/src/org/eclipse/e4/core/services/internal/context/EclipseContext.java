@@ -12,6 +12,7 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import java.util.*;
+
 import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.*;
@@ -27,7 +28,7 @@ public class EclipseContext extends AbstractContext {
 			this.name = name;
 		}
 
-		final protected void doHandleInvalid(IEclipseContext context) {
+		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
 			if (EclipseContext.DEBUG)
 				System.out.println("scheduling " + toString());
 			((EclipseContext) context).schedule(this); // XXX conversion: should be IEclipseContext
@@ -46,6 +47,32 @@ public class EclipseContext extends AbstractContext {
 
 		public String toString() {
 			return name;
+		}
+	}
+	
+	static class TrackableComputationExt extends Computation implements IRunAndTrack {
+		
+		private IRunAndTrack runnable;
+
+		public TrackableComputationExt(IRunAndTrack runnable) {
+			this.runnable = runnable;
+		}
+
+		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
+			((EclipseContext) context).schedule(this, name, eventType, null); // XXX IEclipseContext
+		}
+
+		public boolean notify(IEclipseContext context, String name, int eventType, Object[] args) {
+			Computation oldComputation = (Computation) currentComputation.get();
+			currentComputation.set(this);
+			boolean result = true;
+			try {
+					result = runnable.notify(context, name, eventType, args);
+			} finally {
+				currentComputation.set(oldComputation);
+			}
+			startListening();
+			return result;
 		}
 	}
 
@@ -82,8 +109,17 @@ public class EclipseContext extends AbstractContext {
 			return;
 		if (strategy != null && strategy instanceof IEclipseContextScheduler)
 			((IEclipseContextScheduler) strategy).schedule(runnable);
-		else
+		else 
 			runnable.run();
+	}
+	
+	protected boolean schedule(IRunAndTrack runnable, String name, int eventType, Object[] args) {
+		if (runnable == null)
+			return false;
+		if (strategy != null && strategy instanceof IEclipseContextScheduler)
+			return ((IEclipseContextScheduler) strategy).schedule(this, runnable, name, eventType, args);
+		else
+			return runnable.notify(this, name, eventType, args);
 	}
 
 	public Object getLocal(String name) {
@@ -166,13 +202,13 @@ public class EclipseContext extends AbstractContext {
 		return null;
 	}
 
-	protected void invalidate(String name) {
+	protected void invalidate(String name, int eventType) {
 		if (EclipseContext.DEBUG)
 			System.out.println("invalidating " + this.contextName + "," + name);
 		localValueComputations.remove(name);
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
 		for (int i = 0; i < ls.length; i++) {
-			ls[i].handleInvalid(this, name);
+			ls[i].handleInvalid(this, name, eventType);
 		}
 	}
 
@@ -189,15 +225,20 @@ public class EclipseContext extends AbstractContext {
 		TrackableComputation computation = new TrackableComputation(runnable, name);
 		schedule(computation);
 	}
+	
+	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
+		TrackableComputationExt computation = new TrackableComputationExt(runnable);
+		schedule(computation, null, IRunAndTrack.INITIAL, args);
+	}
 
 	public void set(String name, Object value) {
 		localValues.put(name, value);
 		Object old = localValueComputations.remove(name);
 		if (old instanceof ValueComputation) {
 			ValueComputation valueComputation = (ValueComputation) old;
-			valueComputation.clear();
+			valueComputation.clear(this, name);
 		}
-		invalidate(name);
+		invalidate(name, IRunAndTrack.ADDED);
 	}
 
 	private void trackAccess(String name) {
@@ -213,9 +254,9 @@ public class EclipseContext extends AbstractContext {
 			Object removed = localValueComputations.remove(name);
 			if (removed instanceof ValueComputation) {
 				ValueComputation valueComputation = (ValueComputation) removed;
-				valueComputation.clear();
+				valueComputation.clear(this, name);
 			}
-			invalidate(name);
+			invalidate(name, IRunAndTrack.REMOVED);
 		}
 	}
 

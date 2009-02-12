@@ -56,8 +56,8 @@ public class ValueComputation extends Computation {
 		cachedValue = null;
 	}
 
-	final protected void doHandleInvalid(IEclipseContext context) {
-		this.originatingContext.invalidate(this.name);
+	final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
+		this.originatingContext.invalidate(this.name, eventType);
 	}
 
 	final Object get(Object[] arguments) {

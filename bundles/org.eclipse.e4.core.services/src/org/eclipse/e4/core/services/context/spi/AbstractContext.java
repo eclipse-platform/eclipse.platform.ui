@@ -35,6 +35,8 @@ public class AbstractContext implements IEclipseContext {
 
 	public void runAndTrack(Runnable runnable, String name) {
 	}
+	public void runAndTrack(IRunAndTrack runnable, Object[] args) {
+	}
 
 	public void set(String name, Object value) {
 	}

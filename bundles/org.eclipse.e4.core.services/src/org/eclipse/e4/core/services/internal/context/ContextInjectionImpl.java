@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IJavaInjection;
 
@@ -19,24 +23,12 @@ import org.eclipse.e4.core.services.context.spi.IJavaInjection;
  * <default_prefix>Log <-> Log <-> log
  */
 public class ContextInjectionImpl implements IJavaInjection {
-
-	abstract private class Processor {
-
-		protected boolean isSetter;
-		
-		public Processor(boolean isSetter) {
-			this.isSetter = isSetter;
-		}
-
-		// true if a field was set 
-		abstract void processMethod(Method method);
-
-		// true if a field was set 
-		abstract void processField(Field field);
-		
-	}
 	
-	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
+	/**
+	 * We keep one injector per context.
+	 */
+	private Map injectors = new HashMap(); // IEclipseContext -> injector
+
 	final static private Class[] contextNotifySignature = new Class[] {IEclipseContext.class};
 
 	final protected String fieldPrefix;
@@ -55,64 +47,20 @@ public class ContextInjectionImpl implements IJavaInjection {
 		fieldPrefixLength = this.fieldPrefix.length();
 	}
 
-	public void injectInto(final Object userObject, final IEclipseContext context) {
-
-		final Processor processor = new Processor(true /*setter*/) {
-			public void processField(final Field field) {
-				final String candidateName = field.getName();
-				if (!candidateName.startsWith(fieldPrefix))
-					return;
-				FieldLink link = new FieldLink(userObject, context, candidateName.substring(fieldPrefixLength), field);
-				context.runAndTrack(link, "Java Field Reflection Injection");
-			}
-
-			public void processMethod(final Method method) {
-				final String candidateName = method.getName();
-				if (!candidateName.startsWith(SET_METHOD_PREFIX))
-					return;
-				MethodLink link = new MethodLink(userObject, context, candidateName.substring(SET_METHOD_PREFIX.length()), method);
-				context.runAndTrack(link, "Java Method Reflection Injection");
-			}
-		};
-		
-		walkClassHierarchy(userObject.getClass(), processor);
-		
-		// trigger post-injection processing
-		notifyUserMethod(CONTEXT_SET_METHOD, userObject, context);
-	}
-
-	/**
-	 * For setters: we set fields first, them methods.
-	 * Otherwise, clear methods first, fields next 
-	 */
-	private void walkClassHierarchy(Class objectsClass, Processor processor) {
-		// process superclass first
-		Class superClass = objectsClass.getSuperclass();
-		if (!superClass.getName().equals(JAVA_OBJECT))
-			walkClassHierarchy(superClass, processor);
-		if (processor.isSetter) {
-			// fields second
-			Field[] fields = objectsClass.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				processor.processField(fields[i]);
-			}
-			// methods last
-			Method[] methods = objectsClass.getDeclaredMethods();
-			for (int i = 0; i < methods.length; i++) {
-				processor.processMethod(methods[i]);
-			}
-		} else {
-			// methods second
-			Method[] methods = objectsClass.getDeclaredMethods();
-			for (int i = 0; i < methods.length; i++) {
-				processor.processMethod(methods[i]);
-			}
-			// fields last
-			Field[] fields = objectsClass.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				processor.processField(fields[i]);
+	synchronized public void injectInto(final Object userObject, final IEclipseContext context) {
+		ContextToObjectLink link;
+		synchronized (injectors) {
+			if (injectors.containsKey(context))
+				link = (ContextToObjectLink) injectors.get(context);
+			else {
+				link = new ContextToObjectLink(context, fieldPrefix, setMethodPrefix);
+				injectors.put(context, link);
 			}
 		}
+		context.runAndTrack(link, new Object[] {userObject});
+
+		// trigger post-injection processing
+		notifyUserMethod(CONTEXT_SET_METHOD, userObject, context);
 	}
 
 	private void notifyUserMethod(String methodName, Object userObject, IEclipseContext newContext) {
