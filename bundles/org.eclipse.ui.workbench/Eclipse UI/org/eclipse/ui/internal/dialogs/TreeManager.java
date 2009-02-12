@@ -98,8 +98,10 @@ public class TreeManager {
 	public static class ViewerCheckStateListener implements ICheckStateListener {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Object checked = event.getElement();
-			if(checked instanceof TreeItem)
+			if(checked instanceof TreeItem) {
 				((TreeItem)checked).setCheckState(event.getChecked());
+				((TreeItem)checked).setChangedByUser(true);
+			}
 		}
 	}
 
@@ -210,6 +212,8 @@ public class TreeManager {
 		private List children;
 		private int checkState;
 		
+		private boolean changedByUser = false;
+		
 		public TreeItem(String label) {
 			this.label = label;
 			this.children = new ArrayList();
@@ -275,7 +279,6 @@ public class TreeManager {
 			int newState = checked ? CHECKSTATE_CHECKED : CHECKSTATE_UNCHECKED;
 			if (checkState == newState)
 				return;
-			
 			// Actually set the state and fire the CheckChangeEvent
 			internalSetCheckState(newState);
 			
@@ -312,6 +315,7 @@ public class TreeManager {
 						.hasNext();) {
 					TreeItem curItem = (TreeItem) iterator.next();
 					curItem.internalSetCheckState(newState);
+					curItem.setChangedByUser(changedItem.isChangedByUser());
 					
 					synchChildren(curItem);
 				}
@@ -374,6 +378,20 @@ public class TreeManager {
 					synchParents(changedItem.parent);
 				}
 			}
+		}
+
+		/**
+		 * @param changedByUser The changedByUser to set.
+		 */
+		public void setChangedByUser(boolean changedByUser) {
+			this.changedByUser = changedByUser;
+		}
+
+		/**
+		 * @return Returns the changedByUser.
+		 */
+		public boolean isChangedByUser() {
+			return changedByUser;
 		}
 	}
 	

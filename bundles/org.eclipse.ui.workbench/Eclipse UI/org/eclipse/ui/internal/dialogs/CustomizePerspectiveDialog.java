@@ -3146,13 +3146,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		return ids;
 	}
 
-	private List getInvisibleIDs(DisplayItem item) {
-		List ids = new ArrayList();
-		collectInvisibleIDs(item, ids);
-		return ids;
-	}
-
-	private void collectInvisibleIDs(DisplayItem item, List collection) {
+	private void getChangedIds(DisplayItem item, List invisible, List visible) {
 		if (item instanceof ShortcutItem)
 			return;
 
@@ -3164,18 +3158,43 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			//themselves in this part of the logic.
 			if (!item.getState()) {
 				String id = getCommandID(item);
-				collection.add(id);
+				invisible.add(id);
 			}
 		} else if (item.getChildren().size() > 0) {
 			for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
-				collectInvisibleIDs((DisplayItem) i.next(), collection);
+				getChangedIds((DisplayItem) i.next(), invisible, visible);
 			}
-		} else if (!item.getState()) {
+		} else if (item.isChangedByUser()) {
 			String id = getCommandID(item);
-			collection.add(id);
+			if (item.getState())
+				visible.add(id);
+			else
+				invisible.add(id);
 		}
 	}
 
+	private void updateHiddenElements(DisplayItem items, Collection currentHidden) {
+		List changedAndVisible = new ArrayList();
+		List changedAndInvisible = new ArrayList();
+		getChangedIds(items, changedAndInvisible, changedAndVisible);
+		
+		// Remove explicitly 'visible' elements from the current list
+		for (Iterator iterator = changedAndVisible.iterator(); iterator.hasNext();) {
+			Object id = iterator.next();
+			if (currentHidden.contains(id)) {
+				currentHidden.remove(id);
+			}
+		}
+		
+		// Add explicitly 'hidden' elements to the current list
+		for (Iterator iterator = changedAndInvisible.iterator(); iterator.hasNext();) {
+			Object id = iterator.next();
+			if (!currentHidden.contains(id)) {
+				currentHidden.add(id);
+			}
+		}
+	}
+	
 	protected void okPressed() {
 		// Shortcuts
 		if (showShortcutTab()) {
@@ -3202,9 +3221,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		perspective.turnOffActionSets((IActionSetDescriptor[]) toRemove
 				.toArray(new IActionSetDescriptor[toAdd.size()]));
 
-		// Menu and ToolBar Items
-		perspective.setHiddenMenuItems(getInvisibleIDs(menuItems));
-		perspective.setHiddenToolbarItems(getInvisibleIDs(toolBarItems));
+		// Menu  and Toolbar Items
+		updateHiddenElements(menuItems, perspective.getHiddenMenuItems());
+		updateHiddenElements(toolBarItems, perspective.getHiddenToolbarItems());
 
 		super.okPressed();
 	}
