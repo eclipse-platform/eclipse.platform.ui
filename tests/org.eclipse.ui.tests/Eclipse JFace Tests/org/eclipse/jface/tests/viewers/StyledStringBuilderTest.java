@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -453,6 +453,30 @@ public class StyledStringBuilderTest extends TestCase {
 		assertEquals(styleRanges[1], STYLER2, str1.length(), str2.length());
 	}
 	
+	public void testSetStyleInsert() {
+
+		String str1= "One";
+		String str2= "Two";
+		String str3= "Three";
+
+		String res= str1 + str2 + str3;
+
+		StyledString styledString= new StyledString(str1);
+		styledString.append(str2 + str3, STYLER1);
+
+		styledString.setStyle(str1.length() + 1, str2.length(), STYLER2);
+
+		assertEquals(res.length(), styledString.length());
+		assertEquals(res, styledString.getString());
+
+		StyleRange[] styleRanges= styledString.getStyleRanges();
+		assertEquals(3, styleRanges.length);
+
+		assertEquals(styleRanges[0], STYLER1, str1.length(), 1);
+		assertEquals(styleRanges[1], STYLER2, str1.length() + 1, str2.length());
+		assertEquals(styleRanges[2], STYLER1, str1.length() + str2.length() + 1, str3.length() - 1);
+	}
+
 	public void testSetStyle7() {
 		
 		String str1= "One";

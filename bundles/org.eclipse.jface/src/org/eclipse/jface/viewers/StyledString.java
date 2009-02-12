@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -354,10 +354,11 @@ public class StyledString {
 		if (length == 0) {
 			return;
 		}
-		if (!hasRuns() || getLastRun().offset <= offset) {
+		final StyleRun lastRun= getLastRun();
+		if (lastRun == null || lastRun.offset <= offset) {
 			appendStyleRun(styler, offset);
 			if (offset + length != fBuffer.length()) {
-				appendStyleRun(null, offset + length);
+				appendStyleRun(lastRun == null ? null : lastRun.style, offset + length);
 			}
 			return;
 		}
