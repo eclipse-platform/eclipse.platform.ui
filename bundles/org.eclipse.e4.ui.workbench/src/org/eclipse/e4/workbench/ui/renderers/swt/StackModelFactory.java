@@ -1,5 +1,7 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -51,8 +53,9 @@ public class StackModelFactory extends SWTPartFactory {
 			ctf.setSimple(false);
 			ctf.setTabHeight(20);
 			newWidget = ctf;
-			final IEclipseContext folderContext = EclipseContextFactory.create("TabFolder", //$NON-NLS-1$
-					parentContext, UIContextScheduler.instance);
+			final IEclipseContext folderContext = EclipseContextFactory.create(parentContext,
+					UIContextScheduler.instance);
+			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
 			part.setContext(folderContext);
 			final IEclipseContext toplevelContext = getToplevelContext(part);
 			final IStylingEngine engine = (IStylingEngine) folderContext.get(IStylingEngine.class.getName());

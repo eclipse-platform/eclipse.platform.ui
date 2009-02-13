@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.*;
@@ -113,7 +115,9 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		resourceUtility = new ResourceUtility(packageAdmin);
 
 		final IEclipseContext mainContext = EclipseContextFactory.create(
-				"globalContext", applicationContext, UIContextScheduler.instance); //$NON-NLS-1$
+				applicationContext, UIContextScheduler.instance);
+		mainContext.set(IContextConstants.DEBUG_STRING, "globalContext"); //$NON-NLS-1$
+
 
 		IConfigurationElement[] contributions = registry
 				.getConfigurationElementsFor("org.eclipse.e4.services"); //$NON-NLS-1$

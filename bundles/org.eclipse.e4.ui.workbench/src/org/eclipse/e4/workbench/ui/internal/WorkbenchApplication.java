@@ -12,6 +12,8 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProduct;
@@ -37,7 +39,7 @@ import org.osgi.util.tracker.ServiceTracker;
  *
  */
 public class WorkbenchApplication implements IApplication {
-	
+
 	// TODO this is a hack until we can review testing
 	public static Workbench workbench;
 
@@ -75,7 +77,8 @@ public class WorkbenchApplication implements IApplication {
 				try {
 					//parent of the global workbench context is an OSGi service context that can provide OSGi services
 					IEclipseContext serviceContext = EclipseContextFactory.createServiceContext(Activator.getContext());
-					IEclipseContext appContext = EclipseContextFactory.create("application", serviceContext, null); //$NON-NLS-1$
+					IEclipseContext appContext = EclipseContextFactory.create(serviceContext, null); 
+					appContext.set(IContextConstants.DEBUG_STRING, "application"); //$NON-NLS-1$
 					if (cssURI != null) {
 						WorkbenchStylingSupport.initializeStyling(display, cssURI, appContext);
 					} else {

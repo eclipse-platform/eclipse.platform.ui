@@ -1,5 +1,7 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -41,7 +43,8 @@ public class WBPartFactory extends SWTPartFactory {
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
 			final IHandlerService hs = new PartHandlerService(part);
-			IEclipseContext localContext = EclipseContextFactory.create("MWorkbenchWindow", parentContext, UIContextScheduler.instance); //$NON-NLS-1$
+			IEclipseContext localContext = EclipseContextFactory.create(parentContext, UIContextScheduler.instance);
+			localContext.set(IContextConstants.DEBUG_STRING, "MWorkbenchWindow"); //$NON-NLS-1$
 			part.setContext(localContext);
 			localContext.set(IHandlerService.class.getName(), hs);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);

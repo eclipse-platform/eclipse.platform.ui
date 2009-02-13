@@ -1,5 +1,7 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -40,9 +42,11 @@ public class ContributedPartFactory extends SWTPartFactory {
 			final MContributedPart contributedPart = (MContributedPart) part;
 			final IHandlerService hs = new PartHandlerService(part);
 			final IEclipseContext localContext = EclipseContextFactory.create(
-					"ContributedPart", parentContext, UIContextScheduler.instance); //$NON-NLS-1$
+					parentContext, UIContextScheduler.instance);
+			localContext.set(IContextConstants.DEBUG_STRING, "ContributedPart"); //$NON-NLS-1$
 			IEclipseContext outputContext = EclipseContextFactory.create(
-					"ContributedPart-output", null, UIContextScheduler.instance); //$NON-NLS-1$
+					null, UIContextScheduler.instance); 
+			outputContext.set(IContextConstants.DEBUG_STRING, "ContributedPart-output"); //$NON-NLS-1$
 			contributedPart.setContext(localContext);
 			localContext.set(Composite.class.getName(), newComposite);
 			localContext.set(IHandlerService.class.getName(), hs);
