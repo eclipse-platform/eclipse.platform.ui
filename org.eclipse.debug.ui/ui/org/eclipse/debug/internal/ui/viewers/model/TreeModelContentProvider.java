@@ -327,7 +327,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
 			}
 		}
-		treeViewer.setSelection(new TreeSelection(getViewerTreePath(delta)), false);
+		treeViewer.setSelection(new TreeSelection(getViewerTreePath(delta)), false, (delta.getFlags() & IModelDelta.FORCE) != 0);
 	}
 
 	/* (non-Javadoc)
@@ -371,8 +371,11 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 					return;
 				}
 			}
-			// only move tree based on selection policy
-			if (treeViewer.overrideSelection(treeViewer.getSelection(), new TreeSelection(elementPath))) {
+
+			// only move tree based on force flag and selection policy
+			if ((delta.getFlags() & IModelDelta.FORCE) != 0 ||
+			    treeViewer.overrideSelection(treeViewer.getSelection(), new TreeSelection(elementPath))) 
+			{
 			    treeViewer.reveal(parentPath, viewIndex);
 			}
 		}
@@ -517,7 +520,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
             delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
 		}
 		if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
-			viewer.setSelection(new TreeSelection(treePath), false);
+			viewer.setSelection(new TreeSelection(treePath), false, false);
             delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
 		}
         if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {

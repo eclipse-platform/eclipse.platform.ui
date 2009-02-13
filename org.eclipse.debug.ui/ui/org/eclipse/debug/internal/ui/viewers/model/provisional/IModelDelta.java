@@ -111,6 +111,15 @@ public interface IModelDelta {
 	public static int COLLAPSE = 1 << 25;	
 	
 	/**
+	 * Flag indicating that the view layout deltas should override the 
+	 * model selection policy.  This flag can be used in conjunction with
+	 * SELECT and REVEAL flags. 
+	 * 
+	 * @see IModelSelectionPolicy
+	 */
+	public static int FORCE = 1 << 26;
+	
+	/**
 	 * Returns the parent of this node, or <code>null</code> if this is
 	 * a root node.
 	 * 

@@ -221,4 +221,7 @@ public class ActionMessages extends NLS {
 	
 	public static String ToggleBreakpointsTargetManager_defaultToggleTarget_name;
     public static String ToggleBreakpointsTargetManager_defaultToggleTarget_description;	
+    
+    public static String NextThreadNavAction_name;
+    public static String PreviousThreadNavAction_name;
 }

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -21,6 +25,8 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelNavigateProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelNavigateUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -29,7 +35,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @since 3.2
  */
-public class DebugTargetProxy extends EventHandlerModelProxy {
+public class DebugTargetProxy extends EventHandlerModelProxy implements IModelNavigateProxy {
 
     private IDebugTarget fDebugTarget;
 
@@ -77,53 +83,95 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 		IDebugTarget target = fDebugTarget;
 		if (target != null) {
 			try {
-				IThread[] threads = target.getThreads();
-				ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-				ILaunch launch = target.getLaunch();
-				int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
-                int targetIndex = indexOf(target.getLaunch().getChildren(), target);
-				IThread chosen = null;
-				int threadIndex = -1;
-				// select the first thread with a breakpoint, or the first suspended thread
-				// if none have breakpoints
-				for (int i = 0; i < threads.length; i++) {
-					IThread thread = threads[i];
-					if (thread.isSuspended()) {
-						IBreakpoint[] bps = thread.getBreakpoints();
-						if (bps != null && bps.length > 0) {
-							chosen = thread;
-							threadIndex = i;
-							break;
-						} else {
-							if (chosen == null) {
-								chosen = thread;
-								threadIndex = i;
-							}
-						}
-					}
-				}
-				if (chosen != null) {
-					IStackFrame frame = chosen.getTopStackFrame();
-					if (frame != null) {
-						ModelDelta delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
-						ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
-						node = node.addNode(target, targetIndex, IModelDelta.NO_CHANGE, threads.length);
-						node = node.addNode(chosen, threadIndex, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, chosen.getStackFrames().length);
-						node = node.addNode(frame, 0, IModelDelta.NO_CHANGE | IModelDelta.SELECT, 0);
-						fireModelChanged(delta);
-						return;
-					}
+				ModelDelta delta = getNextSuspendedThreadDelta(null, false, false);
+				if (delta == null) {
+	                ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+	                ILaunch launch = target.getLaunch();
+	                int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
+	                int targetIndex = indexOf(target.getLaunch().getChildren(), target);
+	                delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
+	                ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+	                node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, target.getThreads().length);
 				}
 				// expand the target if no suspended thread
-				ModelDelta delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
-				ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
-				node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, threads.length);
 				fireModelChanged(delta);
 			} catch (DebugException e) {
 			}
 		}
 	}
     
+    public void update(final IModelNavigateUpdate update) {
+        new Job("Traverse Debug Model") { //$NON-NLS-1$
+            { setSystem(true); }
+            protected IStatus run(IProgressMonitor monitor) {
+                // Get current thread based on selection
+                IThread currentThread = null;
+                Object element = update.getElement();
+                if (element instanceof IThread) {
+                    currentThread = (IThread)element;
+                }
+                else if (element instanceof IStackFrame) {
+                    currentThread = ((IStackFrame)element).getThread();
+                }  
+                
+                // Calculate next thread and complete update.
+                update.setNextElementDelta( getNextSuspendedThreadDelta(currentThread, update.isReverse(), true) );
+                update.done();
+                
+                return Status.OK_STATUS;
+            }
+        }.schedule();
+    }
     
+    protected ModelDelta getNextSuspendedThreadDelta(IThread currentThread, boolean reverse, boolean force) {
+        IDebugTarget target = fDebugTarget;
+        if (target != null) {
+            try {
+                IThread[] threads = target.getThreads();
+                ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+                ILaunch launch = target.getLaunch();
+                int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
+                int targetIndex = indexOf(target.getLaunch().getChildren(), target);
+                IThread chosen = null;
+                int threadIndex = -1;
+                // select the first thread with a breakpoint, or the first suspended thread
+                // if none have breakpoints
+                boolean takeNext = currentThread == null;
+                int startIdx = reverse ? threads.length - 1 : 0;
+                int endIdx = reverse ? -1 : threads.length;
+                int increment = reverse ? -1 : 1;
+                for (int i = startIdx; i != endIdx; i = i + increment) {
+                    IThread thread = threads[i];
+                    if (takeNext && thread.isSuspended()) {
+                        IBreakpoint[] bps = thread.getBreakpoints();
+                        if (bps != null && bps.length > 0) {
+                            chosen = thread;
+                            threadIndex = i;
+                            break;
+                        } else {
+                            if (chosen == null) {
+                                chosen = thread;
+                                threadIndex = i;
+                            }
+                        }
+                    }
+                    takeNext = takeNext || thread.equals(currentThread);
+                }
+                if (chosen != null) {
+                    IStackFrame frame = chosen.getTopStackFrame();
+                    if (frame != null) {
+                        ModelDelta delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
+                        ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+                        node = node.addNode(target, targetIndex, IModelDelta.NO_CHANGE, threads.length);
+                        node = node.addNode(chosen, threadIndex, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, chosen.getStackFrames().length);
+                        node = node.addNode(frame, 0, IModelDelta.NO_CHANGE | IModelDelta.SELECT | (force ? IModelDelta.FORCE : 0), 0);
+                        return delta;
+                    }
+                }
+            } catch (DebugException e) {
+            }
+        }
+        return null;
+    }
 
 }

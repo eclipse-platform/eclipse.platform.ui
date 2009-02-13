@@ -74,13 +74,15 @@ public interface ITreeModelViewer extends ISelectionProvider {
     public ISelection getSelection();
 
     /**
-     * Sets a new selection for this viewer and optionally makes it visible.
+      * Sets a new selection for this viewer and optionally makes it visible.
      * 
      * @param selection the new selection
      * @param reveal <code>true</code> if the selection is to be made
      *   visible, and <code>false</code> otherwise
+     * @param force <code>true</code> if the selection should override the 
+     *   model selection policy
      */
-    public void setSelection(ISelection selection, boolean reveal);
+    public void setSelection(ISelection selection, boolean reveal, boolean force);
 
     /**
      * Returns the auto-expand level.

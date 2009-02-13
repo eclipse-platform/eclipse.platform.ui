@@ -72,6 +72,8 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_TERMINATE_ALL = "IMG_DLCL_TERMINATE_ALL"; //$NON-NLS-1$
     public static final String IMG_DLCL_TERMINATE_AND_RELAUNCH = "IMG_DLCL_TERMINATE_AND_RELAUNCH"; //$NON-NLS-1$
     public static final String IMG_DLCL_TOGGLE_STEP_FILTERS = "IMG_DLCL_TOGGLE_STEP_FILTERS"; //$NON-NLS-1$
+    public static final String IMG_DLCL_NEXT_THREAD = "IMG_DLCL_NEXT_THREAD"; //$NON-NLS-1$
+    public static final String IMG_DLCL_PREVIOUS_THREAD = "IMG_DLCL_PREVIOUS_THREAD"; //$NON-NLS-1$
     
     //TODO: Move this IDebugUIConstants. Created too late in 3.2 cycle to add API.
     //The enabled icon is already API.
@@ -114,6 +116,8 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_TOGGLE_STEP_FILTERS = "IMG_ELCL_TOGGLE_STEP_FILTERS"; //$NON-NLS-1$
     public static final String IMG_ELCL_STANDARD_OUT = "IMG_ELCL_STANDARD_OUT"; //$NON-NLS-1$
     public static final String IMG_ELCL_STANDARD_ERR = "IMG_ELCL_STANDARD_ERR"; //$NON-NLS-1$
+    public static final String IMG_ELCL_NEXT_THREAD = "IMG_ELCL_NEXT_THREAD"; //$NON-NLS-1$
+    public static final String IMG_ELCL_PREVIOUS_THREAD = "IMG_ELCL_PREVIOUS_THREAD"; //$NON-NLS-1$
     
     public static final String IMG_OBJS_COMMON_TAB = "IMG_OBJS_COMMON_TAB"; //$NON-NLS-1$
     public static final String IMG_OBJS_REFRESH_TAB = "IMG_OBJS_REFRESH_TAB"; //$NON-NLS-1$

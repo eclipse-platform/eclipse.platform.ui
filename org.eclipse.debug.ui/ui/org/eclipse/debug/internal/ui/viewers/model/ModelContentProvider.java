@@ -73,7 +73,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      */
 	private boolean fSuppressModelControlRequests = false;
 	
-	private Map fModelProxies = new HashMap(); // model proxy by element
+	private Map fModelProxies = new LinkedHashMap(); // model proxy by element
 	
 	/**
 	 * Map of nodes that have been filtered from the viewer.
@@ -776,6 +776,20 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		fModelProxies.clear();
 	}
 
+	protected synchronized IModelProxy[] getModelProxies() {
+	    return (IModelProxy[])fModelProxies.values().toArray(new IModelProxy[fModelProxies.size()]);
+	}
+	
+	protected synchronized IModelProxy getElementProxy(TreePath path) {
+	    for (int i = path.getSegmentCount() - 1; i >= 0; i--) {
+	        IModelProxy proxy = (IModelProxy)fModelProxies.get(path.getSegment(i));
+	        if (proxy != null) {
+	            return proxy;
+	        }
+	    }
+	    return null;
+	}
+	
 	/**
 	 * Installs the model proxy for the given element into this content provider
 	 * if not already installed.
