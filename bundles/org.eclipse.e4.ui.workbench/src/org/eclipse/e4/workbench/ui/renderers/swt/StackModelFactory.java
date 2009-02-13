@@ -56,6 +56,7 @@ public class StackModelFactory extends SWTPartFactory {
 			part.setContext(folderContext);
 			final IEclipseContext toplevelContext = getToplevelContext(part);
 			final IStylingEngine engine = (IStylingEngine) folderContext.get(IStylingEngine.class.getName());
+			if (engine!=null) {
 			folderContext.runAndTrack(new Runnable() {
 				public void run() {
 					IEclipseContext currentActive = toplevelContext;
@@ -74,6 +75,7 @@ public class StackModelFactory extends SWTPartFactory {
 					}
 				}
 			}, ""); //$NON-NLS-1$
+			}
 		}
 
 		return newWidget;
