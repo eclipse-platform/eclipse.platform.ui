@@ -13,6 +13,7 @@ package org.eclipse.e4.internal.core.services.osgi;
 import java.util.*;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.core.services.osgi.IServiceAliasRegistry;
 import org.osgi.framework.*;
@@ -51,9 +52,10 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 	private Map services = Collections.synchronizedMap(new HashMap());
 
 	public OSGiServiceContext(BundleContext bc) {
-		super(null, "OSGi context for bundle: " + bc.getBundle().getSymbolicName(), null);
+		super(null, null);
 		this.bundleContext = bc;
 		this.aliasRegistryTracker = new ServiceTracker(bc, IServiceAliasRegistry.SERVICE_NAME, null);
+		set(IContextConstants.DEBUG_STRING, "OSGi context for bundle: " + bc.getBundle().getSymbolicName()); //$NON-NLS-1$
 		aliasRegistryTracker.open();
 	}
 

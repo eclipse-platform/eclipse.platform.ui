@@ -16,7 +16,7 @@ import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.*;
 
-public class EclipseContext extends AbstractContext {
+public class EclipseContext implements IEclipseContext {
 
 	static class TrackableComputation extends Computation implements Runnable {
 		Runnable runnable;
@@ -95,12 +95,11 @@ public class EclipseContext extends AbstractContext {
 	Map localValueComputations = new HashMap();
 
 	IEclipseContext parent;
-	private final String contextName;
 
-	public EclipseContext(IEclipseContext parent, String name, IEclipseContextStrategy strategy) {
+	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.parent = parent;
-		this.contextName = name;
 		this.strategy = strategy;
+		set(IContextConstants.DEBUG_STRING, "Anonymous Context"); //$NON-NLS-1$
 	}
 
 	protected void schedule(Runnable runnable) {
@@ -202,7 +201,7 @@ public class EclipseContext extends AbstractContext {
 
 	protected void invalidate(String name, int eventType) {
 		if (EclipseContext.DEBUG)
-			System.out.println("invalidating " + this.contextName + ',' + name); //$NON-NLS-1$
+			System.out.println("invalidating " + get(IContextConstants.DEBUG_STRING) + ',' + name); //$NON-NLS-1$
 		localValueComputations.remove(name);
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
 		for (int i = 0; i < ls.length; i++) {
@@ -259,6 +258,6 @@ public class EclipseContext extends AbstractContext {
 	}
 
 	public String toString() {
-		return contextName;
+		return (String) get(IContextConstants.DEBUG_STRING);
 	}
 }

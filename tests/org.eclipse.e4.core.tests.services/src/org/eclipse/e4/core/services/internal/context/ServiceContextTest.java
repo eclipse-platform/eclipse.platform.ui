@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import junit.framework.TestCase;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -57,7 +59,8 @@ public class ServiceContextTest extends TestCase {
 	 * Tests accessing OSGi services through a child context that is not aware of them.
 	 */
 	public void testServiceContextAsParent() {
-		IEclipseContext child = EclipseContextFactory.create("child", context, null);
+		IEclipseContext child = EclipseContextFactory.create(context, null);
+		child.set(IContextConstants.DEBUG_STRING, "child");
 		IServiceAliasRegistry service = (IServiceAliasRegistry) child.get(IServiceAliasRegistry.SERVICE_NAME);
 		assertNotNull(service);
 	}
@@ -115,7 +118,8 @@ public class ServiceContextTest extends TestCase {
 		StringPrintService stringPrint1 = new StringPrintService();
 		ServiceRegistration reg1 = TestActivator.bundleContext.registerService(PrintService.SERVICE_NAME, stringPrint1, null);
 		ServiceReference ref = reg1.getReference();
-		IEclipseContext child = EclipseContextFactory.create("child", context, null);
+		IEclipseContext child = EclipseContextFactory.create(context, null);
+		child.set(IContextConstants.DEBUG_STRING, "child");
 		
 		PrintService service = (PrintService) child.get(PrintService.SERVICE_NAME);
 		assertEquals("1.0", stringPrint1, service);

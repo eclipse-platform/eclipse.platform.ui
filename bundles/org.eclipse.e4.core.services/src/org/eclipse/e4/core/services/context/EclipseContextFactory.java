@@ -11,10 +11,9 @@
 
 package org.eclipse.e4.core.services.context;
 
-import org.eclipse.e4.internal.core.services.osgi.OSGiServiceContext;
-
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
+import org.eclipse.e4.internal.core.services.osgi.OSGiServiceContext;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -29,19 +28,14 @@ public final class EclipseContextFactory {
 	 * the default context strategy.
 	 * 
 	 * TODO do we need a name?
-	 * @param name The context name
 	 * @return A new empty context with no parent context.
 	 */
-	static public IEclipseContext create(String name) {
-		return new EclipseContext(null, name, null);
+	static public IEclipseContext create() {
+		return new EclipseContext(null, null);
 	}
 
-	static public IEclipseContext create(String name, IEclipseContextStrategy strategy) {
-		return new EclipseContext(null, name, strategy);
-	}
-
-	static public IEclipseContext create(String name, IEclipseContext parent, IEclipseContextStrategy strategy) {
-		return new EclipseContext(parent, name, strategy);
+	static public IEclipseContext create(IEclipseContext parent, IEclipseContextStrategy strategy) {
+		return new EclipseContext(parent, strategy);
 	}
 
 	/**

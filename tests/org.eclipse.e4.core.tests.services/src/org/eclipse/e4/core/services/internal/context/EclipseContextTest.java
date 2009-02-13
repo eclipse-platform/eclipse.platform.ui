@@ -1,5 +1,7 @@
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import junit.framework.TestCase;
 import org.eclipse.e4.core.services.context.*;
 
@@ -33,8 +35,10 @@ public class EclipseContextTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.parentContext = EclipseContextFactory.create(getName() + "-parent");
-		this.context = EclipseContextFactory.create(getName(), parentContext, null);
+		this.parentContext = EclipseContextFactory.create();
+		this.parentContext.set(IContextConstants.DEBUG_STRING, getName() + "-parent");
+		this.context = EclipseContextFactory.create(parentContext, null);
+		context.set(IContextConstants.DEBUG_STRING, getName());
 	}
 
 	public void testContainsKey() {

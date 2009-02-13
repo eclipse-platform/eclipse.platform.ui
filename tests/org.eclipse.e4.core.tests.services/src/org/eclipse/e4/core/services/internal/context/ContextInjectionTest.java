@@ -42,7 +42,7 @@ public class ContextInjectionTest extends TestCase {
 		Object testObjectViaMethod = new Object();
 
 		// create context
-		IEclipseContext context = EclipseContextFactory.create(null);
+		IEclipseContext context = EclipseContextFactory.create();
 		// elements to be populated via fields
 		context.set("Integer", testInt);
 		context.set("string", testString); // this checks capitalization as well
@@ -89,7 +89,7 @@ public class ContextInjectionTest extends TestCase {
 		Object testObjectViaMethod = new Object();
 
 		// create context
-		IEclipseContext context = EclipseContextFactory.create(null);
+		IEclipseContext context = EclipseContextFactory.create();
 		// elements to be populated via fields
 		context.set("Integer", testInt);
 		context.set("string", testString); // this checks capitalization as well
@@ -124,12 +124,12 @@ public class ContextInjectionTest extends TestCase {
 		Object testObjectViaMethod = new Object();
 
 		// create parent context
-		IEclipseContext parentContext = EclipseContextFactory.create(null);
+		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("Integer", testInt);
 		parentContext.set("StringViaMethod", testStringViaMethod);
 
 		// create child context
-		IEclipseContext context = EclipseContextFactory.create(null, parentContext, null);
+		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
 		context.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
 
 		ObjectBasic userObject = new ObjectBasic();

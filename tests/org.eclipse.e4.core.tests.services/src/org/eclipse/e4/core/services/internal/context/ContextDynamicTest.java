@@ -41,7 +41,7 @@ public class ContextDynamicTest extends TestCase {
 		Object testObjectViaMethod = new Object();
 
 		// create original context
-		IEclipseContext context = EclipseContextFactory.create(null);
+		IEclipseContext context = EclipseContextFactory.create();
 		context.set("Integer", testInt);
 		context.set("StringViaMethod", testStringViaMethod);
 
@@ -91,11 +91,11 @@ public class ContextDynamicTest extends TestCase {
 		Object testObjectViaMethod = new Object();
 
 		// create original context
-		IEclipseContext parentContext = EclipseContextFactory.create(null);
+		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("Integer", testInt);
 		parentContext.set("StringViaMethod", testStringViaMethod);
 
-		IEclipseContext context = EclipseContextFactory.create(null, parentContext, null); 
+		IEclipseContext context = EclipseContextFactory.create(parentContext, null); 
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
@@ -139,7 +139,7 @@ public class ContextDynamicTest extends TestCase {
 	 */
 	public synchronized void testContextAware() {
 		// create context
-		IEclipseContext context = EclipseContextFactory.create(null);
+		IEclipseContext context = EclipseContextFactory.create();
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
 

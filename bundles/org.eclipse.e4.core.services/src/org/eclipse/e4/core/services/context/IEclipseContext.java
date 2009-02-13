@@ -11,7 +11,6 @@
 
 package org.eclipse.e4.core.services.context;
 
-import org.eclipse.e4.core.services.context.spi.AbstractContext;
 import org.eclipse.e4.core.services.context.spi.ComputedValue;
 import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
@@ -30,8 +29,7 @@ import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
  * is an implementation detail that clients need not be concerned with. Parent
  * contexts cannot be modified by a child context.
  * </p>
- * @noimplement This interface is not intended to be implemented by clients. Context
- * implementations must subclass {@link AbstractContext} instead.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEclipseContext {
 
@@ -92,6 +90,7 @@ public interface IEclipseContext {
 
 	// TBD should this be a part of IEclipseContext or a separate convenience method?
 	public void runAndTrack(final Runnable runnable, String name);
+
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args);
 
 	/**

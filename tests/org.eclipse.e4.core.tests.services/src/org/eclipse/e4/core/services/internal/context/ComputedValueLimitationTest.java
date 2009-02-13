@@ -74,7 +74,7 @@ public class ComputedValueLimitationTest extends TestCase {
 
 	public synchronized void testInjection() {
 		
-		IEclipseContext context = EclipseContextFactory.create("test");
+		IEclipseContext context = EclipseContextFactory.create();
 		for (int i = 0 ; i < 10; i++)
 			context.set("arg" + Integer.toString(i), Integer.toString(i));
 		context.set("computed", new CalcColor());

@@ -14,16 +14,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IJavaInjection;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
  * The first character of the service name is not case-sensitive; rest is case-sensitive:
  * <default_prefix>Log <-> Log <-> log
  */
-public class ContextInjectionImpl implements IJavaInjection {
-	
+public class ContextInjectionImpl implements IContextConstants {
+
 	/**
 	 * We keep one injector per context.
 	 */
@@ -37,12 +36,12 @@ public class ContextInjectionImpl implements IJavaInjection {
 	final protected int fieldPrefixLength;
 
 	public ContextInjectionImpl() {
-		this(FIELD_PREFIX, SET_METHOD_PREFIX);
+		this(INJECTION_FIELD_PREFIX, INJECTION_SET_METHOD_PREFIX);
 	}
 
 	public ContextInjectionImpl(String fieldPrefix, String setMethodPrefix) {
-		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix : FIELD_PREFIX;
-		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix : SET_METHOD_PREFIX;
+		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix : INJECTION_FIELD_PREFIX;
+		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix : INJECTION_SET_METHOD_PREFIX;
 
 		fieldPrefixLength = this.fieldPrefix.length();
 	}
@@ -60,7 +59,7 @@ public class ContextInjectionImpl implements IJavaInjection {
 		context.runAndTrack(link, new Object[] {userObject});
 
 		// trigger post-injection processing
-		notifyUserMethod(CONTEXT_SET_METHOD, userObject, context);
+		notifyUserMethod(INJECTION_SET_CONTEXT_METHOD, userObject, context);
 	}
 
 	private void notifyUserMethod(String methodName, Object userObject, IEclipseContext newContext) {
