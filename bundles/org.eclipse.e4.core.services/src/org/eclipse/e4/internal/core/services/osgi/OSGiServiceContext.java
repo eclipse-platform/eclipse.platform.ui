@@ -44,6 +44,7 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 	}
 
 	private final BundleContext bundleContext;
+	private final ServiceTracker aliasRegistryTracker;
 	/**
 	 * Map of String (service name) -> ServiceData
 	 */
@@ -52,17 +53,20 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 	public OSGiServiceContext(BundleContext bc) {
 		super(null, "OSGi context for bundle: " + bc.getBundle().getSymbolicName(), null);
 		this.bundleContext = bc;
+		this.aliasRegistryTracker = new ServiceTracker(bc, IServiceAliasRegistry.SERVICE_NAME, null);
+		aliasRegistryTracker.open();
 	}
 
 	public Object addingService(ServiceReference reference) {
 		String name = serviceName(reference);
+		String alias = unresolve(name);
 		Object newValue = bundleContext.getService(reference);
 		if (newValue == null)
 			return null;
 		//for performance we store the concrete service object with each context that requested it
-		ServiceData data = (ServiceData) services.get(name);
+		ServiceData data = (ServiceData) services.get(alias);
 		for (Iterator it = data.users.keySet().iterator(); it.hasNext();)
-			((IEclipseContext) it.next()).set(name, newValue);
+			((IEclipseContext) it.next()).set(alias, newValue);
 		return newValue;
 	}
 
@@ -86,8 +90,9 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 
 	public boolean containsKey(String name) {
 		cleanReferences();
+		String unresolved = unresolve(name);
 		String resolved = resolve(name);
-		return super.containsKey(resolved) || bundleContext.getServiceReference(resolved) != null;
+		return super.containsKey(unresolved) || bundleContext.getServiceReference(resolved) != null;
 	}
 
 	public void dispose() {
@@ -96,20 +101,22 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 				((ServiceData) it.next()).tracker.close();
 			services.clear();
 		}
+		aliasRegistryTracker.close();
 	}
 
 	protected Object internalGet(EclipseContext originatingContext, String name, Object[] arguments, boolean local) {
 		cleanReferences();
+		String alias = unresolve(name);
 		String resolved = resolve(name);
 		//first see if we have already stored a value locally
-		Object result = super.internalGet(originatingContext, resolved, arguments, local);
+		Object result = super.internalGet(originatingContext, alias, arguments, local);
 		if (result != null)
 			return result;
-		ServiceData data = (ServiceData) services.get(resolved);
+		ServiceData data = (ServiceData) services.get(alias);
 		if (data == null) {
-			data = new ServiceData(resolved);
+			data = new ServiceData(alias);
 			data.tracker = new ServiceTracker(bundleContext, resolved, this);
-			services.put(resolved, data);
+			services.put(alias, data);
 			//just opening a tracker will cause values to be set by the tracker callback methods
 			data.tracker.open();
 		}
@@ -119,29 +126,38 @@ public class OSGiServiceContext extends EclipseContext implements IDisposable, S
 
 	public void modifiedService(ServiceReference reference, Object service) {
 		String name = serviceName(reference);
-		ServiceData data = (ServiceData) services.get(name);
+		String alias = unresolve(name);
+		ServiceData data = (ServiceData) services.get(alias);
 		for (Iterator it = data.users.keySet().iterator(); it.hasNext();)
-			((IEclipseContext) it.next()).set(name, service);
+			((IEclipseContext) it.next()).set(alias, service);
 	}
 
 	public void removedService(ServiceReference reference, Object service) {
 		String name = serviceName(reference);
+		String alias = unresolve(name);
 		//must set to null rather than removing so injection continues to work
-		ServiceData data = (ServiceData) services.get(name);
+		ServiceData data = (ServiceData) services.get(alias);
 		for (Iterator it = data.users.keySet().iterator(); it.hasNext();)
-			((IEclipseContext) it.next()).set(name, null);
+			((IEclipseContext) it.next()).set(alias, null);
 		bundleContext.ungetService(reference);
+	}
+
+	/**
+	 * Returns the service alias for a resolved service name.
+	 * @param serviceName The resolved service name
+	 * @return The service alias
+	 */
+	private String unresolve(String serviceName) {
+		IServiceAliasRegistry registry = (IServiceAliasRegistry) aliasRegistryTracker.getService();
+		return registry == null ? serviceName : registry.findAlias(serviceName);
 	}
 
 	/**
 	 * Returns the service alias for a qualified name
 	 */
 	private String resolve(String alias) {
-		//getting the alias registry to resolve itself will cause infinite recursion
-		if (alias == IServiceAliasRegistry.SERVICE_NAME)
-			return alias;
-		IServiceAliasRegistry service = (IServiceAliasRegistry) get(IServiceAliasRegistry.SERVICE_NAME);
-		return service == null ? alias : service.resolveAlias(alias);
+		IServiceAliasRegistry registry = (IServiceAliasRegistry) aliasRegistryTracker.getService();
+		return registry == null ? alias : registry.resolveAlias(alias);
 	}
 
 	/**

@@ -42,12 +42,12 @@ public class ServiceContextTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		context = EclipseContextFactory.createServiceContext(TestActivator.bundleContext);
-		((IServiceAliasRegistry) context.get(IServiceAliasRegistry.SERVICE_NAME)).registerAlias("printer", PrintService.SERVICE_NAME);
+		((IServiceAliasRegistry) context.get(IServiceAliasRegistry.SERVICE_NAME)).registerAlias("Printer", PrintService.SERVICE_NAME);
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
-		((IServiceAliasRegistry) context.get(IServiceAliasRegistry.SERVICE_NAME)).unregisterAlias("printer");
+		((IServiceAliasRegistry) context.get(IServiceAliasRegistry.SERVICE_NAME)).unregisterAlias("Printer");
 		if (context instanceof IDisposable) 
 			((IDisposable)context).dispose();
 		super.tearDown();
