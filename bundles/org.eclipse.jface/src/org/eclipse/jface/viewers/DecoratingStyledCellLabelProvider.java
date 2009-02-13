@@ -206,7 +206,7 @@ public class DecoratingStyledCellLabelProvider extends
 			return styledString;
 
 		Styler style = getDecorationStyle(element);
-		return StyledCellLabelProvider.styleDecoratedString(styledString, decorated, style);
+		return StyledCellLabelProvider.styleDecoratedString(decorated, style, styledString);
 	}
 
 	/**

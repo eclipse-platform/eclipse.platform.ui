@@ -1682,7 +1682,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (selectionDecorator != null && isSelected(element)) {
 				String decorated = selectionDecorator.decorateText(string
 						.getString(), element);
-				return StyledCellLabelProvider.styleDecoratedString(string, decorated, null);
+				return StyledCellLabelProvider.styleDecoratedString(decorated, null, string);
 				// no need to add colors when element is selected
 			}
 			return string;
