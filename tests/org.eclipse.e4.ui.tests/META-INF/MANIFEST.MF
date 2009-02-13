@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Modelled UI tests bundle
+Bundle-SymbolicName: org.eclipse.e4.ui.tests; singleton:=true
+Bundle-Version: 0.9.0.qualifier
+Bundle-Activator: org.eclipse.e4.ui.tests.Activator
+Bundle-Vendor: Eclipse.org
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.e4.core.services,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.ui.services,
+ org.eclipse.e4.ui.workbench,
+ org.junit,
+ org.eclipse.swt,
+ org.eclipse.jface
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
