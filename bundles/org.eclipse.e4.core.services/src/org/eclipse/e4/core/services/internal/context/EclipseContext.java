@@ -12,7 +12,6 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import java.util.*;
-
 import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.*;
@@ -30,7 +29,7 @@ public class EclipseContext extends AbstractContext {
 
 		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
 			if (EclipseContext.DEBUG)
-				System.out.println("scheduling " + toString());
+				System.out.println("scheduling " + toString()); //$NON-NLS-1$
 			((EclipseContext) context).schedule(this); // XXX conversion: should be IEclipseContext
 		}
 
@@ -49,9 +48,9 @@ public class EclipseContext extends AbstractContext {
 			return name;
 		}
 	}
-	
+
 	static class TrackableComputationExt extends Computation implements IRunAndTrack {
-		
+
 		private IRunAndTrack runnable;
 
 		public TrackableComputationExt(IRunAndTrack runnable) {
@@ -67,7 +66,7 @@ public class EclipseContext extends AbstractContext {
 			currentComputation.set(this);
 			boolean result = true;
 			try {
-					result = runnable.notify(context, name, eventType, args);
+				result = runnable.notify(context, name, eventType, args);
 			} finally {
 				currentComputation.set(oldComputation);
 			}
@@ -109,17 +108,16 @@ public class EclipseContext extends AbstractContext {
 			return;
 		if (strategy != null && strategy instanceof IEclipseContextScheduler)
 			((IEclipseContextScheduler) strategy).schedule(runnable);
-		else 
+		else
 			runnable.run();
 	}
-	
+
 	protected boolean schedule(IRunAndTrack runnable, String name, int eventType, Object[] args) {
 		if (runnable == null)
 			return false;
 		if (strategy != null && strategy instanceof IEclipseContextScheduler)
 			return ((IEclipseContextScheduler) strategy).schedule(this, runnable, name, eventType, args);
-		else
-			return runnable.notify(this, name, eventType, args);
+		return runnable.notify(this, name, eventType, args);
 	}
 
 	public Object getLocal(String name) {
@@ -189,7 +187,7 @@ public class EclipseContext extends AbstractContext {
 		if (result != null) {
 			if (result instanceof IComputedValue) {
 				if (EclipseContext.DEBUG)
-					System.out.println("creating new value computation for " + name + " in " + this + " from " + originatingContext);
+					System.out.println("creating new value computation for " + name + " in " + this + " from " + originatingContext); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				ValueComputation valueComputation = new ValueComputation(this, originatingContext, name, ((IComputedValue) result));
 				originatingContext.localValueComputations.put(lookupKey, valueComputation);
 				result = valueComputation.get(arguments);
@@ -204,7 +202,7 @@ public class EclipseContext extends AbstractContext {
 
 	protected void invalidate(String name, int eventType) {
 		if (EclipseContext.DEBUG)
-			System.out.println("invalidating " + this.contextName + "," + name);
+			System.out.println("invalidating " + this.contextName + ',' + name); //$NON-NLS-1$
 		localValueComputations.remove(name);
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
 		for (int i = 0; i < ls.length; i++) {
@@ -225,7 +223,7 @@ public class EclipseContext extends AbstractContext {
 		TrackableComputation computation = new TrackableComputation(runnable, name);
 		schedule(computation);
 	}
-	
+
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
 		TrackableComputationExt computation = new TrackableComputationExt(runnable);
 		schedule(computation, null, IRunAndTrack.INITIAL, args);
