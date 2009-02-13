@@ -102,7 +102,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 			StyledString str= new StyledString(name);
 			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), pathString });
 
-			StyledCellLabelProvider.styleDecoratedString(str, decorated, StyledString.QUALIFIER_STYLER);
+			StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.QUALIFIER_STYLER, str);
 			return getColoredLabelWithCounts(resource, str);
 		}
 
