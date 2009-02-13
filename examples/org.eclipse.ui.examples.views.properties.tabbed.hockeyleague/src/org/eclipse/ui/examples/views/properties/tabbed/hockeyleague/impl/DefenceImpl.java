@@ -73,7 +73,7 @@ public class DefenceImpl extends PlayerImpl implements Defence {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList playerStats = null;
+	protected EList playerStats;
 
 	/**
 	 * <!-- begin-user-doc -->

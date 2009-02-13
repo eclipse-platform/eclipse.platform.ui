@@ -57,7 +57,7 @@ public class TeamImpl extends HockeyleagueObjectImpl implements Team {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList forwards = null;
+	protected EList forwards;
 
 	/**
 	 * The cached value of the '{@link #getDefencemen() <em>Defencemen</em>}' containment reference list.
@@ -67,7 +67,7 @@ public class TeamImpl extends HockeyleagueObjectImpl implements Team {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList defencemen = null;
+	protected EList defencemen;
 
 	/**
 	 * The cached value of the '{@link #getGoalies() <em>Goalies</em>}' containment reference list.
@@ -77,7 +77,7 @@ public class TeamImpl extends HockeyleagueObjectImpl implements Team {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList goalies = null;
+	protected EList goalies;
 
 	/**
 	 * The cached value of the '{@link #getArena() <em>Arena</em>}' containment reference.
@@ -87,7 +87,7 @@ public class TeamImpl extends HockeyleagueObjectImpl implements Team {
 	 * @generated
 	 * @ordered
 	 */
-	protected Arena arena = null;
+	protected Arena arena;
 
 	/**
 	 * <!-- begin-user-doc -->

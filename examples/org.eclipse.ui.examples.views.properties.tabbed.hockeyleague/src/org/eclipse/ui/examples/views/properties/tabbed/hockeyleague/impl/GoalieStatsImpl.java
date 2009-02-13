@@ -79,7 +79,7 @@ public class GoalieStatsImpl extends EObjectImpl implements GoalieStats {
 	 * @generated
 	 * @ordered
 	 */
-	protected Team team = null;
+	protected Team team;
 
 	/**
 	 * The default value of the '{@link #getGamesPlayedIn() <em>Games Played In</em>}' attribute.

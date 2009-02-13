@@ -72,7 +72,7 @@ public class LeagueImpl extends HockeyleagueObjectImpl implements League {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList teams = null;
+	protected EList teams;
 
 	/**
 	 * <!-- begin-user-doc -->

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public interface HockeyleaguePackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNAME = "org.eclipse.ui.examples.views.properties.tabbed.hockeyleague"; //$NON-NLS-1$
+	String eNAME = "hockeyleague"; //$NON-NLS-1$
 
 	/**
 	 * The package namespace URI.

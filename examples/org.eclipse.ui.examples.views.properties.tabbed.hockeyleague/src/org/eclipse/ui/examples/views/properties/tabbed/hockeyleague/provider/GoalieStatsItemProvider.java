@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,12 @@
 package org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.provider;
 
 
-
 import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.util.ResourceLocator;
-
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -41,11 +38,11 @@ import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.Hockeyleague
  */
 public class GoalieStatsItemProvider
 	extends ItemProviderAdapter
-	implements	
-		IEditingDomainItemProvider,	
-		IStructuredItemContentProvider,	
-		ITreeItemContentProvider,	
-		IItemLabelProvider,	
+	implements
+		IEditingDomainItemProvider,
+		IStructuredItemContentProvider,
+		ITreeItemContentProvider,
+		IItemLabelProvider,
 		IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -102,6 +99,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_year_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__YEAR,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
 				 null));
@@ -121,6 +120,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_GoalieStats_team_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_team_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__TEAM,
+				 true,
+				 false,
 				 true,
 				 null,
 				 null,
@@ -142,6 +143,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_gamesPlayedIn_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__GAMES_PLAYED_IN,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -162,6 +165,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_minutesPlayedIn_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__MINUTES_PLAYED_IN,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -182,6 +187,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_goalsAgainstAverage_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__GOALS_AGAINST_AVERAGE,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.REAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -202,6 +209,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_wins_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__WINS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -222,6 +231,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_losses_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__LOSSES,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -242,6 +253,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_ties_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__TIES,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -262,6 +275,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_emptyNetGoals_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__EMPTY_NET_GOALS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -282,6 +297,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_shutouts_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__SHUTOUTS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -302,6 +319,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_goalsAgainst_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__GOALS_AGAINST,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -322,6 +341,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_saves_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__SAVES,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -342,6 +363,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_penaltyMinutes_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__PENALTY_MINUTES,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -362,6 +385,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_goals_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__GOALS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -382,6 +407,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_assists_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__ASSISTS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -402,6 +429,8 @@ public class GoalieStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_GoalieStats_points_feature", "_UI_GoalieStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.GOALIE_STATS__POINTS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -414,7 +443,7 @@ public class GoalieStatsItemProvider
 	 * @generated
 	 */
 	public Object getImage(Object object) {
-		return getResourceLocator().getImage("full/obj16/GoalieStats"); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/GoalieStats")); //$NON-NLS-1$
 	}
 
 	/**
@@ -463,8 +492,8 @@ public class GoalieStatsItemProvider
 	}
 
 	/**
-	 * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-	 * describing all of the children that can be created under this object.
+	 * This adds {@link org.eclipse.emf.edit.command.CommandParameter}s describing the children
+	 * that can be created under this object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,11 @@
 package org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.provider;
 
 
-
 import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 
@@ -28,9 +25,9 @@ import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ViewerNotification;
+
 import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.HockeyleagueFactory;
 import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.HockeyleaguePackage;
-import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.HockeyleaguePlugin;
 import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.Team;
 
 /**
@@ -41,11 +38,11 @@ import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.Team;
  */
 public class TeamItemProvider
 	extends HockeyleagueObjectItemProvider
-	implements	
-		IEditingDomainItemProvider,	
-		IStructuredItemContentProvider,	
-		ITreeItemContentProvider,	
-		IItemLabelProvider,	
+	implements
+		IEditingDomainItemProvider,
+		IStructuredItemContentProvider,
+		ITreeItemContentProvider,
+		IItemLabelProvider,
 		IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -109,7 +106,7 @@ public class TeamItemProvider
 	 * @generated
 	 */
 	public Object getImage(Object object) {
-		return getResourceLocator().getImage("full/obj16/Team"); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Team")); //$NON-NLS-1$
 	}
 
 	/**
@@ -147,8 +144,8 @@ public class TeamItemProvider
 	}
 
 	/**
-	 * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-	 * describing all of the children that can be created under this object.
+	 * This adds {@link org.eclipse.emf.edit.command.CommandParameter}s describing the children
+	 * that can be created under this object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -175,16 +172,6 @@ public class TeamItemProvider
 			(createChildParameter
 				(HockeyleaguePackage.Literals.TEAM__ARENA,
 				 HockeyleagueFactory.eINSTANCE.createArena()));
-	}
-
-	/**
-	 * Return the resource locator for this item provider's resources.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ResourceLocator getResourceLocator() {
-		return HockeyleaguePlugin.INSTANCE;
 	}
 
 }

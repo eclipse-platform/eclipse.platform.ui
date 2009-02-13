@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,12 @@
 package org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.provider;
 
 
-
 import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.util.ResourceLocator;
-
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -41,11 +38,11 @@ import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.PlayerStats;
  */
 public class PlayerStatsItemProvider
 	extends ItemProviderAdapter
-	implements	
-		IEditingDomainItemProvider,	
-		IStructuredItemContentProvider,	
-		ITreeItemContentProvider,	
-		IItemLabelProvider,	
+	implements
+		IEditingDomainItemProvider,
+		IStructuredItemContentProvider,
+		ITreeItemContentProvider,
+		IItemLabelProvider,
 		IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -99,6 +96,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_year_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__YEAR,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
 				 null));
@@ -118,6 +117,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PlayerStats_team_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_team_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__TEAM,
+				 true,
+				 false,
 				 true,
 				 null,
 				 null,
@@ -139,6 +140,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_gamesPlayedIn_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__GAMES_PLAYED_IN,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -159,6 +162,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_goals_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__GOALS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -179,6 +184,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_assists_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__ASSISTS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -199,6 +206,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_points_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__POINTS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -219,6 +228,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_plusMinus_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__PLUS_MINUS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -239,6 +250,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_penaltyMinutes_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__PENALTY_MINUTES,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -259,6 +272,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_powerPlayGoals_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__POWER_PLAY_GOALS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -279,6 +294,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_shortHandedGoals_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__SHORT_HANDED_GOALS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -299,6 +316,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_gameWinningGoals_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__GAME_WINNING_GOALS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -319,6 +338,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_shots_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__SHOTS,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -339,6 +360,8 @@ public class PlayerStatsItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_PlayerStats_shotPercentage_feature", "_UI_PlayerStats_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.PLAYER_STATS__SHOT_PERCENTAGE,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.REAL_VALUE_IMAGE,
 				 null,
 				 null));
@@ -351,7 +374,7 @@ public class PlayerStatsItemProvider
 	 * @generated
 	 */
 	public Object getImage(Object object) {
-		return getResourceLocator().getImage("full/obj16/PlayerStats"); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/PlayerStats")); //$NON-NLS-1$
 	}
 
 	/**
@@ -397,8 +420,8 @@ public class PlayerStatsItemProvider
 	}
 
 	/**
-	 * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-	 * describing all of the children that can be created under this object.
+	 * This adds {@link org.eclipse.emf.edit.command.CommandParameter}s describing the children
+	 * that can be created under this object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

@@ -76,7 +76,7 @@ public class PlayerStatsImpl extends EObjectImpl implements PlayerStats {
 	 * @generated
 	 * @ordered
 	 */
-	protected Team team = null;
+	protected Team team;
 
 	/**
 	 * The default value of the '{@link #getGamesPlayedIn() <em>Games Played In</em>}' attribute.

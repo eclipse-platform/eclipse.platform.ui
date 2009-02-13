@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,12 @@
 package org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.provider;
 
 
-
 import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.util.ResourceLocator;
-
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -41,11 +38,11 @@ import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.Hockeyleague
  */
 public class HockeyleagueObjectItemProvider
 	extends ItemProviderAdapter
-	implements	
-		IEditingDomainItemProvider,	
-		IStructuredItemContentProvider,	
-		ITreeItemContentProvider,	
-		IItemLabelProvider,	
+	implements
+		IEditingDomainItemProvider,
+		IStructuredItemContentProvider,
+		ITreeItemContentProvider,
+		IItemLabelProvider,
 		IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -87,6 +84,8 @@ public class HockeyleagueObjectItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_HockeyleagueObject_name_feature", "_UI_HockeyleagueObject_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 HockeyleaguePackage.Literals.HOCKEYLEAGUE_OBJECT__NAME,
 				 true,
+				 false,
+				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
 				 null));
@@ -124,8 +123,8 @@ public class HockeyleagueObjectItemProvider
 	}
 
 	/**
-	 * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-	 * describing all of the children that can be created under this object.
+	 * This adds {@link org.eclipse.emf.edit.command.CommandParameter}s describing the children
+	 * that can be created under this object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

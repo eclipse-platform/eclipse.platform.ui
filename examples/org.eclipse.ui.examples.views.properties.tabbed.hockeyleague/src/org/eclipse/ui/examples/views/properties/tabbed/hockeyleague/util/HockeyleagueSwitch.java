@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,13 +166,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Arena</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Arena</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Arena</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Arena</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -181,13 +181,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Defence</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Defence</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Defence</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Defence</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -196,13 +196,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Forward</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Forward</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Forward</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Forward</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -211,13 +211,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Goalie</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Goalie</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Goalie</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Goalie</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -226,13 +226,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Goalie Stats</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Goalie Stats</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Goalie Stats</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Goalie Stats</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -241,13 +241,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Object</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Object</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Object</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Object</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -256,13 +256,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>League</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>League</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>League</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>League</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -271,13 +271,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Player</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Player</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Player</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Player</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -286,13 +286,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Player Stats</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Player Stats</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Player Stats</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Player Stats</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -301,13 +301,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>Team</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Team</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>Team</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Team</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
@@ -316,13 +316,13 @@ public class HockeyleagueSwitch {
 	}
 
 	/**
-	 * Returns the result of interpretting the object as an instance of '<em>EObject</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>EObject</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch, but this is the last case anyway.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpretting the object as an instance of '<em>EObject</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>EObject</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject)
 	 * @generated
 	 */

@@ -48,7 +48,7 @@ public class GoalieImpl extends PlayerImpl implements Goalie {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList goalieStats = null;
+	protected EList goalieStats;
 
 	/**
 	 * <!-- begin-user-doc -->

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,13 @@
 package org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.provider;
 
 
-
 import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
-import org.eclipse.emf.common.util.ResourceLocator;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -26,10 +25,10 @@ import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ViewerNotification;
+
 import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.Goalie;
 import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.HockeyleagueFactory;
 import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.HockeyleaguePackage;
-import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.HockeyleaguePlugin;
 
 /**
  * This is the item provider adapter for a {@link org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.Goalie} object.
@@ -39,11 +38,11 @@ import org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.Hockeyleague
  */
 public class GoalieItemProvider
 	extends PlayerItemProvider
-	implements	
-		IEditingDomainItemProvider,	
-		IStructuredItemContentProvider,	
-		ITreeItemContentProvider,	
-		IItemLabelProvider,	
+	implements
+		IEditingDomainItemProvider,
+		IStructuredItemContentProvider,
+		ITreeItemContentProvider,
+		IItemLabelProvider,
 		IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -86,13 +85,25 @@ public class GoalieItemProvider
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected EStructuralFeature getChildFeature(Object object, Object child) {
+		// Check the type of the specified child object and return the proper feature to use for
+		// adding (see {@link AddCommand}) it as a child.
+
+		return super.getChildFeature(object, child);
+	}
+
+	/**
 	 * This returns Goalie.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	public Object getImage(Object object) {
-		return getResourceLocator().getImage("full/obj16/Goalie"); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Goalie")); //$NON-NLS-1$
 	}
 
 	/**
@@ -127,8 +138,8 @@ public class GoalieItemProvider
 	}
 
 	/**
-	 * This adds to the collection of {@link org.eclipse.emf.edit.command.CommandParameter}s
-	 * describing all of the children that can be created under this object.
+	 * This adds {@link org.eclipse.emf.edit.command.CommandParameter}s describing the children
+	 * that can be created under this object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -140,16 +151,6 @@ public class GoalieItemProvider
 			(createChildParameter
 				(HockeyleaguePackage.Literals.GOALIE__GOALIE_STATS,
 				 HockeyleagueFactory.eINSTANCE.createGoalieStats()));
-	}
-
-	/**
-	 * Return the resource locator for this item provider's resources.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ResourceLocator getResourceLocator() {
-		return HockeyleaguePlugin.INSTANCE;
 	}
 
 }
