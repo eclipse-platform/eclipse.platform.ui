@@ -37,6 +37,9 @@ import org.osgi.util.tracker.ServiceTracker;
  *
  */
 public class WorkbenchApplication implements IApplication {
+	
+	// TODO this is a hack until we can review testing
+	public static Workbench workbench;
 
 	private ServiceTracker instanceLocation;
 	private BundleContext context;
@@ -78,6 +81,7 @@ public class WorkbenchApplication implements IApplication {
 					}
 					IWorkbench wb = workbenchFactory
 							.create(initialWorkbenchDefinitionInstance, appContext);
+					workbench = (Workbench) wb;
 					wb.run();
 				} catch (ThreadDeath th) {
 					throw th;
