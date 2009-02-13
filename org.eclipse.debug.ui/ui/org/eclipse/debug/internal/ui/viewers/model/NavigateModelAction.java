@@ -71,12 +71,12 @@ public class NavigateModelAction extends Action implements ISelectionChangedList
     /**
      * Update class for collecting the model delta to navigate the viewer to.
      */
-    abstract private class TraversalUpdate extends ViewerUpdateMonitor implements IModelNavigateUpdate {
+    abstract private class ModelNavigateUpdate extends ViewerUpdateMonitor implements IModelNavigateUpdate {
     	
         final IModelNavigateProxy fModelTraversalProxy;
         IModelDelta fDelta; 
         
-        TraversalUpdate(IModelNavigateProxy proxy, TreePath path) {
+        ModelNavigateUpdate(IModelNavigateProxy proxy, TreePath path) {
             super((ModelContentProvider)fViewer.getContentProvider(), 
                   fViewer.getInput(), 
                   path, 
@@ -107,7 +107,7 @@ public class NavigateModelAction extends Action implements ISelectionChangedList
         }
 
         TreePath getSchedulingPath() {
-            return null;
+            return getElementPath();
         }
     }
     
@@ -136,7 +136,7 @@ public class NavigateModelAction extends Action implements ISelectionChangedList
         
         // Try traversing in the current model.
         if (selectionProxy instanceof IModelNavigateProxy && !selectionProxy.isDisposed()) {
-            new TraversalUpdate((IModelNavigateProxy)selectionProxy, path) {
+            new ModelNavigateUpdate((IModelNavigateProxy)selectionProxy, path) {
                 protected void performUpdate() {
                     if (fDelta != null) {
                         fViewer.updateViewer(fDelta);
@@ -176,7 +176,7 @@ public class NavigateModelAction extends Action implements ISelectionChangedList
             // We're finished trying to find the next context
             setEnabled(true);
         } else if (proxy instanceof IModelNavigateProxy && !proxy.isDisposed()) { 
-            new TraversalUpdate((IModelNavigateProxy)proxy, TreePath.EMPTY) {
+            new ModelNavigateUpdate((IModelNavigateProxy)proxy, TreePath.EMPTY) {
                 protected void performUpdate() {
                     if (fDelta != null) {
                         fViewer.updateViewer(fDelta);
