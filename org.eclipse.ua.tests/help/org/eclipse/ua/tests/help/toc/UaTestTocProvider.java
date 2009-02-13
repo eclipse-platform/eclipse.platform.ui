@@ -42,7 +42,7 @@ public class UaTestTocProvider extends AbstractTocProvider {
 		}
 
 		public String getLinkTo() {
-			return "data/help/toc/root.xml#generatedContent";
+			return "PLUGINS_ROOT/org.eclipse.ua.tests/data/help/toc/root.xml#generatedContent";
 		}
 
 		public String getLocale() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.help.internal.toc;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
+import org.eclipse.help.internal.util.ProductPreferences;
 
 public class TocContribution implements ITocContribution {
 
@@ -69,7 +70,8 @@ public class TocContribution implements ITocContribution {
 	}
 	
 	public String getLinkTo() {
-		return toc.getLinkTo();
+		String link = toc.getLinkTo();
+		return ProductPreferences.resolveSpecialIdentifiers(link);
 	}
 	
 	public void setLinkTo(String linkTo) {

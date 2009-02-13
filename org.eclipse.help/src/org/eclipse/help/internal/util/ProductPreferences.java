@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -432,5 +432,33 @@ public class ProductPreferences {
 			return true;
 		}
 		return false;
+	}
+
+	/*
+	 * Expand the special identifiers PLUGINS_ROOT and PRODUCT_PLUGIN in a path
+	 */
+	public static String resolveSpecialIdentifiers(String path) {
+		if (path == null) {
+			return null;
+		}
+		int index = path.indexOf("PLUGINS_ROOT"); //$NON-NLS-1$
+		if (index != -1) {
+			path = path.substring(index + "PLUGINS_ROOT".length()); //$NON-NLS-1$
+		}
+		index = path.indexOf('/', 1);
+		if (index != -1) {
+			String bundleName = path.substring(0, index);
+			if ("PRODUCT_PLUGIN".equals(bundleName) || "/PRODUCT_PLUGIN".equals(bundleName)) { //$NON-NLS-1$ //$NON-NLS-2$
+				IProduct product = Platform.getProduct();
+				if (product != null) {
+					Bundle productBundle = product.getDefiningBundle();
+					if (productBundle != null) {
+						bundleName = productBundle.getSymbolicName();
+						return '/' + bundleName + path.substring(index);
+					}
+				}
+			}
+		}
+		return path;
 	}
 }
