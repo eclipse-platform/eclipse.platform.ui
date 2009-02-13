@@ -81,7 +81,24 @@ public class WorkbenchStylingSupport {
 
 		} catch (Throwable e) {
 			System.err.println("Warning - could not initialize CSS styling (but the applicationCSS property has a value) : " + e.toString()); //$NON-NLS-1$
+			initializeNullStyling(appContext);
 		}
+	}
+
+	/**
+	 * For use when there is no real styling engine present.
+	 * Has no behaviour but conforms to IStylingEngine API.
+	 * @param appContext
+	 */
+	static void initializeNullStyling(IEclipseContext appContext) {
+		appContext.set(IStylingEngine.class.getName(),
+				new IStylingEngine() {
+					public void setClassname(Object widget, String classname) {
+					}
+
+					public void setId(Object widget, String id) {
+					}
+				});		
 	}
 
 }

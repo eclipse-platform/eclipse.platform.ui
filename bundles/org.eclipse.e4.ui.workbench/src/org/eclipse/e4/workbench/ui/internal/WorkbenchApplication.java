@@ -78,10 +78,11 @@ public class WorkbenchApplication implements IApplication {
 					IEclipseContext appContext = EclipseContextFactory.create("application", serviceContext, null); //$NON-NLS-1$
 					if (cssURI != null) {
 						WorkbenchStylingSupport.initializeStyling(display, cssURI, appContext);
+					} else {
+						WorkbenchStylingSupport.initializeNullStyling(appContext);
 					}
 					IWorkbench wb = workbenchFactory
 							.create(initialWorkbenchDefinitionInstance, appContext);
-					workbench = (Workbench) wb;
 					wb.run();
 				} catch (ThreadDeath th) {
 					throw th;
