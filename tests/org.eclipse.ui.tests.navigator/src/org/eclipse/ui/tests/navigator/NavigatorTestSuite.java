@@ -36,7 +36,8 @@ public final class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(LabelProviderTest.class));
 		addTest(new TestSuite(SorterTest.class));
 		//addTest(new TestSuite(DnDTest.class));
-		addTest(new TestSuite(PerformanceTest.class));
+		// Does not pass on all platforms see bug 264449
+		//addTest(new TestSuite(PerformanceTest.class));
 	}
 
 }
