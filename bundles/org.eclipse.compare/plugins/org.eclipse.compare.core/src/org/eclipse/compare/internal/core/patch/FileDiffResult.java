@@ -99,9 +99,10 @@ public class FileDiffResult implements IFilePatchResult {
 			// results for display
 			fBeforeLines = new ArrayList(getLines(content, false));
 			fAfterLines = fMatches ? new ArrayList() : fBeforeLines;
-			Hunk[] hunks = fDiff.getHunks();
+			IHunk[] hunks = fDiff.getHunks();
 			for (int i = 0; i < hunks.length; i++) {
-				Hunk hunk = hunks[i];
+				Hunk hunk = (Hunk) hunks[i];
+				hunk.setCharset(charset);
 				HunkResult result = getHunkResult(hunk);
 				result.setMatches(false);
 			}
@@ -114,9 +115,9 @@ public class FileDiffResult implements IFilePatchResult {
 			if (fMatches) {
 				// Check to see if we have at least one hunk that matches
 				fMatches = false;
-				Hunk[] hunks = fDiff.getHunks();
+				IHunk[] hunks = fDiff.getHunks();
 				for (int i = 0; i < hunks.length; i++) {
-					Hunk hunk = hunks[i];
+					Hunk hunk = (Hunk) hunks[i];
 					HunkResult result = getHunkResult(hunk);
 					if (result.isOK()) {
 						fMatches = true;
@@ -157,9 +158,10 @@ public class FileDiffResult implements IFilePatchResult {
 			calculateFuzz(fBeforeLines, monitor);
 		}
 		int shift= 0;
-		Hunk[] hunks = fDiff.getHunks();
+		IHunk[] hunks = fDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
-			Hunk hunk = hunks[i];
+			Hunk hunk = (Hunk) hunks[i];
+			hunk.setCharset(charset);
 			HunkResult result = getHunkResult(hunk);
 			result.setShift(shift);
 			if (result.patch(lines)) {
@@ -226,9 +228,9 @@ public class FileDiffResult implements IFilePatchResult {
 		int shift= 0;
 		int highestFuzz = -1; // the maximum fuzz factor for all hunks
 		String name = getTargetPath() != null ? getTargetPath().lastSegment() : ""; //$NON-NLS-1$
-		Hunk[] hunks = fDiff.getHunks();
+		IHunk[] hunks = fDiff.getHunks();
 		for (int j = 0; j < hunks.length; j++) {
-			Hunk h = hunks[j];
+			Hunk h = (Hunk) hunks[j];
 			monitor.subTask(NLS.bind(Messages.FileDiffResult_3, new String[] {name, Integer.toString(j + 1)}));
 			HunkResult result = getHunkResult(h);
 			result.setShift(shift);
@@ -263,16 +265,6 @@ public class FileDiffResult implements IFilePatchResult {
 				failedHunks.add(result.getHunk());
 		}
 		return failedHunks;
-	}
-	
-	private HunkResult[] getFailedHunkResults() {
-		List failedHunks = new ArrayList();
-		for (Iterator iterator = fHunkResults.values().iterator(); iterator.hasNext();) {
-			HunkResult result = (HunkResult) iterator.next();
-			if (!result.isOK())
-				failedHunks.add(result);
-		}
-		return (HunkResult[]) failedHunks.toArray(new HunkResult[failedHunks.size()]);
 	}
 
 	public FileDiff getDiff() {
@@ -310,13 +302,14 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 
 	public IHunk[] getRejects() {
-		return getFailedHunkResults();
+		List failedHunks = getFailedHunks();
+		return (IHunk[]) failedHunks.toArray(new IHunk[failedHunks.size()]);
 	}
 
 	public boolean hasRejects() {
-		return getFailedHunkResults().length > 0;
+		return getFailedHunks().size() > 0;
 	}
-	
+
 	public static InputStream asInputStream(String contents, String charSet) {
 		byte[] bytes = null;
 		if (charSet != null) {

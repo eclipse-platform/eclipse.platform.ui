@@ -21,6 +21,7 @@ import org.eclipse.compare.internal.core.patch.DiffProject;
 import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.compare.internal.core.patch.PatchReader;
+import org.eclipse.compare.patch.IHunk;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -258,7 +259,7 @@ public class WorkspacePatcher extends Patcher {
 
 	public void retargetDiff(FileDiff diff, IFile file) {
 		retargetedDiffs.put(diff, diff.getPath(false));
-		Hunk[] hunks = diff.getHunks();
+		IHunk[] hunks = diff.getHunks();
 		
 		if (isWorkspacePatch()){
 			//since the diff has no more hunks to apply, remove it from the parent and the patcher
@@ -267,7 +268,7 @@ public class WorkspacePatcher extends Patcher {
 		removeDiff(diff);
 		FileDiff newDiff = getDiffForFile(file);
 		for (int i = 0; i < hunks.length; i++) {
-			Hunk hunk = hunks[i];
+			Hunk hunk = (Hunk) hunks[i];
 			newDiff.add(hunk);
 		}
 	}

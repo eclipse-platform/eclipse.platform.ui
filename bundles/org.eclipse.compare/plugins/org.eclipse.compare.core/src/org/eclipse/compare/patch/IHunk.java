@@ -70,6 +70,11 @@ public interface IHunk {
 	 * @return the name of a charset, or <code>null</code>
 	 * @exception CoreException if an error happens while determining 
 	 * the charset. See any refinements for more information.
+	 * @deprecated This method can be called before the first attempt to apply
+	 *             the hunk when it is impossible to determine the encoding and
+	 *             in this case it always returns null. Please see
+	 *             {@link IFilePatchResult#getCharset()} as a proper way to
+	 *             obtain charset.
 	 */
 	public String getCharset() throws CoreException;
 	

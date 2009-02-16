@@ -21,6 +21,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.internal.core.patch.Hunk;
+import org.eclipse.compare.patch.IHunk;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -717,9 +718,9 @@ public class PreviewPatchPage2 extends WizardPage {
 
 			FileDiff[] fileDiffs = fPatcher.getDiffs();
 			for (int i = 0; i < fileDiffs.length; i++) {
-				Hunk[] hunks = fileDiffs[i].getHunks();
+				IHunk[] hunks = fileDiffs[i].getHunks();
 				for (int j = 0; j < hunks.length; j++) {
-					String[] lines = hunks[j].getLines();
+					String[] lines = ((Hunk) hunks[j]).getLines();
 					for (int k = 0; k < lines.length; k++) {
 						String line = lines[k];
 						if (addedPattern.matcher(line).find())

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,23 +10,26 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.core.patch;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.runtime.Assert;
 
 /**
  * A Hunk describes a range of changed lines and some context lines.
  */
-public class Hunk {
+public class Hunk implements IHunk {
 
 	private FileDiff fParent;
 	private int fOldStart, fOldLength;
 	private int fNewStart, fNewLength;
 	private String[] fLines;
 	private int hunkType;
-	
+	private String charset = null;
+
 	public static Hunk createHunk(FileDiff parent, int[] oldRange, int[] newRange, List lines, boolean hasLineAdditions, boolean hasLineDeletions, boolean hasContextLines) {
 		int oldStart = 0;
 		int oldLength = 0;
@@ -461,4 +464,36 @@ public class Hunk {
 		}
 		return result.toString();
 	}
+
+	public String getLabel() {
+		return getDescription();
+	}
+
+	public int getStartPosition() {
+		return getStart(false);
+	}
+
+	public InputStream getOriginalContents() {
+		String contents = getContents(false, false);
+		return asInputStream(contents);
+	}
+
+	public InputStream getPatchedContents() {
+		String contents = getContents(true, false);
+		return asInputStream(contents);
+	}
+
+	private InputStream asInputStream(String contents) {
+		String charSet = getCharset();
+		return FileDiffResult.asInputStream(contents, charSet);
+	}
+
+	void setCharset(String charset) {
+		this.charset = charset;
+	}
+
+	public String getCharset() {
+		return charset;
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.*;
+import java.io.InputStream;
 
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.DiffImageDescriptor;
+import org.eclipse.compare.internal.ICompareUIConstants;
+import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.IHunk;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
@@ -71,7 +76,7 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 	 * @see org.eclipse.compare.ITypedElement#getName()
 	 */
 	public String getName() {
-		return fHunkResult.getLabel();
+		return fHunkResult.getHunk().getLabel();
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +91,7 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 	 */
 	public InputStream getContents() throws CoreException {
 		String contents = fHunkResult.getContents(fIsAfterState, fFullContext);
-		return fHunkResult.asInputStream(contents);
+		return FileDiffResult.asInputStream(contents, fHunkResult.getCharset());
 	}
 
 	public String getCharset() throws CoreException {

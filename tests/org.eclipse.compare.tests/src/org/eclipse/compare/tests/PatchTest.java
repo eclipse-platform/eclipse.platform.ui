@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,8 @@ import org.eclipse.compare.internal.patch.WorkspacePatcher;
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.compare.patch.IFilePatchResult;
+import org.eclipse.compare.patch.IHunk;
+import org.eclipse.compare.patch.IHunkFilter;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -53,6 +55,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -189,7 +192,38 @@ public class PatchTest extends TestCase {
 	public void testContext3Patch() throws CoreException, IOException {
 		patch("context.txt", "patch_context3.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
+	public void testHunkFilter() throws CoreException, IOException {
+		IStorage patchStorage = new StringStorage("patch_hunkFilter.txt");
+		IStorage expStorage = new StringStorage("context.txt");
+		IFilePatch[] patches = ApplyPatchOperation.parsePatch(patchStorage);
+		assertEquals(1, patches.length);
+		IHunk[] hunks = patches[0].getHunks();
+		assertEquals(5, hunks.length);
+		PatchConfiguration pc = new PatchConfiguration();
+		final IHunk toFilterOut = hunks[3];
+		pc.addHunkFilter(new IHunkFilter() {
+			public boolean select(IHunk hunk) {
+				return hunk != toFilterOut;
+			}
+		});
+		IFilePatchResult result = patches[0].apply(expStorage, pc,
+				new NullProgressMonitor());
+		IHunk[] rejects = result.getRejects();
+		assertEquals(2, rejects.length);
+		boolean aFiltered = pc.getHunkFilters()[0].select(rejects[0]);
+		boolean bFiltered = pc.getHunkFilters()[0].select(rejects[1]);
+		assertTrue((aFiltered && !bFiltered) || (!aFiltered && bFiltered));
+
+		InputStream actual = result.getPatchedContents();
+
+		LineReader lr = new LineReader(getReader("exp_hunkFilter.txt"));
+		List inLines = lr.readLines();
+		String expected = LineReader.createString(false, inLines);
+
+		assertEquals(expected, asString(actual));
+	}
+
 	public void testContext3PatchWithHeader() throws CoreException, IOException {
 		patch("context.txt", "patch_context3_header.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		IStorage patchStorage = new StringStorage("patch_context3_header.txt");

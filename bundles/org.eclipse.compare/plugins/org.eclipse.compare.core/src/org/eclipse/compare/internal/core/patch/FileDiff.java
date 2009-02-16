@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.compare.patch.IFilePatch2;
 import org.eclipse.compare.patch.IFilePatchResult;
+import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.patch.ReaderCreator;
 import org.eclipse.core.runtime.IPath;
@@ -124,8 +125,8 @@ public class FileDiff implements IFilePatch2 {
 	 * Return the hunks associated with this file diff.
 	 * @return the hunks associated with this file diff
 	 */
-	public Hunk[] getHunks() {
-		return (Hunk[]) fHunks.toArray(new Hunk[fHunks.size()]);
+	public IHunk[] getHunks() {
+		return (IHunk[]) fHunks.toArray(new IHunk[fHunks.size()]);
 	}
 	
 	/**

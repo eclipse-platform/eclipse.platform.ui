@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.core.patch;
 
-import java.io.InputStream;
 import java.util.List;
 
-import org.eclipse.compare.patch.IHunk;
+import org.eclipse.compare.patch.IHunkFilter;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-public class HunkResult implements IHunk {
+public class HunkResult {
 
 	private static final boolean DEBUG= false;
 
@@ -249,41 +248,19 @@ public class HunkResult implements IHunk {
 		}
 		return getHunk().getContents(afterState, getConfiguration().isReversed());
 	}
-	
+
 	private boolean isEnabled(PatchConfiguration configuration) {
-		Object property = configuration.getProperty(IHunkFilter.HUNK_FILTER_PROPERTY);
-		if (property instanceof IHunkFilter) {
-			IHunkFilter filter = (IHunkFilter) property;
-			return filter.select(fHunk);
+		IHunkFilter[] filters = configuration.getHunkFilters();
+		for (int i = 0; i < filters.length; i++) {
+			if (!filters[i].select(fHunk)) {
+				return false;
+			}
 		}
 		return true;
 	}
 
 	public void setMatches(boolean matches) {
 		fMatches = matches;
-	}
-
-	public int getStartPosition() {
-		return fHunk.getStart(getConfiguration().isReversed()) + fShift;
-	}
-
-	public String getLabel() {
-		return getHunk().getDescription();
-	}
-
-	public InputStream getOriginalContents() {
-		String contents = getContents(false, false);
-		return asInputStream(contents);
-	}
-
-	public InputStream asInputStream(String contents) {
-		String charSet = getCharset();
-		return FileDiffResult.asInputStream(contents, charSet);
-	}
-
-	public InputStream getPatchedContents() {
-		String contents = getContents(true, false);
-		return asInputStream(contents);
 	}
 
 	public String getCharset() {

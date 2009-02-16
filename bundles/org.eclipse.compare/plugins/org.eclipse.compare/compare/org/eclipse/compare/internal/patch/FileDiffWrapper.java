@@ -13,6 +13,7 @@ package org.eclipse.compare.internal.patch;
 import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.compare.patch.IFilePatchResult;
+import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.patch.ReaderCreator;
 import org.eclipse.core.resources.IStorage;
@@ -69,4 +70,9 @@ public class FileDiffWrapper implements IFilePatch {
 	public IPath getTargetPath(PatchConfiguration configuration) {
 		return fileDiff.getTargetPath(configuration);
 	}
+
+	public IHunk[] getHunks() {
+		return fileDiff.getHunks();
+	}
+
 }

@@ -78,4 +78,13 @@ public interface IFilePatch2 {
 	 * @return milliseconds time value of the after date from the patch
 	 */
 	public long getAfterDate();
+
+	/**
+	 * Returns all the hunks this file patch contains.
+	 * 
+	 * @return array of hunks
+	 * @since org.eclipse.compare.core 1.0
+	 */
+	public IHunk[] getHunks();
+
 }

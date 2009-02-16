@@ -31,8 +31,9 @@ import org.eclipse.compare.internal.core.patch.DiffProject;
 import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.internal.core.patch.Hunk;
-import org.eclipse.compare.internal.core.patch.IHunkFilter;
 import org.eclipse.compare.internal.core.patch.PatchReader;
+import org.eclipse.compare.patch.IHunk;
+import org.eclipse.compare.patch.IHunkFilter;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -90,7 +91,7 @@ public class Patcher implements IHunkFilter {
 	public Patcher() {
 		configuration = new PatchConfiguration();
 		configuration.setProperty(PROP_PATCHER, this);
-		configuration.setProperty(IHunkFilter.HUNK_FILTER_PROPERTY, this);
+		configuration.addHunkFilter(this);
 	}
 	
 	/*
@@ -191,8 +192,8 @@ public class Patcher implements IHunkFilter {
 			int removedLines = 0;
 			FileDiff fileDiff = fileDiffs[i];
 			for (int j = 0; j < fileDiff.getHunkCount(); j++) {
-				Hunk hunk = fileDiff.getHunks()[j];
-				String[] lines = hunk.getLines();
+				IHunk hunk = fileDiff.getHunks()[j];
+				String[] lines = ((Hunk) hunk).getLines();
 				for (int k = 0; k < lines.length; k++) {
 					char c = lines[k].charAt(0);
 					switch (c) {
@@ -516,9 +517,9 @@ public class Patcher implements IHunkFilter {
 	}
 	
 	private void setEnabledFile(FileDiff fileDiff, boolean enabled) {
-		Hunk[] hunks = fileDiff.getHunks();
+		IHunk[] hunks = fileDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
-			setEnabledHunk(hunks[i], enabled);
+			setEnabledHunk((Hunk) hunks[i], enabled);
 		}
 	}
 
@@ -751,7 +752,7 @@ public class Patcher implements IHunkFilter {
 		return false;
 	}
 
-	public boolean select(Hunk hunk) {
+	public boolean select(IHunk hunk) {
 		return isEnabled(hunk);
 	}
 }

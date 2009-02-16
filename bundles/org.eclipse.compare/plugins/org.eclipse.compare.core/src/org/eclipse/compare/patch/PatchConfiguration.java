@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.compare.patch;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A patch configuration allows clients to set parameters that control how a
@@ -28,6 +30,7 @@ public class PatchConfiguration {
 	private boolean fIgnoreWhitespace= false;
 	private boolean fReverse= false;
 	private HashMap properties = new HashMap();
+	private List hunkFilters = new ArrayList();
 
 	/**
 	 * Return whether the patch should be reversed when applied.
@@ -119,4 +122,37 @@ public class PatchConfiguration {
 	public void setProperty(String key, Object value) {
 		properties.put(key, value);
 	}
+
+	/**
+	 * Adds a hunk filter.
+	 * 
+	 * @param filter
+	 * @since org.eclipse.compare.core 1.0
+	 */
+	public void addHunkFilter(IHunkFilter filter) {
+		hunkFilters.add(filter);
+	}
+
+	/**
+	 * Removes a hunk filter.
+	 * 
+	 * @param filter
+	 * @since org.eclipse.compare.core 1.0
+	 */
+	public void removeHunkFilter(IHunkFilter filter) {
+		hunkFilters.remove(filter);
+	}
+
+	/**
+	 * Return an array of hunk filters that have been added to this
+	 * configuration.
+	 * 
+	 * @return
+	 * @since org.eclipse.compare.core 1.0
+	 */
+	public IHunkFilter[] getHunkFilters() {
+		return (IHunkFilter[]) hunkFilters.toArray(new IHunkFilter[hunkFilters
+				.size()]);
+	}
+
 }
