@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,11 +87,12 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * @param element the config element defining the extension
 	 * @param classAttribute the name of the attribute carrying the class
 	 * @return the extension object
+	 * @throws CoreException 
 	 */
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
-		Bundle bundle = Platform.getBundle(element.getNamespace());
+		Bundle bundle = Platform.getBundle(element.getNamespaceIdentifier());
 		if (bundle.getState() == org.osgi.framework.Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		} else {
@@ -156,7 +157,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		
 		// Convert the old compressed folder preference to the new layout preference
 		if (!store.isDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS) && !store.getBoolean(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
-		    // Set the compress folder preference to the defautl true) \
+		    // Set the compress folder preference to the default true) \
 		    // so will will ignore it in the future
 		    store.setToDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS);
 		    // Set the layout to tree (which was used when compress folder was false)
@@ -184,7 +185,15 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Log the given exception along with the provided message and severity indicator
+	 * Log the given exception along with the provided message and severity
+	 * indicator
+	 * 
+	 * @param severity
+	 *            the severity
+	 * @param message
+	 *            a human-readable message, localized to the current locale
+	 * @param e
+	 *            a low-level exception, or <code>null</code> if not applicable
 	 */
 	public static void log(int severity, String message, Throwable e) {
 		log(new Status(severity, ID, 0, message, e));
@@ -245,6 +254,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Register for changes made to Team properties.
+	 * @param listener the listener to register
 	 */
 	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
 		propertyChangeListeners.add(listener);
@@ -252,6 +262,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	
 	/**
 	 * Deregister as a Team property changes.
+	 * @param listener the listener to remove
 	 */
 	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
 		propertyChangeListeners.remove(listener);
@@ -259,6 +270,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	
 	/**
 	 * Broadcast a Team property change.
+	 * @param event the property change event object
 	 */
 	public static void broadcastPropertyChange(PropertyChangeEvent event) {
 		for (Iterator it = propertyChangeListeners.iterator(); it.hasNext();) {
@@ -308,7 +320,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * @return the image
 	 */
 	public static ImageDescriptor getImageDescriptorFromExtension(IExtension extension, String subdirectoryAndFilename) {
-		URL fullPathString = Platform.find(Platform.getBundle(extension.getNamespace()), new Path(subdirectoryAndFilename));
+		URL fullPathString = FileLocator.find(Platform.getBundle(extension.getNamespaceIdentifier()), new Path(subdirectoryAndFilename), null);
 		return ImageDescriptor.createFromURL(fullPathString);
 	}
 	/*
@@ -375,13 +387,14 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	}
 
     private URL getImageUrl(String relative) {
-        return Platform.find(Platform.getBundle(PLUGIN_ID), new Path(ICON_PATH + relative));
+        return FileLocator.find(Platform.getBundle(PLUGIN_ID), new Path(ICON_PATH + relative), null);
     }
 
 	/**
 	 * Returns the standard display to be used. The method first checks, if
 	 * the thread calling this method has an associated display. If so, this
 	 * display is returned. Otherwise the method returns the default display.
+	 * @return the standard display to be used
 	 */
 	public static Display getStandardDisplay() {
 		Display display= Display.getCurrent();
