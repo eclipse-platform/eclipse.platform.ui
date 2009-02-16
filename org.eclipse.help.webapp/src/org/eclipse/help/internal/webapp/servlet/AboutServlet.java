@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,10 @@ public class AboutServlet extends HttpServlet {
 			getAgent(req, resp);
 			return;
 		}
+		if ("preferences".equalsIgnoreCase(showParam)) { //$NON-NLS-1$
+			getPreferences(req, resp);
+			return;
+		}
 		String sortParam = req.getParameter("sortColumn"); //$NON-NLS-1$
 		int sortColumn = 3;
 		if (sortParam != null) {
@@ -126,6 +130,22 @@ public class AboutServlet extends HttpServlet {
 		buf.append(XHTML_3);
 		String response = buf.toString();
 		resp.getWriter().write(response);		
+	}
+
+	private void getPreferences(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		StringBuffer buf = new StringBuffer();
+		buf.append(XHTML_1);
+		String title = WebappResources.getString("preferences", req.getLocale()); //$NON-NLS-1$
+		buf.append(UrlUtil.htmlEncode(title));
+		buf.append(XHTML_2);
+		buf.append("<h1>"); //$NON-NLS-1$
+		buf.append(title);
+		buf.append("</h1>"); //$NON-NLS-1$
+		PreferenceWriter writer = new PreferenceWriter(buf, req.getLocale());
+		writer.writePreferences();
+		buf.append(XHTML_3);
+		String response = buf.toString();
+		resp.getWriter().write(response);	
 	}
 
 	private void getAgent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
