@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,6 +94,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	private IDialogSettings settings;
 	private ExpandableComposite patchOptions;
 	private Button generateRejects;
+	private FormToolkit toolkit;
 		
 	public PreviewPatchPage2(WorkspacePatcher patcher, CompareConfiguration configuration) {
 		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
@@ -112,7 +113,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	}
 
 	public void createControl(Composite parent) {
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		
 		final ScrolledForm form = toolkit.createScrolledForm(parent);
@@ -734,5 +735,8 @@ public class PreviewPatchPage2 extends WizardPage {
 				new String[] { added + "", removed + "" }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-
+	public void dispose() {
+		toolkit.dispose();
+		super.dispose();
+	}
 }
