@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 264307
+ *     Matthew Hall - bugs 195222, 264307, 265064
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -95,15 +95,16 @@ public class BeanSetProperty extends SimpleSetProperty {
 		}
 
 		public void propertyChange(java.beans.PropertyChangeEvent evt) {
-			SetDiff diff;
-			Object oldValue = evt.getOldValue();
-			Object newValue = evt.getNewValue();
-			if (oldValue != null && newValue != null) {
-				diff = Diffs.computeSetDiff(asSet(oldValue), asSet(newValue));
-			} else {
-				diff = null;
-			}
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
+				SetDiff diff;
+				Object oldValue = evt.getOldValue();
+				Object newValue = evt.getNewValue();
+				if (oldValue != null && newValue != null) {
+					diff = Diffs.computeSetDiff(asSet(oldValue),
+							asSet(newValue));
+				} else {
+					diff = null;
+				}
 				listener.handlePropertyChange(new SimplePropertyEvent(evt
 						.getSource(), BeanSetProperty.this, diff));
 			}
