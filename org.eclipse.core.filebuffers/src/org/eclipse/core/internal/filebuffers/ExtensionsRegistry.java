@@ -64,15 +64,6 @@ public class ExtensionsRegistry {
 		}
 
 		/**
-		 * Return the adapted content type.
-		 *
-		 * @return the content type
-		 */
-		public IContentType getContentType() {
-			return fContentType;
-		}
-
-		/**
 		 * Return the id of the adapted content type.
 		 *
 		 * @return the id

@@ -75,20 +75,13 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	private static final class ListItem {
 		final String id;
 		final String name;
-		final String description;
-		final String targetId;
 		final String targetName;
-		final String targetDescription;
-		String stateMask;
 		String modifierKeys= ""; //$NON-NLS-1$
 
-		ListItem(String id, String name, String description, String targetId, String targetName, String targetDescription, String modifierKeys) {
+		ListItem(String id, String name, String targetName, String modifierKeys) {
 			this.id= id;
 			this.name= name;
-			this.description= description;
-			this.targetId= targetId;
 			this.targetName= targetName;
-			this.targetDescription= targetDescription;
 			this.modifierKeys= modifierKeys;
 		}
 	}
@@ -537,8 +530,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			int stateMask= fStore.getInt(desc.getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX);
 			String modifierKeys= getModifierString(stateMask);
 
-			listModelItems.add(new ListItem(
-					desc.getId(), desc.getName(), desc.getDescription(), desc.getTargetId(), target.getName(), target.getDescription(), modifierKeys));
+			listModelItems.add(new ListItem(desc.getId(), desc.getName(), target.getName(), modifierKeys));
 		}
 
 		Comparator comparator= new Comparator() {

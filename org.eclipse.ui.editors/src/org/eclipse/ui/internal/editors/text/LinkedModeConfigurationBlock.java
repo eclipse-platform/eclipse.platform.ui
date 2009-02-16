@@ -25,7 +25,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -76,24 +75,18 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private static final class ListItem {
 		final String label;
-		final Image image;
 		final String colorKey;
 		final String highlightKey;
-		final String overviewRulerKey;
 		final String textStyleKey;
 		final String textKey;
-		final String verticalRulerKey;
 		final List validStyles;
 
-		ListItem(String label, Image image, String colorKey, String textKey, String overviewRulerKey, String highlightKey, String verticalRulerKey, String textStyleKey, List validStyles) {
+		ListItem(String label, String colorKey, String textKey, String highlightKey, String textStyleKey, List validStyles) {
 			this.label= label;
-			this.image= image;
 			this.colorKey= colorKey;
 			this.highlightKey= highlightKey;
-			this.overviewRulerKey= overviewRulerKey;
 			this.textKey= textKey;
 			this.textStyleKey= textStyleKey;
-			this.verticalRulerKey= verticalRulerKey;
 			this.validStyles= validStyles;
 		}
 	}
@@ -193,7 +186,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			if (isLinkedModeAnnotation(info)) {
 				String label= info.getPreferenceLabel();
 				List styles= getStyles(info.getAnnotationType());
-				listModelItems.add(new ListItem(label, null, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey(), styles));
+				listModelItems.add(new ListItem(label, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getHighlightPreferenceKey(), info.getTextStylePreferenceKey(), styles));
 			}
 		}
 

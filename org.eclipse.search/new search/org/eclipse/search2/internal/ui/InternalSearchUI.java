@@ -58,12 +58,10 @@ public class InternalSearchUI {
 	private class SearchJobRecord {
 		public ISearchQuery query;
 		public Job job;
-		public boolean background;
 		public boolean isRunning;
 
-		public SearchJobRecord(ISearchQuery job, boolean bg) {
+		public SearchJobRecord(ISearchQuery job) {
 			this.query= job;
-			this.background= bg;
 			this.isRunning= false;
 			this.job= null;
 		}
@@ -168,7 +166,7 @@ public class InternalSearchUI {
 
 		addQuery(query);
 
-		SearchJobRecord sjr= new SearchJobRecord(query, true);
+		SearchJobRecord sjr= new SearchJobRecord(query);
 		fSearchJobs.put(query, sjr);
 
 		Job job= new InternalSearchJob(sjr);
@@ -204,7 +202,7 @@ public class InternalSearchUI {
 
 		addQuery(query);
 
-		SearchJobRecord sjr= new SearchJobRecord(query, false);
+		SearchJobRecord sjr= new SearchJobRecord(query);
 		fSearchJobs.put(query, sjr);
 
 		if (context == null)

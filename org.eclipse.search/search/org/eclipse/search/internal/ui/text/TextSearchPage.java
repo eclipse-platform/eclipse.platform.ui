@@ -182,21 +182,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		}
 
-		public String getPattern() {
-			return textPattern;
-		}
-
-		public boolean isCaseSensitive() {
-			return isCaseSensitive;
-		}
-
-		public boolean isRegExSearch() {
-			return isRegExSearch;
-		}
-
-		public boolean isStringMatcherPattern() {
-			return !isRegExSearch;
-		}
 	}
 
 	private static class TextSearchPageInput extends TextSearchInput {

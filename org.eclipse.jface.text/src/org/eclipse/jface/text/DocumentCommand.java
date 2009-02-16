@@ -68,15 +68,6 @@ public class DocumentCommand {
 		}
 
 		/**
-		 * Returns the length delta for this command.
-		 *
-		 * @return the length delta for this command
-		 */
-		public int getDeltaLength() {
-			return (fText == null ? 0 : fText.length()) - fLength;
-		}
-
-		/**
 		 * Executes the document command on the specified document.
 		 *
 		 * @param document the document on which to execute the command.
