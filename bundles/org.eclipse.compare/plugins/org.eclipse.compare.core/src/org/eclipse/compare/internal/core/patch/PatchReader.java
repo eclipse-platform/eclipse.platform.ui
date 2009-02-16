@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import org.eclipse.compare.patch.IFilePatch;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.compare.patch.IFilePatch2;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -92,7 +90,7 @@ public class PatchReader {
 		String fileName= null;
 		// no project means this is a single patch,create a placeholder project for now
 		// which will be replaced by the target selected by the user in the preview pane
-		String project= ""; //$NON-NLS-1$
+		String projectName= ""; //$NON-NLS-1$
 		fIsWorkspacePatch= false;
 
 		LineReader lr= new LineReader(reader);
@@ -119,7 +117,7 @@ public class PatchReader {
 				continue; // too short
 
 			if (line.startsWith(PatchReader.MULTIPROJECTPATCH_PROJECT)) {
-				project= line.substring(2).trim();
+				projectName= line.substring(2).trim();
 				continue;
 			}
 
@@ -138,12 +136,11 @@ public class PatchReader {
 				// reset the current project to the newly parsed one, create a new DiffProject
 				// and add it to the array
 				DiffProject diffProject;
-				if (!diffProjects.containsKey(project)) {
-					IProject iproject= ResourcesPlugin.getWorkspace().getRoot().getProject(project);
-					diffProject= new DiffProject(iproject);
-					diffProjects.put(project, diffProject);
+				if (!diffProjects.containsKey(projectName)) {
+					diffProject= new DiffProject(projectName);
+					diffProjects.put(projectName, diffProject);
 				} else {
-					diffProject= (DiffProject) diffProjects.get(project);
+					diffProject= (DiffProject) diffProjects.get(projectName);
 				}
 
 				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName, diffProject);
@@ -574,7 +571,7 @@ public class PatchReader {
 			}
 			// System.err.println("can't parse date: <" + line + ">");
 		}
-		return IFilePatch.DATE_UNKNOWN;
+		return IFilePatch2.DATE_UNKNOWN;
 	}
 	
 	/*

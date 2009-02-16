@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -78,7 +79,7 @@ public class FileDiffResultTest extends WorkspaceTest {
 			assertNotNull(filePatch);
 			assertEquals(1, filePatch.length);
 
-			IFilePatchResult filePatchResult = filePatch[0].apply(null,
+			IFilePatchResult filePatchResult = filePatch[0].apply((IStorage)null,
 					patchConfiguration, nullProgressMonitor);
 			assertTrue(filePatchResult.hasMatches());
 			assertEquals(0, filePatchResult.getRejects().length);

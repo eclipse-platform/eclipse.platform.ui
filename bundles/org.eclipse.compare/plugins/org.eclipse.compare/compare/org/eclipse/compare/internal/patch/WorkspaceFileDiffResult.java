@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
-import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -52,7 +51,6 @@ public class WorkspaceFileDiffResult extends FileDiffResult {
 	}
 	
 	public void refresh() {
-		refresh(getTargetFile(), null);
+		refresh(Utilities.getReaderCreator(getTargetFile()), null);
 	}
-
 }

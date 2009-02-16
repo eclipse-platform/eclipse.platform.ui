@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,25 @@
  *******************************************************************************/
 package org.eclipse.compare.patch;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.PatchReader;
+import org.eclipse.compare.internal.patch.FileDiffWrapper;
 import org.eclipse.compare.internal.patch.PatchWizard;
 import org.eclipse.compare.internal.patch.PatchWizardDialog;
+import org.eclipse.compare.internal.patch.Utilities;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
@@ -76,7 +85,7 @@ public class ApplyPatchOperation implements Runnable {
 	 * @throws CoreException if an error occurs reading the contents from the storage
 	 */
 	public static boolean isPatch(IStorage storage) throws CoreException {
-		return PatchParser.parsePatch(storage).length > 0;
+		return internalParsePatch(storage).length > 0;
 	}
 	
 	/**
@@ -86,7 +95,7 @@ public class ApplyPatchOperation implements Runnable {
 	 * @throws CoreException if an error occurs reading the contents from the storage
 	 */
 	public static IFilePatch[] parsePatch(IStorage storage) throws CoreException {
-		return PatchParser.parsePatch(storage);
+		return internalParsePatch(storage);
 	}
 	
 	/**
@@ -131,7 +140,6 @@ public class ApplyPatchOperation implements Runnable {
 	 * This method must be called from the UI thread.
 	 */
 	public void openWizard() {
-		
 		saveAllEditors();
 		
 		if (saveAllEditors) {
@@ -191,5 +199,31 @@ public class ApplyPatchOperation implements Runnable {
 	public void run() {
 		openWizard();
 	}
+	
+	private static IFilePatch[] internalParsePatch(IStorage storage)
+			throws CoreException {
+		BufferedReader reader = Utilities.createReader(storage);
+		try {
+			PatchReader patchReader = new PatchReader();
+			patchReader.parse(reader);
+			FileDiff[] fileDiffs = patchReader.getAdjustedDiffs();
+
+			IFilePatch[] filePatch = new IFilePatch[fileDiffs.length];
+			for (int i = 0; i < fileDiffs.length; i++) {
+				filePatch[i] = new FileDiffWrapper(fileDiffs[i]);
+			}
+
+			return filePatch;
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR,
+					CompareUIPlugin.PLUGIN_ID, 0, e.getMessage(), e));
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) { // ignored
+			}
+		}
+	}
+
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,96 +13,44 @@ package org.eclipse.compare.internal.core.patch;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.compare.internal.core.Activator;
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.compare.internal.core.ComparePlugin;
+import org.eclipse.compare.patch.ReaderCreator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
 public class LineReader {
 
-	public static BufferedReader createReader(IStorage storage) throws CoreException {
-		String charset = null;
-		if (storage instanceof IEncodedStorage) {
-			IEncodedStorage es = (IEncodedStorage) storage;
-			charset = es.getCharset();
-		}
-		InputStreamReader in = null;
-		if (charset != null) {
-			InputStream contents = storage.getContents();
-			try {
-				in = new InputStreamReader(contents, charset);
-			} catch (UnsupportedEncodingException e) {
-				Activator.log(e);
-				try {
-					contents.close();
-				} catch (IOException e1) {
-					// Ignore
-				}
-			}
-		}
-		if (in == null) {
-			in = new InputStreamReader(storage.getContents());
-		}
-		return new BufferedReader(in);
-	}
-	
 	/*
-	 * Reads the contents from the given file and returns them as
-	 * a List of lines.
+	 * Reads the contents and returns them as a List of lines.
 	 */
-	public static List load(IStorage file, boolean create) {
-		List lines= null;
-		if (!create && file != null && exists(file)) {
+	public static List load(ReaderCreator content, boolean create) {
+		List lines = null;
+		BufferedReader bufferedReader = null;
+		if (!create && content != null) {
 			// read current contents
-			String charset = Utilities.getCharset(file);
-			InputStream is= null;
 			try {
-				is= file.getContents();
-				
-				Reader streamReader= null;
-				try {
-					streamReader= new InputStreamReader(is, charset);
-				} catch (UnsupportedEncodingException x) {
-					// use default encoding
-					streamReader= new InputStreamReader(is);
-				}
-				
-				BufferedReader reader= new BufferedReader(streamReader);
-				lines = readLines(reader);
-			} catch(CoreException ex) {
-				// TODO
-				Activator.log(ex);
+				bufferedReader = new BufferedReader(content.createReader());
+				lines = readLines(bufferedReader);
+			} catch (CoreException ex) {
+				ComparePlugin.log(ex);
 			} finally {
-				if (is != null)
+				if (bufferedReader != null)
 					try {
-						is.close();
-					} catch(IOException ex) {
+						bufferedReader.close();
+					} catch (IOException ex) {
 						// silently ignored
 					}
 			}
 		}
-		
-		if (lines == null)
-			lines= new ArrayList();
-		return lines;
-	}
 
-	private static boolean exists(IStorage file) {
-		if (file instanceof IFile) {
-			return ((IFile) file).exists();
-		}
-		return true;
+		if (lines == null)
+			lines = new ArrayList();
+		return lines;
 	}
 
 	public static List readLines(BufferedReader reader) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.compare.internal.core.Messages;
 import org.eclipse.compare.internal.core.patch.DiffProject;
 import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.internal.core.patch.Hunk;
-import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.compare.internal.core.patch.PatchReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -83,7 +82,7 @@ public class WorkspacePatcher extends Patcher {
 			List list= new ArrayList();
 			for (int j= 0; j < fDiffProjects.length; j++) {
 				DiffProject diffProject= fDiffProjects[j];
-				if (diffProject.getProject().isAccessible())
+				if (Utilities.getProject(diffProject).isAccessible())
 					list.addAll(Arrays.asList(getTargetFiles(diffProject)));
 			}
 			// validate the files for editing
@@ -165,7 +164,7 @@ public class WorkspacePatcher extends Patcher {
 	}
 	
 	private boolean isAccessible(FileDiff diff) {
-		return isEnabled(diff) && diff.getProject().getProject().isAccessible();
+		return isEnabled(diff) && Utilities.getProject(diff.getProject()).isAccessible();
 	}
 
 	/**
@@ -190,7 +189,7 @@ public class WorkspacePatcher extends Patcher {
 		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 		DiffProject project = getProject(diff);
 		if (project != null)
-			return project.getFile(path);
+			return Utilities.getProject(project).getFile(path);
 		return super.getTargetFile(diff);
 	}
 	
@@ -198,7 +197,7 @@ public class WorkspacePatcher extends Patcher {
 		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 		DiffProject project = getProject(diff);
 		if (project != null)
-			return project.getFile(path).getFullPath();
+			return Utilities.getProject(project).getFile(path).getFullPath();
 		return getTarget().getFullPath().append(path);
 	}
 
@@ -207,7 +206,7 @@ public class WorkspacePatcher extends Patcher {
 		IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
 		// Determine the appropriate scheduling rules 
 		for (int i= 0; i < fDiffProjects.length; i++) {
-			IProject tempProject= fDiffProjects[i].getProject();
+			IProject tempProject= Utilities.getProject(fDiffProjects[i]);
 			// The goal here is to lock as little of the workspace as necessary
 			// but still allow the patcher to obtain the locks it needs.
 			// As such, we need to get the modify rules from the rule factory for the .project file. A pessimistic
@@ -281,7 +280,7 @@ public class WorkspacePatcher extends Patcher {
 			IProject project = file.getProject();
 			DiffProject[] diffProjects = getDiffProjects();
 			for (int i = 0; i < diffProjects.length; i++) {
-				if (diffProjects[i].getProject().equals(project)){
+				if (Utilities.getProject(diffProjects[i]).equals(project)){
 					diffProject = diffProjects[i];
 					break;
 				}
@@ -326,7 +325,7 @@ public class WorkspacePatcher extends Patcher {
 
 	private DiffProject addDiffProjectForProject(IProject project) {
 		DiffProject[] diffProjects = getDiffProjects();
-		DiffProject diffProject = new DiffProject(project);
+		DiffProject diffProject = new DiffProject(project.getName());
 		DiffProject[] newProjectArray = new DiffProject[diffProjects.length + 1];
 		System.arraycopy(diffProjects, 0, newProjectArray, 0, diffProjects.length);
 		newProjectArray[diffProjects.length] = diffProject;
@@ -340,7 +339,7 @@ public class WorkspacePatcher extends Patcher {
 	}
 
 	public void retargetProject(DiffProject project, IProject targetProject) {
-		retargetedDiffs.put(project, project.getProject().getFullPath());
+		retargetedDiffs.put(project, Utilities.getProject(project).getFullPath());
 		FileDiff[] diffs = project.getFileDiffs();
 		DiffProject selectedProject = getDiffProject(targetProject);
 		if (selectedProject == null)
@@ -366,7 +365,7 @@ public class WorkspacePatcher extends Patcher {
 			return null;
 		DiffProject[] projects = getDiffProjects();
 		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].getProject().equals(project))
+			if (Utilities.getProject(projects[i]).equals(project))
 				return projects[i];
 		}
 		return null;

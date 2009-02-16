@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.compare.patch.IFilePatch;
+import org.eclipse.compare.patch.IFilePatch2;
 import org.eclipse.compare.patch.IFilePatchResult;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.compare.patch.ReaderCreator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Path;
  * A file diff represents a set of hunks that were associated with the
  * same path in a patch file.
  */
-public class FileDiff implements IFilePatch {
+public class FileDiff implements IFilePatch2 {
 
 	/**
 	 * Difference constant (value 1) indicating one side was added.
@@ -193,11 +193,11 @@ public class FileDiff implements IFilePatch {
 			length= Math.min(length, fNewPath.segmentCount());
 		return length;
 	}
-
-	public IFilePatchResult apply(IStorage contents,
+	
+	public IFilePatchResult apply(ReaderCreator content,
 			PatchConfiguration configuration, IProgressMonitor monitor) {
 		FileDiffResult result = new FileDiffResult(this, configuration);
-		result.refresh(contents, monitor);
+		result.refresh(content, monitor);
 		return result;
 	}
 

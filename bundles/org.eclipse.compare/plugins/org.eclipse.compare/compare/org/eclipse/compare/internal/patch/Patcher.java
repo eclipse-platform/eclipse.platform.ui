@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,7 @@ import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.compare.internal.core.patch.IHunkFilter;
-import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.compare.internal.core.patch.PatchReader;
-import org.eclipse.compare.internal.core.patch.Utilities;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -165,7 +163,7 @@ public class Patcher implements IHunkFilter {
 	//---- parsing patch files
 
 	public void parse(IStorage storage) throws IOException, CoreException {
-		BufferedReader reader = LineReader.createReader(storage);
+		BufferedReader reader = Utilities.createReader(storage);
 		try {
 			parse(reader);
 		} finally {
@@ -731,7 +729,7 @@ public class Patcher implements IHunkFilter {
 	public IProject getTargetProject(FileDiff diff) {
 		DiffProject dp = getProject(diff);
 		if (dp != null)
-			return dp.getProject();
+			return Utilities.getProject(dp);
 		IResource tr = getTarget();
 		if (tr instanceof IWorkspaceRoot) {
 			IWorkspaceRoot root = (IWorkspaceRoot) tr;

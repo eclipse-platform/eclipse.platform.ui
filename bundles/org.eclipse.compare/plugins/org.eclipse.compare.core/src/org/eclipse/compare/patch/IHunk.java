@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.compare.patch;
 
 import java.io.InputStream;
 
-import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -71,7 +70,6 @@ public interface IHunk {
 	 * @return the name of a charset, or <code>null</code>
 	 * @exception CoreException if an error happens while determining 
 	 * the charset. See any refinements for more information.
-	 * @see IEncodedStorage
 	 */
 	public String getCharset() throws CoreException;
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,12 +19,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.compare.internal.core.Activator;
+import org.eclipse.compare.internal.core.ComparePlugin;
 import org.eclipse.compare.internal.core.Messages;
 import org.eclipse.compare.patch.IFilePatchResult;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.compare.patch.ReaderCreator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -63,18 +63,18 @@ public class FileDiffResult implements IFilePatchResult {
 	 * Checks to see:
 	 * 1) if the target file specified in fNewPath exists and is patchable
 	 * 2) which hunks contained by this diff can actually be applied to the file
-	 * @param storage the contents being patched or <code>null</code> for an addition
+	 * @param content the contents being patched or <code>null</code> for an addition
 	 * @param monitor a progress monitor or <code>null</code> if no progress monitoring is desired
 	 */
-	 public void refresh(IStorage storage, IProgressMonitor monitor) {
+	 public void refresh(ReaderCreator content, IProgressMonitor monitor) {
 		fMatches= false;
 		fDiffProblem= false;
 		boolean create= false;
-		charset = Utilities.getCharset(storage);
+		charset = Utilities.getCharset(content);
 		//If this diff is an addition, make sure that it doesn't already exist
-		boolean exists = targetExists(storage);
+		boolean exists = targetExists(content);
 		if (fDiff.getDiffType(getConfiguration().isReversed()) == FileDiff.ADDITION) {
-			if ((!exists || isEmpty(storage)) && canCreateTarget(storage)) {
+			if ((!exists || isEmpty(content)) && canCreateTarget(content)) {
 				fMatches= true;
 			} else {
 				// file already exists
@@ -97,7 +97,7 @@ public class FileDiffResult implements IFilePatchResult {
 			// We couldn't find the target file or the patch is trying to add a
 			// file that already exists but we need to initialize the hunk
 			// results for display
-			fBeforeLines = new ArrayList(getLines(storage, false));
+			fBeforeLines = new ArrayList(getLines(content, false));
 			fAfterLines = fMatches ? new ArrayList() : fBeforeLines;
 			Hunk[] hunks = fDiff.getHunks();
 			for (int i = 0; i < hunks.length; i++) {
@@ -107,7 +107,7 @@ public class FileDiffResult implements IFilePatchResult {
 			}
 		} else {
 			// If this diff has no problems discovered so far, try applying the patch
-			patch(getLines(storage, create), monitor);
+			patch(getLines(content, create), monitor);
 		}
 
 		if (containsProblems()) {
@@ -127,23 +127,23 @@ public class FileDiffResult implements IFilePatchResult {
 		}
 	}
 
-	protected boolean canCreateTarget(IStorage storage) {
+	protected boolean canCreateTarget(ReaderCreator content) {
 		return true;
 	}
 
-	protected boolean targetExists(IStorage storage) {
-		return storage != null;
+	protected boolean targetExists(ReaderCreator content) {
+		return content != null;
 	}
-	
-	protected List getLines(IStorage storage, boolean create) {
-		List lines = LineReader.load(storage, create);
+
+	protected List getLines(ReaderCreator content, boolean create) {
+		List lines = LineReader.load(content, create);
 		return lines;
 	}
-	
-	protected boolean isEmpty(IStorage storage) {
-		if (storage == null)
+
+	protected boolean isEmpty(ReaderCreator content) {
+		if (content == null)
 			return true;
-		return LineReader.load(storage, false).isEmpty();
+		return LineReader.load(content, false).isEmpty();
 	}
 
 	/*
@@ -323,7 +323,7 @@ public class FileDiffResult implements IFilePatchResult {
 			try {
 				bytes = contents.getBytes(charSet);
 			} catch (UnsupportedEncodingException e) {
-				Activator.log(e);
+				ComparePlugin.log(e);
 			}
 		}
 		if (bytes == null) {

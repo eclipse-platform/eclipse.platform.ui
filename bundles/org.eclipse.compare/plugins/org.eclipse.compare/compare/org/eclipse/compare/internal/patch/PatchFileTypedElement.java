@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.core.patch.DiffProject;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
-import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -29,7 +28,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
 
-public class PatchFileTypedElement implements ITypedElement, IEncodedStreamContentAccessor {
+public class PatchFileTypedElement implements ITypedElement,
+		IEncodedStreamContentAccessor {
 
 	private final FileDiffResult result;
 	private final boolean isAfterState;
@@ -45,11 +45,13 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 			// We don't get a target file if the file doesn't exist
 			DiffProject project = result.getDiff().getProject();
 			if (project != null) {
-				file = project.getFile(result.getDiff().getPath(result.getConfiguration().isReversed()));
+				file = Utilities.getProject(project).getFile(
+						result.getDiff().getPath(
+								result.getConfiguration().isReversed()));
 			} else {
 				IResource target = getPatcher().getTarget();
 				if (target instanceof IFile) {
-					file =  (IFile) target;
+					file = (IFile) target;
 				} else if (target instanceof IContainer) {
 					IContainer container = (IContainer) target;
 					file = container.getFile(result.getTargetPath());
@@ -61,20 +63,25 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 			image = CompareUI.getImage(file);
 		}
 		if (result.containsProblems()) {
-			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(result.getConfiguration());
+			LocalResourceManager imageCache = PatchCompareEditorInput
+					.getImageCache(result.getConfiguration());
 			image = HunkTypedElement.getHunkErrorImage(image, imageCache, true);
 		}
 		return image;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.compare.ITypedElement#getName()
 	 */
 	public String getName() {
 		return result.getTargetPath().toString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.compare.ITypedElement#getType()
 	 */
 	public String getType() {
@@ -89,7 +96,8 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 	public InputStream getContents() throws CoreException {
 		// If there are cached contents, use them
 		if (isAfterState && getPatcher().hasCachedContents(result.getDiff()))
-			return new ByteArrayInputStream(getPatcher().getCachedContents(result.getDiff()));
+			return new ByteArrayInputStream(getPatcher().getCachedContents(
+					result.getDiff()));
 		// Otherwise, get the lines from the diff result
 		List lines;
 		if (isAfterState) {
@@ -97,7 +105,8 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 		} else {
 			lines = result.getBeforeLines();
 		}
-		String contents = LineReader.createString(getPatcher().isPreserveLineDelimeters(), lines);
+		String contents = LineReader.createString(getPatcher()
+				.isPreserveLineDelimeters(), lines);
 		String charSet = getCharset();
 		byte[] bytes = null;
 		if (charSet != null) {
