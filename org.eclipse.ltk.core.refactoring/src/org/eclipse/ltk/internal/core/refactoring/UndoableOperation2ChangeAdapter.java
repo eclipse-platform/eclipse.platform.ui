@@ -65,7 +65,6 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 
 	private static class ExecuteResult {
 		boolean changeExecuted;
-		boolean changeExecutionFailed;
 		Change reverseChange;
 		RefactoringStatus validationStatus;
 		public ExecuteResult() {
@@ -317,9 +316,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 						return;
 					}
 					try {
-						result.changeExecutionFailed= true;
 						result.reverseChange= fActiveChange.perform(new SubProgressMonitor(monitor, 9));
-						result.changeExecutionFailed= false;
 						result.changeExecuted= true;
 					} finally {
 						ResourcesPlugin.getWorkspace().checkpoint(false);

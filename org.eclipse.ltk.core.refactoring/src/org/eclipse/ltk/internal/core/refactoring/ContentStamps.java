@@ -45,9 +45,6 @@ public class ContentStamps {
 			fValue= value;
 			fFileStamp= filestamp;
 		}
-		public boolean isFileStamp() {
-			return fKind == FILE;
-		}
 		public boolean isDocumentStamp() {
 			return fKind == DOCUMENT;
 		}

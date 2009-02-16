@@ -94,8 +94,6 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fLabel= new Label(parent, SWT.CENTER | SWT.FLAT);
 			fLabel.setText(RefactoringUIMessages.PreviewWizardPage_no_preview);
 		}
-		public void refresh() {
-		}
 		public Control getControl() {
 			return fLabel;
 		}
