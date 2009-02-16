@@ -57,12 +57,6 @@ public final class Assert {
 			private static final long serialVersionUID= 3689918374733886002L;
 
 			/**
-			 * Constructs a new exception.
-			 */
-			public AssertionFailedException() {
-			}
-
-			/**
 			 * Constructs a new exception with the given message.
 			 *
 			 * @param detail the detailed message
