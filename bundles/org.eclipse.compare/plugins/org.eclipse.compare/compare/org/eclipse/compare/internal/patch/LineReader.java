@@ -81,9 +81,9 @@ public class LineReader {
 	public static List readLines(BufferedReader reader) {
 		List lines;
 		LineReader lr = new LineReader(reader);
-		if (!Platform.WS_CARBON.equals(Platform.getWS())) //$NON-NLS-1$
-			lr.ignoreSingleCR(); // Don't treat single CRs as line feeds to be
-									// consistent with command line patch
+		if (!Platform.WS_CARBON.equals(Platform.getWS()))
+			// Don't treat single CRs as line feeds to be consistent with command line patch
+			lr.ignoreSingleCR(); 
 		lines = lr.readLines();
 		return lines;
 	}

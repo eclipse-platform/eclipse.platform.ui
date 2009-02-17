@@ -94,7 +94,7 @@ public class PatchReader {
 		fIsWorkspacePatch= false;
 
 		LineReader lr= new LineReader(reader);
-		if (!Platform.WS_CARBON.equals(Platform.getWS())) //$NON-NLS-1$
+		if (!Platform.WS_CARBON.equals(Platform.getWS()))
 			lr.ignoreSingleCR(); // Don't treat single CRs as line feeds to be consistent with command line patch
 
 		// Test for our format

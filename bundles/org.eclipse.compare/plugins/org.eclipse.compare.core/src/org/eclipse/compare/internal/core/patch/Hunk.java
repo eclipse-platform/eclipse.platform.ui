@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.compare.patch.IFilePatchResult;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.runtime.Assert;
@@ -430,7 +431,7 @@ public class Hunk implements IHunk {
 			// if the file doesn't exist use a line separator from the patch
 			return fLines[0].substring(LineReader.length(fLines[0]));
 		}
-		return System.getProperty("line.separator");
+		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 
 	/*
@@ -492,6 +493,14 @@ public class Hunk implements IHunk {
 		this.charset = charset;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @deprecated This method can be called before the first attempt to apply
+	 *             the hunk when it is impossible to determine the encoding and
+	 *             in this case it always returns null. Please see
+	 *             {@link IFilePatchResult#getCharset()} as a proper way to
+	 *             obtain charset.
+	 */
 	public String getCharset() {
 		return charset;
 	}
