@@ -77,4 +77,62 @@ public class StyleRuleTest extends TestCase {
 		String colorString = ((CSSPrimitiveValue) value).getStringValue();
 		assertEquals("Verdana", colorString);
 	}
+	
+	public void testTestFontItalic() throws Exception {
+		String css = "Label { font: Arial 12px; font-style: italic }";
+		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSRuleList rules = styleSheet.getCssRules();
+		CSSRule rule = rules.item(0);
+		assertEquals(CSSRule.STYLE_RULE, rule.getType());
+		CSSStyleDeclaration style = ((CSSStyleRule) rule).getStyle();
+		CSSValue value = style.getPropertyCSSValue("font-style");
+		assertTrue(value instanceof CSSPrimitiveValue);
+		String colorString = ((CSSPrimitiveValue) value).getStringValue();
+		assertEquals("italic", colorString);
+	}
+	
+	public void testTestFontBold() throws Exception{
+		String css = "Label { font: Arial 12px; font-style: bold }";
+		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSRuleList rules = styleSheet.getCssRules();
+		CSSRule rule = rules.item(0);
+		assertEquals(CSSRule.STYLE_RULE, rule.getType());
+		CSSStyleDeclaration style = ((CSSStyleRule) rule).getStyle();
+		CSSValue value = style.getPropertyCSSValue("font-style");
+		assertTrue(value instanceof CSSPrimitiveValue);
+		String colorString = ((CSSPrimitiveValue) value).getStringValue();
+		assertEquals("bold", colorString);
+	}
+	
+	
+	public void testBackgroundNameColor() throws Exception{
+		String css = "Label { background-color: green }";
+		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSRuleList rules = styleSheet.getCssRules();
+		CSSRule rule = rules.item(0);
+		assertEquals(CSSRule.STYLE_RULE, rule.getType());
+		CSSStyleDeclaration style = ((CSSStyleRule) rule).getStyle();
+		CSSValue value = style.getPropertyCSSValue("background-color");
+		assertTrue(value instanceof CSSPrimitiveValue);
+		String colorString = ((CSSPrimitiveValue) value).getStringValue();
+		assertEquals("green", colorString);
+	}
+	
+	public void testBackgroundHexColor() throws Exception {
+		String css = "Label { background-color: #FF0220 }";
+		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSRuleList rules = styleSheet.getCssRules();
+		CSSRule rule = rules.item(0);
+		assertEquals(CSSRule.STYLE_RULE, rule.getType());
+		CSSStyleDeclaration style = ((CSSStyleRule) rule).getStyle();
+		CSSValue value = style.getPropertyCSSValue("background-color");
+		assertTrue(value instanceof CSSPrimitiveValue);
+		RGBColor colorValue = ((CSSPrimitiveValue) value).getRGBColorValue();
+		assertEquals(255.0f, colorValue.getRed().getFloatValue(
+				CSSPrimitiveValue.CSS_NUMBER), 0f);
+		assertEquals(2.0f, colorValue.getGreen().getFloatValue(
+				CSSPrimitiveValue.CSS_NUMBER), 0f);
+		assertEquals(32.0f, colorValue.getBlue().getFloatValue(
+				CSSPrimitiveValue.CSS_NUMBER), 0f);
+	}
 }
