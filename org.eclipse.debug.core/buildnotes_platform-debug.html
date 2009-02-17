@@ -14,8 +14,8 @@
 <h3>Breakpoint Import Participants</h3>
 The breakpoints framework has been further enhanced to support breakpoint import
 participants, which allows contributors to participate in the importing process
-for any given breakpoint type. Participants can contribute in the decision of whether 
-a breakpoint should be imported and in the verification process once a breakpoint has 
+for any given breakpoint type. Participants can contribute in the decision of whether
+a breakpoint should be imported and in the verification process once a breakpoint has
 been imported.
 <p>The API to support this feature includes:</p>
 <ul>
@@ -35,32 +35,32 @@ been imported.
 </ul>
 
 <h3>Breakpoints</h3>
-The breakpoints framework has been enhanced to support different breakpoint 
-types to be created within the same part.  This effectively allows different 
-debuggers to share a common editor and views where breakpoints are created. 
-Debuggers can also use this mechanism to let users quickly change what 
-breakpoint type is created by default (e.g.: software, hardware, 
-thread-filtered, etc.). 
+The breakpoints framework has been enhanced to support different breakpoint
+types to be created within the same part.  This effectively allows different
+debuggers to share a common editor and views where breakpoints are created.
+Debuggers can also use this mechanism to let users quickly change what
+breakpoint type is created by default (e.g.: software, hardware,
+thread-filtered, etc.).
 <p>The API to support this feature includes: </p>
 <ul>
-  <li><b><code>org.eclipse.debug.ui.toggleBreakpointsTargetFactories</code> 
-      extension point</b> - Allows a debugger to register a factory of 
+  <li><b><code>org.eclipse.debug.ui.toggleBreakpointsTargetFactories</code>
+      extension point</b> - Allows a debugger to register a factory of
       <code>IToggleBreakpointsTarget</code> adapters, which are used by toggle
       breakpoint actions to create breakpoints.
   </li>
-  <li><b><code>IToggleBreakpointsTargetFactory</code> interface</b> - Factory API 
+  <li><b><code>IToggleBreakpointsTargetFactory</code> interface</b> - Factory API
   	  for IToggleBreakpointTarget adapters to be implemented by debuggers.
   </li>
-  <li><b><code>RulerBreakpointTypesActionDelegate</code> action</b> - Editor gutter 
-      action to select the active breakpoint types. 
+  <li><b><code>RulerBreakpointTypesActionDelegate</code> action</b> - Editor gutter
+      action to select the active breakpoint types.
   </li>
 </ul>
 
 <h3>ILaunchConfiguration.getLocation() can return null</h3>
 <p><strong>What is affected:</strong> Clients that call ILaunchConfiguration.getLocation()</p>
-<p><strong>Description:</strong> In release 3.4 and earlier, ILaunchConfiguration.getLocation() was not specified 
+<p><strong>Description:</strong> In release 3.4 and earlier, ILaunchConfiguration.getLocation() was not specified
 to return <code>null</code>. Since 3.5, launch configuration infrastructure has been enhanced to support storage
-on external file systems (EFS). The #getLocation() method returns a location in the local file system - however, since 
+on external file systems (EFS). The #getLocation() method returns a location in the local file system - however, since
 an external file system may not map to a local location, <code>null</code> can now be returned. </p>
 <p><strong>Action required:</strong> Clients that call ILaunchConfiguration.getLocation() should update
 code to handle a <code>null</code> result. The #getLocation() method has been deprecated since the return
@@ -72,7 +72,7 @@ value is no longer reliable.</p>
 <p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
 
 <h3>debugContext evaluation variable</h3>
-<p><strong>What is affected:</strong> 
+<p><strong>What is affected:</strong>
 <ul>
   <li>Evaluation service variable addition: <code>debugContext</code> </li>
   <li>Method addition: <code>DebugUITools.getDebugContextForEvent(EvalutationEvent)</code> </li>
@@ -84,7 +84,7 @@ value is no longer reliable.</p>
 <p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
 
 <h3>Detail pane selection provider</h3>
-<p><strong>What is affected:</strong> 
+<p><strong>What is affected:</strong>
 <ul>
   <li>Interface addition: <code>IDetailPane2</code> </li>
   <li>Interface addition: <code>IDetailPaneContainer2</code> </li>
@@ -93,6 +93,14 @@ value is no longer reliable.</p>
 <p><strong>Description:</strong>The original detail pane design does not allow a detail pane implementation to properly supply a selection provider for a view (see <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=254442">bug 254442</a>).  These addition allows a detail pane to overcome this limitation.</p>
 <p><strong>Action required:</strong>This is a backwards compatible change, so no action is required.  However, detail pane implementations which need to drive the active view selection, should implement the new <code>IDetailPane2</code> interface.</p>
 <p>&nbsp;  </p>
+
+<h2>February 10, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=262261">262261</a>: Bug 262261 &ndash; [breadcrumb] Add actions to Debug view to switch between tree view, breadcrumb, or automatic modes.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=262262">262262</a>: Bug 262262 &ndash; [breadcrumb] Add actions to quickly switch between contexts in Debug view.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=262870">262870</a>: Bug 262870 &ndash; [breadcrumb] When debug view is activated no item has focus.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=262837">262837</a>: Bug 262837 &ndash; No more handle exception when working in Debug Perspective<br>
+
 
 <h2>February 10, 2009</h2>
 <h3>Problem Reports Fixed</h3>
