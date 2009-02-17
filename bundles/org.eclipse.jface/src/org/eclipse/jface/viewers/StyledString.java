@@ -356,9 +356,10 @@ public class StyledString {
 		}
 		final StyleRun lastRun= getLastRun();
 		if (lastRun == null || lastRun.offset <= offset) {
+			Styler lastStyler = lastRun == null ? null : lastRun.style;
 			appendStyleRun(styler, offset);
 			if (offset + length != fBuffer.length()) {
-				appendStyleRun(lastRun == null ? null : lastRun.style, offset + length);
+				appendStyleRun(lastStyler, offset + length);
 			}
 			return;
 		}

@@ -476,6 +476,27 @@ public class StyledStringBuilderTest extends TestCase {
 		assertEquals(styleRanges[1], STYLER2, str1.length() + 1, str2.length());
 		assertEquals(styleRanges[2], STYLER1, str1.length() + str2.length() + 1, str3.length() - 1);
 	}
+	
+	public void testSetStyleInsert2() {
+		
+		String str1= "one";
+		String str2= "two";
+		
+		String res= str1 + str2;
+		
+		StyledString styledString= new StyledString(res);
+		
+		styledString.setStyle(0, str1.length(), STYLER1);
+		styledString.setStyle(str1.length(), 1, STYLER1);
+		
+		assertEquals(res.length(), styledString.length());
+		assertEquals(res, styledString.getString());
+		
+		StyleRange[] styleRanges= styledString.getStyleRanges();
+		assertEquals(1, styleRanges.length);
+		
+		assertEquals(styleRanges[0], STYLER1, 0, str1.length() + 1);
+	}
 
 	public void testSetStyle7() {
 		
