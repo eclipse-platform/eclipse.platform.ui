@@ -35,14 +35,11 @@ public class ActionPresentation {
     private HashMap invisibleBars = new HashMap(3);
 
     private class SetRec {
-        public SetRec(IActionSetDescriptor desc, IActionSet set,
+        public SetRec(IActionSet set,
                 SubActionBars bars) {
-            this.desc = desc;
             this.set = set;
             this.bars = bars;
         }
-
-        public IActionSetDescriptor desc;
 
         public IActionSet set;
 
@@ -118,7 +115,7 @@ public class ActionPresentation {
                     IActionSet set = rec.set;
                     SubActionBars bars = rec.bars;
                     if (bars != null) {
-                        SetRec invisibleRec = new SetRec(desc, set, bars);
+                        SetRec invisibleRec = new SetRec(set, bars);
                         invisibleBars.put(desc, invisibleRec);
                         bars.deactivate();
                     }
@@ -150,7 +147,7 @@ public class ActionPresentation {
 								.getActionBars(), window,
 								(IActionBarConfigurer2) window.getWindowConfigurer()
 										.getActionBarConfigurer(), desc.getId());
-                        rec = new SetRec(desc, set, bars);
+                        rec = new SetRec(set, bars);
                         set.init(window, bars);
                         sets.add(set);
 

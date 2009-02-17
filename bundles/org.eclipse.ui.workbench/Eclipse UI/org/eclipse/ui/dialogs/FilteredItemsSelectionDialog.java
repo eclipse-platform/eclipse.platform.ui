@@ -1628,15 +1628,6 @@ public abstract class FilteredItemsSelectionDialog extends
 			setOwnerDrawEnabled(showColoredLabels() && provider instanceof IStyledLabelProvider);
 		}
 
-		/**
-		 * Gets the label provider.
-		 * 
-		 * @return the label provider for items in the list
-		 */
-		public ILabelProvider getProvider() {
-			return provider;
-		}
-
 		private Image getImage(Object element) {
 			if (element instanceof ItemsListSeparator) {
 				return WorkbenchImages
@@ -2629,16 +2620,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * to be left intact.
 		 */
 		private boolean reset;
-
-		/**
-		 * Creates new instance of <code>ContentProvider</code>.
-		 * 
-		 * @param selectionHistory
-		 */
-		public ContentProvider(SelectionHistory selectionHistory) {
-			this();
-			this.selectionHistory = selectionHistory;
-		}
 
 		/**
 		 * Creates new instance of <code>ContentProvider</code>.

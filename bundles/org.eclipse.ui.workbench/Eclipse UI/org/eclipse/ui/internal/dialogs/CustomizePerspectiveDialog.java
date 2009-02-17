@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -443,21 +443,14 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @since 3.5
 	 */
 	private class Category extends TreeItem {
-		/** The logic item represented */
-		private Object data;
 
 		/** ShortcutItems which are contributed in this Category */
 		private List contributionItems;
 
-		public Category(String label, Object data) {
+		public Category(String label) {
 			treeManager.super(label == null ? null : DialogUtil
 					.removeAccel(removeShortcut(label)));
-			this.data = data;
 			this.contributionItems = new ArrayList();
-		}
-
-		public Object getData() {
-			return data;
 		}
 
 		public List getContributionItems() {
@@ -1127,10 +1120,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		public FilteredTreeCheckProvider(ITreeContentProvider contentProvider,
 				ViewerFilter filter) {
 			this.contentProvider = contentProvider;
-			this.filter = filter;
-		}
-
-		public void setFilter(ViewerFilter filter) {
 			this.filter = filter;
 		}
 
@@ -2503,7 +2492,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private void initializeNewWizardsMenu(DisplayItem menu,
 			Category parentCategory, IWizardCategory element, List activeIds) {
-		Category category = new Category(element.getLabel(), element.getId());
+		Category category = new Category(element.getLabel());
 		parentCategory.addChild(category);
 
 		Object[] wizards = element.getWizards();
@@ -2529,7 +2518,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private void initializeNewWizardsMenu(DisplayItem menu) {
 		Category rootForNewWizards = new Category(
-				WorkbenchMessages.ActionSetDialogInput_wizardCategory, null);
+				WorkbenchMessages.ActionSetDialogInput_wizardCategory);
 		shortcuts.addChild(rootForNewWizards);
 
 		IWizardCategory wizardCollection = WorkbenchPlugin.getDefault()
@@ -2550,8 +2539,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private void initializePerspectivesMenu(DisplayItem menu) {
 		Category rootForPerspectives = new Category(
-				WorkbenchMessages.ActionSetDialogInput_perspectiveCategory,
-				null);
+				WorkbenchMessages.ActionSetDialogInput_perspectiveCategory);
 		shortcuts.addChild(rootForPerspectives);
 
 		IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault()
@@ -2579,7 +2567,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private void initializeViewsMenu(DisplayItem menu) {
 		Category rootForViews = new Category(
-				WorkbenchMessages.ActionSetDialogInput_viewCategory, null);
+				WorkbenchMessages.ActionSetDialogInput_viewCategory);
 
 		shortcuts.addChild(rootForViews);
 
@@ -2594,7 +2582,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				continue;
 			}
 
-			Category viewCategory = new Category(category.getLabel(), category);
+			Category viewCategory = new Category(category.getLabel());
 			rootForViews.addChild(viewCategory);
 
 			IViewDescriptor[] views = category.getViews();
@@ -2678,7 +2666,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		customizeActionBars.menuManager.updateAll(true);
 		customizeActionBars.coolBarManager.update(true);
 
-		shortcuts = new Category("", null); //$NON-NLS-1$
+		shortcuts = new Category(""); //$NON-NLS-1$
 		toolBarItems = createToolBarStructure(cb);
 		menuItems = createMenuStructure(menu);
 	}

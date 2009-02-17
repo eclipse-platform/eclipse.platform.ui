@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,15 +80,12 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 
 		IUndoableOperation operation;
 
-		IOperationHistory history;
-
 		IAdaptable uiInfo;
 
 		StatusReportingRunnable(IUndoableOperation operation,
 				IOperationHistory history, IAdaptable uiInfo, int doing) {
 			super();
 			this.operation = operation;
-			this.history = history;
 			this.doing = doing;
 			this.uiInfo = uiInfo;
 		}

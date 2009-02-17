@@ -4224,16 +4224,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
         /*
-         * Return the active part. Filter fast views.
-         */
-        IWorkbenchPart getActive() {
-            if (parts.isEmpty()) {
-				return null;
-			}
-            return getActive(parts.size() - 1);
-        }
-
-        /*
          * Return the previously active part. Filter fast views.
          */
         IWorkbenchPart getPreviouslyActive() {
@@ -4316,18 +4306,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
         /*
-         * Retuns the index of the part within the activation list. The higher
-         * the index, the more recently it was used.
-         */
-        int indexOf(IWorkbenchPart part) {
-        	IWorkbenchPartReference ref = getReference(part);
-        	if (ref == null) {
-        		return -1;
-        	}
-            return parts.indexOf(ref);
-        }
-
-        /*
          * Returns the index of the part reference within the activation list.  
          * The higher the index, the more recent it was used.
          */
@@ -4382,19 +4360,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             IWorkbenchPartReference[] result = new IWorkbenchPartReference[resultList
                     .size()];
             return (IWorkbenchPartReference[]) resultList.toArray(result);
-        }
-
-        /*
-         * Returns the topmost editor on the stack, or null if none.
-         */
-        IEditorPart getTopEditor() {
-            IEditorReference editor = (IEditorReference)getActiveReference(parts.size() - 1, true);
-            
-            if (editor == null) {
-                return null;
-            }
-            
-            return editor.getEditor(true);
         }
     }
 

@@ -52,14 +52,9 @@ public class WorkbenchLayout extends Layout {
 	 */
 	private class TrimLine {
 		/**
-		 * Teh list of controls in this trim line
+		 * The list of controls in this trim line
 		 */
 		List controls = new ArrayList();
-
-		/**
-		 * A cache of the previously computed sizes of each trim control
-		 */
-		List computedSizes = new ArrayList();
 
 		/**
 		 * In horizontal terms this is the 'height' of the tallest control.

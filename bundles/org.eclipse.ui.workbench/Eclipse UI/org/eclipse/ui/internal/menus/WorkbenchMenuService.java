@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,21 +198,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			}
 		}
 		
-		public List getItemsForFactory(AbstractContributionFactory factory) {
-			ContributionRoot items =(ContributionRoot) factoryToItems.get(factory);
-			if (items == null)
-				return new ArrayList();
-			
-			return items.getItems();
-		}
-
-		/**
-		 * Removes all the cached info for the given manager.
-		 */
-		public void clearCaches() {
-			factoryToItems.clear();
-		}
-
 		/**
 		 * Delegates back to the workbench to remove -all- the contributions
 		 * associated with this contribution manager

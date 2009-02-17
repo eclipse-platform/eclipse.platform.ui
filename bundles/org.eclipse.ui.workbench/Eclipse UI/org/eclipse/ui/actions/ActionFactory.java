@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import java.util.Map;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
@@ -36,7 +35,6 @@ import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.actions.DynamicHelpAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
-import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -81,11 +79,6 @@ public abstract class ActionFactory {
 		public WorkbenchCommandAction(String commandIdIn,
 				IWorkbenchWindow window) {
 			super(window, commandIdIn);
-		}
-		
-		public WorkbenchCommandAction(String commandIdIn, Map parameterMap,
-				IServiceLocator serviceLocator) {
-			super(serviceLocator, commandIdIn, parameterMap);
 		}
 	}
 

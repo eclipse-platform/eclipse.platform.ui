@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.ui.internal.ObjectContributorManager;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 
@@ -42,32 +41,12 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
 		CategorizedPageNode parent;
 
-		String qualifiedName;
-
 		CategorizedPageNode(RegistryPageContributor page) {
 			contributor = page;
 		}
 
 		void setParent(CategorizedPageNode node) {
 			parent = node;
-		}
-
-		String getQualifiedName() {
-
-			if (qualifiedName == null) {
-				if (parent == null) {
-					qualifiedName = contributor.getPageName();
-				} else {
-					StringBuffer nameBuffer = new StringBuffer();
-					nameBuffer.append(parent.getQualifiedName());
-					nameBuffer
-							.append(WorkbenchPlugin.PREFERENCE_PAGE_CATEGORY_SEPARATOR);
-					nameBuffer.append(contributor.getPageName());
-					qualifiedName = nameBuffer.toString();
-				}
-			}
-			return qualifiedName;
-
 		}
 
 	}

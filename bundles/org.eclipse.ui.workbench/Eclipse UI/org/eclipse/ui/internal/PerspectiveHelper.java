@@ -179,10 +179,6 @@ public class PerspectiveHelper {
     }
 
     private class MatchingPart implements Comparable {
-        String pid;
-
-        String sid;
-
         LayoutPart part;
 
         boolean hasWildcard;
@@ -190,8 +186,6 @@ public class PerspectiveHelper {
         int len;
 
         MatchingPart(String pid, String sid, LayoutPart part) {
-            this.pid = pid;
-            this.sid = sid;
             this.part = part;
             this.len = (pid == null ? 0 : pid.length())
                     + (sid == null ? 0 : sid.length());
