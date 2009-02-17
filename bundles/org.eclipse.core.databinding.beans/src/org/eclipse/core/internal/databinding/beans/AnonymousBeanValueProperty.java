@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
- *     Matthew Hall - bug 264307
+ *     Matthew Hall - bugs 264307, 264619
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -17,6 +17,8 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 
@@ -40,7 +42,10 @@ public class AnonymousBeanValueProperty extends DelegatingValueProperty {
 	}
 
 	protected IValueProperty doGetDelegate(Object source) {
-		Class beanClass = source.getClass();
+		return getClassDelegate(source.getClass());
+	}
+
+	private IValueProperty getClassDelegate(Class beanClass) {
 		if (delegates.containsKey(beanClass))
 			return (IValueProperty) delegates.get(beanClass);
 
@@ -53,6 +58,19 @@ public class AnonymousBeanValueProperty extends DelegatingValueProperty {
 		}
 		delegates.put(beanClass, delegate);
 		return delegate;
+	}
+
+	public IObservableValue observeDetail(IObservableValue master) {
+		return MasterDetailObservables.detailValue(master, valueFactory(master
+				.getRealm()), inferValueType(master.getValueType()));
+	}
+
+	private Object inferValueType(Object masterObservableValueType) {
+		if (masterObservableValueType instanceof Class) {
+			return getClassDelegate((Class) masterObservableValueType)
+					.getValueType();
+		}
+		return null;
 	}
 
 	public String toString() {

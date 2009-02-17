@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 221351, 256150
+ *     Matthew Hall - bugs 221351, 256150, 264619
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -31,6 +31,7 @@ public class Bean implements IBean {
 	protected List list;
 	protected Set set;
 	protected Map map;
+	protected Bean bean;
 
 	public Bean() {
 	}
@@ -53,6 +54,10 @@ public class Bean implements IBean {
 
 	public Bean(Map map) {
 		this.map = map;
+	}
+
+	public Bean(Bean bean) {
+		this.bean = bean;
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -103,6 +108,14 @@ public class Bean implements IBean {
 
 	public void setMap(Map map) {
 		changeSupport.firePropertyChange("map", this.map, this.map = map);
+	}
+
+	public Bean getBean() {
+		return bean;
+	}
+
+	public void setBean(Bean bean) {
+		changeSupport.firePropertyChange("bean", this.bean, this.bean = bean);
 	}
 
 	public boolean hasListeners(String propertyName) {
