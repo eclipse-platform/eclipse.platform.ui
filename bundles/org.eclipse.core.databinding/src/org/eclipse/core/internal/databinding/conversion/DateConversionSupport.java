@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Copyright (C) 2005 db4objects Inc.  http://www.db4o.com
  *
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +9,8 @@
  * Contributors:
  *     db4objects - Initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
- */
+ *     Matthew Hall - bug 121110
+ ******************************************************************************/
 package org.eclipse.core.internal.databinding.conversion;
 
 import java.text.ParsePosition;
@@ -99,6 +100,8 @@ public abstract class DateConversionSupport {
 	}
 
 	protected String format(Date date,int formatterIdx) {
+		if (date == null)
+			return null;
 		if(formatterIdx>=0) {
 			return formatters[formatterIdx].format(date);
 		}

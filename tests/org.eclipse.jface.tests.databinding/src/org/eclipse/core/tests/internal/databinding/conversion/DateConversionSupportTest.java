@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 121110
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.conversion;
+
+import java.util.Date;
 
 import junit.framework.TestCase;
 
@@ -43,9 +46,18 @@ public class DateConversionSupportTest extends TestCase {
 		assertEquals(format, dateFormat.toPattern());
 	}
 	
+	public void testFormat_NullDate() {
+		StubConverter stub = new StubConverter();
+		assertNull(stub.format(null));
+	}
+	
 	static class StubConverter extends DateConversionSupport {
 		protected DateFormat getDateFormat(int index) {
 			return super.getDateFormat(index);
+		}
+		
+		protected String format(Date date) {
+			return super.format(date);
 		}
 	}
 }
