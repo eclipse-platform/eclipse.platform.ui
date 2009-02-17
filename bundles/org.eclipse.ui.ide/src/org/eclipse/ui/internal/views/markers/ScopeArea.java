@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -149,31 +150,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 		}
 
 		/**
-		 * Opens the working set selection dialog.
-		 */
-		void selectPressed() {
-			IWorkingSetSelectionDialog dialog = PlatformUI.getWorkbench()
-					.getWorkingSetManager().createWorkingSetSelectionDialog(
-							button.getShell(), false);
-			IWorkingSet workingSet = getWorkingSet();
-
-			if (workingSet != null) {
-				dialog.setSelection(new IWorkingSet[] { workingSet });
-			}
-			if (dialog.open() == Window.OK) {
-				IWorkingSet[] result = dialog.getSelection();
-				if (result != null && result.length > 0) {
-					setWorkingSet(result[0]);
-				} else {
-					setWorkingSet(null);
-				}
-				if (getSelection() == false) {
-					setSelection(true);
-				}
-			}
-		}
-
-		/**
 		 * Sets the specified working set.
 		 * 
 		 * @param workingSet
@@ -188,11 +164,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 			} else {
 				button.setText(MarkerMessages.filtersDialog_noWorkingSet);
 			}
-		}
-
-		void setEnabled(boolean enabled) {
-			button.setEnabled(enabled);
-			selectButton.setEnabled(enabled);
 		}
 
 		/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,13 +276,6 @@ public class CommonFiltersTab extends CustomizationTab {
 				return false;
 			}
 			return matcher == null || matcher.match(input);
-		}
-
-		protected boolean match(TableItem tableItem) {
-			if (tableItem == null || tableItem.getData() == null) {
-				return false;
-			}
-			return match(filterLabelProvider.getText(tableItem.getData()));
 		}
 	}
  

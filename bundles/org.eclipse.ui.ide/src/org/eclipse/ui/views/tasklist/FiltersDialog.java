@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,33 @@
 
 package org.eclipse.ui.views.tasklist;
 
-import com.ibm.icu.text.Collator; 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.ibm.icu.text.Collator;
+
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -29,24 +50,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
@@ -65,12 +69,9 @@ class FiltersDialog extends TrayDialog {
 
         private String text;
 
-        private Image image;
-
-        EnumValue(int value, String text, Image image) {
+        EnumValue(int value, String text) {
             this.value = value;
             this.text = text;
-            this.image = image;
         }
 
         int getValue() {
@@ -79,10 +80,6 @@ class FiltersDialog extends TrayDialog {
 
         String getText() {
             return text;
-        }
-
-        Image getImage() {
-            return image;
         }
     }
 
@@ -132,10 +129,6 @@ class FiltersDialog extends TrayDialog {
                 valueButton.setText(values[i].getText());
                 valueButtons[i] = valueButton;
             }
-        }
-
-        boolean getEnabled() {
-            return enableButton.getEnabled();
         }
 
         void setEnabled(boolean enabled) {
@@ -211,7 +204,7 @@ class FiltersDialog extends TrayDialog {
     }
 
     /**
-     * Creates and manages a group of widgets for selecting a working 
+     * Creates and manages a group of widgets for selecting a working
      * set task filter.
      */
     private class WorkingSetGroup {
@@ -239,22 +232,21 @@ class FiltersDialog extends TrayDialog {
             createButton(composite, SELECT_ID, TaskListMessages.TaskList_workingSetSelect, false);
         }
 
-        /**
-         * Returns wether or not a working set filter should be used
-         * 
-         * @return 
-         * 	true=a working set filter should be used
-         * 	false=a working set filter should not be used
-         */
+		/**
+		 * Returns whether or not a working set filter should be used
+		 * 
+		 * @return true=a working set filter should be used false=a working set filter should not be
+		 *         used
+		 */
         boolean getSelection() {
             return button.getSelection();
         }
 
         /**
-         * Returns the selected working set filter or null if none 
+         * Returns the selected working set filter or null if none
          * is selected.
          * 
-         * @return the selected working set filter or null if none 
+         * @return the selected working set filter or null if none
          * 	is selected.
          */
         IWorkingSet getWorkingSet() {
@@ -305,7 +297,7 @@ class FiltersDialog extends TrayDialog {
         /**
          * Sets the specified working set.
          * 
-         * @param workingSet the working set 
+         * @param workingSet the working set
          */
         void setWorkingSet(IWorkingSet workingSet) {
             button.setData(workingSet);
@@ -420,11 +412,11 @@ class FiltersDialog extends TrayDialog {
         composite.setFont(parent.getFont());
 
         String[] filters = {
-                TaskListMessages.TaskList_contains, TaskListMessages.TaskList_doesNotContain }; 
-        descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages.TaskList_whereDescription, filters, "", 200);//$NON-NLS-1$ 
-        severityGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_severity_label, severityType); 
-        priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_priority_label, priorityType); 
-        completionGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_status_label, completionType); 
+                TaskListMessages.TaskList_contains, TaskListMessages.TaskList_doesNotContain };
+        descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages.TaskList_whereDescription, filters, "", 200);//$NON-NLS-1$
+        severityGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_severity_label, severityType);
+        priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_priority_label, priorityType);
+        completionGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_status_label, completionType);
     }
 
     void createResetArea(Composite parent) {
@@ -543,9 +535,9 @@ class FiltersDialog extends TrayDialog {
         anyResourceButton = createRadioButton(group, TaskListMessages.TaskList_anyResource);
         anyResourceInSameProjectButton = createRadioButton(group,
                 TaskListMessages.TaskList_anyResourceInSameProject);// added by cagatayk@acm.org
-        selectedResourceButton = createRadioButton(group, TaskListMessages.TaskList_selectedResource); 
+        selectedResourceButton = createRadioButton(group, TaskListMessages.TaskList_selectedResource);
         selectedResourceAndChildrenButton = createRadioButton(group,
-                TaskListMessages.TaskList_selectedAndChildren); 
+                TaskListMessages.TaskList_selectedAndChildren);
         workingSetGroup = new WorkingSetGroup(group);
     }
 
@@ -689,7 +681,7 @@ class FiltersDialog extends TrayDialog {
         for (int i = 0; i < checked.length; ++i) {
             MarkerType type = (MarkerType) checked[i];
             // Skip it if any supertypes have already been included.
-            // Relies on getCheckedElements() using a pre-order traversal 
+            // Relies on getCheckedElements() using a pre-order traversal
             // so parents are earlier in the list.
             boolean found = false;
             for (int j = list.size(); --j >= 0;) {
@@ -751,29 +743,29 @@ class FiltersDialog extends TrayDialog {
                 new EnumValue[] {
                         new EnumValue(
                                 IMarker.SEVERITY_ERROR,
-                                TaskListMessages.TaskList_severity_error, MarkerUtil.getImage("error")),//$NON-NLS-1$
+                                TaskListMessages.TaskList_severity_error),
                         new EnumValue(
                                 IMarker.SEVERITY_WARNING,
-                                TaskListMessages.TaskList_severity_warning, MarkerUtil.getImage("warn")),//$NON-NLS-1$
+                                TaskListMessages.TaskList_severity_warning),
                         new EnumValue(
                                 IMarker.SEVERITY_INFO,
-                                TaskListMessages.TaskList_severity_info, MarkerUtil.getImage("info"))  //$NON-NLS-1$
+                                TaskListMessages.TaskList_severity_info)
                 });
 
         priorityType = new EnumType(
                 new EnumValue[] {
                         new EnumValue(
                                 IMarker.PRIORITY_HIGH,
-                                TaskListMessages.TaskList_priority_high, MarkerUtil.getImage("hprio")), //$NON-NLS-1$
-                        new EnumValue(IMarker.PRIORITY_NORMAL, TaskListMessages.TaskList_priority_normal, null), 
+                                TaskListMessages.TaskList_priority_high),
+                        new EnumValue(IMarker.PRIORITY_NORMAL, TaskListMessages.TaskList_priority_normal),
                         new EnumValue(
                                 IMarker.PRIORITY_LOW,
-                                TaskListMessages.TaskList_priority_low, MarkerUtil.getImage("lprio")) //$NON-NLS-1$
+                                TaskListMessages.TaskList_priority_low)
                 });
 
         completionType = new EnumType(new EnumValue[] {
-                new EnumValue(1, TaskListMessages.TaskList_status_completed, null), 
-                new EnumValue(0, TaskListMessages.TaskList_status_notCompleted, null) 
+                new EnumValue(1, TaskListMessages.TaskList_status_completed),
+                new EnumValue(0, TaskListMessages.TaskList_status_notCompleted)
                 });
     }
 
@@ -796,7 +788,7 @@ class FiltersDialog extends TrayDialog {
             MessageBox messageBox = new MessageBox(getShell(), SWT.OK
                     | SWT.APPLICATION_MODAL | SWT.ICON_ERROR);
             messageBox.setText(TaskListMessages.TaskList_titleMarkerLimitInvalid);
-            messageBox.setMessage(TaskListMessages.TaskList_messageMarkerLimitInvalid); 
+            messageBox.setMessage(TaskListMessages.TaskList_messageMarkerLimitInvalid);
             messageBox.open();
 
             if (markerLimit.forceFocus()) {
@@ -954,9 +946,11 @@ class FiltersDialog extends TrayDialog {
         updateEnabledState();
     }
 
-    /**
-     * Handles selection on a check box or combo box.
-     */
+	/**
+	 * Handles selection on a check box or combo box.
+	 * 
+	 * @param e the selection event
+	 */
     void widgetSelected(SelectionEvent e) {
         updateEnabledState();
     }
