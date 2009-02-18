@@ -158,6 +158,7 @@ public class InstallationDialog extends Dialog implements
 			productName = product.getName();
 		newShell.setText(NLS.bind(
 				WorkbenchMessages.InstallationDialog_ShellTitle, productName));
+		newShell.setSize(600, 768);
 	}
 
 	/*
