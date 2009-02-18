@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,23 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
-		return RangeComparatorLCS.findDifferences(pm, left, right);
+		return findDifferences(new RangeDifferenceCreator(), (IProgressMonitor)null, left, right);
+	}
+	
+	/**
+	 * Finds the differences between two <code>IRangeComparator</code>s.
+	 * The differences are returned as an array of <code>RangeDifference</code>s.
+	 * If no differences are detected an empty array is returned.
+	 * 
+	 * @param creator
+	 * @param pm if not <code>null</code> used to report progress
+	 * @param left the left range comparator
+	 * @param right the right range comparator
+	 * @return an array of range differences, or an empty array if no differences were found
+	 * @since org.eclipse.compare.core 1.0
+	 */
+	public static RangeDifference[] findDifferences(RangeDifferenceCreator creator, IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
+		return RangeComparatorLCS.findDifferences(creator, pm, left, right);
 	}
 
 	/**
@@ -109,6 +125,25 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+		return findDifferences(new RangeDifferenceCreator(), (IProgressMonitor)pm, ancestor, left, right);
+	}
+	
+	/**
+	 * Finds the differences among three <code>IRangeComparator</code>s.
+	 * The differences are returned as a list of <code>RangeDifference</code>s.
+	 * If no differences are detected an empty list is returned.
+	 * If the ancestor range comparator is <code>null</code>, a two-way
+	 * comparison is performed.
+	 * 	 
+	 * @param creator
+	 * @param pm if not <code>null</code> used to report progress
+	 * @param ancestor the ancestor range comparator or <code>null</code>
+	 * @param left the left range comparator
+	 * @param right the right range comparator
+	 * @return an array of range differences, or an empty array if no differences were found
+	 * @since org.eclipse.compare.core 1.0
+	 */
+	public static RangeDifference[] findDifferences(RangeDifferenceCreator creator, IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 		try {
 			if (ancestor == null)
 				return findDifferences(pm, left, right);
@@ -126,7 +161,7 @@ public final class RangeDifferencer {
 			DifferencesIterator yourIter= new DifferencesIterator(leftAncestorScript);
 	
 			List diff3= new ArrayList();
-			diff3.add(new RangeDifference(RangeDifference.ERROR)); // add a sentinel
+			diff3.add(creator.createRangeDifference(RangeDifference.ERROR)); // add a sentinel
 	
 			int changeRangeStart= 0;
 			int changeRangeEnd= 0;
@@ -147,12 +182,12 @@ public final class RangeDifferencer {
 				else if (yourIter.fDifference == null)
 					startThread= myIter;
 				else { // not at end of both scripts take the lowest range
-					if (myIter.fDifference.fLeftStart <= yourIter.fDifference.fLeftStart) // 2 -> common (Ancestor) change range
+					if (myIter.fDifference.leftStart <= yourIter.fDifference.leftStart) // 2 -> common (Ancestor) change range
 						startThread= myIter;
 					else
 						startThread= yourIter;
 				}
-				changeRangeStart= startThread.fDifference.fLeftStart;
+				changeRangeStart= startThread.fDifference.leftStart;
 				changeRangeEnd= startThread.fDifference.leftEnd();
 	
 				startThread.next();
@@ -162,7 +197,7 @@ public final class RangeDifferencer {
 				// merge overlapping changes with this range
 				//
 				DifferencesIterator other= startThread.other(myIter, yourIter);
-				while (other.fDifference != null && other.fDifference.fLeftStart <= changeRangeEnd) {
+				while (other.fDifference != null && other.fDifference.leftStart <= changeRangeEnd) {
 					int newMax= other.fDifference.leftEnd();
 					other.next();
 					monitor.worked(1);
@@ -171,7 +206,7 @@ public final class RangeDifferencer {
 						other= other.other(myIter, yourIter);
 					}
 				}
-				diff3.add(createRangeDifference3(myIter, yourIter, diff3, right, left, changeRangeStart, changeRangeEnd));
+				diff3.add(createRangeDifference3(creator, myIter, yourIter, diff3, right, left, changeRangeStart, changeRangeEnd));
 			}
 	
 			// remove sentinel
@@ -208,6 +243,22 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
+		return findRanges(new RangeDifferenceCreator(), pm, left, right);
+	}
+	
+	/**
+	 * Finds the differences among two <code>IRangeComparator</code>s.
+	 * In contrast to <code>findDifferences</code>, the result
+	 * contains <code>RangeDifference</code> elements for non-differing ranges too.
+	 * 
+	 * @param creator
+	 * @param pm if not <code>null</code> used to report progress
+	 * @param left the left range comparator
+	 * @param right the right range comparator
+	 * @return an array of range differences
+	 * @since org.eclipse.compare.core 1.0
+	 */
+	public static RangeDifference[] findRanges(RangeDifferenceCreator creator, IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 		RangeDifference[] in= findDifferences(pm, left, right);
 		List out= new ArrayList();
 
@@ -219,7 +270,7 @@ public final class RangeDifferencer {
 		for (int i= 0; i < in.length; i++) {
 			RangeDifference es= in[i];
 
-			rd= new RangeDifference(RangeDifference.NOCHANGE, mstart, es.rightStart() - mstart, ystart, es.leftStart() - ystart);
+			rd= creator.createRangeDifference(RangeDifference.NOCHANGE, mstart, es.rightStart() - mstart, ystart, es.leftStart() - ystart);
 			if (rd.maxLength() != 0)
 				out.add(rd);
 
@@ -228,7 +279,7 @@ public final class RangeDifferencer {
 			mstart= es.rightEnd();
 			ystart= es.leftEnd();
 		}
-		rd= new RangeDifference(RangeDifference.NOCHANGE, mstart, right.getRangeCount() - mstart, ystart, left.getRangeCount() - ystart);
+		rd= creator.createRangeDifference(RangeDifference.NOCHANGE, mstart, right.getRangeCount() - mstart, ystart, left.getRangeCount() - ystart);
 		if (rd.maxLength() > 0)
 			out.add(rd);
 
@@ -266,7 +317,25 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
-
+		return findRanges(new RangeDifferenceCreator(), (IProgressMonitor)null, ancestor, left, right);
+	}
+	
+	/**
+	 * Finds the differences among three <code>IRangeComparator</code>s.
+	 * In contrast to <code>findDifferences</code>, the result
+	 * contains <code>RangeDifference</code> elements for non-differing ranges too.
+	 * If the ancestor range comparator is <code>null</code>, a two-way
+	 * comparison is performed.
+	 * 
+	 * @param creator
+	 * @param pm if not <code>null</code> used to report progress
+	 * @param ancestor the ancestor range comparator or <code>null</code>
+	 * @param left the left range comparator
+	 * @param right the right range comparator
+	 * @return an array of range differences
+	 * @since org.eclipse.compare.core 1.0
+	 */
+	public static RangeDifference[] findRanges(RangeDifferenceCreator creator, IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 		if (ancestor == null)
 			return findRanges(pm, left, right);
 
@@ -282,7 +351,7 @@ public final class RangeDifferencer {
 		for (int i= 0; i < in.length; i++) {
 			RangeDifference es= in[i];
 
-			rd= new RangeDifference(RangeDifference.NOCHANGE, mstart, es.rightStart() - mstart, ystart, es.leftStart() - ystart, astart, es.ancestorStart() - astart);
+			rd= creator.createRangeDifference(RangeDifference.NOCHANGE, mstart, es.rightStart() - mstart, ystart, es.leftStart() - ystart, astart, es.ancestorStart() - astart);
 			if (rd.maxLength() > 0)
 				out.add(rd);
 
@@ -292,7 +361,7 @@ public final class RangeDifferencer {
 			ystart= es.leftEnd();
 			astart= es.ancestorEnd();
 		}
-		rd= new RangeDifference(RangeDifference.NOCHANGE, mstart, right.getRangeCount() - mstart, ystart, left.getRangeCount() - ystart, astart, ancestor.getRangeCount() - astart);
+		rd= creator.createRangeDifference(RangeDifference.NOCHANGE, mstart, right.getRangeCount() - mstart, ystart, left.getRangeCount() - ystart, astart, ancestor.getRangeCount() - astart);
 		if (rd.maxLength() > 0)
 			out.add(rd);
 
@@ -305,7 +374,7 @@ public final class RangeDifferencer {
 	 * Creates a <code>RangeDifference3</code> given the
 	 * state of two DifferenceIterators.
 	 */
-	private static RangeDifference createRangeDifference3(DifferencesIterator myIter, DifferencesIterator yourIter, List diff3, 
+	private static RangeDifference createRangeDifference3(RangeDifferenceCreator configurator, DifferencesIterator myIter, DifferencesIterator yourIter, List diff3, 
 		IRangeComparator right, IRangeComparator left, int changeRangeStart,  int changeRangeEnd) {
 
 		int rightStart, rightEnd;
@@ -324,7 +393,7 @@ public final class RangeDifferencer {
 		} else {
 			RangeDifference f= (RangeDifference) myIter.fRange.get(0);
 			RangeDifference l= (RangeDifference) myIter.fRange.get(myIter.fRange.size() - 1);
-			rightStart= changeRangeStart - f.fLeftStart + f.fRightStart;
+			rightStart= changeRangeStart - f.leftStart + f.rightStart;
 			rightEnd= changeRangeEnd - l.leftEnd() + l.rightEnd();
 		}
 
@@ -335,7 +404,7 @@ public final class RangeDifferencer {
 		} else {
 			RangeDifference f= (RangeDifference) yourIter.fRange.get(0);
 			RangeDifference l= (RangeDifference) yourIter.fRange.get(yourIter.fRange.size() - 1);
-			leftStart= changeRangeStart - f.fLeftStart + f.fRightStart;
+			leftStart= changeRangeStart - f.leftStart + f.rightStart;
 			leftEnd= changeRangeEnd - l.leftEnd() + l.rightEnd();
 		}
 
@@ -345,7 +414,7 @@ public final class RangeDifferencer {
 			else
 				kind= RangeDifference.CONFLICT;
 		}
-		return new RangeDifference(kind, rightStart, rightEnd - rightStart, leftStart, leftEnd - leftStart, changeRangeStart, changeRangeEnd - changeRangeStart);
+		return configurator.createRangeDifference(kind, rightStart, rightEnd - rightStart, leftStart, leftEnd - leftStart, changeRangeStart, changeRangeEnd - changeRangeStart);
 	}
 
 	/*

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ package org.eclipse.compare.rangedifferencer;
  * <code>RangeDifference</code> objects are the elements of a compare result returned from
  * the <code>RangeDifferencer</code> <code>find* </code> methods.
  * Clients use these objects as they are returned from the differencer.
- * This class is not intended to be instantiated or subclassed outside of the Compare framework.
+ * This class is not intended to be instantiated outside of the Compare framework.
  * <p>
  * Note: A range in the <code>RangeDifference</code> object is given as a start index
  * and length in terms of comparable entities. However, these entity indices and counts
@@ -26,7 +26,6 @@ package org.eclipse.compare.rangedifferencer;
  *
  * @see RangeDifferencer
  * @noinstantiate This class is not intended to be instantiated by clients.
- * @noextend This class is not intended to be subclassed by clients.
  */
 public class RangeDifference {
 
@@ -51,14 +50,13 @@ public class RangeDifference {
 	public final static int ERROR= 5;
 
 	/** the kind of change: NOCHANGE, CHANGE, LEFT, RIGHT, ANCESTOR, CONFLICT, ERROR */
-	int fKind;
-
-	int fLeftStart;
-	int fLeftLength;
-	int fRightStart;
-	int fRightLength;
-	int lAncestorStart;
-	int lAncestorLength;
+	protected int kind;
+	protected int leftStart;
+	protected int leftLength;
+	protected int rightStart;
+	protected int rightLength;
+	protected int ancestorStart;
+	protected int ancestorLength;
 	
 	/**
 	 * Creates a new range difference with the given change kind.
@@ -66,7 +64,7 @@ public class RangeDifference {
 	 * @param changeKind the kind of change
 	 */
 	/* package */ RangeDifference(int changeKind) {
-		fKind= changeKind;
+		this.kind= changeKind;
 	}
 
 	/**
@@ -80,11 +78,11 @@ public class RangeDifference {
 	 * @param leftLength number of entities on left side
 	 */
 	/* package */ RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength) {
-		fKind= kind;
-		fRightStart= rightStart;
-		fRightLength= rightLength;
-		fLeftStart= leftStart;
-		fLeftLength= leftLength;
+		this.kind= kind;
+		this.rightStart= rightStart;
+		this.rightLength= rightLength;
+		this.leftStart= leftStart;
+		this.leftLength= leftLength;
 	}
 
 	/**
@@ -102,8 +100,8 @@ public class RangeDifference {
 	/* package */ RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength,
 									int ancestorStart, int ancestorLength) {
 		this(kind, rightStart, rightLength, leftStart, leftLength);
-		lAncestorStart= ancestorStart;
-		lAncestorLength= ancestorLength;
+		this.ancestorStart= ancestorStart;
+		this.ancestorLength= ancestorLength;
 	}
 
 	/**
@@ -114,7 +112,7 @@ public class RangeDifference {
 	 * <code>ANCESTOR</code>, <code>CONFLICT</code>, <code>ERROR</code>
 	 */
 	public int kind() {
-		return fKind;
+		return this.kind;
 	}
 
 	/**
@@ -123,7 +121,7 @@ public class RangeDifference {
 	 * @return the start index of the entity range on the ancestor side
 	 */
 	public int ancestorStart() {
-		return lAncestorStart;
+		return this.ancestorStart;
 	}
 
 	/**
@@ -132,7 +130,7 @@ public class RangeDifference {
 	 * @return the number of entities on the ancestor side
 	 */
 	public int ancestorLength() {
-		return lAncestorLength;
+		return this.ancestorLength;
 	}
 
 	/**
@@ -141,7 +139,7 @@ public class RangeDifference {
 	 * @return the end index of the entity range on the ancestor side
 	 */
 	public int ancestorEnd() {
-		return lAncestorStart + lAncestorLength;
+		return this.ancestorStart + this.ancestorLength;
 	}
 
 	/**
@@ -150,7 +148,7 @@ public class RangeDifference {
 	 * @return the start index of the entity range on the right side
 	 */
 	public int rightStart() {
-		return fRightStart;
+		return this.rightStart;
 	}
 
 	/**
@@ -159,7 +157,7 @@ public class RangeDifference {
 	 * @return the number of entities on the right side
 	 */
 	public int rightLength() {
-		return fRightLength;
+		return rightLength;
 	}
 
 	/**
@@ -168,7 +166,7 @@ public class RangeDifference {
 	 * @return the end index of the entity range on the right side
 	 */
 	public int rightEnd() {
-		return fRightStart + fRightLength;
+		return this.rightStart + rightLength;
 	}
 
 	/**
@@ -177,7 +175,7 @@ public class RangeDifference {
 	 * @return the start index of the entity range on the left side
 	 */
 	public int leftStart() {
-		return fLeftStart;
+		return this.leftStart;
 	}
 
 	/**
@@ -186,7 +184,7 @@ public class RangeDifference {
 	 * @return the number of entities on the left side
 	 */
 	public int leftLength() {
-		return fLeftLength;
+		return this.leftLength;
 	}
 
 	/**
@@ -195,7 +193,7 @@ public class RangeDifference {
 	 * @return the end index of the entity range on the left side
 	 */
 	public int leftEnd() {
-		return fLeftStart + fLeftLength;
+		return this.leftStart + this.leftLength;
 	}
 
 	/**
@@ -204,28 +202,56 @@ public class RangeDifference {
 	 * @return the maximum number of entities in the left, right, and ancestor sides of this range
 	 */
 	public int maxLength() {
-		return Math.max(fRightLength, Math.max(fLeftLength, lAncestorLength));
+		return Math.max(rightLength, Math.max(this.leftLength, this.ancestorLength));
 	}
 	
 	public boolean equals(Object obj) {
 		if (obj instanceof RangeDifference) {
 			RangeDifference other = (RangeDifference) obj;
-			return fKind == other.fKind
-				&& fLeftStart == other.fLeftStart
-				&& fLeftLength == other.fLeftLength
-				&& fRightStart == other.fRightStart
-				&& fRightLength == other.fRightLength
-				&& lAncestorStart == other.lAncestorStart
-				&& lAncestorLength == other.lAncestorLength;
+			return this.kind == other.kind
+				&& this.leftStart == other.leftStart
+				&& this.leftLength == other.leftLength
+				&& this.rightStart == other.rightStart
+				&& rightLength == other.rightLength
+				&& this.ancestorStart == other.ancestorStart
+				&& this.ancestorLength == other.ancestorLength;
 		}
 		return super.equals(obj);
 	}
 	
 	public String toString() {
-		String string = "Left: " + toRangeString(fLeftStart, fLeftLength) + " Right: " + toRangeString(fRightStart, fRightLength); //$NON-NLS-1$ //$NON-NLS-2$
-		if (lAncestorLength > 0 || lAncestorStart> 0)
-			string += " Ancestor: " + toRangeString(lAncestorStart, lAncestorLength); //$NON-NLS-1$
-		return string;
+		StringBuffer buf = new StringBuffer("RangeDifference {"); //$NON-NLS-1$
+		switch (this.kind) {
+		case NOCHANGE:
+			buf.append("NOCHANGE"); //$NON-NLS-1$
+			break;
+		case CHANGE:
+			buf.append("CHANGE/RIGHT"); //$NON-NLS-1$
+			break;
+		case CONFLICT:
+			buf.append("CONFLICT"); //$NON-NLS-1$
+			break;
+		case LEFT:
+			buf.append("LEFT"); //$NON-NLS-1$
+			break;
+		case ERROR:
+			buf.append("ERROR"); //$NON-NLS-1$
+			break;
+		case ANCESTOR:
+			buf.append("ANCESTOR"); //$NON-NLS-1$
+			break;
+		default:
+			break;
+		}
+
+		buf.append(", "); //$NON-NLS-1$
+
+		buf.append("Left: " + toRangeString(this.leftStart, this.leftLength) + " Right: " + toRangeString(this.rightStart, this.rightLength)); //$NON-NLS-1$ //$NON-NLS-2$
+		if (this.ancestorLength > 0 || this.ancestorStart > 0)
+			buf.append(" Ancestor: " + toRangeString(this.ancestorStart, this.ancestorLength)); //$NON-NLS-1$
+
+		buf.append("}"); //$NON-NLS-1$
+		return buf.toString();
 	}
 
 	private String toRangeString(int start, int length) {
