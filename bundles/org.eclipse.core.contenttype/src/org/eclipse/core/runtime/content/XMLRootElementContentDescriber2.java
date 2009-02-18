@@ -106,17 +106,6 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 			element = ("*".equals(qualifiedElement) ? null : qualifiedElement);
 		}
 
-		public String getNamespace() {
-			return namespace;
-		}
-		
-		public String getElement() {
-			return element;
-		}
-		public String getDTD() {
-			return dtd;
-		}
-		
 		public boolean matches(String someNamespace, String someElement, String someDtd) {
 			boolean nsMatch = this.namespace != null ? this.namespace.equals(someNamespace) : true;
 			boolean elementEquals = this.element != null ? this.element.equals(someElement) : true;
