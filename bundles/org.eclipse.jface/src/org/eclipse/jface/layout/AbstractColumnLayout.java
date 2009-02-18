@@ -295,6 +295,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	 *            the control
 	 * 
 	 * @return the number of columns
+     * @since 3.5
 	 */
 	protected abstract int getColumnCount(Scrollable tableTree);
 
@@ -306,6 +307,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	 * 
 	 * @param widths
 	 *            the widths of the column
+     * @since 3.5
 	 */
 	protected abstract void setColumnWidths(Scrollable tableTree, int[] widths);
 
@@ -317,6 +319,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	 * @param columnIndex
 	 *            the column index
 	 * @return the layout data, might <b>not</b> null
+     * @since 3.5
 	 */
 	protected abstract ColumnLayoutData getLayoutData(Scrollable tableTree,
 			int columnIndex);
@@ -326,6 +329,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	 * 
 	 * @param column
 	 *            the column
+     * @since 3.5
 	 */
 	protected abstract void updateColumnData(Widget column);
 
