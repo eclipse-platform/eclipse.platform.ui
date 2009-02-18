@@ -27,8 +27,11 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.dialogs.TypeFilteringDialog;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
+import org.eclipse.ui.internal.dialogs.AboutPluginsDialog;
 import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
@@ -37,6 +40,7 @@ import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.osgi.framework.Bundle;
 
 public class UIDialogsAuto extends TestCase {
     private static final String PROJECT_SELECTION_MESSAGE ="Select Other Projects";
@@ -58,6 +62,18 @@ public class UIDialogsAuto extends TestCase {
     public void testAbout() {
         Dialog dialog = null;
         dialog = new AboutDialog(getShell());
+        DialogCheck.assertDialogTexts(dialog, this);
+    }
+    
+     public void testAboutPlugins() {
+        Dialog dialog = null;
+        dialog = new AboutPluginsDialog(
+				getShell(),
+				"",
+				new Bundle [] {WorkbenchPlugin.getDefault().getBundle() },
+				WorkbenchMessages.AboutFeaturesDialog_pluginInfoTitle,
+				"Title",
+				IWorkbenchHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
         DialogCheck.assertDialogTexts(dialog, this);
     }
 

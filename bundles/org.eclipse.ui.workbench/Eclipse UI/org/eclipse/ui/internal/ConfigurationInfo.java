@@ -80,7 +80,10 @@ public final class ConfigurationInfo {
 	 * extension point.
 	 */
 	private static void appendExtensions(PrintWriter writer) {
-		IConfigurationElement[] configElements = getSortedExtensions();
+		IConfigurationElement[] configElements = getSortedExtensions(Platform
+				.getExtensionRegistry().getConfigurationElementsFor(
+						PlatformUI.PLUGIN_ID,
+						IWorkbenchRegistryConstants.PL_SYSTEM_SUMMARY_SECTIONS));
 		for (int i = 0; i < configElements.length; ++i) {
 			IConfigurationElement element = configElements[i];
 
@@ -108,11 +111,7 @@ public final class ConfigurationInfo {
 		}
 	}
 
-	private static IConfigurationElement[] getSortedExtensions() {
-		IConfigurationElement[] configElements = Platform
-				.getExtensionRegistry().getConfigurationElementsFor(
-						PlatformUI.PLUGIN_ID,
-						IWorkbenchRegistryConstants.PL_SYSTEM_SUMMARY_SECTIONS);
+	public static IConfigurationElement[] getSortedExtensions(IConfigurationElement[] configElements) {
 
 		Arrays.sort(configElements, new Comparator() {
 			Collator collator = Collator.getInstance(Locale.getDefault());

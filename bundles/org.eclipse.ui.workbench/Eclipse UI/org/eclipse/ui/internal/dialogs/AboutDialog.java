@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.osgi.util.NLS;
@@ -35,7 +36,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -47,26 +47,26 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.ProductProperties;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.about.AboutBundleGroupData;
 import org.eclipse.ui.internal.about.AboutFeaturesButtonManager;
+import org.eclipse.ui.internal.about.AboutItem;
+import org.eclipse.ui.internal.about.AboutTextManager;
+import org.eclipse.ui.internal.about.InstallationDialog;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 
 /**
  * Displays information about the product.
  */
-public class AboutDialog extends ProductInfoDialog {
+public class AboutDialog extends TrayDialog {
     private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
 
-    private final static int FEATURES_ID = IDialogConstants.CLIENT_ID + 1;
-
-    private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
-
-    private final static int INFO_ID = IDialogConstants.CLIENT_ID + 3;
+    private final static int DETAILS_ID = IDialogConstants.CLIENT_ID + 1;
 
     private String productName;
 
@@ -78,9 +78,9 @@ public class AboutDialog extends ProductInfoDialog {
 
     private AboutFeaturesButtonManager buttonManager = new AboutFeaturesButtonManager();
 
-    // TODO should the styled text be disposed? if not then it likely
-    //      doesn't need to be a member
     private StyledText text;
+    
+    private AboutTextManager aboutTextManager;
 
     /**
      * Create an instance of the AboutDialog for the given window.
@@ -117,25 +117,12 @@ public class AboutDialog extends ProductInfoDialog {
      */
     protected void buttonPressed(int buttonId) {
         switch (buttonId) {
-        case FEATURES_ID:
+        case DETAILS_ID:
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 				public void run() {
-		            new AboutFeaturesDialog(getShell(), productName, bundleGroupInfos)
-		                    .open();
-				}
-			});
-            break;
-        case PLUGINS_ID:
-			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-				public void run() {
-		            new AboutPluginsDialog(getShell(), productName).open();
-				}
-			});
-            break;
-        case INFO_ID:
-			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-				public void run() {
-		            new AboutSystemDialog(getShell()).open();
+					IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					InstallationDialog dialog = new InstallationDialog(getShell(), workbenchWindow);
+					dialog.open();	
 				}
 			});
             break;
@@ -176,14 +163,7 @@ public class AboutDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        // bug 64232: the feature details button should only be created if there
-        // are features to show
-        if (bundleGroupInfos != null && bundleGroupInfos.length > 0) {
-			createButton(parent, FEATURES_ID, WorkbenchMessages.AboutDialog_featureInfo, false);
-		} 
-
-        createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutDialog_pluginInfo, false);
-        createButton(parent, INFO_ID, WorkbenchMessages.AboutDialog_systemInfo, false); 
+        createButton(parent, DETAILS_ID, WorkbenchMessages.AboutDialog_DetailsButton, false); 
 
         Label l = new Label(parent, SWT.NONE);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -206,21 +186,9 @@ public class AboutDialog extends ProductInfoDialog {
      * @return the dialog area control
      */
     protected Control createDialogArea(Composite parent) {
-        final Cursor hand = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
-        final Cursor busy = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
-        setHandCursor(hand);
-        setBusyCursor(busy);
-        getShell().addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
-                setHandCursor(null);
-                hand.dispose();
-                setBusyCursor(null);
-                busy.dispose();
-            }
-        });
-
-        // brand the about box if there is product info
+         // brand the about box if there is product info
         Image aboutImage = null;
+        AboutItem item = null;
         if (product != null) {
             ImageDescriptor imageDescriptor = ProductProperties
                     .getAboutImage(product);
@@ -233,7 +201,7 @@ public class AboutDialog extends ProductInfoDialog {
                     || aboutImage.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
                 String aboutText = ProductProperties.getAboutText(product);
                 if (aboutText != null) {
-					setItem(scan(aboutText));
+					item = AboutTextManager.scan(aboutText);
 				}
             }
 
@@ -276,7 +244,7 @@ public class AboutDialog extends ProductInfoDialog {
         topContainer.setForeground(foreground);
 
         layout = new GridLayout();
-        layout.numColumns = (aboutImage == null || getItem() == null ? 1 : 2);
+        layout.numColumns = (aboutImage == null || item == null ? 1 : 2);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         layout.verticalSpacing = 0;
@@ -318,7 +286,7 @@ public class AboutDialog extends ProductInfoDialog {
         data.heightHint = topContainerHeightHint;
         topContainer.setLayoutData(data);
         
-        if (getItem() != null) {
+        if (item != null) {
         	final int minWidth = 400; // This value should really be calculated
         	// from the computeSize(SWT.DEFAULT,
         	// SWT.DEFAULT) of all the
@@ -340,12 +308,13 @@ public class AboutDialog extends ProductInfoDialog {
     		text = new StyledText(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
     		text.setCaret(null);
             text.setFont(parent.getFont());
-            text.setText(getItem().getText());
+            text.setText(item.getText());
             text.setCursor(null);
             text.setBackground(background);
             text.setForeground(foreground);
-            setLinkRanges(text, getItem().getLinkRanges());
-            addListeners(text);
+            
+            aboutTextManager = new AboutTextManager(text);
+            aboutTextManager.setItem(item);
             
             createTextMenu();
             
@@ -487,8 +456,7 @@ public class AboutDialog extends ProductInfoDialog {
                         .getData();
 
                 AboutFeaturesDialog d = new AboutFeaturesDialog(getShell(),
-                        productName, groupInfos);
-                d.setInitialSelection(selection);
+                        productName, groupInfos, selection);
                 d.open();
             }
         });

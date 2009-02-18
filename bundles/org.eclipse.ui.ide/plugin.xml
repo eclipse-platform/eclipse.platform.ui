@@ -2234,4 +2234,97 @@
             type="org.eclipse.core.resources.IMarker">
       </propertyTester>
    </extension>
+   <extension
+          point="org.eclipse.ui.commands">
+          <command
+            description="%command.installationPageLicense.description"
+            id="org.eclipse.ui.about.featureDialog.openLicense"
+            name="%command.installationPageLicense.name"
+            defaultHandler="org.eclipse.ui.internal.about.OpenBrowserHandler"/> 
+ 	 </extension>          
+   
+      <extension
+         point="org.eclipse.ui.installationPages">
+          <page
+            name="%installationPage.feature.name"
+            class="org.eclipse.ui.internal.about.AboutFeaturesPage"
+            id="20.FeaturesPage">
+          </page>
+       </extension>
+       <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.installationDialog.buttonbar">
+         <command
+               commandId="org.eclipse.ui.about.columns"
+               mnemonic="%command.installationPageColumns.mnemonic"
+               style="push">
+            <visibleWhen>
+      			<with variable="org.eclipse.ui.installationPage.activePage.id">
+        			<equals value="20.FeaturesPage"/>
+      			</with>
+    		</visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.ui.about.openBrowser"
+               label="%command.installationPageLicense.name"
+               mnemonic="%command.installationPageLicense.mnemonic"
+               style="push">
+            <visibleWhen>
+      			<with variable="org.eclipse.ui.installationPage.activePage.id">
+        			<equals value="20.FeaturesPage"/>
+      			</with>
+    		</visibleWhen>
+         </command>
+        </menuContribution> 
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.installationDialog.buttonbar.productInfo.features">
+         <command
+               commandId="org.eclipse.ui.about.columns"
+               mnemonic="%command.installationPageColumns.mnemonic"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ui.about.featureDialog.openLicense"
+               label="%command.installationPageLicense.name"
+               mnemonic="%command.installationPageLicense.mnemonic"
+               style="push">
+         </command>
+        </menuContribution> 
+     </extension> 
+            <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.internal.about.OpenBrowserHandler"
+            commandId="org.eclipse.ui.about.openBrowser">
+         <activeWhen>
+            <with
+                  variable="org.eclipse.ui.installationPage.activePage.id">
+               <equals value="20.FeaturesPage"/>
+            </with>
+         </activeWhen>
+        <enabledWhen>
+            <with
+                  variable="org.eclipse.ui.installationPage.activePage.selection">
+               <count value="1"/>
+            </with>
+         </enabledWhen>
+      </handler>
+     <handler
+            class="org.eclipse.ui.internal.about.OpenBrowserHandler"
+            commandId="org.eclipse.ui.about.featureDialog.openLicense">
+         <activeWhen>
+             <with
+                  variable="org.eclipse.ui.internal.about.activeProductDialogPageId">
+               <equals value="productInfo.features"/>
+            </with>
+         </activeWhen>
+        <enabledWhen>
+            <with
+                  variable="org.eclipse.ui.internal.about.activeProductDialogSelection">
+               <count value="1"/>
+            </with>
+         </enabledWhen>
+      </handler>
+    </extension>
 </plugin>

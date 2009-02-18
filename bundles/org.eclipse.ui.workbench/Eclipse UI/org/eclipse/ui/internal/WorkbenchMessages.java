@@ -98,6 +98,12 @@ public class WorkbenchMessages extends NLS {
 	public static String ExportResourcesAction_toolTip;
 	public static String ImportResourcesAction_text;
 	public static String ImportResourcesAction_toolTip;
+	public static String OpenBrowserHandler_NoInfoDialogMessage;
+
+
+	public static String OpenBrowserHandler_NoInfoDialogTitle;
+
+
 	public static String OpenRecent_errorTitle;
 	public static String OpenRecent_unableToOpen;
 	public static String Exit_text;
@@ -283,10 +289,10 @@ public class WorkbenchMessages extends NLS {
 	public static String DynamicHelpAction_text;
 	public static String DynamicHelpAction_toolTip;
 	public static String AboutDialog_shellTitle;
-	public static String AboutDialog_featureInfo;
-	public static String AboutDialog_pluginInfo;
-	public static String AboutDialog_systemInfo;
 	public static String AboutDialog_defaultProductName;
+
+
+	public static String AboutDialog_DetailsButton;
 	public static String ProductInfoDialog_errorTitle;
 	public static String ProductInfoDialog_unableToOpenWebBrowser;
 	public static String PreferencesExportDialog_ErrorDialogTitle;
@@ -322,6 +328,9 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutFeaturesDialog_pluginInfoTitle;
 	public static String AboutFeaturesDialog_pluginInfoMessage;
 	public static String AboutFeaturesDialog_noInfoTitle;
+
+
+	public static String AboutFeaturesDialog_SimpleTitle;
 	public static String AboutSystemDialog_browseErrorLogName;
 	public static String AboutSystemDialog_copyToClipboardName;
 	public static String AboutSystemDialog_noLogTitle;
@@ -551,6 +560,9 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	public static String Error;
 	public static String Information;
+
+
+	public static String InstallationDialog_ShellTitle;
 	
 	public static String Workbench_NeedsClose_Title;
 	public static String Workbench_NeedsClose_Message;

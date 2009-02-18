@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="systemSummarySections" name="System Summary Sections"/>
       </appInfo>
       <documentation>
-         The Eclipse UI provides an AboutDialog that can be branded and reused by client product plugins.  This dialog includes a SystemSummary dialog that contains configuration details.  By extending the org.eclipse.ui.systemSummarySections extension point clients are able to put their own information into the log.
+         The Eclipse UI provides an AboutDialog that can be branded and reused by client product plugins.  This dialog includes SystemSummary information that contains configuration details.  By extending the org.eclipse.ui.systemSummarySections extension point clients are able to put their own information into the log.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="section" minOccurs="1" maxOccurs="unbounded"/>
