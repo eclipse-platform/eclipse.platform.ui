@@ -149,7 +149,8 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 
 		fContainer.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
-				refresh();
+			    updateSize();
+			    fContainer.layout(true, true);
 			}
 		});
 	}
