@@ -3205,7 +3205,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		for (Iterator i = actionSets.iterator(); i.hasNext();) {
 			ActionSet actionSet = (ActionSet) i.next();
-			if (!actionSet.wasChanged)
+			if (!actionSet.wasChanged())
 				continue;
 			
 			if (actionSet.isActive()) {
