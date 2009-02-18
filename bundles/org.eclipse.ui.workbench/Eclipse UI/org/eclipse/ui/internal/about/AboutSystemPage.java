@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -32,40 +29,6 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
  * <code>org.eclipse.ui.systemSummaryExtensions</code> extension point.
  */
 public final class AboutSystemPage extends ProductInfoPage {
-
-	class CopyHandler extends AbstractHandler {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands
-		 * .ExecutionEvent)
-		 */
-		public Object execute(ExecutionEvent event) throws ExecutionException {
-			if (text == null) {
-				return null;
-			}
-
-			Clipboard clipboard = null;
-			try {
-				clipboard = new Clipboard(getShell().getDisplay());
-				String contents = text.getSelectionText();
-				if (contents.length() == 0)
-					contents = text.getText();
-				clipboard.setContents(new Object[] { contents },
-						new Transfer[] { TextTransfer.getInstance() });
-			} finally {
-				if (clipboard != null) {
-					clipboard.dispose();
-				}
-			}
-			return null;
-		}
-
-		public boolean isEnabled() {
-			return true;
-		}
-	}
 
 	// This id should *not* be the same id used for contributing the page in
 	// the installationPage extension. It is used by ProductInfoDialog
