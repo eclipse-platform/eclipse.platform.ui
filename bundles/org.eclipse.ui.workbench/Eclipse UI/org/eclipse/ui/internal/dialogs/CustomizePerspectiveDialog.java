@@ -521,6 +521,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private List contributionItems;
 
 		private boolean active;
+		
+		private boolean wasChanged = false;
 
 		public ActionSet(ActionSetDescriptor descriptor, boolean active) {
 			this.descriptor = descriptor;
@@ -540,6 +542,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			return active;
 		}
 
+		public boolean wasChanged() {
+			return wasChanged;
+		}
+		
 		public void setActive(boolean active) {
 			boolean wasActive = this.active;
 			this.active = active;
@@ -552,6 +558,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			if (wasActive != active) {
 				actionSetAvailabilityChanged();
 			}
+			
+			wasChanged = true;
 		}
 	}
 
@@ -3197,6 +3205,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		for (Iterator i = actionSets.iterator(); i.hasNext();) {
 			ActionSet actionSet = (ActionSet) i.next();
+			if (!actionSet.wasChanged)
+				continue;
+			
 			if (actionSet.isActive()) {
 				toAdd.add(actionSet.descriptor);
 			} else {
