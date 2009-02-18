@@ -76,14 +76,14 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getColumnCount(org.eclipse.swt.widgets.Scrollable)
 	 */
-	int getColumnCount(Scrollable tree) {
+	protected int getColumnCount(Scrollable tree) {
 		return ((Tree) tree).getColumnCount();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.layout.AbstractColumnLayout#setColumnWidths(org.eclipse.swt.widgets.Scrollable, int[])
 	 */
-	void setColumnWidths(Scrollable tree, int[] widths) {
+	protected void setColumnWidths(Scrollable tree, int[] widths) {
 		TreeColumn[] columns = ((Tree) tree).getColumns();
 		for (int i = 0; i < widths.length; i++) {
 			columns[i].setWidth(widths[i]);
@@ -93,12 +93,12 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getLayoutData(org.eclipse.swt.widgets.Scrollable, int)
 	 */
-	ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex) {
+	protected ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex) {
 		TreeColumn column = ((Tree) tableTree).getColumn(columnIndex);
 		return (ColumnLayoutData) column.getData(LAYOUT_DATA);
 	}
 	
-	void updateColumnData(Widget column) {
+	protected void updateColumnData(Widget column) {
 		TreeColumn tColumn = (TreeColumn) column;
 		Tree t = tColumn.getParent();
 		

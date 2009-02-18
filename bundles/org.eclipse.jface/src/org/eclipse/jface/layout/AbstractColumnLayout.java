@@ -34,12 +34,12 @@ import org.eclipse.swt.widgets.Widget;
  * The AbstractColumnLayout is a {@link Layout} used to set the size of a table
  * in a consistent way even during a resize unlike a {@link TableLayout} which
  * only sets initial sizes.
- *
+ * 
  * <p>
  * <b>You can only add the layout to a container whose only child is the
  * table/tree control you want the layouts applied to.</b>
  * </p>
- *
+ * 
  * @since 3.4
  */
 public abstract class AbstractColumnLayout extends Layout {
@@ -56,7 +56,10 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	static final boolean IS_GTK = Util.isGtk();
 
-	static final String LAYOUT_DATA = Policy.JFACE + ".LAYOUT_DATA"; //$NON-NLS-1$
+	/**
+	 * Key used to restore the layout data in the columns data-slot
+	 */
+	protected static final String LAYOUT_DATA = Policy.JFACE + ".LAYOUT_DATA"; //$NON-NLS-1$
 
 	private boolean inupdateMode = false;
 
@@ -74,10 +77,10 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	/**
 	 * Adds a new column of data to this table layout.
-	 *
+	 * 
 	 * @param column
 	 *            the column
-	 *
+	 * 
 	 * @param data
 	 *            the column layout data
 	 */
@@ -93,7 +96,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	/**
 	 * Compute the size of the table or tree based on the ColumnLayoutData and
 	 * the width and height hint.
-	 *
+	 * 
 	 * @param scrollable
 	 *            the widget to compute
 	 * @param wHint
@@ -132,7 +135,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	/**
 	 * Layout the scrollable based on the supplied width and area. Only increase
 	 * the size of the scrollable if increase is <code>true</code>.
-	 *
+	 * 
 	 * @param scrollable
 	 * @param width
 	 * @param area
@@ -178,8 +181,8 @@ public abstract class AbstractColumnLayout extends Layout {
 				ColumnWeightData cw = (ColumnWeightData) getLayoutData(
 						scrollable, colIndex);
 				final int minWidth = cw.minimumWidth;
-				final int allowedWidth = totalWeight == 0 ? 0 : (width - fixedWidth) * cw.weight
-						/ totalWeight;
+				final int allowedWidth = totalWeight == 0 ? 0
+						: (width - fixedWidth) * cw.weight / totalWeight;
 				if (allowedWidth < minWidth) {
 					/*
 					 * if the width assigned by weight is less than the minimum,
@@ -215,9 +218,10 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
-	 *      int, int, boolean)
+	 * 
+	 * @see
+	 * org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite
+	 * , int, int, boolean)
 	 */
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
@@ -226,9 +230,10 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
-	 *      boolean)
+	 * 
+	 * @see
+	 * org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
+	 * boolean)
 	 */
 	protected void layout(Composite composite, boolean flushCache) {
 		Rectangle area = composite.getClientArea();
@@ -250,7 +255,7 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	/**
 	 * Compute the area required for trim.
-	 *
+	 * 
 	 * @param area
 	 * @param scrollable
 	 * @param currentWidth
@@ -274,7 +279,7 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	/**
 	 * Get the control being laid out.
-	 *
+	 * 
 	 * @param composite
 	 *            the composite with the layout
 	 * @return {@link Scrollable}
@@ -285,28 +290,50 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	/**
 	 * Get the number of columns for the receiver.
-	 *
+	 * 
+	 * @param tableTree
+	 *            the control
+	 * 
 	 * @return the number of columns
 	 */
-	abstract int getColumnCount(Scrollable tableTree);
+	protected abstract int getColumnCount(Scrollable tableTree);
 
 	/**
 	 * Set the widths of the columns.
-	 *
+	 * 
+	 * @param tableTree
+	 *            the control
+	 * 
 	 * @param widths
+	 *            the widths of the column
 	 */
-	abstract void setColumnWidths(Scrollable tableTree, int[] widths);
+	protected abstract void setColumnWidths(Scrollable tableTree, int[] widths);
 
-	abstract ColumnLayoutData getLayoutData(Scrollable tableTree,
+	/**
+	 * Get the layout data for a column
+	 * 
+	 * @param tableTree
+	 *            the control
+	 * @param columnIndex
+	 *            the column index
+	 * @return the layout data, might <b>not</b> null
+	 */
+	protected abstract ColumnLayoutData getLayoutData(Scrollable tableTree,
 			int columnIndex);
 
-	abstract void updateColumnData(Widget column);
+	/**
+	 * Update the layout data for a column
+	 * 
+	 * @param column
+	 *            the column
+	 */
+	protected abstract void updateColumnData(Widget column);
 
 	/**
 	 * The number of extra pixels taken as horizontal trim by the table column.
 	 * To ensure there are N pixels available for the content of the column,
 	 * assign N+COLUMN_TRIM for the column width.
-	 *
+	 * 
 	 * @return the trim used by the columns
 	 * @since 3.4
 	 */
