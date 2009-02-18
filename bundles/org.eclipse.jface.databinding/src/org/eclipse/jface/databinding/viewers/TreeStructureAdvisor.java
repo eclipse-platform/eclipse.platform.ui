@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 265062
  ******************************************************************************/
 package org.eclipse.jface.databinding.viewers;
 
@@ -22,15 +23,15 @@ package org.eclipse.jface.databinding.viewers;
 public abstract class TreeStructureAdvisor {
 
 	/**
-	 * Returns the parent for the given element, or <code>null</code>
-	 * indicating that the parent can't be computed. In this case the
-	 * tree-structured viewer can't expand a given node correctly if requested.
-	 * The default implementation returns null; clients should override.
+	 * Returns the parent for the given element, or <code>null</code> indicating
+	 * that the parent can't be computed. In this case the tree-structured
+	 * viewer can't expand a given node correctly if requested. The default
+	 * implementation returns null; clients should override.
 	 * 
 	 * @param element
 	 *            the element
-	 * @return the parent element, or <code>null</code> if it has none or if
-	 *         the parent cannot be computed
+	 * @return the parent element, or <code>null</code> if it has none or if the
+	 *         parent cannot be computed
 	 */
 	public Object getParent(Object element) {
 		return null;
@@ -49,9 +50,9 @@ public abstract class TreeStructureAdvisor {
 	 * @param element
 	 *            the element
 	 * @return <code>Boolean.TRUE</code> if the given element has children,
-	 *         <code>Boolean.FALSE</code> if it has no children, or
-	 *         <code>null</code> if the children collection should be
-	 *         consulted.
+	 *         <code>Boolean.FALSE</code> if the given element
+	 *         <strong>never</strong> has children, or <code>null</code> if the
+	 *         children collection should be consulted.
 	 */
 	public Boolean hasChildren(Object element) {
 		return null;
