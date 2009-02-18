@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,24 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Test cases for the Platform API
  */
 public class PlatformTest extends RuntimeTest {
+
+	private FrameworkLog logService;
+	private ServiceReference logRef;
+	private java.io.File originalLocation;
 
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.
@@ -35,12 +42,31 @@ public class PlatformTest extends RuntimeTest {
 		super(name);
 	}
 
+	protected void setUp() throws Exception {
+		super.setUp();
+		//ensure platform locations are initialized
+		Platform.getLogFileLocation();
+
+		//setup reference to log service, and remember original log location
+		logRef = RuntimeTestsPlugin.getContext().getServiceReference(FrameworkLog.class.getName());
+		logService = (FrameworkLog) RuntimeTestsPlugin.getContext().getService(logRef);
+		originalLocation = logService.getFile();
+	}
+
+	protected void tearDown() throws Exception {
+		//undo any damage done by log location test
+		super.tearDown();
+		logService.setFile(originalLocation, true);
+		RuntimeTestsPlugin.getContext().ungetService(logRef);
+	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(PlatformTest.class.getName());
 		suite.addTest(new PlatformTest("testKeyRing1"));
 		suite.addTest(new PlatformTest("testKeyRing2"));
 		suite.addTest(new PlatformTest("testGetCommandLine"));
 		suite.addTest(new PlatformTest("testGetLocation"));
+		suite.addTest(new PlatformTest("testGetLogLocation"));
 		//	suite.addTest(new PlatformTest("testRetrievePlugins"));
 		suite.addTest(new PlatformTest("testRunnable"));
 		return suite;
@@ -138,6 +164,28 @@ public class PlatformTest extends RuntimeTest {
 
 	public void testGetLocation() {
 		assertNotNull("1.0", Platform.getLocation());
+	}
+
+	public void testGetLogLocation() throws IOException {
+		IPath initialLocation = Platform.getLogFileLocation();
+		System.out.println(Platform.getLogFileLocation());
+		Platform.getStateLocation(Platform.getBundle("org.eclipse.equinox.common"));//causes DataArea to be initialzed
+		System.out.println(Platform.getLogFileLocation());
+
+		assertNotNull("1.0", initialLocation);
+
+		//ensure result is same as log service
+		IPath logPath = new Path(logService.getFile().getAbsolutePath());
+		assertEquals("2.0", logPath, initialLocation);
+
+		//changing log service location should change log location
+		File newLocation = File.createTempFile("testGetLogLocation", null);
+		logService.setFile(newLocation, true);
+		assertEquals("3.0", new Path(newLocation.getAbsolutePath()), Platform.getLogFileLocation());
+
+		//when log is non-local, should revert to default location
+		logService.setWriter(new StringWriter(), true);
+		assertEquals("4.0", initialLocation, Platform.getLogFileLocation());
 	}
 
 	public void testRetrievePlugins() {
