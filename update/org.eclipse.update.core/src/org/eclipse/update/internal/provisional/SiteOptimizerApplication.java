@@ -530,12 +530,6 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 		private File tempDigestDirectory;
 
-		public Map availableLocales;
-
-		public Map getAvailableLocales() {
-			return availableLocales;
-		}
-
 		public void finishDigest(String outputDirectory) throws IOException {
 			localizedPrintWriter.println("</digest>"); //$NON-NLS-1$
 			if (localizedPrintWriter != null) {
@@ -571,28 +565,12 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 		}
 
-		public void setAvailableLocales(Map availableLocales) {
-			this.availableLocales = availableLocales;
-		}
-
 		public AvailableLocale(String locale) {
 			this.locale = locale;
 		}
 
-		public Map getFeatures() {
-			return features;
-		}
-
 		public void addFeatures(String feature) {
 			features.put(feature, feature);
-		}
-
-		public String getLocale() {
-			return locale;
-		}
-
-		public PrintWriter getLocalizedPrintWriter() {
-			return localizedPrintWriter;
 		}
 
 		public void openLocalizedOutputStream() throws IOException {

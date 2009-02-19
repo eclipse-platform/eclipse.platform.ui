@@ -56,10 +56,6 @@ public class SiteSearchCategory extends BaseSearchCategory {
 			this.liteFeaturesAreOK = liteFeaturesAreOK;
 		}
 		
-		public boolean isLiteFeaturesAreOK() {
-			return liteFeaturesAreOK;
-		}
-
 		public void setLiteFeaturesAreOK(boolean liteFeaturesAreOK) {
 			this.liteFeaturesAreOK = liteFeaturesAreOK;
 		}

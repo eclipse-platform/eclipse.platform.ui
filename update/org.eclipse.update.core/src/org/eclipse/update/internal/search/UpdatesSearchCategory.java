@@ -130,14 +130,12 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 	}
 
 	private static class Hit {
-		IFeature candidate;
 		IFeatureReference ref;
 		IInstallFeatureOperation patchFor;
 		boolean patch;
 		IInstallFeatureOperation job;
 		
 		public Hit(IFeature candidate, IFeatureReference ref) {
-			this.candidate = candidate;
 			this.ref = ref;
 		}
 		public Hit(IFeature candidate, IFeatureReference ref, boolean patch) {
