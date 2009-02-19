@@ -63,7 +63,7 @@ public class RangeDifference {
 	 *
 	 * @param changeKind the kind of change
 	 */
-	/* package */ RangeDifference(int changeKind) {
+	protected RangeDifference(int changeKind) {
 		this.kind= changeKind;
 	}
 
@@ -77,7 +77,7 @@ public class RangeDifference {
 	 * @param leftStart start index of entity on left side
 	 * @param leftLength number of entities on left side
 	 */
-	/* package */ RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength) {
+	protected RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength) {
 		this.kind= kind;
 		this.rightStart= rightStart;
 		this.rightLength= rightLength;
@@ -97,7 +97,7 @@ public class RangeDifference {
 	 * @param ancestorStart start index of entity on ancestor side
 	 * @param ancestorLength number of entities on ancestor side
 	 */
-	/* package */ RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength,
+	protected RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength,
 									int ancestorStart, int ancestorLength) {
 		this(kind, rightStart, rightLength, leftStart, leftLength);
 		this.ancestorStart= ancestorStart;

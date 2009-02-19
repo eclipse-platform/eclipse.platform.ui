@@ -12,12 +12,9 @@ package org.eclipse.compare.rangedifferencer;
 
 /**
  * @since org.eclipse.compare.core 1.0
- *
  */
-public class RangeDifferenceCreator {
-	protected RangeDifference createRangeDifference() {
-		return new RangeDifference(RangeDifference.NOCHANGE);
-	}
+public abstract class AbstractRangeDifferenceFactory {
+	protected abstract RangeDifference createRangeDifference();
 
 	RangeDifference createRangeDifference(int changeKind) {
 		RangeDifference rangeDifference = createRangeDifference();

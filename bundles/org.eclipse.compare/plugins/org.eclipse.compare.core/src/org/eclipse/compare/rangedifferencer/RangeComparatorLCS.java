@@ -24,12 +24,12 @@ import org.eclipse.core.runtime.SubMonitor;
 	private final IRangeComparator comparator1, comparator2;
 	private int[][] lcs;
 	
-	public static RangeDifference[] findDifferences(RangeDifferenceCreator creator, IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
+	public static RangeDifference[] findDifferences(AbstractRangeDifferenceFactory factory, IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 		RangeComparatorLCS lcs = new RangeComparatorLCS(left, right);
 		SubMonitor monitor = SubMonitor.convert(pm, Messages.RangeComparatorLCS_0, 100);
 		try {
 			lcs.longestCommonSubsequence(monitor.newChild(95));
-			return lcs.getDifferences(monitor.newChild(5), creator);
+			return lcs.getDifferences(monitor.newChild(5), factory);
 		} finally {
 			if (pm != null)
 				pm.done();
@@ -63,12 +63,12 @@ import org.eclipse.core.runtime.SubMonitor;
 		lcs[1][sl1] = sl2 + 1;
 	}
 	
-	public RangeDifference[] getDifferences(SubMonitor subMonitor, RangeDifferenceCreator creator) {
+	public RangeDifference[] getDifferences(SubMonitor subMonitor, AbstractRangeDifferenceFactory factory) {
 		try {
 			List differences = new ArrayList();
 			int length = getLength();
 			if (length == 0) {
-				differences.add(creator.createRangeDifference(RangeDifference.CHANGE, 0, comparator2.getRangeCount(), 0, comparator1.getRangeCount()));
+				differences.add(factory.createRangeDifference(RangeDifference.CHANGE, 0, comparator2.getRangeCount(), 0, comparator1.getRangeCount()));
 			} else {
 				subMonitor.beginTask(null, length);
 				int index1, index2;
@@ -98,7 +98,7 @@ import org.eclipse.core.runtime.SubMonitor;
 					if (s1 == -1 && (end1 != 0 || end2 != 0)) {
 						// There is a diff at the beginning
 						// TODO: We need to conform that this is the proper order
-						differences.add(creator.createRangeDifference(RangeDifference.CHANGE, 0, end2, 0, end1));
+						differences.add(factory.createRangeDifference(RangeDifference.CHANGE, 0, end2, 0, end1));
 					} else if (end1 != s1 + 1 || end2 != s2 + 1) {
 						// A diff was found on one of the sides
 						int leftStart = s1 + 1;
@@ -106,7 +106,7 @@ import org.eclipse.core.runtime.SubMonitor;
 						int rightStart = s2 + 1;
 						int rightLength = end2 - rightStart;
 						// TODO: We need to conform that this is the proper order
-						differences.add(creator.createRangeDifference(RangeDifference.CHANGE, rightStart, rightLength, leftStart, leftLength));
+						differences.add(factory.createRangeDifference(RangeDifference.CHANGE, rightStart, rightLength, leftStart, leftLength));
 					}
 					s1 = end1;
 					s2 = end2;
@@ -119,7 +119,7 @@ import org.eclipse.core.runtime.SubMonitor;
 					int leftStart = s1 < comparator1.getRangeCount() ? s1 + 1 : s1;
 					int rightStart = s2 < comparator2.getRangeCount() ? s2 + 1 : s2;
 					// TODO: We need to confirm that this is the proper order
-					differences.add(creator.createRangeDifference(RangeDifference.CHANGE, rightStart, comparator2.getRangeCount() - (s2 + 1), leftStart, comparator1.getRangeCount() - (s1 + 1)));
+					differences.add(factory.createRangeDifference(RangeDifference.CHANGE, rightStart, comparator2.getRangeCount() - (s2 + 1), leftStart, comparator1.getRangeCount() - (s1 + 1)));
 				}
 				
 			}
