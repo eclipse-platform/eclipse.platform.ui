@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gunnar Wagenknecht <gunnar@wagenknecht.org> - Fix for bug 265445
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
@@ -429,6 +430,8 @@ public final class Platform {
 	private static final String LINE_SEPARATOR_VALUE_CR = "\r"; //$NON-NLS-1$
 	private static final String LINE_SEPARATOR_VALUE_LF = "\n"; //$NON-NLS-1$
 	private static final String LINE_SEPARATOR_VALUE_CRLF = "\r\n"; //$NON-NLS-1$
+	
+	private static boolean authNotAvailableLogged = false;
 
 	/**
 	 * Private constructor to block instance creation.
@@ -591,7 +594,10 @@ public final class Platform {
 	}
 
 	private static void logAuthNotAvailable(Throwable e) {
-		InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, Messages.auth_notAvailable, null));
+		if(authNotAvailableLogged)
+			return;
+		authNotAvailableLogged = true;
+		InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, Messages.auth_notAvailable, e));
 	}
 
 	/**
