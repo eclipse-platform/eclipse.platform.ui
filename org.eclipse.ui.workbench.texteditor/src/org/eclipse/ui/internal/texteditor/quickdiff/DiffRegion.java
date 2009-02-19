@@ -19,7 +19,8 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 
 import org.eclipse.ui.internal.texteditor.NLSUtility;
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
+
+import org.eclipse.compare.rangedifferencer.RangeDifference;
 
 
 /**
@@ -30,7 +31,7 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Ran
  * @since 3.0
  */
 public final class DiffRegion extends Annotation implements ILineDiffInfo {
-	private final RangeDifference fDifference;
+	private final QuickDiffRangeDifference fDifference;
 
 	private final int fOffset;
 
@@ -46,7 +47,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 	 * @param differences the list of differences
 	 * @param source the document
 	 */
-	public DiffRegion(RangeDifference difference, int offset, List differences, IDocument source) {
+	public DiffRegion(QuickDiffRangeDifference difference, int offset, List differences, IDocument source) {
 		super("org.eclipse.ui.workbench.texteditor.quickdiffChange", false, null); //$NON-NLS-1$
 		fOffset= offset;
 		fDifference= difference;
@@ -91,7 +92,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 				for (ListIterator it= fList.listIterator(); it.hasNext();) {
 					if (fDifference.equals(it.next())) {
 						if (it.hasNext()) {
-							RangeDifference next= (RangeDifference) it.next();
+							QuickDiffRangeDifference next= (QuickDiffRangeDifference) it.next();
 							if (next.rightLength() == 0)
 								return Math.max(next.leftLength() - next.rightLength(), 0);
 						}
@@ -123,7 +124,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 				for (ListIterator it= fList.listIterator(fList.size()); it.hasPrevious();) {
 					if (fDifference.equals(it.previous())) {
 						if (it.hasPrevious()) {
-							RangeDifference previous= (RangeDifference) it.previous();
+							QuickDiffRangeDifference previous= (QuickDiffRangeDifference) it.previous();
 							return Math.max(previous.leftLength() - previous.rightLength(), 0);
 						}
 						break;
@@ -197,7 +198,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 	/**
 	 * @return Returns the difference.
 	 */
-	public RangeDifference getDifference() {
+	public QuickDiffRangeDifference getDifference() {
 		return fDifference;
 	}
 
