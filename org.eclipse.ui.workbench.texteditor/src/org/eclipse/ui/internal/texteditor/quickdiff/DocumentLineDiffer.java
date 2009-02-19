@@ -895,7 +895,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @throws BadLocationException if document access fails somewhere
 	 */
 	void handleChanged(DocumentEvent event) throws BadLocationException {
-		Assert.isTrue(fThread == Thread.currentThread());
+		Assert.isTrue(fThread == null || fThread == Thread.currentThread());
 		fThread= null;
 
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=132125
