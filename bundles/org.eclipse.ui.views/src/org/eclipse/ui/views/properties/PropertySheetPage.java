@@ -133,6 +133,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 
 		public void partClosed(IWorkbenchPart part) {
 			if (sourcePart == part) {
+				if (sourcePart != null)
+					sourcePart.getSite().getPage().removePartListener(partListener);
 				sourcePart = null;
 				if (viewer != null && !viewer.getControl().isDisposed()) {
 					viewer.setInput(new Object[0]);
