@@ -694,15 +694,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			String property= event.getProperty();
 
-			if (isBlockSelectionModeEnabled()) {
-				if (BLOCK_SELECTION_MODE_FONT.equals(property)) {
-					Font blockFont= JFaceResources.getFont(BLOCK_SELECTION_MODE_FONT);
-					disposeFont();
-					setFont(fSourceViewer, blockFont);
-				}
-			} else if (getFontPropertyPreferenceKey().equals(property)) {
+			// IMPORTANT: Do not call isBlockSelectionModeEnabled() before checking the property!
+
+			if (BLOCK_SELECTION_MODE_FONT.equals(property) && isBlockSelectionModeEnabled()) {
+				Font blockFont= JFaceResources.getFont(BLOCK_SELECTION_MODE_FONT);
+				disposeFont();
+				setFont(fSourceViewer, blockFont);
+				return;
+			}
+			if (getFontPropertyPreferenceKey().equals(property) && isBlockSelectionModeEnabled()) {
 				initializeViewerFont(fSourceViewer);
 				updateCaret();
+				return;
 			}
 		}
 	}
