@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -2583,27 +2582,14 @@ public class Perspective {
 		return hideMenuIDs;
 	}
 	
-	/**	Hides the menu item	*/
-	public void setHiddenMenuItems(Collection items) {
-		hideMenuIDs = items;
-		page.getActionBars().getMenuManager().updateAll(true);
-	}
-	
 	/**	@return a Collection of IDs of items to be hidden from the tool bar	*/
 	public Collection getHiddenToolbarItems() {
 		return hideToolBarIDs;
 	}
 	
-	/**	Hides the menu item	*/
-	public void setHiddenToolbarItems(Collection items) {
-		hideToolBarIDs = items;
-		IWorkbenchWindow wbw = page.getWorkbenchWindow();
-		if (wbw instanceof WorkbenchWindow) {
-			final CoolBarManager cbm = ((WorkbenchWindow)wbw).getCoolBarManager();
-			if(cbm != null) {
-				cbm.update(true);
-			}
-		}
+	public void updateActionBars() {
+		page.getActionBars().getMenuManager().updateAll(true);
+		page.resetToolBarLayout();
 	}
 
 }

@@ -3169,7 +3169,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 	}
 
-	private void updateHiddenElements(DisplayItem items, Collection currentHidden) {
+	private boolean updateHiddenElements(DisplayItem items, Collection currentHidden) {
+		boolean hasChanges = false;
+		
 		List changedAndVisible = new ArrayList();
 		List changedAndInvisible = new ArrayList();
 		getChangedIds(items, changedAndInvisible, changedAndVisible);
@@ -3178,6 +3180,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		for (Iterator iterator = changedAndVisible.iterator(); iterator.hasNext();) {
 			Object id = iterator.next();
 			if (currentHidden.contains(id)) {
+				hasChanges = true;
 				currentHidden.remove(id);
 			}
 		}
@@ -3186,9 +3189,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		for (Iterator iterator = changedAndInvisible.iterator(); iterator.hasNext();) {
 			Object id = iterator.next();
 			if (!currentHidden.contains(id)) {
+				hasChanges = true;
 				currentHidden.add(id);
 			}
 		}
+		
+		return hasChanges;
 	}
 	
 	protected void okPressed() {
@@ -3199,6 +3205,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			perspective.setShowViewActionIds(getVisibleIDs(views));
 		}
 
+		// Determine if anything has changed and, if so, update the menu & tb's
+		boolean requiresUpdate = false;
+		
 		// Action Sets
 		ArrayList toAdd = new ArrayList();
 		ArrayList toRemove = new ArrayList();
@@ -3207,6 +3216,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			ActionSet actionSet = (ActionSet) i.next();
 			if (!actionSet.wasChanged())
 				continue;
+			
+			// Something has changed
+			requiresUpdate = true;
 			
 			if (actionSet.isActive()) {
 				toAdd.add(actionSet.descriptor);
@@ -3221,9 +3233,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				.toArray(new IActionSetDescriptor[toAdd.size()]));
 
 		// Menu  and Toolbar Items
-		updateHiddenElements(menuItems, perspective.getHiddenMenuItems());
-		updateHiddenElements(toolBarItems, perspective.getHiddenToolbarItems());
-
+		requiresUpdate |= updateHiddenElements(menuItems, perspective.getHiddenMenuItems());
+		requiresUpdate |= updateHiddenElements(toolBarItems, perspective.getHiddenToolbarItems());
+		
+		if (requiresUpdate) {
+			perspective.updateActionBars();
+		}
+		
 		super.okPressed();
 	}
 

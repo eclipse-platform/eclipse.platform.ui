@@ -975,7 +975,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
             // Update the Coolbar layout.
             resetToolBarLayout();
-
+            getActionBars().getMenuManager().updateAll(true);
+            
             // restore the maximized intro
             if (introViewAdapter != null) {
                 try {

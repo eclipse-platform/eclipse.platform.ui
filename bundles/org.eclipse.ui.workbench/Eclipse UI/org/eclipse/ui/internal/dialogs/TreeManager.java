@@ -99,8 +99,8 @@ public class TreeManager {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Object checked = event.getElement();
 			if(checked instanceof TreeItem) {
-				((TreeItem)checked).setCheckState(event.getChecked());
 				((TreeItem)checked).setChangedByUser(true);
+				((TreeItem)checked).setCheckState(event.getChecked());
 			}
 		}
 	}
