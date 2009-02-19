@@ -73,15 +73,19 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getColumnCount(org.eclipse.swt.widgets.Scrollable)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.5
 	 */
 	protected int getColumnCount(Scrollable tree) {
 		return ((Tree) tree).getColumnCount();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.layout.AbstractColumnLayout#setColumnWidths(org.eclipse.swt.widgets.Scrollable, int[])
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.5
 	 */
 	protected void setColumnWidths(Scrollable tree, int[] widths) {
 		TreeColumn[] columns = ((Tree) tree).getColumns();
@@ -90,14 +94,21 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getLayoutData(org.eclipse.swt.widgets.Scrollable, int)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.5
 	 */
 	protected ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex) {
 		TreeColumn column = ((Tree) tableTree).getColumn(columnIndex);
 		return (ColumnLayoutData) column.getData(LAYOUT_DATA);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.5
+	 */
 	protected void updateColumnData(Widget column) {
 		TreeColumn tColumn = (TreeColumn) column;
 		Tree t = tColumn.getParent();

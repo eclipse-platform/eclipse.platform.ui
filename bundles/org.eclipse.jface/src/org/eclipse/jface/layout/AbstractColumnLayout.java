@@ -58,6 +58,7 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	/**
 	 * Key used to restore the layout data in the columns data-slot
+     * @since 3.5
 	 */
 	protected static final String LAYOUT_DATA = Policy.JFACE + ".LAYOUT_DATA"; //$NON-NLS-1$
 

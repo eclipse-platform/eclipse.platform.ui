@@ -27,29 +27,28 @@ import org.eclipse.swt.widgets.Widget;
  * {@link TableColumn} sizes in a {@link Table}.
  * 
  * <p>
- * <b>You can only add the {@link Layout} to a container whose <i>only</i>
- * child is the {@link Table} control you want the {@link Layout} applied to.
- * Don't assign the layout directly the {@link Table}</b>
+ * <b>You can only add the {@link Layout} to a container whose <i>only</i> child
+ * is the {@link Table} control you want the {@link Layout} applied to. Don't
+ * assign the layout directly the {@link Table}</b>
  * </p>
  * 
  * @since 3.3
  */
 public class TableColumnLayout extends AbstractColumnLayout {
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
 	 * 
-	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getColumnCount(org.eclipse.swt.widgets.Scrollable)
+	 * @since 3.5
 	 */
 	protected int getColumnCount(Scrollable tableTree) {
 		return ((Table) tableTree).getColumnCount();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
 	 * 
-	 * @see org.eclipse.jface.layout.AbstractColumnLayout#setColumnWidths(org.eclipse.swt.widgets.Scrollable,
-	 *      int[])
+	 * @since 3.5
 	 */
 	protected void setColumnWidths(Scrollable tableTree, int[] widths) {
 		TableColumn[] columns = ((Table) tableTree).getColumns();
@@ -58,12 +57,13 @@ public class TableColumnLayout extends AbstractColumnLayout {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
 	 * 
-	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getLayoutData(int)
+	 * @since 3.5
 	 */
-	protected ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex) {
+	protected ColumnLayoutData getLayoutData(Scrollable tableTree,
+			int columnIndex) {
 		TableColumn column = ((Table) tableTree).getColumn(columnIndex);
 		return (ColumnLayoutData) column.getData(LAYOUT_DATA);
 	}
@@ -72,16 +72,17 @@ public class TableColumnLayout extends AbstractColumnLayout {
 		return ((TableColumn) column).getParent().getParent();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.layout.AbstractColumnLayout#updateColumnData(org.eclipse.swt.widgets.Widget)
+	/**
+	 * @since 3.5
 	 */
 	protected void updateColumnData(Widget column) {
 		TableColumn tColumn = (TableColumn) column;
 		Table t = tColumn.getParent();
-		
-		if( ! IS_GTK || t.getColumn(t.getColumnCount()-1) != tColumn ){
-			tColumn.setData(LAYOUT_DATA,new ColumnPixelData(tColumn.getWidth()));
+
+		if (!IS_GTK || t.getColumn(t.getColumnCount() - 1) != tColumn) {
+			tColumn.setData(LAYOUT_DATA,
+					new ColumnPixelData(tColumn.getWidth()));
 			layout(t.getParent(), true);
-		}	
+		}
 	}
 }
