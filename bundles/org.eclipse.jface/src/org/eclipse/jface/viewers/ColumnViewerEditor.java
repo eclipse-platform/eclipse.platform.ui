@@ -440,7 +440,8 @@ public abstract class ColumnViewerEditor {
 
 			this.cell = (ViewerCell) event.getSource();
 
-			if( ! activateCellEditor(event) ) {
+			// Only null if we are not in a deactivation process see bug 260892
+			if( ! activateCellEditor(event) && ! inEditorDeactivation ) {
 				this.cell = null;
 				this.cellEditor = null;
 			}
