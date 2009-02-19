@@ -28,8 +28,6 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
-import org.eclipse.jface.bindings.BindingManagerEvent;
-import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
@@ -55,38 +53,6 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 public final class BindingManagerTest extends UITestCase {
 
 	/**
-	 * A test listener that should be attached to the binding manager. The
-	 * listener records the last fired event.
-	 * 
-	 * @since 3.1
-	 */
-	private static final class TestListener implements IBindingManagerListener {
-
-		/**
-		 * The last event that this listener saw. <code>null</code> if none.
-		 */
-		private BindingManagerEvent event = null;
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
-		 */
-		public void bindingManagerChanged(BindingManagerEvent e) {
-			this.event = e;
-		}
-
-		/**
-		 * Returns the last event.
-		 * 
-		 * @return The last event; may be <code>null</code> if none.
-		 */
-		public final BindingManagerEvent getLastEvent() {
-			return event;
-		}
-	}
-
-	/**
 	 * The binding manager to use in each test case. A new binding manager is
 	 * created for each test case, and it is disposed when the test is over.
 	 */
@@ -103,13 +69,6 @@ public final class BindingManagerTest extends UITestCase {
 	 * created for each test case, and it is disposed when the test is over.
 	 */
 	private ContextManager contextManager = null;
-
-	/**
-	 * The listener attached to the binding manager. This listener is attached
-	 * at the beginning of each test case, and it is disposed when the test is
-	 * over.
-	 */
-	private TestListener listener = null;
 
 	/**
 	 * Constructor for <code>BindingInteractionsTest</code>.
@@ -129,16 +88,12 @@ public final class BindingManagerTest extends UITestCase {
 		commandManager = new CommandManager();
 		contextManager = new ContextManager();
 		bindingManager = new BindingManager(contextManager, commandManager);
-		listener = new TestListener();
-		bindingManager.addBindingManagerListener(listener);
 	}
 
 	/**
 	 * Releases the context manager and binding manager for garbage collection.
 	 */
 	protected final void doTearDown() {
-		bindingManager.removeBindingManagerListener(listener);
-		listener = null;
 		bindingManager = null;
 		contextManager = null;
 		commandManager = null;
