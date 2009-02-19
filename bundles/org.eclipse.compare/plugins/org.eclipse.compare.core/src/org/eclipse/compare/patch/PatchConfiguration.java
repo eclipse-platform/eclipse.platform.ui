@@ -18,7 +18,7 @@ import java.util.List;
  * A patch configuration allows clients to set parameters that control how a
  * patch is applied.
  * 
- * @see IFilePatch
+ * @see IFilePatch2
  * @since 3.3
  * @noextend This class may be instantiated by clients but is not intended to be
  *           subclassed.
@@ -126,7 +126,7 @@ public class PatchConfiguration {
 	/**
 	 * Adds a hunk filter.
 	 * 
-	 * @param filter
+	 * @param filter the filter
 	 * @since org.eclipse.compare.core 1.0
 	 */
 	public void addHunkFilter(IHunkFilter filter) {
@@ -136,7 +136,7 @@ public class PatchConfiguration {
 	/**
 	 * Removes a hunk filter.
 	 * 
-	 * @param filter
+	 * @param filter the filter
 	 * @since org.eclipse.compare.core 1.0
 	 */
 	public void removeHunkFilter(IHunkFilter filter) {
@@ -147,7 +147,7 @@ public class PatchConfiguration {
 	 * Return an array of hunk filters that have been added to this
 	 * configuration.
 	 * 
-	 * @return
+	 * @return an array of hunk filters that have been added to this configuration
 	 * @since org.eclipse.compare.core 1.0
 	 */
 	public IHunkFilter[] getHunkFilters() {

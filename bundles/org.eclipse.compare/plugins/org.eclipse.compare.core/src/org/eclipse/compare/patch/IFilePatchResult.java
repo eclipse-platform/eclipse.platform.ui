@@ -16,12 +16,12 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * A file patch result provides the results of an attempt to apply an
- * {@link IFilePatch} to the contents of a file. *
+ * {@link IFilePatch2} to the contents of a file. *
  * 
- * @see IFilePatch
+ * @see IFilePatch2
  * @since 3.3
  * @noimplement This interface is not intended to be implemented by clients.
- *              Clients can obtain patch results from an {@link IFilePatch}.
+ *              Clients can obtain patch results from an {@link IFilePatch2}.
  */
 public interface IFilePatchResult {
 	
