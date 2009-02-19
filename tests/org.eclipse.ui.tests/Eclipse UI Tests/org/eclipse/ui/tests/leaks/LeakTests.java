@@ -22,8 +22,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -202,6 +204,37 @@ public class LeakTests extends UITestCase {
 			service = null;
 			site = null;
 			view = null;
+			// check for leaks
+			checkRef(queue, ref);
+		} finally {
+			ref.clear();
+		}
+	}
+	
+	public void testBug265449PropertiesLeak() throws Exception {
+		// create a project to be selected by the 'Navigator'
+    	proj = FileUtil.createProject("projectToSelect");
+    	
+    	// show the 'Navigator'
+    	IViewPart navigator = fActivePage.showView(IPageLayout.ID_RES_NAV);
+    	// show the 'Properties' view
+    	IViewPart propertiesView = fActivePage.showView(IPageLayout.ID_PROP_SHEET);
+    	
+    	// select the project in the 'Navigator', this will cause the 'Properties'
+    	// view to show something, and create a PropertySheetPage, which was leaking
+    	navigator.getSite().getSelectionProvider().setSelection(new StructuredSelection(proj));
+
+		// create a reference for the 'Properties' view
+		ReferenceQueue queue = new ReferenceQueue();
+		Reference ref = createReference(queue, propertiesView);
+
+		try {
+			// hide the views
+	    	fActivePage.hideView(navigator);
+	    	fActivePage.hideView(propertiesView);
+			// remove our references
+			navigator = null;
+			propertiesView = null;
 			// check for leaks
 			checkRef(queue, ref);
 		} finally {
