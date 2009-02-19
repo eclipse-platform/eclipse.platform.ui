@@ -702,7 +702,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				setFont(fSourceViewer, blockFont);
 				return;
 			}
-			if (getFontPropertyPreferenceKey().equals(property) && isBlockSelectionModeEnabled()) {
+			if (getFontPropertyPreferenceKey().equals(property) && !isBlockSelectionModeEnabled()) {
 				initializeViewerFont(fSourceViewer);
 				updateCaret();
 				return;
