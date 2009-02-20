@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Gunnar Wagenknecht <gunnar@wagenknecht.org> - Fix for bug 265445
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - Fix for bug 265532     
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
@@ -403,6 +404,13 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "cocoa") indicating the platform is running on a
+	 * machine using the Cocoa windowing system (Mac OS X).
+	 * @since 3.5
+	 */
+	public static final String WS_COCOA = "cocoa";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "wpf") indicating the platform is running on a

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Julian Chen - fix for bug #92572, jclRM
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - fix for bug 265532
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
@@ -87,7 +88,7 @@ public final class InternalPlatform {
 
 	private static final InternalPlatform singleton = new InternalPlatform();
 
-	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32, Platform.WS_WPF};
+	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_COCOA, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32, Platform.WS_WPF};
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 	private ServiceTracker configurationLocation = null;
 	private BundleContext context;
