@@ -281,6 +281,10 @@ public class ToolBarManager extends ContributionManager implements
 				ToolItem[] mi = toolBar.getItems();
 				ArrayList toRemove = new ArrayList(mi.length);
 				for (int i = 0; i < mi.length; i++) {
+					// there may be null items in a toolbar
+					if (mi[i] == null)
+						continue;
+					
 					Object data = mi[i].getData();
 					if (data == null
 							|| !clean.contains(data)
