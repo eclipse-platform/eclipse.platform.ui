@@ -323,24 +323,11 @@ public class Workbench implements IWorkbench, IContributionFactory {
 	}
 
 	private void installLegacyHook() {
-		IExtensionRegistry registry = InternalPlatform.getDefault()
-				.getRegistry();
-		String extId = "org.eclipse.e4.workbench.legacy"; //$NON-NLS-1$
-		IConfigurationElement[] hooks = registry
-				.getConfigurationElementsFor(extId);
+		legacyHook = (ILegacyHook) globalContext.get(ILegacyHook.class.getName());
+		if (legacyHook == null)
+			return;
 
-		ILegacyHook impl = null;
-		if (hooks.length > 0) {
-			try {
-				impl = (ILegacyHook) hooks[0]
-						.createExecutableExtension("class"); //$NON-NLS-1$
-				legacyHook = impl;
-				legacyHook.init(this, workbench);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		}
-
+		legacyHook.init(this, workbench);
 	}
 
 	private EObject findObject(TreeIterator<EObject> it, String id) {
