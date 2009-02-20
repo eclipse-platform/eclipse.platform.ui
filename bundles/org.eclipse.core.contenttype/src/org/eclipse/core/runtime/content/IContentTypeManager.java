@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
  * </p>
  * 
  * @see org.eclipse.core.runtime.content.IContentTypeMatcher
- * @see org.eclipse.core.runtime.Platform#getContentTypeManager()
  * @since 3.0
  */
 public interface IContentTypeManager extends IContentTypeMatcher {
