@@ -145,11 +145,13 @@ public class CoolBarManager extends ContributionManager implements
 
                 }
             }
-            // Now check last element to see if there is a separator
-            item = (IContributionItem) contributionList.get(contributionList
-                    .size() - 1);
-            if (item.isSeparator()) {
-                contributionList.remove(contributionList.size() - 1);
+            if (contributionList.size() != 0) {
+	            // Now check last element to see if there is a separator
+	            item = (IContributionItem) contributionList.get(contributionList
+	                    .size() - 1);
+	            if (item.isSeparator()) {
+	                contributionList.remove(contributionList.size() - 1);
+	            }
             }
         }
         return contributionList;
@@ -654,8 +656,8 @@ public class CoolBarManager extends ContributionManager implements
             }
         }
 
+        contributionList = adjustContributionList(contributionList);
         if (contributionList.size() != 0) {
-            contributionList = adjustContributionList(contributionList);
             IContributionItem[] array = new IContributionItem[contributionList
                     .size() - 1];
             array = (IContributionItem[]) contributionList.toArray(array);
@@ -917,10 +919,12 @@ public class CoolBarManager extends ContributionManager implements
 
                 // Otherwise, a new item has to be added.
                 final int start = coolBar.getItemCount();
-                IToolBarManager manager = ((ToolBarContributionItem)sourceItem).getToolBarManager();
-            	if(manager instanceof IToolBarManager2) {
-            		((IToolBarManager2)manager).setOverrides(getOverrides());
-            	}
+                if (sourceItem instanceof ToolBarContributionItem) {
+	                IToolBarManager manager = ((ToolBarContributionItem)sourceItem).getToolBarManager();
+	            	if(manager instanceof IToolBarManager2) {
+	            		((IToolBarManager2)manager).setOverrides(getOverrides());
+	            	}
+                }
                 sourceItem.fill(coolBar, destinationIndex);
                 final int newItems = coolBar.getItemCount() - start;
                 for (int i = 0; i < newItems; i++) {

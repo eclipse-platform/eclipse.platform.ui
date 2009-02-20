@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.internal;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -190,6 +191,34 @@ public class EditorActionBarsTest extends UITestCase {
             }
 
         }
+    }
+
+    /**
+     * Tests an edge case in cool bar updating when the cool bar has a single separator 
+     * and no other contents (or multiple separators and no other contents). 
+     * See bug 239945 for details.
+     * @throws Throwable
+     */
+    public void test239945() throws Throwable {
+    	// Test a cool bar with a single separator
+		CoolBarManager coolBarManager = new CoolBarManager();
+		coolBarManager.add(new Separator(CoolBarManager.USER_SEPARATOR));
+		try {
+			coolBarManager.createControl(fWindow.getShell());
+			coolBarManager.update(true);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			fail("Exception updating cool bar with a single separator");
+		}
+
+    	// Test a cool bar with multiple separators
+		CoolBarManager coolBarManager2 = new CoolBarManager();
+		coolBarManager2.add(new Separator(CoolBarManager.USER_SEPARATOR));
+		try {
+			coolBarManager2.createControl(fWindow.getShell());
+			coolBarManager2.update(true);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			fail("Exception updating cool bar with multiple separators");
+		}
     }
 }
 
