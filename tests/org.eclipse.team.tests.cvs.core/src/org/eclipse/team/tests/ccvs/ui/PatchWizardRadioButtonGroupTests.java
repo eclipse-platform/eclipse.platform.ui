@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -380,32 +380,6 @@ public class PatchWizardRadioButtonGroupTests extends TestCase {
 			} catch (InvocationTargetException e) {
 				fail(e.getMessage());
 			}
-		}
-
-		public int setSelection(int buttonCode, boolean selectEnabledOnly) {
-			try {
-				Class partypes[] = new Class[2];
-				partypes[0] = Boolean.TYPE;
-				partypes[1] = Integer.class;
-				Method method = clazz.getMethod("setSelection", partypes);
-				method.setAccessible(true);
-				Object arglist[] = new Object[2];
-				arglist[0] = new Integer(buttonCode);
-				arglist[1] = new Boolean(selectEnabledOnly);
-				Object retobj = method.invoke(groupObject, arglist);
-				return ((Integer) retobj).intValue();
-			} catch (SecurityException e) {
-				fail(e.getMessage());
-			} catch (NoSuchMethodException e) {
-				fail(e.getMessage());
-			} catch (IllegalArgumentException e) {
-				fail(e.getMessage());
-			} catch (IllegalAccessException e) {
-				fail(e.getMessage());
-			} catch (InvocationTargetException e) {
-				fail(e.getMessage());
-			}
-			return 0;
 		}
 
 	}

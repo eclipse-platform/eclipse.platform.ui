@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,11 +44,7 @@ public abstract class CompareInputChangeNotifier implements
 	private InputChangeEventHandler eventHandler;
 
 	private class CompareInputConnecton {
-		private ICompareInput input;
 		private int connections;
-		public CompareInputConnecton(ICompareInput input) {
-			this.input = input;
-		}
 		public void increment() {
 			connections++;
 		}
@@ -59,9 +55,6 @@ public abstract class CompareInputChangeNotifier implements
 		}
 		public boolean isDisconnected() {
 			return connections == 0;
-		}
-		public ICompareInput getInput() {
-			return input;
 		}
 	}
 	
@@ -209,7 +202,7 @@ public abstract class CompareInputChangeNotifier implements
 	public void connect(ICompareInput input) {
 		CompareInputConnecton con = (CompareInputConnecton)inputs.get(input);
 		if (con == null) {
-			con = new CompareInputConnecton(input);
+			con = new CompareInputConnecton();
 			inputs.put(input, con);
 		}
 		con.increment();
