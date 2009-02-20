@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 			String charset = getCharset(line);
 			if (charset != null && !isCharsetValid(charset))
 				return INVALID;
-			if (charset != null && !charset.equalsIgnoreCase("utf8") && !charset.equalsIgnoreCase("utf-8"))
+			if (charset != null && !charset.equalsIgnoreCase("utf8") && !charset.equalsIgnoreCase("utf-8")) //$NON-NLS-1$ //$NON-NLS-2$
 				// only set property if value is not default (avoid using a non-default content description)
 				description.setProperty(IContentDescription.CHARSET, charset);
 		}
