@@ -97,7 +97,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 		int sel = providerCombo.getSelectionIndex();
 		proxyEntriesComposite.performApply();
 		nonProxyHostsComposite.performApply();
-		ProxySelector.setDefaultProvider(providerCombo.getItem(sel));
+		ProxySelector.setActiveProvider(providerCombo.getItem(sel));
 	}
 
 	protected void performDefaults() {

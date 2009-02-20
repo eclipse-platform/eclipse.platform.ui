@@ -40,11 +40,11 @@ public class ProxySelector {
 		return NATIVE_PROVIDER;
 	}
 
-	public static void setDefaultProvider(String provider) {
+	public static void setActiveProvider(String provider) {
 		IProxyService service = ProxyManager.getProxyManager();
 		if (provider.equals(DIRECT_PROVIDER)) {
 			service.setProxiesEnabled(false);
-			service.setProxiesEnabled(false);
+			service.setSystemProxiesEnabled(false);
 		} else if (provider.equals(ECLIPSE_PROVIDER)) {
 			service.setProxiesEnabled(true);
 			service.setSystemProxiesEnabled(false);
