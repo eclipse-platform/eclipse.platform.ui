@@ -622,9 +622,11 @@ final class HandlerAuthority {
 		 * For every command identifier with a changed activation, we resolve
 		 * conflicts and trigger an update.
 		 */
-		final Iterator changedCommandIdItr = changedCommandIds.iterator();
-		while (changedCommandIdItr.hasNext()) {
-			final String commandId = (String) changedCommandIdItr.next();
+		String[] changedIds = (String[]) changedCommandIds.toArray(new String[changedCommandIds.size()]);
+		changedCommandIds.clear();
+		for (int i = 0; i < changedIds.length; i++) {
+			
+			final String commandId = changedIds[i];
 			final Object value = handlerActivationsByCommandId.get(commandId);
 			if (value instanceof IHandlerActivation) {
 				final IHandlerActivation activation = (IHandlerActivation) value;
