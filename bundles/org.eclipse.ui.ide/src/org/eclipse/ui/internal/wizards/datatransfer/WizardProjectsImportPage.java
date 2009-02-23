@@ -56,6 +56,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -68,6 +69,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -105,6 +107,28 @@ public class WizardProjectsImportPage extends WizardPage implements
 	private ILeveledImportStructureProvider structureProvider;
 
 	/**
+	 * @since 3.5
+	 *
+	 */
+	private final class ProjectLabelProvider extends LabelProvider implements IColorProvider{
+		
+		public String getText(Object element) {
+			return ((ProjectRecord) element).getProjectLabel();
+		}
+
+		public Color getBackground(Object element) {
+			return null;
+		}
+
+		public Color getForeground(Object element) {
+			ProjectRecord projectRecord = (ProjectRecord) element;
+			if(projectRecord.hasConflicts)
+				return getShell().getDisplay().getSystemColor(SWT.COLOR_GRAY);
+			return null;
+		}
+	}
+
+	/**
 	 * Class declared public only for test suite.
 	 * 
 	 */
@@ -118,6 +142,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 		Object parent;
 
 		int level;
+		
+		boolean hasConflicts;
 
 		IProjectDescription description;
 
@@ -242,6 +268,13 @@ public class WizardProjectsImportPage extends WizardPage implements
 			return NLS.bind(
 					DataTransferMessages.WizardProjectsImportPage_projectLabel,
 					projectName, path);
+		}
+		
+		/**
+		 * @return Returns the hasConflicts.
+		 */
+		public boolean hasConflicts() {
+			return hasConflicts;
 		}
 	}
 
@@ -404,7 +437,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			 * (java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
-				return getValidProjects();
+				return getProjectRecords();
 			}
 
 			/*
@@ -451,17 +484,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		});
 
-		projectsList.setLabelProvider(new LabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
-			public String getText(Object element) {
-				return ((ProjectRecord) element).getProjectLabel();
-			}
-		});
+		projectsList.setLabelProvider(new ProjectLabelProvider());
 
 		projectsList.addCheckStateListener(new ICheckStateListener() {
 			/*
@@ -472,6 +495,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 			 * (org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				ProjectRecord element = (ProjectRecord) event.getElement();
+				if(element.hasConflicts) {
+					projectsList.setChecked(element, false);
+				}
 				setPageComplete(projectsList.getCheckedElements().length > 0);
 			}
 		});
@@ -500,7 +527,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 		selectAll.setText(DataTransferMessages.DataTransfer_selectAll);
 		selectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				projectsList.setCheckedElements(selectedProjects);
+				for (int i = 0; i < selectedProjects.length; i++) {
+					if(selectedProjects[i].hasConflicts)
+						projectsList.setChecked(selectedProjects[i], false);
+					else
+						projectsList.setChecked(selectedProjects[i], true);
+				}
 				setPageComplete(projectsList.getCheckedElements().length > 0);
 			}
 		});
@@ -893,8 +925,18 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 
 		projectsList.refresh(true);
-		projectsList.setCheckedElements(getValidProjects());
-		if (getValidProjects().length < selectedProjects.length) {
+		ProjectRecord[] projects = getProjectRecords();
+		boolean displayWarning = false;
+		for (int i = 0; i < projects.length; i++) {
+			if(projects[i].hasConflicts) {
+				displayWarning = true;
+				projectsList.setGrayed(projects[i], true);
+			}else {
+				projectsList.setChecked(projects[i], true);
+			}
+		}
+		
+		if (displayWarning) {
 			setMessage(
 					DataTransferMessages.WizardProjectsImportPage_projectsInWorkspace,
 					WARNING);
@@ -1373,26 +1415,26 @@ public class WizardProjectsImportPage extends WizardPage implements
 	}
 
 	/**
-	 * Get the array of valid project records that can be imported from the
+	 * Get the array of  project records that can be imported from the
 	 * source workspace or archive, selected by the user. If a project with the
 	 * same name exists in both the source workspace and the current workspace,
-	 * it will not appear in the list of projects to import and thus cannot be
-	 * selected for import.
+	 * then the hasConflicts flag would be set on that project record.
 	 * 
 	 * Method declared public for test suite.
 	 * 
 	 * @return ProjectRecord[] array of projects that can be imported into the
 	 * 	workspace
 	 */
-	public ProjectRecord[] getValidProjects() {
-		List validProjects = new ArrayList();
+	public ProjectRecord[] getProjectRecords() {
+		List projectRecords = new ArrayList();
 		for (int i = 0; i < selectedProjects.length; i++) {
-			if (!isProjectInWorkspace(selectedProjects[i].getProjectName())) {
-				validProjects.add(selectedProjects[i]);
+			if (isProjectInWorkspace(selectedProjects[i].getProjectName())) {
+				selectedProjects[i].hasConflicts = true;
 			}
+			projectRecords.add(selectedProjects[i]);
 		}
-		return (ProjectRecord[]) validProjects
-				.toArray(new ProjectRecord[validProjects.size()]);
+		return (ProjectRecord[]) projectRecords
+				.toArray(new ProjectRecord[projectRecords.size()]);
 	}
 
 	/**

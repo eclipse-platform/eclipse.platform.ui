@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFolder;
@@ -58,6 +59,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	private static final String WS_DATA_LOCATION = "importExistingFromDirTest";
 	private static final String ARCHIVE_HELLOWORLD = "helloworld";
 	private static final String ARCHIVE_FILE_WITH_EMPTY_FOLDER = "EmptyFolderInArchive";
+	private static final String PROJECTS_ARCHIVE = "ProjectsArchive";
 
 	private static final String[] FILE_LIST = new String[] { "test-file-1.txt",
 			"test-file-2.doc", ".project" };
@@ -154,9 +156,10 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip.updateProjectsList(archiveFile.getPath());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
+				assertFalse(selectedProjects[i].hasConflicts());
 				projectNames.add(selectedProjects[i].getProjectName());
 			}
 
@@ -184,9 +187,10 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip.updateProjectsList(archiveFile.getPath());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
+				assertFalse(selectedProjects[i].hasConflicts());
 				projectNames.add(selectedProjects[i].getProjectName());
 			}
 
@@ -208,9 +212,10 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			wpip.getProjectFromDirectoryRadio().setSelection((true));
 			wpip.updateProjectsList(wsPath.toOSString());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
+				assertFalse(selectedProjects[i].hasConflicts());
 				projectNames.add(selectedProjects[i].getProjectName());
 			}
 
@@ -233,18 +238,12 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			wpip.getProjectFromDirectoryRadio().setSelection((true));
 			wpip.updateProjectsList(wsPath.toOSString());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
-			ArrayList projectNames = new ArrayList();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			for (int i = 0; i < selectedProjects.length; i++) {
-				projectNames.add(selectedProjects[i].getProjectName());
+				if(selectedProjects[i].getProjectName().equals("HelloWorld"))
+					assertTrue(selectedProjects[i].hasConflicts());
 			}
 
-			assertEquals("there should only be the WorldHello project left", 1,
-					projectNames.size());
-
-			assertTrue(
-					"HelloWorld project should not be found in project list.",
-					!projectNames.contains("HelloWorld"));
 		} catch (Exception e) {
 			fail(e.toString());
 		}
@@ -272,9 +271,10 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip.updateProjectsList(archiveFile.getPath());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
+				assertFalse(selectedProjects[i].hasConflicts());
 				projectNames.add(selectedProjects[i].getProjectName());
 			}
 
@@ -327,7 +327,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip.updateProjectsList(archiveFile.getPath());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -381,7 +381,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip.updateProjectsList(archiveFile.getPath());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -436,7 +436,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip.updateProjectsList(archiveFile.getPath());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -487,7 +487,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 
 			wpip.getProjectFromDirectoryRadio().setSelection((true));
 			wpip.updateProjectsList(wsPath.toOSString());
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -540,7 +540,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			wpip.restoreWidgetValues();
 
 			wpip.updateProjectsList(wsPath.toOSString());
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -593,7 +593,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			wpip.restoreWidgetValues();
 
 			wpip.updateProjectsList(wsPath.toOSString());
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -637,7 +637,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			wpip2.restoreWidgetValues();
 
 			wpip2.updateProjectsList(wsPath.toOSString());
-			ProjectRecord[] selectedProjects2 = wpip2.getValidProjects();
+			ProjectRecord[] selectedProjects2 = wpip2.getProjectRecords();
 			assertTrue("Not all projects were found correctly in zip (2).",
 					selectedProjects2.length == 1);
 
@@ -694,7 +694,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip.updateProjectsList(archiveFile.getPath());
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -745,7 +745,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip2.updateProjectsList(archiveFile2.getPath());
 
-			ProjectRecord[] selectedProjects2 = wpip2.getValidProjects();
+			ProjectRecord[] selectedProjects2 = wpip2.getProjectRecords();
 			ArrayList projectNames2 = new ArrayList();
 			for (int i = 0; i < selectedProjects2.length; i++) {
 				projectNames2.add(selectedProjects2[i].getProjectName());
@@ -801,7 +801,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 																		// selected
 			wpip.updateProjectsList(zipLocation);
 
-			ProjectRecord[] selectedProjects = wpip.getValidProjects();
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
 			ArrayList projectNames = new ArrayList();
 			for (int i = 0; i < selectedProjects.length; i++) {
 				projectNames.add(selectedProjects[i].getProjectName());
@@ -961,4 +961,45 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		wpip.createControl(parent);
 		return wpip;
 	}
+
+	public void testGetProjectRecords() throws Exception {
+		
+		HashSet expectedNames = new HashSet();
+		expectedNames.add("Project1");
+		expectedNames.add("Project2");
+		expectedNames.add("Project3");
+		expectedNames.add("Project4");
+		expectedNames.add("Project5");
+		
+		URL projectsArchive = Platform.asLocalURL(Platform.find(TestPlugin
+				.getDefault().getBundle(), new Path(DATA_PATH_PREFIX
+				+ PROJECTS_ARCHIVE + ".zip")));
+
+		List projectNames = getNonConflictingProjectsFromArchive(projectsArchive);
+		
+		assertTrue("Not all projects were found correctly in zip", projectNames.containsAll(expectedNames));
+		
+		FileUtil.createProject("Project1");
+		projectNames = getNonConflictingProjectsFromArchive(projectsArchive);
+		
+		assertFalse("Conflict flag is not set on the projects correctly", projectNames.contains("Project1"));
+		
+	}
+
+	private List getNonConflictingProjectsFromArchive(URL projectsArchive) {
+		WizardProjectsImportPage newWizard = getNewWizard();
+		newWizard.getProjectFromDirectoryRadio().setSelection(false);
+		newWizard.updateProjectsList(projectsArchive.getPath());
+		
+		ProjectRecord[] projectRecords = newWizard.getProjectRecords();
+		
+		List projectNames = new ArrayList();
+		for (int i = 0; i < projectRecords.length; i++) {
+			if(!projectRecords[i].hasConflicts())
+				projectNames.add(projectRecords[i].getProjectName());
+		}
+		return projectNames;
+	}
+	
+	
 }
