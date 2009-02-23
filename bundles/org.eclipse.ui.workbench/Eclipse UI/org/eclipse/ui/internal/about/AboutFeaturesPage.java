@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,12 @@
  *      IBM Corporation - initial API and implementation 
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *      font should be activated and used by other components.
+ *      Remy Chi Jian Suen <remy.suen@gmail.com> - Fix for bug 265739 - 
+ *      [About] 'Features' tab in 'Eclipse SDK Installation Details' dialog 
+ *      does not display sort direction
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,8 +25,9 @@ import java.util.Map;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.internal.ConfigureColumnsDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -37,8 +40,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -47,9 +50,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.AboutPluginsDialog;
-import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.IContributionRoot;
-import org.eclipse.ui.services.IServiceLocator;
 import org.osgi.framework.Bundle;
 
 /**
@@ -58,12 +58,9 @@ import org.osgi.framework.Bundle;
  * PRIVATE This class is internal to the workbench and must not be called
  * outside the workbench.
  */
-public class AboutFeaturesPage extends TableListPage {
+public class AboutFeaturesPage extends ProductInfoPage {
 
-	// This id should *not* be the same id used for contributing the page in
-	// the installationPage extension. It is used by ProductInfoDialog
-	// to ensure a different namespace for button contributions than the id
-	// for the page appearing in the InstallationDialog
+	// used as the page id when this page is launched in its own dialog
 	private static final String ID = "productInfo.features"; //$NON-NLS-1$
 	/**
 	 * Table height in dialog units (value 150).
@@ -71,6 +68,12 @@ public class AboutFeaturesPage extends TableListPage {
 	private static final int TABLE_HEIGHT = 150;
 
 	private static final int INFO_HEIGHT = 100;
+
+	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+
+	private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
+
+	private final static int COLUMNS_ID = IDialogConstants.CLIENT_ID + 3;
 
 	private Table table;
 
@@ -98,7 +101,7 @@ public class AboutFeaturesPage extends TableListPage {
 
 	private AboutBundleGroupData lastSelection = null;
 
-	private Action pluginsAction;
+	private Button pluginsButton, moreButton;
 
 	private static Map featuresMap;
 
@@ -167,26 +170,20 @@ public class AboutFeaturesPage extends TableListPage {
 		d.open();
 	}
 
-	protected AbstractContributionFactory makeContributionFactory() {
-		return new AbstractContributionFactory(getInstallationDialog()
-				.getButtonBarURI(), null) {
-
-			public void createContributionItems(IServiceLocator serviceLocator,
-					IContributionRoot additions) {
-
-				pluginsAction = new Action(
-						WorkbenchMessages.AboutFeaturesDialog_pluginsInfo) {
-					public void run() {
-						handlePluginInfoPressed();
-					}
-				};
-				additions.addContributionItem(new ActionContributionItem(
-						pluginsAction), getInstallationDialog().getActivePageExpression(AboutFeaturesPage.this));
-			}
-		};
+	public void createPageButtons(Composite parent) {
+		moreButton = createButton(parent, MORE_ID,
+				WorkbenchMessages.AboutFeaturesDialog_moreInfo);
+		pluginsButton = createButton(parent, PLUGINS_ID,
+				WorkbenchMessages.AboutFeaturesDialog_pluginsInfo);
+		createButton(parent, COLUMNS_ID,
+				WorkbenchMessages.AboutFeaturesDialog_columns);
+		TableItem[] items = table.getSelection();
+		if (items.length > 0) {
+			updateButtons((AboutBundleGroupData) items[0].getData());
+		}
 	}
 
-	protected Control createPageControl(Composite parent) {
+	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		parent.getShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
@@ -200,7 +197,7 @@ public class AboutFeaturesPage extends TableListPage {
 
 		createTable(outer);
 		createInfoArea(outer);
-		return outer;
+		setControl(outer);
 	}
 
 	/**
@@ -210,7 +207,8 @@ public class AboutFeaturesPage extends TableListPage {
 		Font font = parent.getFont();
 
 		infoArea = new Composite(parent, SWT.BORDER);
-		infoArea.setBackground(infoArea.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		infoArea.setBackground(infoArea.getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND));
 		GridData data = new GridData(GridData.FILL, GridData.FILL, true, true);
 		// need to provide space for arbitrary feature infos, not just the
 		// one selected by default
@@ -272,7 +270,6 @@ public class AboutFeaturesPage extends TableListPage {
 						.getData();
 				updateInfoArea(info);
 				updateButtons(info);
-				selectionChanged();
 			}
 		});
 
@@ -326,27 +323,26 @@ public class AboutFeaturesPage extends TableListPage {
 	 * Update the button enablement
 	 */
 	private void updateButtons(AboutBundleGroupData info) {
-
-		// called too early
-		if (pluginsAction == null)
-			return;
-
 		if (info == null) {
-			pluginsAction.setEnabled(false);
+			moreButton.setEnabled(false);
+			pluginsButton.setEnabled(false);
 			return;
 		}
 
 		// Creating the feature map is too much just to determine enablement, so
-		// if doesn't already exist, just enable the buttons. If this was the
-		// wrong choice, then when the button is actually pressed an dialog will
-		// be
+		// if
+		// it doesn't already exist, just enable the buttons. If this was the
+		// wrong
+		// choice, then when the button is actually pressed an dialog will be
 		// opened.
 		if (featuresMap == null) {
-			pluginsAction.setEnabled(true);
+			moreButton.setEnabled(true);
+			pluginsButton.setEnabled(true);
 			return;
 		}
 
-		pluginsAction.setEnabled(true);
+		moreButton.setEnabled(info.getLicenseUrl() != null);
+		pluginsButton.setEnabled(true);
 	}
 
 	/**
@@ -426,6 +422,9 @@ public class AboutFeaturesPage extends TableListPage {
 			AboutData.sortById(reverseSort, bundleGroupInfos);
 			break;
 		}
+		// set the sort column and directional indicator
+		table.setSortColumn(table.getColumn(column));
+		table.setSortDirection(reverseSort ? SWT.DOWN : SWT.UP);
 
 		refreshTable();
 	}
@@ -475,32 +474,6 @@ public class AboutFeaturesPage extends TableListPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.about.ColumnsPage#getTable()
-	 */
-	protected Table getTable() {
-		return table;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.about.TableListPage#getURL()
-	 */
-	protected URL getURL() {
-		if (table == null || table.isDisposed())
-			return null;
-		TableItem[] items = table.getSelection();
-		if (items.length <= 0) 
-			return null;
-
-		AboutBundleGroupData info = (AboutBundleGroupData) items[0].getData();
-		if (info == null)
-			return null;
-		
-		return info.getLicenseUrl();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.about.TableListPage#getSelectionValue()
 	 */
 	protected Collection getSelectionValue() {
@@ -513,5 +486,50 @@ public class AboutFeaturesPage extends TableListPage {
 		ArrayList list = new ArrayList(1);
 		list.add(items[0].getData());
 		return list;
-	}	
+	}
+
+	private void handleColumnsPressed() {
+		ConfigureColumnsDialog d = new ConfigureColumnsDialog(this, table);
+		d.open();
+	}
+
+	/**
+	 * The More Info button was pressed. Open a browser with the license for the
+	 * selected item or an information dialog if there is no license, or the
+	 * browser cannot be opened.
+	 */
+	private void handleMoreInfoPressed() {
+		TableItem[] items = table.getSelection();
+		if (items.length <= 0) {
+			return;
+		}
+
+		AboutBundleGroupData info = (AboutBundleGroupData) items[0].getData();
+		if (info == null
+				|| !AboutUtils.openBrowser(getShell(), info.getLicenseUrl())) {
+			MessageDialog.openInformation(getShell(),
+					WorkbenchMessages.AboutFeaturesDialog_noInfoTitle,
+					WorkbenchMessages.AboutFeaturesDialog_noInformation);
+		}
+	}
+
+	/*
+	 * (non-Javadoc) Method declared on Dialog.
+	 */
+	protected void buttonPressed(int buttonId) {
+		switch (buttonId) {
+		case MORE_ID:
+			handleMoreInfoPressed();
+			break;
+		case PLUGINS_ID:
+			handlePluginInfoPressed();
+			break;
+		case COLUMNS_ID:
+			handleColumnsPressed();
+			break;
+		default:
+			super.buttonPressed(buttonId);
+			break;
+		}
+	}
 }
