@@ -103,7 +103,7 @@ abstract class SWTFocusCellManager {
 
 	private void handleSelection(Event event) {
 		if ((event.detail & SWT.CHECK) == 0 && focusCell != null && focusCell.getItem() != event.item
-				&& event.item != null ) {
+				&& event.item != null && ! event.item.isDisposed() ) {
 			ViewerRow row = viewer.getViewerRowFromItem(event.item);
 			Assert
 					.isNotNull(row,
