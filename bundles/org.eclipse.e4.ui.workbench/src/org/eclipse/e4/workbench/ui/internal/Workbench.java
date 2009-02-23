@@ -16,7 +16,6 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.*;
-import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
@@ -76,15 +75,9 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		exceptionHandler = new ExceptionHandler();
 		this.registry = registry;
 		this.packageAdmin = packageAdmin;
-		workbenchData = null;
-		try {
-			workbenchData = new File(
-					new File(instanceLocation.getURL().toURI()),
-					".metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi"); //$NON-NLS-1$
-		} catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		workbenchData = new File(new File(instanceLocation.getURL()
+				.toExternalForm()),
+				".metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi"); //$NON-NLS-1$
 
 		resourceSet = new ResourceSetImpl();
 
