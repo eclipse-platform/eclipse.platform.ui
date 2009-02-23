@@ -233,6 +233,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 		} else if (element instanceof WorkbenchWizardElement) {
 			if (canFlipToNextPage()) {
 				getContainer().showPage(getNextPage());
+				return;
 			}
 		}    	
         getContainer().showPage(getNextPage());   			
