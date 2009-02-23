@@ -944,6 +944,11 @@ public class WizardProjectsImportPage extends WizardPage implements
 			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
 		}
 		setPageComplete(projectsList.getCheckedElements().length > 0);
+		if(selectedProjects.length == 0) {
+			setMessage(
+					DataTransferMessages.WizardProjectsImportPage_noProjectsToImport,
+					WARNING);
+		}
 	}
 
 	/**

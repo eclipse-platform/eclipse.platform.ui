@@ -93,6 +93,7 @@ public class DataTransferMessages extends NLS {
 	public static String WizardProjectsImportPage_CreateProjectsTask;
 	public static String WizardProjectsImportPage_CopyProjectsIntoWorkspace;
 	public static String WizardProjectsImportPage_projectsInWorkspace;
+	public static String WizardProjectsImportPage_noProjectsToImport;
 	public static String WizardProjectsImportPage_projectLabel;
 
 	// --- Export Wizards ---
