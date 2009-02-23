@@ -133,16 +133,13 @@ import com.ibm.icu.text.DateFormat;
  * {@link #addStatusAdapter(StatusAdapter, boolean)}
  * </p>
  * 
- * <p>
- * IMPORTANT: This class is <em>not</em> intended to be subclassed by clients.
- * </p>
- * 
  * @see Policy#setErrorSupportProvider(ErrorSupportProvider)
  * @see ErrorSupportProvider
  * @see AbstractStatusAreaProvider
  * 
  * @since 3.4
  * @since 3.5 implements {@link IShellProvider}
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkbenchStatusDialogManager implements IShellProvider {
 	
