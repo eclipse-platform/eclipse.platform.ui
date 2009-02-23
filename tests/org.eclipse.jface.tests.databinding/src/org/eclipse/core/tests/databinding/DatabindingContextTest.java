@@ -37,7 +37,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#setUp()
+	 * @see
+	 * org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -48,7 +49,9 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#tearDown()
+	 * @see
+	 * org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#tearDown
+	 * ()
 	 */
 	protected void tearDown() throws Exception {
 		if (dbc != null) {
@@ -72,8 +75,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		IObservableValue model = WritableValue.withValueType(String.class);
 
 		Binding binding = dbc.bindValue(target, model);
-		assertTrue("binding is of the incorrect type",
-				binding.getClass().getName().endsWith("ValueBinding"));
+		assertTrue("binding is of the incorrect type", binding.getClass()
+				.getName().endsWith("ValueBinding"));
 	}
 
 	public void testBindList() throws Exception {
@@ -81,8 +84,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		IObservableList model = WritableList.withElementType(Object.class);
 
 		Binding binding = dbc.bindList(target, model);
-		assertTrue("binding is of the incorrect type",
-				binding.getClass().getName().endsWith("ListBinding"));
+		assertTrue("binding is of the incorrect type", binding.getClass()
+				.getName().endsWith("ListBinding"));
 	}
 
 	/**
@@ -92,8 +95,10 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testValidationError() throws Exception {
-		WritableValue targetObservable = WritableValue.withValueType(String.class);
-		WritableValue modelObservable = WritableValue.withValueType(String.class);
+		WritableValue targetObservable = WritableValue
+				.withValueType(String.class);
+		WritableValue modelObservable = WritableValue
+				.withValueType(String.class);
 
 		final String errorMessage = "error";
 		ValueChangeEventTracker errorCounter = new ValueChangeEventTracker();
@@ -116,7 +121,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 		dbc
 				.bindValue(targetObservable, modelObservable,
-						new UpdateValueStrategy().setAfterGetValidator(validator), null);
+						new UpdateValueStrategy()
+								.setAfterGetValidator(validator), null);
 
 		targetObservable.setValue("");
 		assertFalse(((IStatus) error.getValue()).isOK());
@@ -209,24 +215,27 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		}
 
 		Binding binding = dbc.bindValue(target, model,
-				new UpdateValueStrategy().setAfterConvertValidator(new Validator()), null);
+				new UpdateValueStrategy()
+						.setAfterConvertValidator(new Validator()), null);
 
 		assertEquals(IStatus.ERROR, ((IStatus) binding.getValidationStatus()
 				.getValue()).getSeverity());
 	}
-	
+
 	protected void assertNoErrorsFound() {
-		IStatus status = AggregateValidationStatus.getStatusMaxSeverity(dbc.getBindings());
-		assertTrue("No errors should be found, but found " + status , status.isOK());
+		IStatus status = AggregateValidationStatus.getStatusMaxSeverity(dbc
+				.getBindings());
+		assertTrue("No errors should be found, but found " + status, status
+				.isOK());
 	}
 
 	protected void assertErrorsFound() {
-		IStatus status = AggregateValidationStatus.getStatusMaxSeverity(dbc.getBindings());
+		IStatus status = AggregateValidationStatus.getStatusMaxSeverity(dbc
+				.getBindings());
 		assertFalse("Errors should be found, but found none.", status.isOK());
 	}
 
 	private static class BindingStub extends Binding {
-		DataBindingContext context;
 
 		public BindingStub() {
 			super(new WritableValue(), new WritableValue());

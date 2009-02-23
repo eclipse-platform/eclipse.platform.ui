@@ -164,7 +164,7 @@ public class Snippet007ColorLabelProvider {
 		display.dispose();
 	}
 
-	private static class Person {
+	static class Person {
 		static final int MALE = 0;
 
 		static final int FEMALE = 1;
@@ -197,7 +197,7 @@ public class Snippet007ColorLabelProvider {
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			changeSupport.addPropertyChangeListener(listener);
 		}
-		
+
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			changeSupport.removePropertyChangeListener(listener);
 		}

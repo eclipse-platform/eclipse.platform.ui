@@ -272,14 +272,6 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 
 		private boolean lastListenerRemoved;
 
-		protected Object doGetValue() {
-			return null;
-		}
-
-		public Object getValueType() {
-			return null;
-		}
-
 		protected void fireStale() {
 			super.fireStale();
 		}

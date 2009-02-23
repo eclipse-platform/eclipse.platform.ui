@@ -165,10 +165,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 			return super.canEdit(element);
 		}
 
-		public CellEditor getCellEditor() {
-			return editor;
-		}
-
 		private void event(String event) {
 			if (events.length() > 0) {
 				events.append(" ");
