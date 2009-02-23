@@ -81,7 +81,7 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
-		return findDifferences(defaultFactory, (IProgressMonitor)null, left, right);
+		return findDifferences(defaultFactory, null, left, right);
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
-		return findDifferences(defaultFactory, (IProgressMonitor)pm, ancestor, left, right);
+		return findDifferences(defaultFactory, pm, ancestor, left, right);
 	}
 	
 	/**
@@ -233,8 +233,9 @@ public final class RangeDifferencer {
 	 * @param right the right range comparator
 	 * @return an array of range differences
 	 */
-	public static RangeDifference[] findRanges(IRangeComparator left, IRangeComparator right) {
-		return findRanges((IProgressMonitor)null, left, right);
+	public static RangeDifference[] findRanges(IRangeComparator left,
+			IRangeComparator right) {
+		return findRanges((IProgressMonitor) null, left, right);
 	}
 	
 	/**
@@ -323,7 +324,7 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
-		return findRanges(defaultFactory, (IProgressMonitor)null, ancestor, left, right);
+		return findRanges(defaultFactory, null, ancestor, left, right);
 	}
 	
 	/**
