@@ -94,7 +94,7 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
-	 * @since org.eclipse.compare.core 1.0
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	public static RangeDifference[] findDifferences(AbstractRangeDifferenceFactory factory, IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 		return RangeComparatorLCS.findDifferences(factory, pm, left, right);
@@ -147,7 +147,7 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
-	 * @since org.eclipse.compare.core 1.0
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	public static RangeDifference[] findDifferences(AbstractRangeDifferenceFactory factory, IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 		try {
@@ -262,7 +262,7 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
-	 * @since org.eclipse.compare.core 1.0
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	public static RangeDifference[] findRanges(AbstractRangeDifferenceFactory factory, IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 		RangeDifference[] in= findDifferences(factory, pm, left, right);
@@ -339,7 +339,7 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
-	 * @since org.eclipse.compare.core 1.0
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	public static RangeDifference[] findRanges(AbstractRangeDifferenceFactory factory, IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 		if (ancestor == null)

@@ -11,7 +11,7 @@
 package org.eclipse.compare.rangedifferencer;
 
 /**
- * @since org.eclipse.compare.core 1.0
+ * @since org.eclipse.compare.core 3.5
  */
 public abstract class AbstractRangeDifferenceFactory {
 	protected abstract RangeDifference createRangeDifference();

@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * A representation of a file patch that can be applied to an input stream.
  * 
  * @noimplement This interface is not intended to be implemented by clients.
- * @since org.eclipse.compare.core 1.0.0
+ * @since org.eclipse.compare.core 3.5
  */
 public interface IFilePatch2 {
 
@@ -83,7 +83,6 @@ public interface IFilePatch2 {
 	 * Returns all the hunks this file patch contains.
 	 * 
 	 * @return array of hunks
-	 * @since org.eclipse.compare.core 1.0
 	 */
 	public IHunk[] getHunks();
 

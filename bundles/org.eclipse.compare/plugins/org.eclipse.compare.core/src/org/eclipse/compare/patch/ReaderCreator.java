@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Abstract class for creating readers.
  * 
- * @since org.eclipse.compare.core 1.0.0
+ * @since org.eclipse.compare.core 3.5
  */
 public abstract class ReaderCreator {
 

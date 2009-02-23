@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * Helper class for parsing patches.
  * 
- * @since org.eclipse.compare.core 1.0.0
+ * @since org.eclipse.compare.core 3.5
  */
 public class PatchParser {
 

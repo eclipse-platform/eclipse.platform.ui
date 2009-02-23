@@ -127,7 +127,7 @@ public class PatchConfiguration {
 	 * Adds a hunk filter.
 	 * 
 	 * @param filter the filter
-	 * @since org.eclipse.compare.core 1.0
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	public void addHunkFilter(IHunkFilter filter) {
 		hunkFilters.add(filter);
@@ -137,7 +137,7 @@ public class PatchConfiguration {
 	 * Removes a hunk filter.
 	 * 
 	 * @param filter the filter
-	 * @since org.eclipse.compare.core 1.0
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	public void removeHunkFilter(IHunkFilter filter) {
 		hunkFilters.remove(filter);
@@ -148,7 +148,7 @@ public class PatchConfiguration {
 	 * configuration.
 	 * 
 	 * @return an array of hunk filters that have been added to this configuration
-	 * @since org.eclipse.compare.core 1.0
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	public IHunkFilter[] getHunkFilters() {
 		return (IHunkFilter[]) hunkFilters.toArray(new IHunkFilter[hunkFilters

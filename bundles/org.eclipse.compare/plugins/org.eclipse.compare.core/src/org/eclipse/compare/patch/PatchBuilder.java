@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * 
- * @since org.eclipse.compare.core 1.0.0
+ * @since org.eclipse.compare.core 3.5
  */
 public class PatchBuilder {
 
