@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -611,11 +611,11 @@ public abstract class AbstractUIPlugin extends Plugin {
     }
 
     /**
-     * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
+     * The <code>AbstractUIPlugin</code> implementation of this {@link Plugin}
      * method saves this plug-in's preference and dialog stores and shuts down 
      * its image registry (if they are in use). Subclasses may extend this
      * method, but must send super <b>last</b>. A try-finally statement should
-     * be used where necessary to ensure that <code>super.shutdown()</code> is
+     * be used where necessary to ensure that <code>super.stop()</code> is
      * always done.
      * {@inheritDoc}
      * 
