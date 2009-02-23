@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
-import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -42,21 +42,9 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 	ProductInfoPage page;
 	String title;
 	String helpContextId;
-	Object previouslyActivePage;
-	Object previouslyActiveSelection;
 
 	protected ProductInfoDialog(Shell shell) {
 		super(shell, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-		// capture the previous variables values.  This is used for
-		// nested product info dialogs, such as a feature dialog that opens a
-		// plugins dialog
-		previouslyActivePage = getSourceProvider().getCurrentState().get(
-				InstallationDialogSourceProvider.ACTIVE_PRODUCT_DIALOG_PAGE);
-		previouslyActiveSelection = getSourceProvider()
-				.getCurrentState()
-				.get(
-						InstallationDialogSourceProvider.ACTIVE_PRODUCT_DIALOG_PAGE_SELECTION);
-
 	}
 
 	public void initializeDialog(ProductInfoPage page, String title,
@@ -73,11 +61,9 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 		control.setLayout(new GridLayout());
 		item.setControl(control);
 		page.createControl(control);
-		// must set up the page data before creating the service locator.
-		// The id is used by the dialog service locator
 		item.setData(page);
 		item.setData(ID, page.getId());
-		page.init(getDialogServiceLocator());
+		page.setPageContainer(this);
 		item.addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {
@@ -85,6 +71,11 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 			}
 		});
 		control.layout(true, true);
+	}
+	
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		createButtons(page);
 	}
 
 	/*
@@ -101,40 +92,9 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 					helpContextId);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.about.IInstallationPageContainer#getButtonBarURI()
-	 */
-	public String getButtonBarURI() {
-		return super.getButtonBarURI() + "." + page.getId(); //$NON-NLS-1$
+	
+	protected String pageToId(InstallationPage page) {
+		Assert.isLegal(page == this.page);
+		return this.page.getId();
 	}
-
-	protected void updateContributions(String id, InstallationPage page) {
-		InstallationDialogSourceProvider sp = getSourceProvider();
-		if (sp != null) {
-			sp.setProductDialogPage((ProductInfoPage) page);
-		}
-		getButtonManager().update(true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.about.IInstallationPageContainer#getActivePageExpression
-	 * (org.eclipse.ui.about.InstallationPage)
-	 */
-	public Expression getActivePageExpression(InstallationPage page) {
-		// We have our own menu URI and do not share with other pages, so
-		// there is no visibility expression needed.
-		return null;
-	}
-
-	protected void resetVariables(InstallationDialogSourceProvider sp) {
-		sp.setProductDialogPage(previouslyActivePage);
-		sp.setProductDialogPageSelection(previouslyActiveSelection);
-	}
-
 }

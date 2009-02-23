@@ -11,14 +11,17 @@
 
 package org.eclipse.ui.internal.about;
 
-import org.eclipse.core.expressions.Expression;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -40,19 +43,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.about.ActiveInstallationPageExpression;
 import org.eclipse.ui.about.IInstallationPageContainer;
 import org.eclipse.ui.about.InstallationPage;
 import org.eclipse.ui.internal.ConfigurationInfo;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.IServiceLocatorCreator;
-import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.services.AbstractServiceFactory;
-import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * @since 3.5
@@ -60,9 +57,12 @@ import org.eclipse.ui.services.ISourceProviderService;
  */
 public class InstallationDialog extends Dialog implements
 		IInstallationPageContainer {
-	class ButtonManager extends ContributionManager {
+	class ButtonManager {
 
 		private Composite composite;
+		HashMap buttonMap = new HashMap(); // page id->Collection of page
+
+		// buttons
 
 		public ButtonManager(Composite composite) {
 			this.composite = composite;
@@ -72,60 +72,74 @@ public class InstallationDialog extends Dialog implements
 			return composite;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.IContributionManager#update(boolean)
-		 */
-		public void update(boolean force) {
+		public void update(String currentPageId) {
 			if (composite == null || composite.isDisposed())
 				return;
 			GC metricsGC = new GC(composite);
 			FontMetrics metrics = metricsGC.getFontMetrics();
 			metricsGC.dispose();
-			IContributionItem[] items = getItems();
+			List buttons = (List) buttonMap.get(currentPageId);
 			Control[] children = composite.getChildren();
 
 			int visibleChildren = 0;
+			Button closeButton = getButton(IDialogConstants.CLOSE_ID);
+
 			for (int i = 0; i < children.length; i++) {
 				Control control = children[i];
-				control.dispose();
+				if (closeButton == control)
+					closeButton.dispose();
+				else {
+					control.setVisible(false);
+					setButtonLayoutData(metrics, control, false);
+				}
 			}
-
-			for (int i = 0; i < items.length; i++) {
-				IContributionItem item = items[i];
-				if (item.isVisible()) {
-					item.fill(composite);
-					children = composite.getChildren();
-					Control itemControl = children[children.length - 1];
-					setButtonLayoutData(metrics, itemControl);
+			if (buttons != null) {
+				for (int i = 0; i < buttons.size(); i++) {
+					Button button = (Button) buttons.get(i);
+					button.setVisible(true);
+					setButtonLayoutData(metrics, button, true);
+					GridData data = (GridData)button.getLayoutData();
+					data.exclude = false;
 					visibleChildren++;
 				}
 			}
+
 			GridLayout compositeLayout = (GridLayout) composite.getLayout();
 			compositeLayout.numColumns = visibleChildren;
 			composite.layout(true);
 		}
 
-		protected void setButtonLayoutData(FontMetrics metrics, Control button) {
+		protected void setButtonLayoutData(FontMetrics metrics, Control button, boolean visible) {
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			int widthHint = Dialog.convertHorizontalDLUsToPixels(metrics,
 					IDialogConstants.BUTTON_WIDTH);
 			Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			data.widthHint = Math.max(widthHint, minSize.x);
+			data.exclude = !visible;
 			button.setLayoutData(data);
 		}
 
+		public void addPageButton(String id, Button button) {
+			List list = (List) buttonMap.get(id);
+			if (list == null) {
+				list = new ArrayList(1);
+				buttonMap.put(id, list);
+			}
+			list.add(button);
+		}
+
+		public void clear() {
+			buttonMap = new HashMap();
+		}
 	}
 
 	protected static final String ID = "ID"; //$NON-NLS-1$
 	private static final String DIALOG_SETTINGS_SECTION = "InstallationDialogSettings"; //$NON-NLS-1$
-	private static final String URI = "toolbar:org.eclipse.ui.installationDialog.buttonbar"; //$NON-NLS-1$
 	private static String lastSelectedTabId = null;
 	private TabFolder folder;
-	private IServiceLocator serviceLocator;
+	IServiceLocator serviceLocator;
 	private ButtonManager buttonManager;
-	private InstallationDialogSourceProvider sourceProvider = null;
+	private Map pageToId = new HashMap();
 
 	/**
 	 * @param parentShell
@@ -133,13 +147,7 @@ public class InstallationDialog extends Dialog implements
 	 */
 	public InstallationDialog(Shell parentShell, IServiceLocator locator) {
 		super(parentShell);
-		IServiceLocatorCreator slc = (IServiceLocatorCreator) locator
-				.getService(IServiceLocatorCreator.class);
-		createDialogServiceLocator(slc, locator);
-		ISourceProviderService sps = (ISourceProviderService) serviceLocator
-				.getService(ISourceProviderService.class);
-		sourceProvider = (InstallationDialogSourceProvider) sps
-				.getSourceProvider(InstallationDialogSourceProvider.ACTIVE_PRODUCT_DIALOG_PAGE);
+		serviceLocator = locator;
 
 	}
 
@@ -192,7 +200,6 @@ public class InstallationDialog extends Dialog implements
 		folder.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				releaseContributions();
-				resetVariables(sourceProvider);
 			}
 		});
 		return composite;
@@ -258,7 +265,13 @@ public class InstallationDialog extends Dialog implements
 				final InstallationPage page = (InstallationPage) element
 						.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 				page.createControl(pageComposite);
-				page.init(serviceLocator);
+				page.setPageContainer(this);
+				// Must be done before creating the buttons because the control
+				// button creation methods
+				// use this map.
+				pageToId.put(page, element
+						.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
+				createButtons(page);
 				item.setData(page);
 				item.addDisposeListener(new DisposeListener() {
 
@@ -277,10 +290,10 @@ public class InstallationDialog extends Dialog implements
 		}
 		String id = (String) item.getData(ID);
 		rememberSelectedTab(id);
-		updateContributions(id, (InstallationPage) item.getData());
-		Button button = createButton(buttonManager.getParent(), IDialogConstants.CLOSE_ID,
-				IDialogConstants.CLOSE_LABEL, true);
-		GridData gd = (GridData)button.getLayoutData();
+		buttonManager.update(id);
+		Button button = createButton(buttonManager.getParent(),
+				IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
+		GridData gd = (GridData) button.getLayoutData();
 		gd.horizontalAlignment = SWT.BEGINNING;
 		gd.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH) / 2;
 		// Layout the button manager again now that the OK button is there.
@@ -292,22 +305,12 @@ public class InstallationDialog extends Dialog implements
 		getButtonBar().getParent().layout();
 	}
 
+	protected void createButtons(InstallationPage page) {
+		page.createPageButtons(buttonManager.getParent());
+	}
+
 	private void rememberSelectedTab(String pageId) {
 		lastSelectedTabId = pageId;
-	}
-
-	protected void updateContributions(String id, InstallationPage page) {
-		// Changing the source provider will cause the contributions and the
-		// button manager to be updated. If for some reason we don't have a
-		// source provider, update it ourselves.
-		if (sourceProvider != null)
-			sourceProvider.setCurrentPage(id, page);
-		else
-			buttonManager.update(true);
-	}
-
-	protected InstallationDialogSourceProvider getSourceProvider() {
-		return sourceProvider;
 	}
 
 	/*
@@ -321,11 +324,9 @@ public class InstallationDialog extends Dialog implements
 		// The button manager will handle the correct sizing of the buttons.
 		// We do not want columns equal width because we are going to add some
 		// padding in the final column (close button).
-		GridLayout layout = (GridLayout)parent.getLayout();
+		GridLayout layout = (GridLayout) parent.getLayout();
 		layout.makeColumnsEqualWidth = false;
 		buttonManager = new ButtonManager(parent);
-		((IMenuService) serviceLocator.getService(IMenuService.class))
-				.populateContributionManager(buttonManager, getButtonBarURI());
 	}
 
 	private void configureFolder() {
@@ -335,25 +336,6 @@ public class InstallationDialog extends Dialog implements
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint("org.eclipse.ui", "installationPages"); //$NON-NLS-1$ //$NON-NLS-2$
 		return point.getConfigurationElements();
-	}
-
-	protected void createDialogServiceLocator(IServiceLocatorCreator slc,
-			IServiceLocator locator) {
-		AbstractServiceFactory localFactory = new AbstractServiceFactory() {
-			public Object create(Class serviceInterface,
-					IServiceLocator parentLocator, IServiceLocator locator) {
-				if (serviceInterface == IInstallationPageContainer.class) {
-					return InstallationDialog.this;
-				}
-				return parentLocator.getService(serviceInterface);
-			}
-		};
-		this.serviceLocator = slc.createServiceLocator(locator, localFactory,
-				new IDisposable() {
-					public void dispose() {
-						close();
-					}
-				});
 	}
 
 	protected IDialogSettings getDialogBoundsSettings() {
@@ -367,47 +349,26 @@ public class InstallationDialog extends Dialog implements
 	}
 
 	protected void releaseContributions() {
-		((IMenuService) serviceLocator.getService(IMenuService.class))
-				.releaseContributions(buttonManager);
-		buttonManager.removeAll();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.about.IInstallationPageContainer#getButtonBarURI()
-	 */
-	public String getButtonBarURI() {
-		return URI;
+		buttonManager.clear();
 	}
 
 	public void closeContainer() {
 		close();
 	}
 
-	protected IServiceLocator getDialogServiceLocator() {
-		return serviceLocator;
-	}
-
-	protected ButtonManager getButtonManager() {
-		return buttonManager;
-	}
-
-   /*
-    * Used by ProductInfoPages to obtain the correct active page
-    * expression.
-    */
-	public Expression getActivePageExpression(InstallationPage page) {
-		return new ActiveInstallationPageExpression(page);
-	}
-
-	protected void resetVariables(InstallationDialogSourceProvider sp) {
-		sp.resetAll();
-	}
-	
 	protected void buttonPressed(int buttonId) {
 		if (IDialogConstants.CLOSE_ID == buttonId) {
 			okPressed();
 		}
+	}
+
+	public void registerPageButton(InstallationPage page, Button button) {
+		buttonManager.addPageButton(pageToId(page), button);
+	}
+
+	protected String pageToId(InstallationPage page) {
+		String pageId = (String) pageToId.get(page);
+		Assert.isLegal(pageId != null);
+		return pageId;
 	}
 }

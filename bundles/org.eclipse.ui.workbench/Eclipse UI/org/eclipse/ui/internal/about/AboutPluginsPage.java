@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.about;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,8 +27,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.internal.ConfigureColumnsDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,6 +40,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -48,8 +48,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -60,11 +60,10 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 /**
@@ -72,7 +71,7 @@ import org.osgi.framework.Bundle;
  * 
  * PRIVATE this class is internal to the ide
  */
-public class AboutPluginsPage extends TableListPage {
+public class AboutPluginsPage extends ProductInfoPage {
 
 	public class BundleTableLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
@@ -225,16 +224,17 @@ public class AboutPluginsPage extends TableListPage {
 		}
 	}
 
-	// This id should *not* be the same id used for contributing the page in
-	// the installationPage extension. It is used by ProductInfoDialog
-	// to ensure a different namespace for button contributions than the id
-	// for the page appearing in the InstallationDialog
+	// This id is used when the page is created inside its own dialog
 	private static final String ID = "productInfo.plugins"; //$NON-NLS-1$
 
 	/**
 	 * Table height in dialog units (value 200).
 	 */
 	private static final int TABLE_HEIGHT = 200;
+
+	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+	private final static int SIGNING_ID = MORE_ID + 1;
+	private final static int COLUMNS_ID = MORE_ID + 2;
 
 	private static final IPath baseNLPath = new Path("$nl$"); //$NON-NLS-1$
 
@@ -246,7 +246,7 @@ public class AboutPluginsPage extends TableListPage {
 
 	private TableViewer vendorInfo;
 
-	private Action signingInfo;
+	private Button moreInfo, signingInfo;
 
 	private String message;
 
@@ -302,28 +302,21 @@ public class AboutPluginsPage extends TableListPage {
 		}
 	}
 
-	protected AbstractContributionFactory makeContributionFactory() {
-		return new AbstractContributionFactory(getInstallationDialog()
-				.getButtonBarURI(), null) {
+	public void createPageButtons(Composite parent) {
 
-			public void createContributionItems(IServiceLocator serviceLocator,
-					IContributionRoot additions) {
+		moreInfo = createButton(parent, MORE_ID,
+				WorkbenchMessages.AboutPluginsDialog_moreInfo);
+		moreInfo.setEnabled(false);
 
-				signingInfo = new Action(
-						WorkbenchMessages.AboutPluginsDialog_signingInfo_show) {
-					public void run() {
-						handleSigningInfoPressed();
-					}
-				};
-				checkSigningEnablement();
-				additions.addContributionItem(new ActionContributionItem(
-						signingInfo), getInstallationDialog()
-						.getActivePageExpression(AboutPluginsPage.this));
-			}
-		};
+		signingInfo = createButton(parent, SIGNING_ID,
+				WorkbenchMessages.AboutPluginsDialog_signingInfo_show);
+		signingInfo.setEnabled(false);
+
+		createButton(parent, COLUMNS_ID,
+				WorkbenchMessages.AboutPluginsDialog_columns);
 	}
 
-	protected Control createPageControl(Composite parent) {
+	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
 		// create a data object for each bundle, remove duplicates, and include
@@ -359,7 +352,7 @@ public class AboutPluginsPage extends TableListPage {
 		}
 
 		createTable(outer);
-		return outer;
+		setControl(outer);
 	}
 
 	/**
@@ -378,8 +371,7 @@ public class AboutPluginsPage extends TableListPage {
 		vendorInfo.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
-				checkSigningEnablement();
-				AboutPluginsPage.this.selectionChanged();
+				checkEnablement();
 			}
 		});
 
@@ -497,40 +489,7 @@ public class AboutPluginsPage extends TableListPage {
 		return ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.about.ColumnsPage#getTable()
-	 */
-	protected Table getTable() {
-		return vendorInfo.getTable();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.about.TableListPage#getURL()
-	 */
-	protected URL getURL() {
-		if (vendorInfo == null)
-			return null;
-
-		if (vendorInfo.getSelection().isEmpty())
-			return null;
-
-		AboutBundleData bundleInfo = (AboutBundleData) ((IStructuredSelection) vendorInfo
-				.getSelection()).getFirstElement();
-		URL url = getMoreInfoURL(bundleInfo, true);
-
-		// only report problems if the -debug command line argument is used
-		if (url == null && WorkbenchPlugin.DEBUG) {
-			WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
-					+ bundleInfo.getName());
-		}
-		return url;
-	}
-
-	private void checkSigningEnablement() {
+	private void checkEnablement() {
 		// enable if there is an item selected and that
 		// item has additional info
 		IStructuredSelection selection = (IStructuredSelection) vendorInfo
@@ -538,31 +497,89 @@ public class AboutPluginsPage extends TableListPage {
 		if (selection.getFirstElement() instanceof AboutBundleData) {
 			AboutBundleData selected = (AboutBundleData) selection
 					.getFirstElement();
+			moreInfo.setEnabled(selectionHasInfo(selected));
 			signingInfo.setEnabled(true);
 			if (signingArea != null) {
 				signingArea.setData(selected);
 			}
 		} else {
 			signingInfo.setEnabled(false);
+			moreInfo.setEnabled(false);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.about.TableListPage#getSelectionValue()
-	 */
-	protected Collection getSelectionValue() {
-		if (vendorInfo == null)
-			return null;
-		IStructuredSelection selection = (IStructuredSelection) vendorInfo
-				.getSelection();
-		if (selection.getFirstElement() instanceof AboutBundleData) {
-			ArrayList list = new ArrayList(1);
-			list.add(selection.getFirstElement());
-			return list;
+	protected void buttonPressed(int buttonId) {
+		switch (buttonId) {
+		case MORE_ID:
+			handleMoreInfoPressed();
+			break;
+		case SIGNING_ID:
+			handleSigningInfoPressed();
+			break;
+		case COLUMNS_ID:
+			handleColumnsPressed();
+			break;
+		default:
+			super.buttonPressed(buttonId);
+			break;
 		}
-		return null;
+	}
+
+	/**
+     * Check if the currently selected plugin has additional information to
+     * show.
+     * @param bundleInfo 
+     * 
+     * @return true if the selected plugin has additional info available to
+     *         display
+     */
+    private boolean selectionHasInfo(AboutBundleData bundleInfo) {
+        
+        URL infoURL = getMoreInfoURL(bundleInfo, false);
+
+        // only report ini problems if the -debug command line argument is used
+        if (infoURL == null && WorkbenchPlugin.DEBUG) {
+        	WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
+					+ bundleInfo.getName());
+		}
+
+        return infoURL != null;
+    }
+    
+	/**
+	 * The More Info button was pressed. Open a browser showing the license
+	 * information for the selected bundle or an error dialog if the browser
+	 * cannot be opened.
+	 */
+	protected void handleMoreInfoPressed() {
+		if (vendorInfo == null) {
+			return;
+		}
+
+		if (vendorInfo.getSelection().isEmpty())
+			return;
+
+		AboutBundleData bundleInfo = (AboutBundleData) ((IStructuredSelection) vendorInfo
+				.getSelection()).getFirstElement();
+
+		if (!AboutUtils.openBrowser(getShell(),
+				getMoreInfoURL(bundleInfo, true))) {
+			String message = NLS.bind(
+					WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,
+					PLUGININFO, bundleInfo.getId());
+			StatusUtil.handleStatus(
+					WorkbenchMessages.AboutPluginsDialog_errorTitle
+							+ ": " + message, StatusManager.SHOW, getShell()); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void handleColumnsPressed() {
+		ConfigureColumnsDialog d = new ConfigureColumnsDialog(this, vendorInfo
+				.getTable());
+		d.open();
 	}
 }
 

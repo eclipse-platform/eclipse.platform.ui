@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.about;
 
+import org.eclipse.swt.widgets.Button;
+
 
 /**
  * <em>This API is experimental and will change before 3.5 ships</em>
@@ -20,15 +22,14 @@ package org.eclipse.ui.about;
 public interface IInstallationPageContainer {
 
 	/**
-	 * URI to be provided to the IMenuService for additions to the button bar.
+	 * Register a button as belonging to a particular page in the container.
+	 * The container will manage the placement and visibility of page buttons.
 	 * 
-	 * This may not be desirable. We've never had a "button manager" before now,
-	 * and this may be a can of worms we dont want to open.
+	 * @param page the page that created the button
+	 * @param button the button to be managed
 	 * 
-	 * @return the button bar uri
 	 */
-	public String getButtonBarURI();
-	
+	public void registerPageButton(InstallationPage page, Button button);
 	/**
 	 * Closes the window that is hosting this container.
 	 */
