@@ -98,10 +98,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 					((IContentChangeNotifier)fInput).removeContentChangeListener(fContentChangedListener);
 				fInput= newInput;
 				if (fInput == null) {
-					if (fStructureComparator instanceof IDisposable) {
-						IDisposable disposable = (IDisposable) fStructureComparator;
-						disposable.dispose();
-					}
+					dispose(); // destroy fStructureComparator
 					fStructureComparator= null;
 				} else {
 					refresh(monitor);

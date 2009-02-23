@@ -219,10 +219,6 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 			text.setText(string);
 		}
 		
-		protected InternalSection getSection() {
-			return section;
-		}
-		
 		protected void setEnabled(boolean enabled) {
 			radioButton.setSelection(enabled);
 			mainButton.setEnabled(enabled);
@@ -381,10 +377,6 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 		ExternalFolderContent externalFolderContent;
 		WorkspaceContent workspaceContent;
 		
-		public InternalSection(Composite parent) {
-			createContents(parent);
-		}
-
 		private InternalSection() {
 			// not to instantiate
 		}
@@ -405,18 +397,20 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 		private void addListenersToRadioButtons() {
 			final ContentTypeElement[] elements = new ContentTypeElement[] { workspaceContent, 
 					externalFileContent, externalFolderContent };
-			for (int i = 0; i < elements.length; i++)
+			for (int i = 0; i < elements.length; i++) {
 				elements[i].getRadioButton().addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
-						for (int j = 0; j < elements.length; j++)
+						for (int j = 0; j < elements.length; j++) {
 							if (event.widget != elements[j].getRadioButton())
 								elements[j].setEnabled(false);
 							else {
 								elements[j].setEnabled(true);
 								setResource(elements[j].getResource());
 							}
+						}
 					}
 				});
+			}
 		}
 
 		protected IResource getResource() {
