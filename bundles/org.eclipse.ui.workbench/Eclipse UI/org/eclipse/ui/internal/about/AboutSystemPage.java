@@ -10,18 +10,24 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
+import java.io.File;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ConfigurationInfo;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Displays system information about the eclipse application. The content of
@@ -30,15 +36,16 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
  */
 public final class AboutSystemPage extends ProductInfoPage {
 
-	// This id should *not* be the same id used for contributing the page in
-	// the installationPage extension. It is used by ProductInfoDialog
-	// to ensure a different namespace for button contributions than the id
-	// for the page appearing in the InstallationDialog
+	// This id is used when the system page is opened in its own dialog
 	private static final String ID = "productInfo.system"; //$NON-NLS-1$
+
+	private final static int BROWSE_ERROR_LOG_BUTTON = IDialogConstants.CLIENT_ID;
+
+	private final static int COPY_TO_CLIPBOARD_BUTTON = IDialogConstants.CLIENT_ID + 1;
 
 	private Text text;
 
-	protected Control createPageControl(Composite parent) {
+	public void createControl(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.SYSTEM_SUMMARY_DIALOG);
 
@@ -55,9 +62,23 @@ public final class AboutSystemPage extends ProductInfoPage {
 		gridData.heightHint = convertVerticalDLUsToPixels(300);
 		gridData.widthHint = convertHorizontalDLUsToPixels(400);
 		text.setLayoutData(gridData);
-		text.setText(ConfigurationInfo.getSystemSummary());
+		BusyIndicator.showWhile(text.getDisplay(), new Runnable() {
+			public void run() {
+				text.setText(ConfigurationInfo.getSystemSummary());
+			}		
+		});
 		text.setFont(JFaceResources.getTextFont());
-		return outer;
+		setControl(outer);
+	}
+
+	public void createPageButtons(Composite parent) {
+		Button button = createButton(parent, BROWSE_ERROR_LOG_BUTTON,
+				WorkbenchMessages.AboutSystemDialog_browseErrorLogName);
+		String filename = Platform.getLogFileLocation().toOSString();
+		button.setEnabled(new File(filename).exists());
+
+		createButton(parent, COPY_TO_CLIPBOARD_BUTTON,
+				WorkbenchMessages.AboutSystemDialog_copyToClipboardName);
 	}
 
 	/*
@@ -81,6 +102,44 @@ public final class AboutSystemPage extends ProductInfoPage {
 			if (contents.length() == 0)
 				contents = text.getText();
 			clipboard.setContents(new Object[] { contents },
+					new Transfer[] { TextTransfer.getInstance() });
+		} finally {
+			if (clipboard != null) {
+				clipboard.dispose();
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 */
+	protected void buttonPressed(int buttonId) {
+		switch (buttonId) {
+		case BROWSE_ERROR_LOG_BUTTON:
+			openErrorLogBrowser();
+			break;
+		case COPY_TO_CLIPBOARD_BUTTON:
+			runCopyToClipboard();
+			break;
+		}
+		super.buttonPressed(buttonId);
+	}
+
+	private void openErrorLogBrowser() {
+		AboutUtils.openErrorLogBrowser(getShell());
+	}
+
+	private void runCopyToClipboard() {
+		if (text == null) {
+			return;
+		}
+
+		Clipboard clipboard = null;
+		try {
+			clipboard = new Clipboard(getShell().getDisplay());
+			clipboard.setContents(new Object[] { text.getText() },
 					new Transfer[] { TextTransfer.getInstance() });
 		} finally {
 			if (clipboard != null) {
