@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.compare.tests;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,7 +36,6 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.internal.core.patch.LineReader;
@@ -49,8 +46,10 @@ import org.eclipse.compare.patch.IFilePatchResult;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.patch.IHunkFilter;
 import org.eclipse.compare.patch.PatchConfiguration;
+import org.eclipse.compare.tests.PatchUtils.JarEntryStorage;
+import org.eclipse.compare.tests.PatchUtils.PatchTestConfiguration;
+import org.eclipse.compare.tests.PatchUtils.StringStorage;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -59,102 +58,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.osgi.framework.Bundle;
 
 public class PatchTest extends TestCase {
 
-	private static final String PATCHDATA = "patchdata";
 	private static final String PATCH_CONFIGURATION = "patchConfiguration.properties";
 	
 	Properties defaultPatchProperties;
-	
-	class StringStorage implements IStorage {
-		String fileName;
-		public StringStorage(String old) {
-			fileName = old;
-		}
-		public Object getAdapter(Class adapter) {
-			return null;
-		}
-		public boolean isReadOnly() {
-			return false;
-		}
-		public String getName() {
-			return fileName;
-		}
-		public IPath getFullPath() {
-			return null;
-		}
-		public InputStream getContents() throws CoreException {
-			return new BufferedInputStream(asInputStream(fileName));
-		}
-	}
-	
-	class FileStorage implements IStorage {
-		File file;
-		public FileStorage(File file) {
-			this.file = file;
-		}
-		public InputStream getContents() throws CoreException {
-			try {
-				return new FileInputStream(file);
-			} catch (FileNotFoundException e) {
-				// ignore, should never happen
-			}
-			return null;
-		}
-		public IPath getFullPath() {
-			return new Path(file.getAbsolutePath());
-		}
-		public String getName() {
-			return file.getName();
-		}
-		public boolean isReadOnly() {
-			return true;
-		}
-		public Object getAdapter(Class adapter) {
-			return null;
-		}
-	}
-	
-	class JarEntryStorage implements IStorage {
-		JarEntry jarEntry;
-		JarFile jarFile;
-		public JarEntryStorage(JarEntry jarEntry, JarFile jarFile) {
-			this.jarEntry = jarEntry;
-			this.jarFile = jarFile;
-		}
-		public InputStream getContents() throws CoreException {
-			try {
-				return jarFile.getInputStream(jarEntry);
-			} catch (IOException e) {
-				// ignore, should never happen
-			}
-			return null;
-		}
-		public IPath getFullPath() {
-			return new Path(jarFile.getName());
-		}
-		public String getName() {
-			return jarEntry.getName();
-		}
-		public boolean isReadOnly() {
-			return true;
-		}
-		public Object getAdapter(Class adapter) {
-			return null;
-		}
-	}
-	
-	class PatchTestConfiguration {
-		String subfolderName;
-		PatchConfiguration pc;
-		String patchFileName;
-		String[] originalFileNames;
-		String[] expectedFileNames;
-		String[] actualFileNames;
-		// TODO: getters, setters
-	}
 	
 	public PatchTest(String name) {
 		super(name);
@@ -217,11 +126,11 @@ public class PatchTest extends TestCase {
 
 		InputStream actual = result.getPatchedContents();
 
-		LineReader lr = new LineReader(getReader("exp_hunkFilter.txt"));
+		LineReader lr = new LineReader(PatchUtils.getReader("exp_hunkFilter.txt"));
 		List inLines = lr.readLines();
 		String expected = LineReader.createString(false, inLines);
 
-		assertEquals(expected, asString(actual));
+		assertEquals(expected, PatchUtils.asString(actual));
 	}
 
 	public void testContext3PatchWithHeader() throws CoreException, IOException {
@@ -298,7 +207,8 @@ public class PatchTest extends TestCase {
 	private List failures = new ArrayList();
 	
 	public void testPatchdataSubfolders() throws IOException, CoreException {
-		URL patchdataUrl = new URL(getBundle().getEntry("/"), new Path(PATCHDATA).toString());
+		URL patchdataUrl = new URL(PatchUtils.getBundle().getEntry("/"),
+				new Path(PatchUtils.PATCHDATA).toString());
 		patchdataUrl = FileLocator.resolve(patchdataUrl);
 		
 		Map map = null;
@@ -321,7 +231,8 @@ public class PatchTest extends TestCase {
 			PatchConfiguration pc = ptc.pc;
 			
 			// create a message to distinguish tests from different subfolders
-			String msg = "Test for subfolder [" + PATCHDATA + "/" + sf + "] failed.";
+			String msg = "Test for subfolder [" + PatchUtils.PATCHDATA + "/"
+					+ sf + "] failed.";
 			
 			try {
 				// test with expected result
@@ -339,8 +250,8 @@ public class PatchTest extends TestCase {
 					continue; // continue with a next subfolder
 				}
 				failures.add(new AssertionFailedError(
-						"\npatchWorkspace should fail for folder [" + PATCHDATA
-								+ "/" + sf + "]."));
+						"\npatchWorkspace should fail for folder ["
+								+ PatchUtils.PATCHDATA + "/" + sf + "]."));
 			}
 		}
 		
@@ -391,7 +302,7 @@ public class PatchTest extends TestCase {
 		while (entries.hasMoreElements()) {
 			JarEntry entry = (JarEntry) entries.nextElement();
 			String entryName = entry.getName();
-			if (entryName.endsWith("/" + PATCHDATA + "/")) {
+			if (entryName.endsWith("/" + PatchUtils.PATCHDATA + "/")) {
 				patchdataName = entryName;
 				break;
 			}
@@ -512,32 +423,13 @@ public class PatchTest extends TestCase {
 		result.put(subfolderName, tpc);
 	}
 
-
-	// Test changing
-	private BufferedReader getReader(String name) {
-		InputStream resourceAsStream = asInputStream(name);
-		InputStreamReader reader2= new InputStreamReader(resourceAsStream);
-		return new BufferedReader(reader2);
-	}
-
-	private InputStream asInputStream(String name) {
-		IPath path= new Path(PATCHDATA).append(name);
-		try {
-			URL url= new URL(getBundle().getEntry("/"), path.toString());
-			return url.openStream();
-		} catch (IOException e) {
-			fail("Failed while reading " + name);
-			return null; // never reached
-		}
-	}
-
 	private void patch(final String old, String patch, String expt) throws CoreException, IOException {
 		patcherPatch(old, patch, expt);
 		filePatch(old, patch, expt);
 	}
 
 	private void filePatch(final String old, String patch, String expt) throws CoreException, IOException {
-		LineReader lr= new LineReader(getReader(expt));
+		LineReader lr= new LineReader(PatchUtils.getReader(expt));
 		List inLines= lr.readLines();
 		String expected = LineReader.createString(false, inLines);
 		
@@ -549,21 +441,17 @@ public class PatchTest extends TestCase {
 		assertTrue(result.hasMatches());
 		assertFalse(result.hasRejects());
 		InputStream actualStream = result.getPatchedContents();
-		String actual = asString(actualStream);
+		String actual = PatchUtils.asString(actualStream);
 		assertEquals(expected, actual);
 	}
 
-	private String asString(InputStream exptStream) throws IOException {
-		return Utilities.readString(exptStream, ResourcesPlugin.getEncoding());
-	}
-
 	private void patcherPatch(String old, String patch, String expt) {
-		LineReader lr= new LineReader(getReader(old));
+		LineReader lr= new LineReader(PatchUtils.getReader(old));
 		List inLines= lr.readLines();
 
 		WorkspacePatcher patcher= new WorkspacePatcher();
 		try {
-			patcher.parse(getReader(patch));
+			patcher.parse(PatchUtils.getReader(patch));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -574,7 +462,7 @@ public class PatchTest extends TestCase {
 		FileDiffResult diffResult = patcher.getDiffResult(diffs[0]);
 		diffResult.patch(inLines, null);
 		
-		LineReader expectedContents= new LineReader(getReader(expt));
+		LineReader expectedContents= new LineReader(PatchUtils.getReader(expt));
 		List expectedLines= expectedContents.readLines();
 		
 		Object[] expected= expectedLines.toArray();
@@ -618,7 +506,7 @@ public class PatchTest extends TestCase {
 			patcher.getConfiguration().setFuzz(patchConfiguration.getFuzz());
 			patcher.getConfiguration().setIgnoreWhitespace(patchConfiguration.isIgnoreWhitespace());
 			patcher.getConfiguration().setPrefixSegmentStripCount(patchConfiguration.getPrefixSegmentStripCount());
-			patcher.parse(getReader(patch));
+			patcher.parse(PatchUtils.getReader(patch));
 			patcher.setReversed(patchConfiguration.isReversed());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -630,13 +518,13 @@ public class PatchTest extends TestCase {
 		//Iterate through all of the original files, apply the diffs that belong to the file and compare
 		//with the corresponding outcome file
 		for (int i = 0; i < originalFiles.length; i++) {	
-			LineReader lr= new LineReader(getReader(originalFiles[i]));
+			LineReader lr= new LineReader(PatchUtils.getReader(originalFiles[i]));
 			List inLines= lr.readLines();
 		
 			FileDiffResult diffResult = patcher.getDiffResult(diffs[i]);
 			diffResult.patch(inLines, null);
 			
-			LineReader expectedContents= new LineReader(getReader(expectedOutcomeFiles[i]));
+			LineReader expectedContents= new LineReader(PatchUtils.getReader(expectedOutcomeFiles[i]));
 			List expectedLines= expectedContents.readLines();
 			
 			Object[] expected= expectedLines.toArray();
@@ -652,7 +540,4 @@ public class PatchTest extends TestCase {
 		}
 	}
 	
-	private Bundle getBundle() {
-		return CompareTestPlugin.getDefault().getBundle();
-	}	
 }
