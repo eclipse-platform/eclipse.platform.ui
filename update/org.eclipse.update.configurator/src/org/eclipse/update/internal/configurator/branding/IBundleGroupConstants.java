@@ -50,16 +50,16 @@ public interface IBundleGroupConstants {
 	public static final String LICENSE_HREF = "licenseHref"; //$NON-NLS-1$
 	
 	/**
-	 * The id of the feature branding bundle.
+	 * The id of the bundle group's branding bundle.
 	 * @see IFeatureEntry#getFeaturePluginIdentifier()
 	 * @since 3.3
 	 */
-	public static final String FEATURE_PLUGIN_ID= "featurePluginId"; //$NON-NLS-1$
+	public static final String BRANDING_BUNDLE_ID= "brandingBundleId"; //$NON-NLS-1$
 
 	/**
 	 * The version of the feature branding bundle.
 	 * @see IFeatureEntry#getFeaturePluginVersion()
 	 * @since 3.3
 	 */
-	public static final String FEATURE_PLUGIN_VERSION= "featurePluginVersion"; //$NON-NLS-1$
+	public static final String BRANDING_BUNDLE_VERSION= "brandingBundleVersion"; //$NON-NLS-1$
 }

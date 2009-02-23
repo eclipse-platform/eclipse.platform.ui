@@ -249,9 +249,9 @@ public class FeatureEntry
 			return branding.getWelcomePageURL() == null ? null : branding.getWelcomePageURL().toExternalForm();
 		else if (key.equals(WELCOME_PERSPECTIVE))
 			return branding.getWelcomePerspectiveId();
-		else if (key.equals(FEATURE_PLUGIN_ID))
+		else if (key.equals(BRANDING_BUNDLE_ID))
 			return pluginIdentifier;
-		else if (key.equals(FEATURE_PLUGIN_VERSION))
+		else if (key.equals(BRANDING_BUNDLE_VERSION))
 			return pluginVersion;
 		// IProductConstants
 		else if (key.equals(APP_NAME)) 
