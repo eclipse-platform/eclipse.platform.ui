@@ -127,7 +127,7 @@ public class Hunk implements IHunk {
 		return sb.toString();
 	}
 	
-	int getHunkType(boolean reverse) {
+	public int getHunkType(boolean reverse) {
 		if (reverse) {
 			if (hunkType == FileDiff.ADDITION)
 				return FileDiff.DELETION;
@@ -291,15 +291,23 @@ public class Hunk implements IHunk {
 		return true;
 	}
 	
-	int getStart(boolean reverse) {
-		if (reverse) {
+	public int getStart(boolean after) {
+		if (after) {
 			return fNewStart;
 		}
 		return fOldStart;
 	}
-	
-	private int getLength(boolean reverse) {
-		if (reverse) {
+
+	public void setStart(int start, boolean after) {
+		if (after) {
+			fNewStart = start;
+		} else {
+			fOldStart = start;
+		}
+	}
+
+	public int getLength(boolean after) {
+		if (after) {
 			return fNewLength;
 		}
 		return fOldLength;

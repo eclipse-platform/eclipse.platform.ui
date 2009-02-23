@@ -259,9 +259,10 @@ public class FileDiffResult implements IFilePatchResult {
 
 	public List getFailedHunks() {
 		List failedHunks = new ArrayList();
-		for (Iterator iterator = fHunkResults.values().iterator(); iterator.hasNext();) {
-			HunkResult result = (HunkResult) iterator.next();
-			if (!result.isOK())
+		IHunk[] hunks = fDiff.getHunks();
+		for (int i = 0; i < hunks.length; i++) {
+			HunkResult result = (HunkResult) fHunkResults.get(hunks[i]);
+			if (result != null && !result.isOK())
 				failedHunks.add(result.getHunk());
 		}
 		return failedHunks;
@@ -280,7 +281,15 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 
 	public HunkResult[] getHunkResults() {
-		return (HunkResult[]) fHunkResults.values().toArray(new HunkResult[fHunkResults.size()]);
+		List results = new ArrayList();
+		IHunk[] hunks = fDiff.getHunks();
+		for (int i = 0; i < hunks.length; i++) {
+			HunkResult result = (HunkResult) fHunkResults.get(hunks[i]);
+			if (result != null) {
+				results.add(result.getHunk());
+			}
+		}
+		return (HunkResult[]) results.toArray(new HunkResult[results.size()]);
 	}
 
 	public InputStream getOriginalContents() {
