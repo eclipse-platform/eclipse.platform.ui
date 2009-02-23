@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -527,6 +527,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		private void initializeActions() {
 			final ArrayList handlerActivations= new ArrayList(3);
 			final IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+			final Expression expression= new ActiveShellExpression(fPatternEditor.getControl().getShell());
+
 			getShell().addDisposeListener(new DisposeListener() {
 
 				public void widgetDisposed(DisposeEvent e) {
@@ -534,17 +536,28 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				}
 			});
 
-			Expression expression= new ActiveShellExpression(fPatternEditor.getControl().getShell());
+			fPatternEditor.getTextWidget().addFocusListener(new FocusListener() {
+				public void focusLost(FocusEvent e) {
+					handlerService.deactivateHandlers(handlerActivations);
+				}
+
+				public void focusGained(FocusEvent e) {
+					IAction action= (IAction)fGlobalActions.get(ITextEditorActionConstants.REDO);
+					handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.REDO, new ActionHandler(action), expression));
+					action= (IAction)fGlobalActions.get(ITextEditorActionConstants.UNDO);
+					handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.UNDO, new ActionHandler(action), expression));
+					action= (IAction)fGlobalActions.get(ITextEditorActionConstants.CONTENT_ASSIST);
+					handlerActivations.add(handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(action), expression));
+				}
+			});
 
 			TextViewerAction action= new TextViewerAction(fPatternEditor, ITextOperationTarget.UNDO);
 			action.setText(TemplatesMessages.EditTemplateDialog_undo);
 			fGlobalActions.put(ITextEditorActionConstants.UNDO, action);
-			handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.UNDO, new ActionHandler(action), expression));
 
 			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.REDO);
 			action.setText(TemplatesMessages.EditTemplateDialog_redo);
 			fGlobalActions.put(ITextEditorActionConstants.REDO, action);
-			handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.REDO, new ActionHandler(action), expression));
 
 			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.CUT);
 			action.setText(TemplatesMessages.EditTemplateDialog_cut);
@@ -564,8 +577,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 			action= new TextViewerAction(fPatternEditor, ISourceViewer.CONTENTASSIST_PROPOSALS);
 			action.setText(TemplatesMessages.EditTemplateDialog_content_assist);
-			fGlobalActions.put("ContentAssistProposal", action); //$NON-NLS-1$
-			handlerActivations.add(handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(action), expression));
+			fGlobalActions.put(ITextEditorActionConstants.CONTENT_ASSIST, action);
 
 			fSelectionActions.add(ITextEditorActionConstants.CUT);
 			fSelectionActions.add(ITextEditorActionConstants.COPY);
