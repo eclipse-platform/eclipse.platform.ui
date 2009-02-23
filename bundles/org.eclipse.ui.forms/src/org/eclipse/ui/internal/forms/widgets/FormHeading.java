@@ -447,13 +447,6 @@ public class FormHeading extends Canvas {
 			return messages;
 		}
 
-		public String getDetailedMessage() {
-			Control c = getMessageControl();
-			if (c != null)
-				return c.getToolTipText();
-			return null;
-		}
-
 		public Control getMessageControl() {
 			if (needHyperlink() && messageHyperlink != null)
 				return messageHyperlink;

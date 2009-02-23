@@ -108,15 +108,12 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 		int row;
 
-		int column;
-
 		int height;
 
 		int totalHeight;
 
 		public RowSpan(Control child, int column, int row) {
 			this.child = child;
-			this.column = column;
 			this.row = row;
 		}
 
