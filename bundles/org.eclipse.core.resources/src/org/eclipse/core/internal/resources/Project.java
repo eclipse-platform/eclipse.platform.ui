@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -960,8 +960,8 @@ public class Project extends Container implements IProject {
 					LinkDescription newLink = null;
 					if (newLinks != null)
 						newLink = (LinkDescription) newLinks.get(oldLink.getProjectRelativePath());
-					//if the new link is missing, or has different location or gender, then remove old link
-					if (newLink == null || !newLink.getLocationURI().equals(oldLinkResource.getLocationURI()) || newLink.getType() != oldLinkResource.getType()) {
+					//if the new link is missing, or has different (raw) location or gender, then remove old link
+					if (newLink == null || !newLink.getLocationURI().equals(oldLinkResource.getRawLocationURI()) || newLink.getType() != oldLinkResource.getType()) {
 						try {
 							oldLinkResource.delete(IResource.NONE, null);
 							//refresh the resource, because removing a link can reveal a previously hidden resource in parent
