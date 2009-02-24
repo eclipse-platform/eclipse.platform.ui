@@ -667,6 +667,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         modeSubmenu.add(fDebugViewModeActions[0]);
         modeSubmenu.add(fDebugViewModeActions[1]);
         modeSubmenu.add(fDebugViewModeActions[2]);
+        modeSubmenu.add(new Separator());
         modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
         viewMenu.add(modeSubmenu);
         viewMenu.add(new Separator());
@@ -676,6 +677,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
                 modeSubmenu.add(fDebugViewModeActions[0]);
                 modeSubmenu.add(fDebugViewModeActions[1]);
                 modeSubmenu.add(fDebugViewModeActions[2]);
+                modeSubmenu.add(new Separator());
                 modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
            }
         });
