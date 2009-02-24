@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -370,6 +372,47 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                 
                 ModelDelta delta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
                 fTreeViewer.saveElementState(TreePath.EMPTY, delta);
+                
+                // If we do not want to expand the elements in the drop-down.
+                // Prune the delta to only select the element in the 
+                // top-most list.
+                if (!fView.getBreadcrumbDropDownAutoExpand()) {
+                    final ModelDelta prunedDelta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
+                    delta.accept(new IModelDeltaVisitor() {
+                        ModelDelta copy = prunedDelta;
+                        public boolean visit(IModelDelta delta, int depth) {
+                            TreePath deltaPath = getViewerTreePath(delta);
+                            if (deltaPath.getSegmentCount() == 0) {
+                                // skip copying the root element, only copy it's child count
+                                copy.setChildCount(delta.getChildCount());
+                                return true;
+                            } else if (deltaPath.getSegmentCount() != 0 && path.startsWith(deltaPath, null) ) {
+                                copy = copy.addNode(
+                                    delta.getElement(), delta.getIndex(), delta.getFlags(), delta.getChildCount());
+                                return true;
+                            } else if (deltaPath.startsWith(path, null)) {
+                                if ( (delta.getFlags() & IModelDelta.SELECT) != 0) {
+                                    copy.setFlags(IModelDelta.SELECT);
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                        
+                        private TreePath getViewerTreePath(IModelDelta node) {
+                            ArrayList list = new ArrayList();
+                            IModelDelta parentDelta = node.getParentDelta();
+                            while (parentDelta != null) {
+                                list.add(0, node.getElement());
+                                node = parentDelta;
+                                parentDelta = node.getParentDelta();
+                            }
+                            return new TreePath(list.toArray());
+                        }
+                    });
+                    delta = prunedDelta;
+                }
+                
                 fDropDownViewer.updateViewer(delta);
                 
                 fDropDownViewer.addLabelUpdateListener(new ILabelUpdateListener() {
@@ -429,8 +472,15 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                             return true;
                         }
                     });
+
+                    // If elements in the drop-down were auto-expanded, then collapse the drop-down's sub tree in the 
+                    // full viewer.  After the drop-down's full expansion state is saved out to the tree viewer, the
+                    // tree viewer will accurately reflect the state changes made by the user. 
+                    if (fView.getBreadcrumbDropDownAutoExpand()) {
+                        fTreeViewer.collapseToLevel(rootPath, TreeViewer.ALL_LEVELS);
+                    }                    
                     
-                    // Save the state of the drop-down into the tree viewer.
+                    // Save the state of the drop-down out into the tree viewer.
                     fTreeViewer.updateViewer(rootDelta);
                     fViewer.setSelection(StructuredSelection.EMPTY);
                     site.close();

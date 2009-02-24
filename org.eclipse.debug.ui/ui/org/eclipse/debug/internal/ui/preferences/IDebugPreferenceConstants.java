@@ -272,11 +272,20 @@ public interface IDebugPreferenceConstants {
 
     /**
      * The layout mode in Debug view.
+     * 
+     * @since 3.5
      */
     public static final String DEBUG_VIEW_MODE = "org.eclispe.debug.ui.Debug_view.mode"; //$NON-NLS-1$
     public static final String DEBUG_VIEW_MODE_AUTO = "Debug_view.mode.auto"; //$NON-NLS-1$
     public static final String DEBUG_VIEW_MODE_COMPACT = "Debug_view.mode.compact"; //$NON-NLS-1$
     public static final String DEBUG_VIEW_MODE_FULL = "Debug_view.mode.full"; //$NON-NLS-1$
+    
+    /**
+     * Preference whether to auto-expand in the breadcrumb drop-down viewers. 
+     * 
+     * @since 3.5
+     */
+    public static final String DEBUG_VIEW_BREADCRUMB_AUTO_EXPAND_DROP_DOWN = "org.eclispe.debug.ui.Debug_view.Breadcrumb.dropDownAutoexpand"; //$NON-NLS-1$
 }
 
 

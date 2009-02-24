@@ -13,6 +13,11 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -109,6 +114,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -183,10 +190,41 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
      */
     private DebugViewModeAction[] fDebugViewModeActions;
 
+    /**
+     * Action that controls the breadcrumb drop-down auto-expand behavior.
+     * 
+     * @since 3.5
+     */
+    private BreadcrumbDropDownAutoExpandAction fBreadcrumbDropDownAutoExpandAction;
+    
+    /**
+     * Preference name for the view's memento.
+     * 
+     * @since 3.5
+     */
+    private String PREF_STATE_MEMENTO = "pref_state_memento."; //$NON-NLS-1$
 
+    /**
+     * Key for a view preference for whether the elements in breadcrumb's
+     * drop-down viewer should be automatically expanded.
+     * 
+     * @since 3.5
+     */
+    private static final String BREADCRUMB_DROPDOWN_AUTO_EXPAND = DebugUIPlugin.getUniqueIdentifier() + ".BREADCRUMB_DROPDOWN_AUTO_EXPAND"; //$NON-NLS-1$
+    
+    /**
+     * Preference for whether the elements in breadcrumb's
+     * drop-down viewer should be automatically expanded.
+     * 
+     * @since 3.5
+     */
+    private boolean fBreadcrumbDropDownAutoExpand = false;
+    
 	/**
 	 * Page-book page for the breadcrumb viewer.  This page is activated in 
 	 * Debug view when the height of the view is reduced to just one line. 
+     * 
+     * @since 3.5
 	 */
 	private class BreadcrumbPage extends Page {
 
@@ -621,12 +659,15 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         fDebugViewModeActions[0] = new DebugViewModeAction(this, IDebugPreferenceConstants.DEBUG_VIEW_MODE_AUTO, parent);
         fDebugViewModeActions[1] = new DebugViewModeAction(this, IDebugPreferenceConstants.DEBUG_VIEW_MODE_FULL, parent);
         fDebugViewModeActions[2] = new DebugViewModeAction(this, IDebugPreferenceConstants.DEBUG_VIEW_MODE_COMPACT, parent);
+        fBreadcrumbDropDownAutoExpandAction = new BreadcrumbDropDownAutoExpandAction(this);
+        
         viewMenu.add(new Separator());
         final MenuManager modeSubmenu = new MenuManager(LaunchViewMessages.LaunchView_ViewModeMenu_label);
         modeSubmenu.setRemoveAllWhenShown(true);
         modeSubmenu.add(fDebugViewModeActions[0]);
         modeSubmenu.add(fDebugViewModeActions[1]);
         modeSubmenu.add(fDebugViewModeActions[2]);
+        modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
         viewMenu.add(modeSubmenu);
         viewMenu.add(new Separator());
         
@@ -635,8 +676,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
                 modeSubmenu.add(fDebugViewModeActions[0]);
                 modeSubmenu.add(fDebugViewModeActions[1]);
                 modeSubmenu.add(fDebugViewModeActions[2]);
+                modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
            }
         });
+        
     }
 
  
@@ -825,12 +868,41 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		site.getWorkbenchWindow().addPerspectiveListener(this);
 	}
 	
+	private void preferenceInit(IViewSite site) {
+        PREF_STATE_MEMENTO = PREF_STATE_MEMENTO + site.getId();
+        IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+        String string = store.getString(PREF_STATE_MEMENTO);
+        if(string.length() > 0) {
+            ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes());
+            InputStreamReader reader = new InputStreamReader(bin);
+            try {
+                XMLMemento stateMemento = XMLMemento.createReadRoot(reader);
+                setMemento(stateMemento);
+            } catch (WorkbenchException e) {
+            } finally {
+                try {
+                    reader.close();
+                    bin.close();
+                } catch (IOException e){}
+            }
+        }
+        IMemento mem = getMemento();
+
+        if (mem != null) {
+            Boolean auto = mem.getBoolean(BREADCRUMB_DROPDOWN_AUTO_EXPAND);
+            if(auto != null) {
+                setBreadcrumbDropDownAutoExpand(auto.booleanValue());
+            } 
+        }
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
 	 */
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 		commonInit(site);
+		preferenceInit(site);
 	}
 
 	/* (non-Javadoc)
@@ -839,8 +911,46 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		commonInit(site);
+        preferenceInit(site);
 	}
-		
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
+     */
+    public void partDeactivated(IWorkbenchPart part) {
+        String id = part.getSite().getId();
+        if (id.equals(getSite().getId())) {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            OutputStreamWriter writer = new OutputStreamWriter(bout);
+
+            try {
+                XMLMemento memento = XMLMemento.createWriteRoot("DebugViewMemento"); //$NON-NLS-1$
+                saveViewerState(memento);
+                memento.save(writer);
+
+                IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+                String xmlString = bout.toString();
+                store.putValue(PREF_STATE_MEMENTO, xmlString);
+            } catch (IOException e) {
+            } finally {
+                try {
+                    writer.close();
+                    bout.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        super.partDeactivated(part);
+    }
+
+    /**
+     * Saves the current state of the viewer
+     * @param memento the memento to write the viewer state into
+     */
+    public void saveViewerState(IMemento memento) {
+        memento.putBoolean(BREADCRUMB_DROPDOWN_AUTO_EXPAND, getBreadcrumbDropDownAutoExpand());
+    }
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
@@ -1260,4 +1370,25 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
     boolean isBreadcrumbVisible() {
         return fBreadcrumbPage.equals(getCurrentPage());
     }
+    
+    /**
+     * Returns whether the elements in breadcrumb's drop-down viewer should be 
+     * automatically expanded.
+     * 
+     * @since 3.5
+     */
+    boolean getBreadcrumbDropDownAutoExpand() {
+        return fBreadcrumbDropDownAutoExpand;
+    }
+    
+    /**
+     * Sets whether the elements in breadcrumb's drop-down viewer should be 
+     * automatically expanded.
+     * 
+     * @since 3.5
+     */
+    void setBreadcrumbDropDownAutoExpand(boolean expand) {
+        fBreadcrumbDropDownAutoExpand = expand;
+    }
+
 }

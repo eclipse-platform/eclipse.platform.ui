@@ -76,6 +76,7 @@ public interface IDebugHelpContextIds {
     public static final String DEBUG_VIEW_MODE_COMPACT_ACTION = PREFIX + "debug_view_mode_compact_action_context"; //$NON-NLS-1$
     public static final String NEXT_THREAD_NAVIGATE_ACTION = PREFIX + "next_thread_navigate_action_context"; //$NON-NLS-1$
     public static final String PREVIOUS_THREAD_NAVIGATE_ACTION = PREFIX + "previous_thread_navigate_action_context"; //$NON-NLS-1$
+    public static final String DEBUG_VIEW_DROP_DOWN_AUTOEXPAND_ACTION = PREFIX + "debug_view_drop_down_autoexpand_action_context"; //$NON-NLS-1$
 
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$

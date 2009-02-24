@@ -30,7 +30,11 @@ public class LaunchViewMessages extends NLS {
     public static String DebugViewModeAction_Compact_label;
     public static String DebugViewModeAction_Compact_tooltip;
     public static String DebugViewModeAction_Compact_description;
-    
+
+    public static String BreadcrumbDropDownAutoExpandAction_label;
+    public static String BreadcrumbDropDownAutoExpandAction_tooltip;
+    public static String BreadcrumbDropDownAutoExpandAction_description;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LaunchViewMessages.class);
