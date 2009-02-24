@@ -17,10 +17,11 @@ public class CTabFolderTest extends CSSTestCase {
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
 	static final RGB WHITE = new RGB(255, 255, 255);
-
+	static public CSSEngine engine;
+	
 	protected CTabFolder createTestCTabFolder(String styleSheet) {
 		Display display = Display.getDefault();
-		CSSEngine engine = createEngine(styleSheet, display);
+		engine = createEngine(styleSheet, display);
 
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -102,26 +103,32 @@ public class CTabFolderTest extends CSSTestCase {
 	public void testBorderVisible() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { borderVisible: true}");
 		assertEquals(true, folderToTest.getBorderVisible());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "borderVisible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { borderVisible: false}");
 		assertEquals(false, folderToTest.getBorderVisible());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "borderVisible", null));
 		folderToTest.getShell().close();
 	}
 	
 	public void testSimple() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { simple: true}");
 		assertEquals(true, folderToTest.getSimple());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "simple", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { simple: false}");
 		assertEquals(false, folderToTest.getSimple());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "simple", null));
 		folderToTest.getShell().close();
 	}
 	
 	public void testMaximizeVisible() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { maximizeVisible: true}");
 		assertEquals(true, folderToTest.getMaximizeVisible());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "maximizeVisible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { maximizeVisible: false}");
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "maximizeVisible", null));
 		assertEquals(false, folderToTest.getMaximizeVisible());
 		folderToTest.getShell().close();
 	}
@@ -129,17 +136,21 @@ public class CTabFolderTest extends CSSTestCase {
 	public void testMinimizeVisible() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { minimizeVisible: true}");
 		assertEquals(true, folderToTest.getMinimizeVisible());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "minimizeVisible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { minimizeVisible: false}");
 		assertEquals(false, folderToTest.getMinimizeVisible());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "minimizeVisible", null));
 		folderToTest.getShell().close();
 	}
 	
 	public void testMRUVisible() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { mruVisible: true}");
 		assertEquals(true, folderToTest.getMRUVisible());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "mruVisible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { mruVisible: false}");
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "mruVisible", null));
 		assertEquals(false, folderToTest.getMRUVisible());
 		folderToTest.getShell().close();
 	}
@@ -147,45 +158,55 @@ public class CTabFolderTest extends CSSTestCase {
 	public void testMaximized() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { maximized: true}");
 		assertEquals(true, folderToTest.getMaximized());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "maximized", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { maximized: false}");
 		assertEquals(false, folderToTest.getMaximized());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "maximized", null));
 		folderToTest.getShell().close();
 	}
 	
 	public void testMinimized() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { minimized: true}");
 		assertEquals(true, folderToTest.getMinimized());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "minimized", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { minimized: false}");
 		assertEquals(false, folderToTest.getMinimized());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "minimized", null));
 		folderToTest.getShell().close();
 	}
 	
 	public void testSingle() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { single: true}");
 		assertEquals(true, folderToTest.getSingle());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "single", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { single: false}");
 		assertEquals(false, folderToTest.getSingle());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "single", null));
 		folderToTest.getShell().close();
 	}
 	
 	public void testUnselectedCloseVisible() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { unselectedCloseVisible: true}");
 		assertEquals(true, folderToTest.getUnselectedCloseVisible());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "unselectedCloseVisible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { unselectedCloseVisible: false}");
 		assertEquals(false, folderToTest.getUnselectedCloseVisible());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "unselectedCloseVisible", null));
 		folderToTest.getShell().close();
 	}
 	
 	public void testUnselectedImageVisible() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { unselectedImageVisible: true}");
 		assertEquals(true, folderToTest.getUnselectedImageVisible());
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "unselectedImageVisible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { unselectedImageVisible: false}");
 		assertEquals(false, folderToTest.getUnselectedImageVisible());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "unselectedImageVisible", null));
 		folderToTest.getShell().close();
 	}
 }

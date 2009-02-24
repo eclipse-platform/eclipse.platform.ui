@@ -22,7 +22,11 @@ public class CSSPropertyMruVisibleSWTHandler extends AbstractCSSPropertySWTHandl
 
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		return null;
+		CTabFolder folder = (CTabFolder)control;
+		if (folder.getMRUVisible())
+			return "true";
+		else
+			return "false";
 	}
 
 

@@ -22,7 +22,11 @@ public class CSSPropertyMaximizedSWTHandler extends AbstractCSSPropertySWTHandle
 
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		return null;
+		CTabFolder folder = (CTabFolder)control;
+		if (folder.getMaximized())
+			return "true";
+		else
+			return "false";
 	}
 
 
