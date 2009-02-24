@@ -3,6 +3,7 @@ CTabFolder {
 	color: #666666;
 	background-color: #ffffff;
 	font: normal;
+	simple: true;
 }
 
 CTabFolder:selected {
@@ -22,10 +23,6 @@ CTabFolder.active:selected {
 }
 
 #library {
-	background-color: #f4f4f4;
-}
-
-CTabFolder {
 	background-color: #f4f4f4;
 }
 
