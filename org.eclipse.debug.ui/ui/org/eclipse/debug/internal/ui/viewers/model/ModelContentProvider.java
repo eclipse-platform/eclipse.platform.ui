@@ -881,7 +881,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 *  
 	 * @param suppress If <code>true</code> it turns on the suppress mode.
 	 */
-    protected void setSuppressModelControlDeltas(boolean suppress) {
+    public void setSuppressModelControlDeltas(boolean suppress) {
         fSuppressModelControlRequests = suppress;
     }
     
@@ -891,10 +891,14 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      *  
      * @return Returns <code>true</code> if in suppress mode.
      */
-    protected boolean isSuppressModelControlDeltas() {
+    public boolean isSuppressModelControlDeltas() {
         return fSuppressModelControlRequests;
     }
 
+    public void updateModel(IModelDelta delta) {
+        updateNodes(new IModelDelta[] { delta }, true);
+    }
+    
     /**
      * Updates the viewer with the following deltas. 
      * 
@@ -1037,7 +1041,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * @param index index of child element in model (raw) space
 	 * @return index of child element in viewer (filtered) space or -1 if filtered
 	 */
-	protected int modelToViewIndex(TreePath parentPath, int index) {
+	public int modelToViewIndex(TreePath parentPath, int index) {
 		return fTransform.modelToViewIndex(parentPath, index);
 	}	
 	
@@ -1049,7 +1053,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * @param count child count element in model (raw) space
 	 * @return child count in viewer (filtered) space
 	 */
-	protected int modelToViewChildCount(TreePath parentPath, int count) {
+	public int modelToViewChildCount(TreePath parentPath, int count) {
 		return fTransform.modelToViewCount(parentPath, count);
 	}	
 	
@@ -1102,7 +1106,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	}
 	
 	/**
-	 * Returns whether the given element is filtered.
+ 	 * Returns whether the given element is filtered.
 	 * 
 	 * @param parentElementOrTreePath
 	 *            the parent element or path
@@ -1110,7 +1114,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 *            the child element
 	 * @return whether to filter the element
 	 */
-	protected boolean shouldFilter(Object parentElementOrTreePath, Object element) {
+	public boolean shouldFilter(Object parentElementOrTreePath, Object element) {
 		ViewerFilter[] filters = fViewer.getFilters();
 		if (filters.length > 0) {
 			for (int j = 0; j < filters.length; j++) {
@@ -1138,7 +1142,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param path
 	 */
-	protected void unmapPath(TreePath path) {
+	public void unmapPath(TreePath path) {
 		//System.out.println("Unmap " + path.getLastSegment());
 		fTransform.clear(path);
 		cancelSubtreeUpdates(path);
@@ -1175,11 +1179,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		}
 	}
 	
-	void addViewerUpdateListener(IViewerUpdateListener listener) {
+	public void addViewerUpdateListener(IViewerUpdateListener listener) {
 		fUpdateListeners.add(listener);
 	}
 	
-	void removeViewerUpdateListener(IViewerUpdateListener listener) {
+	public void removeViewerUpdateListener(IViewerUpdateListener listener) {
 		fUpdateListeners.remove(listener);
 	}
 	
@@ -1413,7 +1417,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param listener model delta listener
 	 */
-	void addModelChangedListener(IModelChangedListener listener) {
+	public void addModelChangedListener(IModelChangedListener listener) {
 		fModelListeners.add(listener); 
 	}
 	
@@ -1422,7 +1426,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param listener model delta listener
 	 */
-	void removeModelChangedListener(IModelChangedListener listener) {
+	public void removeModelChangedListener(IModelChangedListener listener) {
 		fModelListeners.remove(listener);
 	}
 	

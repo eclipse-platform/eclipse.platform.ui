@@ -17,7 +17,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 
@@ -26,7 +25,7 @@ import org.eclipse.jface.viewers.TreeSelection;
  * 
  * @since 3.3
  */
-public class TreeModelContentProvider extends ModelContentProvider implements ILazyTreePathContentProvider {
+public class TreeModelContentProvider extends ModelContentProvider implements ITreeModelContentProvider {
 	
 	/**
 	 * Re-filters any filtered children of the given parent element.

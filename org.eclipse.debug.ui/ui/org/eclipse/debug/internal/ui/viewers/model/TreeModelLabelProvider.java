@@ -44,7 +44,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * @since 3.3
  */
-public class TreeModelLabelProvider extends ColumnLabelProvider {
+public class TreeModelLabelProvider extends ColumnLabelProvider implements ITreeModelLabelProvider {
 	
 	private ITreeModelLabelProviderTarget fViewer;
 	private List fComplete;
@@ -115,7 +115,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	 * @param descriptor image descriptor or <code>null</code>
 	 * @return image or <code>null</code>
 	 */
-	protected Image getImage(ImageDescriptor descriptor) {
+	public Image getImage(ImageDescriptor descriptor) {
 		if (descriptor == null) {
 			return null;
 		}
@@ -143,7 +143,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	 * @param fontData font data or <code>null</code>
 	 * @return font font or <code>null</code>
 	 */
-	protected Font getFont(FontData fontData) {
+	public Font getFont(FontData fontData) {
 		if (fontData == null) {
 			return null;
 		}
@@ -162,7 +162,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	 * @param rgb RGB or <code>null</code>
 	 * @return color or <code>null</code>
 	 */
-	protected Color getColor(RGB rgb) {
+	public Color getColor(RGB rgb) {
 		if (rgb == null) {
 			return null;
 		}
@@ -312,11 +312,11 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 		}
     }
     
-	void addLabelUpdateListener(ILabelUpdateListener listener) {
+	public void addLabelUpdateListener(ILabelUpdateListener listener) {
 		fLabelListeners.add(listener);
 	}
 	
-	void removeLabelUpdateListener(ILabelUpdateListener listener) {
+	public void removeLabelUpdateListener(ILabelUpdateListener listener) {
 		fLabelListeners.remove(listener);
 	}
 	

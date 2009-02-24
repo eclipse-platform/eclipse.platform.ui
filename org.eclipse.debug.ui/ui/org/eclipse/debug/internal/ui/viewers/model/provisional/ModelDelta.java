@@ -285,6 +285,9 @@ public class ModelDelta implements IModelDelta {
 			if ((flags & IModelDelta.REVEAL) > 0) {
                 buf.append("REVEAL | "); //$NON-NLS-1$
             }
+            if ((flags & IModelDelta.FORCE) > 0) {
+                buf.append("FORCE | "); //$NON-NLS-1$
+            }
 
 		}
 		buf.append('\n');

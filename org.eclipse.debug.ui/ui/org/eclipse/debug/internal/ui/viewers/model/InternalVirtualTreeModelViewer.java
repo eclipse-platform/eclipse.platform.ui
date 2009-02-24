@@ -180,7 +180,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         fLabelProvider = new TreeModelLabelProvider(this);
         
         if ((style & SWT.POP_UP) != 0) {
-            ((ModelContentProvider)getContentProvider()).setSuppressModelControlDeltas(true);
+            ((ITreeModelContentProvider)getContentProvider()).setSuppressModelControlDeltas(true);
         }
     }
 
@@ -368,11 +368,11 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return -1;
     }
 
-    private TreeModelLabelProvider getLabelProvider() {
+    private ITreeModelLabelProvider getLabelProvider() {
         return fLabelProvider;
     }
 
-    private TreeModelContentProvider getContentProvider() {
+    private ITreeModelContentProvider getContentProvider() {
         return fContentProvider;
     }
 
@@ -1176,7 +1176,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
     
     public void removeViewerUpdateListener(IViewerUpdateListener listener) {
-        ModelContentProvider cp = getContentProvider();
+        ITreeModelContentProvider cp = getContentProvider();
         if (cp !=  null) {
             cp.removeViewerUpdateListener(listener);
         }
@@ -1187,7 +1187,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
     
     public void removeModelChangedListener(IModelChangedListener listener) {
-        ModelContentProvider cp = getContentProvider();
+        ITreeModelContentProvider cp = getContentProvider();
         if (cp !=  null) {
             cp.removeModelChangedListener(listener);
         }

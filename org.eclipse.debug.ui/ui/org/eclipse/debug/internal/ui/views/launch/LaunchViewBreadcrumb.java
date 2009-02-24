@@ -18,8 +18,11 @@ import org.eclipse.debug.internal.ui.viewers.breadcrumb.BreadcrumbViewer;
 import org.eclipse.debug.internal.ui.viewers.breadcrumb.IBreadcrumbDropDownSite;
 import org.eclipse.debug.internal.ui.viewers.breadcrumb.TreeViewerDropDown;
 import org.eclipse.debug.internal.ui.viewers.model.ILabelUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.SubTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.contexts.AbstractDebugContextProvider;
@@ -38,7 +41,6 @@ import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -353,15 +355,15 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
         
         TreeViewerDropDown dropDownTreeViewer = new TreeViewerDropDown() {
             
-            TreeModelViewer fDropDownViewer;
+            SubTreeModelViewer fDropDownViewer;
             
-            protected TreeViewer createTreeViewer(Composite composite, int style, TreePath path) {
-                fDropDownViewer = new TreeModelViewer(
+            protected TreeViewer createTreeViewer(Composite composite, int style, final TreePath path) {
+                fDropDownViewer = new SubTreeModelViewer(
                     composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL | SWT.POP_UP, 
                     fTreeViewer.getPresentationContext());
 
                 Object launchViewInput = fTreeViewer.getInput();
-                fDropDownViewer.setInput(launchViewInput);
+                fDropDownViewer.setInput(launchViewInput, path.getParentPath());
 
                 ViewerFilter[] filters = fTreeViewer.getFilters();
                 fDropDownViewer.setFilters(filters);
@@ -369,10 +371,6 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                 ModelDelta delta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
                 fTreeViewer.saveElementState(TreePath.EMPTY, delta);
                 fDropDownViewer.updateViewer(delta);
-                
-                if (path.getSegmentCount() != 0) {
-                    fDropDownViewer.setSelection(new TreeSelection(path), true, true);
-                }
                 
                 fDropDownViewer.addLabelUpdateListener(new ILabelUpdateListener() {
                     public void labelUpdateComplete(ILabelUpdate update) {}
@@ -393,11 +391,47 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             }
 
             protected void openElement(ISelection selection) {
+                if (fTreeViewer.getControl().isDisposed()) {
+                    return;
+                }
+                
                 if (selection != null && (selection instanceof ITreeSelection) && !selection.isEmpty()) {
-                    ModelDelta delta = new ModelDelta(fDropDownViewer.getInput(), IModelDelta.NO_CHANGE); 
+                    // Create the path to the root element of the drop-down viewer.  Need to calcualte
+                    // indexes and counts for the delta in order for the selection from the drop-down 
+                    // viewer to work properly.
+                    TreeModelContentProvider contentProvider = (TreeModelContentProvider)fTreeViewer.getContentProvider();
+                    TreePath path = TreePath.EMPTY;
+                    int count = fTreeViewer.getChildCount(path);
+                    count = contentProvider.viewToModelCount(path, count);
+                    ModelDelta rootDelta = 
+                        new ModelDelta(fTreeViewer.getInput(), -1, IModelDelta.NO_CHANGE, count);
+                    TreePath rootPath = fDropDownViewer.getRootPath();
+                    ModelDelta delta = rootDelta;
+                    for (int i = 0; i < rootPath.getSegmentCount(); i++) {
+                        Object element = rootPath.getSegment(i);
+                        int index = fTreeViewer.findElementIndex(path, element);
+                        index = contentProvider.viewToModelIndex(path, index);
+                        path = path.createChildPath(element);
+                        count = fTreeViewer.getChildCount(path);
+                        count = contentProvider.viewToModelCount(path, count);
+                        delta = delta.addNode(rootPath.getSegment(i), index, IModelDelta.NO_CHANGE, count);
+                    }
+                    
+                    // Create the delta and save the drop-down viewer's state to it.
                     fDropDownViewer.saveElementState(TreePath.EMPTY, delta);
-                    fTreeViewer.updateViewer(delta);
-                    fTreeViewer.setSelection(selection, true, true);
+                    
+                    // Add the IModelDelta.FORCE flag to override the current selection in view.
+                    rootDelta.accept(new IModelDeltaVisitor(){
+                        public boolean visit(IModelDelta paramDelta, int depth) {
+                            if ((paramDelta.getFlags() & IModelDelta.SELECT) != 0) {
+                                ((ModelDelta)paramDelta).setFlags(paramDelta.getFlags() | IModelDelta.FORCE);
+                            }
+                            return true;
+                        }
+                    });
+                    
+                    // Save the state of the drop-down into the tree viewer.
+                    fTreeViewer.updateViewer(rootDelta);
                     fViewer.setSelection(StructuredSelection.EMPTY);
                     site.close();
                 }

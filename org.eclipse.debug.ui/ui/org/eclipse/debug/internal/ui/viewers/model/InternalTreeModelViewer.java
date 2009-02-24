@@ -41,10 +41,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -499,7 +497,7 @@ public class InternalTreeModelViewer extends TreeViewer
 							update = null;
 						}
 					} else {
-						int modelIndex = ((ModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, i);
+						int modelIndex = ((ITreeModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, i);
 						if (update == null) {
 							update = new VirtualChildrenUpdate(parentPath, this, model);
 						} else if ((modelIndex - prevModelIndex) > 1) {
@@ -544,7 +542,7 @@ public class InternalTreeModelViewer extends TreeViewer
 			if (fLabel == null) {
 				return fItem.getImage();
 			} else {
-				return ((TreeModelLabelProvider)getLabelProvider()).getImage(fLabel.fImage);
+				return ((ITreeModelLabelProvider)getLabelProvider()).getImage(fLabel.fImage);
 			}
 		}
 
@@ -800,7 +798,7 @@ public class InternalTreeModelViewer extends TreeViewer
 					int start = update.getOffset();
 					int end = start + update.getLength();
 					for (int i = start; i < end; i++) {
-						int viewIndex = ((ModelContentProvider)getContentProvider()).modelToViewIndex(parent, i);
+						int viewIndex = ((ITreeModelContentProvider)getContentProvider()).modelToViewIndex(parent, i);
 						VirtualElement proxy = children[viewIndex];
 						if (proxy.fFiltered) {
 							fMonitor.worked(1); // don't need the label, this one is already done
@@ -888,10 +886,10 @@ public class InternalTreeModelViewer extends TreeViewer
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#setChild(java.lang.Object, int)
 		 */
 		public void setChild(Object child, int offset) {
-			int viewIndex = ((ModelContentProvider)getContentProvider()).modelToViewIndex(getElementPath(), offset);
+			int viewIndex = ((ITreeModelContentProvider)getContentProvider()).modelToViewIndex(getElementPath(), offset);
 			VirtualElement virtualChild = getVirtualElement().fChildren[viewIndex];
 			virtualChild.setElement(child);
-			ModelContentProvider provider = (ModelContentProvider) getContentProvider();
+			ITreeModelContentProvider provider = (ITreeModelContentProvider) getContentProvider();
 			virtualChild.fFiltered = provider.shouldFilter(getElementPath(), child);
 			if (!virtualChild.fFiltered) {
 				virtualChild.retrieveChildren(getElementPath().createChildPath(child), fModel);
@@ -1004,14 +1002,14 @@ public class InternalTreeModelViewer extends TreeViewer
 		setLabelProvider(createLabelProvider());
 		
 		if ((style & SWT.POP_UP) != 0) {
-		    ((ModelContentProvider)getContentProvider()).setSuppressModelControlDeltas(true);
+		    ((ITreeModelContentProvider)getContentProvider()).setSuppressModelControlDeltas(true);
 		}
 	}
 	
 	/**
 	 * @return content provider for this tree viewer
 	 */
-	protected TreeModelContentProvider createContentProvider()
+	protected ITreeModelContentProvider createContentProvider()
 	{
 		return new TreeModelContentProvider();
 	}
@@ -1019,7 +1017,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	/**
 	 * @return label provider for this tree viewer
 	 */
-	protected TreeModelLabelProvider createLabelProvider()
+	protected ITreeModelLabelProvider createLabelProvider()
 	{
 		return new TreeModelLabelProvider(this);
 	}
@@ -1132,10 +1130,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	protected void unmapElement(Object element, Widget widget) {
 		if (fNotifyUnmap) {
 			// TODO: should we update the filter with the "new non-identical element"?
-			IContentProvider provider = getContentProvider();
-			if (provider instanceof ModelContentProvider) {
-				((ModelContentProvider) provider).unmapPath((TreePath) widget.getData(TREE_PATH_KEY));
-			}
+		    ((ITreeModelContentProvider) getContentProvider()).unmapPath((TreePath) widget.getData(TREE_PATH_KEY));
 		}
 		super.unmapElement(element, widget);
 	}
@@ -1393,7 +1388,7 @@ public class InternalTreeModelViewer extends TreeViewer
 				column.setWidth(1);
 				ImageDescriptor image = presentation.getImageDescriptor(id);
 				if (image != null) {
-					column.setImage(((TreeModelLabelProvider)getLabelProvider()).getImage(image));
+					column.setImage(((ITreeModelLabelProvider)getLabelProvider()).getImage(image));
 				}
 				column.setData(id);
 			}
@@ -1687,7 +1682,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * @param listener listener
 	 */
 	public void addViewerUpdateListener(IViewerUpdateListener listener) {
-		((ModelContentProvider)getContentProvider()).addViewerUpdateListener(listener);
+		((ITreeModelContentProvider)getContentProvider()).addViewerUpdateListener(listener);
 	}
 	
 	/**
@@ -1696,7 +1691,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * @param listener listener
 	 */
 	public void removeViewerUpdateListener(IViewerUpdateListener listener) {
-		ModelContentProvider cp = (ModelContentProvider)getContentProvider();
+	    ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
 		if (cp !=  null) {
 			cp.removeViewerUpdateListener(listener);
 		}
@@ -1708,7 +1703,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * @param listener model delta listener
 	 */
 	public void addModelChangedListener(IModelChangedListener listener) {
-		((ModelContentProvider)getContentProvider()).addModelChangedListener(listener); 
+		((ITreeModelContentProvider)getContentProvider()).addModelChangedListener(listener); 
 	}
 	
 	/**
@@ -1717,7 +1712,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * @param listener model delta listener
 	 */
 	public void removeModelChangedListener(IModelChangedListener listener) {
-		ModelContentProvider cp = (ModelContentProvider)getContentProvider();
+	    ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
 		if (cp !=  null) {
 			cp.removeModelChangedListener(listener);
 		}
@@ -1736,7 +1731,7 @@ public class InternalTreeModelViewer extends TreeViewer
 			return;
 		}
 		
-		if ( !((TreeModelLabelProvider)getLabelProvider()).update(getTreePathFromItem(item)) ) {
+		if ( !((ITreeModelLabelProvider)getLabelProvider()).update(getTreePathFromItem(item)) ) {
             if (element instanceof String) {
                 item.setData(PREV_LABEL_KEY, new String[] { (String)element } );
             }		    
@@ -1767,18 +1762,12 @@ public class InternalTreeModelViewer extends TreeViewer
 	}
 		
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {
-        IBaseLabelProvider labelProvider = getLabelProvider();
-        if (labelProvider instanceof TreeModelLabelProvider) {
-            ((TreeModelLabelProvider)labelProvider).addLabelUpdateListener(listener);
-        }
+	    ((ITreeModelLabelProvider)getLabelProvider()).addLabelUpdateListener(listener);
 	}
 	
 	public void removeLabelUpdateListener(ILabelUpdateListener listener) {
 	    if (!getControl().isDisposed()) {
-	        IBaseLabelProvider labelProvider = getLabelProvider();
-	        if (labelProvider instanceof TreeModelLabelProvider) {
-	            ((TreeModelLabelProvider)labelProvider).removeLabelUpdateListener(listener);
-	        }
+	        ((ITreeModelLabelProvider)getLabelProvider()).removeLabelUpdateListener(listener);
 	    }
 	}
 	
@@ -2017,7 +2006,7 @@ public class InternalTreeModelViewer extends TreeViewer
             } else {
                 Image[] images = new Image[imageDescriptors.length];
                 for (int i = 0; i < imageDescriptors.length; i++) {
-                    images[i] = ((TreeModelLabelProvider)getLabelProvider()).getImage(imageDescriptors[i]);
+                    images[i] = ((ITreeModelLabelProvider)getLabelProvider()).getImage(imageDescriptors[i]);
                 }
                 if (columnIds == null) {
                     item.setImage(images[0]);
@@ -2035,7 +2024,7 @@ public class InternalTreeModelViewer extends TreeViewer
             } else {
                 Color[] foregrounds = new Color[_foregrounds.length];
                 for (int i = 0; i< foregrounds.length; i++) {
-                    foregrounds[i] = ((TreeModelLabelProvider)getLabelProvider()).getColor(_foregrounds[i]);
+                    foregrounds[i] = ((ITreeModelLabelProvider)getLabelProvider()).getColor(_foregrounds[i]);
                 }
                 if (columnIds == null) {
                     item.setForeground(0,foregrounds[0]);
@@ -2055,7 +2044,7 @@ public class InternalTreeModelViewer extends TreeViewer
             } else {
                 Color[] backgrounds = new Color[_backgrounds.length];
                 for (int i = 0; i< backgrounds.length; i++) {
-                    backgrounds[i] = ((TreeModelLabelProvider)getLabelProvider()).getColor(_backgrounds[i]);
+                    backgrounds[i] = ((ITreeModelLabelProvider)getLabelProvider()).getColor(_backgrounds[i]);
                 }
                 if (columnIds == null) {
                     item.setBackground(0,backgrounds[0]);
@@ -2075,7 +2064,7 @@ public class InternalTreeModelViewer extends TreeViewer
             } else {
                 Font[] fonts = new Font[fontDatas.length];
                 for (int i = 0; i < fontDatas.length; i++) {
-                    fonts[i] = ((TreeModelLabelProvider)getLabelProvider()).getFont(fontDatas[i]);
+                    fonts[i] = ((ITreeModelLabelProvider)getLabelProvider()).getFont(fontDatas[i]);
                 }
                 if (columnIds == null) {
                     item.setFont(0,fonts[0]);
@@ -2191,12 +2180,14 @@ public class InternalTreeModelViewer extends TreeViewer
         TreeItem[] items = null;
         Widget w = internalGetWidgetToSelect(path);
         if (w instanceof Tree) {
-            delta.setChildCount(((ModelContentProvider)getContentProvider()).viewToModelCount(path, tree.getItemCount()));
+            delta.setChildCount(
+                ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, tree.getItemCount()));
             delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
             items = tree.getItems(); 
         } else if (w instanceof TreeItem) {
             TreeItem item = (TreeItem)w;
-            delta.setChildCount(((ModelContentProvider)getContentProvider()).viewToModelCount(path, item.getItemCount()));
+            delta.setChildCount(
+                ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, item.getItemCount()));
             if (item.getExpanded()) {
                 delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
             }
@@ -2225,9 +2216,10 @@ public class InternalTreeModelViewer extends TreeViewer
                 if (selected) {
                     flags = flags | IModelDelta.SELECT;
                 }
-                int modelIndex = ((ModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, index);
+                int modelIndex = ((ITreeModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, index);
                 TreePath elementPath = parentPath.createChildPath(element);
-                int numChildren = ((ModelContentProvider)getContentProvider()).viewToModelCount(elementPath, item.getItemCount());
+                int numChildren = ((ITreeModelContentProvider)getContentProvider()).
+                    viewToModelCount(elementPath, item.getItemCount());
                 ModelDelta childDelta = delta.addNode(element, modelIndex, flags, numChildren);
                 if (expanded) {
                     TreeItem[] items = item.getItems();
@@ -2240,6 +2232,6 @@ public class InternalTreeModelViewer extends TreeViewer
     }
     
     public void updateViewer(IModelDelta delta) {
-        ((ModelContentProvider)getContentProvider()).updateNodes(new IModelDelta[] { delta }, true);
+        ((ITreeModelContentProvider)getContentProvider()).updateModel(delta);
     }
 }

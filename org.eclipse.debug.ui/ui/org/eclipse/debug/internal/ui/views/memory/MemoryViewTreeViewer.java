@@ -11,7 +11,7 @@
 
 package org.eclipse.debug.internal.ui.views.memory;
 
-import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.swt.widgets.Composite;
@@ -40,7 +40,7 @@ public class MemoryViewTreeViewer extends TreeModelViewer {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer#createContentProvider()
 	 */
-	protected TreeModelContentProvider createContentProvider() {
+	protected ITreeModelContentProvider createContentProvider() {
 		return new MemoryViewTreeModelContentProvider();
 	}
 
