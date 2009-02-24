@@ -90,7 +90,7 @@ public class WorkbenchStylingSupport {
 	 * Has no behaviour but conforms to IStylingEngine API.
 	 * @param appContext
 	 */
-	static void initializeNullStyling(IEclipseContext appContext) {
+	public static void initializeNullStyling(IEclipseContext appContext) {
 		appContext.set(IStylingEngine.class.getName(),
 				new IStylingEngine() {
 					public void setClassname(Object widget, String classname) {
