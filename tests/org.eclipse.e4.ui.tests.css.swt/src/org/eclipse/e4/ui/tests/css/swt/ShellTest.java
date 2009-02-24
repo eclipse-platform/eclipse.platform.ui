@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -31,7 +39,6 @@ public class ShellTest extends CSSTestCase {
 		engine.applyStyles(shell, true);
 
 		shell.pack();
-		shell.open();
 		return shell;
 	}
 	
@@ -40,7 +47,6 @@ public class ShellTest extends CSSTestCase {
 		Shell shellToTest = createTestShell("Shell { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, shellToTest.getBackground().getRGB());
 		assertEquals(BLUE, shellToTest.getForeground().getRGB());
-		shellToTest.getShell().close();
 	}
 
 	public void testFontRegular() throws Exception {
@@ -50,7 +56,6 @@ public class ShellTest extends CSSTestCase {
 		assertEquals("Verdana", fontData.getName());
 		assertEquals(16, fontData.getHeight());
 		assertEquals(SWT.NORMAL, fontData.getStyle());		
-		shellToTest.getShell().close();
 	}
 
 	public void testFontBold() throws Exception {
@@ -60,7 +65,6 @@ public class ShellTest extends CSSTestCase {
 		assertEquals("Arial", fontData.getName());
 		assertEquals(12, fontData.getHeight());
 		assertEquals(SWT.BOLD, fontData.getStyle());		
-		shellToTest.getShell().close();
 	}
 
 	public void testFontItalic() throws Exception {
@@ -68,7 +72,6 @@ public class ShellTest extends CSSTestCase {
 		assertEquals(1, shellToTest.getFont().getFontData().length);
 		FontData fontData = shellToTest.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());		
-		shellToTest.getShell().close();
 	}
 
 }

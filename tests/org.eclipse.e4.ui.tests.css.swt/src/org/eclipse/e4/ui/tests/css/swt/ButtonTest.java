@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -35,7 +43,6 @@ public class ButtonTest extends CSSTestCase {
 		engine.applyStyles(shell, true);
 
 		shell.pack();
-		shell.open();
 		return buttonToTest;
 	}
 	
@@ -44,7 +51,6 @@ public class ButtonTest extends CSSTestCase {
 		Button buttonToTest = createTestButton("Button { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, buttonToTest.getBackground().getRGB());
 		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
-		buttonToTest.getShell().close();
 	}
 
 	public void testFontRegular() throws Exception {
@@ -54,7 +60,6 @@ public class ButtonTest extends CSSTestCase {
 		assertEquals("Verdana", fontData.getName());
 		assertEquals(16, fontData.getHeight());
 		assertEquals(SWT.NORMAL, fontData.getStyle());		
-		buttonToTest.getShell().close();
 	}
 
 	public void testFontBold() throws Exception {
@@ -64,7 +69,6 @@ public class ButtonTest extends CSSTestCase {
 		assertEquals("Arial", fontData.getName());
 		assertEquals(12, fontData.getHeight());
 		assertEquals(SWT.BOLD, fontData.getStyle());		
-		buttonToTest.getShell().close();
 	}
 
 	public void testFontItalic() throws Exception {
@@ -72,7 +76,6 @@ public class ButtonTest extends CSSTestCase {
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());		
-		buttonToTest.getShell().close();
 	}
 	
 }
