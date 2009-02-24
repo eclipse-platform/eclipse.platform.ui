@@ -55,6 +55,7 @@ public class Thumbnails {
 		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
 		ir.setShowLabels(false);
 		ir.setDropShadowsSize(0);
+		ir.setShowRoundedSelectionCorners(false);
 
 		gallery.setItemRenderer(ir);
 
