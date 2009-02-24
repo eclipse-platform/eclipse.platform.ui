@@ -281,12 +281,13 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 
 	public HunkResult[] getHunkResults() {
+		// return hunk results in the same order as hunks are placed in file diff 
 		List results = new ArrayList();
 		IHunk[] hunks = fDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
 			HunkResult result = (HunkResult) fHunkResults.get(hunks[i]);
 			if (result != null) {
-				results.add(result.getHunk());
+				results.add(result);
 			}
 		}
 		return (HunkResult[]) results.toArray(new HunkResult[results.size()]);
