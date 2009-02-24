@@ -35,7 +35,6 @@ public class LabelTest extends CSSTestCase {
 		engine.applyStyles(shell, true);
 
 		shell.pack();
-		shell.open();
 		return labelToTest;
 	}
 	
@@ -44,7 +43,6 @@ public class LabelTest extends CSSTestCase {
 		Label labelToTest = createTestLabel("Label { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, labelToTest.getBackground().getRGB());
 		assertEquals(BLUE, labelToTest.getForeground().getRGB());
-		labelToTest.getShell().close();
 	}
 
 	public void testFontRegular() throws Exception {
@@ -54,7 +52,6 @@ public class LabelTest extends CSSTestCase {
 		assertEquals("Verdana", fontData.getName());
 		assertEquals(16, fontData.getHeight());
 		assertEquals(SWT.NORMAL, fontData.getStyle());		
-		labelToTest.getShell().close();
 	}
 
 	public void testFontBold() throws Exception {
@@ -64,7 +61,6 @@ public class LabelTest extends CSSTestCase {
 		assertEquals("Arial", fontData.getName());
 		assertEquals(12, fontData.getHeight());
 		assertEquals(SWT.BOLD, fontData.getStyle());		
-		labelToTest.getShell().close();
 	}
 
 	public void testFontItalic() throws Exception {
@@ -72,6 +68,5 @@ public class LabelTest extends CSSTestCase {
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());		
-		labelToTest.getShell().close();
 	}
 }
