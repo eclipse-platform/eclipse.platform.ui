@@ -52,6 +52,7 @@ import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.FileTool;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard;
 
 public class ImportExistingProjectsWizardTest extends UITestCase {
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
@@ -778,7 +779,43 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		}
 
 	}
+	
 
+	public void testInitialValue() {
+
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			zipLocation = copyZipLocation();
+			IProject[] workspaceProjects = root.getProjects();
+			for (int i = 0; i < workspaceProjects.length; i++)
+				FileUtil.deleteProject(workspaceProjects[i]);
+
+			WizardProjectsImportPage wpip = getExternalImportWizard(zipLocation);
+			ProjectRecord[] selectedProjects = wpip.getProjectRecords();
+			ArrayList projectNames = new ArrayList();
+			for (int i = 0; i < selectedProjects.length; i++) {
+				projectNames.add(selectedProjects[i].getProjectName());
+			}
+
+			HashSet projects = new HashSet();
+			projects.add("HelloWorld");
+			projects.add("WorldHello");
+			assertTrue("Not all projects were found correctly in zip",
+
+			projectNames.containsAll(projects));
+
+			// no initial value, no projects
+			wpip = getExternalImportWizard(null);
+			selectedProjects = wpip.getProjectRecords();
+			assertEquals(0, selectedProjects.length);
+
+		} catch (IOException e) {
+			fail(e.toString());
+		} catch (CoreException e) {
+			fail(e.toString());
+		}
+
+	}
 	public void testImportArchiveMultiProject() {
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -1001,5 +1038,18 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		return projectNames;
 	}
 	
-	
+	private WizardProjectsImportPage getExternalImportWizard(String initialPath) {
+
+		ExternalProjectImportWizard wizard = new ExternalProjectImportWizard(
+				initialPath);
+		wizard.init(getWorkbench(), null);
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.create();
+
+		dialog.getShell().setSize(Math.max(100, dialog.getShell().getSize().x),
+				100);
+		WizardProjectsImportPage wpip = (WizardProjectsImportPage) wizard
+				.getPage("wizardExternalProjectsPage");
+		return wpip;
+	}
 }

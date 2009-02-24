@@ -105,6 +105,15 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * @since 3.4
 	 */
 	private ILeveledImportStructureProvider structureProvider;
+	
+	
+	// Added width and height constants because Text and
+	// CheckboxTreeViewer components are sized improperly
+	// when wizard is called with an initial path
+	private final static int PATH_FIELD_WIDTH = 220;
+	private final static int PATH_FIELD_HEIGHT = 14;
+	private final static int PROJECT_LIST_WIDTH = 340;
+	private final static int PROJECT_LIST_HEIGHT = 200;
 
 	/**
 	 * @since 3.5
@@ -317,6 +326,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 	private static final String[] FILE_IMPORT_MASK = {
 			"*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
+	// The initial path to set
+	private String initialPath;
+	
 	// The last selected path to minimize searches
 	private String lastPath;
 	// The last time that the file or folder at the selected path was modified
@@ -337,7 +349,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * @param pageName
 	 */
 	public WizardProjectsImportPage(String pageName) {
-		super(pageName);
+		this(pageName,null);
+	}
+			
+	public WizardProjectsImportPage(String pageName,String initialPath) {
+ 		super(pageName);
+		this.initialPath = initialPath;
 		setPageComplete(false);
 		setTitle(DataTransferMessages.WizardProjectsImportPage_ImportProjectsTitle);
 		setDescription(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
@@ -412,10 +429,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
 
 		projectsList = new CheckboxTreeViewer(listComposite, SWT.BORDER);
-		GridData listData = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
-		projectsList.getControl().setLayoutData(listData);
-
+		projectsList.getControl().setLayoutData(new GridData(PROJECT_LIST_WIDTH,PROJECT_LIST_HEIGHT));
 		projectsList.setContentProvider(new ITreeContentProvider() {
 
 			/*
@@ -605,9 +619,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 		// project location entry field
 		this.directoryPathField = new Text(projectGroup, SWT.BORDER);
 
-		this.directoryPathField.setLayoutData(new GridData(
-				GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-
+		directoryPathField.setLayoutData(new GridData(PATH_FIELD_WIDTH,PATH_FIELD_HEIGHT));
+		
 		// browse button
 		browseDirectoriesButton = new Button(projectGroup, SWT.PUSH);
 		browseDirectoriesButton
@@ -622,9 +635,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		// project location entry field
 		archivePathField = new Text(projectGroup, SWT.BORDER);
 
-		archivePathField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-				| GridData.GRAB_HORIZONTAL));
-		// browse button
+		archivePathField.setLayoutData(new GridData(PATH_FIELD_WIDTH,PATH_FIELD_HEIGHT));		// browse button
 		browseArchivesButton = new Button(projectGroup, SWT.PUSH);
 		browseArchivesButton.setText(DataTransferMessages.DataTransfer_browse);
 		setButtonLayoutData(browseArchivesButton);
@@ -1465,17 +1476,28 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	/**
 	 * Use the dialog store to restore widget values to the values that they
-	 * held last time this wizard was used to completion.
+	 * held last time this wizard was used to completion, or alternatively,
+	 * if an initial path is specified, use it to select values.
 	 * 
 	 * Method declared public only for use of tests.
 	 */
 	public void restoreWidgetValues() {
+				
+		// First, check to see if we have resore settings, and
+		// take care of the checkbox
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
 			// checkbox
 			copyFiles = settings.getBoolean(STORE_COPY_PROJECT_ID);
 			copyCheckbox.setSelection(copyFiles);
-
+		}
+				
+		// Second, check to see if we don't have an initial path, 
+		// and if we do have restore settings.  If so, set the
+		// radio selection properly to restore settings
+		
+		if (initialPath==null && settings!=null)
+		{
 			// radio selection
 			boolean archiveSelected = settings
 					.getBoolean(STORE_ARCHIVE_SELECTED);
@@ -1485,6 +1507,26 @@ public class WizardProjectsImportPage extends WizardPage implements
 				archiveRadioSelected();
 			} else {
 				directoryRadioSelected();
+			}
+		}	
+		// Third, if we do have an initial path, set the proper
+		// path and radio buttons to the initial value. Move
+		// cursor to the end of the path so user can see the
+		// most relevant part (directory / archive name)
+		else if (initialPath != null) {
+			boolean dir = new File(initialPath).isDirectory();
+
+			projectFromDirectoryRadio.setSelection(dir);
+			projectFromArchiveRadio.setSelection(!dir);
+
+			if (dir) {
+				directoryPathField.setText(initialPath);
+				directoryPathField.setSelection(initialPath.length());
+				directoryRadioSelected();
+			} else {
+				archivePathField.setText(initialPath);
+				archivePathField.setSelection(initialPath.length());
+				archiveRadioSelected();
 			}
 		}
 	}
