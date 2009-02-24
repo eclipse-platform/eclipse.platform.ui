@@ -34,6 +34,6 @@ public class CSSPropertyBorderVisibleSWTHandler extends AbstractCSSPropertySWTHa
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		CTabFolder folder = (CTabFolder)control;
-		return Boolean.toString(folder.getBorderVisible());
+		return Boolean.toString( folder.getBorderVisible() );
 	}
 }

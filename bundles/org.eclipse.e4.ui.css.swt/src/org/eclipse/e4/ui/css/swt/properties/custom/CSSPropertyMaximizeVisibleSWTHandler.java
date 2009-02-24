@@ -31,9 +31,6 @@ public class CSSPropertyMaximizeVisibleSWTHandler extends AbstractCSSPropertySWT
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		CTabFolder folder = (CTabFolder)control;
-		if (folder.getMaximizeVisible())
-			return "true";
-		else
-			return "false";
+		return Boolean.toString( folder.getMaximizeVisible() );
 	}
 }

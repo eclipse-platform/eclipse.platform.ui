@@ -31,10 +31,7 @@ public class CSSPropertyMinimizedSWTHandler extends AbstractCSSPropertySWTHandle
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		CTabFolder folder = (CTabFolder)control;
-		if (folder.getMinimized())
-			return "true";
-		else
-			return "false";
+		return Boolean.toString( folder.getMinimized() );
 	}
 
 

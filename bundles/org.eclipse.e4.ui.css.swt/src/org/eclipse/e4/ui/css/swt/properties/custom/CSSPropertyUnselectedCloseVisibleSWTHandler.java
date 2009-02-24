@@ -31,10 +31,7 @@ public class CSSPropertyUnselectedCloseVisibleSWTHandler extends AbstractCSSProp
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		CTabFolder folder = (CTabFolder)control;
-		if (folder.getUnselectedCloseVisible())
-			return "true";
-		else
-			return "false";
+		return Boolean.toString( folder.getUnselectedCloseVisible() );
 	}
 
 
