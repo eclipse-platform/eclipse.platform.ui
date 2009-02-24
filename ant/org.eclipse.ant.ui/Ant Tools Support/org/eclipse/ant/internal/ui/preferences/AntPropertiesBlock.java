@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,13 +18,13 @@ import java.util.Map;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.ColumnSorter;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -53,7 +52,30 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import com.ibm.icu.text.MessageFormat;
+
 public class AntPropertiesBlock {
+	
+	/**
+	 * Constant representing the id of the settings for the property table column widths
+	 * 
+	 * @since 3.5
+	 */
+	private static final String PROPERTY_COLUMN_WIDTH = "ant.properties.block.property.columnWidth"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the id of the settings for the property table sort column
+	 * 
+	 * @since 3.5
+	 */
+	private static final String PROPERTY_SORT_COLUMN = "ant.properties.block.property.sortColumn"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the id of the settings for the property table sort direction
+	 * 
+	 * @since 3.5
+	 */
+	private static final String PROPERTY_SORT_DIRECTION = "ant.properties.block.property.sortDirection"; //$NON-NLS-1$
 	
 	private IAntBlockContainer container;
 	
@@ -79,9 +101,9 @@ public class AntPropertiesBlock {
 	};
 	
 	private final ColumnLayoutData[] fTableColumnLayouts= {
-	        new ColumnWeightData(30),
-	        new ColumnWeightData(40),
-            new ColumnWeightData(30)
+	        new ColumnWeightData(30),//, 190, true),
+	        new ColumnWeightData(40),//, 190, true),
+            new ColumnWeightData(30)//, 190, true)
 	};
 	
 	/**
@@ -181,7 +203,14 @@ public class AntPropertiesBlock {
 		label.setFont(font);
 		label.setText(propertyLabel);
 
-		propertyTableViewer= createTableViewer(top, true);
+		int idx = 0;
+        int direction = SWT.DOWN;
+		try {
+			idx = dialogSettings.getInt(PROPERTY_SORT_COLUMN);
+			direction = dialogSettings.getInt(PROPERTY_SORT_DIRECTION);
+		} 
+		catch (NumberFormatException e) {}
+		propertyTableViewer= createTableViewer(top, true, false, idx, direction);
 		propertyTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty() && editButton.isEnabled()) {
@@ -201,8 +230,9 @@ public class AntPropertiesBlock {
 		label.setFont(font);
 		label.setText(propertyFileLabel);
 
-		fileTableViewer= createTableViewer(top, false);
+		fileTableViewer= createTableViewer(top, false, true, 0, SWT.DOWN);
 		fileTableViewer.getTable().addKeyListener(keyListener);	
+		
 		createButtonGroup(top);
 	}
 	
@@ -224,19 +254,19 @@ public class AntPropertiesBlock {
 	/**
 	 * Creates and returns a configured table viewer in the given parent
 	 */
-	private TableViewer createTableViewer(Composite parent, boolean setColumns) {
+	private TableViewer createTableViewer(Composite parent, boolean setColumns, boolean defaultsorting, int sortcolumnidx, int sortdirection) {
 		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
         int availableRows= availableRows(parent);
         if (setColumns) {
             data.heightHint = table.getItemHeight() * (availableRows / 10);
         }
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.widthHint = 425;
 		table.setLayoutData(data);
 		table.setFont(parent.getFont());
 		
 		TableViewer tableViewer= new TableViewer(table);
-		tableViewer.setContentProvider(new AntContentProvider());
+		tableViewer.setContentProvider(new AntContentProvider(defaultsorting));
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.addSelectionChangedListener(tableListener);
         
@@ -245,18 +275,88 @@ public class AntPropertiesBlock {
             table.setLayout(tableLayout);
             table.setHeaderVisible(true);
             table.setLinesVisible(true);
-            
+            ColumnSorter sorter = null;
             for (int i = 0; i < fTableColumnHeaders.length; i++) {
                 tableLayout.addColumnData(fTableColumnLayouts[i]);
                 TableColumn column = new TableColumn(table, SWT.NONE, i);
                 column.setResizable(fTableColumnLayouts[i].resizable);
                 column.setText(fTableColumnHeaders[i]);
+                sorter = new ColumnSorter(tableViewer, column) {
+					public String getCompareText(Object obj, int columnindex) {
+						return AntPropertiesBlock.this.labelProvider.getColumnText(obj, columnindex);
+					}
+				};
+                if(i == sortcolumnidx) {
+					sorter.setDirection(sortdirection);
+                }
             }
         }
-            
 		return tableViewer;
 	}
     
+	/**
+	 * Used to persist any settings for the block that the user has set
+	 * 
+	 * @since 3.5
+	 */
+	public void saveSettings() {
+		if(propertyTableViewer != null) {
+			saveColumnSettings();
+		}
+	}
+	
+	/**
+	 * Persist table settings into the give dialog store.
+	 * 
+	 * @since 3.5
+	 */
+	private void saveColumnSettings() {
+		Table table = this.propertyTableViewer.getTable();
+        int columnCount = table.getColumnCount();
+		for (int i = 0; i < columnCount; i++) {
+			dialogSettings.put(PROPERTY_COLUMN_WIDTH + i, table.getColumn(i).getWidth());
+		}
+		TableColumn column = table.getSortColumn();
+		if(column != null) {
+			dialogSettings.put(PROPERTY_SORT_COLUMN, table.indexOf(column));
+			dialogSettings.put(PROPERTY_SORT_DIRECTION, table.getSortDirection());
+		}
+	}
+	
+	/**
+	 * Restore table settings from the given dialog store.
+	 * 
+	 * @since 3.5
+	 */
+	private void restoreColumnSettings() {
+		if(this.propertyTableViewer == null) {
+			return;
+		}
+        restoreColumnWidths();
+	}
+	
+	/**
+	 * Restores the column widths from dialog settings
+	 * 
+	 * @since 3.5
+	 */
+	private void restoreColumnWidths() {
+		Table table = this.propertyTableViewer.getTable();
+        int columnCount = table.getColumnCount();
+        for (int i = 0; i < columnCount; i++) {
+            int width = -1;
+            try {
+                width = dialogSettings.getInt(PROPERTY_COLUMN_WIDTH + i);
+            } catch (NumberFormatException e) {}
+            
+            if ((width <= 0) || (i == table.getColumnCount() - 1)) {
+            	table.getColumn(i).pack();
+            } else {
+            	table.getColumn(i).setWidth(width);
+            }
+        }
+	}
+	
     /**
      * Return the number of rows available in the current display using the
      * current font.
@@ -286,7 +386,7 @@ public class AntPropertiesBlock {
 	
 	/**
 	 * Creates and returns a configured button in the given composite with the given
-	 * label. Widget selection callbacks for the returned button will be processed
+	 * label. Widget selection call-backs for the returned button will be processed
 	 * by the <code>buttonListener</code>
 	 */
 	private Button createPushButton(Composite parent, String label) {
@@ -449,6 +549,7 @@ public class AntPropertiesBlock {
 			i++;
 		}
 		propertyTableViewer.setInput(result);
+		restoreColumnSettings();
 	}
 	
 	public void setPropertiesInput(Property[] properties) {

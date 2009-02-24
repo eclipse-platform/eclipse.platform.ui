@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -190,6 +190,8 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		}
 		
 		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, files);
+		
+		fAntPropertiesBlock.saveSettings();
 	}
 
 	/**
@@ -218,9 +220,9 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	public Button createPushButton(Composite parent, String buttonText) {
 		return super.createPushButton(parent, buttonText, null);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
+	
+	/**
+	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#update()
 	 */
 	public void update() {
 		updateTargetsTab();

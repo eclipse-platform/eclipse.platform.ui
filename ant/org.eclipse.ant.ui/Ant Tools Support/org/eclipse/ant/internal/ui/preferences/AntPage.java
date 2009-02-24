@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,12 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.ant.internal.core.AntObject;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.ColumnSorter;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -56,9 +60,11 @@ public abstract class AntPage {
 			buttonPressed(((Integer) e.widget.getData()).intValue());
 		}
 	};
+	
 	private AntRuntimePreferencePage preferencePage;
 	private TableViewer tableViewer;
 	private AntContentProvider contentProvider;
+	private AntObjectLabelProvider labelProvider = new AntObjectLabelProvider();
 	
 	protected Button editButton;
 	protected Button removeButton;
@@ -67,10 +73,10 @@ public abstract class AntPage {
 	        AntPreferencesMessages.AntPage_0, AntPreferencesMessages.AntPage_1, AntPreferencesMessages.AntPage_2, AntPreferencesMessages.AntPage_3
 	};
 	private final ColumnLayoutData[] fTableColumnLayouts= {
-	        new ColumnWeightData(40),
-	        new ColumnWeightData(20),
-	        new ColumnWeightData(20),
-	        new ColumnWeightData(20)
+	        new ColumnWeightData(33),
+	        new ColumnWeightData(23),
+	        new ColumnWeightData(22),
+	        new ColumnWeightData(22)
 	};  
 
 	/**
@@ -116,7 +122,7 @@ public abstract class AntPage {
                 break;
         }
     }
-
+    
 	/**
 	 * Creates and returns a button with appropriate size and layout.
 	 * 
@@ -156,9 +162,9 @@ public abstract class AntPage {
 	protected void createTable(Composite parent) {
 		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.widthHint = 425;
 		data.heightHint = table.getItemHeight();
-		data.horizontalSpan= 1;
+		data.horizontalSpan = 1;
 		table.setLayoutData(data);
 		table.setFont(parent.getFont());
         
@@ -167,18 +173,10 @@ public abstract class AntPage {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
-        // tableViewer.setColumnProperties(fTableColumnProperties);
-		for (int i = 0; i < fTableColumnHeaders.length; i++) {
-		    tableLayout.addColumnData(fTableColumnLayouts[i]);
-		    TableColumn column = new TableColumn(table, SWT.NONE, i);
-		    column.setResizable(fTableColumnLayouts[i].resizable);
-		    column.setText(fTableColumnHeaders[i]);
-		}
-		
 		contentProvider = getContentProvider();
 		tableViewer = new TableViewer(table);
 		tableViewer.setContentProvider(contentProvider);
-		tableViewer.setLabelProvider(new AntObjectLabelProvider());
+		tableViewer.setLabelProvider(this.labelProvider);
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				tableSelectionChanged((IStructuredSelection) event.getSelection());
@@ -192,6 +190,18 @@ public abstract class AntPage {
 				}
 			}
 		});
+		ArrayList sorters = new ArrayList(fTableColumnHeaders.length);
+		for (int i = 0; i < fTableColumnHeaders.length; i++) {
+		    tableLayout.addColumnData(fTableColumnLayouts[i]);
+		    TableColumn column = new TableColumn(table, SWT.NONE, i);
+		    column.setResizable(fTableColumnLayouts[i].resizable);
+		    column.setText(fTableColumnHeaders[i]);
+		    sorters.add(new ColumnSorter(this.tableViewer, column) {
+		    	public String getCompareText(Object obj, int columnindex) {
+		    		return AntPage.this.labelProvider.getColumnText(obj, columnindex);
+		    	}
+		    });
+		}
 		
 		table.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
@@ -200,15 +210,90 @@ public abstract class AntPage {
 				}
 			}
 		});	
+		
+		restoreColumnSettings(AntUIPlugin.getDefault().getDialogSettings(), sorters);
 	}
-
+	
+	/**
+	 * Persist table settings into the give dialog store, prefixed
+	 * with the given key.
+	 * 
+	 * @param settings dialog store
+	 * @since 3.5
+	 */
+	public void saveColumnSettings(IDialogSettings settings) {
+		Table table = this.tableViewer.getTable();
+        int columnCount = table.getColumnCount();
+		for (int i = 0; i < columnCount; i++) {
+			settings.put(getHelpContextId() + ".columnWidth" + i, table.getColumn(i).getWidth());	 //$NON-NLS-1$
+		}
+		TableColumn column = table.getSortColumn();
+		if(column != null) {
+			settings.put(getHelpContextId() + ".sortColumn", table.indexOf(column)); //$NON-NLS-1$
+			settings.put(getHelpContextId() + ".sortDirection", table.getSortDirection()); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Restore table settings from the given dialog store using the
+	 * given key.
+	 * 
+	 * @param settings dialog settings store
+	 * @since 3.5
+	 */
+	private void restoreColumnSettings(IDialogSettings settings, ArrayList sorters) {
+        restoreColumnWidths(settings);
+        int idx = 0;
+        int direction = SWT.DOWN;
+		try {
+			idx = settings.getInt(getHelpContextId() + ".sortColumn"); //$NON-NLS-1$
+			direction = settings.getInt(getHelpContextId() + ".sortDirection"); //$NON-NLS-1$
+		} 
+		catch (NumberFormatException e) {}
+		Table table = this.tableViewer.getTable();
+		if(table.getColumnCount() < 1) {
+			return;
+		}
+		TableColumn column = table.getColumn(idx);
+		if(column != null) {
+			table.setSortColumn(column);
+			table.setSortDirection(direction);
+			ColumnSorter sorter = (ColumnSorter) sorters.get(idx);
+			sorter.setDirection(direction);
+		}
+		sorters.clear();
+	}
+	
+	/**
+	 * Restores the column widths from dialog settings
+	 * 
+	 * @param settings
+	 * @since 3.5
+	 */
+	private void restoreColumnWidths(IDialogSettings settings) {
+		Table table = this.tableViewer.getTable();
+        int columnCount = table.getColumnCount();
+        for (int i = 0; i < columnCount; i++) {
+            int width = -1;
+            try {
+                width = settings.getInt(getHelpContextId() + ".columnWidth" + i); //$NON-NLS-1$
+            } catch (NumberFormatException e) {}
+            
+            if ((width <= 0) || (i == table.getColumnCount() - 1)) {
+            	table.getColumn(i).pack();
+            } else {
+            	table.getColumn(i).setWidth(width);
+            }
+        }
+	}
+	
 	/**
 	 * Returns the content provider to use for the table viewer
 	 * 
 	 * @return AntPageContentProvider
 	 */
 	protected AntContentProvider getContentProvider() {
-		return new AntContentProvider();
+		return new AntContentProvider(false);
 	}
 
 	/**

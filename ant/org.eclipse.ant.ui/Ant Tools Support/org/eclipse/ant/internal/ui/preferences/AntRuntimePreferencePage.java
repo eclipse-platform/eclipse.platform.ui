@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
@@ -21,6 +22,7 @@ import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -106,6 +108,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	 */
 	public boolean performOk() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
 		
 		prefs.setAntHomeClasspathEntries(classpathPage.getAntHomeEntries());
 		
@@ -121,11 +124,15 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 			prefs.setCustomTasks(tasks);
 		}
 		
+		tasksPage.saveColumnSettings(settings);
+		
 		contents = typesPage.getContents(false);
 		if (contents != null) {
 			Type[] types = (Type[]) contents.toArray(new Type[contents.size()]);
 			prefs.setCustomTypes(types);
 		}
+		
+		typesPage.saveColumnSettings(settings);
 		
 		contents = propertiesPage.getProperties();
 		if (contents != null) {
@@ -135,6 +142,8 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		
 		String[] files = propertiesPage.getPropertyFiles();
 		prefs.setCustomPropertyFiles(files);
+		
+		propertiesPage.saveAdditionalSettings();
 		
 		prefs.updatePluginPreferences();
 	
