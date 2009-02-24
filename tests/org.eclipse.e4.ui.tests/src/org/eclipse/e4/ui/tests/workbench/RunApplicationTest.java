@@ -33,7 +33,13 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
-public class CommandLookupTest extends TestCase {
+/**
+ * This should be run as a headless Junit Plug-in Test. It creates the
+ * application in a separate thread, and then tries to post the test to the
+ * application using syncExec(*). It doesn't have the correct "wait for the
+ * workbench to come up" code.
+ */
+public class RunApplicationTest extends TestCase {
 	private ServiceTracker instanceLocation;
 	private BundleContext bundleContext;
 	private ServiceTracker instanceAppContext;
@@ -42,7 +48,7 @@ public class CommandLookupTest extends TestCase {
 	private IEclipseContext applicationContext;
 	private Display display;
 
-	public CommandLookupTest(String name) {
+	public RunApplicationTest(String name) {
 		super(name);
 	}
 
