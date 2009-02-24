@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,14 +35,14 @@ import org.eclipse.ui.progress.UIJob;
  * a dialog by calling {@link CompareUI#openCompareDialog(org.eclipse.compare.CompareEditorInput)}.
  * <p>
  * The editor will not update when the elements in the sync info are changed.
- * </p><p>
+ * </p>
+ * <p>
  * Supports saving the local resource that is changed in the editor and will be updated
  * when the local resources is changed.
- * </p><p>
- * This class cannot be subclassed by clients.
  * </p>
  * @see SyncInfo
- * @since 3.0
+ * @since 3.0 
+ * @noextend This class cannot be subclassed by clients.
  */
 public final class SyncInfoCompareInput extends SaveableCompareEditorInput implements IResourceChangeListener {
 
