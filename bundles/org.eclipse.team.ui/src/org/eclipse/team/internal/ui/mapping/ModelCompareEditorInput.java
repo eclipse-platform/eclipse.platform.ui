@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,6 +113,8 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 			throws InvocationTargetException, InterruptedException {
         monitor.beginTask(TeamUIMessages.SyncInfoCompareInput_3, 100);
         monitor.setTaskName(TeamUIMessages.SyncInfoCompareInput_3);
+		getCompareConfiguration().setLeftEditable(isLeftEditable(input));
+		getCompareConfiguration().setRightEditable(false);
 		try {
 			ISynchronizationCompareInput adapter = asModelCompareInput(input);
 			if (adapter != null) {
@@ -296,4 +298,13 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	public int hashCode() {
 		return input.hashCode();
 	}
+
+	private boolean isLeftEditable(ICompareInput input) {
+		Object left = input.getLeft();
+		if (left instanceof IEditableContent) {
+			return ((IEditableContent) left).isEditable();
+		}
+		return false;
+	}
+
 }
