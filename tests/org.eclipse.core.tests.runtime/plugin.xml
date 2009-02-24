@@ -9,6 +9,9 @@
       <scope
             name="test"
             class="org.eclipse.core.tests.internal.preferences.TestScope"/>
+      <scope
+            name="badtest"
+            class="org.eclipse.core.tests.internal.preferences.BadTestScope"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

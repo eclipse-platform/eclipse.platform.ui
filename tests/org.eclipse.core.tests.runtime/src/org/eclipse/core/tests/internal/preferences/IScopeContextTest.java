@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@ package org.eclipse.core.tests.internal.preferences;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.osgi.service.prefs.Preferences;
 
@@ -65,5 +65,17 @@ public class IScopeContextTest extends RuntimeTest {
 		expected = "/instance/" + qualifier;
 		actual = node.absolutePath();
 		assertEquals("3.1", expected, actual);
+	}
+
+	public void testBadContext() {
+		IScopeContext context = new BadTestScope();
+		IPreferencesService service = Platform.getPreferencesService();
+		try {
+			context.getNode("qualifier");
+			fail("0.5"); // should throw an exception
+		} catch (RuntimeException e) {
+			// expected
+		}
+		assertNull("1.0", service.getString("qualifier", "foo", null, new IScopeContext[] {context}));
 	}
 }
