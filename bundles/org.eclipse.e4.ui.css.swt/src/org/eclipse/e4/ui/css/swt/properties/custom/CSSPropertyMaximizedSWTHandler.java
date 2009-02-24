@@ -32,8 +32,11 @@ public class CSSPropertyMaximizedSWTHandler extends AbstractCSSPropertySWTHandle
 
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		CTabFolder folder = (CTabFolder)control;
-		return Boolean.toString( folder.getMaximized() );
+		if (control instanceof CTabFolder) {
+			CTabFolder folder = (CTabFolder)control;
+			return Boolean.toString( folder.getMaximized() );
+		}
+		return null;
 	}
 
 

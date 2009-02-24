@@ -30,8 +30,11 @@ public class CSSPropertySingleSWTHandler extends AbstractCSSPropertySWTHandler{
 
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		CTabFolder folder = (CTabFolder)control;
-		return Boolean.toString( folder.getSingle() );
+		if (control instanceof CTabFolder) {
+			CTabFolder folder = (CTabFolder)control;
+			return Boolean.toString( folder.getSingle() );
+		}
+		return null;
 	}
 
 

@@ -30,7 +30,10 @@ public class CSSPropertyMinimizeVisibleSWTHandler extends AbstractCSSPropertySWT
 
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		CTabFolder folder = (CTabFolder)control;
-		return Boolean.toString( folder.getMinimizeVisible() );
+		if (control instanceof CTabFolder) {
+			CTabFolder folder = (CTabFolder)control;
+			return Boolean.toString( folder.getMinimizeVisible() );
+		}
+		return null;
 	}
 }

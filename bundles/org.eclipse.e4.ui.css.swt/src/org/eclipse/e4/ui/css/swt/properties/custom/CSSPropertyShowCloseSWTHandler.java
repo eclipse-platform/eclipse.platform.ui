@@ -34,7 +34,10 @@ public class CSSPropertyShowCloseSWTHandler extends AbstractCSSPropertySWTHandle
 
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		CTabFolder folder = (CTabFolder)control;		
-		return Boolean.toString( folder.getItem(0).getShowClose() );
+		if (control instanceof CTabFolder){
+			CTabFolder folder = (CTabFolder)control;		
+			return Boolean.toString( folder.getItem(0).getShowClose() );
+		}
+		return null;
 	}
 }
