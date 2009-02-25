@@ -25,12 +25,14 @@ import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -42,27 +44,33 @@ public class WBPartFactory extends SWTPartFactory {
 
 	public Object createWidget(MPart<?> part) {
 		final Widget newWidget;
-	
+
 		if (part instanceof MWindow) {
 			IEclipseContext parentContext = getContextForParent(part);
 			Shell wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-			TrimmedLayout tl = new TrimmedLayout(wbwShell);
-			wbwShell.setLayout(tl);
+			if (part instanceof MWorkbenchWindow) {
+				TrimmedLayout tl = new TrimmedLayout(wbwShell);
+				wbwShell.setLayout(tl);
+			} else {
+				wbwShell.setLayout(new FillLayout());
+			}
 			if (((MWindow) part).getName() != null)
 				wbwShell.setText(((MWindow) part).getName());
-	
+
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
 			final IHandlerService hs = new PartHandlerService(part);
-			IEclipseContext localContext = EclipseContextFactory.create(parentContext, UIContextScheduler.instance);
-			localContext.set(IContextConstants.DEBUG_STRING, "MWorkbenchWindow"); //$NON-NLS-1$
+			IEclipseContext localContext = EclipseContextFactory.create(
+					parentContext, UIContextScheduler.instance);
+			localContext
+					.set(IContextConstants.DEBUG_STRING, "MWorkbenchWindow"); //$NON-NLS-1$
 			part.setContext(localContext);
 			localContext.set(IHandlerService.class.getName(), hs);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 		} else {
 			newWidget = null;
 		}
-	
+
 		return newWidget;
 	}
 
@@ -72,7 +80,7 @@ public class WBPartFactory extends SWTPartFactory {
 			MWorkbenchWindow wbwModel = (MWorkbenchWindow) me;
 			Shell wbwShell = (Shell) wbwModel.getWidget();
 			TrimmedLayout tl = (TrimmedLayout) wbwShell.getLayout();
-	
+
 			// MTrim
 			MPart<?> topTrim = wbwModel.getTrim().getTopTrim();
 			if (topTrim != null) {
@@ -98,14 +106,21 @@ public class WBPartFactory extends SWTPartFactory {
 				rightTrim.setOwner(this);
 				super.processContents(rightTrim);
 			}
-	
+
 			// Client Area
 			MPerspective<?> persp = wbwModel.getChildren().get(0);
 			bindWidget(persp, tl.center);
 			persp.setOwner(this);
 			super.processContents(persp);
+		} else if (me instanceof MWindow) {
+			MWindow window = (MWindow) me;
+			EList children = window.getChildren();
+			if (children.size() > 0) {
+				MPart sash = (MPart) children.get(0);
+				renderer.createGui(sash);
+			}
 		}
-	
+
 		// TODO Auto-generated method stub
 		super.processContents(me);
 	}
@@ -113,9 +128,9 @@ public class WBPartFactory extends SWTPartFactory {
 	@Override
 	public void hookControllerLogic(MPart<?> me) {
 		super.hookControllerLogic(me);
-	
+
 		Widget widget = (Widget) me.getWidget();
-	
+
 		// Set up the text binding...perhaps should catch exceptions?
 		IObservableValue emfTextObs = EMFObservables.observeValue((EObject) me,
 				ApplicationPackage.Literals.MITEM__NAME);
@@ -128,7 +143,7 @@ public class WBPartFactory extends SWTPartFactory {
 					.observeText((org.eclipse.swt.widgets.Item) widget);
 			dbc.bindValue(uiTextObs, emfTextObs, null, null);
 		}
-	
+
 		// Set up the tool tip binding...perhaps should catch exceptions?
 		IObservableValue emfTTipObs = EMFObservables.observeValue((EObject) me,
 				ApplicationPackage.Literals.MITEM__TOOLTIP);
@@ -142,7 +157,7 @@ public class WBPartFactory extends SWTPartFactory {
 					.observeTooltipText((org.eclipse.swt.widgets.Item) widget);
 			dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
 		}
-	
+
 		// Handle generic image changes
 		((EObject) me).eAdapters().add(new AdapterImpl() {
 			@Override
