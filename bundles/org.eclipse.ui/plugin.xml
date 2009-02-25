@@ -2114,14 +2114,11 @@
          </service>
       </serviceFactory>
       <sourceProvider
-            provider="org.eclipse.ui.internal.services.CurrentSelectionSourceProvider">
+            provider="org.eclipse.ui.internal.services.WorkbenchSourceProvider">
          <variable
                name="selection"
                priorityLevel="workbench">
          </variable>
-      </sourceProvider>
-      <sourceProvider
-            provider="org.eclipse.ui.internal.services.ActiveShellSourceProvider">
          <variable
                name="activeShell"
                priorityLevel="workbench">
@@ -2146,9 +2143,6 @@
                name="activeWorkbenchWindow.activePerspective"
                priorityLevel="workbench">
          </variable>
-      </sourceProvider>
-      <sourceProvider
-            provider="org.eclipse.ui.internal.services.ActivePartSourceProvider">
          <variable
                name="activeEditor"
                priorityLevel="workbench">

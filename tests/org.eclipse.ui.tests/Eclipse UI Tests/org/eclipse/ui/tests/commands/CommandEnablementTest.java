@@ -38,7 +38,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
+import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -486,7 +486,7 @@ public class CommandEnablementTest extends UITestCase {
 		assertFalse(proxy.isEnabled());
 		ISourceProviderService providers = (ISourceProviderService) fWorkbench
 				.getService(ISourceProviderService.class);
-		CurrentSelectionSourceProvider selectionProvider = (CurrentSelectionSourceProvider) providers
+		WorkbenchSourceProvider selectionProvider = (WorkbenchSourceProvider) providers
 				.getSourceProvider(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 
 		selectionProvider.selectionChanged(null, StructuredSelection.EMPTY);

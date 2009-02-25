@@ -34,8 +34,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.services.ActivePartSourceProvider;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -174,8 +174,8 @@ public class ShowInMenu extends ContributionItem implements
 					.getService(ISourceProviderService.class);
 			ISourceProvider sp = sps
 					.getSourceProvider(ISources.SHOW_IN_SELECTION);
-			if (sp instanceof ActivePartSourceProvider) {
-				((ActivePartSourceProvider) sp).checkActivePart();
+			if (sp instanceof WorkbenchSourceProvider) {
+				((WorkbenchSourceProvider) sp).checkActivePart();
 			}
 			IMenuService service = (IMenuService) locator
 					.getService(IMenuService.class);
