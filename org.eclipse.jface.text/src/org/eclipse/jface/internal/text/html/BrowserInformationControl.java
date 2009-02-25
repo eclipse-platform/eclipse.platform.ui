@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -211,7 +211,8 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 */
 	protected void createContent(Composite parent) {
 		fBrowser= new Browser(parent, SWT.NONE);
-
+		fBrowser.setJavascriptEnabled(false);
+		
 		Display display= getShell().getDisplay();
 		fBrowser.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fBrowser.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
