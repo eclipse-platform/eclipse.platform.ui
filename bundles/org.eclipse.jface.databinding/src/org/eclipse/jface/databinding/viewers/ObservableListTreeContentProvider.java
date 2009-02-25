@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bugs 226765, 222991, 226292
+ *     Matthew Hall - bugs 226765, 222991, 226292, 266038
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -36,9 +36,7 @@ import org.eclipse.jface.viewers.Viewer;
  * {@link IObservableList} created by the factory, and will insert and remove
  * viewer elements to reflect the observed changes.
  * 
- * <p>
- * This class is not intended to be subclassed by clients.
- * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 1.2
  */
 public class ObservableListTreeContentProvider implements ITreeContentProvider {
@@ -191,10 +189,10 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 	 * @param structureAdvisor
 	 *            an advisor that will be consulted from the implementations of
 	 *            the {@link #getParent(Object)} and
-	 *            {@link #hasChildren(Object)} methods, or <code>null</code>
-	 *            if no advisor is available. It is recommended that clients
-	 *            pass a non-null advisor if they can provide additional
-	 *            structural information about the tree.
+	 *            {@link #hasChildren(Object)} methods, or <code>null</code> if
+	 *            no advisor is available. It is recommended that clients pass a
+	 *            non-null advisor if they can provide additional structural
+	 *            information about the tree.
 	 */
 	public ObservableListTreeContentProvider(IObservableFactory listFactory,
 			TreeStructureAdvisor structureAdvisor) {

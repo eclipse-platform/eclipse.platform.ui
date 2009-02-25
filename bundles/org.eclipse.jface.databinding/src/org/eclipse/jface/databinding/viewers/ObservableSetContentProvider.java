@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bugs 215531, 226765, 222991, 238296
+ *     Matthew Hall - bugs 215531, 226765, 222991, 238296, 266038
  *******************************************************************************/
 package org.eclipse.jface.databinding.viewers;
 
@@ -32,9 +32,7 @@ import org.eclipse.jface.viewers.Viewer;
  * of this class listen for changes to the observable set, and will insert and
  * remove viewer elements to reflect observed changes.
  * 
- * <p>
- * This class is not intended to be subclassed by clients.
- * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 1.1
  */
 public class ObservableSetContentProvider implements IStructuredContentProvider {
