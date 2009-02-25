@@ -392,7 +392,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                                 return true;
                             } else if (deltaPath.startsWith(path, null)) {
                                 if ( (delta.getFlags() & IModelDelta.SELECT) != 0) {
-                                    copy.setFlags(IModelDelta.SELECT);
+                                    copy.setFlags(IModelDelta.SELECT | IModelDelta.REVEAL);
                                     return false;
                                 }
                             }

@@ -396,8 +396,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		Rectangle rect= fParentComposite.getBounds();
 		Rectangle toolbarBounds= fToolBar.getBounds();
 
-		shell.pack();
-		Point size= shell.getSize();
+		Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
 		int height= Math.min(size.y, DROP_DOWN_HIGHT);
 		// TODO: Because of bug 258196 the drop down does not resize correctly 
 		// on GTK.  As a workaround temporarily increase the initial width of 

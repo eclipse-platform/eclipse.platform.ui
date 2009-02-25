@@ -126,7 +126,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		// expand each parent, then this node
 		IModelDelta parentDelta = delta.getParentDelta();
 		if (parentDelta != null) {
-			handleExpand(parentDelta);
+			if ((parentDelta.getFlags() & IModelDelta.EXPAND) == 0) {
+				handleExpand(parentDelta);
+			}
 			expand(delta);
 		} else {
 	        int childCount = delta.getChildCount();
