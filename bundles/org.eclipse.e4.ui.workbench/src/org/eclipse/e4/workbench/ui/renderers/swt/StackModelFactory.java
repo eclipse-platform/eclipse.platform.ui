@@ -246,7 +246,8 @@ public class StackModelFactory extends SWTPartFactory {
 				CTabFolder ctf = (CTabFolder) event.widget;
 				MStack stack = (MStack) ctf.getData(OWNING_ME);
 				MItemPart<?> part = stack.getActiveChild();
-				activate(part);
+				if (part != null)
+					activate(part);
 			}
 		});
 
