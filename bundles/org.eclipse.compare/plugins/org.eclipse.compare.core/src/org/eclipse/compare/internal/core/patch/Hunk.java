@@ -145,6 +145,12 @@ public class Hunk implements IHunk {
 		return fLines;
 	}
 
+	public String[] getUnifiedLines() {
+		String[] ret = new String[fLines.length];
+		System.arraycopy(fLines, 0, ret, 0, fLines.length);
+		return ret;
+	}
+
 	/**
 	 * Set the parent of this hunk. This method
 	 * should only be invoked from {@link FileDiff#add(Hunk)}

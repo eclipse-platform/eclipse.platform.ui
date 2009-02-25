@@ -40,7 +40,23 @@ public interface IHunk {
 	 * @return the start position of the hunk in the target file.
 	 */
 	public int getStartPosition();
-	
+
+	/**
+	 * Returns hunk's content in the unified format. This is an internal format in
+	 * which hunk stores its content and is always the same even if the hunk was
+	 * extracted from a patch stored in a different format. In the unified format
+	 * each line is prefixed with one of the following:
+	 * <ul>
+	 * <li> <code>' '</code> for context
+	 * <li> <code>'+'</code> for addition
+	 * <li> <code>'-'</code> for removal
+	 * </ul>
+	 * 
+	 * @return hunk's content in the unified format
+	 * @since org.eclipse.compare 3.5
+	 */
+	public String[] getUnifiedLines();
+
 	/**
 	 * Return the original contents from which the hunk was generated.
 	 * The returned contents usually only represent a portion of the

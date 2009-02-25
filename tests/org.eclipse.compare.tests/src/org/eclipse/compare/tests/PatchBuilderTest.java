@@ -226,6 +226,9 @@ public class PatchBuilderTest extends TestCase {
 				" [b]", "-[c]", " [d]", " [e]", " [f]" };
 		addLineDelimiters(lines);
 		Hunk hunk = (Hunk) PatchBuilder.createHunk(0, lines);
+		String[] actual = hunk.getUnifiedLines();
+		assertTrue(lines != actual);
+		assertLinesEquals(lines, actual);
 
 		assertHunkEquals(hunk, (Hunk) filePatches[0].getHunks()[0]);
 	}
@@ -241,6 +244,9 @@ public class PatchBuilderTest extends TestCase {
 				"+[j2]", " [k]", " [l]", " [m]" };
 		addLineDelimiters(lines);
 		Hunk hunk = (Hunk) PatchBuilder.createHunk(0, lines);
+		String[] actual = hunk.getUnifiedLines();
+		assertTrue(lines != actual);
+		assertLinesEquals(lines, actual);
 
 		assertHunkEquals(hunk, (Hunk) filePatches[0].getHunks()[0]);
 	}
@@ -254,6 +260,9 @@ public class PatchBuilderTest extends TestCase {
 		String[] lines = new String[] { "+[aa]", "+[bb]", "+[cc]" };
 		addLineDelimiters(lines);
 		Hunk hunk = (Hunk) PatchBuilder.createHunk(0, lines);
+		String[] actual = hunk.getUnifiedLines();
+		assertTrue(lines != actual);
+		assertLinesEquals(lines, actual);
 
 		assertHunkEquals(hunk, (Hunk) filePatches[0].getHunks()[0]);
 	}
@@ -267,6 +276,9 @@ public class PatchBuilderTest extends TestCase {
 		String[] lines = new String[] { "-[aa]", "-[bb]", "-[cc]", "-[dd]" };
 		addLineDelimiters(lines);
 		Hunk hunk = (Hunk) PatchBuilder.createHunk(0, lines);
+		String[] actual = hunk.getUnifiedLines();
+		assertTrue(lines != actual);
+		assertLinesEquals(lines, actual);
 
 		assertHunkEquals(hunk, (Hunk) filePatches[0].getHunks()[0]);
 	}
@@ -285,6 +297,13 @@ public class PatchBuilderTest extends TestCase {
 		assertEquals(h1.getLength(true), h2.getLength(true));
 		assertEquals(h1.getHunkType(false), h2.getHunkType(false));
 		assertEquals(h1.getHunkType(true), h2.getHunkType(true));
+	}
+
+	private void assertLinesEquals(String[] expected, String[] actual) {
+		assertEquals(expected.length, actual.length);
+		for (int i = 0; i < expected.length; i++) {
+			assertEquals(expected[i], actual[i]);
+		}
 	}
 
 	private void addLineDelimiters(String[] lines) {
