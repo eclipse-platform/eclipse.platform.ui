@@ -60,8 +60,6 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		return globalContext;
 	}
 
-	private ILegacyHook legacyHook;
-
 	// UI Construction...
 	private PartRenderer renderer;
 	private int rv;
@@ -172,6 +170,9 @@ public class Workbench implements IWorkbench, IContributionFactory {
 			workbench = ApplicationFactory.eINSTANCE.createMApplication();
 			resource.getContents().add((EObject) workbench);
 
+			// Capture the MApplication into the context
+			globalContext.set(MApplication.class.getName(), workbench);
+			
 			// Should set up such things as initial perspective id here...
 			String initialPerspectiveId = "org.eclipse.e4.ui.workbench.fragment.testPerspective"; //$NON-NLS-1$
 			populateWBModel(workbench, workbenchDefinitionInstance,
@@ -199,11 +200,8 @@ public class Workbench implements IWorkbench, IContributionFactory {
 	private void populateWBModel(MApplication<MWorkbenchWindow> wb,
 			URI initialWorkbenchDefinitionInstance, String initialPerspectiveId) {
 
-		// Install any registered legacy hook
-		installLegacyHook();
-
 		MWorkbenchWindow wbw;
-
+		ILegacyHook legacyHook = (ILegacyHook) globalContext.get(ILegacyHook.class.getName());
 		if (legacyHook != null) {
 			wbw = WorkbenchFactory.eINSTANCE.createMWorkbenchWindow();
 			wbw.setWidth(1280);
@@ -313,14 +311,6 @@ public class Workbench implements IWorkbench, IContributionFactory {
 			}
 		}
 
-	}
-
-	private void installLegacyHook() {
-		legacyHook = (ILegacyHook) globalContext.get(ILegacyHook.class.getName());
-		if (legacyHook == null)
-			return;
-
-		legacyHook.init(this, workbench);
 	}
 
 	private EObject findObject(TreeIterator<EObject> it, String id) {
