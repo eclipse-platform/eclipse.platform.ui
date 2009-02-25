@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,8 @@ public class RefactoringDescriptorViewer extends Viewer {
 	public RefactoringDescriptorViewer(final Composite parent, final int style) {
 		Assert.isNotNull(parent);
 		fBrowser= new Browser(parent, style);
+		fBrowser.setJavascriptEnabled(false);
+		
 		final Display display= parent.getDisplay();
 		fBrowser.setForeground(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 		fBrowser.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
