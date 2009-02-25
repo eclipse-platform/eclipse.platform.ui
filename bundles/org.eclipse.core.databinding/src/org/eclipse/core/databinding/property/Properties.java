@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 195222, 263868
+ *     Matthew Hall - bugs 195222, 263868, 264954
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -27,6 +28,7 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.property.list.SelfListProperty;
 import org.eclipse.core.internal.databinding.property.map.SelfMapProperty;
 import org.eclipse.core.internal.databinding.property.set.SelfSetProperty;
+import org.eclipse.core.internal.databinding.property.value.ObservableValueProperty;
 import org.eclipse.core.internal.databinding.property.value.SelfValueProperty;
 
 /**
@@ -90,7 +92,7 @@ public class Properties {
 	 * @return a value property which takes the source object itself as the
 	 *         property value.
 	 */
-	public static IValueProperty selfValue(final Object valueType) {
+	public static IValueProperty selfValue(Object valueType) {
 		return new SelfValueProperty(valueType);
 	}
 
@@ -104,7 +106,7 @@ public class Properties {
 	 * @return a list property which takes the source object (a {@link List}) as
 	 *         the property list.
 	 */
-	public static IListProperty selfList(final Object elementType) {
+	public static IListProperty selfList(Object elementType) {
 		return new SelfListProperty(elementType);
 	}
 
@@ -118,7 +120,7 @@ public class Properties {
 	 * @return a set property which takes the source object (a {@link Set}) as
 	 *         the property set.
 	 */
-	public static ISetProperty selfSet(final Object elementType) {
+	public static ISetProperty selfSet(Object elementType) {
 		return new SelfSetProperty(elementType);
 	}
 
@@ -134,8 +136,26 @@ public class Properties {
 	 * @return a map property which takes the source object (a {@link Map} as
 	 *         the property map.
 	 */
-	public static IMapProperty selfMap(final Object keyType,
-			final Object valueType) {
+	public static IMapProperty selfMap(Object keyType, Object valueType) {
 		return new SelfMapProperty(keyType, valueType);
+	}
+
+	/**
+	 * Returns a value property which observes the value of an
+	 * {@link IObservableValue}. This property may be used e.g. for observing
+	 * the respective values of an {@link IObservableList} &lt;
+	 * {@link IObservableValue} &gt;.
+	 * <p>
+	 * Calls to {@link IValueProperty#observe(Object)} or
+	 * {@link IValueProperty#observe(Realm, Object)} just cast the argument to
+	 * {@link IObservableValue} and return it (the realm argument is ignored).
+	 * 
+	 * @param valueType
+	 *            the value type of the property
+	 * @return a value property which observes the value of an
+	 *         {@link IObservableValue}.
+	 */
+	public static IValueProperty observableValue(Object valueType) {
+		return new ObservableValueProperty(valueType);
 	}
 }

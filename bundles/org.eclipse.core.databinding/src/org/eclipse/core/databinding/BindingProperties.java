@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263709)
+ *     Matthew Hall - bug 264954
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.BindingModelProperty;
@@ -21,7 +23,6 @@ import org.eclipse.core.internal.databinding.DataBindingContextValidationStatusP
 import org.eclipse.core.internal.databinding.ValidationStatusProviderModelsProperty;
 import org.eclipse.core.internal.databinding.ValidationStatusProviderTargetsProperty;
 import org.eclipse.core.internal.databinding.ValidationStatusProviderValidationStatusProperty;
-import org.eclipse.core.internal.databinding.property.value.ObservableValueProperty;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -95,7 +96,7 @@ public class BindingProperties {
 	 */
 	public static IValueProperty validationStatus() {
 		return new ValidationStatusProviderValidationStatusProperty()
-				.value(new ObservableValueProperty(IStatus.class));
+				.value(Properties.observableValue(IStatus.class));
 	}
 
 	/**
