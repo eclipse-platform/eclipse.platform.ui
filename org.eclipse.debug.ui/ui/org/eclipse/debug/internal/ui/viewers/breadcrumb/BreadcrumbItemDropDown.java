@@ -316,7 +316,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 						if (DEBUG)
 							System.out.println("focusOut - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
 
-						if (event.display.getActiveShell() != shell) {
+						if (event.display.getActiveShell() == null) {
 							if (DEBUG)
 								System.out.println("==> closing shell since event.display.getActiveShell() != shell"); //$NON-NLS-1$
 							shell.close();
