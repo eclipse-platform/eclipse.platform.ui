@@ -389,52 +389,63 @@ public class Workbench implements IWorkbench, IContributionFactory {
 
 		return rv;
 	}
+	
+	/**
+	 * Initialize a part renderer from the extension point.
+	 * @param registry the registry for the EP
+	 * @param r the created renderer
+	 * @param context the context for the part factories
+	 * @param f the IContributionFactory already provided to <code>r</code>
+	 */
+	public static void initializeRenderer(IExtensionRegistry registry, PartRenderer r, IEclipseContext context, IContributionFactory f) {
+		// add the factories from the extension point, sort by dependency
+		// * Need to make the EP more declarative to avoid aggressive
+		// loading
+		IConfigurationElement[] factories = registry
+				.getConfigurationElementsFor("org.eclipse.e4.workbench.partfactory"); //$NON-NLS-1$
+
+		// Sort the factories based on their dependence
+		// This is a hack, should be based on plug-in dependencies
+		int offset = 0;
+		for (int i = 0; i < factories.length; i++) {
+			String clsSpec = factories[i].getAttribute("class"); //$NON-NLS-1$
+			if (clsSpec.indexOf("Legacy") >= 0 //$NON-NLS-1$
+					|| clsSpec.indexOf("PartSash") >= 0) { //$NON-NLS-1$
+				IConfigurationElement tmp = factories[offset];
+				factories[offset++] = factories[i];
+				factories[i] = tmp;
+			}
+		}
+
+		for (int i = 0; i < factories.length; i++) {
+			PartFactory factory = null;
+			try {
+				factory = (PartFactory) factories[i]
+						.createExecutableExtension("class"); //$NON-NLS-1$
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+			if (factory != null) {
+				factory.init(r, context,
+						f);
+				r.addPartFactory(factory);
+
+				// Hack!! initialize the ContributedPartFactory
+				if (factory instanceof ContributedPartFactory) {
+					ContributedPartFactory cpf = (ContributedPartFactory) factory;
+					cpf
+							.setContributionFactory(f);
+				}
+			}
+		}
+	}
 
 	private void createGUI(MWorkbenchWindow workbenchWindow) {
 		if (renderer == null) {
-			renderer = new PartRenderer((IContributionFactory) this,
+			renderer = new PartRenderer(this,
 					globalContext);
+			initializeRenderer(registry, renderer, globalContext, this);
 
-			// add the factories from the extension point, sort by dependency
-			// * Need to make the EP more declarative to avoid aggressive
-			// loading
-			IConfigurationElement[] factories = registry
-					.getConfigurationElementsFor("org.eclipse.e4.workbench.partfactory"); //$NON-NLS-1$
-
-			// Sort the factories based on their dependence
-			// This is a hack, should be based on plug-in dependencies
-			int offset = 0;
-			for (int i = 0; i < factories.length; i++) {
-				String clsSpec = factories[i].getAttribute("class"); //$NON-NLS-1$
-				if (clsSpec.indexOf("Legacy") >= 0 //$NON-NLS-1$
-						|| clsSpec.indexOf("PartSash") >= 0) { //$NON-NLS-1$
-					IConfigurationElement tmp = factories[offset];
-					factories[offset++] = factories[i];
-					factories[i] = tmp;
-				}
-			}
-
-			for (int i = 0; i < factories.length; i++) {
-				PartFactory factory = null;
-				try {
-					factory = (PartFactory) factories[i]
-							.createExecutableExtension("class"); //$NON-NLS-1$
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-				if (factory != null) {
-					factory.init(renderer, globalContext,
-							(IContributionFactory) this);
-					renderer.addPartFactory(factory);
-
-					// Hack!! initialize the ContributedPartFactory
-					if (factory instanceof ContributedPartFactory) {
-						ContributedPartFactory cpf = (ContributedPartFactory) factory;
-						cpf
-								.setContributionFactory(((IContributionFactory) this));
-					}
-				}
-			}
 		}
 
 		renderer.createGui(workbenchWindow);

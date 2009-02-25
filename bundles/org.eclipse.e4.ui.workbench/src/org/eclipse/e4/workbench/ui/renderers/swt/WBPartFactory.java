@@ -17,6 +17,7 @@ import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -42,13 +43,13 @@ public class WBPartFactory extends SWTPartFactory {
 	public Object createWidget(MPart<?> part) {
 		final Widget newWidget;
 	
-		if (part instanceof MWorkbenchWindow) {
+		if (part instanceof MWindow) {
 			IEclipseContext parentContext = getContextForParent(part);
 			Shell wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
 			TrimmedLayout tl = new TrimmedLayout(wbwShell);
 			wbwShell.setLayout(tl);
-			if (((MWorkbenchWindow) part).getName() != null)
-				wbwShell.setText(((MWorkbenchWindow) part).getName());
+			if (((MWindow) part).getName() != null)
+				wbwShell.setText(((MWindow) part).getName());
 	
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
