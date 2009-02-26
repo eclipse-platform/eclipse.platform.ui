@@ -74,7 +74,7 @@ public class Toc extends UAElement implements IToc {
 		if (href != null) {
 			map.put(href, topic);
 			int anchorIx = href.lastIndexOf("#"); //$NON-NLS-1$
-			if (anchorIx >= 0) { //anchor exists, drop it and add
+			if (anchorIx >= 0) { //anchor exists, drop it and add href again to map
 				String simpleHref = href.substring(0, anchorIx);
 				if (!map.containsKey(simpleHref)) {
 					map.put(simpleHref, topic);
