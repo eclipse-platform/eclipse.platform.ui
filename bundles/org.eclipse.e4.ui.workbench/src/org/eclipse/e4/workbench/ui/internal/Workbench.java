@@ -11,25 +11,36 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.*;
-import java.util.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ComputedValue;
-import org.eclipse.e4.ui.model.application.*;
-import org.eclipse.e4.ui.model.workbench.*;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
+import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.*;
-import org.eclipse.e4.workbench.ui.renderers.swt.*;
+import org.eclipse.e4.workbench.ui.IExceptionHandler;
+import org.eclipse.e4.workbench.ui.ILegacyHook;
+import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.e4.workbench.ui.renderers.swt.ContributedPartFactory;
+import org.eclipse.e4.workbench.ui.renderers.swt.PartFactory;
+import org.eclipse.e4.workbench.ui.renderers.swt.PartRenderer;
 import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -41,11 +52,12 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.osgi.framework.Bundle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-public class Workbench implements IWorkbench, IContributionFactory {
+public class Workbench implements IWorkbench {
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
 	private MApplication<MWorkbenchWindow> workbench;
 	private ResourceUtility resourceUtility;
@@ -63,12 +75,14 @@ public class Workbench implements IWorkbench, IContributionFactory {
 	// UI Construction...
 	private PartRenderer renderer;
 	private int rv;
-	private Map<String, Object> languages;
+
 	private ExceptionHandler exceptionHandler;
 	private IEclipseContext globalContext;
+	private ReflectionContributionFactory contributionFactory;
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
-			PackageAdmin packageAdmin, URI workbenchXmiURI, IEclipseContext applicationContext) {
+			PackageAdmin packageAdmin, URI workbenchXmiURI,
+			IEclipseContext applicationContext) {
 
 		exceptionHandler = new ExceptionHandler();
 		this.registry = registry;
@@ -77,6 +91,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 				.toExternalForm()),
 				".metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi"); //$NON-NLS-1$
 
+		contributionFactory = new ReflectionContributionFactory(registry);
 		resourceSet = new ResourceSetImpl();
 
 		// Register the appropriate resource factory to handle all file
@@ -91,7 +106,6 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		resourceSet.getPackageRegistry().put(WorkbenchPackage.eNS_URI,
 				WorkbenchPackage.eINSTANCE);
 
-		processLanguages();
 		globalContext = createContext(applicationContext);
 		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
 			createWorkbenchModel(workbenchData.getAbsolutePath(),
@@ -108,7 +122,6 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		final IEclipseContext mainContext = EclipseContextFactory.create(
 				applicationContext, UIContextScheduler.instance);
 		mainContext.set(IContextConstants.DEBUG_STRING, "globalContext"); //$NON-NLS-1$
-
 
 		IConfigurationElement[] contributions = registry
 				.getConfigurationElementsFor("org.eclipse.e4.services"); //$NON-NLS-1$
@@ -130,29 +143,30 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(ResourceUtility.class.getName(), resourceUtility);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
-		mainContext.set(IServiceConstants.SELECTION, new ActiveChildOutputValue(IServiceConstants.SELECTION));
+		mainContext.set(IServiceConstants.SELECTION,
+				new ActiveChildOutputValue(IServiceConstants.SELECTION));
 		mainContext.set(IServiceConstants.INPUT, new ComputedValue() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
-							Class adapterType = null;
-							if (arguments.length > 0 && arguments[0] instanceof Class) {
-								adapterType = (Class) arguments[0];
-							}
-							Object newInput = null;
-							Object newValue = mainContext.get(IServiceConstants.SELECTION);
-							if (newValue instanceof IStructuredSelection) {
-								newValue = ((IStructuredSelection) newValue)
-										.getFirstElement();
-							}
-							if (adapterType == null || adapterType.isInstance(newValue)) {
-								newInput = newValue;
-							} else if (newValue != null && adapterType != null) {
-								Object adapted = Platform.getAdapterManager().loadAdapter(newValue,
-										adapterType.getName());
-								if (adapted != null) {
-									newInput = adapted;
-								}
-							}
-							return newInput;
+				Class adapterType = null;
+				if (arguments.length > 0 && arguments[0] instanceof Class) {
+					adapterType = (Class) arguments[0];
+				}
+				Object newInput = null;
+				Object newValue = mainContext.get(IServiceConstants.SELECTION);
+				if (newValue instanceof IStructuredSelection) {
+					newValue = ((IStructuredSelection) newValue)
+							.getFirstElement();
+				}
+				if (adapterType == null || adapterType.isInstance(newValue)) {
+					newInput = newValue;
+				} else if (newValue != null && adapterType != null) {
+					Object adapted = Platform.getAdapterManager().loadAdapter(
+							newValue, adapterType.getName());
+					if (adapted != null) {
+						newInput = adapted;
+					}
+				}
+				return newInput;
 			}
 		});
 
@@ -172,7 +186,7 @@ public class Workbench implements IWorkbench, IContributionFactory {
 
 			// Capture the MApplication into the context
 			globalContext.set(MApplication.class.getName(), workbench);
-			
+
 			// Should set up such things as initial perspective id here...
 			String initialPerspectiveId = "org.eclipse.e4.ui.workbench.fragment.testPerspective"; //$NON-NLS-1$
 			populateWBModel(workbench, workbenchDefinitionInstance,
@@ -201,7 +215,8 @@ public class Workbench implements IWorkbench, IContributionFactory {
 			URI initialWorkbenchDefinitionInstance, String initialPerspectiveId) {
 
 		MWorkbenchWindow wbw;
-		ILegacyHook legacyHook = (ILegacyHook) globalContext.get(ILegacyHook.class.getName());
+		ILegacyHook legacyHook = (ILegacyHook) globalContext
+				.get(ILegacyHook.class.getName());
 		if (legacyHook != null) {
 			wbw = WorkbenchFactory.eINSTANCE.createMWorkbenchWindow();
 			wbw.setWidth(1280);
@@ -223,7 +238,8 @@ public class Workbench implements IWorkbench, IContributionFactory {
 			// legacyHook.loadMenu(mainMenu);
 			// wbw.setMenu(mainMenu);
 
-			MPerspective<?> persp = WorkbenchFactory.eINSTANCE.createMPerspective();
+			MPerspective<?> persp = WorkbenchFactory.eINSTANCE
+					.createMPerspective();
 			persp.setId(initialPerspectiveId);
 			persp.setName("Java MPerspective"); //$NON-NLS-1$
 			legacyHook.loadPerspective(persp);
@@ -261,34 +277,9 @@ public class Workbench implements IWorkbench, IContributionFactory {
 		wb.getWindows().add(wbw);
 	}
 
-	private void processLanguages() {
-		languages = new HashMap<String, Object>();
-		IExtensionRegistry registry = InternalPlatform.getDefault()
-				.getRegistry();
-		String extId = "org.eclipse.e4.languages"; //$NON-NLS-1$
-		IConfigurationElement[] languageElements = registry
-				.getConfigurationElementsFor(extId);
-		for (int i = 0; i < languageElements.length; i++) {
-			IConfigurationElement languageElement = languageElements[i];
-			try {
-				languages
-						.put(
-								languageElement.getAttribute("name"), //$NON-NLS-1$
-								languageElement
-										.createExecutableExtension("contributionFactory")); //$NON-NLS-1$
-			} catch (InvalidRegistryObjectException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private void processPartContributions(Resource resource, MWorkbenchWindow wbw) {
-		IExtensionRegistry registry = InternalPlatform.getDefault()
-				.getRegistry();
+	private void processPartContributions(Resource resource,
+			MWorkbenchWindow wbw) {
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		String extId = "org.eclipse.e4.workbench.parts"; //$NON-NLS-1$
 		IConfigurationElement[] parts = registry
 				.getConfigurationElementsFor(extId);
@@ -305,7 +296,8 @@ public class Workbench implements IWorkbench, IContributionFactory {
 					+ parts[i].getAttribute("class")); //$NON-NLS-1$
 			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$
 
-			MPart parent = (MPart) findObject(resource.getAllContents(), parentId);
+			MPart parent = (MPart) findObject(resource.getAllContents(),
+					parentId);
 			if (parent != null) {
 				parent.getChildren().add(part);
 			}
@@ -379,15 +371,21 @@ public class Workbench implements IWorkbench, IContributionFactory {
 
 		return rv;
 	}
-	
+
 	/**
 	 * Initialize a part renderer from the extension point.
-	 * @param registry the registry for the EP
-	 * @param r the created renderer
-	 * @param context the context for the part factories
-	 * @param f the IContributionFactory already provided to <code>r</code>
+	 * 
+	 * @param registry
+	 *            the registry for the EP
+	 * @param r
+	 *            the created renderer
+	 * @param context
+	 *            the context for the part factories
+	 * @param f
+	 *            the IContributionFactory already provided to <code>r</code>
 	 */
-	public static void initializeRenderer(IExtensionRegistry registry, PartRenderer r, IEclipseContext context, IContributionFactory f) {
+	public static void initializeRenderer(IExtensionRegistry registry,
+			PartRenderer r, IEclipseContext context, IContributionFactory f) {
 		// add the factories from the extension point, sort by dependency
 		// * Need to make the EP more declarative to avoid aggressive
 		// loading
@@ -416,15 +414,13 @@ public class Workbench implements IWorkbench, IContributionFactory {
 				e.printStackTrace();
 			}
 			if (factory != null) {
-				factory.init(r, context,
-						f);
+				factory.init(r, context, f);
 				r.addPartFactory(factory);
 
 				// Hack!! initialize the ContributedPartFactory
 				if (factory instanceof ContributedPartFactory) {
 					ContributedPartFactory cpf = (ContributedPartFactory) factory;
-					cpf
-							.setContributionFactory(f);
+					cpf.setContributionFactory(f);
 				}
 			}
 		}
@@ -432,9 +428,9 @@ public class Workbench implements IWorkbench, IContributionFactory {
 
 	private void createGUI(MWorkbenchWindow workbenchWindow) {
 		if (renderer == null) {
-			renderer = new PartRenderer(this,
-					globalContext);
-			initializeRenderer(registry, renderer, globalContext, this);
+			renderer = new PartRenderer(contributionFactory, globalContext);
+			initializeRenderer(registry, renderer, globalContext,
+					contributionFactory);
 
 		}
 
@@ -444,215 +440,6 @@ public class Workbench implements IWorkbench, IContributionFactory {
 
 	public void close() {
 		appWindow.dispose();
-	}
-
-	private Bundle getBundleForName(String bundleName) {
-		Bundle[] bundles = packageAdmin.getBundles(bundleName, null);
-		if (bundles == null)
-			return null;
-		// Return the first bundle that is not installed or uninstalled
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
-			}
-		}
-		return null;
-	}
-
-	private Bundle getBundle(URI platformURI) {
-		return getBundleForName(platformURI.segment(1));
-	}
-
-	public Object createObject(Class<?> targetClass, IEclipseContext context) {
-
-		Constructor<?> targetConstructor = null;
-
-		Constructor<?>[] constructors = targetClass.getConstructors();
-
-		// Optimization: if there's only one constructor, use it.
-		if (constructors.length == 1) {
-			targetConstructor = constructors[0];
-		} else {
-			ArrayList<Constructor<?>> toSort = new ArrayList<Constructor<?>>();
-
-			for (int i = 0; i < constructors.length; i++) {
-				Constructor<?> constructor = constructors[i];
-
-				// Filter out non-public constructors
-				if ((constructor.getModifiers() & Modifier.PUBLIC) != 0) {
-					toSort.add(constructor);
-				}
-			}
-
-			// Sort the constructors by descending number of constructor
-			// arguments
-			Collections.sort(toSort, new Comparator<Constructor<?>>() {
-				public int compare(Constructor<?> c1, Constructor<?> c2) {
-
-					int l1 = c1.getParameterTypes().length;
-					int l2 = c2.getParameterTypes().length;
-
-					return l1 - l2;
-				}
-			});
-
-			// Find the first satisfiable constructor
-			for (Constructor<?> next : toSort) {
-				boolean satisfiable = true;
-
-				Class<?>[] params = next.getParameterTypes();
-				for (int i = 0; i < params.length && satisfiable; i++) {
-					Class<?> clazz = params[i];
-
-					if (!context.containsKey(clazz.getName())) {
-						satisfiable = false;
-					}
-				}
-
-				if (satisfiable) {
-					targetConstructor = next;
-				}
-			}
-		}
-
-		if (targetConstructor == null) {
-			throw new RuntimeException(
-					"could not find satisfiable constructor in class " + targetClass); //$NON-NLS-1$
-		}
-
-		Class<?>[] paramKeys = targetConstructor.getParameterTypes();
-
-		try {
-			Object[] params = new Object[paramKeys.length];
-			for (int i = 0; i < params.length; i++) {
-				params[i] = context.get(paramKeys[i].getName());
-			}
-
-			return targetConstructor.newInstance(params);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public Object create(String uriString, IEclipseContext context) {
-		URI uri = URI.createURI(uriString);
-		Bundle bundle = getBundle(uri);
-		if (bundle != null) {
-			if (uri.segmentCount() > 3) {
-				String prefix = uri.segment(2);
-				IContributionFactorySpi factory = (IContributionFactorySpi) languages
-						.get(prefix);
-				StringBuffer resource = new StringBuffer(uri.segment(3));
-				for (int i = 4; i < uri.segmentCount(); i++) {
-					resource.append('/');
-					resource.append(uri.segment(i));
-				}
-				return factory.create(bundle, resource.toString(), context);
-			}
-			try {
-				Class targetClass = bundle.loadClass(uri.segment(2));
-				return createObject(targetClass, context);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
-
-	public Object call(Object object, String uriString, String methodName,
-			IEclipseContext context, Object defaultValue) {
-		URI uri = URI.createURI(uriString);
-		if (uri.segmentCount() > 3) {
-			String prefix = uri.segment(2);
-			IContributionFactorySpi factory = (IContributionFactorySpi) languages
-					.get(prefix);
-			return factory.call(object, methodName, context, defaultValue);
-		}
-
-		Method targetMethod = null;
-
-		Method[] methods = object.getClass().getMethods();
-
-		// Optimization: if there's only one method, use it.
-		if (methods.length == 1) {
-			targetMethod = methods[0];
-		} else {
-			ArrayList toSort = new ArrayList();
-
-			for (int i = 0; i < methods.length; i++) {
-				Method method = methods[i];
-
-				// Filter out non-public constructors
-				if ((method.getModifiers() & Modifier.PUBLIC) != 0
-						&& method.getName().equals(methodName)) {
-					toSort.add(method);
-				}
-			}
-
-			// Sort the methods by descending number of method
-			// arguments
-			Collections.sort(toSort, new Comparator() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.util.Comparator#compare(java.lang.Object,
-				 * java.lang.Object)
-				 */
-				public int compare(Object arg0, Object arg1) {
-					Constructor c1 = (Constructor) arg0;
-					Constructor c2 = (Constructor) arg1;
-
-					int l1 = c1.getParameterTypes().length;
-					int l2 = c2.getParameterTypes().length;
-
-					return l1 - l2;
-				}
-			});
-
-			// Find the first satisfiable method
-			for (Iterator iter = toSort.iterator(); iter.hasNext()
-					&& targetMethod == null;) {
-				Method next = (Method) iter.next();
-
-				boolean satisfiable = true;
-
-				Class[] params = next.getParameterTypes();
-				for (int i = 0; i < params.length && satisfiable; i++) {
-					Class clazz = params[i];
-
-					if (!context.containsKey(clazz.getName())) {
-						satisfiable = false;
-					}
-				}
-
-				if (satisfiable) {
-					targetMethod = next;
-				}
-			}
-		}
-
-		if (targetMethod == null) {
-			if (defaultValue != null) {
-				return defaultValue;
-			}
-			throw new RuntimeException(
-					"could not find satisfiable method " + methodName + " in class " + object.getClass()); //$NON-NLS-1$//$NON-NLS-2$
-		}
-
-		Class[] paramKeys = targetMethod.getParameterTypes();
-
-		try {
-			Object[] params = new Object[paramKeys.length];
-			for (int i = 0; i < params.length; i++) {
-				params[i] = context.get(paramKeys[i].getName());
-			}
-
-			return targetMethod.invoke(object, params);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
 	}
 
 	public Display getDisplay() {
