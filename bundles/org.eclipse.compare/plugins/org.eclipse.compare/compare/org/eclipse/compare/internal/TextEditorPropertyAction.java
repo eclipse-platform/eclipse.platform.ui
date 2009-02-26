@@ -57,8 +57,8 @@ public class TextEditorPropertyAction extends Action implements IPropertyChangeL
 			checked = store.getBoolean(getPreferenceKey());
 		}
 		if (checked != isChecked()) {
-			toggleState(checked);
-			setChecked(checked);
+			if (toggleState(checked))
+				setChecked(checked);
 		}
 	}
 
@@ -77,8 +77,15 @@ public class TextEditorPropertyAction extends Action implements IPropertyChangeL
 			store.removePropertyChangeListener(this);
 	}
 	
-	protected void toggleState(boolean checked) {
+	/**
+	 * @param checked
+	 *            new state
+	 * @return <code>true</code> if state has been changed, toggle has been
+	 *         successful
+	 */
+	protected boolean toggleState(boolean checked) {
 		// No-op by default
+		return false;
 	}
 
 }

@@ -28,14 +28,15 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 		synchronizeWithPreference();
 	}
 	
-	protected void toggleState(boolean checked) {
+	protected boolean toggleState(boolean checked) {
 		if (fNeedsPainters == null)
-			return; // Not initialized yet
+			return false; // Not initialized yet
 		if (checked) {
 			showWhitespace();
 		} else {
 			hideWhitespace();
 		}
+		return true;
 	}
 	
 	private synchronized Map getPainters() {
