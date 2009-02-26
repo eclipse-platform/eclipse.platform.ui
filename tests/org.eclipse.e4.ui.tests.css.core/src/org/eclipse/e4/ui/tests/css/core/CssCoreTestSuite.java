@@ -20,7 +20,7 @@ public class CssCoreTestSuite extends TestSuite {
 		// $JUnit-BEGIN$
 		addTestSuite(CascadeTest.class);
 		addTestSuite(FontFaceRulesTest.class);
-		addTestSuite(MediaRulesTest.class);
+//		addTestSuite(MediaRulesTest.class);
 		addTestSuite(RGBColorImplTest.class);
 		addTestSuite(StyleRuleTest.class);
 		addTestSuite(ViewCSSTest.class);
