@@ -549,11 +549,11 @@ public final class SelectionProcessor {
 	 */
 	public void doDelete(ISelection selection) throws BadLocationException {
 		TextEdit edit= delete(selection);
-		ISelection empty= makeEmpty(selection);
 		boolean complex= edit.hasChildren();
 		if (complex && fRewriteTarget != null)
 			fRewriteTarget.beginCompoundChange();
 		edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
+		ISelection empty= makeEmpty(selection);
 		if (fSelectionProvider != null)
 			fSelectionProvider.setSelection(empty);
 		if (complex && fRewriteTarget != null)

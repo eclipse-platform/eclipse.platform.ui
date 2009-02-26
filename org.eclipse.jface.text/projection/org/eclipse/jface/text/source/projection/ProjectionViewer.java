@@ -1455,6 +1455,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 				if (redraws()) {
 					selection= (ITextSelection) getSelection();
+					if (exposeModelRange(new Region(selection.getOffset(), selection.getLength())))
+						return;
+
 					if (selection.getLength() == 0)
 						copyMarkedRegion(true);
 					else
@@ -1481,8 +1484,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (redraws()) {
 					try {
 						selection= (ITextSelection) getSelection();
-						Point widgetSelection= textWidget.getSelectionRange();
-						if (selection.getLength() == widgetSelection.y)
+						int length= selection.getLength();
+						if (!textWidget.getBlockSelection() && (length == 0 || length == textWidget.getSelectionRange().y))
 							getTextWidget().invokeAction(ST.DELETE_NEXT);
 						else
 							deleteSelection(selection, textWidget);
