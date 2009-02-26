@@ -82,12 +82,6 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		private String element;
 		private String dtd;
 		
-		public QualifiedElement(String namespace, String element, String dtd) {
-			this.namespace = namespace;
-			this.element = element;
-			this.dtd = dtd;
-		}
-
 		public QualifiedElement(String qualifiedElement) {
 			// Extract namespace part
 			int openBrace = qualifiedElement.indexOf('{');
