@@ -30,52 +30,96 @@ package org.eclipse.compare.rangedifferencer;
 public class RangeDifference {
 
 	/** Two-way change constant indicating no change. */
-	public final static int NOCHANGE= 0;
-	/** Two-way change constant indicating two-way change (same as <code>RIGHT</code>) */
-	public final static int CHANGE= 2;
+	public final static int NOCHANGE = 0;
+
+	/**
+	 * Two-way change constant indicating two-way change (same as
+	 * <code>RIGHT</code>)
+	 */
+	public final static int CHANGE = 2;
 
 	/** Three-way change constant indicating a change in both right and left. */
-	public final static int CONFLICT= 1;
-	/** Three-way change constant indicating a change in right. */
-	public final static int RIGHT= 2;
-	/** Three-way change constant indicating a change in left. */
-	public final static int LEFT= 3;
-	/**
-	 * Three-way change constant indicating the same change in both right and left,
-	 * that is only the ancestor is different.
-	 */
-	public final static int ANCESTOR= 4;
-	
-	/** Constant indicating an unknown change kind. */
-	public final static int ERROR= 5;
+	public final static int CONFLICT = 1;
 
-	/** the kind of change: NOCHANGE, CHANGE, LEFT, RIGHT, ANCESTOR, CONFLICT, ERROR */
+	/** Three-way change constant indicating a change in right. */
+	public final static int RIGHT = 2;
+
+	/** Three-way change constant indicating a change in left. */
+	public final static int LEFT = 3;
+
+	/**
+	 * Three-way change constant indicating the same change in both right and
+	 * left, that is only the ancestor is different.
+	 */
+	public final static int ANCESTOR = 4;
+
+	/** Constant indicating an unknown change kind. */
+	public final static int ERROR = 5;
+
+	/**
+	 * the kind of change: NOCHANGE, CHANGE, LEFT, RIGHT, ANCESTOR, CONFLICT,
+	 * ERROR
+	 * 
+	 * @since org.eclipse.compare.core 3.5
+	 */
 	protected int kind;
+
+	/**
+	 * @since org.eclipse.compare.core 3.5
+	 */
 	protected int leftStart;
+
+	/**
+	 * @since org.eclipse.compare.core 3.5
+	 */
 	protected int leftLength;
+
+	/**
+	 * @since org.eclipse.compare.core 3.5
+	 */
 	protected int rightStart;
+
+	/**
+	 * @since org.eclipse.compare.core 3.5
+	 */
 	protected int rightLength;
+
+	/**
+	 * @since org.eclipse.compare.core 3.5
+	 */
 	protected int ancestorStart;
+
+	/**
+	 * @since org.eclipse.compare.core 3.5
+	 */
 	protected int ancestorLength;
 	
 	/**
 	 * Creates a new range difference with the given change kind.
-	 *
-	 * @param changeKind the kind of change
+	 * 
+	 * @param changeKind
+	 *            the kind of change
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	protected RangeDifference(int changeKind) {
-		this.kind= changeKind;
+		this.kind = changeKind;
 	}
 
 	/**
-	 * Creates a new <code>RangeDifference</code> with the given change kind
-	 * and left and right ranges.
-	 *
-	 * @param kind the kind of change
-	 * @param rightStart start index of entity on right side
-	 * @param rightLength number of entities on right side
-	 * @param leftStart start index of entity on left side
-	 * @param leftLength number of entities on left side
+	 * Creates a new <code>RangeDifference</code> with the given change kind and
+	 * left and right ranges.
+	 * 
+	 * @param kind
+	 *            the kind of change
+	 * @param rightStart
+	 *            start index of entity on right side
+	 * @param rightLength
+	 *            number of entities on right side
+	 * @param leftStart
+	 *            start index of entity on left side
+	 * @param leftLength
+	 *            number of entities on left side
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	protected RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength) {
 		this.kind= kind;
@@ -86,16 +130,24 @@ public class RangeDifference {
 	}
 
 	/**
-	 * Creates a new <code>RangeDifference</code> with the given change kind
-	 * and left, right, and ancestor ranges.
-	 *
-	 * @param kind the kind of change
-	 * @param rightStart start index of entity on right side
-	 * @param rightLength number of entities on right side
-	 * @param leftStart start index of entity on left side
-	 * @param leftLength number of entities on left side
-	 * @param ancestorStart start index of entity on ancestor side
-	 * @param ancestorLength number of entities on ancestor side
+	 * Creates a new <code>RangeDifference</code> with the given change kind and
+	 * left, right, and ancestor ranges.
+	 * 
+	 * @param kind
+	 *            the kind of change
+	 * @param rightStart
+	 *            start index of entity on right side
+	 * @param rightLength
+	 *            number of entities on right side
+	 * @param leftStart
+	 *            start index of entity on left side
+	 * @param leftLength
+	 *            number of entities on left side
+	 * @param ancestorStart
+	 *            start index of entity on ancestor side
+	 * @param ancestorLength
+	 *            number of entities on ancestor side
+	 * @since org.eclipse.compare.core 3.5
 	 */
 	protected RangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength,
 									int ancestorStart, int ancestorLength) {
