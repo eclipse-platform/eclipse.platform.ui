@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source.projection;
-
 
 import java.util.Iterator;
 
@@ -71,6 +70,21 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		ProjectionAnnotation annotation= findAnnotation(line, true);
 		if (annotation != null) {
 			ProjectionAnnotationModel model= (ProjectionAnnotationModel) getModel();
+			model.toggleExpansionState(annotation);
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#mouseDoubleClicked(int)
+	 * @since 3.5
+	 */
+	protected void mouseDoubleClicked(int rulerLine) {
+		if (findAnnotation(rulerLine, true) != null)
+			return;
+
+		ProjectionAnnotation annotation= findAnnotation(rulerLine, false);
+		if (annotation != null) {
+			ProjectionAnnotationModel model= (ProjectionAnnotationModel)getModel();
 			model.toggleExpansionState(annotation);
 		}
 	}
