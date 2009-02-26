@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,23 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.PopupDialog;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.resource.FontDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
@@ -62,8 +47,30 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.commands.Command;
+
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.util.Util;
+import org.eclipse.jface.viewers.ColumnWeightData;
+
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -300,11 +307,17 @@ public class QuickAccessDialog extends PopupDialog {
 			}
 		});
 
-		// italicsFont = resourceManager.createFont(FontDescriptor.createFrom(
-		// table.getFont()).setStyle(SWT.ITALIC));
-		grayColor = resourceManager.createColor(ColorUtil.blend(table
-				.getBackground().getRGB(), table.getForeground().getRGB()));
-		final TextStyle boldStyle = new TextStyle(boldFont, null, null);
+
+		final TextStyle boldStyle;
+		if (PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS)) {
+			boldStyle = new TextStyle(boldFont, null, null);
+			// italicsFont = resourceManager.createFont(FontDescriptor.createFrom(
+			// table.getFont()).setStyle(SWT.ITALIC));
+			grayColor = resourceManager.createColor(ColorUtil.blend(table
+					.getBackground().getRGB(), table.getForeground().getRGB()));
+		} else {
+			boldStyle = null;
+		}
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				QuickAccessEntry entry = (QuickAccessEntry) event.item
