@@ -623,10 +623,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             }
         }
 
-        public IStreamMonitor getStreamMonitor() {
-            return fStreamMonitor;
-        }
-
         public void closeStream() {
             if (fStreamMonitor == null) {
                 return;

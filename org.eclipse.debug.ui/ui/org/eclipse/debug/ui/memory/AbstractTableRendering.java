@@ -251,10 +251,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			return false;
 		}
 		
-		public boolean isLocked()
-		{
-			return (fOwner != null);
-		}
 	}	
 	
 	
