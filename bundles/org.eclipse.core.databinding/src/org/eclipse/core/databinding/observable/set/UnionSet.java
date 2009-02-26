@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bugs 208332, 265727
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -59,15 +59,27 @@ public final class UnionSet extends ObservableSet {
 	 * @param childSets
 	 */
 	public UnionSet(IObservableSet[] childSets) {
-		super(childSets[0].getRealm(), null, childSets[0].getElementType());
-		System.arraycopy(childSets, 0, this.childSets = new IObservableSet[childSets.length], 0, childSets.length);
+		this(childSets, childSets[0].getElementType());
+	}
+
+	/**
+	 * @param childSets
+	 * @param elementType
+	 * @since 1.2
+	 */
+	public UnionSet(IObservableSet[] childSets, Object elementType) {
+		super(childSets[0].getRealm(), null, elementType);
+		System.arraycopy(childSets, 0,
+				this.childSets = new IObservableSet[childSets.length], 0,
+				childSets.length);
 		this.stalenessTracker = new StalenessTracker(childSets,
 				stalenessConsumer);
 	}
 
 	private ISetChangeListener childSetChangeListener = new ISetChangeListener() {
 		public void handleSetChange(SetChangeEvent event) {
-			processAddsAndRemoves(event.diff.getAdditions(), event.diff.getRemovals());
+			processAddsAndRemoves(event.diff.getAdditions(), event.diff
+					.getRemovals());
 		}
 	};
 
