@@ -495,11 +495,16 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			fRequestWriter.flush();
 			try {
 				// wait for reply
-				return fRequestReader.readLine();
+				String retVal = fRequestReader.readLine();
+				if (retVal == null) {
+	                requestFailed("Request failed: " + request + ".  Debugger connection closed.", null);				    
+				}
+				return retVal;
 			} catch (IOException e) {
 				requestFailed("Request failed: " + request, e);
 			}
 		}
+		// Should never reach this satement.
 		return null;
 	}  
 	
