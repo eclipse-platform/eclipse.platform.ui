@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -122,22 +123,7 @@ public class MWindowTest extends TestCase {
 	}
 
 	public void testCreateView() {
-		final MWindow<MPart<?>> window = ApplicationFactory.eINSTANCE
-				.createMWindow();
-		window.setHeight(300);
-		window.setWidth(400);
-		window.setName("MyWindow");
-		MSashForm<MPart<?>> sash = ApplicationFactory.eINSTANCE
-				.createMSashForm();
-		window.getChildren().add(sash);
-		MStack stack = ApplicationFactory.eINSTANCE.createMStack();
-		sash.getChildren().add(stack);
-		MContributedPart<MPart<?>> contributedPart = ApplicationFactory.eINSTANCE
-				.createMContributedPart();
-		stack.getChildren().add(contributedPart);
-		contributedPart.setName("Sample View");
-		contributedPart
-				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		final MWindow<MPart<?>> window = createWindowWithOneView();
 		Realm.runWithDefault(SWTObservables.getRealm(getDisplay()),
 				new Runnable() {
 					public void run() {
@@ -167,5 +153,65 @@ public class MWindowTest extends TestCase {
 						assertTrue(viewPart[0] instanceof Tree);
 					}
 				});
+	}
+
+	public void testContextChildren() {
+		final MWindow<MPart<?>> window = createWindowWithOneView();
+		Realm.runWithDefault(SWTObservables.getRealm(getDisplay()),
+				new Runnable() {
+					public void run() {
+						IEclipseContext context = getAppContext();
+						PartRenderer renderer = new PartRenderer(getCFactory(),
+								context);
+						Workbench.initializeRenderer(RegistryFactory
+								.getRegistry(), renderer, appContext,
+								getCFactory());
+						Object o = renderer.createGui(window);
+						assertNotNull(o);
+						topWidget = (Widget) o;
+						assertTrue(topWidget instanceof Shell);
+						Shell shell = (Shell) topWidget;
+						assertEquals("MyWindow", shell.getText());
+						IEclipseContext child = (IEclipseContext) appContext
+								.get(IServiceConstants.ACTIVE_CHILD);
+						assertNotNull(child);
+						assertEquals(window.getContext(), child);
+						/*
+						 * MContributedPart<MPart<?>> part =
+						 * getContributedPart(window); child = (IEclipseContext)
+						 * child .get(IServiceConstants.ACTIVE_CHILD);
+						 * assertNotNull(child); assertEquals(part.getContext(),
+						 * child);
+						 */
+					}
+				});
+	}
+
+	MContributedPart<MPart<?>> getContributedPart(MWindow<MPart<?>> window) {
+		MPart<?> part = window.getChildren().get(0).getChildren().get(0)
+				.getChildren().get(0);
+		assertTrue("part is incorrect type " + part,
+				part instanceof MContributedPart<?>);
+		return (MContributedPart<MPart<?>>) part;
+	}
+
+	private MWindow<MPart<?>> createWindowWithOneView() {
+		final MWindow<MPart<?>> window = ApplicationFactory.eINSTANCE
+				.createMWindow();
+		window.setHeight(300);
+		window.setWidth(400);
+		window.setName("MyWindow");
+		MSashForm<MPart<?>> sash = ApplicationFactory.eINSTANCE
+				.createMSashForm();
+		window.getChildren().add(sash);
+		MStack stack = ApplicationFactory.eINSTANCE.createMStack();
+		sash.getChildren().add(stack);
+		MContributedPart<MPart<?>> contributedPart = ApplicationFactory.eINSTANCE
+				.createMContributedPart();
+		stack.getChildren().add(contributedPart);
+		contributedPart.setName("Sample View");
+		contributedPart
+				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		return window;
 	}
 }
