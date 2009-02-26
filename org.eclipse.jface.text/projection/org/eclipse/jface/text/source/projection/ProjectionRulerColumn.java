@@ -42,6 +42,12 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	private ProjectionAnnotation fCurrentAnnotation;
 
 	/**
+	 * Line number recorded on mouse down.
+	 * @since 3.5
+	 */
+	private int fMouseDownLine;
+
+	/**
 	 * Creates a new projection ruler column.
 	 *
 	 * @param model the column's annotation model
@@ -67,11 +73,21 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	 */
 	protected void mouseClicked(int line) {
 		clearCurrentAnnotation();
+		if (fMouseDownLine != line)
+			return;
 		ProjectionAnnotation annotation= findAnnotation(line, true);
 		if (annotation != null) {
 			ProjectionAnnotationModel model= (ProjectionAnnotationModel) getModel();
 			model.toggleExpansionState(annotation);
 		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#mouseDown(int)
+	 * @since 3.5
+	 */
+	protected void mouseDown(int rulerLine) {
+		fMouseDownLine= rulerLine;
 	}
 
 	/*

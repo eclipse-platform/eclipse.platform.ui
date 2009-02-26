@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -303,8 +303,15 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			}
 
 			public void mouseDown(MouseEvent event) {
-				if (isPropagatingMouseListener())
+				int lineNumber;
+				if (isPropagatingMouseListener()) {
 					fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+					lineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
+				} else
+					lineNumber= fParentRuler.toDocumentLineNumber(event.y);
+
+				if (1 == event.button)
+					AnnotationRulerColumn.this.mouseDown(lineNumber);
 			}
 
 			public void mouseDoubleClick(MouseEvent event) {
@@ -370,6 +377,15 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	}
 
 	/**
+	 * Hook method for a mouse down event on the given ruler line.
+	 * 
+	 * @param rulerLine the ruler line
+	 * @since 3.5
+	 */
+	protected void mouseDown(int rulerLine) {
+	}
+
+	/**
 	 * Hook method for a mouse double click event on the given ruler line.
 	 *
 	 * @param rulerLine the ruler line
@@ -379,7 +395,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 	/**
 	 * Hook method for a mouse click event on the given ruler line.
-	 *
+	 * <p>
+	 * <strong>Note:</strong> The event is sent on mouse up.
+	 * </p>
+	 * 
 	 * @param rulerLine the ruler line
 	 * @since 3.0
 	 */
