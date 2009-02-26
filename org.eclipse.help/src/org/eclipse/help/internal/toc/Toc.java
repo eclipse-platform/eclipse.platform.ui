@@ -73,6 +73,13 @@ public class Toc extends UAElement implements IToc {
 		String href = topic.getHref();
 		if (href != null) {
 			map.put(href, topic);
+			int anchorIx = href.lastIndexOf("#"); //$NON-NLS-1$
+			if (anchorIx >= 0) { //anchor exists, drop it and add
+				String simpleHref = href.substring(0, anchorIx);
+				if (!map.containsKey(simpleHref)) {
+					map.put(simpleHref, topic);
+				}
+		    }
 		}
 		ITopic[] subtopics = topic.getSubtopics();
 		if (subtopics != null) {
