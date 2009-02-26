@@ -93,11 +93,5 @@
          </property>
       </product>
    </extension>
-   <extension
-   			point="org.eclipse.ui.presentationFactories">
-		<factory class="org.eclipse.e4.ui.examples.css.rcp.presentation.CSSPresentationFactory"
-         		id="org.eclipse.e4.ui.examples.css.rcp.presentationFactory"
-         		name="CSS Presentation">
-         </factory>
-     </extension>       
+
 </plugin>

@@ -1,6 +1,6 @@
 package org.eclipse.e4.ui.examples.css.rcp;
 
-import org.eclipse.e4.ui.examples.css.rcp.presentation.CSSPresentationFactory;
+import org.eclipse.e4.ui.css.legacy.presentation.CSSPresentationFactory;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
