@@ -483,8 +483,8 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 		while (tokenizer.hasMoreTokens()){
 			lastLine = tokenizer.nextToken();
 		}
-		assertTrue(
-			lastLine.equals("Mirror command completed successfully.")
-				|| lastLine.equals("Command completed successfully."));
+		if (lastLine.equals("Mirror command completed successfully."))
+			return;
+		assertEquals("Output was: " + errOutput.toString(), "Command completed successfully.", lastLine);
 	}
 }
