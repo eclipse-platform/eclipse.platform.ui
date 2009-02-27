@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.workbench.ui.internal;
+package org.eclipse.e4.ui.workbench.swt.internal;
 
 //import java.io.InputStream;
 import java.io.InputStream;

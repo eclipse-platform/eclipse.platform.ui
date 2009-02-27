@@ -9,11 +9,12 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Boris Bokowski, IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.workbench.ui;
+package org.eclipse.e4.ui.workbench.swt;
 
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.e4.ui.workbench.swt.internal.Workbench;
+import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.service.packageadmin.PackageAdmin;

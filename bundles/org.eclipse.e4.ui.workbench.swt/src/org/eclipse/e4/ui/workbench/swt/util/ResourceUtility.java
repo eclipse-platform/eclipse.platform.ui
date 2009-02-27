@@ -9,7 +9,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Boris Bokowski, IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.workbench.ui.utils;
+package org.eclipse.e4.ui.workbench.swt.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;

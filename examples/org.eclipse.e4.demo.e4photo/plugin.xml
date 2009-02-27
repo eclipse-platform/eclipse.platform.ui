@@ -58,7 +58,7 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="org.eclipse.e4.ui.workbench.application"
+            application="org.eclipse.e4.ui.workbench.swt.application"
             name="e4 photo demo">
          <property
                name="appName"

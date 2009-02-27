@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.workbench.ui.internal;
+package org.eclipse.e4.ui.workbench.swt.internal;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
@@ -19,8 +19,9 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.workbench.swt.Activator;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchFactory;
 import org.eclipse.e4.workbench.ui.IWorkbench;
-import org.eclipse.e4.workbench.ui.WorkbenchFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;

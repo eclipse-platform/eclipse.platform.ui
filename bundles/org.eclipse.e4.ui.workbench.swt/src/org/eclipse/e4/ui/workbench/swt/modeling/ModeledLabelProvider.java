@@ -8,11 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.workbench.modeling;
+package org.eclipse.e4.ui.workbench.swt.modeling;
 
+import org.eclipse.e4.workbench.modeling.ModelService;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * FIXME Eric/Boris what is this needed for????
+ */
 public class ModeledLabelProvider extends LabelProvider {
 	private ModelService modelSvc;
 

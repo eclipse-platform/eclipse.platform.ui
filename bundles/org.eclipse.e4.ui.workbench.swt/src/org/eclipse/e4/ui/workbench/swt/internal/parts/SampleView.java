@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.workbench.ui.internal.parts;
+package org.eclipse.e4.ui.workbench.swt.internal.parts;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- *
+ * FIXME Eric/Boris what is this needed for????
  */
 public class SampleView {
 	/**

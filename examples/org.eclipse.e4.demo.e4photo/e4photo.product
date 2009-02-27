@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="e4 photo demo" id="org.eclipse.e4.demo.e4photo.product" application="org.eclipse.e4.ui.workbench.application" version="0.9.0" useFeatures="false">
+<product name="e4 photo demo" id="org.eclipse.e4.demo.e4photo.product" application="org.eclipse.e4.ui.workbench.swt.application" version="0.9.0" useFeatures="false">
 
    <configIni use="default">
    </configIni>
@@ -44,6 +44,7 @@
       <plugin id="org.eclipse.e4.ui.services"/>
       <plugin id="org.eclipse.e4.ui.workbench"/>
       <plugin id="org.eclipse.e4.ui.workbench.renderers.swt"/>
+      <plugin id="org.eclipse.e4.ui.workbench.swt"/>
       <plugin id="org.eclipse.emf.common"/>
       <plugin id="org.eclipse.emf.databinding"/>
       <plugin id="org.eclipse.emf.ecore"/>
