@@ -20,5 +20,6 @@ Export-Package: org.eclipse.e4.workbench.modeling,
  org.eclipse.e4.workbench.ui,
  org.eclipse.e4.workbench.ui.behaviors,
  org.eclipse.e4.workbench.ui.internal;x-friends:="org.eclipse.e4.ui.workbench.fragment",
- org.eclipse.e4.workbench.ui.renderers
+ org.eclipse.e4.workbench.ui.renderers,
+ org.eclipse.e4.workbench.ui.utils
 Bundle-Activator: org.eclipse.e4.workbench.ui.internal.Activator

@@ -9,7 +9,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Boris Bokowski, IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.ui.workbench.swt.internal;
+package org.eclipse.e4.workbench.ui.internal;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,16 +35,12 @@ import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.workbench.swt.util.ResourceUtility;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.IWorkbench;
-import org.eclipse.e4.workbench.ui.internal.ActiveChildOutputValue;
-import org.eclipse.e4.workbench.ui.internal.ExceptionHandler;
-import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
-import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
+import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -60,7 +56,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-public class Workbench implements IWorkbench { 
+public class Workbench implements IWorkbench {
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
 	private MApplication<MWorkbenchWindow> workbench;
 	private ResourceUtility resourceUtility;
