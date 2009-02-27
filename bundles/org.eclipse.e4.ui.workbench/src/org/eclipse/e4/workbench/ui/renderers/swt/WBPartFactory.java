@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -40,25 +39,21 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
+/**
+ * Render a Window or Workbench Window.
+ */
 public class WBPartFactory extends SWTPartFactory {
 
 	public Object createWidget(MPart<?> part) {
 		final Widget newWidget;
 
-		if (part instanceof MWindow) {
+		if (part instanceof MWindow<?>) {
 			IEclipseContext parentContext = getContextForParent(part);
 			Shell wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-			if (part instanceof MWorkbenchWindow) {
-				TrimmedLayout tl = new TrimmedLayout(wbwShell);
-				wbwShell.setLayout(tl);
-			} else {
-				wbwShell.setLayout(new FillLayout());
-			}
-			if (((MWindow) part).getName() != null)
-				wbwShell.setText(((MWindow) part).getName());
-
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
+
+			// set up context
 			final IHandlerService hs = new PartHandlerService(part);
 			IEclipseContext localContext = EclipseContextFactory.create(
 					parentContext, UIContextScheduler.instance);
@@ -67,6 +62,18 @@ public class WBPartFactory extends SWTPartFactory {
 			part.setContext(localContext);
 			localContext.set(IHandlerService.class.getName(), hs);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
+			localContext.set(MWindow.class.getName(), part);
+
+			if (part instanceof MWorkbenchWindow) {
+				TrimmedLayout tl = new TrimmedLayout(wbwShell);
+				wbwShell.setLayout(tl);
+				localContext.set(MWorkbenchWindow.class.getName(), part);
+			} else {
+				wbwShell.setLayout(new FillLayout());
+			}
+			if (((MWindow<?>) part).getName() != null)
+				wbwShell.setText(((MWindow<?>) part).getName());
+
 		} else {
 			newWidget = null;
 		}
@@ -112,11 +119,11 @@ public class WBPartFactory extends SWTPartFactory {
 			bindWidget(persp, tl.center);
 			persp.setOwner(this);
 			super.processContents(persp);
-		} else if (me instanceof MWindow) {
-			MWindow window = (MWindow) me;
-			EList children = window.getChildren();
+		} else if (me instanceof MWindow<?>) {
+			MWindow<MPart<?>> window = (MWindow<MPart<?>>) me;
+			EList<MPart<?>> children = window.getChildren();
 			if (children.size() > 0) {
-				MPart sash = (MPart) children.get(0);
+				MPart<?> sash = children.get(0);
 				renderer.createGui(sash);
 			}
 		}
@@ -132,20 +139,19 @@ public class WBPartFactory extends SWTPartFactory {
 		Widget widget = (Widget) me.getWidget();
 
 		// Set up the text binding...perhaps should catch exceptions?
-		IObservableValue emfTextObs = EMFObservables.observeValue((EObject) me,
+		IObservableValue emfTextObs = EMFObservables.observeValue(me,
 				ApplicationPackage.Literals.MITEM__NAME);
 		if (widget instanceof Control && !(widget instanceof Composite)) {
 			ISWTObservableValue uiTextObs = SWTObservables
 					.observeText((Control) widget);
 			dbc.bindValue(uiTextObs, emfTextObs, null, null);
 		} else if (widget instanceof org.eclipse.swt.widgets.Item) {
-			ISWTObservableValue uiTextObs = SWTObservables
-					.observeText((org.eclipse.swt.widgets.Item) widget);
+			ISWTObservableValue uiTextObs = SWTObservables.observeText(widget);
 			dbc.bindValue(uiTextObs, emfTextObs, null, null);
 		}
 
 		// Set up the tool tip binding...perhaps should catch exceptions?
-		IObservableValue emfTTipObs = EMFObservables.observeValue((EObject) me,
+		IObservableValue emfTTipObs = EMFObservables.observeValue(me,
 				ApplicationPackage.Literals.MITEM__TOOLTIP);
 		if (widget instanceof Control) {
 			ISWTObservableValue uiTTipObs = SWTObservables
@@ -154,7 +160,7 @@ public class WBPartFactory extends SWTPartFactory {
 		} else if (widget instanceof org.eclipse.swt.widgets.Item
 				&& !(widget instanceof MenuItem)) {
 			ISWTObservableValue uiTTipObs = SWTObservables
-					.observeTooltipText((org.eclipse.swt.widgets.Item) widget);
+					.observeTooltipText(widget);
 			dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
 		}
 

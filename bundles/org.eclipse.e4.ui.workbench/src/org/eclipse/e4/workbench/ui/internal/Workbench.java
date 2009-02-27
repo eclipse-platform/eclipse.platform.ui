@@ -38,7 +38,6 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.IWorkbench;
-import org.eclipse.e4.workbench.ui.renderers.swt.ContributedPartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.PartRenderer;
 import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
@@ -416,12 +415,6 @@ public class Workbench implements IWorkbench {
 			if (factory != null) {
 				factory.init(r, context, f);
 				r.addPartFactory(factory);
-
-				// Hack!! initialize the ContributedPartFactory
-				if (factory instanceof ContributedPartFactory) {
-					ContributedPartFactory cpf = (ContributedPartFactory) factory;
-					cpf.setContributionFactory(f);
-				}
 			}
 		}
 	}
