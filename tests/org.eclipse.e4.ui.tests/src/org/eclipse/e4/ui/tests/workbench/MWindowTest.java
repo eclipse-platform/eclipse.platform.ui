@@ -20,6 +20,7 @@ import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
@@ -29,6 +30,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.custom.CTabFolder;
@@ -49,11 +51,15 @@ public class MWindowTest extends TestCase {
 
 	private IEclipseContext getAppContext() {
 		if (appContext == null) {
+
 			IEclipseContext serviceContext = EclipseContextFactory
 					.createServiceContext(Activator.getDefault().getBundle()
 							.getBundleContext());
 			appContext = EclipseContextFactory.create(serviceContext, null);
 			appContext.set(IContextConstants.DEBUG_STRING, "application"); //$NON-NLS-1$
+			MApplication<MWindow<?>> app = ApplicationFactory.eINSTANCE
+					.createMApplication();
+			appContext.set(MApplication.class.getName(), app);
 		}
 		return appContext;
 	}
@@ -98,6 +104,7 @@ public class MWindowTest extends TestCase {
 	}
 
 	public void testCreateWindow() {
+
 		final MWindow<MPart<?>> window = ApplicationFactory.eINSTANCE
 				.createMWindow();
 		window.setHeight(300);
@@ -172,22 +179,45 @@ public class MWindowTest extends TestCase {
 						assertTrue(topWidget instanceof Shell);
 						Shell shell = (Shell) topWidget;
 						assertEquals("MyWindow", shell.getText());
+
+						// should get the window context
 						IEclipseContext child = (IEclipseContext) appContext
 								.get(IServiceConstants.ACTIVE_CHILD);
 						assertNotNull(child);
 						assertEquals(window.getContext(), child);
-						/*
-						 * MContributedPart<MPart<?>> part =
-						 * getContributedPart(window); child = (IEclipseContext)
-						 * child .get(IServiceConstants.ACTIVE_CHILD);
-						 * assertNotNull(child); assertEquals(part.getContext(),
-						 * child);
-						 */
+
+						MContributedPart<MPart<?>> modelPart = getContributedPart(window);
+						assertNotNull(modelPart);
+						assertEquals(window, modelPart.getParent().getParent()
+								.getParent());
+
+						// "activate" the part, same as (in theory) an
+						// SWT.Activate event.
+						PartFactory factory = (PartFactory) modelPart
+								.getOwner();
+						factory.activate(modelPart);
+
+						IEclipseContext next = (IEclipseContext) child
+								.get(IServiceConstants.ACTIVE_CHILD);
+						while (next != child) {
+							child = next;
+							next = (IEclipseContext) child
+									.get(IServiceConstants.ACTIVE_CHILD);
+						}
+						assertFalse(window.getContext() == child);
+
+						MContributedPart<?> contextPart = (MContributedPart<?>) child
+								.get(MContributedPart.class.getName());
+
+						assertNotNull(contextPart);
+						assertEquals(window, contextPart.getParent()
+								.getParent().getParent());
 					}
 				});
 	}
 
-	MContributedPart<MPart<?>> getContributedPart(MWindow<MPart<?>> window) {
+	private MContributedPart<MPart<?>> getContributedPart(
+			MWindow<MPart<?>> window) {
 		MPart<?> part = window.getChildren().get(0).getChildren().get(0)
 				.getChildren().get(0);
 		assertTrue("part is incorrect type " + part,
