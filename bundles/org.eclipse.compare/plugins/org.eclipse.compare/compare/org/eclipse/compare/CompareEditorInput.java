@@ -859,17 +859,34 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	
 	/**
 	 * Asks this input to take focus within its container (editor).
-	 * <p>
-	 * Clients should not call this method but they may
-	 * override if they implement a different layout with different visual
-	 * components. Clients are free to call the inherited method.
-	 * </p>
+	 * 
+	 * @noreference Clients should not call this method but they may override if
+	 *              they implement a different layout with different visual
+	 *              components. Clients are free to call the inherited method.
+	 * 
+	 * @deprecated Please use {@link #setFocus2()} instead.
 	 */
 	public void setFocus() {
+		setFocus2();
+	}
+	
+	/**
+	 * Asks this input to take focus within its container (editor).
+	 * 
+	 * @noreference Clients should not call this method but they may override if
+	 *              they implement a different layout with different visual
+	 *              components. Clients are free to call the inherited method.
+	 * 
+	 * @return <code>true</code> if the input got focus, and <code>false</code>
+	 *         if it was unable to.
+	 * @since 3.5
+	 */
+	public boolean setFocus2() {
 		if (fFocusPane != null) {
-			fFocusPane.setFocus();
+			return fFocusPane.setFocus();
 		} else if (fComposite != null)
-			fComposite.setFocus();
+			return fComposite.setFocus();
+		return false;
 	}
 	
 	/**

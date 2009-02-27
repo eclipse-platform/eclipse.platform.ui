@@ -490,7 +490,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	public void setFocus() {
 		IEditorInput input= getEditorInput();
 		if (input instanceof CompareEditorInput)
-			((CompareEditorInput)input).setFocus();
+			if (!((CompareEditorInput)input).setFocus2())
+				fPageBook.setFocus();
 	}
 	
 	/* (non-Javadoc)

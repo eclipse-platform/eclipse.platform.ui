@@ -4,20 +4,21 @@
         <filter id="338944126">
             <message_arguments>
                 <message_argument value="org.eclipse.compare.CompareViewerSwitchingPane"/>
-                <message_argument value="setTitleArgument(String)"/>
+                <message_argument value="getTitleArgument()"/>
             </message_arguments>
         </filter>
         <filter id="338944126">
             <message_arguments>
                 <message_argument value="org.eclipse.compare.CompareViewerSwitchingPane"/>
-                <message_argument value="getTitleArgument()"/>
+                <message_argument value="setTitleArgument(String)"/>
             </message_arguments>
         </filter>
     </resource>
-    <resource path="compare/org/eclipse/compare/ISharedDocumentAdapter.java" type="org.eclipse.compare.ISharedDocumentAdapter">
-        <filter id="403853384">
+    <resource path="compare/org/eclipse/compare/CompareEditorInput.java" type="org.eclipse.compare.CompareEditorInput">
+        <filter id="338944126">
             <message_arguments>
-                <message_argument value="org.eclipse.compare.ISharedDocumentAdapter"/>
+                <message_argument value="org.eclipse.compare.CompareEditorInput"/>
+                <message_argument value="setFocus()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -39,6 +40,13 @@
         <filter id="403853384">
             <message_arguments>
                 <message_argument value="org.eclipse.compare.patch.IFilePatchResult"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="compare/org/eclipse/compare/ISharedDocumentAdapter.java" type="org.eclipse.compare.ISharedDocumentAdapter">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.compare.ISharedDocumentAdapter"/>
             </message_arguments>
         </filter>
     </resource>
