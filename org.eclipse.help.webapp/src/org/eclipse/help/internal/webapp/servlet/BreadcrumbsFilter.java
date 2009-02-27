@@ -124,7 +124,7 @@ public class BreadcrumbsFilter implements IFilter {
 			}
 			buf.append(href);
 			buf.append("\">"); //$NON-NLS-1$
-			buf.append(topic.getLabel());
+			buf.append(UrlUtil.htmlEncode(topic.getLabel()));
 			buf.append("</a>"); //$NON-NLS-1$
 			
 			// add separator
