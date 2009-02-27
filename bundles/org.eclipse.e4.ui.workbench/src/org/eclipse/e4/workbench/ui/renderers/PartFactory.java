@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 
 public abstract class PartFactory {
@@ -109,4 +110,26 @@ public abstract class PartFactory {
 		}
 		return result;
 	}
+
+	/**
+	 * Activate the part in the hierarchy. This should either still be internal
+	 * or be a public method somewhere else.
+	 * 
+	 * @param part
+	 */
+	public void activate(MPart<?> part) {
+		MPart<MPart<?>> parent = (MPart<MPart<?>>) part.getParent();
+		IEclipseContext partContext = part.getContext();
+		while (parent != null) {
+			IEclipseContext parentContext = parent.getContext();
+			parent.setActiveChild(part);
+			if (parentContext != null) {
+				parentContext.set(IServiceConstants.ACTIVE_CHILD, partContext);
+				partContext = parentContext;
+			}
+			part = parent;
+			parent = (MPart<MPart<?>>) parent.getParent();
+		}
+	}
+
 }

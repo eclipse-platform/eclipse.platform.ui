@@ -24,10 +24,9 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
-import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.workbench.swt.util.ResourceUtility;
 import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -48,35 +47,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartFactory extends PartFactory {
-
-	public SWTPartFactory() {
-		super();
-	}
-
-	protected void activate(MPart part) {
-		//System.out.print("Activating"); //$NON-NLS-1$
-		// if (part instanceof MContributedPart) {
-		//	System.out.println(": " + ((MContributedPart) part).getName()); //$NON-NLS-1$
-		// } else {
-		//	System.out.println(" part without name"); //$NON-NLS-1$
-		// }
-		internalActivate(part, getContext(part));
-	}
-
-	private void internalActivate(MPart<?> part, IEclipseContext context) {
-		MPart parent = part.getParent();
-		if (parent != null) {
-			parent.setActiveChild(part);
-			IEclipseContext parentContext = getContext(parent);
-			if (parentContext != null) {
-				if (context != null && context != parentContext) {
-					parentContext.set(IServiceConstants.ACTIVE_CHILD, context);
-				}
-				context = parentContext;
-			}
-			internalActivate(parent, context);
-		}
-	}
 
 	public void createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
 		Widget widget = (Widget) widgetObject;
