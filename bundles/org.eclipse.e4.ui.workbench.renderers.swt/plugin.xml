@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.workbench.partfactory">
+      <factory
+            class="org.eclipse.e4.workbench.ui.renderers.swt.CompositePartFactory">
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.e4.workbench.partfactory">
+      <factory
+            class="org.eclipse.e4.workbench.ui.renderers.swt.PartSashFactory">
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.e4.workbench.partfactory">
+      <factory
+            class="org.eclipse.e4.workbench.ui.renderers.swt.WBPartFactory">
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.e4.workbench.partfactory">
+      <factory
+            class="org.eclipse.e4.workbench.ui.renderers.swt.ContributedPartFactory">
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.e4.workbench.partfactory">
+      <factory
+            class="org.eclipse.e4.workbench.ui.renderers.swt.StackModelFactory">
+      </factory>
+   </extension>
+
+</plugin>
