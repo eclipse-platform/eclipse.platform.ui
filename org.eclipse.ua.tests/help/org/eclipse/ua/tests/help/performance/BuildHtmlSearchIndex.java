@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,10 @@ import java.net.URL;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.AbstractTocProvider;
-import org.eclipse.help.IToc;
-import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.index.IndexManager;
 import org.eclipse.help.internal.search.AnalyzerDescriptor;
@@ -95,29 +94,54 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 	private void buildIndex() {
 		SearchIndexWithIndexingProgress index = new SearchIndexWithIndexingProgress("en-us", analyzerDesc, HelpPlugin
 				.getTocManager());
-		IToc[] tocs = HelpPlugin.getTocManager().getTocs("en-us");
-		for (int i = 0; i < tocs.length; i++) {
-			ITopic[] topics = tocs[i].getTopics();
-			addTopicsToIndex(index, topics);
-		}	
+		index.beginAddBatch(true);
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test7.html");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test8.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test9.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_active_action.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_active.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_active_action.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_active_debug.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_active_invoke.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_command.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_command_authoring.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_files.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_manifest.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_nested.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_process.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_remote.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_toc.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_content_xhtml.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_context.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_context_dynamic.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_context_id.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_context_infopops.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_context_xml.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_menu.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_search.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_search_types.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup_about.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup_help_data.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup_infocenter.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup_nav.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup_preferences.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup_preindex.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup_rcp.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_setup_standalone.htm");
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/performance/search/ua_help_war.htm");
+		index.endAddBatch(true, true);
+		index.close();
 	}
 
-	private void addTopicsToIndex(SearchIndexWithIndexingProgress index,
-			ITopic[] topics) {
-		for (int i = 0; i < topics.length; i++) {
-			String href = topics[i].getHref();
-			if (href != null) {
-				addHrefToIndex(index, href);
-			}
-			addTopicsToIndex(index, topics[i].getSubtopics());
-		}
-		
-	}
 
 	private void addHrefToIndex(SearchIndexWithIndexingProgress index,
 			String doc) {
 		URL url = SearchIndex.getIndexableURL(index.getLocale(), doc);
-		index.addDocument(url.getFile(), url);
+		IStatus status = index.addDocument(url.getFile(), url);
+		assertTrue(status.isOK());
 	}
 
 	private static class TestTocFileProvider extends TocFileProvider {
