@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.BinaryCompareViewer;
 import org.eclipse.compare.internal.ChangePropertyAction;
+import org.eclipse.compare.internal.CompareContentViewerSwitchingPane;
 import org.eclipse.compare.internal.CompareEditorInputNavigator;
 import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.ComparePreferencePage;
@@ -27,6 +28,7 @@ import org.eclipse.compare.internal.ICompareAsText;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.internal.OutlineViewerCreator;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.internal.ViewerDescriptor;
 import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
@@ -144,7 +146,7 @@ import org.eclipse.ui.services.IServiceLocator;
 public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress, ICompareContainer {
 
 	private static final boolean DEBUG= false;
-
+	
 	/**
 	 * The name of the "dirty" property (value <code>"DIRTY_STATE"</code>).
 	 */
@@ -203,6 +205,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private String fHelpContextId;
 	private InternalOutlineViewerCreator fOutlineView;
 	private ICompareAsText fCompareAsText;
+	private ViewerDescriptor vd;
 	
 	private class InternalOutlineViewerCreator extends OutlineViewerCreator {
 		private OutlineViewerCreator getWrappedCreator() {
@@ -552,13 +555,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				
 		Control outline= createOutlineContents(fComposite, SWT.HORIZONTAL);
 					
-		fContentInputPane= new CompareViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT) {
-			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				if (input instanceof ICompareInput)
-					return findContentViewer(oldViewer, (ICompareInput)input, this);
-				return null;
-			}
-		};
+		fContentInputPane= new CompareContentViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT, this);
+
 		if (fFocusPane == null)
 			fFocusPane= fContentInputPane;
 		if (outline != null)
@@ -926,8 +924,10 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
 
-		Viewer newViewer= CompareUI.findContentViewer(oldViewer, input, parent, fCompareConfiguration);
-		
+		Viewer newViewer = vd != null ? vd.createViewer(oldViewer, parent,
+				fCompareConfiguration) : CompareUI.findContentViewer(oldViewer,
+				input, parent, fCompareConfiguration);
+			
 		boolean isNewViewer= newViewer != oldViewer;
 		if (DEBUG) System.out.println("CompareEditorInput.findContentViewer: " + isNewViewer); //$NON-NLS-1$
 		
@@ -946,6 +946,27 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		}
 		
 		return newViewer;
+	}
+	
+	/**
+	 * @param vd
+	 *            the viewer descriptor
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	public void setViewerDescriptor(ViewerDescriptor vd) {
+		this.vd = vd;
+	}
+
+	/**
+	 * @return the viewer descriptor set for the input
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	public ViewerDescriptor getViewerDescriptor() {
+		return this.vd;
 	}
 	
 	/**

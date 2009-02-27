@@ -307,19 +307,22 @@
    <extension
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
-            extensions="class,exe,dll,binary,zip,jar"
             class="org.eclipse.compare.internal.BinaryCompareViewerCreator"
-            id="org.eclipse.compare.BinaryCompareViewerCreator">
+            extensions="class,exe,dll,binary,zip,jar"
+            id="org.eclipse.compare.BinaryCompareViewerCreator"
+            label="%BinaryCompare.label">
       </viewer>
       <viewer
-            extensions="txt"
             class="org.eclipse.compare.internal.TextMergeViewerCreator"
-            id="org.eclipse.compare.TextMergeViewerCreator">
+            extensions="txt"
+            id="org.eclipse.compare.TextMergeViewerCreator"
+            label="%TextCompare.label">
       </viewer>
       <viewer
-            extensions="gif,jpg,jpeg,png,bmp,ico,tif,tiff"
             class="org.eclipse.compare.internal.ImageMergeViewerCreator"
-            id="org.eclipse.compare.ImageMergeViewerCreator">
+            extensions="gif,jpg,jpeg,png,bmp,ico,tif,tiff"
+            id="org.eclipse.compare.ImageMergeViewerCreator"
+            label="%ImageCompare.label">
       </viewer>
       <contentTypeBinding
 			contentTypeId="org.eclipse.core.runtime.text"

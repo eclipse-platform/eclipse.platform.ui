@@ -216,6 +216,17 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 					return true;
 		return false;
 	}
+	
+	/**
+	 * @param input the input
+	 * @return true, if the input is considered as changed
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	protected boolean inputChanged(Object input) {
+		return getInput() != input;
+	}
 		
 	/**
 	 * Sets the input object of this pane. 
@@ -233,10 +244,10 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 	 */ 
 	public void setInput(Object input) {
 
-		if (getInput() == input)
+		if (!inputChanged(input))
 			return;
-			
-		boolean hadFocus= hasFocus2();
+
+		boolean hadFocus = hasFocus2();
 		
 		super.setInput(input);
 

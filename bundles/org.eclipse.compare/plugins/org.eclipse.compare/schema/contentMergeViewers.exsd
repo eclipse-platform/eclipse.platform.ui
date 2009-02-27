@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.compare" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.compare" id="contentMergeViewers" name="ContentMerge Viewers"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point allows a plug-in to register compare/merge 
 viewers for specific content types. The viewer is expected to 
@@ -17,9 +17,9 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -45,9 +45,9 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -68,9 +68,9 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
                   a fully qualified name of a class that implements a factory for the 
 content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.compare.IViewerCreator"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="extensions" type="string">
@@ -78,6 +78,16 @@ content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreat
                <documentation>
                   a comma separated list of file extensions e.g. &quot;java, gif&quot;
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  a translatable label that will be used in the UI for this viewer
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -95,9 +105,9 @@ content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreat
                <documentation>
                   The id of a content type defined using the &lt;code&gt;org.eclipse.core.contenttype.contentTypes&lt;/code&gt; extension point.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="contentMergeViewerId" type="string" use="required">
@@ -105,18 +115,18 @@ content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreat
                <documentation>
                   The id of a merge viewer defined using the &lt;code&gt;viewer&lt;/code&gt; element of this extension point (i.e. &lt;code&gt;org.eclipse.compare.contentMergeViewers&lt;/code&gt;)
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.compare.contentMergeViewers/viewer/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of a compare/merge viewer 
 for text files (extension &quot;txt&quot;):
@@ -135,9 +145,9 @@ for text files (extension &quot;txt&quot;):
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The contributed class must implement &lt;code&gt;org.eclipse.compare.IViewerCreator&lt;/code&gt;
       </documentation>
@@ -145,20 +155,20 @@ for text files (extension &quot;txt&quot;):
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The Compare UI plugin defines content viewers for text, binary contents, and images.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         Copyright (c) 2000, 2008 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2009 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>

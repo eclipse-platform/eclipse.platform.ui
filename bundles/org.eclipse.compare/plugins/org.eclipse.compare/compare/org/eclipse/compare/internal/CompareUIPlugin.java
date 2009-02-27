@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -92,73 +93,89 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
     
     static class CompareRegistry {
         
-    		private final static String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
-    		private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
-    		private final static String CONTENT_TYPE_ID_ATTRIBUTE= "contentTypeId"; //$NON-NLS-1$
- 
-    		private HashMap fIdMap;					// maps ids to data
-    		private HashMap fExtensionMap;			// maps extensions to data
-    		private HashMap fContentTypeBindings;		// maps content type bindings to data
-        
- 
-	    	void register(IConfigurationElement element, Object data) {
-	    	    String id= element.getAttribute(ID_ATTRIBUTE);
-	    	    if (id != null) {      
-	    	        if (fIdMap == null)
-	    	            fIdMap= new HashMap();
-	    	        fIdMap.put(id, data);
-	    	    }
-	    	    
-	    	    String types= element.getAttribute(EXTENSIONS_ATTRIBUTE);
-	    	    if (types != null) {
-	    	        if (fExtensionMap == null)
-	    	            fExtensionMap= new HashMap();
-		    		StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
-		    		while (tokenizer.hasMoreElements()) {
-		    			String extension= tokenizer.nextToken().trim();
-		    			fExtensionMap.put(normalizeCase(extension), data);
-		    		}
-	    	    }
-	    	}
+    	private final static String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
+    	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
+    	private final static String CONTENT_TYPE_ID_ATTRIBUTE= "contentTypeId"; //$NON-NLS-1$
 
-	    	void createBinding(IConfigurationElement element, String idAttributeName) {
-            String type= element.getAttribute(CONTENT_TYPE_ID_ATTRIBUTE);
-            String id= element.getAttribute(idAttributeName);
-            if (id == null)
-                logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.targetIdAttributeMissing", idAttributeName)); //$NON-NLS-1$
-            if (type != null && id != null && fIdMap != null) {
-                Object o= fIdMap.get(id);
-                if (o != null) {
-                    IContentType ct= fgContentTypeManager.getContentType(type);
-                    if (ct != null) {
-                        if (fContentTypeBindings == null)
-                            fContentTypeBindings= new HashMap();
-                        fContentTypeBindings.put(ct, o);
-                    } else {
-                        logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.contentTypeNotFound", type)); //$NON-NLS-1$
-                    }
-                } else {
-                    logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.targetNotFound", id)); //$NON-NLS-1$
-                }
-            }
-	    	}
+    	private HashMap fIdMap;	// maps ids to data
+    	private HashMap fExtensionMap;	// multimap: maps extensions to list of data
+    	private HashMap fContentTypeBindings; // multimap: maps content type bindings to list of data
 
-	    	Object search(IContentType type) {
-	    	    if (fContentTypeBindings != null) {
-	    	    		for (; type != null; type= type.getBaseType()) {
-	    	    			Object data= fContentTypeBindings.get(type);
-	    	    			if (data != null)
-	    	    				return data;
-	    	    		}
-	    	    }
-	    	    return null;
-	    	}
+
+    	void register(IConfigurationElement element, Object data) {
+    		String id= element.getAttribute(ID_ATTRIBUTE);
+    		if (id != null) {      
+    			if (fIdMap == null)
+    				fIdMap= new HashMap();
+    			fIdMap.put(id, data);
+    		}
+
+    		String types= element.getAttribute(EXTENSIONS_ATTRIBUTE);
+    		if (types != null) {
+    			if (fExtensionMap == null)
+    				fExtensionMap= new HashMap();
+    			StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
+    			while (tokenizer.hasMoreElements()) {
+    				String extension= tokenizer.nextToken().trim();
+    				List l = (List) fExtensionMap.get(normalizeCase(extension));
+					if (l == null)
+						fExtensionMap.put(normalizeCase(extension),	l = new ArrayList());
+					l.add(data);
+    			}
+    		}
+    	}
+
+    	void createBinding(IConfigurationElement element, String idAttributeName) {
+    		String type= element.getAttribute(CONTENT_TYPE_ID_ATTRIBUTE);
+    		String id= element.getAttribute(idAttributeName);
+    		if (id == null)
+    			logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.targetIdAttributeMissing", idAttributeName)); //$NON-NLS-1$
+    		if (type != null && id != null && fIdMap != null) {
+    			Object o= fIdMap.get(id);
+    			if (o != null) {
+    				IContentType ct= fgContentTypeManager.getContentType(type);
+    				if (ct != null) {
+    					if (fContentTypeBindings == null)
+    						fContentTypeBindings= new HashMap();
+    					List l = (List) fContentTypeBindings.get(ct);
+    					if (l == null)
+							fContentTypeBindings.put(ct, l = new ArrayList());
+    					l.add(o);
+    				} else {
+    					logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.contentTypeNotFound", type)); //$NON-NLS-1$
+    				}
+    			} else {
+    				logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.targetNotFound", id)); //$NON-NLS-1$
+    			}
+    		}
+    	}
+
+		Object search(IContentType type) {
+			List list = searchAll(type);
+			return list != null ? list.get(0) : null;
+		}
 	    	
-	    	Object search(String extension) {
-	    	    if (fExtensionMap != null)
-	    	        return fExtensionMap.get(normalizeCase(extension));
-	    	    return null;
-	    	}
+		List searchAll(IContentType type) {
+			if (fContentTypeBindings != null) {
+				for (; type != null; type= type.getBaseType()) {
+					List data= (List) fContentTypeBindings.get(type);
+					if (data != null)
+						return data;
+				}
+			}
+			return null;
+		}
+
+		Object search(String extension) {
+			List list = searchAll(extension);
+			return list != null ? list.get(0) : null;
+		}
+		
+		List searchAll(String extension) {
+			if (fExtensionMap != null)
+				return (List) fExtensionMap.get(normalizeCase(extension));
+			return null;
+		}
     }
 	
 	/** Status code describing an internal error */
@@ -171,19 +188,19 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	private static final String BINARY_TYPE= "binary"; //$NON-NLS-1$
 
 	private static final String STREAM_MERGER_EXTENSION_POINT= "streamMergers"; //$NON-NLS-1$
-		private static final String STREAM_MERGER= "streamMerger"; //$NON-NLS-1$
-		private static final String STREAM_MERGER_ID_ATTRIBUTE= "streamMergerId"; //$NON-NLS-1$
+	private static final String STREAM_MERGER= "streamMerger"; //$NON-NLS-1$
+	private static final String STREAM_MERGER_ID_ATTRIBUTE= "streamMergerId"; //$NON-NLS-1$
 	private static final String STRUCTURE_CREATOR_EXTENSION_POINT= "structureCreators"; //$NON-NLS-1$
-		private static final String STRUCTURE_CREATOR= "structureCreator"; //$NON-NLS-1$
-		private static final String STRUCTURE_CREATOR_ID_ATTRIBUTE= "structureCreatorId"; //$NON-NLS-1$
-		
+	private static final String STRUCTURE_CREATOR= "structureCreator"; //$NON-NLS-1$
+	private static final String STRUCTURE_CREATOR_ID_ATTRIBUTE= "structureCreatorId"; //$NON-NLS-1$
+
 	private static final String VIEWER_TAG= "viewer"; //$NON-NLS-1$
 	private static final String STRUCTURE_MERGE_VIEWER_EXTENSION_POINT= "structureMergeViewers"; //$NON-NLS-1$
-		private static final String STRUCTURE_MERGE_VIEWER_ID_ATTRIBUTE= "structureMergeViewerId"; //$NON-NLS-1$
+	private static final String STRUCTURE_MERGE_VIEWER_ID_ATTRIBUTE= "structureMergeViewerId"; //$NON-NLS-1$
 	private static final String CONTENT_MERGE_VIEWER_EXTENSION_POINT= "contentMergeViewers"; //$NON-NLS-1$
-		private static final String CONTENT_MERGE_VIEWER_ID_ATTRIBUTE= "contentMergeViewerId"; //$NON-NLS-1$
+	private static final String CONTENT_MERGE_VIEWER_ID_ATTRIBUTE= "contentMergeViewerId"; //$NON-NLS-1$
 	private static final String CONTENT_VIEWER_EXTENSION_POINT= "contentViewers"; //$NON-NLS-1$
-		private static final String CONTENT_VIEWER_ID_ATTRIBUTE= "contentViewerId"; //$NON-NLS-1$
+	private static final String CONTENT_VIEWER_ID_ATTRIBUTE= "contentViewerId"; //$NON-NLS-1$
 
 	private static final String CONTENT_TYPE_BINDING= "contentTypeBinding"; //$NON-NLS-1$
 
@@ -223,7 +240,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	private Map fStructureViewerAliases;
 	private CompareFilter fFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
-	
+
 	/**
 	 * Creates the <code>CompareUIPlugin</code> object and registers all
 	 * structure creators, content merge viewers, and structure merge viewers
@@ -807,21 +824,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return null;
 	}
 	
-	/**
-	 * Returns a content compare viewer based on an old viewer and an input object.
-	 * If the old viewer is suitable for showing the input the old viewer
-	 * is returned. Otherwise the input's type is used to find a viewer descriptor in the registry
-	 * which in turn is used to create a content compare viewer under the given parent composite.
-	 * If no viewer descriptor can be found <code>null</code> is returned.
-	 *
-	 * @param oldViewer a new viewer is only created if this old viewer cannot show the given input
-	 * @param in the input object for which to find a content viewer
-	 * @param parent the SWT parent composite under which the new viewer is created
-	 * @param cc a configuration which is passed to a newly created viewer
-	 * @return the compare viewer which is suitable for the given input object or <code>null</code>
-	 */
-	public Viewer findContentViewer(Viewer oldViewer, Object in, Composite parent, CompareConfiguration cc) {
-		
+	public Set/*<ViewerDescriptor>*/ findContentViewerDescriptor(Viewer oldViewer, Object in, CompareConfiguration cc) {
+		Set result = new LinkedHashSet();
 		if (in instanceof IStreamContentAccessor) {
 			String type= ITypedElement.TEXT_TYPE;
 			
@@ -831,9 +835,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			    IContentType ct= getContentType(tin);
 				if (ct != null) {
 					initializeRegistries();
-					Viewer viewer= getViewer(fContentViewers.search(ct), oldViewer, parent, cc);
-					if (viewer != null)
-						return viewer;
+					List list = fContentViewers.searchAll(ct);
+					if (list != null)
+						result.addAll(list);
 				}
 			    
 				String ty= tin.getType();
@@ -842,18 +846,18 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			}
 			
 			initializeRegistries();
-			Viewer viewer= getViewer(fContentViewers.search(type), oldViewer, parent, cc);
-			if (viewer != null)
-				return viewer;
+			List list = fContentViewers.searchAll(type);
+			if (list != null)
+				result.addAll(list);
 			// fallback
-			return new SimpleTextViewer(parent);
+			result.add(fContentViewers.search(Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT)));
+			return result;
 		}
 
 		if (!(in instanceof ICompareInput))
 			return null;
-			
-		ICompareInput input= (ICompareInput) in;
 
+		ICompareInput input= (ICompareInput) in;
 		
 		IContentType ctype= getCommonType(input);
 		if (isCompareAsText(input, cc)) {
@@ -861,9 +865,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		}
 		if (ctype != null) {
 			initializeRegistries();
-			Viewer viewer= getViewer(fContentMergeViewers.search(ctype), oldViewer, parent, cc);
-			if (viewer != null)
-				return viewer;
+			List list = fContentMergeViewers.searchAll(ctype);
+			if (list != null)
+				result.addAll(list);
 		}
 		
 		String[] types= getTypes(input);
@@ -888,9 +892,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		
 		if (type != null) {
 			initializeRegistries();
-			Viewer viewer= getViewer(fContentMergeViewers.search(type), oldViewer, parent, cc);
-			if (viewer != null)
-				return viewer;
+			List list = fContentMergeViewers.searchAll(type);
+			if (list != null)
+				result.addAll(list);
 		}
 
 		// fallback
@@ -906,11 +910,29 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				type= BINARY_TYPE;
 			
 			initializeRegistries();
-			IViewerDescriptor vd= (IViewerDescriptor) fContentMergeViewers.search(type);
-			if (vd != null)
-				return vd.createViewer(oldViewer, parent, cc);
+			List list = fContentMergeViewers.searchAll(type);
+			if (list != null)
+				result.addAll(list);
+			return result;
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a content compare viewer based on an old viewer and an input object.
+	 * If the old viewer is suitable for showing the input the old viewer
+	 * is returned. Otherwise the input's type is used to find a viewer descriptor in the registry
+	 * which in turn is used to create a content compare viewer under the given parent composite.
+	 * If no viewer descriptor can be found <code>null</code> is returned.
+	 *
+	 * @param oldViewer a new viewer is only created if this old viewer cannot show the given input
+	 * @param in the input object for which to find a content viewer
+	 * @param parent the SWT parent composite under which the new viewer is created
+	 * @param cc a configuration which is passed to a newly created viewer
+	 * @return the compare viewer which is suitable for the given input object or <code>null</code>
+	 */
+	public Viewer findContentViewer(Viewer oldViewer, Object in, Composite parent, CompareConfiguration cc) {
+		return getViewer(findContentViewerDescriptor(oldViewer, in, cc).toArray()[0], oldViewer, parent, cc);
 	}
 	
 	private boolean isCompareAsText(ICompareInput input, CompareConfiguration cc) {

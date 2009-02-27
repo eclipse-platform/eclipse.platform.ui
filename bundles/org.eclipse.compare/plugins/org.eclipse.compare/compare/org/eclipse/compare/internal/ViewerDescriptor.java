@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import org.eclipse.swt.widgets.Composite;
-
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.IViewerCreator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.compare.*;
-
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Creates <code>Viewer</code>s from an <code>IConfigurationElement</code>.
@@ -25,6 +24,7 @@ public class ViewerDescriptor implements IViewerDescriptor {
 
 	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
 	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
+	private final static String LABEL_ATTRIBUTE = "label"; //$NON-NLS-1$
 
 	private IConfigurationElement fConfiguration;
 	private IViewerCreator fViewerCreator;
@@ -68,5 +68,9 @@ public class ViewerDescriptor implements IViewerDescriptor {
 
 	public String getExtension() {
 		return fConfiguration.getAttribute(EXTENSIONS_ATTRIBUTE);
+	}
+
+	String getLabel() {
+		return fConfiguration.getAttribute(LABEL_ATTRIBUTE);
 	}
 }

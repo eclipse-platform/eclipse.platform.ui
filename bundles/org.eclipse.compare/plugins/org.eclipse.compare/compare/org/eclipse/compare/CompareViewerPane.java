@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,34 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * A <code>CompareViewerPane</code> is a convenience class which installs a
@@ -63,12 +80,8 @@ public class CompareViewerPane extends ViewForm implements ISelectionProvider,
 		marginWidth= 0;
 		marginHeight= 0;
 		
-		CLabel label= new CLabel(this, SWT.NONE) {
-			public Point computeSize(int wHint, int hHint, boolean changed) {
-				return super.computeSize(wHint, Math.max(24, hHint), changed);
-			}
-		};
-		setTopLeft(label);
+		Control topLeft = createTopLeft(this);
+		setTopLeft(topLeft);
 		
 		MouseAdapter ml= new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
@@ -82,7 +95,7 @@ public class CompareViewerPane extends ViewForm implements ISelectionProvider,
 		};	
 				
 		addMouseListener(ml);
-		label.addMouseListener(ml);
+		getTopLeft().addMouseListener(ml);
 		
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -95,6 +108,24 @@ public class CompareViewerPane extends ViewForm implements ISelectionProvider,
 				setImage(null);
 			}
 		});
+	}
+	
+	/**
+	 * @param parent
+	 *            a widget which will be the parent of the control (cannot be
+	 *            null)
+	 * @return the control to be placed in the top left corner of the pane
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	protected Control createTopLeft(Composite parent) {
+		CLabel label = new CLabel(this, SWT.NONE) {
+			public Point computeSize(int wHint, int hHint, boolean changed) {
+				return super.computeSize(wHint, Math.max(24, hHint), changed);
+			}
+		};
+		return label;
 	}
 	
 	/**
