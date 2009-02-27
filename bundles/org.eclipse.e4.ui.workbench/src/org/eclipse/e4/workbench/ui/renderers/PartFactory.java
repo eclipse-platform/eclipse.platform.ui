@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.workbench.ui.renderers.swt;
+package org.eclipse.e4.workbench.ui.renderers;
 
 import java.util.Iterator;
 import java.util.List;
