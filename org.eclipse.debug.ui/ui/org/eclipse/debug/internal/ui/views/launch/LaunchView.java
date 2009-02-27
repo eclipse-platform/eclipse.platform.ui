@@ -984,9 +984,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	public void dispose() {
 	    getSite().getSelectionProvider().removeSelectionChangedListener(this);
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextProvider(fTreeViewerDebugContextProvider);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextProvider(fContextProviderProxy);
+        fContextProviderProxy.dispose();
+        fTreeViewerDebugContextProvider.dispose();
         disposeActions();
-		fTreeViewerDebugContextProvider.dispose();
 	    Viewer viewer = getViewer();
 		if (viewer != null) {
 			viewer.removeSelectionChangedListener(fTreeViewerSelectionChangedListener);
