@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,8 +55,9 @@ function selectTopic(topic, isAutosynch)
         pendingSynchTopic = topic;
         return;
     }
+
     // Is the highlighted node the same as the href? In that case no need to call the server.
-    if (oldActive && sameTopic(topic, oldActive.href)) {
+    if (oldActive && sameTopic(topic, stripParams(oldActive.href))) {
            focusOnItem(getTreeItem(oldActive), true);
            return;
     }
@@ -75,6 +76,14 @@ function selectTopic(topic, isAutosynch)
 	}
 	makeShowInTocRequest(parameters);	
     return true;
+}
+
+function stripParams(href) {
+    var qMark = href.indexOf('?');
+    if (qMark < 0) {
+        return href;
+    }
+    return href.substring(0, qMark);
 }
 
 function sameTopic(topicHref, oldActiveHref) {

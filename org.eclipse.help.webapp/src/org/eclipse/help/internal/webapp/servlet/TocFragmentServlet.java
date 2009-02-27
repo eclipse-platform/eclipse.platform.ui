@@ -185,10 +185,7 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			buf.append('\n' + "      id=\"" + XMLGenerator.xmlEscape(toc.getHref()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
-			String href = toc.getTopic(null).getHref();
-			if (href == null) {
-				href = "/../nav/" + tocIndex; //$NON-NLS-1$
-			}
+			String href = fixupHref(toc.getTopic(null).getHref(), "" + tocIndex); //$NON-NLS-1$
 			buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href)) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
 			buf.append(createTocImageTag(toc));
@@ -209,7 +206,7 @@ public class TocFragmentServlet extends HttpServlet {
 			buf.append("</node>\n"); //$NON-NLS-1$
 			
 		}
-	
+
 		private void serializeTopic(ITopic topic, ITopic[] topicPath, boolean isSelected, String parentPath)  {
 		    ITopic[] subtopics = topic.getSubtopics();
 		     boolean isLeaf = !EnabledTopicUtils.hasEnabledSubtopic(topic);
@@ -221,9 +218,7 @@ public class TocFragmentServlet extends HttpServlet {
 			buf.append('\n' + "      id=\"" + parentPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
 			String href = topic.getHref();
-			if (href == null) {
-				href = "/../nav/" + tocData.getSelectedToc() + '_' + parentPath; //$NON-NLS-1$
-			}
+			href = fixupHref(href, "" + tocData.getSelectedToc() + '_' + parentPath); //$NON-NLS-1$
 			buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape( //$NON-NLS-1$
 					UrlUtil.getHelpURL(href)) + '"');
 			if (isLeaf ) {
@@ -331,6 +326,26 @@ public class TocFragmentServlet extends HttpServlet {
 			} 
 			return parentPath + '_' + subtopic;
 		}
+	}
+	
+	/*
+	 * If the href contains an anchor add a parameter containing the anchor value
+	 * href cannot be null. Static for testing purposes
+	 */
+	public static String  fixupHref(String href, String path) {
+		if (href == null) {
+			return "/../nav/" + path; //$NON-NLS-1$
+		}
+		int aIndex = href.indexOf('#');
+		if (aIndex > 0) {
+			int questionIndex = href.indexOf('?');
+			if (questionIndex > 0 && questionIndex < aIndex) {
+				return href.substring(0, aIndex) + "&path=" + path + href.substring(aIndex); //$NON-NLS-1$			
+			} else {
+				return href.substring(0, aIndex) + "?path=" + path + href.substring(aIndex); //$NON-NLS-1$
+			}
+		}
+		return href;
 	}
 
 }

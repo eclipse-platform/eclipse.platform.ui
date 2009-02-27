@@ -63,7 +63,15 @@ public class BreadcrumbsFilter implements IFilter {
 		// Use pathInfo to get the topic path because the uri could have escaped spaces
 		// or other characters, Bug 75360
 		String locale = UrlUtil.getLocale(req, null);
-		int[] path = UrlUtil.getTopicPath(servletPath + pathInfo, locale );
+		String pathParam = req.getParameter("path"); //$NON-NLS-1$
+		
+		String breadcrumbPath;
+		if (pathParam != null && pathParam.length() > 0) {
+			breadcrumbPath = "/nav/" + pathParam; //$NON-NLS-1$
+		} else {
+		    breadcrumbPath= servletPath + pathInfo;
+		}
+		int[] path = UrlUtil.getTopicPath(breadcrumbPath, locale );
 		if (path != null && path.length > 1) {
 			try {
 			boolean isNarrow = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
