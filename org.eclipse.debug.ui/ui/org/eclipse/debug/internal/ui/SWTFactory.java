@@ -478,6 +478,8 @@ public class SWTFactory {
 		if (items != null){
 			c.setItems(items);
 		}
+		// Some platforms open up combos in bad sizes without this, see bug 245569
+		c.setVisibleItemCount(30);
 		c.select(0);
 		return c;
 	}
@@ -500,6 +502,8 @@ public class SWTFactory {
 		if (items != null){
 			c.setItems(items);
 		}
+		// Some platforms open up combos in bad sizes without this, see bug 245569
+		c.setVisibleItemCount(30);
 		c.select(0);
 		return c;
 	}
