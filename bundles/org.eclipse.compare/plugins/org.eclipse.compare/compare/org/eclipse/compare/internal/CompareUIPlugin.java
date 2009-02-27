@@ -931,8 +931,11 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @param cc a configuration which is passed to a newly created viewer
 	 * @return the compare viewer which is suitable for the given input object or <code>null</code>
 	 */
-	public Viewer findContentViewer(Viewer oldViewer, Object in, Composite parent, CompareConfiguration cc) {
-		return getViewer(findContentViewerDescriptor(oldViewer, in, cc).toArray()[0], oldViewer, parent, cc);
+	public Viewer findContentViewer(Viewer oldViewer, Object in,
+			Composite parent, CompareConfiguration cc) {
+		Set descriptors = findContentViewerDescriptor(oldViewer, in, cc);
+		return getViewer(descriptors != null ? descriptors.toArray()[0] : null, oldViewer,
+				parent, cc);
 	}
 	
 	private boolean isCompareAsText(ICompareInput input, CompareConfiguration cc) {
