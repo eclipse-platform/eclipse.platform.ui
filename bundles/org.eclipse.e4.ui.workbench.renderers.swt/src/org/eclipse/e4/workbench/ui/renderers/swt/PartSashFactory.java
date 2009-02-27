@@ -30,7 +30,7 @@ public class PartSashFactory extends SWTPartFactory {
 	}
 
 	public Widget createWidget(MPart<?> part) {
-		System.err.println("Creating Widdget!!!!");
+
 		Widget parentWidget = getParentWidget(part);
 
 		if (part instanceof org.eclipse.e4.ui.model.application.MSashForm<?>) {
@@ -48,27 +48,26 @@ public class PartSashFactory extends SWTPartFactory {
 
 		return null;
 	}
-	
+
 	public void postProcess(MPart<?> part) {
 		if (part instanceof org.eclipse.e4.ui.model.application.MSashForm<?>) {
 			// do we have any children ?
 			EList<?> kids = part.getChildren();
 			if (kids.size() == 0)
 				return;
-			
+
 			// set the weights of the sashes
 			SashForm sashForm = (SashForm) part.getWidget();
-			org.eclipse.e4.ui.model.application.MSashForm<?> sashPart =
-				(org.eclipse.e4.ui.model.application.MSashForm<?>) part;
+			org.eclipse.e4.ui.model.application.MSashForm<?> sashPart = (org.eclipse.e4.ui.model.application.MSashForm<?>) part;
 			List<Integer> weightList = sashPart.getWeights();
-			
+
 			// If it's not already initialized the set them all ==
 			if (weightList.size() != kids.size()) {
 				for (int i = 0; i < kids.size(); i++) {
-					weightList.add(new Integer(100+i));
+					weightList.add(new Integer(100 + i));
 				}
 			}
-			
+
 			// Set the weights in the control
 			if (weightList.size() > 0) {
 				int count = 0;
@@ -80,32 +79,35 @@ public class PartSashFactory extends SWTPartFactory {
 				}
 				sashForm.setWeights(weights);
 			}
-			
-			// add a size change listener to each child so we can recalculate the
+
+			// add a size change listener to each child so we can recalculate
+			// the
 			// weights on a change...
 			Control[] childCtrls = sashForm.getChildren();
 			for (int i = 0; i < childCtrls.length; i++) {
 				childCtrls[i].addControlListener(new ControlListener() {
 					public void controlMoved(ControlEvent e) {
 					}
+
 					public void controlResized(ControlEvent e) {
 						// See if we need to re do the weights
-						synchWeights((Control)e.widget);
-					}					
+						synchWeights((Control) e.widget);
+					}
 				});
 			}
-		}	
+		}
 	}
 
 	protected void synchWeights(Control ctrl) {
 		if (!(ctrl.getParent() instanceof SashForm))
 			return;
-		
+
 		SashForm sf = (SashForm) ctrl.getParent();
-		org.eclipse.e4.ui.model.application.MSashForm<?> sfm = (org.eclipse.e4.ui.model.application.MSashForm<?>) sf.getData(OWNING_ME);
+		org.eclipse.e4.ui.model.application.MSashForm<?> sfm = (org.eclipse.e4.ui.model.application.MSashForm<?>) sf
+				.getData(OWNING_ME);
 		int[] ctrlWeights = sf.getWeights();
 		EList<Integer> modelWeights = sfm.getWeights();
-		
+
 		boolean overWrite = false;
 		if (ctrlWeights.length != modelWeights.size())
 			overWrite = true;
@@ -120,7 +122,7 @@ public class PartSashFactory extends SWTPartFactory {
 				}
 			}
 		}
-		
+
 		// reset the model's weights to match the control
 		if (overWrite) {
 			modelWeights.clear();
