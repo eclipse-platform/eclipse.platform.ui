@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
  * but instead of changing/obtaining values from its internal state, it
  * changes/obtains properties in/from the workspace plug-in's preferences.
  * 
- * Obs.: for performance reasons, some frequently called acessor methods are
+ * Note: for performance reasons, some frequently called accessor methods are
  * reading a cached value from the super class instead of reading the
  * corresponding property preference store. To keep the cache synchronized with
  * the preference store, a property change listener is used.
