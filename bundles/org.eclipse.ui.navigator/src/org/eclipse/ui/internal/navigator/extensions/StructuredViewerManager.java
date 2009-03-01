@@ -24,7 +24,7 @@ import org.eclipse.ui.progress.UIJob;
  * <p>
  * Provides a consistent mechanism to interact with StructuredViewers over time.
  * The Common Navigator framework attempts to defer the loading of extensions,
- * which also means defering the loading of Content Providers. To follow the
+ * which also means deferring the loading of Content Providers. To follow the
  * contracts already in place by
  * {@link org.eclipse.jface.viewers.ITreeContentProvider}, the Viewer, Old
  * Input, and New Input parameters for
