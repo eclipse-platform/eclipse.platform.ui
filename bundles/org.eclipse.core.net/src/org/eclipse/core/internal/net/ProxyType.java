@@ -156,7 +156,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		return proxyData;
 	}
 
-	public boolean setProxyData(IProxyData proxyData, boolean proxiesEnabled) {
+	public boolean setProxyData(IProxyData proxyData) {
 		Assert.isTrue(proxyData.getType().equals(getName()));
 		IProxyData oldData = getProxyData(VERIFY_EQUAL);
 		if (oldData.equals(proxyData))

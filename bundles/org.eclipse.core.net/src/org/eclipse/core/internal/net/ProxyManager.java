@@ -204,7 +204,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		for (int i = 0; i < proxyDatas.length; i++) {
 			IProxyData proxyData = proxyDatas[i];
 			ProxyType type = getType(proxyData);
-			if (type != null && type.setProxyData(proxyData, internalIsProxiesEnabled())) {
+			if (type != null && type.setProxyData(proxyData)) {
 				result.add(proxyData);
 			}
 		}
@@ -447,7 +447,6 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		}
 		
 		// migrate proxy data
-		boolean proxiesEnabled = netConfigurationPrefs.getBoolean(PREF_ENABLED, true);
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
 			IProxyData data = type.getProxyData(ProxyType.DO_NOT_VERIFY);
@@ -455,7 +454,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 				ProxyType instanceType = new ProxyType(type.getName(),netInstancePrefs);
 				IProxyData instanceData = instanceType.getProxyData(ProxyType.DO_NOT_VERIFY);
 				if (instanceData.getHost() != null)
-					type.setProxyData(instanceData, proxiesEnabled);
+					type.setProxyData(instanceData);
 			}
 		}
 		
