@@ -986,7 +986,8 @@ public class Project extends Container implements IProject {
 				IContainer parent = toLink.getParent();
 				if (parent != null && !parent.exists() && parent.getType() == FOLDER)
 					((Folder) parent).ensureExists(Policy.monitorFor(null));
-				toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
+				if (!toLink.exists())
+					toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
 			} catch (CoreException e) {
 				status.merge(e.getStatus());
 			}
