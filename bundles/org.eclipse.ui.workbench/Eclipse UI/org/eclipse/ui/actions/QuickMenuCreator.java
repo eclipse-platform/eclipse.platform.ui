@@ -16,12 +16,15 @@ import java.util.List;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -44,7 +47,7 @@ public abstract class QuickMenuCreator {
 	 * Create the context menu.
 	 */
 	public void createMenu() {
-		Display display = Display.getCurrent();
+		final Display display = Display.getCurrent();
 		if (display == null) {
 			return;
 		}
@@ -55,10 +58,7 @@ public abstract class QuickMenuCreator {
 
 		MenuManager menu = new MenuManager();
 		fillMenu(menu);
-		if (quickMenu != null) {
-			quickMenu.dispose();
-			quickMenu = null;
-		}
+		disposeMenu();
 		quickMenu = menu.createContextMenu(focus.getShell());
 		Point location = computeMenuLocation(focus);
 		if (location == null) {
@@ -66,6 +66,17 @@ public abstract class QuickMenuCreator {
 		}
 		quickMenu.setLocation(location);
 		quickMenu.setVisible(true);
+		quickMenu.addListener(SWT.Hide, new Listener() {
+			public void handleEvent(Event event) {
+				if (!display.isDisposed()) {
+					display.asyncExec(new Runnable() {
+						public void run() {
+							QuickMenuCreator.this.disposeMenu();
+						}
+					});
+				}
+			} 
+		});
 	}
 
 	/**
@@ -82,8 +93,9 @@ public abstract class QuickMenuCreator {
 	 * @param focus
 	 *            the focus control
 	 * @return the optimal placement
+	 * @since 3.5
 	 */
-	private Point computeMenuLocation(Control focus) {
+	protected Point computeMenuLocation(Control focus) {
 		Point cursorLocation = focus.getDisplay().getCursorLocation();
 		Rectangle clientArea = null;
 		Point result = null;
@@ -126,10 +138,11 @@ public abstract class QuickMenuCreator {
 	 * @return a widget relative position of the menu to pop up or
 	 *         <code>null</code> if now position inside the widget can be
 	 *         computed
+	 * @since 3.5
 	 */
-	private Point computeMenuLocation(StyledText text) {
+	protected Point computeMenuLocation(StyledText text) {
 		Point result = text.getLocationAtOffset(text.getCaretOffset());
-		result.y += text.getLineHeight();
+		result.y += text.getLineHeight(text.getCaretOffset());
 		if (!text.getClientArea().contains(result)) {
 			return null;
 		}
@@ -145,8 +158,9 @@ public abstract class QuickMenuCreator {
 	 * @return a widget relative position of the menu to pop up or
 	 *         <code>null</code> if now position inside the widget can be
 	 *         computed
+	 * @since 3.5
 	 */
-	private Point computeMenuLocation(Tree tree) {
+	protected Point computeMenuLocation(Tree tree) {
 		TreeItem[] items = tree.getSelection();
 		Rectangle clientArea = tree.getClientArea();
 		switch (items.length) {
@@ -186,8 +200,9 @@ public abstract class QuickMenuCreator {
 	 * @return a widget relative position of the menu to pop up or
 	 *         <code>null</code> if now position inside the widget can be
 	 *         computed
+	 * @since 3.5
 	 */
-	private Point computeMenuLocation(Table table) {
+	protected Point computeMenuLocation(Table table) {
 		TableItem[] items = table.getSelection();
 		Rectangle clientArea = table.getClientArea();
 		switch (items.length) {
@@ -281,9 +296,16 @@ public abstract class QuickMenuCreator {
 	 * call this method.
 	 */
 	public void dispose() {
-		if (quickMenu != null) {
+		disposeMenu();
+	}
+
+	/**
+	 * dispose the menu widget.
+	 */
+	private void disposeMenu() {
+		if (quickMenu != null && !quickMenu.isDisposed()) {
 			quickMenu.dispose();
-			quickMenu = null;
 		}
+		quickMenu = null;
 	}
 }
