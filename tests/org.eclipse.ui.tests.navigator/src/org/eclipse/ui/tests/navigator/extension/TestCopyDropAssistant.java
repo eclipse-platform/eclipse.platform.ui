@@ -34,7 +34,7 @@ public class TestCopyDropAssistant extends ResourceDropAdapterAssistant {
 		Assert.isTrue(event != null);
 		
 		// Switch to copy
-		getCommonDropAdapter().setCurrentOperation(DND.DROP_COPY);
+		getCommonDropAdapter().overrideOperation(DND.DROP_COPY);
 		return super.validateDrop(target, operation, transferType);
 	}
 

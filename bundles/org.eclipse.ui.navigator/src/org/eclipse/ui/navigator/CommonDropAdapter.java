@@ -304,15 +304,6 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	}
 
 	/**
-	 * Goes away once JDT has hooked to overrideOperation
-	 * @param operation 
-	 * @since 3.4
-	 */
-	public void setCurrentOperation(int operation) {
-		overrideOperation(operation);
-	}
-
-	/**
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#overrideOperation(int)
 	 * @since 3.4
 	 */
