@@ -116,12 +116,6 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String FILE_RENAME = "org.eclipse.ui.edit.rename"; //$NON-NLS-1$
 
-    /**
-     * Id for command "Close Others" in category "File"
-     * (value is <code>"org.eclipse.ui.file.closeOthers"</code>).
-     */
-    public static final String FILE_CLOSEOTHERS = "org.eclipse.ui.file.closeOthers"; //$NON-NLS-1$
-
     // Edit Category:
 
     /**
@@ -161,42 +155,12 @@ public interface IWorkbenchCommandConstants {
     public static final String EDIT_DELETE = "org.eclipse.ui.edit.delete"; //$NON-NLS-1$
 
     /**
-     * Id for command "Content Assist" in category "Edit"
-     * (value is <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>).
-     */
-    public static final String EDIT_CONTENTASSIST = "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Context Information" in category "Edit"
-     * (value is <code>"org.eclipse.ui.edit.text.contentAssist.contextInformation"</code>).
-     */
-    public static final String EDIT_CONTEXTINFORMATION = "org.eclipse.ui.edit.text.contentAssist.contextInformation"; //$NON-NLS-1$
-
-    /**
      * Id for command "Select All" in category "Edit"
      * (value is <code>"org.eclipse.ui.edit.selectAll"</code>).
      */
     public static final String EDIT_SELECTALL = "org.eclipse.ui.edit.selectAll"; //$NON-NLS-1$
 
-    /**
-     * Id for command "Find and Replace" in category "Edit"
-     * (value is <code>"org.eclipse.ui.edit.findReplace"</code>).
-     */
-    public static final String EDIT_FINDANDREPLACE = "org.eclipse.ui.edit.findReplace"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Add Bookmark" in category "Edit"
-     * (value is <code>"org.eclipse.ui.edit.addBookmark"</code>).
-     */
-    public static final String EDIT_ADDBOOKMARK = "org.eclipse.ui.edit.addBookmark"; //$NON-NLS-1$
-
     // Navigate Category:
-
-    /**
-     * Id for command "Go Into" in category "Navigate"
-     * (value is <code>"org.eclipse.ui.navigate.goInto"</code>).
-     */
-    public static final String NAVIGATE_GOINTO = "org.eclipse.ui.navigate.goInto"; //$NON-NLS-1$
 
     /**
      * Id for command "Back" in category "Navigate"
@@ -211,28 +175,10 @@ public interface IWorkbenchCommandConstants {
     public static final String NAVIGATE_FORWARD = "org.eclipse.ui.navigate.forward"; //$NON-NLS-1$
 
     /**
-     * Id for command "Up" in category "Navigate"
-     * (value is <code>"org.eclipse.ui.navigate.up"</code>).
-     */
-    public static final String NAVIGATE_UP = "org.eclipse.ui.navigate.up"; //$NON-NLS-1$
-
-    /**
      * Id for command "Next" in category "Navigate"
      * (value is <code>"org.eclipse.ui.navigate.next"</code>).
      */
     public static final String NAVIGATE_NEXT = "org.eclipse.ui.navigate.next"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Backward History" in category "Navigate"
-     * (value is <code>"org.eclipse.ui.navigate.backwardHistory"</code>).
-     */
-    public static final String NAVIGATE_BACKWARDHISTORY = "org.eclipse.ui.navigate.backwardHistory"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Forward History" in category "Navigate"
-     * (value is <code>"org.eclipse.ui.navigate.forwardHistory"</code>).
-     */
-    public static final String NAVIGATE_FORWARDHISTORY = "org.eclipse.ui.navigate.forwardHistory"; //$NON-NLS-1$
 
     /**
      * Id for command "Previous" in category "Navigate"
@@ -285,36 +231,6 @@ public interface IWorkbenchCommandConstants {
     public static final String WINDOW_NEWEDITOR = "org.eclipse.ui.window.newEditor"; //$NON-NLS-1$
 
     /**
-     * Id for command "Quick Switch Editor" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.openEditorDropDown"</code>).
-     */
-    public static final String WINDOW_QUICKSWITCHEDITOR = "org.eclipse.ui.window.openEditorDropDown"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Quick Access" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.quickAccess"</code>).
-     */
-    public static final String WINDOW_QUICKACCESS = "org.eclipse.ui.window.quickAccess"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Switch to Editor" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.switchToEditor"</code>).
-     */
-    public static final String WINDOW_SWITCHTOEDITOR = "org.eclipse.ui.window.switchToEditor"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Show System Menu" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.showSystemMenu"</code>).
-     */
-    public static final String WINDOW_SHOWSYSTEMMENU = "org.eclipse.ui.window.showSystemMenu"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Show View Menu" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.showViewMenu"</code>).
-     */
-    public static final String WINDOW_SHOWVIEWMENU = "org.eclipse.ui.window.showViewMenu"; //$NON-NLS-1$
-
-    /**
      * Id for command "Activate Editor" in category "Window"
      * (value is <code>"org.eclipse.ui.window.activateEditor"</code>).
      */
@@ -325,48 +241,6 @@ public interface IWorkbenchCommandConstants {
      * (value is <code>"org.eclipse.ui.window.maximizePart"</code>).
      */
     public static final String WINDOW_MAXIMIZEACTIVEVIEWOREDITOR = "org.eclipse.ui.window.maximizePart"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Minimize Active View or Editor" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.minimizePart"</code>).
-     */
-    public static final String WINDOW_MINIMIZEACTIVEVIEWOREDITOR = "org.eclipse.ui.window.minimizePart"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Next Editor" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.nextEditor"</code>).
-     */
-    public static final String WINDOW_NEXTEDITOR = "org.eclipse.ui.window.nextEditor"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Previous Editor" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.previousEditor"</code>).
-     */
-    public static final String WINDOW_PREVIOUSEDITOR = "org.eclipse.ui.window.previousEditor"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Next View" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.nextView"</code>).
-     */
-    public static final String WINDOW_NEXTVIEW = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Previous View" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.previousView"</code>).
-     */
-    public static final String WINDOW_PREVIOUSVIEW = "org.eclipse.ui.window.previousView"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Next Perspective" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.nextPerspective"</code>).
-     */
-    public static final String WINDOW_NEXTPERSPECTIVE = "org.eclipse.ui.window.nextPerspective"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Previous Perspective" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.previousPerspective"</code>).
-     */
-    public static final String WINDOW_PREVIOUSPERSPECTIVE = "org.eclipse.ui.window.previousPerspective"; //$NON-NLS-1$
 
     /**
      * Id for command "Close All Perspectives" in category "Window"
@@ -387,58 +261,16 @@ public interface IWorkbenchCommandConstants {
     public static final String WINDOW_CLOSEPART = "org.eclipse.ui.file.closePart"; //$NON-NLS-1$
 
     /**
-     * Id for command "Customize Perspective" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.customizePerspective"</code>).
-     */
-    public static final String WINDOW_CUSTOMIZEPERSPECTIVE = "org.eclipse.ui.window.customizePerspective"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Hide Editors" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.hideShowEditors"</code>).
-     */
-    public static final String WINDOW_HIDEEDITORS = "org.eclipse.ui.window.hideShowEditors"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Lock the Toolbars" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.lockToolBar"</code>).
-     */
-    public static final String WINDOW_LOCKTHETOOLBARS = "org.eclipse.ui.window.lockToolBar"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Pin Editor" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.pinEditor"</code>).
-     */
-    public static final String WINDOW_PINEDITOR = "org.eclipse.ui.window.pinEditor"; //$NON-NLS-1$
-
-    /**
      * Id for command "Preferences" in category "Window"
      * (value is <code>"org.eclipse.ui.window.preferences"</code>).
      */
     public static final String WINDOW_PREFERENCES = "org.eclipse.ui.window.preferences"; //$NON-NLS-1$
 
     /**
-     * Id for command "Reset Perspective" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.resetPerspective"</code>).
-     */
-    public static final String WINDOW_RESETPERSPECTIVE = "org.eclipse.ui.window.resetPerspective"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Save Perspective As" in category "Window"
-     * (value is <code>"org.eclipse.ui.window.savePerspective"</code>).
-     */
-    public static final String WINDOW_SAVEPERSPECTIVEAS = "org.eclipse.ui.window.savePerspective"; //$NON-NLS-1$
-
-    /**
      * Id for command "Show Key Assist" in category "Window"
      * (value is <code>"org.eclipse.ui.window.showKeyAssist"</code>).
      */
     public static final String WINDOW_SHOWKEYASSIST = "org.eclipse.ui.window.showKeyAssist"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Toggle Toolbar Visibility" in category "Window"
-     * (value is <code>"org.eclipse.ui.ToggleCoolbarAction"</code>).
-     */
-    public static final String WINDOW_TOGGLETOOLBARVISIBILITY = "org.eclipse.ui.ToggleCoolbarAction"; //$NON-NLS-1$
 
     // Help Category:
 
@@ -449,40 +281,10 @@ public interface IWorkbenchCommandConstants {
     public static final String HELP_HELPCONTENTS = "org.eclipse.ui.help.helpContents"; //$NON-NLS-1$
 
     /**
-     * Id for command "Help Search" in category "Help"
-     * (value is <code>"org.eclipse.ui.help.helpSearch"</code>).
-     */
-    public static final String HELP_HELPSEARCH = "org.eclipse.ui.help.helpSearch"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Dynamic Help" in category "Help"
-     * (value is <code>"org.eclipse.ui.help.dynamicHelp"</code>).
-     */
-    public static final String HELP_DYNAMICHELP = "org.eclipse.ui.help.dynamicHelp"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Welcome" in category "Help"
-     * (value is <code>"org.eclipse.ui.help.quickStartAction"</code>).
-     */
-    public static final String HELP_WELCOME = "org.eclipse.ui.help.quickStartAction"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Tips and Tricks" in category "Help"
-     * (value is <code>"org.eclipse.ui.help.tipsAndTricksAction"</code>).
-     */
-    public static final String HELP_TIPSANDTRICKS = "org.eclipse.ui.help.tipsAndTricksAction"; //$NON-NLS-1$
-
-    /**
      * Id for command "About" in category "Help"
      * (value is <code>"org.eclipse.ui.help.aboutAction"</code>).
      */
     public static final String HELP_ABOUT = "org.eclipse.ui.help.aboutAction"; //$NON-NLS-1$
-
-    /**
-     * Id for command "Display Help" in category "Help"
-     * (value is <code>"org.eclipse.ui.help.displayHelp"</code>).
-     */
-    public static final String HELP_DISPLAYHELP = "org.eclipse.ui.help.displayHelp"; //$NON-NLS-1$
 
     // Views Category:
 
