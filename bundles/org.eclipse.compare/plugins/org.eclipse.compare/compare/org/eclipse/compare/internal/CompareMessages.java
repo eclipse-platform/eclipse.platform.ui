@@ -131,6 +131,8 @@ public final class CompareMessages extends NLS {
 	public static String CompareWithOtherResourceDialog_workspaceRadioButton;
 	public static String CompareContentViewerSwitchingPane_defaultViewer;
 	public static String CompareContentViewerSwitchingPane_switchButtonTooltip;
+	
+	public static String ReaderCreator_fileIsNotAccessible;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CompareMessages.class);

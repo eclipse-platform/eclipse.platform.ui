@@ -30,4 +30,13 @@ public abstract class ReaderCreator {
 	 *                if the reader can't be created
 	 */
 	public abstract Reader createReader() throws CoreException;
+
+	/**
+	 * Returns whether the reader can be created.
+	 * 
+	 * @return true if the reader can be created, false otherwise
+	 */
+	public boolean canCreateReader() {
+		return true;
+	}
 }

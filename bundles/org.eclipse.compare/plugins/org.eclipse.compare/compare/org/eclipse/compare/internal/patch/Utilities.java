@@ -17,14 +17,18 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.core.patch.DiffProject;
 import org.eclipse.compare.patch.ReaderCreator;
 import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public class Utilities {
 
@@ -43,17 +47,36 @@ public class Utilities {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(
 				diffProject.getName());
 	}
-	
-	public static ReaderCreator getReaderCreator(final IStorage storage){
-		return new ReaderCreator(){
+
+	public static ReaderCreator getReaderCreator(final IStorage storage) {
+		return new ReaderCreator() {
 			public Reader createReader() throws CoreException {
 				return Utilities.createReader(storage);
-			}	
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.compare.patch.ReaderCreator#canCreateReader()
+			 */
+			public boolean canCreateReader() {
+				if (storage != null && storage instanceof IFile
+						&& !((IFile) storage).isAccessible()) {
+					return false;
+				}
+				return true;
+			}
 		};
 	}
-	
+
 	public static BufferedReader createReader(IStorage storage)
 			throws CoreException {
+		if (storage != null && storage instanceof IFile
+				&& !((IFile) storage).isAccessible()) {
+			throw new CoreException(new Status(IStatus.WARNING,
+					CompareUIPlugin.PLUGIN_ID,
+					CompareMessages.ReaderCreator_fileIsNotAccessible));
+		}
 		String charset = null;
 		if (storage instanceof IEncodedStorage) {
 			IEncodedStorage es = (IEncodedStorage) storage;

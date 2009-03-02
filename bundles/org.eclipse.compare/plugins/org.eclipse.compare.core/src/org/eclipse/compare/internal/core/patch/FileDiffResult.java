@@ -133,7 +133,7 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 
 	protected boolean targetExists(ReaderCreator content) {
-		return content != null;
+		return content != null && content.canCreateReader();
 	}
 
 	protected List getLines(ReaderCreator content, boolean create) {
