@@ -18,15 +18,14 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.Policy;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -242,17 +241,12 @@ public class NavigatorContentExtension implements IMementoAware,
 
 					public void run() throws Exception {
 						if (labelProvider != null) {
-							// Reset the label provider in the viewer so that any objects
-							// in the viewer created by the this contentExtension's label
-							// provider are properly disposed.
-							CommonViewer viewer = (CommonViewer)viewerManager.getViewer();
-							IBaseLabelProvider currentLp = viewer.getLabelProvider();
-							viewer.setLabelProvider(null);
+							StructuredViewer viewer = (StructuredViewer)viewerManager.getViewer();
 							labelProvider
 									.removeListener((ILabelProviderListener) contentService
 											.createCommonLabelProvider());
+							viewer.refresh();
 							labelProvider.dispose();
-							viewer.setLabelProvider(currentLp);
 						}
 
 					}
