@@ -22,7 +22,6 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -55,7 +54,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -96,6 +94,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.internal.statushandlers.DefaultDetailsArea;
+import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
 import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
@@ -138,10 +137,9 @@ import com.ibm.icu.text.DateFormat;
  * @see AbstractStatusAreaProvider
  * 
  * @since 3.4
- * @since 3.5 implements {@link IShellProvider}
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class WorkbenchStatusDialogManager implements IShellProvider {
+public class WorkbenchStatusDialogManager {
 	
 	private static final String LOG_VIEW_ID = "org.eclipse.pde.runtime.LogView"; //$NON-NLS-1$
 	
@@ -1058,7 +1056,6 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	
 	/**
 	 * 
-	 * @see #setShowSupport
 	 */
 	private boolean showSupport = false;
 	
@@ -2369,24 +2366,12 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 	/**
 	 * Gets the shell of the managed dialog.
 	 * 
-	 * @since 3.5
 	 * @see org.eclipse.jface.window.IShellProvider#getShell()
 	 */
-	public Shell getShell() {
+	private Shell getShell() {
 		if (this.dialog == null)
 			return null;
 		return this.dialog.getShell();
-	}
-	
-	/**
-	 * This method indicates, if the dialog should automatically open available
-	 * support. The default setting is false.
-	 * 
-	 * @param showSupport
-	 * @since 3.5
-	 */
-	public void setShowSupport(boolean showSupport){
-		this.showSupport = showSupport;
 	}
 
 	/**
@@ -2427,53 +2412,52 @@ public class WorkbenchStatusDialogManager implements IShellProvider {
 		}
 		return string;
 	}
-	
+
 	/**
-	 * This method allows for deciding how OK Statuses should be handled.
+	 * This method sets various properties on the manager.
 	 * 
-	 * This method is not a part of API. It is public only for testing purposes.
-	 * 
-	 * @param handleOK
-	 *            <code>true</code> indicates that OK {@link Status}es will be
-	 *            handled in the same way as all other kinds. <code>false</code>
-	 *            means that they will be ignored. It is the default setting.
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 *             by clients.
+	 * @param key
+	 *            a key of the property to be set.
+	 * @param value
+	 *            a value of the property to be set. The value must be of type
+	 *            specified by the property key. <code>null</code> should never
+	 *            be passed unless the property key javadoc allows for that.
 	 * @since 3.5
 	 */
-	public void setHandleOKStatuses(boolean handleOK){
-		this.handleOKStatuses  = handleOK;
-	}
-	
-	/**
-	 * This method allows for checking how OK statuses are handled. It is not a
-	 * part of API.
-	 * 
-	 * @return <true> if OK statuses are handled, <false> if they are ignored.
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 *             by clients.
-	 * @since 3.5
-	 */
-	public boolean getHandleOkStatuses(){
-		return handleOKStatuses;
+	public void setProperty(Object key, Object value){
+		if(key == IStatusDialogConstants.SHOW_SUPPORT){
+			showSupport = ((Boolean)value).booleanValue();
+		}
+		if(key == IStatusDialogConstants.ERRORLOG_LINK){
+			supportForErrorLog = ((Boolean)value).booleanValue();
+		}
+		if(key == IStatusDialogConstants.HANDLE_OK_STATUSES){
+			handleOKStatuses   = ((Boolean)value).booleanValue();
+		}
 	}
 
 	/**
-	 * This method allows for deciding if link to Error Log view should be
-	 * displayed on the error dialog.
+	 * This method gets various dialog properties.
 	 * 
-	 * @param supportForErrorLog
-	 *            <true> means that a link to error log should be accessible
-	 *            when error log view is present. <false> means that the link
-	 *            will be never shown. This is the default setting.
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 *             by clients.
+	 * @param key
+	 *            a key of the property to be get.
+	 * @return a value of the property. The value will be of type specified by
+	 *         the property key. <code>null</code> can be returned.
 	 * @since 3.5
 	 */
-	public void setSupportForErrorLog(boolean supportForErrorLog){
-		this.supportForErrorLog  = supportForErrorLog;
+	public Object getProperty(Object key){
+		if(key == IStatusDialogConstants.SHELL){
+			return getShell();
+		}
+		if(key == IStatusDialogConstants.SHOW_SUPPORT){
+			return Boolean.valueOf(showSupport);
+		}
+		if(key == IStatusDialogConstants.ERRORLOG_LINK){
+			return Boolean.valueOf(supportForErrorLog);
+		}
+		if(key == IStatusDialogConstants.HANDLE_OK_STATUSES){
+			return Boolean.valueOf(handleOKStatuses);
+		}
+		return null;
 	}
 }

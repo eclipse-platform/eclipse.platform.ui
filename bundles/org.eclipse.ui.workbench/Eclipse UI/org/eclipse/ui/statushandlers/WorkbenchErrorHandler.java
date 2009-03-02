@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
 import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
 
 /**
@@ -99,13 +100,18 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 
 		if (block) {
 			Shell shell;
-			while ((shell = getStatusDialogManager().getShell()) != null
+			while ((shell = getStatusDialogShell()) != null
 					&& !shell.isDisposed()) {
 				if (!shell.getDisplay().readAndDispatch()) {
 					Display.getDefault().sleep();
 				}
 			}
 		}
+	}
+	
+	private Shell getStatusDialogShell() {
+		return (Shell) getStatusDialogManager().getProperty(
+				IStatusDialogConstants.SHELL);
 	}
 
 	/**
@@ -118,9 +124,13 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 			synchronized (this) {
 				if (statusDialogManager == null) {
 					statusDialogManager = new WorkbenchStatusDialogManager(null);
-					statusDialogManager.setShowSupport(true);
-					statusDialogManager.setHandleOKStatuses(true);
-					statusDialogManager.setSupportForErrorLog(true);
+					statusDialogManager.setProperty(
+							IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
+					statusDialogManager.setProperty(
+							IStatusDialogConstants.HANDLE_OK_STATUSES,
+							Boolean.TRUE);
+					statusDialogManager.setProperty(
+							IStatusDialogConstants.ERRORLOG_LINK, Boolean.TRUE);
 					configureStatusDialog(statusDialogManager);
 				}
 			}

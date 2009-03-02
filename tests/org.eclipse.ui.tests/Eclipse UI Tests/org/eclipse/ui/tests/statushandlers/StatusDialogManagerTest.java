@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
@@ -426,7 +427,7 @@ public class StatusDialogManagerTest extends TestCase {
 	 */
 	public void testSupport2(){
 		StatusAdapter statusAdapter = createStatusAdapter(MESSAGE_1);
-		wsdm.setShowSupport(true);
+		wsdm.setProperty(IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
 		Composite[] support = new Composite[] { null };
 		setupSupportArea(passed, support);
