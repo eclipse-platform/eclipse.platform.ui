@@ -12,7 +12,6 @@
 
 package org.eclipse.core.internal.databinding.property.value;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -130,15 +129,12 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	}
 
 	public synchronized void dispose() {
-		if (!isDisposed()) {
-			if (listener != null) {
-				for (Iterator it = values().iterator(); it.hasNext();) {
-					unhookListener(it.next());
-				}
-				listener = null;
-			}
-			detailProperty = null;
+		if (cachedValues != null) {
+			cachedValues.clear();
+			cachedValues = null;
 		}
+		listener = null;
+		detailProperty = null;
 
 		super.dispose();
 	}

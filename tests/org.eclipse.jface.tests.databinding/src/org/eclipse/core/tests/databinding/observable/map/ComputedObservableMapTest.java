@@ -102,6 +102,20 @@ public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertFalse(bean.hasListeners(propertyName));
 	}
 
+	public void testDisposeKeySet_DisposesMap() {
+		assertFalse(map.isDisposed());
+		keySet.dispose();
+		assertTrue(map.isDisposed());
+	}
+
+	public void testDisposeKeySet_RemoveListenersFromKeySetElements() {
+		ChangeEventTracker.observe(map);
+		keySet.add(bean);
+		assertTrue(bean.hasListeners(propertyName));
+		keySet.dispose();
+		assertFalse(bean.hasListeners(propertyName));
+	}
+
 	static class ComputedObservableMapStub extends ComputedObservableMap {
 		private PropertyChangeListener listener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {

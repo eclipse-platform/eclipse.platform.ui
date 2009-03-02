@@ -21,12 +21,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.core.internal.databinding.IdentitySet;
 
 /**
  * Maps objects to one of their attributes. Tracks changes to the underlying
@@ -35,7 +38,9 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 public abstract class ComputedObservableMap extends AbstractObservableMap {
 
 	private IObservableSet keySet;
-	
+
+	private Set knownKeys;
+
 	private Object valueType;
 
 	private ISetChangeListener setChangeListener = new ISetChangeListener() {
@@ -50,6 +55,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 				if (removedKey != null) {
 					oldValue = doGet(removedKey);
 					unhookListener(removedKey);
+					knownKeys.remove(removedKey);
 				}
 				oldValues.put(removedKey, oldValue);
 			}
@@ -59,6 +65,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 				if (addedKey != null) {
 					newValue = doGet(addedKey);
 					hookListener(addedKey);
+					knownKeys.add(addedKey);
 				}
 				newValues.put(addedKey, newValue);
 			}
@@ -124,14 +131,20 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	}
 
 	/**
-	 * @param keySet 
-	 * @param valueType 
+	 * @param keySet
+	 * @param valueType
 	 * @since 1.2
 	 */
 	public ComputedObservableMap(IObservableSet keySet, Object valueType) {
 		super(keySet.getRealm());
 		this.keySet = keySet;
 		this.valueType = valueType;
+
+		keySet.addDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent staleEvent) {
+				ComputedObservableMap.this.dispose();
+			}
+		});
 	}
 
 	/**
@@ -150,11 +163,13 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 
 	private void hookListeners() {
 		if (keySet != null) {
+			knownKeys = new IdentitySet();
 			keySet.addSetChangeListener(setChangeListener);
 			keySet.addStaleListener(staleListener);
 			for (Iterator it = this.keySet.iterator(); it.hasNext();) {
 				Object key = it.next();
 				hookListener(key);
+				knownKeys.add(key);
 			}
 		}
 	}
@@ -163,10 +178,14 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 		if (keySet != null) {
 			keySet.removeSetChangeListener(setChangeListener);
 			keySet.removeStaleListener(staleListener);
-			Object[] keys = keySet.toArray();
+		}
+		if (knownKeys != null) {
+			Object[] keys = knownKeys.toArray();
 			for (int i = 0; i < keys.length; i++) {
 				unhookListener(keys[i]);
 			}
+			knownKeys.clear();
+			knownKeys = null;
 		}
 	}
 
@@ -192,7 +211,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	public Set entrySet() {
 		return entrySet;
 	}
-	
+
 	public Set keySet() {
 		return keySet;
 	}
