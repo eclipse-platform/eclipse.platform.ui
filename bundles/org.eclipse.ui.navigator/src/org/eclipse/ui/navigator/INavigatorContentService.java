@@ -250,7 +250,7 @@ public interface INavigatorContentService {
 	 * Bind the set of given extensions to this content service. Programmatic
 	 * bindings allow clients to make extensions <i>visible</i> to an instance
 	 * of the content service by appending to the bindings declared through
-	 * <b>org.eclipse.ui.navigator.viewer</b>. Programmtic bindings are not
+	 * <b>org.eclipse.ui.navigator.viewer</b>. Programmatic bindings are not
 	 * persisted and are not remembered or propagated to other instances of the
 	 * INavigatorContentService in the same session. Programmatic bindings
 	 * cannot be undone for a given instance of the INavigatorContentService and
