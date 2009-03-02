@@ -73,6 +73,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		
 		processEvents();
 		forceUpdate();		
+		processEvents();
 		
 		Cursor cursor = ((PartSite)site).getPane().getControl().getCursor();
 		assertNotNull(cursor);
@@ -110,6 +111,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		assertTrue(jobWithCursor.getState() != Job.RUNNING); 
 		
 		forceUpdate();
+		processEvents();
 		cursor = ((PartSite)site).getPane().getControl().getCursor();
 		assertNull(cursor); // jobWithoutCursor is scheduled to run first - no cursor now
 		
@@ -123,6 +125,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		assertTrue(jobWithCursor.getState() == Job.RUNNING && jobWithoutCursor.getState() == Job.RUNNING);
 
 		forceUpdate();		
+		processEvents();
 		cursor = ((PartSite)site).getPane().getControl().getCursor();
 		assertNotNull(cursor); // both running now - cursor should be set
 	}
