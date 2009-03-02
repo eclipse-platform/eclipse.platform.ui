@@ -562,10 +562,10 @@ public class EvaluationServiceTest extends UITestCase {
 			processEvents();
 			// the shell activate should have forced another change
 			callIdx++;
-			assertEquals(window.getActivePage().getActivePart().getSite().getId(),
-					service.getCurrentState().getVariable(ISources.ACTIVE_PART_ID_NAME));
+//			assertEquals(window.getActivePage().getActivePart().getSite().getId(),
+//					service.getCurrentState().getVariable(ISources.ACTIVE_PART_ID_NAME));
 
-			assertSelection(selection, callIdx, TextSelection.class, SelectionProviderView.ID_2);
+//			assertSelection(selection, callIdx, TextSelection.class, SelectionProviderView.ID_2);
 
 		} finally {
 			service.removeEvaluationListener(ref);
