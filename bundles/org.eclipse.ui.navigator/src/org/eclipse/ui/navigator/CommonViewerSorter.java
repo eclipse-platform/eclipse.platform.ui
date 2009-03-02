@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
  * 
  * <p>
  * The CommonViewerSorter must be assigned a {@link INavigatorContentService} to drive its sorting
- * algorithm. Without a vaild content service, the sorter will return the default ordering.
+ * algorithm. Without a valid content service, the sorter will return the default ordering.
  * </p>
  * <p>
  * A CommonViewerSorter may not be attached to more than one CommonViewer.
