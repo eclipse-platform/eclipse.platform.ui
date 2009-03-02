@@ -85,6 +85,13 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
     private int lastValidOperation;
     
     /**
+     * This is used because we allow the operation 
+     * to be temporarily overridden (for example a move to a copy) for a drop that
+     * happens immediately after the operation is overridden.
+     */
+    private int overrideOperation = -1;
+    
+    /**
      * The current DropTargetEvent, used only during validateDrop()
      */
     private DropTargetEvent currentEvent;
@@ -181,18 +188,23 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      * that it is still enabled.
      */
     private void doDropValidation(DropTargetEvent event) {
-    	//always remember what was previously requested
-    	if (event.detail != DND.DROP_NONE)
+    	//always remember what was previously requested, but not if it
+    	//was overridden
+    	if (event.detail != DND.DROP_NONE && overrideOperation == -1)
     		lastValidOperation = event.detail;
     	
     	currentOperation = lastValidOperation;
-
-    	//the client may change the currentOperation inside of here
         currentEvent = event;
+        overrideOperation = -1;
         if (!validateDrop(currentTarget, currentOperation, event.currentDataType)) {
-            currentOperation = DND.DROP_NONE;
+        	currentOperation = DND.DROP_NONE;
         }
-        event.detail = currentOperation;
+
+        //give the right feedback for the override
+        if (overrideOperation != -1)
+        	event.detail = overrideOperation;
+        else
+        	event.detail = currentOperation;
         currentEvent = null;
     }
 
@@ -246,6 +258,9 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         currentLocation = determineLocation(event);
     	currentEvent = event;
 
+    	if (overrideOperation != -1)
+    		currentOperation = overrideOperation;
+    	
         //perform the drop behavior
         if (!performDrop(event.data)) {
             event.detail = DND.DROP_NONE;
@@ -402,14 +417,15 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
     public abstract boolean performDrop(Object data);
 
 	/**
-	 * Sets the current operation.
+	 * Overrides the current operation for a drop that happens immediately
+	 * after the current validateDrop.
 	 * 
 	 * This maybe called only from within a
 	 * {@link #validateDrop(Object, int, TransferData)} method
 	 * 
 	 * 
 	 * @param operation
-	 *            the operation to set to be current.
+	 *            the operation to be used for the drop.
 	 * 
 	 * @see DND#DROP_COPY
 	 * @see DND#DROP_MOVE
@@ -418,10 +434,10 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 * 
 	 * @since 3.5
 	 */
-	protected void setCurrentOperation(int operation) {
-		currentOperation = operation;
+	protected void overrideOperation(int operation) {
+		overrideOperation = operation;
 	}
-
+	
     /* (non-Javadoc)
      * Method declared on DropTargetAdapter.
      * The mouse has moved over the drop target.  If the
