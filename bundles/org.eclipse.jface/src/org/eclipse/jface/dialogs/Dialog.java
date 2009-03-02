@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
@@ -699,10 +698,10 @@ public abstract class Dialog extends Window {
 	 * @see Window.initializeBounds()
 	 */
 	protected void initializeBounds() {
-		if (Util.isMac()) {
-			// On Mac OS X the default button must be the right-most button
-			Shell shell = getShell();
-			if (shell != null) {
+		Shell shell = getShell();
+		if (shell != null) {
+			if (shell.getDisplay().getDismissalAlignment() == SWT.RIGHT) {
+				// make the default button the right-most button
 				Button defaultButton = shell.getDefaultButton();
 				if (defaultButton != null
 						&& isContained(buttonBar, defaultButton)) {

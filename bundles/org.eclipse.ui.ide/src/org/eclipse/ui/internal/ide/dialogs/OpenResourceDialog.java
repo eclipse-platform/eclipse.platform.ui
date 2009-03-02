@@ -199,11 +199,29 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		cancelLayoutData.widthHint = buttonWidth;
 		okLayoutData.widthHint = buttonWidth;
 		
-		if (Util.isCarbon()) {
-			// On Mac OS X Carbon the default button must be the right-most button
+		if (openComposite.getDisplay().getDismissalAlignment() == SWT.RIGHT) {
+			// Make the default button the right-most button.
 			// See also special code in org.eclipse.jface.dialogs.Dialog#initializeBounds()
 			openComposite.moveBelow(null);
-			okLayoutData.horizontalIndent = -10;
+			if (Util.isCarbon()) {
+				okLayoutData.horizontalIndent = -10;
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#initializeBounds()
+	 * @since 3.5
+	 */
+	protected void initializeBounds() {
+		super.initializeBounds();
+		if (openWithButton.getDisplay().getDismissalAlignment() == SWT.RIGHT) {
+			// Move the menu button back to the right of the default button.
+			if (!Util.isMac()) {
+				// On the Mac, the round buttons and the big padding would destroy the visual coherence of the split button.
+				openWithButton.moveBelow(null);
+				openWithButton.getParent().layout();
+			}
 		}
 	}
 

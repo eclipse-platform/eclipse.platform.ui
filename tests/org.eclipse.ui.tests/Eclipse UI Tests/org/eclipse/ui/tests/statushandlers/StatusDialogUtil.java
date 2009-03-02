@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -121,8 +121,8 @@ public class StatusDialogUtil {
 		if(c == null || c.isDisposed()){
 			return null;
 		}
-		// Mac renders Ok button as the last one
-		if(Platform.getOS().equals("macosx")){
+		// retrieve buttons based on dismissal alignment
+		if(c.getDisplay().getDismissalAlignment() == SWT.RIGHT){
 			return (Button) c.getChildren()[3];
 		}
 		return (Button) c.getChildren()[2];
@@ -133,8 +133,8 @@ public class StatusDialogUtil {
 		if(c == null || c.isDisposed()){
 			return null;
 		}
-		// Mac renders Ok button as the last one
-		if(Platform.getOS().equals("macosx")){
+		// retrieve buttons based on dismissal alignment
+		if(c.getDisplay().getDismissalAlignment() == SWT.RIGHT){
 			return (Button) c.getChildren()[2];
 		}
 		return (Button) c.getChildren()[3];
