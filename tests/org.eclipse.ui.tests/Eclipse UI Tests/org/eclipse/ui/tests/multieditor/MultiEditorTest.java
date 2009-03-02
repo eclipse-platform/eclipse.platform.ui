@@ -261,7 +261,7 @@ public class MultiEditorTest extends UITestCase {
 	 * @throws Throwable
 	 *             on an error
 	 */
-	public void testTrackOutline() throws Throwable {
+	public void xtestTrackOutline() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST02_TXT,
 				TEST04_PROPERTIES, BUILD_XML, TEST03_ETEST };
 
