@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 256543, 213893, 262320, 262946, 264286
+ *     Matthew Hall - bugs 256543, 213893, 262320, 262946, 264286, 266563
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -25,6 +25,7 @@ import org.eclipse.jface.internal.databinding.swt.WidgetEditableProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetImageProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetItemsProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetMaximumProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetMessageProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetMinimumProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetSingleSelectionIndexProperty;
@@ -51,6 +52,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.Widget;
@@ -174,6 +176,17 @@ public class WidgetProperties {
 	 */
 	public static IWidgetValueProperty maximum() {
 		return new WidgetMaximumProperty();
+	}
+
+	/**
+	 * Returns a value property for observing the message of a {@link Text} or
+	 * {@link ToolTip}.
+	 * 
+	 * @return a value property for observing the message of a {@link Text} or
+	 *         {@link ToolTip}.
+	 */
+	public static IWidgetValueProperty message() {
+		return new WidgetMessageProperty();
 	}
 
 	/**

@@ -10,7 +10,7 @@
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
  *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734,
- *                    195222, 256543, 213893, 262320, 264286
+ *                    195222, 256543, 213893, 262320, 264286, 266563
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *     Tom Schindl - bug 246462
@@ -304,6 +304,23 @@ public class SWTObservables {
 	 */
 	public static ISWTObservableValue observeText(Control control) {
 		return observeText((Widget) control);
+	}
+
+	/**
+	 * Returns an observable observing the message attribute of the provided
+	 * <code>widget</code>. the supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Text</li>
+	 * <li>org.eclipse.swt.widgets.ToolTip</li>
+	 * <ul>
+	 * 
+	 * @param widget
+	 * @return an observable observing the message attribute of the provided
+	 *         <code>widget</code>.
+	 * @since 1.3
+	 */
+	public static ISWTObservableValue observeMessage(Widget widget) {
+		return WidgetProperties.message().observe(widget);
 	}
 
 	/**
