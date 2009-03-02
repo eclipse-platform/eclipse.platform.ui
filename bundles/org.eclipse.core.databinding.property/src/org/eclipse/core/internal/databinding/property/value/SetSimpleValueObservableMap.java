@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 262269
+ *     Matthew Hall - bugs 262269, 266754
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;

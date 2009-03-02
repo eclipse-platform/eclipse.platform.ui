@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247394)
+ *     Matthew Hall - bug 266754
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.map;
