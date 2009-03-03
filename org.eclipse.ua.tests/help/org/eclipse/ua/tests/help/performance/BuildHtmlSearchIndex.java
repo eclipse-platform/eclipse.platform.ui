@@ -72,8 +72,8 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 		indexProviders = null;
 	}
 	
-	public void testHtmlSearchIndexCreate() throws Exception {
-		tagAsGlobalSummary("HTML Search Index", Dimension.ELAPSED_PROCESS);
+	public void testCreateHtmlSearchIndex() throws Exception {
+		tagAsGlobalSummary("Create HTML Search Index", Dimension.ELAPSED_PROCESS);
 
 		// warm-up
 		for (int i=0;i<3;++i) {
