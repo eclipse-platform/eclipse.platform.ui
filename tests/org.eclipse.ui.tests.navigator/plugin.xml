@@ -58,7 +58,7 @@
             class="org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider"
             id="org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider"> 
       	 </actionProvider>
-        <commonSorter
+         <commonSorter
               class="org.eclipse.ui.tests.navigator.extension.TestDataSorter"
               id="org.eclipse.ui.tests.navigator.commonSorter">
            <parentExpression>
@@ -67,18 +67,18 @@
                  <instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
               </or>
            </parentExpression>
-        </commonSorter>
-        <!-- The following two sorters are used to test the INavigatorSorterService -->
-       <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
-          <parentExpression>
-             <instanceof value="org.eclipse.ui.navigator.INavigatorSorterService"/>
-          </parentExpression>
-       </commonSorter> 
-       <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
-          <parentExpression>
-             <instanceof value="org.eclipse.ui.navigator.INavigatorSorterService"/>
-          </parentExpression>
-       </commonSorter>
+          </commonSorter>
+          <!-- The following two sorters are used to test the INavigatorSorterService -->
+       	  <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
+            <parentExpression>
+               <instanceof value="org.eclipse.ui.navigator.INavigatorSorterService"/>
+            </parentExpression>
+       	  </commonSorter> 
+       	  <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
+            <parentExpression>
+               <instanceof value="org.eclipse.ui.navigator.INavigatorSorterService"/>
+            </parentExpression>
+       	  </commonSorter>
 	      <actionProvider
 	            class="org.eclipse.ui.tests.navigator.extension.TestActionProvider"
 	            id="org.eclipse.ui.tests.navigator.extension.TestActionProvider"
@@ -91,6 +91,7 @@
 	         </enablement>
 	      </actionProvider>
       </navigatorContent>
+      
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
             dependsOn="org.eclipse.ui.tests.navigator.extension.TestActionProvider"
@@ -115,15 +116,7 @@
             <instanceof value="org.eclipse.core.resources.IResource"/>
          </enablement>
       </actionProvider>
-      <navigatorContent
-            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"
-            id="org.eclipse.ui.tests.navigator.testContent2"
-            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
-            name="Test Navigator Extension [Programmatic Binding]">
-	     <triggerPoints>
-            <instanceof value="org.eclipse.core.resources.IProject"/>
-         </triggerPoints>            
-      </navigatorContent>
+      
       <commonFilter
             class="org.eclipse.ui.tests.navigator.extension.TestItemsThatEndIn3"
             description="Hide TestItem objects that end in the number &quot;3&quot;"
@@ -131,6 +124,7 @@
             name="TestItems that end with &quot;3&quot;"
             activeByDefault="true"
             /> 
+
       <commonFilter
             description="Hides all instances of Test Item"
             id="org.eclipse.ui.tests.navigator.filters.AllTestItems"
@@ -139,6 +133,7 @@
             <instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
          </filterExpression>
       </commonFilter>      
+
       <commonFilter
             class="org.eclipse.ui.tests.navigator.extension.TestItemsThatEndIn3"
             description="This filter specifies a class an an expression; selecting it should result in a warning in the log."
@@ -148,6 +143,7 @@
             <instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
          </filterExpression>
       </commonFilter>
+
       <commonFilter
             id="org.eclipse.ui.tests.navigator.filters.NoDescriptionFilter"
             name="No Description Filter">
@@ -155,6 +151,7 @@
             <instanceof value="org.eclipse.ui.navigator.INavigatorContentService"/>
          </filterExpression>
       </commonFilter>
+
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.TestOverrideableActionProvider"
             id="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
@@ -165,6 +162,7 @@
             </instanceof>
          </enablement>
       </actionProvider>
+
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.TestOverrideableActionProvider"
             id="org.eclipse.ui.tests.navigator.extension.TestOverridINGActionProvider1"
@@ -176,7 +174,8 @@
             </instanceof>
          </enablement>
       </actionProvider>
-            <actionProvider
+
+      <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.TestOverrideableActionProvider"
             id="org.eclipse.ui.tests.navigator.extension.TestOverridINGActionProvider2"
             overrides="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
@@ -189,6 +188,7 @@
             </and> 
          </enablement>
       </actionProvider>
+
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
             id="org.eclipse.ui.tests.navigator.extension.TestOverridINGAndDependentActionProvider1"
@@ -201,8 +201,19 @@
             </instanceof>
          </enablement>
       </actionProvider>
+
+      <navigatorContent
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"
+            id="org.eclipse.ui.tests.navigator.testContent2"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            name="Test Navigator Extension [Programmatic Binding]">
+	     <triggerPoints>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </triggerPoints>            
+      </navigatorContent>
+
       <navigatorContent 
-            id="org.eclipse.ui.tests.navigator.testDropCopy" 
+            id="org.eclipse.ui.tests.navigator.testContentDropCopy" 
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
    			labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"			
             name="Change drop to copy (from move)"
@@ -224,8 +235,9 @@
            </possibleDropTargets>
          </dropAssistant> 
 	  </navigatorContent>      
+
       <navigatorContent 
-            id="org.eclipse.ui.tests.navigator.testHasChildren" 
+            id="org.eclipse.ui.tests.navigator.testContentHasChildren" 
             name="Dat File Content Extension"
             contentProvider="org.eclipse.ui.tests.navigator.extension.DatContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
@@ -242,8 +254,9 @@
          <possibleChildren> 
          </possibleChildren> 
 	  </navigatorContent>      
+
       <navigatorContent 
-            id="org.eclipse.ui.tests.navigator.testOverriddenContent1" 
+            id="org.eclipse.ui.tests.navigator.testContentOverridden1" 
             name="Test Content 1"
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderRed"
@@ -255,7 +268,7 @@
          </triggerPoints>
 	  </navigatorContent>      
       <navigatorContent 
-            id="org.eclipse.ui.tests.navigator.testOverriddenContent2" 
+            id="org.eclipse.ui.tests.navigator.testContentOverridden2" 
             name="Test Content 2"
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
@@ -266,8 +279,9 @@
             </instanceof>
          </triggerPoints>
 	  </navigatorContent>      
+
       <navigatorContent 
-            id="org.eclipse.ui.tests.navigator.testOverride1" 
+            id="org.eclipse.ui.tests.navigator.testContentOverride1" 
             name="Override 1"
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderGreen"
@@ -277,10 +291,11 @@
                   value="org.eclipse.core.resources.IResource">
             </instanceof>
          </triggerPoints>
-		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testOverriddenContent1"/>
+		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testContentOverridden1"/>
 	  </navigatorContent>      
+
       <navigatorContent 
-            id="org.eclipse.ui.tests.navigator.testOverride2" 
+            id="org.eclipse.ui.tests.navigator.testContentOverride2" 
             name="Override 2"
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan"
@@ -290,10 +305,11 @@
                   value="org.eclipse.core.resources.IResource">
             </instanceof>
          </triggerPoints>
-		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testOverriddenContent2"/>
+		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testContentOverridden2"/>
 	  </navigatorContent>      
+
       <navigatorContent
-            id="org.eclipse.ui.tests.navigator.testSorterContent"
+            id="org.eclipse.ui.tests.navigator.testContentSorter"
             contentProvider="org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider"
             labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
             name="Test Navigator Extension [Sorter NPE test]">
@@ -308,161 +324,7 @@
           </parentExpression>
        </commonSorter>
       </navigatorContent>
-   </extension>
 
-   <extension
-         point="org.eclipse.ui.navigator.viewer">
-      <viewer
-            popupMenuId="org.eclipse.ui.tests.navigator.TestView#PopupMenu"
-            viewerId="org.eclipse.ui.tests.navigator.TestView">
-         <options>
-            <property
-                  name="org.eclipse.ui.navigator.hideLinkWithEditorAction"
-                  value="true"/> 
-            <property
-                  name="org.eclipse.ui.navigator.hideCollapseAllAction"
-                  value="true"/>  
-            <property
-                  name="org.eclipse.ui.navigator.enforceHasChildren"
-                  value="true"/> 
-         </options>
-      </viewer>
-      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
-         <includes>
-            <contentExtension pattern="org.eclipse.ui.tests.navigator.testContent"/>
-            <contentExtension pattern="org.eclipse.ui.tests.navigator.testHasChildren"/>            
-            <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
-            <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
-            <!-- pick up the resource filters for free --> 
-            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
-            <actionExtension
-                  pattern="org.eclipse.ui.tests.navigator.extension.*">
-            </actionExtension> 
-         </includes>
-      </viewerContentBinding>
-
-      <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
-         <includes>
-            <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
-            <actionExtension pattern="org.eclipse.ui.navigator.resources.*"/>
-         </includes>
-      </viewerActionBinding>
-      <dragAssistant
-            class="org.eclipse.ui.tests.navigator.extension.TestDragAssistant"
-            viewerId="org.eclipse.ui.tests.navigator.TestView"/>
-      <viewer
-            viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
-         <options>
-            <property
-                  name="org.eclipse.ui.navigator.hideAvailableExtensionsTab"
-                  value="true"/>
-         </options>
-          <popupMenu
-                allowsPlatformContributions="true"
-                id="org.eclipse.ui.tests.navigator.TestView#PopupMenu"/>  
-      </viewer>
-      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
-          <includes>
-       	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
-	          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
-           <contentExtension pattern="org.eclipse.ui.navigator.resources.linkHelper"/>
-           <contentExtension pattern="org.eclipse.ui.navigator.resources.workingSets"/>
-          </includes>
-      </viewerContentBinding>
-      <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
-         <includes>
-             <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
-         </includes>
-      </viewerActionBinding>
-      <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>      
-      <viewer viewerId="org.eclipse.ui.tests.navigator.PipelineTestView"/>      
-      <viewer viewerId="org.eclipse.ui.tests.navigator.OverrideTestView"/>      
-      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.OverrideTestView">
-          <includes>
-       	      <contentExtension pattern="org.eclipse.ui.tests.navigator.testOverride1" />		       	      
-       	      <contentExtension pattern="org.eclipse.ui.tests.navigator.testOverriddenContent1" />		       	      
-          </includes>
-      </viewerContentBinding>
-   </extension>
- 
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"
-            class="org.eclipse.ui.tests.navigator.extension.TestExtensionAdapterFactory">
-         <adapter type="org.eclipse.core.resources.IResource"/>
-         <adapter type="org.eclipse.core.resources.IFile"/>
-      </factory>
-   </extension>
-   
-   <!-- Verify decorator extension: Adds ">>" to Test Items that end in "3" --> 
-   <extension
-         point="org.eclipse.ui.decorators">
-      <decorator
-            class="org.eclipse.ui.tests.navigator.extension.TestLabelDecorator"
-            id="org.eclipse.ui.tests.navigator.threeDecorator"
-            label="Items that end in 3 decorator"
-            lightweight="false"
-            state="true">
-         <enablement>
-            <objectClass name="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
-         </enablement>
-      </decorator>
-   </extension>
-   <extension
-         point="org.eclipse.ui.activities">
-      <activityPatternBinding
-            activityId="org.eclipse.ui.tests.navigator.testActivity"
-            pattern="org\.eclipse\.ui\.tests\.navigator.*"/>
-      <activity
-            description="Common Navigator Test Activity"
-            id="org.eclipse.ui.tests.navigator.testActivity"
-            name="CN Test">
-      </activity>
-      <category
-            id="org.eclipse.ui.tests.navigator.category1"
-            name="CN Test Category">
-      </category>
-      <categoryActivityBinding
-            activityId="org.eclipse.ui.tests.navigator.testActivity"
-            categoryId="org.eclipse.ui.tests.navigator.category1">
-      </categoryActivityBinding> 
-   </extension>
-   
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
-            id="org.eclipse.ui.tests.navigator.SampleNewWizard"
-            name="Test CNF New Wizard1 (Does Nothing)"/>
-   </extension>
-   
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
-            id="org.eclipse.ui.tests.navigator.SampleNewWizard2"
-            name="Test CNF New Wizard2 (Does Nothing)"/>
-   </extension>
-   
-   <extension
-         point="org.eclipse.ui.importWizards">
-      <wizard
-            class="org.eclipse.ui.tests.navigator.wizards.ImportWizard1"
-            id="org.eclipse.ui.tests.navigator.SampleImportWizard"
-            name="Test CNF Import Wizard  (Does Nothing)"/>
-   </extension>
-  
-   <extension
-         point="org.eclipse.ui.exportWizards">
-      <wizard
-            class="org.eclipse.ui.tests.navigator.wizards.ExportWizard1"
-            id="org.eclipse.ui.tests.navigator.SampleExportWizard"
-            name="Test CNF Export Wizard  (Does Nothing)"/>
-   </extension>
-
-	<extension
-	      point="org.eclipse.ui.navigator.navigatorContent"> 
       <commonWizard
             associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
             menuGroupId="org.eclipse.ui.tests.navigator"
@@ -522,5 +384,160 @@
          </enablement>
       </commonWizard>
 
-   </extension> 
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewer
+            popupMenuId="org.eclipse.ui.tests.navigator.TestView#PopupMenu"
+            viewerId="org.eclipse.ui.tests.navigator.TestView">
+         <options>
+            <property
+                  name="org.eclipse.ui.navigator.hideLinkWithEditorAction"
+                  value="true"/> 
+            <property
+                  name="org.eclipse.ui.navigator.hideCollapseAllAction"
+                  value="true"/>  
+            <property
+                  name="org.eclipse.ui.navigator.enforceHasChildren"
+                  value="true"/> 
+         </options>
+      </viewer>
+
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
+         <includes>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.testContent"/>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.testContentHasChildren"/>            
+            <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
+            <!-- pick up the resource filters for free --> 
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
+            <actionExtension
+                  pattern="org.eclipse.ui.tests.navigator.extension.*">
+            </actionExtension> 
+         </includes>
+      </viewerContentBinding>
+
+      <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
+         <includes>
+            <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
+            <actionExtension pattern="org.eclipse.ui.navigator.resources.*"/>
+         </includes>
+      </viewerActionBinding>
+
+      <dragAssistant
+            class="org.eclipse.ui.tests.navigator.extension.TestDragAssistant"
+            viewerId="org.eclipse.ui.tests.navigator.TestView"/>
+
+      <viewer
+            viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
+         <options>
+            <property
+                  name="org.eclipse.ui.navigator.hideAvailableExtensionsTab"
+                  value="true"/>
+         </options>
+          <popupMenu
+                allowsPlatformContributions="true"
+                id="org.eclipse.ui.tests.navigator.TestView#PopupMenu"/>  
+      </viewer>
+
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
+          <includes>
+       	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
+	          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
+           <contentExtension pattern="org.eclipse.ui.navigator.resources.linkHelper"/>
+           <contentExtension pattern="org.eclipse.ui.navigator.resources.workingSets"/>
+          </includes>
+      </viewerContentBinding>
+
+      <viewerActionBinding viewerId="org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView">
+         <includes>
+             <actionExtension pattern="org.eclipse.ui.navigator.resources.*" />
+         </includes>
+      </viewerActionBinding>
+
+      <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>      
+      <viewer viewerId="org.eclipse.ui.tests.navigator.PipelineTestView"/>      
+      <viewer viewerId="org.eclipse.ui.tests.navigator.OverrideTestView"/>      
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.OverrideTestView">
+          <includes>
+       	      <contentExtension pattern="org.eclipse.ui.tests.navigator.testContentOverride1" />		       	      
+       	      <contentExtension pattern="org.eclipse.ui.tests.navigator.testContentOverridden1" />		       	      
+          </includes>
+      </viewerContentBinding>
+
+   </extension>
+ 
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"
+            class="org.eclipse.ui.tests.navigator.extension.TestExtensionAdapterFactory">
+         <adapter type="org.eclipse.core.resources.IResource"/>
+         <adapter type="org.eclipse.core.resources.IFile"/>
+      </factory>
+   </extension>
+   
+   <!-- Verify decorator extension: Adds ">>" to Test Items that end in "3" --> 
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="org.eclipse.ui.tests.navigator.extension.TestLabelDecorator"
+            id="org.eclipse.ui.tests.navigator.threeDecorator"
+            label="Items that end in 3 decorator"
+            lightweight="false"
+            state="true">
+         <enablement>
+            <objectClass name="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+         </enablement>
+      </decorator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.activities">
+      <activityPatternBinding
+            activityId="org.eclipse.ui.tests.navigator.testActivity"
+            pattern="org\.eclipse\.ui\.tests\.navigator.*"/>
+      <activity
+            description="Common Navigator Test Activity"
+            id="org.eclipse.ui.tests.navigator.testActivity"
+            name="CN Test">
+      </activity>
+      <category
+            id="org.eclipse.ui.tests.navigator.category1"
+            name="CN Test Category">
+      </category>
+      <categoryActivityBinding
+            activityId="org.eclipse.ui.tests.navigator.testActivity"
+            categoryId="org.eclipse.ui.tests.navigator.category1">
+      </categoryActivityBinding> 
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
+            id="org.eclipse.ui.tests.navigator.SampleNewWizard"
+            name="Test CNF New Wizard1 (Does Nothing)"/>
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
+            id="org.eclipse.ui.tests.navigator.SampleNewWizard2"
+            name="Test CNF New Wizard2 (Does Nothing)"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.ImportWizard1"
+            id="org.eclipse.ui.tests.navigator.SampleImportWizard"
+            name="Test CNF Import Wizard  (Does Nothing)"/>
+   </extension>
+  
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.ExportWizard1"
+            id="org.eclipse.ui.tests.navigator.SampleExportWizard"
+            name="Test CNF Export Wizard  (Does Nothing)"/>
+   </extension>
+
 </plugin>

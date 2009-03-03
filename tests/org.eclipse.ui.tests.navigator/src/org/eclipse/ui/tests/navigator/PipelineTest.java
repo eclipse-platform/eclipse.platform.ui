@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TreeItem;
 public class PipelineTest extends NavigatorTestBase {
 
 	public PipelineTest() {
-		_navigatorInstanceId = "org.eclipse.ui.tests.navigator.PipelineTestView";
+		_navigatorInstanceId = TEST_VIEWER_PIPELINE;
 	}
 
 	public void testNavigatorRootContents() throws Exception {

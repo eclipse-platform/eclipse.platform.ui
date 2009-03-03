@@ -30,8 +30,6 @@ public class ActivityTest extends NavigatorTestBase {
 		_navigatorInstanceId = TEST_VIEWER;
 	}
 
-	protected static final String ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
-
 	private static final boolean DEBUG = false;
 
 	protected boolean verifyMenu(IStructuredSelection sel, String item) {
@@ -77,7 +75,7 @@ public class ActivityTest extends NavigatorTestBase {
 
 		Set newIds = new HashSet();
 		newIds.addAll(ids);
-		newIds.add(ACTIVITY);
+		newIds.add(TEST_ACTIVITY);
 		actSupport.setEnabledActivityIds(newIds);
 
 		ids = actSupport.getActivityManager().getEnabledActivityIds();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,110 +10,50 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
-import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
-import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
-public class INavigatorContentServiceTests extends TestCase {
+public class INavigatorContentServiceTests extends NavigatorTestBase {
 
-	public static final String COMMON_NAVIGATOR_INSTANCE_ID = "org.eclipse.ui.tests.navigator.TestView";
 
-	public static final String TEST_EXTENSION_ID = "org.eclipse.ui.tests.navigator.testContent";
+	public INavigatorContentServiceTests() {
+		_navigatorInstanceId = TEST_VIEWER;
+		
+	}
 	
-	public static final String ENFORCE_HASCHILDREN_EXTENSION_ID = "org.eclipse.ui.tests.navigator.testHasChildren";
-
-	public static final String TEST_EXTENSION_2_ID = "org.eclipse.ui.tests.navigator.testContent2";
-
-	public static final String RESOURCE_EXTENSION_ID = "org.eclipse.ui.navigator.resourceContent";
-
-	private final Map expectedChildren = new HashMap();
-
-	private IProject project;
-
-	private INavigatorContentService contentService;
-
-	private CommonViewer viewer;
-
-	protected void setUp() throws Exception {
-
-		TestWorkspace.init();
-
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		project = root.getProject("Test");
-		Map projectMap = new HashMap();
-
-		expectedChildren.put(project, (projectMap = new HashMap()));
-
-		projectMap.put(project.getFolder("src"), new HashMap());
-		projectMap.put(project.getFolder("bin"), new HashMap());
-		projectMap.put(project.getFile(".project"), null);
-		projectMap.put(project.getFile(".classpath"), null);
-		projectMap.put(project.getFile("model.properties"), null);
-
-		EditorTestHelper.showView(COMMON_NAVIGATOR_INSTANCE_ID, true);
-
-		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		IWorkbenchPage activePage = activeWindow.getActivePage();
-
-		IViewPart commonNavigator = activePage
-				.findView(COMMON_NAVIGATOR_INSTANCE_ID);
-
-		viewer = (CommonViewer) commonNavigator.getAdapter(CommonViewer.class);
-		viewer.expandAll();
-
-		contentService = viewer.getNavigatorContentService();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 	public void testFindValidExtensions() {
 
-		contentService
+		_contentService
 				.getActivationService()
 				.activateExtensions(
-						new String[] { TEST_EXTENSION_ID, RESOURCE_EXTENSION_ID },
+						new String[] { TEST_CONTENT, COMMON_NAVIGATOR_RESOURCE_EXT },
 						true);
 
-		ITreeContentProvider contentServiceContentProvider = contentService
+		ITreeContentProvider contentServiceContentProvider = _contentService
 				.createCommonContentProvider();
 
-		ILabelProvider contentServiceLabelProvider = contentService
+		ILabelProvider contentServiceLabelProvider = _contentService
 				.createCommonLabelProvider();
 
-		ITreeContentProvider[] rootContentProviders = ((NavigatorContentService) contentService)
+		ITreeContentProvider[] rootContentProviders = ((NavigatorContentService) _contentService)
 				.findRootContentProviders(ResourcesPlugin.getWorkspace()
 						.getRoot());
 
 		assertEquals("Ensure there is only one root content provider.", 1,
 				rootContentProviders.length);
 
-		Set projectContentExtensions = contentService
-				.findContentExtensionsByTriggerPoint(project);
+		Set projectContentExtensions = _contentService
+				.findContentExtensionsByTriggerPoint(_project);
 
 		assertEquals("Ensure there are two content providers for an IProject.",
 				2, projectContentExtensions.size());
@@ -127,7 +67,7 @@ public class INavigatorContentServiceTests extends TestCase {
 				TestContentProvider testContentProvider = (TestContentProvider) ext
 						.getContentProvider();
 				Object[] projectChildren = testContentProvider
-						.getChildren(project);
+						.getChildren(_project);
 				assertEquals(
 						"There should be one test-type child of the project.",
 						1, projectChildren.length);
@@ -148,22 +88,22 @@ public class INavigatorContentServiceTests extends TestCase {
 
 	public void testDeactivateTestExtension() {
 
-		contentService.getActivationService().activateExtensions(
-				new String[] { RESOURCE_EXTENSION_ID }, true);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT }, true);
 
-		contentService.createCommonContentProvider();
+		_contentService.createCommonContentProvider();
 
-		contentService.createCommonLabelProvider();
+		_contentService.createCommonLabelProvider();
 
-		Set rootContentProviders = contentService
+		Set rootContentProviders = _contentService
 				.findRootContentExtensions(ResourcesPlugin.getWorkspace()
 						.getRoot());
 
 		assertEquals("Ensure there is only one root content provider.", 1,
 				rootContentProviders.size());
 
-		Set projectContentExtensions = contentService
-				.findContentExtensionsByTriggerPoint(project);
+		Set projectContentExtensions = _contentService
+				.findContentExtensionsByTriggerPoint(_project);
 
 		assertEquals("Ensure there is one content provider for an IProject.",
 				1, projectContentExtensions.size());
@@ -173,34 +113,34 @@ public class INavigatorContentServiceTests extends TestCase {
 	public void testBindTestExtension() {
 
 		INavigatorContentService contentServiceWithProgrammaticBindings = NavigatorContentServiceFactory.INSTANCE
-				.createContentService(COMMON_NAVIGATOR_INSTANCE_ID);
+				.createContentService(TEST_VIEWER);
 		INavigatorContentDescriptor[] boundDescriptors = contentServiceWithProgrammaticBindings
-				.bindExtensions(new String[] { TEST_EXTENSION_2_ID }, false);
+				.bindExtensions(new String[] { TEST_CONTENT2 }, false);
 		contentServiceWithProgrammaticBindings
 				.getActivationService()
 				.activateExtensions(
-						new String[] { RESOURCE_EXTENSION_ID,
-								TEST_EXTENSION_ID, TEST_EXTENSION_2_ID }, false);
+						new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
+								TEST_CONTENT, TEST_CONTENT2 }, false);
 
 		assertEquals("One descriptor should have been returned.", 1,
 				boundDescriptors.length);
 
 		assertEquals(
 				"The declarative content service should have one fewer visible extension ids than the one created programmatically.",
-				contentService.getVisibleExtensionIds().length + 1,
+				_contentService.getVisibleExtensionIds().length + 1,
 				contentServiceWithProgrammaticBindings.getVisibleExtensionIds().length);
 
 		INavigatorContentDescriptor[] visibleDescriptors = contentServiceWithProgrammaticBindings
 				.getVisibleExtensions();
 		boolean found = false;
 		for (int i = 0; i < visibleDescriptors.length; i++)
-			if (TEST_EXTENSION_2_ID.equals(visibleDescriptors[i].getId()))
+			if (TEST_CONTENT2.equals(visibleDescriptors[i].getId()))
 				found = true;
 		assertTrue("The programmatically bound extension should be bound.",
 				found);
 
 		Set enabledDescriptors = contentServiceWithProgrammaticBindings
-				.findContentExtensionsByTriggerPoint(project);
+				.findContentExtensionsByTriggerPoint(_project);
 
 		assertEquals("There should be a three extensions.", 3,
 				enabledDescriptors.size());
@@ -208,40 +148,40 @@ public class INavigatorContentServiceTests extends TestCase {
 	}
 
 	public void testTestExtensionVisibility() {
-		assertTrue("The test extension should be visible.", contentService
+		assertTrue("The test extension should be visible.", _contentService
 				.getViewerDescriptor().isVisibleContentExtension(
-						TEST_EXTENSION_ID));
+						TEST_CONTENT));
 	}
 
 	public void testResourceExtensionVisibility() {
-		assertTrue("The test extension should be visible.", contentService
+		assertTrue("The test extension should be visible.", _contentService
 				.getViewerDescriptor().isVisibleContentExtension(
-						RESOURCE_EXTENSION_ID));
+						COMMON_NAVIGATOR_RESOURCE_EXT));
 	}
 
 	public void testVisibleExtensionIds() {
-		String[] visibleIds = contentService.getVisibleExtensionIds();
+		String[] visibleIds = _contentService.getVisibleExtensionIds();
 
 		assertEquals("There should be three visible extensions.", 3,
 				visibleIds.length);
 
 		for (int i = 0; i < visibleIds.length; i++) {
-			if (!TEST_EXTENSION_ID.equals(visibleIds[i])
-					&& !RESOURCE_EXTENSION_ID.equals(visibleIds[i])
-					&& !ENFORCE_HASCHILDREN_EXTENSION_ID.equals(visibleIds[i])) {
+			if (!TEST_CONTENT.equals(visibleIds[i])
+					&& !COMMON_NAVIGATOR_RESOURCE_EXT.equals(visibleIds[i])
+					&& !TEST_CONTENT_HAS_CHILDREN.equals(visibleIds[i])) {
 				assertTrue("The extension id is invalid:" + visibleIds[i],
 						false);
 			}
 		}
 
-		INavigatorContentDescriptor[] visibleDescriptors = contentService
+		INavigatorContentDescriptor[] visibleDescriptors = _contentService
 				.getVisibleExtensions();
 
 		for (int i = 0; i < visibleIds.length; i++) {
-			if (!TEST_EXTENSION_ID.equals(visibleDescriptors[i].getId())
-					&& !RESOURCE_EXTENSION_ID.equals(visibleDescriptors[i]
+			if (!TEST_CONTENT.equals(visibleDescriptors[i].getId())
+					&& !COMMON_NAVIGATOR_RESOURCE_EXT.equals(visibleDescriptors[i]
 							.getId())
-						&& !ENFORCE_HASCHILDREN_EXTENSION_ID.equals(visibleDescriptors[i].getId())) {
+						&& !TEST_CONTENT_HAS_CHILDREN.equals(visibleDescriptors[i].getId())) {
 				assertTrue("The extension id is invalid:"
 						+ visibleDescriptors[i].getId(), false);
 			}

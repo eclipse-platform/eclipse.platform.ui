@@ -31,10 +31,10 @@ public class SorterTest extends NavigatorTestBase {
 
 		TestResourceContentProvider._returnBadObject = true;
 
-		_contentService.bindExtensions(new String[] { TEST_SORTER_CONTENT },
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_SORTER },
 				false);
 		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_SORTER_CONTENT }, true);
+				new String[] { TEST_CONTENT_SORTER }, true);
 
 		refreshViewer();
 
@@ -61,10 +61,10 @@ public class SorterTest extends NavigatorTestBase {
 	// bug 231855 [CommonNavigator] CommonViewerSorter does not support isSorterProperty method of ViewerComparator 
 	public void testSorterProperty() throws Exception {
 
-		_contentService.bindExtensions(new String[] { TEST_SORTER_CONTENT },
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_SORTER },
 				false);
 		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_SORTER_CONTENT }, true);
+				new String[] { TEST_CONTENT_SORTER }, true);
 
 		refreshViewer();
 

@@ -107,10 +107,10 @@ public class DnDTest extends NavigatorTestBase {
 	// Bug 242265 Allow event to be available for validateDrop
 	public void testSetDragOperation() throws Exception {
 
-		_contentService.bindExtensions(new String[] { TEST_DROP_COPY_CONTENT },
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_DROP_COPY },
 				false);
 		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_DROP_COPY_CONTENT }, false);
+				new String[] { TEST_CONTENT_DROP_COPY }, false);
 
 		_viewer.expandToLevel(_p1, 3);
 

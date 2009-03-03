@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,24 +36,30 @@ import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
 public class NavigatorTestBase extends TestCase {
 
-	public static final String COMMON_NAVIGATOR_RESOURCE_EXT = "org.eclipse.ui.navigator.resourceContent"; //$NON-NLS-1$
+	public static final String COMMON_NAVIGATOR_RESOURCE_EXT = "org.eclipse.ui.navigator.resourceContent";
 
-	public static final String COMMON_NAVIGATOR_JAVA_EXT = "org.eclipse.jdt.java.ui.javaContent"; //$NON-NLS-1$
+	public static final String COMMON_NAVIGATOR_JAVA_EXT = "org.eclipse.jdt.java.ui.javaContent";
 
-	public static final String COMMON_NAVIGATOR_TEST_EXT = "org.eclipse.ui.tests.navigator.testContent"; //$NON-NLS-1$
-
+	
+	public static final String TEST_VIEWER = "org.eclipse.ui.tests.navigator.TestView";
+	public static final String TEST_VIEWER_PROGRAMMATIC = "org.eclipse.ui.tests.navigator.ProgrammaticTestView";
+	public static final String TEST_VIEWER_PIPELINE = "org.eclipse.ui.tests.navigator.PipelineTestView";
+	public static final String TEST_VIEWER_HIDE_EXTENSIONS = "org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView";
+	
 	public static final String TEST_CONTENT = "org.eclipse.ui.tests.navigator.testContent";
-	public static final String TEST_CONTENT1 = "org.eclipse.ui.tests.navigator.testOverriddenContent1";
-	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testOverriddenContent2";
-	public static final String TEST_OVERRIDE1 = "org.eclipse.ui.tests.navigator.testOverride1";
-	public static final String TEST_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testOverride2";
-	public static final String TEST_SORTER_CONTENT = "org.eclipse.ui.tests.navigator.testSorterContent";
+	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testContent2";	
+	public static final String TEST_CONTENT_OVERRIDDEN1 = "org.eclipse.ui.tests.navigator.testContentOverridden1";
+	public static final String TEST_CONTENT_OVERRIDDEN2 = "org.eclipse.ui.tests.navigator.testContentOverridden2";
+	public static final String TEST_CONTENT_OVERRIDE1 = "org.eclipse.ui.tests.navigator.testContentOverride1";
+	public static final String TEST_CONTENT_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testContentOverride2";
+	public static final String TEST_CONTENT_SORTER = "org.eclipse.ui.tests.navigator.testContentSorter";
 	public static final String TEST_CONTENT_REDLABEL = "org.eclipse.ui.tests.navigator.testContentRedLabel";
 	public static final String TEST_CONTENT_MISSINGLABEL = "org.eclipse.ui.tests.navigator.testContentMissingLabel";
+	public static final String TEST_CONTENT_DROP_COPY = "org.eclipse.ui.tests.navigator.testContentDropCopy";
+	public static final String TEST_CONTENT_HAS_CHILDREN = "org.eclipse.ui.tests.navigator.testContentHasChildren";
 
-	public static final String TEST_DROP_COPY_CONTENT = "org.eclipse.ui.tests.navigator.testDropCopy";
+	protected static final String TEST_ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
 
-	public static final String TEST_VIEWER = "org.eclipse.ui.tests.navigator.TestView";
 
 	protected String _navigatorInstanceId;
 

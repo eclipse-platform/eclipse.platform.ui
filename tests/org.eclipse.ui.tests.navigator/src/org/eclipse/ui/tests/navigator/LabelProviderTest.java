@@ -29,10 +29,10 @@ public class LabelProviderTest extends NavigatorTestBase {
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
 	public void testSimpleResFirst() throws Exception {
 
-		_contentService.bindExtensions(new String[] { TEST_CONTENT1,
-				TEST_OVERRIDE1 }, false);
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1,
+				TEST_CONTENT_OVERRIDE1 }, false);
 		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_OVERRIDE1, TEST_CONTENT1 }, true);
+				new String[] { TEST_CONTENT_OVERRIDE1, TEST_CONTENT_OVERRIDDEN1 }, true);
 
 		refreshViewer();
 
@@ -54,10 +54,10 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 		TestLabelProvider._blank = true;
 		
-		_contentService.bindExtensions(new String[] { TEST_CONTENT1,
-				TEST_OVERRIDE1 }, false);
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1,
+				TEST_CONTENT_OVERRIDE1 }, false);
 		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_OVERRIDE1, TEST_CONTENT1 }, true);
+				new String[] { TEST_CONTENT_OVERRIDE1, TEST_CONTENT_OVERRIDDEN1 }, true);
 
 		refreshViewer();
 
@@ -74,10 +74,10 @@ public class LabelProviderTest extends NavigatorTestBase {
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
 	public void testSimpleResLast() throws Exception {
 
-		_contentService.bindExtensions(new String[] { TEST_CONTENT2,
-				TEST_OVERRIDE2 }, false);
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
+				TEST_CONTENT_OVERRIDE2 }, false);
 		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_CONTENT2, TEST_OVERRIDE2 }, true);
+				new String[] { TEST_CONTENT_OVERRIDDEN2, TEST_CONTENT_OVERRIDE2 }, true);
 
 		refreshViewer();
 		TreeItem[] rootItems = _viewer.getTree().getItems();

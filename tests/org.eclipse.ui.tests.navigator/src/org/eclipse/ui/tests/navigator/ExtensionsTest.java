@@ -21,7 +21,7 @@ public class ExtensionsTest extends NavigatorTestBase {
 	private static final boolean DEBUG = false;
 
 	public ExtensionsTest() {
-		_navigatorInstanceId = "org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView";
+		_navigatorInstanceId = TEST_VIEWER_HIDE_EXTENSIONS;
 	}
 
 	class CFDialog extends CommonFilterSelectionDialog {
