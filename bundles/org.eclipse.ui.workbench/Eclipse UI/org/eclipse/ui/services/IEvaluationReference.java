@@ -17,16 +17,9 @@ import org.eclipse.ui.internal.services.IEvaluationResultCache;
 /**
  * A token representing a core expression and property change listener currently
  * working in the <code>IEvaluationService</code>.
- * <p>
- * Note:This is not meant to be implemented or extended by clients.
- * </p>
- * <p>
- * <strong>PROVISIONAL</strong>. This class or interface has been added as part
- * of a work in progress. There is a guarantee neither that this API will work
- * nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team. This might disappear in 3.4 M5.
- * </p>
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * @since 3.4
  */
 public interface IEvaluationReference extends IEvaluationResultCache {
