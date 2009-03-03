@@ -25,6 +25,7 @@ public class Bug_265810 extends ResourceTest {
 
 	protected final static String VARIABLE_NAME = "ROOT";
 	private final ArrayList toDelete = new ArrayList();
+	private List resourceDeltas = new ArrayList();
 
 	/**
 	 * Constructor for Bug_265810.
@@ -74,9 +75,9 @@ public class Bug_265810 extends ResourceTest {
 	}
 
 	public void testBug() {
-
+		
+		// create a project
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
-
 		try {
 			project.create(new NullProgressMonitor());
 			project.open(new NullProgressMonitor());
@@ -95,19 +96,8 @@ public class Bug_265810 extends ResourceTest {
 			fail("3.0", e);
 		}
 
-		// save the .project content
-		byte[] buffer = new byte[2048];
-		int bytesRead = 0;
-
-		try {
-			InputStream iS = project.getFile(".project").getContents();
-			bytesRead = iS.read(buffer);
-			iS.close();
-		} catch (IOException e) {
-			fail("4.0", e);
-		} catch (CoreException e) {
-			fail("4.1", e);
-		}
+		// save the .project [1] content
+		byte[] dotProject1 = storeDotProject(project);
 
 		// create a new linked file
 		final IFile newFile = project.getFile("newFile");
@@ -119,36 +109,15 @@ public class Bug_265810 extends ResourceTest {
 			fail("6.0", e);
 		}
 
-		final List resourceDeltas = new ArrayList();
-
-		IResourceChangeListener ll = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					event.getDelta().accept(new IResourceDeltaVisitor() {
-						public boolean visit(IResourceDelta delta) throws CoreException {
-							IResource resource = delta.getResource();
-							if (resource instanceof IFile && !resource.getName().equals(".project"))
-								resourceDeltas.add(delta);
-							if (delta.getAffectedChildren().length > 0)
-								return true;
-							return false;
-						}
-					});
-				} catch (CoreException e) {
-					fail("7.0", e);
-				}
-			}
-		};
+		// save the .project [2] content
+		byte[] dotProject2 = storeDotProject(project);
 
 		try {
+			resourceDeltas = new ArrayList();
 			getWorkspace().addResourceChangeListener(ll);
 
-			// restore .project
-			try {
-				project.getFile(".project").setContents(new ByteArrayInputStream(buffer, 0, bytesRead), IResource.NONE, new NullProgressMonitor());
-			} catch (CoreException e) {
-				fail("8.0", e);
-			}
+			// restore .project [1]
+			restoreDotProject(project, dotProject1);
 
 			assertEquals("9.0", 1, resourceDeltas.size());
 			assertEquals("9.1", newFile, ((IResourceDelta) resourceDeltas.get(0)).getResource());
@@ -156,5 +125,74 @@ public class Bug_265810 extends ResourceTest {
 		} finally {
 			getWorkspace().removeResourceChangeListener(ll);
 		}
+
+		// create newFile as a non-linked resource
+		try {
+			newFile.create(getContents("content"), IResource.NONE, new NullProgressMonitor());
+		} catch (CoreException e1) {
+			fail("10.0", e1);
+		}
+
+		try {
+			resourceDeltas = new ArrayList();
+			getWorkspace().addResourceChangeListener(ll);
+
+			// restore .project [2]
+			restoreDotProject(project, dotProject2);
+
+			assertEquals("11.0", 1, resourceDeltas.size());
+			assertEquals("11.1", newFile, ((IResourceDelta) resourceDeltas.get(0)).getResource());
+			assertEquals("11.2", IResourceDelta.REPLACED, ((IResourceDelta) resourceDeltas.get(0)).getFlags() & IResourceDelta.REPLACED);
+		} finally {
+			getWorkspace().removeResourceChangeListener(ll);
+		}
 	}
+
+	private byte[] storeDotProject(IProject project) {
+		byte[] buffer = new byte[2048];
+		int bytesRead = 0;
+		byte[] doProject = new byte[0];
+
+		try {
+			InputStream iS = project.getFile(".project").getContents();
+			bytesRead = iS.read(buffer);
+			iS.close();
+		} catch (IOException e) {
+			fail("storing dotProject failed", e);
+		} catch (CoreException e) {
+			fail("storing dotProject failed", e);
+		}
+
+		doProject = new byte[bytesRead];
+		System.arraycopy(buffer, 0, doProject, 0, bytesRead);
+
+		return doProject;
+	}
+
+	private void restoreDotProject(IProject project, byte[] dotProject) {
+		try {
+			project.getFile(".project").setContents(new ByteArrayInputStream(dotProject), IResource.NONE, new NullProgressMonitor());
+		} catch (CoreException e) {
+			fail("restoring dotProject failed", e);
+		}
+	}
+
+	IResourceChangeListener ll = new IResourceChangeListener() {
+		public void resourceChanged(IResourceChangeEvent event) {
+			try {
+				event.getDelta().accept(new IResourceDeltaVisitor() {
+					public boolean visit(IResourceDelta delta) throws CoreException {
+						IResource resource = delta.getResource();
+						if (resource instanceof IFile && !resource.getName().equals(".project"))
+							resourceDeltas.add(delta);
+						if (delta.getAffectedChildren().length > 0)
+							return true;
+						return false;
+					}
+				});
+			} catch (CoreException e) {
+				fail("listener failed", e);
+			}
+		}
+	};
 }
