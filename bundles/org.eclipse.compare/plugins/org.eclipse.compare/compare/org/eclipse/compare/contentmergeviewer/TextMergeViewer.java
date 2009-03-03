@@ -64,6 +64,10 @@ import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -241,7 +245,7 @@ import com.ibm.icu.text.MessageFormat;
  * @see IDocumentRange
  * @see org.eclipse.compare.IStreamContentAccessor
  */
-public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
+public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	
 	private static final String COPY_LEFT_TO_RIGHT_INDICATOR = ">"; //$NON-NLS-1$
 	private static final String COPY_RIGHT_TO_LEFT_INDICATOR = "<"; //$NON-NLS-1$
@@ -420,7 +424,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private DocumentMerger fMerger;
 	/** The current diff */
 	private Diff fCurrentDiff;
-	
+
+	// Bug 259362 - Update diffs after undo
+	private boolean copyOperationInProgress = false; 
+	private IUndoableOperation copyUndoable = null;
+	private IOperationHistoryListener operationHistoryListener;
+
 	/**
 	 * Preference key for highlighting current line.
 	 */
@@ -1363,7 +1372,15 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 */
 	public TextMergeViewer(Composite parent, int style, CompareConfiguration configuration) {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
-		
+
+		operationHistoryListener = new IOperationHistoryListener() {
+			public void historyNotification(OperationHistoryEvent event) {
+				TextMergeViewer.this.historyNotification(event);
+			}
+		};
+		OperationHistoryFactory.getOperationHistory()
+				.addOperationHistoryListener(operationHistoryListener);
+
 		fMerger = new DocumentMerger(new IDocumentMergerInput() {
 			public ITokenComparator createTokenComparator(String line) {
 				return TextMergeViewer.this.createTokenComparator(line);
@@ -1779,7 +1796,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 * @param event
 	 */
 	protected void handleDispose(DisposeEvent event) {
-		
+		OperationHistoryFactory.getOperationHistory()
+				.removeOperationHistoryListener(operationHistoryListener);
+
 		if (fHandlerService != null)
 			fHandlerService.dispose();
 		
@@ -4603,7 +4622,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			invalidateLines();
 			return;
 		}
-				
+		copyOperationInProgress = true;
 		if (leftToRight) {
 			if (fLeft.getEnabled()) {
 				// copy text
@@ -4631,8 +4650,27 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fLeftLineCount= fLeft.getLineCount();
 			setLeftDirty(true);
 		}
+		copyOperationInProgress = false;
 		update(false);
 		selectFirstDiff(true);
+	}
+
+	private void historyNotification(OperationHistoryEvent event) {
+		switch (event.getEventType()) {
+		case OperationHistoryEvent.OPERATION_ADDED:
+			if (copyOperationInProgress) {
+				copyUndoable = event.getOperation();
+			}
+			break;
+		case OperationHistoryEvent.UNDONE:
+			if (copyUndoable == event.getOperation()) {
+				update(false);
+			}
+			break;
+		default:
+			// Nothing to do
+			break;
+		}
 	}
 
 	private void copyDiffLeftToRight() {
