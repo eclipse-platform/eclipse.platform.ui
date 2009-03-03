@@ -89,7 +89,7 @@ public class Bug_265810 extends ResourceTest {
 		// the file should not exist yet
 		assertDoesNotExistInWorkspace("2.0", file);
 		try {
-			file.createLink(getRandomLocation(), IResource.NONE, null);
+			file.createLink(getRandomLocation(), IResource.NONE, new NullProgressMonitor());
 			file.setContents(getContents("contents for a file"), IResource.NONE, new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail("3.0", e);
@@ -103,10 +103,10 @@ public class Bug_265810 extends ResourceTest {
 			InputStream iS = project.getFile(".project").getContents();
 			bytesRead = iS.read(buffer);
 			iS.close();
-		} catch (IOException e3) {
-			fail("4.0", e3);
-		} catch (CoreException e3) {
-			fail("4.1", e3);
+		} catch (IOException e) {
+			fail("4.0", e);
+		} catch (CoreException e) {
+			fail("4.1", e);
 		}
 
 		// create a new linked file
@@ -114,9 +114,9 @@ public class Bug_265810 extends ResourceTest {
 		// the file should not exist yet
 		assertDoesNotExistInWorkspace("5.0", newFile);
 		try {
-			newFile.createLink(getTempDir().append("newFile"), IResource.NONE, new NullProgressMonitor());
-		} catch (CoreException e2) {
-			fail("6.0", e2);
+			newFile.createLink(getRandomLocation(), IResource.NONE, new NullProgressMonitor());
+		} catch (CoreException e) {
+			fail("6.0", e);
 		}
 
 		final List resourceDeltas = new ArrayList();
@@ -146,8 +146,8 @@ public class Bug_265810 extends ResourceTest {
 			// restore .project
 			try {
 				project.getFile(".project").setContents(new ByteArrayInputStream(buffer, 0, bytesRead), IResource.NONE, new NullProgressMonitor());
-			} catch (CoreException e1) {
-				fail("8.0", e1);
+			} catch (CoreException e) {
+				fail("8.0", e);
 			}
 
 			assertEquals("9.0", 1, resourceDeltas.size());
