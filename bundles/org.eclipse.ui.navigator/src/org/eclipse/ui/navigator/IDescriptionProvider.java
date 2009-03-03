@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,6 @@ package org.eclipse.ui.navigator;
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point) may 
  * choose to also implement this interface in order to provide text for 
  * the status bar at the bottom of the Eclipse window. 
- * 
- * <p>
- * Clients may implement this interface, but are not required to do so.
- * </p>
  * 
  * @since 3.2
  */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,10 +64,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * {@link WizardActionGroup#fillContextMenu(IMenuManager)}.</li>
  * </ol>
  * </p>
- * <p>
- * Clients may instantiate, but not subclass WizardActionGroup.
- * </p>
- * 
+ *
  * @see PlatformUI#getWorkbench()
  * @see IWorkbench#getNewWizardRegistry()
  * @see IWorkbench#getImportWizardRegistry()

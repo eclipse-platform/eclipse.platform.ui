@@ -35,7 +35,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
  * Navigator.
  * </p>
  * 
- * 
  * @since 3.2
  */
 public interface ICommonLabelProvider extends ILabelProvider, IMementoAware,
