@@ -69,8 +69,6 @@ import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.update.configurator.ConfiguratorUtils;
-import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
@@ -503,36 +501,27 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			for (Iterator it = wbAdvisor.getNewlyAddedBundleGroups().entrySet()
 					.iterator(); it.hasNext();) {
 				Map.Entry entry = (Map.Entry) it.next();
-				String versionedId = (String) entry.getKey();
-				String featureId = versionedId.substring(0, versionedId
-						.indexOf(':'));
 				AboutInfo info = (AboutInfo) entry.getValue();
 
 				if (info != null && info.getWelcomePageURL() != null) {
 					welcomeFeatures.add(info);
 					// activate the feature plug-in so it can run some install
 					// code
-					IPlatformConfiguration platformConfiguration = ConfiguratorUtils
-							.getCurrentPlatformConfiguration();
-					IPlatformConfiguration.IFeatureEntry feature = platformConfiguration
-							.findConfiguredFeatureEntry(featureId);
-					if (feature != null) {
-						String pi = feature.getFeaturePluginIdentifier();
-						if (pi != null) {
-							// Start the bundle if there is one
-							Bundle bundle = Platform.getBundle(pi);
-							if (bundle != null) {
-								try {
-									bundle.start(Bundle.START_TRANSIENT);
-								} catch (BundleException exception) {
-									StatusManager
-											.getManager()
-											.handle(
-													new Status(
-															IStatus.ERROR,
-															IDEApplication.PLUGIN_ID,
-															"Failed to load feature", exception));//$NON-NLS-1$
-								}
+					String pi = info.getBrandingBundleId();
+					if (pi != null) {
+						// Start the bundle if there is one
+						Bundle bundle = Platform.getBundle(pi);
+						if (bundle != null) {
+							try {
+								bundle.start(Bundle.START_TRANSIENT);
+							} catch (BundleException exception) {
+								StatusManager
+										.getManager()
+										.handle(
+												new Status(
+														IStatus.ERROR,
+														IDEApplication.PLUGIN_ID,
+														"Failed to load feature", exception));//$NON-NLS-1$
 							}
 						}
 					}

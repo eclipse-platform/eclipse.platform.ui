@@ -335,4 +335,14 @@ public final class AboutInfo {
         return productProperties == null ? null : productProperties
                 .getWindowImages();
     }
+    
+    public String getBrandingBundleId() {
+    	return bundleGroupProperties == null ? null : bundleGroupProperties
+                .getBrandingBundleId();
+    }
+    
+    public String getBrandingBundleVersion() {
+    	return bundleGroupProperties == null ? null : bundleGroupProperties
+                .getBrandingBundleVersion();
+    }
 }

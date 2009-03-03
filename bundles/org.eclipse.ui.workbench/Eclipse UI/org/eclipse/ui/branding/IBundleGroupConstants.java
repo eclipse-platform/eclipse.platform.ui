@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,4 +59,18 @@ public interface IBundleGroupConstants {
      * </p> 
      */
     public static final String LICENSE_HREF = "licenseHref"; //$NON-NLS-1$
+    
+	/**
+	 * The feature's branding bundle id (optional).
+	 * 
+	 * @since 3.5
+	 */
+	public static final String BRANDING_BUNDLE_ID = "brandingBundleId"; //$NON-NLS-1$
+
+	/**
+	 * The feature's branding bundle version (optional).
+	 * 
+	 * @since 3.5
+	 */
+	public static final String BRANDING_BUNDLE_VERSION = "brandingBundleVersion"; //$NON-NLS-1$
 }
