@@ -64,6 +64,10 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 
 	private ArrayList hidden;
 
+	private ListViewer visibleViewer;
+
+	private ListViewer nonVisibleViewer;
+
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -211,7 +215,7 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 		nonVisibleLabelData.top = new FormAttachment(0);
 		nonVisibleLabel.setLayoutData(nonVisibleLabelData);
 
-		final ListViewer visibleViewer = new ListViewer(columnsComposite,
+		visibleViewer = new ListViewer(columnsComposite,
 				SWT.BORDER);
 
 		FormData visibleViewerData = new FormData();
@@ -262,7 +266,7 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 
 		visibleViewer.setInput(this);
 
-		final ListViewer nonVisibleViewer = new ListViewer(columnsComposite,
+		nonVisibleViewer = new ListViewer(columnsComposite,
 				SWT.BORDER);
 
 		nonVisibleViewer.setLabelProvider(markerFieldLabelProvider());
@@ -454,6 +458,20 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 				.getDefaultBoolean(IDEInternalPreferences.USE_MARKER_LIMITS);
 		enablementButton.setSelection(checked);
 		setLimitEditorEnablement(editArea, checked);
+
+		Object[] visibleFields=extendedView.getBuilder().getGenerator().getInitialVisible();
+		Object[] allFields=extendedView.getBuilder().getGenerator().getAllFields();
+		visible.clear();
+		hidden.clear();
+		for (int i = 0; i < allFields.length; i++) {
+			hidden.add(allFields[i]);
+		}
+		for (int i = 0; i < visibleFields.length; i++) {
+			hidden.remove(visibleFields[i]);
+			visible.add(visibleFields[i]);
+		}
+		visibleViewer.refresh();
+		nonVisibleViewer.refresh();
 	}
 
 }
