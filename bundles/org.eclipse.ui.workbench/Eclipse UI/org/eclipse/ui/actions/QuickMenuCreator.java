@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
- * Abstract class that is capable of creating a context menu under the mouse
- * pointer.
+ * Abstract class that is capable of creating a context menu. It will try and
+ * open the menu close to the current selection, or under the mouse pointer if
+ * that's not possible.
  * 
  * @since 3.3
  */
@@ -41,10 +42,8 @@ public abstract class QuickMenuCreator {
 
 	private static final int CHAR_INDENT = 3;
 
-	private Menu quickMenu;
-
 	/**
-	 * Create the context menu.
+	 * Create and open the context menu.
 	 */
 	public void createMenu() {
 		final Display display = Display.getCurrent();
@@ -58,25 +57,26 @@ public abstract class QuickMenuCreator {
 
 		MenuManager menu = new MenuManager();
 		fillMenu(menu);
-		disposeMenu();
-		quickMenu = menu.createContextMenu(focus.getShell());
+		final Menu quickMenu = menu.createContextMenu(focus.getShell());
 		Point location = computeMenuLocation(focus);
 		if (location == null) {
 			return;
 		}
 		quickMenu.setLocation(location);
-		quickMenu.setVisible(true);
 		quickMenu.addListener(SWT.Hide, new Listener() {
 			public void handleEvent(Event event) {
 				if (!display.isDisposed()) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							QuickMenuCreator.this.disposeMenu();
+							if (!quickMenu.isDisposed()) {
+								quickMenu.dispose();
+							}
 						}
 					});
 				}
-			} 
+			}
 		});
+		quickMenu.setVisible(true);
 	}
 
 	/**
@@ -294,18 +294,11 @@ public abstract class QuickMenuCreator {
 	/**
 	 * Dispose of this quick menu creator. Subclasses should ensure that they
 	 * call this method.
+	 * 
+	 * @deprecated As of 3.5 this is not necessary as the SWT Menu created in
+	 *             {@link #createMenu()} will be disposed shortly after the
+	 *             SWT.Hide event.
 	 */
 	public void dispose() {
-		disposeMenu();
-	}
-
-	/**
-	 * dispose the menu widget.
-	 */
-	private void disposeMenu() {
-		if (quickMenu != null && !quickMenu.isDisposed()) {
-			quickMenu.dispose();
-		}
-		quickMenu = null;
 	}
 }
