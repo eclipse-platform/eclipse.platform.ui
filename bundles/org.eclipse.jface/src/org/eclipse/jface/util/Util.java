@@ -501,55 +501,55 @@ public final class Util {
 	//
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Windowing system constant.
 	 * @since 3.5
 	 */
 	public static final String WS_WIN32 = "win32";//$NON-NLS-1$
 
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Windowing system constant.
 	 * @since 3.5
 	 */
 	public static final String WS_MOTIF = "motif";//$NON-NLS-1$
 
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Windowing system constant.
 	 * @since 3.5
 	 */
 	public static final String WS_GTK = "gtk";//$NON-NLS-1$
 
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Windowing system constant.
 	 * @since 3.5
 	 */
 	public static final String WS_PHOTON = "photon";//$NON-NLS-1$
 
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Windowing system constant.
 	 * @since 3.5
 	 */
 	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
 
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Windowing system constant.
 	 * @since 3.5
 	 */
 	public static final String WS_COCOA = "cocoa";//$NON-NLS-1$
 
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Windowing system constant.
 	 * @since 3.5
 	 */
 	public static final String WS_WPF = "wpf";//$NON-NLS-1$
 
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Windowing system constant.
 	 * @since 3.5
 	 */
 	public static final String WS_UNKNOWN = "unknown";//$NON-NLS-1$
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
 	 * @return <code>true</code> for windows platforms
 	 * @since 3.5
 	 */
@@ -559,7 +559,7 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
 	 * @return <code>true</code> for mac platforms
 	 * @since 3.5
 	 */
@@ -569,7 +569,17 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
+	 * @return <code>true</code> for linux platform
+	 * @since 3.5
+	 */
+	public static final boolean isLinux() {
+		final String ws = SWT.getPlatform();
+		return WS_GTK.equals(ws) || WS_MOTIF.equals(ws);
+	}
+	
+	/**
+	 * Common WS query helper method. 
 	 * @return <code>true</code> for gtk platforms
 	 * @since 3.5
 	 */
@@ -579,7 +589,7 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
 	 * @return <code>true</code> for motif platforms
 	 * @since 3.5
 	 */
@@ -589,7 +599,7 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
 	 * @return <code>true</code> for photon platforms
 	 * @since 3.5
 	 */
@@ -599,7 +609,7 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
 	 * @return <code>true</code> for carbon platforms
 	 * @since 3.5
 	 */
@@ -609,7 +619,17 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
+	 * @return <code>true</code> for the cocoa platform.
+	 * @since 3.5
+	 */
+	public static final boolean isCocoa() {
+		final String ws = SWT.getPlatform();
+		return WS_COCOA.equals(ws);
+	}
+	
+	/**
+	 * Common WS query helper method. 
 	 * @return <code>true</code> for WPF
 	 * @since 3.5
 	 */
@@ -619,7 +639,7 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
 	 * @return <code>true</code> for win32
 	 * @since 3.5
 	 */
@@ -629,7 +649,7 @@ public final class Util {
 	}
 	
 	/**
-	 * <b>Note:</b> this may be made internal in 3.5
+	 * Common WS query helper method. 
 	 * @return the SWT windowing platform string.
 	 * @see SWT#getPlatform()
 	 * @since 3.5
