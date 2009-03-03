@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 264286)
+ *     Matthew Hall - bug 169876
  *******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -15,6 +16,7 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Spinner;
@@ -28,6 +30,7 @@ public final class WidgetSelectionProperty extends
 	private IValueProperty button = new ButtonSelectionProperty();
 	private IValueProperty cCombo = new CComboSelectionProperty();
 	private IValueProperty combo = new ComboSelectionProperty();
+	private IValueProperty dateTime = new DateTimeSelectionProperty();
 	private IValueProperty list = new ListSelectionProperty();
 	private IValueProperty scale = new ScaleSelectionProperty();
 	private IValueProperty spinner = new SpinnerSelectionProperty();
@@ -39,6 +42,8 @@ public final class WidgetSelectionProperty extends
 			return cCombo;
 		if (source instanceof Combo)
 			return combo;
+		if (source instanceof DateTime)
+			return dateTime;
 		if (source instanceof List)
 			return list;
 		if (source instanceof Scale)

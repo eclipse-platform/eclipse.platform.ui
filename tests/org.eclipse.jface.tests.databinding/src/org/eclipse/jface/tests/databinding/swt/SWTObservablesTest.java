@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Chris Aniszczyk <zx@code9.com> - bug 131435
- *     Matthew Hall - bug 248621, 213893, 262320
+ *     Matthew Hall - bugs 248621, 213893, 262320, 169876
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.swt;
@@ -31,6 +31,7 @@ import org.eclipse.jface.internal.databinding.swt.CTabItemTooltipTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ComboSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ComboTextProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlTooltipTextProperty;
+import org.eclipse.jface.internal.databinding.swt.DateTimeSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ItemImageProperty;
 import org.eclipse.jface.internal.databinding.swt.ItemTextProperty;
 import org.eclipse.jface.internal.databinding.swt.LabelImageProperty;
@@ -56,6 +57,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
@@ -75,14 +77,14 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		shell = getShell();
 		RealmTester.setDefault(SWTObservables.getRealm(shell.getDisplay()));
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		
+
 		RealmTester.setDefault(null);
 	}
 
@@ -141,19 +143,46 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		assertTrue(property.getProperty() instanceof CComboSelectionProperty);
 	}
 
+	public void testObserveSelectionOfDateTime_Date() throws Exception {
+		DateTime dateTime = new DateTime(shell, SWT.DATE);
+		ISWTObservableValue value = SWTObservables.observeSelection(dateTime);
+		assertNotNull(value);
+		assertTrue(value.getWidget() == dateTime);
+		IPropertyObservable property = getPropertyObservable(value);
+		assertTrue(property.getProperty() instanceof DateTimeSelectionProperty);
+	}
+
+	public void testObserveSelectionOfDateTime_Calendar() throws Exception {
+		DateTime dateTime = new DateTime(shell, SWT.CALENDAR);
+		ISWTObservableValue value = SWTObservables.observeSelection(dateTime);
+		assertNotNull(value);
+		assertTrue(value.getWidget() == dateTime);
+		IPropertyObservable property = getPropertyObservable(value);
+		assertTrue(property.getProperty() instanceof DateTimeSelectionProperty);
+	}
+
+	public void testObserveSelectionOfDateTime_Time() throws Exception {
+		DateTime dateTime = new DateTime(shell, SWT.TIME);
+		ISWTObservableValue value = SWTObservables.observeSelection(dateTime);
+		assertNotNull(value);
+		assertTrue(value.getWidget() == dateTime);
+		IPropertyObservable property = getPropertyObservable(value);
+		assertTrue(property.getProperty() instanceof DateTimeSelectionProperty);
+	}
+
 	public void testObserveSelectionOfList() throws Exception {
 		List list = new List(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeSelection(list);
 		assertNotNull(value);
 		assertTrue(value.getWidget() == list);
 	}
-	
+
 	public void testObserveSelectionOfScale() throws Exception {
 		Scale scale = new Scale(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeSelection(scale);
 		assertNotNull(value);
 		assertTrue(value.getWidget() == scale);
-		
+
 		IPropertyObservable property = getPropertyObservable(value);
 		assertTrue(property.getProperty() instanceof ScaleSelectionProperty);
 	}
@@ -276,7 +305,7 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		assertTrue(value.getWidget() == text);
 		IPropertyObservable propertyObservable = getPropertyObservable(value);
 		assertTrue(propertyObservable.getProperty() instanceof TextTextProperty);
-		
+
 		assertFalse(text.isListening(SWT.Modify));
 		assertFalse(text.isListening(SWT.FocusOut));
 	}
@@ -418,23 +447,23 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 
 		}
 	}
-	
+
 	public void testObserveMinOfSpinner() throws Exception {
 		Spinner spinner = new Spinner(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeMin(spinner);
 		assertNotNull(value);
 		assertTrue(value.getWidget() == spinner);
-		
+
 		IPropertyObservable propertyObservable = getPropertyObservable(value);
 		assertTrue(propertyObservable.getProperty() instanceof SpinnerMinimumProperty);
 	}
-	
+
 	public void testObserveMinOfScale() throws Exception {
 		Scale scale = new Scale(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeMin(scale);
 		assertNotNull(value);
 		assertTrue(value.getWidget() == scale);
-		
+
 		IPropertyObservable propertyObservable = getPropertyObservable(value);
 		assertTrue(propertyObservable.getProperty() instanceof ScaleMinimumProperty);
 	}
@@ -444,30 +473,30 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		try {
 			SWTObservables.observeMin(text);
 			fail("Exception should have been thrown");
-		} catch (IllegalArgumentException e) {	
+		} catch (IllegalArgumentException e) {
 		}
 	}
-	
+
 	public void testObserveMaxOfSpinner() throws Exception {
 		Spinner spinner = new Spinner(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeMax(spinner);
 		assertNotNull(value);
 		assertTrue(value.getWidget() == spinner);
-		
+
 		IPropertyObservable propertyObservable = getPropertyObservable(value);
 		assertTrue(propertyObservable.getProperty() instanceof SpinnerMaximumProperty);
 	}
-	
+
 	public void testObserveMaxOfScale() throws Exception {
 		Scale scale = new Scale(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeMax(scale);
 		assertNotNull(value);
 		assertTrue(value.getWidget() == scale);
-		
+
 		IPropertyObservable propertyObservable = getPropertyObservable(value);
 		assertTrue(propertyObservable.getProperty() instanceof ScaleMaximumProperty);
 	}
-	
+
 	public void testObserveMaxOfUnsupportedControl() throws Exception {
 		Text text = new Text(shell, SWT.NONE);
 		try {
@@ -476,7 +505,7 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		} catch (IllegalArgumentException e) {
 		}
 	}
-	
+
 	public void testObserveEditableOfText() throws Exception {
 		Text text = new Text(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeEditable(text);
@@ -485,7 +514,7 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		IPropertyObservable propertyObservable = getPropertyObservable(value);
 		assertTrue(propertyObservable.getProperty() instanceof TextEditableProperty);
 	}
-	
+
 	public void testObserveEditableOfUnsupportedControl() throws Exception {
 		Label label = new Label(shell, SWT.NONE);
 		try {

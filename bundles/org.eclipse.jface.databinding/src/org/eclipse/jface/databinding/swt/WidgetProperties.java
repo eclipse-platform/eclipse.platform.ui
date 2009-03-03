@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 256543, 213893, 262320, 262946, 264286, 266563
+ *     Matthew Hall - bugs 256543, 213893, 262320, 262946, 264286, 266563,
+ *                    169876
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -40,6 +41,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -202,12 +204,12 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the selection state of a
-	 * {@link Button}, {@link CCombo}, {@link Combo}, {@link List},
-	 * {@link Scale} or {@link Spinner}.
+	 * {@link Button}, {@link CCombo}, {@link Combo}, {@link DateTime},
+	 * {@link List}, {@link Scale} or {@link Spinner}.
 	 * 
 	 * @return a value property for observing the selection state of a
-	 *         {@link Button}, {@link CCombo}, {@link Combo}, {@link List},
-	 *         {@link Scale} or {@link Spinner}.
+	 *         {@link Button}, {@link CCombo}, {@link Combo}, {@link DateTime},
+	 *         {@link List}, {@link Scale} or {@link Spinner}.
 	 */
 	public static IWidgetValueProperty selection() {
 		return new WidgetSelectionProperty();
