@@ -555,7 +555,7 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Get the counts of errors,warnings and others in that order.
+	 * Get the counts of errors,warnings,infos and others in that order.
 	 * 
 	 * @return Integer[]
 	 */

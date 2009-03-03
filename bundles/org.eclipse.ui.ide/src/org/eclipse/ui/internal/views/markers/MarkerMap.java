@@ -66,22 +66,24 @@ class MarkerMap {
 	 * the number of markers in the list with the given severity.
 	 * 
 	 * @return an array of {@link Integer} where index indicates
-	 *         [errors,warnings,others]
+	 *         [errors,warnings,infos,others]
 	 */
 	Integer[] getMarkerCounts() {
 		if (markerCounts == null) {
-			int[] ints = new int[] { 0, 0, 0 };
+			int[] ints = new int[] { 0, 0, 0, 0 };
 
 			for (int idx = 0; idx < markers.length; idx++) {
 				MarkerEntry marker = markers[idx];
 				int severity = marker.getAttributeValue(IMarker.SEVERITY, -1);
 				if (severity >= IMarker.SEVERITY_INFO) {
 					ints[marker.getAttributeValue(IMarker.SEVERITY, -1)]++;
+				}else{
+					ints[3]++;
 				}
 			}
 
 			markerCounts = new Integer[] { new Integer(ints[2]),
-					new Integer(ints[1]), new Integer(ints[0]) };
+					new Integer(ints[1]), new Integer(ints[0]), new Integer(ints[3]) };
 
 		}
 

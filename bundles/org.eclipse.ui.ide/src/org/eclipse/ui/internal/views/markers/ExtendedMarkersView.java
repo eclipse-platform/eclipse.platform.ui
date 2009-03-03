@@ -17,14 +17,38 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.osgi.framework.Bundle;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
+import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.SameShellProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -50,39 +74,6 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-
-import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.SameShellProvider;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -113,6 +104,9 @@ import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
+import org.osgi.framework.Bundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The ExtendedMarkersView is the internal implementation of the view that shows
@@ -1240,7 +1234,9 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 			return status;
 		}
-
+		// combine counts for infos and others
+		counts = new Integer[] { counts[0], counts[1], 
+				new Integer(counts[2].intValue() + counts[3].intValue()) };
 		if (filteredCount < 0 || filteredCount >= totalCount)
 			return MessageFormat.format(
 					MarkerMessages.errorsAndWarningsSummaryBreakdown, counts);
@@ -1787,17 +1783,48 @@ public class ExtendedMarkersView extends ViewPart {
 			message = ((MarkerSupportItem) newSelection.getFirstElement())
 					.getDescription();
 
-		} else
+		} else {
+			Iterator elements = newSelection.iterator();
+			Collection result = new ArrayList();
+			while (elements.hasNext()) {
+				MarkerSupportItem next = (MarkerSupportItem) elements.next();
+				if (next.isConcrete())
+					result.add(next);
+			}
+			MarkerEntry[] entries = new MarkerEntry[result.size()];
+			result.toArray(entries);
+			MarkerMap markers=new MarkerMap(entries);
 			// Show stats on only those items in the selection
-			message = MessageFormat.format(
-					MarkerMessages.marker_statusSummarySelected, new Object[] {
-							new Integer(newSelection.size()),
-							getStatusMessage() });
-
+			message =getStatusSummary(markers) ;
+		}
 		getViewSite().getActionBars().getStatusLineManager()
 				.setMessage(message);
 	}
 
+	/**
+	 * Get the status line summary of markers.
+	 * @param markers 
+	 */
+	private String getStatusSummary(MarkerMap markers) {
+		Integer[] counts = markers.getMarkerCounts();
+		// combine counts for infos and others
+		counts = new Integer[] { counts[0], counts[1],
+				new Integer(counts[2].intValue() + counts[3].intValue()) };
+		if (counts[0].intValue() == 0 && counts[1].intValue() == 0) {
+			// In case of tasks view and bookmarks view, show only selection
+			// count
+			return MessageFormat.format(
+					MarkerMessages.marker_statusSelectedCount,
+					new Object[] { new Integer(markers.getSize()) });
+		}
+		return MessageFormat.format(
+						MarkerMessages.marker_statusSummarySelected,
+						new Object[] {
+								new Integer(markers.getSize()),
+								MessageFormat.format(
+												MarkerMessages.errorsAndWarningsSummaryBreakdown,
+												counts) });
+	}
 	/**
 	 * Update the title of the view.
 	 */
