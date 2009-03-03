@@ -19,4 +19,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.ui.workbench.swt,
  org.eclipse.e4.ui.workbench.swt.internal,
  org.eclipse.e4.ui.workbench.swt.internal.parts,
- org.eclipse.e4.ui.workbench.swt.modeling
+ org.eclipse.e4.ui.workbench.swt.modeling,
+ org.eclipse.e4.ui.workbench.swt.util

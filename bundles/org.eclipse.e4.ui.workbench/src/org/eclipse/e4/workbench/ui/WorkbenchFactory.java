@@ -31,8 +31,10 @@ public class WorkbenchFactory {
 	}
 
 	public IWorkbench create(URI initialWorkbenchDefinitionInstance,
-			IEclipseContext applicationContext) {
+			IEclipseContext applicationContext,
+			IWorkbenchWindowHandler windowHandler) {
 		return new Workbench(location, registry, packageAdmin,
-				initialWorkbenchDefinitionInstance, applicationContext);
+				initialWorkbenchDefinitionInstance, applicationContext,
+				windowHandler);
 	}
 }

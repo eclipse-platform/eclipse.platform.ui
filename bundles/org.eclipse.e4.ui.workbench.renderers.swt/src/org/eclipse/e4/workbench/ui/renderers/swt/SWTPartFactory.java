@@ -24,9 +24,10 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
+import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IHandlerService;
+import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
-import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -291,8 +292,8 @@ public abstract class SWTPartFactory extends PartFactory {
 			}
 			String iconURI = ((MItem) element).getIconURI();
 			if (iconURI != null && !iconURI.equals("null")) { //$NON-NLS-1$
-				ResourceUtility resUtils = (ResourceUtility) localContext
-						.get(ResourceUtility.class.getName());
+				ISWTResourceUtiltities resUtils = (ISWTResourceUtiltities) localContext
+						.get(IResourceUtiltities.class.getName());
 				ImageDescriptor desc = resUtils.imageDescriptorFromURI(URI
 						.createURI(iconURI));
 				if (desc != null)

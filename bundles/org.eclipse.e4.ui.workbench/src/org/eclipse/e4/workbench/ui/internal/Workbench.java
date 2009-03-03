@@ -38,9 +38,9 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
-import org.eclipse.e4.workbench.ui.utils.ResourceUtility;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -50,21 +50,16 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.service.datalocation.Location;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 public class Workbench implements IWorkbench {
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
 	private MApplication<MWorkbenchWindow> workbench;
-	private ResourceUtility resourceUtility;
 	private static final boolean saveAndRestore = true;
 	private File workbenchData;
-	private Shell appWindow;
+	private IWorkbenchWindowHandler windowHandler;
+	private Object appWindow;
 	private final IExtensionRegistry registry;
-	private final PackageAdmin packageAdmin;
 	private ResourceSetImpl resourceSet;
 
 	public IEclipseContext getContext() {
@@ -81,11 +76,11 @@ public class Workbench implements IWorkbench {
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
 			PackageAdmin packageAdmin, URI workbenchXmiURI,
-			IEclipseContext applicationContext) {
-
+			IEclipseContext applicationContext,
+			IWorkbenchWindowHandler windowHandler) {
+		this.windowHandler = windowHandler;
 		exceptionHandler = new ExceptionHandler();
 		this.registry = registry;
-		this.packageAdmin = packageAdmin;
 		workbenchData = new File(new File(instanceLocation.getURL()
 				.toExternalForm()),
 				".metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi"); //$NON-NLS-1$
@@ -115,9 +110,6 @@ public class Workbench implements IWorkbench {
 	}
 
 	private IEclipseContext createContext(IEclipseContext applicationContext) {
-		// Initialize Services
-		resourceUtility = new ResourceUtility(packageAdmin);
-
 		final IEclipseContext mainContext = EclipseContextFactory.create(
 				applicationContext, UIContextScheduler.instance);
 		mainContext.set(IContextConstants.DEBUG_STRING, "globalContext"); //$NON-NLS-1$
@@ -140,7 +132,6 @@ public class Workbench implements IWorkbench {
 		}
 		mainContext.set(IWorkbench.class.getName(), this);
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
-		mainContext.set(ResourceUtility.class.getName(), resourceUtility);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
 		mainContext.set(IServiceConstants.SELECTION,
 				new ActiveChildOutputValue(IServiceConstants.SELECTION));
@@ -326,31 +317,15 @@ public class Workbench implements IWorkbench {
 
 		rv = 0;
 		Platform.endSplash();
-		appWindow.open();
+		windowHandler.open(appWindow);
 		// A position of 0 is not possible on OS-X because then the title-bar is
 		// hidden
 		// below the MMenu-Bar
-		// TODO is there a better method to find out the height of the title bar
-		int y = wbw.getY();
-		if (y == 0 && SWT.getPlatform().equals("carbon")) { //$NON-NLS-1$
-			y = 20;
-		}
-		appWindow.getShell().setBounds(wbw.getX(), y, wbw.getWidth(),
-				wbw.getHeight());
 
-		((Composite) wbw.getWidget()).layout(true);
-
-		Display display = appWindow.getDisplay();
-		while (appWindow != null && !appWindow.isDisposed()) {
-			try {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		}
-		display.update();
+		windowHandler.setBounds(appWindow, wbw.getX(), wbw.getY(), wbw
+				.getWidth(), wbw.getHeight());
+		windowHandler.layout(appWindow);
+		windowHandler.runEvenLoop(appWindow);
 
 		if (workbenchData != null && saveAndRestore && workbench != null) {
 			try {
@@ -428,23 +403,22 @@ public class Workbench implements IWorkbench {
 		}
 
 		renderer.createGui(workbenchWindow);
-		appWindow = (Shell) workbenchWindow.getWidget();
+		appWindow = workbenchWindow.getWidget();
 	}
 
 	public void close() {
-		appWindow.dispose();
+		windowHandler.dispose(appWindow);
 	}
 
-	public Display getDisplay() {
-		return appWindow.getDisplay();
-	}
+	// public Display getDisplay() {
+	// return appWindow.getDisplay();
+	// }
 
 	public void closeWindow(MWorkbenchWindow workbenchWindow) {
-		// needs proper closing protocol
-		((Shell) workbenchWindow.getWidget()).close();
+		windowHandler.close(workbenchWindow.getWidget());
 	}
 
-	public Shell getShell() {
+	public Object getWindow() {
 		return appWindow;
 	}
 }
