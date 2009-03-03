@@ -198,6 +198,12 @@ public interface ISources {
 	public static final String ACTIVE_EDITOR_NAME = "activeEditor"; //$NON-NLS-1$
 
 	/**
+	 * The editor input of the currently active editor.
+	 * @since 3.5
+	 */
+	public static final String ACTIVE_EDITOR_INPUT_NAME = "activeEditorInput"; //$NON-NLS-1$
+	
+	/**
 	 * The priority given when the source includes the active editor identifier.
 	 * 
 	 * @since 3.2

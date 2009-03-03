@@ -484,6 +484,13 @@
             id="org.eclipse.ui.tests.api.MockEditorPart2">
       </editor>
       <editor
+            name="Mock Reusable Editor 1"
+            extensions="mockr1"
+            icon="icons/mockeditorpart1.gif"
+            class="org.eclipse.ui.tests.api.MockReusableEditorPart"
+            id="org.eclipse.ui.tests.api.MockReusableEditorPart1">
+      </editor>
+      <editor
             name="Mock Editor Save"
             extensions="mocksave"
             icon="icons/mockeditorpart1.gif"

@@ -25,12 +25,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AbstractSourceProvider;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
@@ -277,6 +279,8 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 
 	};
 
+	private IEditorInput lastEditorInput;
+	
 	public void handleCheck(Shell s) {
 		if (s != lastActiveShell) {
 			lastActiveShell = s;
@@ -345,14 +349,21 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 				lastShowInSelection = null;
 			}
 		}
-		final Object newActiveEditor = currentState
-				.get(ISources.ACTIVE_EDITOR_NAME);
+		Object newActiveEditor = currentState.get(ISources.ACTIVE_EDITOR_NAME);
 		if (!Util.equals(newActiveEditor, lastActiveEditor)) {
 			sources |= ISources.ACTIVE_EDITOR;
-			if (newActiveEditor != IEvaluationContext.UNDEFINED_VARIABLE) {
-				lastActiveEditor = (IEditorPart) newActiveEditor;
+			newActiveEditor = (newActiveEditor == IEvaluationContext.UNDEFINED_VARIABLE ? null
+					: newActiveEditor);
+			hookListener(lastActiveEditor, (IEditorPart) newActiveEditor);
+			lastActiveEditor = (IEditorPart) newActiveEditor;
+		}
+		Object newEditorInput = currentState.get(ISources.ACTIVE_EDITOR_INPUT_NAME);
+		if (!Util.equals(newEditorInput, lastEditorInput)) {
+			sources |= ISources.ACTIVE_EDITOR;
+			if (newEditorInput != IEvaluationContext.UNDEFINED_VARIABLE) {
+				lastEditorInput = (IEditorInput) newEditorInput;
 			} else {
-				lastActiveEditor = null;
+				lastEditorInput = null;
 			}
 		}
 		final Object newActiveEditorId = currentState
@@ -484,6 +495,8 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 						.getActiveEditor();
 				currentState.put(ISources.ACTIVE_EDITOR_NAME, newActiveEditor);
 				if (newActiveEditor != null) {
+					currentState.put(ISources.ACTIVE_EDITOR_INPUT_NAME,
+							newActiveEditor.getEditorInput());
 					final IEditorSite activeEditorSite = newActiveEditor
 							.getEditorSite();
 					if (activeEditorSite != null) {
@@ -632,6 +645,15 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 				IPerspectiveDescriptor perspective, String changeId) {
 		}
 	};
+	
+	private IPropertyListener editorListener = new IPropertyListener() {
+		public void propertyChanged(Object source, int propId) {
+			if (propId == IEditorPart.PROP_INPUT) {
+				handleInputChanged((IEditorPart) source);
+			}
+		}
+	};
+
 
 	/**
 	 * The listener to shell activations on the display.
@@ -830,8 +852,20 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 		}
 	};
 
+
 	protected void checkOtherSources(Shell s) {
 		handleCheck(s);
+	}
+
+	protected void handleInputChanged(IEditorPart editor) {
+		IEditorInput newInput = editor.getEditorInput();
+		if (!Util.equals(newInput, lastEditorInput)) {
+			fireSourceChanged(ISources.ACTIVE_EDITOR,
+					ISources.ACTIVE_EDITOR_INPUT_NAME,
+					newInput == null ? IEvaluationContext.UNDEFINED_VARIABLE
+							: newInput);
+			lastEditorInput = newInput;
+		}
 	}
 
 	private void hookListener(WorkbenchWindow lastActiveWorkbenchWindow,
@@ -848,6 +882,16 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 					.addPropertyChangeListener(propertyListener);
 			newActiveWorkbenchWindow
 					.addPerspectiveListener(perspectiveListener);
+		}
+	}
+	
+	private void hookListener(IEditorPart lastActiveEditor,
+			IEditorPart newActiveEditor) {
+		if (lastActiveEditor!=null) {
+			lastActiveEditor.removePropertyListener(editorListener);
+		}
+		if (newActiveEditor!=null) {
+			newActiveEditor.addPropertyListener(editorListener);
 		}
 	}
 
