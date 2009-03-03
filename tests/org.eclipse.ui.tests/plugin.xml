@@ -465,6 +465,12 @@
             name="NonRestorableView"
             restorable="false">
       </view>
+      <view
+            class="org.eclipse.ui.tests.internal.TextControlView"
+            id="org.eclipse.ui.tests.textHandlerView"
+            name="Text Control view"
+            restorable="true">
+      </view>
 
    </extension>
    <extension

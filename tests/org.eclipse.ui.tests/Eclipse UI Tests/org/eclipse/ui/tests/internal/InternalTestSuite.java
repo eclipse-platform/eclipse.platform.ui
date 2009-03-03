@@ -55,5 +55,6 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(ReopenMenuTest.class));
         addTest(new TestSuite(UtilTest.class));
 		addTest(new TestSuite(MarkerTesterTest.class));
+		addTest(new TestSuite(TextHandlerTest.class));
     }
 }
