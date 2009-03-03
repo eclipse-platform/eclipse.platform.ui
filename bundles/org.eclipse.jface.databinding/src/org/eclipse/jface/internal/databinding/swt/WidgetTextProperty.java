@@ -28,16 +28,16 @@ import org.eclipse.swt.widgets.Text;
  * 
  */
 public class WidgetTextProperty extends WidgetDelegatingValueProperty {
-	private IValueProperty button = new ButtonTextProperty();
-	private IValueProperty cCombo = new CComboTextProperty();
-	private IValueProperty cLabel = new CLabelTextProperty();
-	private IValueProperty combo = new ComboTextProperty();
-	private IValueProperty item = new ItemTextProperty();
-	private IValueProperty label = new LabelTextProperty();
-	private IValueProperty link = new LinkTextProperty();
-	private IValueProperty shell = new ShellTextProperty();
-	private IValueProperty styledText = new StyledTextTextProperty();
-	private IValueProperty text = new TextTextProperty();
+	private IValueProperty button;
+	private IValueProperty cCombo;
+	private IValueProperty cLabel;
+	private IValueProperty combo;
+	private IValueProperty item;
+	private IValueProperty label;
+	private IValueProperty link;
+	private IValueProperty shell;
+	private IValueProperty styledText;
+	private IValueProperty text;
 
 	/**
 	 * 
@@ -47,26 +47,56 @@ public class WidgetTextProperty extends WidgetDelegatingValueProperty {
 	}
 
 	protected IValueProperty doGetDelegate(Object source) {
-		if (source instanceof Button)
+		if (source instanceof Button) {
+			if (button == null)
+				button = new ButtonTextProperty();
 			return button;
-		if (source instanceof CCombo)
+		}
+		if (source instanceof CCombo) {
+			if (cCombo == null)
+				cCombo = new CComboTextProperty();
 			return cCombo;
-		if (source instanceof CLabel)
+		}
+		if (source instanceof CLabel) {
+			if (cLabel == null)
+				cLabel = new CLabelTextProperty();
 			return cLabel;
-		if (source instanceof Combo)
+		}
+		if (source instanceof Combo) {
+			if (combo == null)
+				combo = new ComboTextProperty();
 			return combo;
-		if (source instanceof Item)
+		}
+		if (source instanceof Item) {
+			if (item == null)
+				item = new ItemTextProperty();
 			return item;
-		if (source instanceof Label)
+		}
+		if (source instanceof Label) {
+			if (label == null)
+				label = new LabelTextProperty();
 			return label;
-		if (source instanceof Link)
+		}
+		if (source instanceof Link) {
+			if (link == null)
+				link = new LinkTextProperty();
 			return link;
-		if (source instanceof Shell)
+		}
+		if (source instanceof Shell) {
+			if (shell == null)
+				shell = new ShellTextProperty();
 			return shell;
-		if (source instanceof StyledText)
+		}
+		if (source instanceof StyledText) {
+			if (styledText == null)
+				styledText = new StyledTextTextProperty();
 			return styledText;
-		if (source instanceof Text)
+		}
+		if (source instanceof Text) {
+			if (text == null)
+				text = new TextTextProperty();
 			return text;
+		}
 		throw notSupported(source);
 	}
 }

@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Spinner;
  * 
  */
 public class WidgetMaximumProperty extends WidgetDelegatingValueProperty {
-	private IValueProperty scale = new ScaleMaximumProperty();
-	private IValueProperty spinner = new SpinnerMaximumProperty();
+	private IValueProperty scale;
+	private IValueProperty spinner;
 
 	/**
 	 * 
@@ -31,10 +31,16 @@ public class WidgetMaximumProperty extends WidgetDelegatingValueProperty {
 	}
 
 	protected IValueProperty doGetDelegate(Object source) {
-		if (source instanceof Scale)
+		if (source instanceof Scale) {
+			if (scale == null)
+				scale = new ScaleMaximumProperty();
 			return scale;
-		if (source instanceof Spinner)
+		}
+		if (source instanceof Spinner) {
+			if (spinner == null)
+				spinner = new SpinnerMaximumProperty();
 			return spinner;
+		}
 		throw notSupported(source);
 	}
 }

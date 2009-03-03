@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.ToolTip;
  * 
  */
 public class WidgetMessageProperty extends WidgetDelegatingValueProperty {
-	private IValueProperty text = new TextMessageProperty();
-	private IValueProperty toolTip = new ToolTipMessageProperty();
+	private IValueProperty text;
+	private IValueProperty toolTip;
 
 	/**
 	 * 
@@ -31,10 +31,16 @@ public class WidgetMessageProperty extends WidgetDelegatingValueProperty {
 	}
 
 	protected IValueProperty doGetDelegate(Object source) {
-		if (source instanceof Text)
+		if (source instanceof Text) {
+			if (text == null)
+				text = new TextMessageProperty();
 			return text;
-		if (source instanceof ToolTip)
+		}
+		if (source instanceof ToolTip) {
+			if (toolTip == null)
+				toolTip = new ToolTipMessageProperty();
 			return toolTip;
+		}
 		throw notSupported(source);
 	}
 }

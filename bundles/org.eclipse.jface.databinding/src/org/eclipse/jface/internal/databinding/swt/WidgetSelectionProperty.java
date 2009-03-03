@@ -27,29 +27,50 @@ import org.eclipse.swt.widgets.Spinner;
  */
 public final class WidgetSelectionProperty extends
 		WidgetDelegatingValueProperty {
-	private IValueProperty button = new ButtonSelectionProperty();
-	private IValueProperty cCombo = new CComboSelectionProperty();
-	private IValueProperty combo = new ComboSelectionProperty();
-	private IValueProperty dateTime = new DateTimeSelectionProperty();
-	private IValueProperty list = new ListSelectionProperty();
-	private IValueProperty scale = new ScaleSelectionProperty();
-	private IValueProperty spinner = new SpinnerSelectionProperty();
+	private IValueProperty button;
+	private IValueProperty cCombo;
+	private IValueProperty combo;
+	private IValueProperty dateTime;
+	private IValueProperty list;
+	private IValueProperty scale;
+	private IValueProperty spinner;
 
 	protected IValueProperty doGetDelegate(Object source) {
-		if (source instanceof Button)
+		if (source instanceof Button) {
+			if (button == null)
+				button = new ButtonSelectionProperty();
 			return button;
-		if (source instanceof CCombo)
+		}
+		if (source instanceof CCombo) {
+			if (cCombo == null)
+				cCombo = new CComboSelectionProperty();
 			return cCombo;
-		if (source instanceof Combo)
+		}
+		if (source instanceof Combo) {
+			if (combo == null)
+				combo = new ComboSelectionProperty();
 			return combo;
-		if (source instanceof DateTime)
+		}
+		if (source instanceof DateTime) {
+			if (dateTime == null)
+				dateTime = new DateTimeSelectionProperty();
 			return dateTime;
-		if (source instanceof List)
+		}
+		if (source instanceof List) {
+			if (list == null)
+				list = new ListSelectionProperty();
 			return list;
-		if (source instanceof Scale)
+		}
+		if (source instanceof Scale) {
+			if (scale == null)
+				scale = new ScaleSelectionProperty();
 			return scale;
-		if (source instanceof Spinner)
+		}
+		if (source instanceof Spinner) {
+			if (spinner == null)
+				spinner = new SpinnerSelectionProperty();
 			return spinner;
+		}
 		throw notSupported(source);
 	}
 }

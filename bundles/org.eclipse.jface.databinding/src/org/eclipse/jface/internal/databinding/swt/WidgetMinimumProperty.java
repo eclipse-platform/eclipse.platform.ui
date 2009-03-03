@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Spinner;
  * 
  */
 public class WidgetMinimumProperty extends WidgetDelegatingValueProperty {
-	private IValueProperty scale = new ScaleMinimumProperty();
-	private IValueProperty spinner = new SpinnerMinimumProperty();
+	private IValueProperty scale;
+	private IValueProperty spinner;
 
 	/**
 	 * 
@@ -31,10 +31,16 @@ public class WidgetMinimumProperty extends WidgetDelegatingValueProperty {
 	}
 
 	protected IValueProperty doGetDelegate(Object source) {
-		if (source instanceof Scale)
+		if (source instanceof Scale) {
+			if (scale == null)
+				scale = new ScaleMinimumProperty();
 			return scale;
-		if (source instanceof Spinner)
+		}
+		if (source instanceof Spinner) {
+			if (spinner == null)
+				spinner = new SpinnerMinimumProperty();
 			return spinner;
+		}
 		throw notSupported(source);
 	}
 }

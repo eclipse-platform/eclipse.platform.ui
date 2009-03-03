@@ -23,10 +23,10 @@ import org.eclipse.swt.widgets.Table;
  */
 public final class WidgetSingleSelectionIndexProperty extends
 		WidgetDelegatingValueProperty {
-	private IValueProperty cCombo = new CComboSingleSelectionIndexProperty();
-	private IValueProperty combo = new ComboSingleSelectionIndexProperty();
-	private IValueProperty list = new ListSingleSelectionIndexProperty();
-	private IValueProperty table = new TableSingleSelectionIndexProperty();
+	private IValueProperty cCombo;
+	private IValueProperty combo;
+	private IValueProperty list;
+	private IValueProperty table;
 
 	/**
 	 * 
@@ -36,14 +36,26 @@ public final class WidgetSingleSelectionIndexProperty extends
 	}
 
 	protected IValueProperty doGetDelegate(Object source) {
-		if (source instanceof CCombo)
+		if (source instanceof CCombo) {
+			if (cCombo == null)
+				cCombo = new CComboSingleSelectionIndexProperty();
 			return cCombo;
-		if (source instanceof Combo)
+		}
+		if (source instanceof Combo) {
+			if (combo == null)
+				combo = new ComboSingleSelectionIndexProperty();
 			return combo;
-		if (source instanceof List)
+		}
+		if (source instanceof List) {
+			if (list == null)
+				list = new ListSingleSelectionIndexProperty();
 			return list;
-		if (source instanceof Table)
+		}
+		if (source instanceof Table) {
+			if (table == null)
+				table = new TableSingleSelectionIndexProperty();
 			return table;
+		}
 		throw notSupported(source);
 	}
 }

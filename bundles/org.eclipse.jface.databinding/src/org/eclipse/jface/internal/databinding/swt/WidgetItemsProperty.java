@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.List;
  * 
  */
 public class WidgetItemsProperty extends WidgetDelegatingListProperty {
-	private IListProperty cCombo = new CComboItemsProperty();
-	private IListProperty combo = new ComboItemsProperty();
-	private IListProperty list = new ListItemsProperty();
+	private IListProperty cCombo;
+	private IListProperty combo;
+	private IListProperty list;
 
 	/**
 	 * 
@@ -33,12 +33,21 @@ public class WidgetItemsProperty extends WidgetDelegatingListProperty {
 	}
 
 	protected IListProperty doGetDelegate(Object source) {
-		if (source instanceof CCombo)
+		if (source instanceof CCombo) {
+			if (cCombo == null)
+				cCombo = new CComboItemsProperty();
 			return cCombo;
-		if (source instanceof Combo)
+		}
+		if (source instanceof Combo) {
+			if (combo == null)
+				combo = new ComboItemsProperty();
 			return combo;
-		if (source instanceof List)
+		}
+		if (source instanceof List) {
+			if (list == null)
+				list = new ListItemsProperty();
 			return list;
+		}
 		throw notSupported(source);
 	}
 }

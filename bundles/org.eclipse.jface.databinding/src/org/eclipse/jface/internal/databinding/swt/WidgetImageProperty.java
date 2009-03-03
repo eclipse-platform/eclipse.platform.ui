@@ -23,10 +23,10 @@ import org.eclipse.swt.widgets.Label;
  * 
  */
 public class WidgetImageProperty extends WidgetDelegatingValueProperty {
-	private IValueProperty button = new ButtonImageProperty();
-	private IValueProperty cLabel = new CLabelImageProperty();
-	private IValueProperty item = new ItemImageProperty();
-	private IValueProperty label = new LabelImageProperty();
+	private IValueProperty button;
+	private IValueProperty cLabel;
+	private IValueProperty item;
+	private IValueProperty label;
 
 	/**
 	 * 
@@ -36,14 +36,26 @@ public class WidgetImageProperty extends WidgetDelegatingValueProperty {
 	}
 
 	protected IValueProperty doGetDelegate(Object source) {
-		if (source instanceof Button)
+		if (source instanceof Button) {
+			if (button == null)
+				button = new ButtonImageProperty();
 			return button;
-		if (source instanceof CLabel)
+		}
+		if (source instanceof CLabel) {
+			if (cLabel == null)
+				cLabel = new CLabelImageProperty();
 			return cLabel;
-		if (source instanceof Item)
+		}
+		if (source instanceof Item) {
+			if (item == null)
+				item = new ItemImageProperty();
 			return item;
-		if (source instanceof Label)
+		}
+		if (source instanceof Label) {
+			if (label == null)
+				label = new LabelImageProperty();
 			return label;
+		}
 		throw notSupported(source);
 	}
 }
