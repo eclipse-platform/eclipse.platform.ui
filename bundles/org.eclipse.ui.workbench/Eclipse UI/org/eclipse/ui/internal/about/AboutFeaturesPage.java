@@ -266,6 +266,10 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		table.setFont(parent.getFont());
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// If there is no item, nothing we can do.
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=266177
+				if (e.item == null)
+					return;
 				AboutBundleGroupData info = (AboutBundleGroupData) e.item
 						.getData();
 				updateInfoArea(info);
