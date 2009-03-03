@@ -521,7 +521,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	 * @param status
 	 */
 	private void unableToLoadPerspective(IStatus status) {
-		String msg = WorkbenchMessages.Perspective_errorLoadingState;
+		String msg = "Unable to load perspective."; //$NON-NLS-1$
 		if (status == null) {
 			IStatus errStatus = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, msg); 
 			StatusManager.getManager().handle(errStatus,

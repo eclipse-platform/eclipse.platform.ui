@@ -637,7 +637,6 @@ public class WorkbenchMessages extends NLS {
 	public static String Perspective_problemRestoringTitle;
 	public static String Perspective_errorReadingState;
 	public static String Perspective_problemLoadingTitle;
-	public static String Perspective_errorLoadingState;
 	public static String WorkbenchPage_problemRestoringTitle;
 	public static String WorkbenchPage_errorReadingState;
 
