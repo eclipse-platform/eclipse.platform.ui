@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bugs 265561, 262287
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.set;
@@ -45,6 +46,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 	private INativePropertyListener listener;
 
 	private Set cachedSet;
+	private boolean stale;
 
 	/**
 	 * @param realm
@@ -61,11 +63,12 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
 			cachedSet = getSet();
+			stale = false;
 
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
-							public void handlePropertyChange(
+							public void handleChange(
 									final SimplePropertyEvent event) {
 								modCount++;
 								if (!isDisposed() && !updating) {
@@ -76,18 +79,26 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 									});
 								}
 							}
+
+							public void handleStale(SimplePropertyEvent event) {
+								if (!isDisposed() && !updating && !stale) {
+									stale = true;
+									fireStale();
+								}
+							}
 						});
 			}
-			property.addListener(source, listener);
+			if (listener != null)
+				listener.addTo(source);
 		}
 	}
 
 	protected void lastListenerRemoved() {
-		if (listener != null) {
-			property.removeListener(source, listener);
-		}
+		if (listener != null)
+			listener.removeFrom(source);
 
 		cachedSet = null;
+		stale = false;
 	}
 
 	protected Set getWrappedSet() {
@@ -372,9 +383,16 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 			Set newSet = cachedSet = property.getSet(source);
 			if (diff == null)
 				diff = Diffs.computeSetDiff(oldSet, newSet);
-			if (!diff.isEmpty())
+			if (!diff.isEmpty() || stale) {
+				stale = false;
 				fireSetChange(diff);
+			}
 		}
+	}
+
+	public boolean isStale() {
+		getterCalled();
+		return stale;
 	}
 
 	public boolean equals(Object o) {
@@ -398,10 +416,11 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 	public synchronized void dispose() {
 		if (!isDisposed()) {
 			if (listener != null)
-				property.removeListener(source, listener);
+				listener.removeFrom(source);
 			property = null;
 			source = null;
 			listener = null;
+			stale = false;
 		}
 		super.dispose();
 	}

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 262269
+ *     Matthew Hall - bugs 262269, 265561, 262287
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -55,6 +55,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 
 	private IObservableSet knownMasterElements;
 	private Map cachedValues;
+	private Set staleElements;
 
 	private boolean updating;
 
@@ -109,9 +110,18 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		this.detailProperty = valueProperty;
 
 		ISimplePropertyListener listener = new ISimplePropertyListener() {
-			public void handlePropertyChange(SimplePropertyEvent event) {
+			public void handleChange(SimplePropertyEvent event) {
 				if (!isDisposed() && !updating) {
 					notifyIfChanged(event.getSource());
+				}
+			}
+
+			public void handleStale(SimplePropertyEvent event) {
+				if (!isDisposed() && !updating) {
+					boolean wasStale = !staleElements.isEmpty();
+					staleElements.add(event.getSource());
+					if (!wasStale)
+						fireStale();
 				}
 			}
 		};
@@ -121,19 +131,23 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 	protected void firstListenerAdded() {
 		knownMasterElements = new IdentityObservableSet(getRealm(), null);
 		cachedValues = new IdentityMap();
+		staleElements = new IdentitySet();
 		knownMasterElements.addSetChangeListener(new ISetChangeListener() {
 			public void handleSetChange(SetChangeEvent event) {
 				for (Iterator it = event.diff.getRemovals().iterator(); it
 						.hasNext();) {
 					Object key = it.next();
-					detailProperty.removeListener(key, detailListener);
+					if (detailListener != null)
+						detailListener.removeFrom(key);
 					cachedValues.remove(key);
+					staleElements.remove(key);
 				}
 				for (Iterator it = event.diff.getAdditions().iterator(); it
 						.hasNext();) {
 					Object key = it.next();
 					cachedValues.put(key, detailProperty.getValue(key));
-					detailProperty.addListener(key, detailListener);
+					if (detailListener != null)
+						detailListener.addTo(key);
 				}
 			}
 		});
@@ -153,6 +167,8 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		}
 		cachedValues.clear();
 		cachedValues = null;
+		staleElements.clear();
+		staleElements = null;
 	}
 
 	protected int doGetSize() {
@@ -203,7 +219,8 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 
 	public boolean isStale() {
 		getterCalled();
-		return masterList.isStale();
+		return masterList.isStale() || staleElements != null
+				&& !staleElements.isEmpty();
 	}
 
 	public Iterator iterator() {
@@ -354,8 +371,10 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		if (cachedValues != null) {
 			Object oldValue = cachedValues.get(masterElement);
 			Object newValue = detailProperty.getValue(masterElement);
-			if (!Util.equals(oldValue, newValue)) {
+			if (!Util.equals(oldValue, newValue)
+					|| staleElements.contains(masterElement)) {
 				cachedValues.put(masterElement, newValue);
+				staleElements.remove(masterElement);
 				fireListChange(indicesOf(masterElement), oldValue, newValue);
 			}
 		}
@@ -434,6 +453,7 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		detailListener = null;
 		detailProperty = null;
 		cachedValues = null;
+		staleElements = null;
 
 		super.dispose();
 	}

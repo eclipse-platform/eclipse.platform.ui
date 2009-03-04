@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 195222, 259380, 263413
+ *     Matthew Hall - bugs 195222, 259380, 263413, 265561
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -18,8 +18,9 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.NativePropertyListener;
 import org.eclipse.jface.databinding.viewers.ViewerSetProperty;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -51,25 +52,14 @@ public abstract class CheckboxViewerCheckedElementsProperty extends
 
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
-		return new CheckStateListener(listener);
+		return new CheckStateListener(this, listener);
 	}
 
-	public void doAddListener(Object source, INativePropertyListener listener) {
-		((ICheckable) source)
-				.addCheckStateListener((ICheckStateListener) listener);
-	}
-
-	public void doRemoveListener(Object source, INativePropertyListener listener) {
-		((ICheckable) source)
-				.removeCheckStateListener((ICheckStateListener) listener);
-	}
-
-	private class CheckStateListener implements INativePropertyListener,
+	private class CheckStateListener extends NativePropertyListener implements
 			ICheckStateListener {
-		private ISimplePropertyListener listener;
-
-		private CheckStateListener(ISimplePropertyListener listener) {
-			this.listener = listener;
+		private CheckStateListener(IProperty property,
+				ISimplePropertyListener listener) {
+			super(property, listener);
 		}
 
 		public void checkStateChanged(CheckStateChangedEvent event) {
@@ -81,9 +71,15 @@ public abstract class CheckboxViewerCheckedElementsProperty extends
 			Set additions = checked ? elementSet : Collections.EMPTY_SET;
 			Set removals = checked ? Collections.EMPTY_SET : elementSet;
 			SetDiff diff = Diffs.createSetDiff(additions, removals);
-			listener.handlePropertyChange(new SimplePropertyEvent(event
-					.getSource(), CheckboxViewerCheckedElementsProperty.this,
-					diff));
+			fireChange(event.getSource(), diff);
+		}
+
+		public void doAddTo(Object source) {
+			((ICheckable) source).addCheckStateListener(this);
+		}
+
+		public void doRemoveFrom(Object source) {
+			((ICheckable) source).removeCheckStateListener(this);
 		}
 	}
 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 263413, 264286
+ *     Matthew Hall - bugs 263413, 264286, 265561, 262287
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -15,8 +15,9 @@ package org.eclipse.jface.databinding.swt;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.NativePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
 import org.eclipse.swt.SWT;
@@ -43,78 +44,122 @@ import org.eclipse.swt.widgets.Widget;
  */
 public abstract class WidgetValueProperty extends SimpleValueProperty implements
 		IWidgetValueProperty {
-	private int[] events;
+	private int[] changeEvents;
+	private int[] staleEvents;
 
 	/**
 	 * Constructs a WidgetValueProperty which does not listen for any SWT
 	 * events.
 	 */
 	protected WidgetValueProperty() {
-		this(null);
+		this(null, null);
 	}
 
 	/**
 	 * Constructs a WidgetValueProperty with the specified SWT event type
 	 * 
-	 * @param event
+	 * @param changeEvent
 	 *            SWT event type constant of the event that signifies a property
 	 *            change.
 	 */
-	protected WidgetValueProperty(int event) {
-		this(new int[] { event });
+	protected WidgetValueProperty(int changeEvent) {
+		this(new int[] { changeEvent }, null);
 	}
 
 	/**
 	 * Constructs a WidgetValueProperty with the specified SWT event type(s).
 	 * 
-	 * @param events
+	 * @param changeEvents
 	 *            array of SWT event type constants of the events that signify a
 	 *            property change.
 	 */
-	protected WidgetValueProperty(int[] events) {
-		this.events = events;
+	protected WidgetValueProperty(int[] changeEvents) {
+		this(changeEvents, null);
+	}
+
+	/**
+	 * Constructs a WidgetValueProperty with the specified SWT event types.
+	 * 
+	 * @param changeEvents
+	 *            array of SWT event type constants of the events that signify a
+	 *            property change.
+	 * @param staleEvents
+	 *            array of SWT event type constants of the events that signify a
+	 *            property became stale.
+	 */
+	public WidgetValueProperty(int[] changeEvents, int[] staleEvents) {
+		this.changeEvents = changeEvents;
+		this.staleEvents = staleEvents;
 	}
 
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
-		return events == null ? null : new WidgetListener(listener);
+		return changeEvents == null && staleEvents == null ? null
+				: new WidgetListener(this, listener);
 	}
 
-	protected void doAddListener(Object source, INativePropertyListener listener) {
-		if (events != null) {
-			for (int i = 0; i < events.length; i++) {
-				int event = events[i];
-				if (event != SWT.None) {
-					((Widget) source).addListener(event, (Listener) listener);
-				}
-			}
-		}
-	}
-
-	protected void doRemoveListener(Object source,
-			INativePropertyListener listener) {
-		if (events != null) {
-			Widget widget = (Widget) source;
-			if (!widget.isDisposed()) {
-				for (int i = 0; i < events.length; i++) {
-					int event = events[i];
-					if (event != SWT.None)
-						widget.removeListener(event, (Listener) listener);
-				}
-			}
-		}
-	}
-
-	private class WidgetListener implements INativePropertyListener, Listener {
-		private final ISimplePropertyListener listener;
-
-		protected WidgetListener(ISimplePropertyListener listener) {
-			this.listener = listener;
+	private class WidgetListener extends NativePropertyListener implements
+			Listener {
+		protected WidgetListener(IProperty property,
+				ISimplePropertyListener listener) {
+			super(property, listener);
 		}
 
 		public void handleEvent(Event event) {
-			listener.handlePropertyChange(new SimplePropertyEvent(event.widget,
-					WidgetValueProperty.this, null));
+			if (staleEvents != null)
+				for (int i = 0; i < staleEvents.length; i++)
+					if (event.type == staleEvents[i]) {
+						fireStale(event.widget);
+						break;
+					}
+
+			if (changeEvents != null)
+				for (int i = 0; i < changeEvents.length; i++)
+					if (event.type == changeEvents[i]) {
+						fireChange(event.widget, null);
+						break;
+					}
+		}
+
+		protected void doAddTo(Object source) {
+			Widget widget = (Widget) source;
+			if (changeEvents != null) {
+				for (int i = 0; i < changeEvents.length; i++) {
+					int event = changeEvents[i];
+					if (event != SWT.None) {
+						widget.addListener(event, this);
+					}
+				}
+			}
+			if (staleEvents != null) {
+				for (int i = 0; i < staleEvents.length; i++) {
+					int event = staleEvents[i];
+					if (event != SWT.None) {
+						widget.addListener(event, this);
+					}
+				}
+			}
+		}
+
+		protected void doRemoveFrom(Object source) {
+			Widget widget = (Widget) source;
+			if (!widget.isDisposed()) {
+				if (changeEvents != null) {
+					for (int i = 0; i < changeEvents.length; i++) {
+						int event = changeEvents[i];
+						if (event != SWT.None)
+							widget.removeListener(event, this);
+					}
+				}
+				if (staleEvents != null) {
+					for (int i = 0; i < staleEvents.length; i++) {
+						int event = staleEvents[i];
+						if (event != SWT.None) {
+							widget.removeListener(event, this);
+						}
+					}
+				}
+			}
 		}
 	}
 

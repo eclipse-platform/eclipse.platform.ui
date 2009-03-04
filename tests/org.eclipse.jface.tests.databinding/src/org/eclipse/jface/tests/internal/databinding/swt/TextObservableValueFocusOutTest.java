@@ -7,13 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145, 194734, 195222
+ *     Matthew Hall - bugs 213145, 194734, 195222, 262287
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
@@ -21,7 +20,10 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.StaleEventTracker;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -29,13 +31,43 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Tests for the FocusOut version of TextObservableValue.
  */
-public class TextObservableValueFocusOutTest extends TestCase {
+public class TextObservableValueFocusOutTest extends AbstractSWTTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(TextObservableValueFocusOutTest.class
 				.toString());
+		suite.addTestSuite(TextObservableValueFocusOutTest.class);
 		suite.addTest(SWTMutableObservableValueContractTest
 				.suite(new Delegate()));
 		return suite;
+	}
+
+	public void testIsStale_AfterModifyBeforeFocusOut() {
+		Text text = new Text(getShell(), SWT.NONE);
+		text.setText("0");
+
+		IObservableValue observable = WidgetProperties.text(SWT.FocusOut)
+				.observe(text);
+
+		StaleEventTracker staleTracker = StaleEventTracker.observe(observable);
+		ChangeEventTracker changeTracker = ChangeEventTracker
+				.observe(observable);
+
+		assertFalse(observable.isStale());
+		assertEquals(0, staleTracker.count);
+		assertEquals(0, changeTracker.count);
+
+		text.setText("1");
+		text.notifyListeners(SWT.Modify, null);
+
+		assertTrue(observable.isStale());
+		assertEquals(1, staleTracker.count);
+		assertEquals(0, changeTracker.count);
+
+		text.notifyListeners(SWT.FocusOut, null);
+
+		assertFalse(observable.isStale());
+		assertEquals(1, staleTracker.count);
+		assertEquals(1, changeTracker.count);
 	}
 
 	/* package */static class Delegate extends

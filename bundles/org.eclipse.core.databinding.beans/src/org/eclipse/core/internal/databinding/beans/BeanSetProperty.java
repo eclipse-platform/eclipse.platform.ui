@@ -7,12 +7,11 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 195222, 264307, 265064
+ *     Matthew Hall - bugs 195222, 264307, 265064, 265561
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -21,10 +20,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 
 /**
@@ -83,42 +82,11 @@ public class BeanSetProperty extends SimpleSetProperty {
 
 	public INativePropertyListener adaptListener(
 			final ISimplePropertyListener listener) {
-		return new Listener(listener);
-	}
-
-	private class Listener implements INativePropertyListener,
-			PropertyChangeListener {
-		private final ISimplePropertyListener listener;
-
-		private Listener(ISimplePropertyListener listener) {
-			this.listener = listener;
-		}
-
-		public void propertyChange(java.beans.PropertyChangeEvent evt) {
-			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
-				SetDiff diff;
-				Object oldValue = evt.getOldValue();
-				Object newValue = evt.getNewValue();
-				if (oldValue != null && newValue != null) {
-					diff = Diffs.computeSetDiff(asSet(oldValue),
-							asSet(newValue));
-				} else {
-					diff = null;
-				}
-				listener.handlePropertyChange(new SimplePropertyEvent(evt
-						.getSource(), BeanSetProperty.this, diff));
+		return new BeanPropertyListener(this, propertyDescriptor, listener) {
+			protected IDiff computeDiff(Object oldValue, Object newValue) {
+				return Diffs.computeSetDiff(asSet(oldValue), asSet(newValue));
 			}
-		}
-	}
-
-	public void doAddListener(Object source, INativePropertyListener listener) {
-		BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
-				.getName(), (PropertyChangeListener) listener);
-	}
-
-	public void doRemoveListener(Object source, INativePropertyListener listener) {
-		BeanPropertyListenerSupport.unhookListener(source, propertyDescriptor
-				.getName(), (PropertyChangeListener) listener);
+		};
 	}
 
 	public String toString() {

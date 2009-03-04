@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 247997
+ *     Matthew Hall - bugs 195222, 247997, 265561
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.list;
@@ -33,8 +33,6 @@ import org.eclipse.core.internal.databinding.property.list.SimplePropertyObserva
  * <li> {@link #doGetList(Object)}
  * <li> {@link #doSetList(Object, List, ListDiff)}
  * <li> {@link #adaptListener(ISimplePropertyListener)}
- * <li> {@link #doAddListener(Object, INativePropertyListener)}
- * <li> {@link #doRemoveListener(Object, INativePropertyListener)}
  * </ul>
  * <p>
  * In addition, we recommended overriding {@link #toString()} to return a
@@ -107,87 +105,21 @@ public abstract class SimpleListProperty extends ListProperty {
 	protected abstract void doSetList(Object source, List list, ListDiff diff);
 
 	/**
-	 * Returns a listener which implements the correct listener interface for
-	 * the expected source object, and which parlays property change events from
-	 * the source object to the given listener. If there is no listener API for
-	 * this property, this method returns null.
+	 * Returns a listener capable of adding or removing itself as a listener on
+	 * a source object using the the source's "native" listener API. Events
+	 * received from the source objects are parlayed to the specified listener
+	 * argument.
+	 * <p>
+	 * This method returns null if the source object has no listener APIs for
+	 * this property.
 	 * 
 	 * @param listener
 	 *            the property listener to receive events
 	 * @return a native listener which parlays property change events to the
-	 *         specified listener.
+	 *         specified listener, or null if the source object has no listener
+	 *         APIs for this property.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public abstract INativePropertyListener adaptListener(
 			ISimplePropertyListener listener);
-
-	/**
-	 * Adds the specified listener as a listener for this property on the
-	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
-	 * returns null), this method does nothing.
-	 * 
-	 * @param source
-	 *            the property source
-	 * @param listener
-	 *            a listener obtained from calling
-	 *            {@link #adaptListener(ISimplePropertyListener)}.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public final void addListener(Object source,
-			INativePropertyListener listener) {
-		if (source != null)
-			doAddListener(source, listener);
-	}
-
-	/**
-	 * Adds the specified listener as a listener for this property on the
-	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
-	 * returns null), this method does nothing.
-	 * 
-	 * @param source
-	 *            the property source
-	 * @param listener
-	 *            a listener obtained from calling
-	 *            {@link #adaptListener(ISimplePropertyListener)}.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	protected abstract void doAddListener(Object source,
-			INativePropertyListener listener);
-
-	/**
-	 * Removes the specified listener as a listener for this property on the
-	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
-	 * returns null), this method does nothing.
-	 * 
-	 * @param source
-	 *            the property source
-	 * @param listener
-	 *            a listener obtained from calling
-	 *            {@link #adaptListener(ISimplePropertyListener)}.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public final void removeListener(Object source,
-			INativePropertyListener listener) {
-		if (source != null)
-			doRemoveListener(source, listener);
-	}
-
-	/**
-	 * Removes the specified listener as a listener for this property on the
-	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
-	 * returns null), this method does nothing.
-	 * 
-	 * @param source
-	 *            the property source
-	 * @param listener
-	 *            a listener obtained from calling
-	 *            {@link #adaptListener(ISimplePropertyListener)}.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	protected abstract void doRemoveListener(Object source,
-			INativePropertyListener listener);
 }

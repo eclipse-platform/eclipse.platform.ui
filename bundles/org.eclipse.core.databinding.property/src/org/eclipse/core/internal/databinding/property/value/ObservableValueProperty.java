@@ -7,17 +7,21 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263709)
+ *     Matthew Hall - bugs 265561, 262287
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
 
+import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.NativePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
@@ -25,7 +29,7 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * 
  */
 /*
- * This class extends SimpleValueProperty rather than ValueProperty so make it
+ * This class extends SimpleValueProperty rather than ValueProperty to make it
  * easy to observe multiple IObservableValues, for example an IObservableList of
  * IObservableValues. In the simple case of observe(Object) or
  * observeDetail(IObservableValue) we just cast the source object to
@@ -55,34 +59,34 @@ public class ObservableValueProperty extends SimpleValueProperty {
 
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
-		return new Listener(listener);
+		return new Listener(this, listener);
 	}
 
-	private class Listener implements INativePropertyListener,
-			IValueChangeListener {
-		private final ISimplePropertyListener listener;
-
-		Listener(ISimplePropertyListener listener) {
-			this.listener = listener;
+	private class Listener extends NativePropertyListener implements
+			IValueChangeListener, IStaleListener {
+		Listener(IProperty property, ISimplePropertyListener listener) {
+			super(property, listener);
 		}
 
 		public void handleValueChange(ValueChangeEvent event) {
-			listener
-					.handlePropertyChange(new SimplePropertyEvent(event
-							.getObservable(), ObservableValueProperty.this,
-							event.diff));
+			fireChange(event.getObservable(), event.diff);
 		}
-	}
 
-	protected void doAddListener(Object source, INativePropertyListener listener) {
-		((IObservableValue) source)
-				.addValueChangeListener((IValueChangeListener) listener);
-	}
+		public void handleStale(StaleEvent event) {
+			fireStale(event.getObservable());
+		}
 
-	protected void doRemoveListener(Object source,
-			INativePropertyListener listener) {
-		((IObservableValue) source)
-				.removeValueChangeListener((IValueChangeListener) listener);
+		protected void doAddTo(Object source) {
+			IObservableValue observable = (IObservableValue) source;
+			observable.addValueChangeListener(this);
+			observable.addStaleListener(this);
+		}
+
+		protected void doRemoveFrom(Object source) {
+			IObservableValue observable = (IObservableValue) source;
+			observable.removeValueChangeListener(this);
+			observable.removeStaleListener(this);
+		}
 	}
 
 	public IObservableValue observe(Realm realm, Object source) {

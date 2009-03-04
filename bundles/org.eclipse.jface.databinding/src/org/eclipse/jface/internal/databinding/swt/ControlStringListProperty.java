@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 195222, 251611, 263413
+ *     Matthew Hall - bugs 195222, 251611, 263413, 265561
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -47,11 +47,5 @@ public abstract class ControlStringListProperty extends WidgetListProperty {
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
-	}
-
-	public void doAddListener(Object source, INativePropertyListener listener) {
-	}
-
-	public void doRemoveListener(Object source, INativePropertyListener listener) {
 	}
 }

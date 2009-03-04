@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bugs 265561, 262287
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
@@ -48,6 +49,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 	private INativePropertyListener listener;
 
 	private Map cachedMap;
+	private boolean stale;
 
 	/**
 	 * @param realm
@@ -76,11 +78,12 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
 			cachedMap = new HashMap(this);
+			stale = false;
 
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
-							public void handlePropertyChange(
+							public void handleChange(
 									final SimplePropertyEvent event) {
 								modCount++;
 								if (!isDisposed() && !updating) {
@@ -91,19 +94,27 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 									});
 								}
 							}
+
+							public void handleStale(SimplePropertyEvent event) {
+								if (!isDisposed() && !updating && !stale) {
+									stale = true;
+									fireStale();
+								}
+							}
 						});
 			}
-			property.addListener(source, listener);
+			if (listener != null)
+				listener.addTo(source);
 		}
 	}
 
 	protected void lastListenerRemoved() {
-		if (listener != null) {
-			property.removeListener(source, listener);
-		}
+		if (listener != null)
+			listener.removeFrom(source);
 
 		cachedMap.clear();
 		cachedMap = null;
+		stale = false;
 	}
 
 	// Queries
@@ -271,9 +282,16 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 			Map newMap = cachedMap = property.getMap(source);
 			if (diff == null)
 				diff = Diffs.computeMapDiff(oldMap, newMap);
-			if (!diff.isEmpty())
+			if (!diff.isEmpty() || stale) {
+				stale = false;
 				fireMapChange(diff);
+			}
 		}
+	}
+
+	public boolean isStale() {
+		getterCalled();
+		return stale;
 	}
 
 	public Object getObserved() {
@@ -287,10 +305,11 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 	public synchronized void dispose() {
 		if (!isDisposed()) {
 			if (listener != null)
-				property.removeListener(source, listener);
+				listener.removeFrom(source);
 			property = null;
 			source = null;
 			listener = null;
+			stale = false;
 		}
 		super.dispose();
 	}

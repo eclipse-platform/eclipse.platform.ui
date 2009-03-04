@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 264307
+ *     Matthew Hall - bugs 195222, 264307, 265561
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -54,13 +54,6 @@ public class PojoValueProperty extends SimpleValueProperty {
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
-	}
-
-	protected void doAddListener(Object source, INativePropertyListener listener) {
-	}
-
-	protected void doRemoveListener(Object source,
-			INativePropertyListener listener) {
 	}
 
 	public String toString() {

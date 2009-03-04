@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 265561
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
@@ -17,10 +18,10 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
- * Marker interface for "native" property listeners. A native listener
- * implements the listener interface supported by the source object, and parlays
- * events received from the source object to the property change listener
- * provided when the native listener was constructed.
+ * A listener capable of adding or removing itself as a listener on a source
+ * object using the source's "native" listener API. Events received from the
+ * source objects are parlayed to the {@link ISimplePropertyListener} provided
+ * to the method that constructed this native listener instance.
  * 
  * @since 1.2
  * @see SimpleValueProperty#adaptListener(ISimplePropertyListener)
@@ -29,4 +30,23 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * @see SimpleMapProperty#adaptListener(ISimplePropertyListener)
  */
 public interface INativePropertyListener {
+	/**
+	 * Adds the receiver as a listener for property events on the specified
+	 * property source.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void addTo(Object source);
+
+	/**
+	 * Removes the receiver as a listener for property events on the specified
+	 * property source.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void removeFrom(Object source);
 }

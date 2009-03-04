@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 256543
+ *     Matthew Hall - bugs 256543, 262287
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -27,18 +27,20 @@ public class TextTextProperty extends WidgetStringValueProperty {
 	 * 
 	 */
 	public TextTextProperty() {
+		this(null);
 	}
 
 	/**
 	 * @param events
 	 */
 	public TextTextProperty(int[] events) {
-		super(checkEvents(events));
+		super(checkEvents(events), staleEvents(events));
 	}
 
 	private static int[] checkEvents(int[] events) {
-		for (int i = 0; i < events.length; i++)
-			checkEvent(events[i]);
+		if (events != null)
+			for (int i = 0; i < events.length; i++)
+				checkEvent(events[i]);
 		return events;
 	}
 
@@ -47,6 +49,14 @@ public class TextTextProperty extends WidgetStringValueProperty {
 				&& event != SWT.DefaultSelection)
 			throw new IllegalArgumentException("UpdateEventType [" //$NON-NLS-1$
 					+ event + "] is not supported."); //$NON-NLS-1$
+	}
+
+	private static int[] staleEvents(int[] changeEvents) {
+		if (changeEvents != null)
+			for (int i = 0; i < changeEvents.length; i++)
+				if (changeEvents[i] == SWT.Modify)
+					return null;
+		return new int[] { SWT.Modify };
 	}
 
 	String doGetStringValue(Object source) {

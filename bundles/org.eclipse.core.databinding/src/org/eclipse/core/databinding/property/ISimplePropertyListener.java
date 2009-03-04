@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - but 194734
+ *     Matthew Hall - bugs 194734, 262287
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
@@ -16,7 +16,7 @@ package org.eclipse.core.databinding.property;
  * Listener for changes to properties on a particular source object
  * 
  * @noextend This interface is not intended to be extended by clients.
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 1.2
  */
 public interface ISimplePropertyListener {
@@ -26,5 +26,15 @@ public interface ISimplePropertyListener {
 	 * @param event
 	 *            an event describing the property change that occured.
 	 */
-	public void handlePropertyChange(SimplePropertyEvent event);
+	public void handleChange(SimplePropertyEvent event);
+
+	/**
+	 * Handle the event that the given property on the source object is now
+	 * stale.
+	 * 
+	 * @param event
+	 *            an event describing the property of the source object that is
+	 *            now stale
+	 */
+	public void handleStale(SimplePropertyEvent event);
 }

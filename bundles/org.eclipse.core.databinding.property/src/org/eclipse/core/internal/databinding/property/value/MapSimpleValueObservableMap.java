@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 262269
+ *     Matthew Hall - bugs 262269, 265561, 262287
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -52,6 +52,7 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 
 	private IObservableSet knownMasterValues;
 	private Map cachedValues;
+	private Set staleMasterValues;
 
 	private boolean updating = false;
 
@@ -132,8 +133,17 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		this.detailProperty = valueProperty;
 
 		ISimplePropertyListener listener = new ISimplePropertyListener() {
-			public void handlePropertyChange(SimplePropertyEvent event) {
+			public void handleChange(SimplePropertyEvent event) {
 				notifyIfChanged(event.getSource());
+			}
+
+			public void handleStale(SimplePropertyEvent event) {
+				if (!isDisposed() && !updating) {
+					boolean wasStale = !staleMasterValues.isEmpty();
+					staleMasterValues.add(event.getSource());
+					if (!wasStale)
+						fireStale();
+				}
 			}
 		};
 		this.detailListener = detailProperty.adaptListener(listener);
@@ -142,19 +152,23 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 	protected void firstListenerAdded() {
 		knownMasterValues = new IdentityObservableSet(getRealm(), null);
 		cachedValues = new IdentityMap();
+		staleMasterValues = new IdentitySet();
 		knownMasterValues.addSetChangeListener(new ISetChangeListener() {
 			public void handleSetChange(SetChangeEvent event) {
 				for (Iterator it = event.diff.getRemovals().iterator(); it
 						.hasNext();) {
 					Object key = it.next();
-					detailProperty.removeListener(key, detailListener);
+					if (detailListener != null)
+						detailListener.removeFrom(key);
 					cachedValues.remove(key);
+					staleMasterValues.remove(key);
 				}
 				for (Iterator it = event.diff.getAdditions().iterator(); it
 						.hasNext();) {
 					Object key = it.next();
 					cachedValues.put(key, detailProperty.getValue(key));
-					detailProperty.addListener(key, detailListener);
+					if (detailListener != null)
+						detailListener.addTo(key);
 				}
 			}
 		});
@@ -174,6 +188,8 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		}
 		cachedValues.clear();
 		cachedValues = null;
+		staleMasterValues.clear();
+		staleMasterValues = null;
 	}
 
 	private Set entrySet;
@@ -288,8 +304,10 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 			final Object oldValue = cachedValues.get(masterValue);
 			final Object newValue = detailProperty.getValue(masterValue);
 
-			if (!Util.equals(oldValue, newValue)) {
+			if (!Util.equals(oldValue, newValue)
+					|| staleMasterValues.contains(masterValue)) {
 				cachedValues.put(masterValue, newValue);
+				staleMasterValues.remove(masterValue);
 				fireMapChange(new MapDiff() {
 					public Set getAddedKeys() {
 						return Collections.EMPTY_SET;
@@ -330,7 +348,8 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 
 	public boolean isStale() {
 		getterCalled();
-		return masterMap.isStale();
+		return masterMap.isStale() || staleMasterValues != null
+				&& !staleMasterValues.isEmpty();
 	}
 
 	private void getterCalled() {
@@ -360,6 +379,7 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		detailListener = null;
 		detailProperty = null;
 		cachedValues = null;
+		staleMasterValues = null;
 
 		super.dispose();
 	}

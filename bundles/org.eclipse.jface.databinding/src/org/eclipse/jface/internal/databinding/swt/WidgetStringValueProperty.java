@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 195222, 256543, 263413
+ *     Matthew Hall - bugs 195222, 256543, 263413, 262287
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -26,9 +26,13 @@ public abstract class WidgetStringValueProperty extends WidgetValueProperty {
 	WidgetStringValueProperty(int event) {
 		super(event);
 	}
-	
+
 	WidgetStringValueProperty(int[] events) {
 		super(events);
+	}
+
+	WidgetStringValueProperty(int[] events, int[] staleEvents) {
+		super(events, staleEvents);
 	}
 
 	public Object getValueType() {

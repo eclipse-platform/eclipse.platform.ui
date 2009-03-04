@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 262287
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
@@ -17,7 +18,7 @@ import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
- * Base class for change events in the properties API
+ * Event object events in the properties API
  * 
  * @since 1.2
  */
@@ -25,29 +26,52 @@ public final class SimplePropertyEvent extends EventObject {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * The property that changed
+	 * Event type constant indicating that the property changed
+	 */
+	public static final int CHANGE = notInlined(1);
+
+	/**
+	 * Event type constant indicating that the property became stale
+	 */
+	public static final int STALE = notInlined(2);
+
+	private static int notInlined(int i) {
+		return i;
+	}
+
+	/**
+	 * The type of property event that occured
+	 */
+	public final int type;
+
+	/**
+	 * The property on which the event took place
 	 */
 	public final IProperty property;
 
 	/**
-	 * A diff object describing the change in state, or null for an unknown
-	 * change.
+	 * If event == CHANGE, a diff object describing the change in state, or null
+	 * for an unknown change.
 	 */
 	public final IDiff diff;
 
 	/**
 	 * Constructs a PropertyChangeEvent with the given attributes
 	 * 
+	 * @param type
+	 *            the property type
 	 * @param source
 	 *            the property source
 	 * @param property
 	 *            the property that changed on the source
 	 * @param diff
 	 *            a diff describing the change in state, or null if the change
-	 *            is unknown.
+	 *            is unknown or not applicable.
 	 */
-	public SimplePropertyEvent(Object source, IProperty property, IDiff diff) {
+	public SimplePropertyEvent(int type, Object source, IProperty property,
+			IDiff diff) {
 		super(source);
+		this.type = type;
 		this.property = property;
 		this.diff = diff;
 	}

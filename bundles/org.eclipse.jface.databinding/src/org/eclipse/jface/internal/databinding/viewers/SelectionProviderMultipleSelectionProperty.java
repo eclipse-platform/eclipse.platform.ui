@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 263413
+ *     Matthew Hall - bugs 195222, 263413, 265561
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -18,13 +18,10 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.jface.databinding.viewers.ViewerListProperty;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
@@ -52,33 +49,7 @@ public class SelectionProviderMultipleSelectionProperty extends
 
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
-		return new SelectionChangedListener(listener);
-	}
-
-	public void doAddListener(Object source, INativePropertyListener listener) {
-		((ISelectionProvider) source)
-				.addSelectionChangedListener((ISelectionChangedListener) listener);
-	}
-
-	public void doRemoveListener(Object source, INativePropertyListener listener) {
-		((ISelectionProvider) source)
-				.removeSelectionChangedListener((ISelectionChangedListener) listener);
-
-	}
-
-	private class SelectionChangedListener implements INativePropertyListener,
-			ISelectionChangedListener {
-		private ISimplePropertyListener listener;
-
-		private SelectionChangedListener(ISimplePropertyListener listener) {
-			this.listener = listener;
-		}
-
-		public void selectionChanged(SelectionChangedEvent event) {
-			listener.handlePropertyChange(new SimplePropertyEvent(event
-					.getSource(),
-					SelectionProviderMultipleSelectionProperty.this, null));
-		}
+		return new SelectionChangedListener(this, listener);
 	}
 
 	public String toString() {

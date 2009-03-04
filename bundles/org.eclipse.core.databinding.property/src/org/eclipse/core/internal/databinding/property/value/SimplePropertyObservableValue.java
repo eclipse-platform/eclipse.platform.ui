@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bugs 265561, 262287
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
@@ -34,6 +36,7 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 
 	private boolean updating = false;
 	private Object cachedValue;
+	private boolean stale;
 
 	private INativePropertyListener listener;
 
@@ -52,10 +55,11 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
 			cachedValue = property.getValue(source);
+			stale = false;
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
-							public void handlePropertyChange(
+							public void handleChange(
 									final SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
@@ -65,17 +69,25 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 									});
 								}
 							}
+
+							public void handleStale(SimplePropertyEvent event) {
+								if (!isDisposed() && !updating && !stale) {
+									stale = true;
+									fireStale();
+								}
+							}
 						});
 			}
-			property.addListener(source, listener);
+			if (listener != null)
+				listener.addTo(source);
 		}
 	}
 
 	protected void lastListenerRemoved() {
-		if (listener != null) {
-			property.removeListener(source, listener);
-		}
+		if (listener != null)
+			listener.removeFrom(source);
 		cachedValue = null;
+		stale = false;
 	}
 
 	protected Object doGetValue() {
@@ -100,7 +112,8 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 			Object newValue = cachedValue = property.getValue(source);
 			if (diff == null)
 				diff = Diffs.createValueDiff(oldValue, newValue);
-			if (hasListeners() && !Util.equals(oldValue, newValue)) {
+			if (!Util.equals(oldValue, newValue) || stale) {
+				stale = false;
 				fireValueChange(diff);
 			}
 		}
@@ -118,13 +131,19 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 		return property;
 	}
 
+	public boolean isStale() {
+		ObservableTracker.getterCalled(this);
+		return stale;
+	}
+
 	public synchronized void dispose() {
 		if (!isDisposed()) {
 			if (listener != null)
-				property.removeListener(source, listener);
+				listener.removeFrom(source);
 			source = null;
 			property = null;
 			listener = null;
+			stale = false;
 		}
 		super.dispose();
 	}

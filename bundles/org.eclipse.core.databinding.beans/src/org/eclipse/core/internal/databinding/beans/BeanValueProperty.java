@@ -7,19 +7,17 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 264307
+ *     Matthew Hall - bug 195222, 264307, 265561
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
@@ -55,42 +53,11 @@ public class BeanValueProperty extends SimpleValueProperty {
 
 	public INativePropertyListener adaptListener(
 			final ISimplePropertyListener listener) {
-		return new Listener(listener);
-	}
-
-	private class Listener implements INativePropertyListener,
-			PropertyChangeListener {
-		private final ISimplePropertyListener listener;
-
-		private Listener(ISimplePropertyListener listener) {
-			this.listener = listener;
-		}
-
-		public void propertyChange(java.beans.PropertyChangeEvent evt) {
-			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
-				ValueDiff diff;
-				Object oldValue = evt.getOldValue();
-				Object newValue = evt.getNewValue();
-				if (oldValue != null && newValue != null) {
-					diff = Diffs.createValueDiff(oldValue, newValue);
-				} else {
-					diff = null;
-				}
-				listener.handlePropertyChange(new SimplePropertyEvent(evt
-						.getSource(), BeanValueProperty.this, diff));
+		return new BeanPropertyListener(this, propertyDescriptor, listener) {
+			protected IDiff computeDiff(Object oldValue, Object newValue) {
+				return Diffs.createValueDiff(oldValue, newValue);
 			}
-		}
-	}
-
-	protected void doAddListener(Object source, INativePropertyListener listener) {
-		BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
-				.getName(), (PropertyChangeListener) listener);
-	}
-
-	protected void doRemoveListener(Object source,
-			INativePropertyListener listener) {
-		BeanPropertyListenerSupport.unhookListener(source, propertyDescriptor
-				.getName(), (PropertyChangeListener) listener);
+		};
 	}
 
 	public String toString() {

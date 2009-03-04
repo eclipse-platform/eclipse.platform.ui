@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 262269, 266754
+ *     Matthew Hall - bugs 262269, 266754, 265561, 262287
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
@@ -24,6 +25,7 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.internal.databinding.IdentityMap;
+import org.eclipse.core.internal.databinding.IdentitySet;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
@@ -36,6 +38,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	private INativePropertyListener listener;
 
 	private Map cachedValues;
+	private Set staleKeys;
 
 	private boolean updating;
 
@@ -51,17 +54,26 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 
 	protected void firstListenerAdded() {
 		cachedValues = new IdentityMap();
+		staleKeys = new IdentitySet();
 		if (listener == null) {
 			listener = detailProperty
 					.adaptListener(new ISimplePropertyListener() {
-						public void handlePropertyChange(
-								final SimplePropertyEvent event) {
+						public void handleChange(final SimplePropertyEvent event) {
 							if (!isDisposed() && !updating) {
 								getRealm().exec(new Runnable() {
 									public void run() {
 										notifyIfChanged(event.getSource());
 									}
 								});
+							}
+						}
+
+						public void handleStale(SimplePropertyEvent event) {
+							if (!isDisposed() && !updating) {
+								boolean wasStale = !staleKeys.isEmpty();
+								staleKeys.add(event.getSource());
+								if (!wasStale)
+									fireStale();
 							}
 						}
 					});
@@ -73,19 +85,24 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		super.lastListenerRemoved();
 		cachedValues.clear();
 		cachedValues = null;
+		staleKeys.clear();
+		staleKeys = null;
 	}
 
 	protected void hookListener(Object addedKey) {
 		if (cachedValues != null) {
 			cachedValues.put(addedKey, detailProperty.getValue(addedKey));
-			detailProperty.addListener(addedKey, listener);
+			if (listener != null)
+				listener.addTo(addedKey);
 		}
 	}
 
 	protected void unhookListener(Object removedKey) {
 		if (cachedValues != null) {
-			detailProperty.removeListener(removedKey, listener);
+			if (listener != null)
+				listener.removeFrom(removedKey);
 			cachedValues.remove(removedKey);
+			staleKeys.remove(removedKey);
 		}
 	}
 
@@ -112,8 +129,9 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		if (cachedValues != null) {
 			Object oldValue = cachedValues.get(key);
 			Object newValue = detailProperty.getValue(key);
-			if (!Util.equals(oldValue, newValue)) {
+			if (!Util.equals(oldValue, newValue) || staleKeys.contains(key)) {
 				cachedValues.put(key, newValue);
+				staleKeys.remove(key);
 				fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
 						newValue));
 			}
@@ -128,13 +146,20 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		return detailProperty;
 	}
 
+	public boolean isStale() {
+		return super.isStale() || staleKeys != null && !staleKeys.isEmpty();
+	}
+
 	public synchronized void dispose() {
 		if (cachedValues != null) {
 			cachedValues.clear();
 			cachedValues = null;
 		}
+
 		listener = null;
 		detailProperty = null;
+		cachedValues = null;
+		staleKeys = null;
 
 		super.dispose();
 	}

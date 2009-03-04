@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 264307
+ *     Matthew Hall - bug 195222, 264307, 265561
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -68,12 +68,6 @@ public class PojoMapProperty extends SimpleMapProperty {
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
-	}
-
-	public void doAddListener(Object source, INativePropertyListener listener) {
-	}
-
-	public void doRemoveListener(Object source, INativePropertyListener listener) {
 	}
 
 	public String toString() {

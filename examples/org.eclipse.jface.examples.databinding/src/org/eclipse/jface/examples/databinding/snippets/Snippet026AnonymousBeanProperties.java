@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
- *     Matthew Hall - bugs 261843, 260337
+ *     Matthew Hall - bugs 261843, 260337, 265561
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
@@ -26,15 +27,16 @@ import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.NativePropertyListener;
 import org.eclipse.core.databinding.property.set.DelegatingSetProperty;
 import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -244,36 +246,27 @@ public class Snippet026AnonymousBeanProperties {
 
 		public INativePropertyListener adaptListener(
 				final ISimplePropertyListener listener) {
-			return new Listener(listener);
+			return new Listener(this, listener);
 		}
 
-		private class Listener implements INativePropertyListener,
+		private class Listener extends NativePropertyListener implements
 				PropertyChangeListener {
-			private final ISimplePropertyListener listener;
-
-			Listener(ISimplePropertyListener listener) {
-				this.listener = listener;
+			Listener(IProperty property, ISimplePropertyListener listener) {
+				super(property, listener);
 			}
 
-			public void propertyChange(java.beans.PropertyChangeEvent evt) {
-				listener.handlePropertyChange(new SimplePropertyEvent(evt
-						.getSource(), ContactGroupContactsProperty.this, null));
+			public void propertyChange(PropertyChangeEvent evt) {
+				fireChange(evt.getSource(), null);
 			}
-		}
 
-		protected void doAddListener(Object source,
-				INativePropertyListener listener) {
-			if (source != null) {
+			protected void doAddTo(Object source) {
 				((ContactGroup) source).addPropertyChangeListener("contacts",
-						(Listener) listener);
+						this);
 			}
-		}
 
-		protected void doRemoveListener(Object source,
-				INativePropertyListener listener) {
-			if (source != null) {
+			protected void doRemoveFrom(Object source) {
 				((ContactGroup) source).removePropertyChangeListener(
-						"contacts", (Listener) listener);
+						"contacts", this);
 			}
 		}
 	}

@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
- *     Matthew Hall - bug 264307
+ *     Matthew Hall - bugs 195222, 264307, 265561
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -82,12 +81,6 @@ public class PojoSetProperty extends SimpleSetProperty {
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
 		return null;
-	}
-
-	public void doAddListener(Object source, INativePropertyListener listener) {
-	}
-
-	public void doRemoveListener(Object source, INativePropertyListener listener) {
 	}
 
 	public String toString() {
