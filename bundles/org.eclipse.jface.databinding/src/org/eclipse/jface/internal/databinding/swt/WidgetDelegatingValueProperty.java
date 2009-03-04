@@ -37,6 +37,6 @@ abstract class WidgetDelegatingValueProperty extends DelegatingValueProperty
 	}
 
 	public ISWTObservableValue observeDelayed(int delay, Widget widget) {
-		return SWTObservables.observeDelayedValue(400, observe(widget));
+		return SWTObservables.observeDelayedValue(delay, observe(widget));
 	}
 }
