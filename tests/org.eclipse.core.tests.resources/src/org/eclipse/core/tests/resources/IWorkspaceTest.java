@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import org.eclipse.core.resources.IWorkspace;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import junit.framework.Test;
@@ -18,6 +20,9 @@ import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.internal.resources.TestActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public class IWorkspaceTest extends ResourceTest {
 
@@ -323,7 +328,7 @@ public class IWorkspaceTest extends ResourceTest {
 		assertDoesNotExistInWorkspace(resources);
 		createHierarchy();
 	}
-	
+
 	/**
 	 * Performs black box testing of the following method:
 	 * 	{@link IWorkspace#forgetSavedTree(String)}.
@@ -1158,10 +1163,10 @@ public class IWorkspaceTest extends ResourceTest {
 			ensureDoesNotExistInFileSystem(openProjectLocation.toFile());
 			ensureDoesNotExistInFileSystem(closedProjectLocation.toFile());
 		}
-		
+
 		// cannot overlap .metadata folder from the current workspace
 		assertTrue("11.1", !(workspace.validateProjectLocation(project, platformLocation.addTrailingSeparator().append(".metadata"))).isOK());
-		
+
 		IProject metadataProject = workspace.getRoot().getProject(".metadata");
 		assertTrue("11.2", !(workspace.validateProjectLocation(metadataProject, null)).isOK());
 
@@ -1189,5 +1194,14 @@ public class IWorkspaceTest extends ResourceTest {
 		} catch (URISyntaxException e) {
 			fail("1.99", e);
 		}
+	}
+
+	public void testWorkspaceService() {
+		final BundleContext context = TestActivator.getContext();
+		ServiceReference ref = context.getServiceReference(IWorkspace.SERVICE_NAME);
+		assertNotNull("1.0", ref);
+		IWorkspace ws = (IWorkspace) context.getService(ref);
+		assertNotNull("1.1", ws);
+		
 	}
 }

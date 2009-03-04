@@ -15,8 +15,7 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 
 /**
  * The plug-in runtime class for the Resources plug-in.  This is
@@ -267,6 +266,8 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	private static Workspace workspace = null;
 
+	private ServiceRegistration workspaceRegistration;
+
 	/** 
 	 * Constructs an instance of this plug-in runtime class.
 	 * <p>
@@ -349,6 +350,7 @@ public final class ResourcesPlugin extends Plugin {
 		super.stop(context);
 		if (workspace == null)
 			return;
+		workspaceRegistration.unregister();
 		// save the preferences for this plug-in
 		getPlugin().savePluginPreferences();
 		workspace.close(null);
@@ -356,6 +358,7 @@ public final class ResourcesPlugin extends Plugin {
 		// Forget workspace only if successfully closed, to
 		// make it easier to debug cases where close() is failing.
 		workspace = null;
+		workspaceRegistration = null;
 	}
 
 	/**
@@ -376,5 +379,6 @@ public final class ResourcesPlugin extends Plugin {
 		IStatus result = workspace.open(null);
 		if (!result.isOK())
 			getLog().log(result);
+		workspaceRegistration = context.registerService(IWorkspace.SERVICE_NAME, workspace, null);
 	}
 }

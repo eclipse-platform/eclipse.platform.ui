@@ -90,6 +90,12 @@ public interface IWorkspace extends IAdaptable {
 	public static final Object VALIDATE_PROMPT = FileModificationValidationContext.VALIDATE_PROMPT;
 
 	/**
+	 * The name of the IWorkspace OSGi service (value "org.eclipse.core.resources.IWorkspace").
+	 * @since 3.5
+	 */
+	public static final String SERVICE_NAME = IWorkspace.class.getName();
+
+	/**
 	 * Adds the given listener for resource change events to this workspace. Has
 	 * no effect if an identical listener is already registered.
 	 * <p>
