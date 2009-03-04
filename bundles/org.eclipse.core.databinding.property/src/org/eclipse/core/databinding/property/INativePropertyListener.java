@@ -24,6 +24,7 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * to the method that constructed this native listener instance.
  * 
  * @since 1.2
+ * @see NativePropertyListener
  * @see SimpleValueProperty#adaptListener(ISimplePropertyListener)
  * @see SimpleListProperty#adaptListener(ISimplePropertyListener)
  * @see SimpleSetProperty#adaptListener(ISimplePropertyListener)
