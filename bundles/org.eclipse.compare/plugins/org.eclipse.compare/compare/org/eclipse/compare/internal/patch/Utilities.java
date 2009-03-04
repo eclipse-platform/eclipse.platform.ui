@@ -60,8 +60,9 @@ public class Utilities {
 			 * @see org.eclipse.compare.patch.ReaderCreator#canCreateReader()
 			 */
 			public boolean canCreateReader() {
-				if (storage != null && storage instanceof IFile
-						&& !((IFile) storage).isAccessible()) {
+				if (storage == null
+						|| (storage != null && storage instanceof IFile && !((IFile) storage)
+								.isAccessible())) {
 					return false;
 				}
 				return true;
@@ -71,8 +72,9 @@ public class Utilities {
 
 	public static BufferedReader createReader(IStorage storage)
 			throws CoreException {
-		if (storage != null && storage instanceof IFile
-				&& !((IFile) storage).isAccessible()) {
+		if (storage == null
+				|| (storage != null && storage instanceof IFile && !((IFile) storage)
+						.isAccessible())) {
 			throw new CoreException(new Status(IStatus.WARNING,
 					CompareUIPlugin.PLUGIN_ID,
 					CompareMessages.ReaderCreator_fileIsNotAccessible));

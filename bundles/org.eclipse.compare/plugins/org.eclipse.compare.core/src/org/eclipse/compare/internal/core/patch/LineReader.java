@@ -31,7 +31,7 @@ public class LineReader {
 	public static List load(ReaderCreator content, boolean create) {
 		List lines = null;
 		BufferedReader bufferedReader = null;
-		if (!create && content != null) {
+		if (!create && content != null && !content.canCreateReader()) {
 			// read current contents
 			try {
 				bufferedReader = new BufferedReader(content.createReader());
