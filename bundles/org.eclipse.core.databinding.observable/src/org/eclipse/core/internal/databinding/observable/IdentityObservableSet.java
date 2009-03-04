@@ -23,7 +23,6 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.internal.databinding.IdentitySet;
 
 /**
  * An {@link IObservableSet} of elements where elements are added, removed and

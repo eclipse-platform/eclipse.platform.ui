@@ -13,7 +13,7 @@ package org.eclipse.core.databinding.observable.value;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * An observable value which behaves similarly to the &lt;select&gt; and

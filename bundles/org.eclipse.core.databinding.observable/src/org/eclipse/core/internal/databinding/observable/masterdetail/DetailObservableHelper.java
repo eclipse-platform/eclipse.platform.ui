@@ -13,7 +13,7 @@ package org.eclipse.core.internal.databinding.observable.masterdetail;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.observable.Util;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 

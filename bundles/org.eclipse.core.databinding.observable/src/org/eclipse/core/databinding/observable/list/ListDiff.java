@@ -15,7 +15,7 @@ package org.eclipse.core.databinding.observable.list;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.IDiff;
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * Object describing a diff between two lists.

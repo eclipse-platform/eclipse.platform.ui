@@ -29,7 +29,7 @@ import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.core.internal.databinding.IdentitySet;
+import org.eclipse.core.internal.databinding.observable.IdentitySet;
 
 /**
  * Maps objects to one of their attributes. Tracks changes to the underlying

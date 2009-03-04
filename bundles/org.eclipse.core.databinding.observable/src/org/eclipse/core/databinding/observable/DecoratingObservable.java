@@ -12,7 +12,7 @@
 
 package org.eclipse.core.databinding.observable;
 
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * An observable which decorates another observable

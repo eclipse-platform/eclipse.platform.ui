@@ -16,9 +16,8 @@ package org.eclipse.core.databinding.observable;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.internal.databinding.Queue;
+import org.eclipse.core.internal.databinding.observable.Queue;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
@@ -28,7 +27,7 @@ import org.eclipse.core.runtime.Status;
  * A realm defines a context from which objects implementing {@link IObservable}
  * must be accessed, and on which these objects will notify their listeners. To
  * bridge between observables from different realms, subclasses of
- * {@link Binding} can be used.
+ * <code>Binding</code> can be used.
  * <p>
  * A block of code is said to be executing within a realm if calling
  * {@link #isCurrent()} from that block returns true. Code reached by calling

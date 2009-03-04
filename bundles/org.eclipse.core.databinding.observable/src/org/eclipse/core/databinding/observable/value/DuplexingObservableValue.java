@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
  * @since 1.2

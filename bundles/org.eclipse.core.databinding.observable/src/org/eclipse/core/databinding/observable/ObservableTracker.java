@@ -13,7 +13,7 @@ package org.eclipse.core.databinding.observable;
 
 import java.util.Set;
 
-import org.eclipse.core.internal.databinding.IdentitySet;
+import org.eclipse.core.internal.databinding.observable.IdentitySet;
 import org.eclipse.core.runtime.Assert;
 
 /**
