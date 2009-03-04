@@ -134,14 +134,17 @@ When an extension is deactivated by the user, the content and label providers ar
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="contentProvider" type="string" use="required">
+         <attribute name="contentProvider" type="string">
             <annotation>
                <documentation>
                   Supplies the name of a class which implements &lt;code&gt;org.eclipse.jface.viewers.ITreeContentProvider&lt;/code&gt; or &lt;code&gt;org.eclipse.ui.navigator.ICommonContentProvider&lt;/code&gt;.
 &lt;br&gt;&lt;br&gt;
-The content provider will be consulted when adding children to the tree. Use the &lt;b&gt;enablement&lt;/b&gt; or &lt;b&gt;triggerPoints&lt;/b&gt; clause to indicate what kinds of content should trigger a request to your content provider.
+The content provider will be consulted when adding children to the tree. Use the &lt;b&gt;enablement&lt;/b&gt;,  &lt;b&gt;triggerPoints&lt;/b&gt;, or &lt;b&gt;possibleChildren&lt;/b&gt; clauses to indicate what kinds of content should trigger a request to your content provider.
 &lt;br&gt;&lt;br&gt; 
 Elements contributed from the content provider are not guaranteed to appear in the tree in the same order. Clients should take advantage of the sorting extension (&lt;b&gt;commonSorter&lt;/b&gt;) to ensure proper ordering of their elements.
+&lt;br&gt;&lt;br&gt;
+All elements contributed by this content provider
+are associated with this navigatorContent extension for the purposes of determining the label provider, action providers, sorters, drop assistants and common wizards.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
@@ -172,7 +175,7 @@ Elements contributed from the content provider are not guaranteed to appear in t
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="labelProvider" type="string" use="required">
+         <attribute name="labelProvider" type="string">
             <annotation>
                <documentation>
                   Supplies the name of a class which implements &lt;code&gt;org.eclipse.jface.viewers.ILabelProvider&lt;/code&gt; or for more advanced functionality, the &lt;code&gt;org.eclipse.ui.navigator.ICommonLabelProvider&lt;/code&gt;.

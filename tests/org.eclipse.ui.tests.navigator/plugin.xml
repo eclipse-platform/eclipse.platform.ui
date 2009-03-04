@@ -257,7 +257,7 @@
 
       <navigatorContent 
             id="org.eclipse.ui.tests.navigator.testContentOverridden1" 
-            name="Test Content 1"
+            name="Test Content Overridden 1 (Red)"
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderRed"
             priority="lower">
@@ -266,23 +266,11 @@
                   value="org.eclipse.core.resources.IResource">
             </instanceof>
          </triggerPoints>
-	  </navigatorContent>      
-      <navigatorContent 
-            id="org.eclipse.ui.tests.navigator.testContentOverridden2" 
-            name="Test Content 2"
-            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
-            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
-            priority="lower">
-         <triggerPoints>
-            <instanceof
-                  value="org.eclipse.core.resources.IResource">
-            </instanceof>
-         </triggerPoints>
-	  </navigatorContent>      
-
+	  </navigatorContent>   
+	     
       <navigatorContent 
             id="org.eclipse.ui.tests.navigator.testContentOverride1" 
-            name="Override 1"
+            name="Test Content Override 1 (Label only - Green)"
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderGreen"
             priority="lower">
@@ -295,8 +283,21 @@
 	  </navigatorContent>      
 
       <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testContentOverridden2" 
+            name="Test Content Overridden 2 (Blue)"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            priority="lower">
+         <triggerPoints>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </triggerPoints>
+	  </navigatorContent>      
+
+      <navigatorContent 
             id="org.eclipse.ui.tests.navigator.testContentOverride2" 
-            name="Override 2"
+            name="Test Content Override 2 (Label only - Cyan)"
             contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan"
             priority="lower">

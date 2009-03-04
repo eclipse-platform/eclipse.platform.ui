@@ -23,7 +23,6 @@ public class SorterTest extends NavigatorTestBase {
 		_navigatorInstanceId = TEST_VIEWER;
 	}
 
-	private IStatus _status;
 	private int _statusCount;
 
 	// bug 262707 CommonViewerSorter gets NPE when misconfigured
@@ -40,7 +39,6 @@ public class SorterTest extends NavigatorTestBase {
 
 		ILogListener ll = new ILogListener() {
 			public void logging(IStatus status, String plugin) {
-				_status = status;
 				_statusCount++;
 			}
 		};
@@ -52,10 +50,9 @@ public class SorterTest extends NavigatorTestBase {
 
 		NavigatorPlugin.getDefault().getLog().removeLogListener(ll);
 
-		// Can vary depending on if the test is run standalone or with something
-		assertTrue("Status Count: " + _statusCount, _statusCount == 6 || _statusCount == 9);
-		assertTrue(_status.getMessage().indexOf("Cannot find nav") > -1);
-		assertTrue(_status.getMessage().indexOf("P/Test") > -1);
+		// We should not get any notification because of the way that
+		// sorters are found
+		assertTrue("Status Count: " + _statusCount, _statusCount == 0);
 	}
 
 	// bug 231855 [CommonNavigator] CommonViewerSorter does not support isSorterProperty method of ViewerComparator 

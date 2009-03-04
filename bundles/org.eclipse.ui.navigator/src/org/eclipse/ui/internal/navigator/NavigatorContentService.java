@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.WeakHashMap;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
@@ -45,6 +46,7 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptorManager;
 import org.eclipse.ui.internal.navigator.extensions.StructuredViewerManager;
 import org.eclipse.ui.internal.navigator.sorters.NavigatorSorterService;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.ui.navigator.IExtensionActivationListener;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -79,6 +81,11 @@ import org.osgi.service.prefs.BackingStoreException;
 public class NavigatorContentService implements IExtensionActivationListener,
 		IMementoAware, INavigatorContentService {
 
+	/**
+	 * 
+	 */
+	public static final String WIDGET_KEY = "org.eclipse.ui.navigator"; //$NON-NLS-1$
+	
 	private static final NavigatorContentDescriptorManager CONTENT_DESCRIPTOR_REGISTRY = NavigatorContentDescriptorManager
 			.getInstance();
 
@@ -107,10 +114,15 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private ITreeContentProvider[] rootContentProviders;
 
-	private WeakHashMap contributionMemory;
-
 	private ITreeContentProvider contentProvider;
 
+	/*
+	 * Used when providing objects to the CommonViewer by the contentProvider
+	 * to record the object/description associations which are when stored
+	 * in the Tree associated with the viewer.
+	 */
+	private Map contributionMemory;
+	
 	private ILabelProvider labelProvider;
 
 	private final VisibilityAssistant assistant;
@@ -148,6 +160,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		assistant = new VisibilityAssistant(viewerDescriptor,
 				getActivationService());
 		getActivationService().addExtensionActivationListener(this);
+		contributionMemory = new HashMap();
 	}
 
 	/**
@@ -409,19 +422,30 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	/**
 	 * 
-	 * Return all of the label providers that are enabled for the given element.
+	 * The label provider that is are enabled for the given element.
 	 * A label provider is 'enabled' if its corresponding content provider
-	 * returned the element, or the element is described in the content
-	 * extension's <b>possibleChild</b> expression.
+	 * returned the element.
 	 * 
 	 * @param anElement
 	 *            An element from the tree (any element contributed to the
 	 *            tree).
-	 * @return The set of label providers that may be able to provide a valid
-	 *         (non-null) label.
+	 * @return The label provider
 	 */
 	public ILabelProvider[] findRelevantLabelProviders(Object anElement) {
-		return extractLabelProviders(findContentExtensionsByTriggerPoint(anElement, true, CONSIDER_OVERRIDES));
+		NavigatorContentDescriptor ncd = getSourceOfContribution(anElement);
+		if (ncd != null) {
+			return new ILabelProvider[] { getExtension(ncd).getLabelProvider() };
+		}
+		// Rare case where there is no corresponding NCE (for example the root)
+		Set theDescriptorInstances = findContentExtensionsByTriggerPoint(anElement, true, CONSIDER_OVERRIDES);
+		if (theDescriptorInstances.size() == 0) {
+			return NO_LABEL_PROVIDERS;
+		}
+		List resultProvidersList = new ArrayList();
+		for (Iterator itr = theDescriptorInstances.iterator(); itr.hasNext();) {
+			resultProvidersList.add(((NavigatorContentExtension) itr.next()).getLabelProvider());
+		}
+		return (ILabelProvider[]) resultProvidersList.toArray(new ILabelProvider[resultProvidersList.size()]);
 	}
 
 	/**
@@ -634,53 +658,59 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	}
 
 	/**
-	 * Remember that the elements in the given array came from the given source
 	 * 
-	 * @param source
-	 *            The descriptor of the extension that contributed the set of
-	 *            elements.
-	 * @param elements
-	 *            An array of elements from the given source.
 	 */
-	public synchronized void rememberContribution(
-			NavigatorContentDescriptor source, Object[] elements) {
-		if (source != null && elements != null) {
-			for (int i = 0; i < elements.length; i++)
-				rememberContribution(source, elements[i]);
-		}
+	public void resetContributionMemory() {
+		contributionMemory.clear();
 	}
-
+	
 	/**
-	 * Remember that the elements in the given array came from the given source
 	 * 
+	 * 
+	 * @param elements
 	 * @param source
-	 *            The descriptor of the extension that contributed the set of
-	 *            elements.
-	 * @param element
-	 *            An element from the given source.
 	 */
-	public synchronized void rememberContribution(
-			NavigatorContentDescriptor source, Object element) {
-		Map memory = getContributionMemory();
-		if (element != null) {
-			if (memory.containsKey(element))
-				return;
-			if (source != null)
-				memory.put(element, source);
+	public void rememberContribution(NavigatorContentDescriptor source, Object[] elements) {
+		for (int i = 0; i < elements.length; i++) {
+			if (Policy.DEBUG_RESOLUTION)
+				System.out.println("rememberContribution: " + source + ": " + elements[i]);  //$NON-NLS-1$//$NON-NLS-2$
+			contributionMemory.put(elements[i], source);
 		}
 	}
-
+	
+	/**
+	 * 
+	 * 
+	 * @param element
+	 * @param source
+	 */
+	public void rememberContribution(NavigatorContentDescriptor source, Object element) {
+		if (Policy.DEBUG_RESOLUTION)
+			System.out.println("rememberContribution: " + source + ": " + element);  //$NON-NLS-1$//$NON-NLS-2$
+		contributionMemory.put(element, source);
+	}
+	
 	/**
 	 * Forget about the specified element
 	 * 
 	 * @param element
 	 *            The element to forget.
 	 */
-	public synchronized void forgetContribution(Object element) {
-		if (element != null)
-			getContributionMemory().remove(element);
+	public void forgetContribution(Object element) {
+		contributionMemory.remove(element);
 	}
-
+	
+	/**
+	 * @param element
+	 * @return the remembered NavigatorContentDescriptor
+	 */
+	public NavigatorContentDescriptor getContribution(Object element)
+	{
+		NavigatorContentDescriptor desc = (NavigatorContentDescriptor) contributionMemory.get(element);
+		contributionMemory.remove(element);
+		return desc;
+	}
+	
 	/**
 	 * 
 	 * @param element
@@ -688,27 +718,30 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @return The descriptor that contributed the element or null.
 	 * @see #findContentExtensionsByTriggerPoint(Object)
 	 */
-	public NavigatorContentDescriptor getSourceOfContribution(Object element) {
-		return (NavigatorContentDescriptor) getContributionMemory()
-				.get(element);
-	}
-
-	/**
-	 * @return Returns the contributionMemory.
-	 */
-	public Map getContributionMemory() {
-		if (contributionMemory != null) {
-			return contributionMemory;
+	public synchronized NavigatorContentDescriptor getSourceOfContribution(Object element) {
+		if (element == null)
+			return null;
+		if (structuredViewerManager == null)
+			return null;
+		// Try here first because it might not yet be in the tree
+		NavigatorContentDescriptor src = (NavigatorContentDescriptor) contributionMemory.get(element);
+		if (src != null)
+			return src;
+		CommonViewer viewer = (CommonViewer) structuredViewerManager.getViewer();
+		Widget[] ws = viewer.getItems(element);
+		if (ws.length == 0)
+			return null;
+		if (ws.length == 1) {
+			return (NavigatorContentDescriptor)ws[0].getData(WIDGET_KEY);
 		}
-		synchronized (this) {
-			if (contributionMemory == null) {
-				contributionMemory = new WeakHashMap();
+		for (int i = 0; i < ws.length; i++) {
+			if (ws[i].getData() == element) {
+				return (NavigatorContentDescriptor)ws[i].getData(WIDGET_KEY);
 			}
 		}
-
-		return contributionMemory;
+		Assert.isTrue(true, "Can't find data in TreeItem " + element); //$NON-NLS-1$
+		return null;
 	}
-
 	/**
 	 * 
 	 */
@@ -798,13 +831,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 						extension = (NavigatorContentExtension) contentExtensions
 								.get(key);
 						iter.remove();
-						/*
-						 * There really shouldn't be any way that this can be
-						 * null, but just to be safe
-						 */
-						if (extension != null) {
-							extension.dispose();
-						}
+						extension.dispose();
 					}
 				}
 			} catch (RuntimeException e) {
@@ -1166,19 +1193,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			}
 		}
 		return resultInstances;
-	}
-
-	private ILabelProvider[] extractLabelProviders(Set theDescriptorInstances) {
-		if (theDescriptorInstances.size() == 0) {
-			return NO_LABEL_PROVIDERS;
-		}
-		List resultProvidersList = new ArrayList();
-		for (Iterator itr = theDescriptorInstances.iterator(); itr.hasNext();) {
-			resultProvidersList.add(((NavigatorContentExtension) itr.next())
-					.getLabelProvider());
-		}
-		return (ILabelProvider[]) resultProvidersList
-				.toArray(new ILabelProvider[resultProvidersList.size()]);
 	}
 
 	/**

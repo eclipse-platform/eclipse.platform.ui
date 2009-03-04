@@ -22,6 +22,7 @@ import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 
 /**
  * 
@@ -180,6 +181,10 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 
     
     private INavigatorContentDescriptor getSource(Object o) {
+    	// Fast path - just an optimization for the common case
+    	NavigatorContentDescriptor ncd = contentService.getSourceOfContribution(o);
+    	if (ncd != null)
+    		return ncd;
 		Set descriptors = contentService.findDescriptorsByTriggerPoint(o, NavigatorContentService.CONSIDER_OVERRIDES);
 		if (descriptors != null && descriptors.size() > 0) {
 			return (INavigatorContentDescriptor) descriptors.iterator().next();

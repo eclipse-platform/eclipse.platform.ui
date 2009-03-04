@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,6 +133,7 @@ public class NavigatorContentServiceContentProvider implements
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public synchronized Object[] getElements(Object anInputElement) {
+		contentService.resetContributionMemory();
 		Set rootContentExtensions = contentService
 				.findRootContentExtensions(anInputElement);
 		if (rootContentExtensions.size() == 0) {
@@ -160,7 +161,7 @@ public class NavigatorContentServiceContentProvider implements
 							.getOverridingExtensionsForTriggerPoint(anInputElement);
 
 					if (overridingExtensions.length > 0) { 
-						localSet = pipelineElements(anInputElement,
+						localSet = pipelineChildren(anInputElement,
 								overridingExtensions, localSet);						
 					}
 					finalElementsSet.addAll(localSet);
@@ -221,6 +222,7 @@ public class NavigatorContentServiceContentProvider implements
 	}
 
 	private Object[] internalGetChildren(Object aParentElementOrPath) {
+		contentService.resetContributionMemory();
 		Object aParentElement = internalAsElement(aParentElementOrPath);
 		Set enabledExtensions = contentService
 				.findContentExtensionsByTriggerPoint(aParentElement);
@@ -303,11 +305,12 @@ public class NavigatorContentServiceContentProvider implements
 		ContributorTrackingSet pipelinedChildren = theCurrentChildren;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
 
+			// Update contributor even if not pipelining as this is where it is recorded by viewer
+			pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());				
 			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
 				
-				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());				
 				pipelinedContentProvider.getPipelinedChildren(aParentOrPath,
 						pipelinedChildren);
 				
@@ -324,48 +327,6 @@ public class NavigatorContentServiceContentProvider implements
 
 		return pipelinedChildren;
 
-	}
-
-	/**
-	 * Query each of <code>theOverridingExtensions</code> for elements, and
-	 * then pipe them through the Pipeline content provider.
-	 * 
-	 * @param anInputElement
-	 *            The input element in the tree
-	 * @param theOverridingExtensions
-	 *            The set of overriding extensions that should participate in
-	 *            the pipeline chain
-	 * @param theCurrentElements
-	 *            The current elements to return to the viewer (should be
-	 *            modifiable)
-	 * @return The set of elements to return to the viewer
-	 */
-	private ContributorTrackingSet pipelineElements(Object anInputElement,
-			NavigatorContentExtension[] theOverridingExtensions,
-			ContributorTrackingSet theCurrentElements) {
-		IPipelinedTreeContentProvider pipelinedContentProvider;
-		NavigatorContentExtension[] overridingExtensions;
-		ContributorTrackingSet pipelinedElements = theCurrentElements;
-		for (int i = 0; i < theOverridingExtensions.length; i++) {
-
-			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
-				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
-						.getContentProvider();
-
-				pipelinedElements.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());
-				pipelinedContentProvider.getPipelinedElements(anInputElement,
-						pipelinedElements);
-				pipelinedElements.setContributor(null);
-
-				overridingExtensions = theOverridingExtensions[i]
-						.getOverridingExtensionsForTriggerPoint(anInputElement);
-				if (overridingExtensions.length > 0) {
-					pipelinedElements = pipelineElements(anInputElement,
-							overridingExtensions, pipelinedElements);
-				}
-			}
-		}
-		return pipelinedElements;
 	}
 
 	/**
@@ -457,6 +418,7 @@ public class NavigatorContentServiceContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public synchronized Object getParent(Object anElement) {
+		contentService.resetContributionMemory();
 		Set extensions = contentService
 				.findContentExtensionsWithPossibleChild(anElement);
 

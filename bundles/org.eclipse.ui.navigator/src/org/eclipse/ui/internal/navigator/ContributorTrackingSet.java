@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.navigator;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
@@ -80,6 +81,12 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	 * @param newContributor The contributor to record for the next series of adds.
 	 */
 	public void setContributor(NavigatorContentDescriptor newContributor) {
+		if (newContributor != contributor) {
+			Iterator it = iterator();
+			while (it.hasNext()) {
+				contentService.rememberContribution(newContributor, it.next());
+			}
+		}
 		contributor = newContributor;
 	}
 

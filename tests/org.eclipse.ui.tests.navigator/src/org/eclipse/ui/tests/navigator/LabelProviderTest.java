@@ -26,6 +26,27 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_navigatorInstanceId = "org.eclipse.ui.tests.navigator.OverrideTestView";
 	}
 
+	public void testBlankLabelProvider() throws Exception {
+
+		TestLabelProvider._blank = true;
+		
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1,
+				TEST_CONTENT_OVERRIDE1 }, false);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_OVERRIDE1, TEST_CONTENT_OVERRIDDEN1 }, true);
+
+		refreshViewer();
+
+		TreeItem[] rootItems = _viewer.getTree().getItems();
+
+		if (DEBUG) {
+			DisplayHelper.sleep(Display.getCurrent(), 10000000);
+		}
+
+		if (!rootItems[0].getText().equals(""))
+			fail("Wrong text: " + rootItems[0].getText());
+	}
+
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
 	public void testSimpleResFirst() throws Exception {
 
@@ -50,28 +71,6 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 	
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
-	public void testBlankLabelProvider() throws Exception {
-
-		TestLabelProvider._blank = true;
-		
-		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1,
-				TEST_CONTENT_OVERRIDE1 }, false);
-		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_CONTENT_OVERRIDE1, TEST_CONTENT_OVERRIDDEN1 }, true);
-
-		refreshViewer();
-
-		TreeItem[] rootItems = _viewer.getTree().getItems();
-
-		if (DEBUG) {
-			DisplayHelper.sleep(Display.getCurrent(), 10000000);
-		}
-
-		if (!rootItems[0].getText().equals(""))
-			fail("Wrong text: " + rootItems[0].getText());
-	}
-
-	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
 	public void testSimpleResLast() throws Exception {
 
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
@@ -86,5 +85,5 @@ public class LabelProviderTest extends NavigatorTestBase {
 		assertEquals(TestLabelProviderCyan.getTestColor(), rootItems[0]
 				.getBackground(0));
 	}
-
+	
 }
