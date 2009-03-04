@@ -37,7 +37,7 @@ public interface IWorkbenchLocationService {
 	/**
 	 * A more numeric representation of the service level.
 	 * 
-	 * @return the level - 0==workbench, 1==workbench window, etc
+	 * @return the level - 0==workbench, 1==workbench window or dialog, etc
 	 */
 	public int getServiceLevel();
 

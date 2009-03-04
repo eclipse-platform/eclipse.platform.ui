@@ -16,11 +16,13 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -147,6 +149,38 @@ public class ContributedServiceTest extends UITestCase {
 		if (locator instanceof IDisposable) {
 			((IDisposable) locator).dispose();
 		}
+	}
+	
+	public void testLocalDialogService() throws Exception {
+		IServiceLocator parent = getWorkbench();
+		IServiceLocatorCreator lc = (IServiceLocatorCreator) parent
+				.getService(IServiceLocatorCreator.class);
+		IServiceLocator locator = lc.createServiceLocator(parent,
+				new AbstractServiceFactory() {
+					public Object create(Class serviceInterface,
+							IServiceLocator parentLocator,
+							IServiceLocator locator) {
+						if (IWorkbenchLocationService.class
+								.equals(serviceInterface)) {
+							IWorkbenchLocationService wls = (IWorkbenchLocationService) parentLocator
+									.getService(IWorkbenchLocationService.class);
+							return new WorkbenchLocationService(
+									IServiceScopes.DIALOG_SCOPE, wls
+											.getWorkbench(), null, null, null,
+									null, wls.getServiceLevel()+1);
+						}
+						return null;
+					}
+				}, new IDisposable() {
+					public void dispose() {
+					}
+				});
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+				.getService(IWorkbenchLocationService.class);
+		assertNotNull(wls.getWorkbench());
+		assertNull(wls.getWorkbenchWindow());
+		assertEquals(1, wls.getServiceLevel());
+		assertEquals(IServiceScopes.DIALOG_SCOPE, wls.getServiceScope());
 	}
 
 	public void testWorkbenchServiceFactory() throws Exception {
