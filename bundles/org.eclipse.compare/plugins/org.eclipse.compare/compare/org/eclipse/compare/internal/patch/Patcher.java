@@ -176,7 +176,12 @@ public class Patcher implements IHunkFilter {
 	}
 	
 	public void parse(BufferedReader reader) throws IOException {
-		PatchReader patchReader= new PatchReader();
+		PatchReader patchReader = new PatchReader() {
+			protected FileDiff createFileDiff(IPath oldPath, long oldDate,
+					IPath newPath, long newDate) {
+				return new FileDiffWrapper(oldPath, oldDate, newPath, newDate);
+			}
+		};
 		patchReader.parse(reader);
 		patchParsed(patchReader);
 	}

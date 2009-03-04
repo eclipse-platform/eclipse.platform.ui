@@ -154,7 +154,12 @@ public class PatchReader {
 		fDiffProjects= (DiffProject[]) diffProjects.values().toArray(new DiffProject[diffProjects.size()]);
 		fDiffs = (FileDiff[]) diffs.toArray(new FileDiff[diffs.size()]);
 	}
-	
+
+	protected FileDiff createFileDiff(IPath oldPath, long oldDate,
+			IPath newPath, long newDate) {
+		return new FileDiff(oldPath, oldDate, newPath, newDate);
+	}
+
 	private String readUnifiedDiff(List diffs, LineReader lr, String line, String diffArgs, String fileName, DiffProject diffProject) throws IOException {
 		List newDiffs= new ArrayList();
 		String nextLine= readUnifiedDiff(newDiffs, lr, line, diffArgs, fileName);
@@ -233,8 +238,9 @@ public class PatchReader {
 			
 		String[] newArgs= split(line.substring(4));
 	
-		FileDiff diff= new FileDiff(extractPath(oldArgs, 0, fileName), extractDate(oldArgs, 1),
-				   			extractPath(newArgs, 0, fileName), extractDate(newArgs, 1));
+		FileDiff diff = createFileDiff(extractPath(oldArgs, 0, fileName),
+				extractDate(oldArgs, 1), extractPath(newArgs, 0, fileName),
+				extractDate(newArgs, 1));
 		diffs.add(diff);
 				   
 		int[] oldRange= new int[2];
@@ -338,8 +344,9 @@ public class PatchReader {
 		
 		String[] newArgs= split(line.substring(4));
 						
-		FileDiff diff= new FileDiff(extractPath(oldArgs, 0, fileName), extractDate(oldArgs, 1),
-				   			extractPath(newArgs, 0, fileName), extractDate(newArgs, 1));
+		FileDiff diff = createFileDiff(extractPath(oldArgs, 0, fileName),
+				extractDate(oldArgs, 1), extractPath(newArgs, 0, fileName),
+				extractDate(newArgs, 1));
 		diffs.add(diff);
 				   
 		int[] oldRange= new int[2];

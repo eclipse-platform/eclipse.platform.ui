@@ -217,13 +217,18 @@ public class FileDiff implements IFilePatch2 {
 		if (fNewPath != null) {
 			adjustedNewPath = new Path(null, fProject.getName()).append(fNewPath);
 		}
-		FileDiff diff = new FileDiff(adjustedOldPath, 0, adjustedNewPath, 0);
+		FileDiff diff = create(adjustedOldPath, 0, adjustedNewPath, 0);
 		for (Iterator iterator = fHunks.iterator(); iterator.hasNext();) {
 			Hunk hunk = (Hunk) iterator.next();
 			// Creating the hunk adds it to the parent diff
 			new Hunk(diff, hunk);
 		}
 		return diff;
+	}
+
+	protected FileDiff create(IPath oldPath, long oldDate, IPath newPath,
+			long newDate) {
+		return new FileDiff(oldPath, oldDate, newPath, newDate);
 	}
 
 	public void setHeader(String header) {

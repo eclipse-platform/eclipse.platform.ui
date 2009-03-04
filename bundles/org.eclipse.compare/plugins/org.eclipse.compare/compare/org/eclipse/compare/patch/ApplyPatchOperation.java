@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -204,13 +205,19 @@ public class ApplyPatchOperation implements Runnable {
 			throws CoreException {
 		BufferedReader reader = Utilities.createReader(storage);
 		try {
-			PatchReader patchReader = new PatchReader();
+			PatchReader patchReader = new PatchReader() {
+				protected FileDiff createFileDiff(IPath oldPath, long oldDate,
+						IPath newPath, long newDate) {
+					return new FileDiffWrapper(oldPath, oldDate, newPath,
+							newDate);
+				}
+			};
 			patchReader.parse(reader);
 			FileDiff[] fileDiffs = patchReader.getAdjustedDiffs();
 
 			IFilePatch[] filePatch = new IFilePatch[fileDiffs.length];
 			for (int i = 0; i < fileDiffs.length; i++) {
-				filePatch[i] = new FileDiffWrapper(fileDiffs[i]);
+				filePatch[i] = (FileDiffWrapper) fileDiffs[i];
 			}
 
 			return filePatch;

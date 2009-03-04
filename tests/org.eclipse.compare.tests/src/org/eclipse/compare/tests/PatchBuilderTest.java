@@ -16,10 +16,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.compare.internal.core.patch.LineReader;
-import org.eclipse.compare.internal.patch.FileDiffWrapper;
+import org.eclipse.compare.internal.patch.Utilities;
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.compare.patch.IFilePatch2;
@@ -75,9 +74,9 @@ public class PatchBuilderTest extends TestCase {
 		assertEquals(28, ((Hunk) hunksAfter[3]).getStart(false));
 		assertEquals(33, ((Hunk) hunksAfter[3]).getStart(true));
 
-		FileDiffWrapper wrapper = new FileDiffWrapper((FileDiff) filePatch);
-		IFilePatchResult result = wrapper.apply(contextStorage,
-				new PatchConfiguration(), new NullProgressMonitor());
+		IFilePatchResult result = filePatch.apply(Utilities
+				.getReaderCreator(contextStorage), new PatchConfiguration(),
+				new NullProgressMonitor());
 
 		IHunk[] rejects = result.getRejects();
 		assertEquals(1, rejects.length);
@@ -126,9 +125,9 @@ public class PatchBuilderTest extends TestCase {
 		assertEquals(46, ((Hunk) hunksAfter[4]).getStart(false));
 		assertEquals(51, ((Hunk) hunksAfter[4]).getStart(true));
 
-		FileDiffWrapper wrapper = new FileDiffWrapper((FileDiff) filePatch);
-		IFilePatchResult result = wrapper.apply(contextStorage,
-				new PatchConfiguration(), new NullProgressMonitor());
+		IFilePatchResult result = filePatch.apply(Utilities
+				.getReaderCreator(contextStorage), new PatchConfiguration(),
+				new NullProgressMonitor());
 
 		IHunk[] rejects = result.getRejects();
 		assertEquals(0, rejects.length);
@@ -162,9 +161,9 @@ public class PatchBuilderTest extends TestCase {
 		assertEquals(46, ((Hunk) hunksAfter[2]).getStart(false));
 		assertEquals(43, ((Hunk) hunksAfter[2]).getStart(true));
 
-		FileDiffWrapper wrapper = new FileDiffWrapper((FileDiff) filePatch);
-		IFilePatchResult result = wrapper.apply(contextStorage,
-				new PatchConfiguration(), new NullProgressMonitor());
+		IFilePatchResult result = filePatch.apply(Utilities
+				.getReaderCreator(contextStorage), new PatchConfiguration(),
+				new NullProgressMonitor());
 
 		IHunk[] rejects = result.getRejects();
 		assertEquals(0, rejects.length);
@@ -202,9 +201,9 @@ public class PatchBuilderTest extends TestCase {
 		assertEquals(hunk0, filePatch.getHunks()[0]);
 		assertEquals(hunk1, filePatch.getHunks()[1]);
 
-		FileDiffWrapper wrapper = new FileDiffWrapper((FileDiff) filePatch);
-		IFilePatchResult result = wrapper.apply(contextStorage,
-				new PatchConfiguration(), new NullProgressMonitor());
+		IFilePatchResult result = filePatch.apply(Utilities
+				.getReaderCreator(contextStorage), new PatchConfiguration(),
+				new NullProgressMonitor());
 
 		InputStream actual = result.getPatchedContents();
 

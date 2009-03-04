@@ -13,19 +13,16 @@ package org.eclipse.compare.internal.patch;
 import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.compare.patch.IFilePatchResult;
-import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.compare.patch.ReaderCreator;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class FileDiffWrapper implements IFilePatch {
+public class FileDiffWrapper extends FileDiff implements IFilePatch {
 
-	private FileDiff fileDiff;
-
-	public FileDiffWrapper(FileDiff fileDiff) {
-		this.fileDiff = fileDiff;
+	public FileDiffWrapper(IPath oldPath, long oldDate, IPath newPath,
+			long newDate) {
+		super(oldPath, oldDate, newPath, newDate);
 	}
 
 	/*
@@ -38,41 +35,13 @@ public class FileDiffWrapper implements IFilePatch {
 	 */
 	public IFilePatchResult apply(IStorage content,
 			PatchConfiguration configuration, IProgressMonitor monitor) {
-		return fileDiff.apply(content != null ? Utilities
-				.getReaderCreator(content) : null, configuration, monitor);
+		return apply(content != null ? Utilities.getReaderCreator(content)
+				: null, configuration, monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.compare.patch.IFilePatch2#apply(org.eclipse.compare.patch
-	 * .ReaderCreator, org.eclipse.compare.patch.PatchConfiguration,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IFilePatchResult apply(ReaderCreator content,
-			PatchConfiguration configuration, IProgressMonitor monitor) {
-		return fileDiff.apply(content, configuration, monitor);
-	}
-
-	public long getAfterDate() {
-		return fileDiff.getAfterDate();
-	}
-
-	public long getBeforeDate() {
-		return fileDiff.getBeforeDate();
-	}
-
-	public String getHeader() {
-		return fileDiff.getHeader();
-	}
-
-	public IPath getTargetPath(PatchConfiguration configuration) {
-		return fileDiff.getTargetPath(configuration);
-	}
-
-	public IHunk[] getHunks() {
-		return fileDiff.getHunks();
+	protected FileDiff create(IPath oldPath, long oldDate, IPath newPath,
+			long newDate) {
+		return new FileDiffWrapper(oldPath, oldDate, newPath, newDate);
 	}
 
 }
