@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Eric Rizzo - removed "prompt for workspace on startup" checkbox
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application.dialogs;
 
@@ -21,7 +22,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.dialogs.StartupPreferencePage;
-import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -38,8 +38,6 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 
     private Button refreshButton;
 
-    private Button launchPromptButton;
-
     private Button exitPromptButton;
 
     /*
@@ -54,7 +52,6 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 
         Composite composite = createComposite(parent);
 
-        createLaunchPromptPref(composite);
         createRefreshWorkspaceOnStartupPref(composite);
         createExitPromptPref(composite);
 
@@ -71,8 +68,6 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
      */
     protected void performDefaults() {
         IPreferenceStore store = getIDEPreferenceStore();
-
-        launchPromptButton.setSelection(true);
 
         refreshButton
                 .setSelection(store
@@ -94,14 +89,6 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         store.setValue(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP,
                 refreshButton.getSelection());
 
-        // TODO: This should get the value from the configuration preference
-        //       area, but dj said we shouldn't use it yet; some final details are
-        //       being worked out. Hopefully it will be available soon, at which time
-        //       the entire recentWorkspaces.xml file can be removed. But until then,
-        //       this preference reads/writes the file each time.
-        ChooseWorkspaceData.setShowDialogValue(launchPromptButton
-                .getSelection());
-
         // store the exit prompt on last window close setting
         store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
                 exitPromptButton.getSelection());
@@ -117,20 +104,6 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         refreshButton.setFont(composite.getFont());
         refreshButton.setSelection(getIDEPreferenceStore().getBoolean(
                 IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
-    }
-
-    protected void createLaunchPromptPref(Composite composite) {
-        launchPromptButton = new Button(composite, SWT.CHECK);
-        launchPromptButton.setText(IDEWorkbenchMessages.StartupPreferencePage_launchPromptButton);
-        launchPromptButton.setFont(composite.getFont());
-
-        // TODO: This should get the value from the configuration preference
-        //       area, but dj said we shouldn't use it yet; some final details are
-        //       being worked out. Hopefully it will be available soon, at which time
-        //       the entire recentWorkspaces.xml file can be removed. But until then,
-        //       this preference reads/writes the file each time.
-        launchPromptButton.setSelection(ChooseWorkspaceData
-                .getShowDialogValue());
     }
 
     protected void createExitPromptPref(Composite composite) {

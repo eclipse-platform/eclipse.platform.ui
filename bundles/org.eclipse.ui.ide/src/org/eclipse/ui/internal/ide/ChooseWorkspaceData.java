@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Eric Rizzo - added API to set the list of recent workspaces.
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -189,6 +190,17 @@ public class ChooseWorkspaceData {
      */
     public void toggleShowDialog() {
         showDialog = !showDialog;
+    }
+
+    /**
+     * Sets the list of recent workspaces.
+     */
+    public void setRecentWorkspaces(String[] workspaces) {
+    	if (workspaces == null) {
+    		recentWorkspaces = new String[0];
+    	} else {
+			recentWorkspaces = workspaces;
+		}
     }
 
     /**

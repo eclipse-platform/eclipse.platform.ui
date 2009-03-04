@@ -19,6 +19,13 @@
             id="org.eclipse.ui.preferencePages.Startup">
          <keywordReference id="org.eclipse.ui.ide.startupAndShutdown"/>
       </page>
+     <page
+            name="%PreferencePages.Startup.Workspaces"
+            category="org.eclipse.ui.preferencePages.Startup"
+            class="org.eclipse.ui.internal.ide.application.dialogs.RecentWorkspacesPreferencePage"
+            id="org.eclipse.ui.preferencePages.Startup.Workspaces">
+         <keywordReference id="org.eclipse.ui.ide.recentWorkspaces"/>
+      </page>
     </extension>
      <extension
          point="org.eclipse.ui.perspectives">

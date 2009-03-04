@@ -411,6 +411,9 @@
             id="org.eclipse.ui.ide.startupAndShutdown"
             label="%PreferenceKeywords.StartupAndShutdown"/>
       <keyword
+            id="org.eclipse.ui.ide.recentWorkspaces"
+            label="%PreferenceKeywords.RecentWorkspaces"/>
+      <keyword
             id="org.eclipse.ui.ide.workspace"
             label="%PreferenceKeywords.Workspace"/>
       <keyword
@@ -2234,7 +2237,7 @@
             type="org.eclipse.core.resources.IMarker">
       </propertyTester>
    </extension>
-      <extension
+   <extension
          point="org.eclipse.ui.installationPages">
           <page
             name="%installationPage.feature.name"

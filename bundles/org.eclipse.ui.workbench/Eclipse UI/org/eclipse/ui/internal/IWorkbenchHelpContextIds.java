@@ -288,6 +288,9 @@ public interface IWorkbenchHelpContextIds {
 	public static final String STARTUP_PREFERENCE_PAGE = PREFIX
 			+ "startup_preference_page_context"; //$NON-NLS-1$
 
+	public static final String WORKSPACES_PREFERENCE_PAGE = PREFIX
+	+ "workspaces_preference_page_context"; //$NON-NLS-1$
+	
 	public static final String RESPONSIVE_UI = PREFIX + "responsive_ui_context"; //$NON-NLS-1$
 
 	// // Windows

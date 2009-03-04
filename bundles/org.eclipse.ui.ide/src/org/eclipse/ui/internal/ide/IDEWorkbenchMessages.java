@@ -499,6 +499,13 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String StartupPreferencePage_launchPromptButton;
 	public static String StartupPreferencePage_exitPromptButton;
 
+	// --- Startup -> Workspaces preferences ---
+	public static String RecentWorkspacesPreferencePage_NumberOfWorkspaces_label;
+	public static String RecentWorkspacesPreferencePage_PromptAtStartup_label;
+	public static String RecentWorkspacesPreferencePage_RecentWorkspacesList_label;
+	public static String RecentWorkspacesPreferencePage_RemoveButton_label;
+
+
 	// --- Info ---
 	public static String ResourceInfo_readOnly;
 	public static String ResourceInfo_executable;
