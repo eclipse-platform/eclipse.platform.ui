@@ -133,16 +133,16 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		this.detailProperty = valueProperty;
 
 		ISimplePropertyListener listener = new ISimplePropertyListener() {
-			public void handleChange(SimplePropertyEvent event) {
-				notifyIfChanged(event.getSource());
-			}
-
-			public void handleStale(SimplePropertyEvent event) {
+			public void handleEvent(SimplePropertyEvent event) {
 				if (!isDisposed() && !updating) {
-					boolean wasStale = !staleMasterValues.isEmpty();
-					staleMasterValues.add(event.getSource());
-					if (!wasStale)
-						fireStale();
+					if (event.type == SimplePropertyEvent.CHANGE)
+						notifyIfChanged(event.getSource());
+					else if (event.type == SimplePropertyEvent.STALE) {
+						boolean wasStale = !staleMasterValues.isEmpty();
+						staleMasterValues.add(event.getSource());
+						if (!wasStale)
+							fireStale();
+					}
 				}
 			}
 		};

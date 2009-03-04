@@ -60,7 +60,7 @@ public abstract class NativePropertyListener implements INativePropertyListener 
 	 *            a diff describing the change in state
 	 */
 	protected void fireChange(Object source, IDiff diff) {
-		listener.handleChange(new SimplePropertyEvent(
+		listener.handleEvent(new SimplePropertyEvent(
 				SimplePropertyEvent.CHANGE, source, property, diff));
 	}
 
@@ -72,7 +72,7 @@ public abstract class NativePropertyListener implements INativePropertyListener 
 	 *            the source object whose property became stale
 	 */
 	protected void fireStale(Object source) {
-		listener.handleStale(new SimplePropertyEvent(SimplePropertyEvent.STALE,
+		listener.handleEvent(new SimplePropertyEvent(SimplePropertyEvent.STALE,
 				source, property, null));
 	}
 }

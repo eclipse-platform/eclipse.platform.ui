@@ -21,20 +21,10 @@ package org.eclipse.core.databinding.property;
  */
 public interface ISimplePropertyListener {
 	/**
-	 * Handle the property change described in the event.
+	 * Handle the described property event.
 	 * 
 	 * @param event
-	 *            an event describing the property change that occured.
+	 *            the event which occured
 	 */
-	public void handleChange(SimplePropertyEvent event);
-
-	/**
-	 * Handle the event that the given property on the source object is now
-	 * stale.
-	 * 
-	 * @param event
-	 *            an event describing the property of the source object that is
-	 *            now stale
-	 */
-	public void handleStale(SimplePropertyEvent event);
+	public void handleEvent(SimplePropertyEvent event);
 }

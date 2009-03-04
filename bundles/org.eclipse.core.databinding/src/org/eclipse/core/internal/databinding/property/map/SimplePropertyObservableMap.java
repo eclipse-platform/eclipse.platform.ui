@@ -83,22 +83,16 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
-							public void handleChange(
-									final SimplePropertyEvent event) {
-								modCount++;
+							public void handleEvent(SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
-									getRealm().exec(new Runnable() {
-										public void run() {
-											notifyIfChanged((MapDiff) event.diff);
-										}
-									});
-								}
-							}
-
-							public void handleStale(SimplePropertyEvent event) {
-								if (!isDisposed() && !updating && !stale) {
-									stale = true;
-									fireStale();
+									if (event.type == SimplePropertyEvent.CHANGE) {
+										modCount++;
+										notifyIfChanged((MapDiff) event.diff);
+									} else if (event.type == SimplePropertyEvent.STALE
+											&& !stale) {
+										stale = true;
+										fireStale();
+									}
 								}
 							}
 						});

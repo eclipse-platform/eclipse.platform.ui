@@ -110,18 +110,16 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		this.detailProperty = valueProperty;
 
 		ISimplePropertyListener listener = new ISimplePropertyListener() {
-			public void handleChange(SimplePropertyEvent event) {
+			public void handleEvent(SimplePropertyEvent event) {
 				if (!isDisposed() && !updating) {
-					notifyIfChanged(event.getSource());
-				}
-			}
-
-			public void handleStale(SimplePropertyEvent event) {
-				if (!isDisposed() && !updating) {
-					boolean wasStale = !staleElements.isEmpty();
-					staleElements.add(event.getSource());
-					if (!wasStale)
-						fireStale();
+					if (event.type == SimplePropertyEvent.CHANGE)
+						notifyIfChanged(event.getSource());
+					else if (event.type == SimplePropertyEvent.STALE) {
+						boolean wasStale = !staleElements.isEmpty();
+						staleElements.add(event.getSource());
+						if (!wasStale)
+							fireStale();
+					}
 				}
 			}
 		};

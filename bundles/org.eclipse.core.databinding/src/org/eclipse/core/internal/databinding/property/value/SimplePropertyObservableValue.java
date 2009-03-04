@@ -59,21 +59,15 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
-							public void handleChange(
-									final SimplePropertyEvent event) {
+							public void handleEvent(SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
-									getRealm().exec(new Runnable() {
-										public void run() {
-											notifyIfChanged((ValueDiff) event.diff);
-										}
-									});
-								}
-							}
-
-							public void handleStale(SimplePropertyEvent event) {
-								if (!isDisposed() && !updating && !stale) {
-									stale = true;
-									fireStale();
+									if (event.type == SimplePropertyEvent.CHANGE) {
+										notifyIfChanged((ValueDiff) event.diff);
+									} else if (event.type == SimplePropertyEvent.STALE
+											&& !stale) {
+										stale = true;
+										fireStale();
+									}
 								}
 							}
 						});
