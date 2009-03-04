@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,17 +16,24 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+
 import org.eclipse.jface.viewers.ISelection;
+
+import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -49,14 +56,24 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 		if (targetId == null) {
 			throw new ExecutionException("No targetId specified"); //$NON-NLS-1$
 		}
+
+		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		ISourceProviderService sps = (ISourceProviderService)activeWorkbenchWindow.getService(ISourceProviderService.class);
+		if (sps != null) {
+			ISourceProvider sp = sps.getSourceProvider(ISources.SHOW_IN_SELECTION);
+			if (sp instanceof WorkbenchSourceProvider) {
+				((WorkbenchSourceProvider)sp).checkActivePart(true);
+			}
+		}
+
 		ShowInContext context = getContext(HandlerUtil
 				.getShowInSelection(event), HandlerUtil.getShowInInput(event));
 		if (context == null) {
 			return null;
 		}
 
-		IWorkbenchPage page = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event).getActivePage();
+		IWorkbenchPage page= activeWorkbenchWindow.getActivePage();
+
 		try {
 			IViewPart view = page.showView(targetId);
 			IShowInTarget target = getShowInTarget(view);

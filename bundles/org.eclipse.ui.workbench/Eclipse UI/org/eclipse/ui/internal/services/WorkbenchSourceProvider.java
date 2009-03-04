@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.expressions.IEvaluationContext;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -298,8 +299,12 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	}
 
 	public final void checkActivePart() {
+		checkActivePart(false);
+	}
+
+	public final void checkActivePart(boolean updateShowInSelection) {
 		Map currentState = new HashMap();
-		updateActivePart(currentState);
+		updateActivePart(currentState, updateShowInSelection);
 
 		int sources = 0;
 
@@ -339,8 +344,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 			sources |= ISources.ACTIVE_SITE;
 			lastShowInInput = newShowInInput;
 		}
-		final Object newShowInSelection = currentState
-				.get(ISources.SHOW_IN_SELECTION);
+		final Object newShowInSelection= updateShowInSelection ? currentState.get(ISources.SHOW_IN_SELECTION) : IEvaluationContext.UNDEFINED_VARIABLE;
 		if (!Util.equals(newShowInSelection, lastShowInSelection)) {
 			sources |= ISources.ACTIVE_SITE;
 			if (newShowInSelection != IEvaluationContext.UNDEFINED_VARIABLE) {
@@ -440,7 +444,10 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	}
 
 	private void updateActivePart(Map currentState) {
+		updateActivePart(currentState, false);
+	}
 
+	private void updateActivePart(Map currentState, boolean updateShowInSelection) {
 		currentState.put(ISources.ACTIVE_SITE_NAME,
 				IEvaluationContext.UNDEFINED_VARIABLE);
 		currentState.put(ISources.ACTIVE_PART_NAME,
@@ -482,10 +489,12 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 						if (input != null) {
 							currentState.put(ISources.SHOW_IN_INPUT, input);
 						}
-						ISelection selection = context.getSelection();
-						if (selection != null) {
-							currentState.put(ISources.SHOW_IN_SELECTION,
-									selection);
+						if (updateShowInSelection) {
+							ISelection selection = context.getSelection();
+							if (selection != null) {
+								currentState.put(ISources.SHOW_IN_SELECTION,
+										selection);
+							}
 						}
 					}
 				}
