@@ -10,7 +10,7 @@
  *     Daniel Kruegler - bug 137435
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding.observable;
+package org.eclipse.core.internal.databinding.identity;
 
 /**
  * Used for wrapping objects that define their own implementations of equals()

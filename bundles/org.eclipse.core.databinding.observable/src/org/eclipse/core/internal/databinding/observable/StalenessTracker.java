@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.StaleEvent;
+import org.eclipse.core.internal.databinding.identity.IdentityMap;
 
 /**
  * @since 1.0

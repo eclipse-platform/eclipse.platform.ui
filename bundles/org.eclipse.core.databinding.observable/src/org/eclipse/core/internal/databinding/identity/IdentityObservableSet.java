@@ -12,7 +12,7 @@
  *     Matthew Hall - bug 262269
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding.observable;
+package org.eclipse.core.internal.databinding.identity;
 
 import java.util.Collection;
 import java.util.Collections;

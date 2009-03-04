@@ -12,7 +12,7 @@
  *     Matthew Hall - bug 262269
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding.observable;
+package org.eclipse.core.internal.databinding.identity;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.internal.databinding.observable.Util;
 import org.eclipse.core.runtime.Assert;
 
 /**
