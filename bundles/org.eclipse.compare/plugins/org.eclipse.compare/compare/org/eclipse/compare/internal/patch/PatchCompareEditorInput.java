@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.internal.core.patch.DiffProject;
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.PatchConfiguration;
@@ -206,7 +206,7 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 		getViewer().refresh();
 	}
 	
-	private void processDiffs(FileDiff[] diffs) { 
+	private void processDiffs(FilePatch2[] diffs) { 
 		for (int i = 0; i < diffs.length; i++) {
 			processDiff(diffs[i], getRoot());
 		}
@@ -216,15 +216,15 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 		//create diffProject nodes
 		for (int i = 0; i < diffProjects.length; i++) {
 			PatchProjectDiffNode projectNode = new PatchProjectDiffNode(getRoot(), diffProjects[i], getPatcher().getConfiguration());
-			FileDiff[] diffs = diffProjects[i].getFileDiffs();
+			FilePatch2[] diffs = diffProjects[i].getFileDiffs();
 			for (int j = 0; j < diffs.length; j++) {
-				FileDiff fileDiff = diffs[j];
+				FilePatch2 fileDiff = diffs[j];
 				processDiff(fileDiff, projectNode);
 			}
 		}
 	}
 
-	private void processDiff(FileDiff diff, DiffNode parent) {
+	private void processDiff(FilePatch2 diff, DiffNode parent) {
 		FileDiffResult diffResult = getPatcher().getDiffResult(diff);
 		PatchFileDiffNode node = PatchFileDiffNode.createDiffNode(parent, diffResult);
 		HunkResult[] hunkResults = diffResult.getHunkResults();

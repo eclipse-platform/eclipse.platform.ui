@@ -12,7 +12,7 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.List;
 
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.resources.IFile;
@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IStorage;
 
 public class WorkspaceFileDiffResult extends FileDiffResult {
 
-	public WorkspaceFileDiffResult(FileDiff diff,
+	public WorkspaceFileDiffResult(FilePatch2 diff,
 			PatchConfiguration configuration) {
 		super(diff, configuration);
 	}

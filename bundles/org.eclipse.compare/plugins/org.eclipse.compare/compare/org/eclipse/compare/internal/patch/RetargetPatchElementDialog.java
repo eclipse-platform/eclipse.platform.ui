@@ -13,7 +13,7 @@ package org.eclipse.compare.internal.patch;
 import java.util.ArrayList;
 
 import org.eclipse.compare.internal.core.patch.DiffProject;
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Assert;
@@ -148,7 +148,7 @@ class RetargetPatchElementDialog extends Dialog {
 		} else if (fSelectedNode instanceof PatchFileDiffNode) {
 			PatchFileDiffNode node = (PatchFileDiffNode) fSelectedNode;
 			//copy over all hunks to new target resource
-			FileDiff diff = node.getDiffResult().getDiff();
+			FilePatch2 diff = node.getDiffResult().getDiff();
 			return NLS.bind(PatchMessages.RetargetPatchElementDialog_0, fPatcher.getPath(diff));
 		} else if (fSelectedNode instanceof HunkDiffNode) {
 			HunkDiffNode node = (HunkDiffNode) fSelectedNode;
@@ -167,7 +167,7 @@ class RetargetPatchElementDialog extends Dialog {
 			} else if (fSelectedNode instanceof PatchFileDiffNode && fSelectedResource instanceof IFile) {
 				PatchFileDiffNode node = (PatchFileDiffNode) fSelectedNode;
 				//copy over all hunks to new target resource
-				FileDiff diff = node.getDiffResult().getDiff();
+				FilePatch2 diff = node.getDiffResult().getDiff();
 				fPatcher.retargetDiff(diff, (IFile)fSelectedResource);
 			} else if (fSelectedNode instanceof HunkDiffNode && fSelectedResource instanceof IFile) {
 				HunkDiffNode node = (HunkDiffNode) fSelectedNode;

@@ -32,7 +32,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class FileDiffResult implements IFilePatchResult {
 
-	private FileDiff fDiff;
+	private FilePatch2 fDiff;
 	private boolean fMatches= false;
 	private boolean fDiffProblem;
 	private String fErrorMessage;
@@ -41,7 +41,7 @@ public class FileDiffResult implements IFilePatchResult {
 	private final PatchConfiguration configuration;
 	private String charset;
 	
-	public FileDiffResult(FileDiff diff, PatchConfiguration configuration) {
+	public FileDiffResult(FilePatch2 diff, PatchConfiguration configuration) {
 		super();
 		fDiff = diff;
 		this.configuration = configuration;
@@ -73,7 +73,7 @@ public class FileDiffResult implements IFilePatchResult {
 		charset = Utilities.getCharset(content);
 		//If this diff is an addition, make sure that it doesn't already exist
 		boolean exists = targetExists(content);
-		if (fDiff.getDiffType(getConfiguration().isReversed()) == FileDiff.ADDITION) {
+		if (fDiff.getDiffType(getConfiguration().isReversed()) == FilePatch2.ADDITION) {
 			if ((!exists || isEmpty(content)) && canCreateTarget(content)) {
 				fMatches= true;
 			} else {
@@ -220,7 +220,7 @@ public class FileDiffResult implements IFilePatchResult {
 			monitor = new NullProgressMonitor();
 		fBeforeLines = new ArrayList(lines);
 		// TODO: What about deletions?
-		if (fDiff.getDiffType(getConfiguration().isReversed()) == FileDiff.ADDITION) {
+		if (fDiff.getDiffType(getConfiguration().isReversed()) == FilePatch2.ADDITION) {
 			// Additions don't need to adjust the fuzz factor
 			// TODO: What about the after lines?
 			return -1;
@@ -268,7 +268,7 @@ public class FileDiffResult implements IFilePatchResult {
 		return failedHunks;
 	}
 
-	public FileDiff getDiff() {
+	public FilePatch2 getDiff() {
 		return fDiff;
 	}
 

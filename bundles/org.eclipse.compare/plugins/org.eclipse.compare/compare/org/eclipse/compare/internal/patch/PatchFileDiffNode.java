@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.compare.internal.patch;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.*;
@@ -36,13 +36,13 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 	private static int convertFileDiffTypeToDifferencerType(int fileDiffKind) {
 		int kind;
 		switch (fileDiffKind) {
-		case FileDiff.ADDITION:
+		case FilePatch2.ADDITION:
 			kind = Differencer.ADDITION;
 			break;
-		case FileDiff.DELETION:
+		case FilePatch2.DELETION:
 			kind = Differencer.DELETION;
 			break;
-		case FileDiff.CHANGE:
+		case FilePatch2.CHANGE:
 			kind = Differencer.CHANGE;
 			break;
 		default:

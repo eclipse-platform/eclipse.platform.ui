@@ -35,7 +35,7 @@ public class DiffProject {
 	 * Add the file diff to this project.
 	 * @param diff the file diff.
 	 */
-	public void add(FileDiff diff) {
+	public void add(FilePatch2 diff) {
 		fDiffs.add(diff);
 		if (diff.getProject() != this)
 			diff.setProject(this);
@@ -53,7 +53,7 @@ public class DiffProject {
 	 * Remove the file diff from this project.
 	 * @param diff the diff to be removed
 	 */
-	public void remove(FileDiff diff) {
+	public void remove(FilePatch2 diff) {
 		fDiffs.remove(diff);
 	}
 
@@ -62,7 +62,7 @@ public class DiffProject {
 	 * @param diff a file diff
 	 * @return whether this project contains the given diff
 	 */
-	public boolean contains(FileDiff diff) {
+	public boolean contains(FilePatch2 diff) {
 		return fDiffs.contains(diff);
 	}
 
@@ -70,7 +70,7 @@ public class DiffProject {
 	 * Return the file diffs associated with this project.
 	 * @return the file diffs associated with this project
 	 */
-	public FileDiff[] getFileDiffs() {
-		return (FileDiff[]) fDiffs.toArray(new FileDiff[fDiffs.size()]);
+	public FilePatch2[] getFileDiffs() {
+		return (FilePatch2[]) fDiffs.toArray(new FilePatch2[fDiffs.size()]);
 	}
 }

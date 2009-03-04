@@ -19,7 +19,7 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.core.runtime.Assert;
@@ -705,7 +705,7 @@ public class PreviewPatchPage2 extends WizardPage {
 				&& (removedLinesRegex == null || "".equals(removedLinesRegex))) { //$NON-NLS-1$
 			
 			fPatcher.countLines();
-			FileDiff[] fileDiffs = fPatcher.getDiffs();
+			FilePatch2[] fileDiffs = fPatcher.getDiffs();
 			for (int i = 0; i < fileDiffs.length; i++) {
 				added += fileDiffs[i].getAddedLines();
 				removed += fileDiffs[i].getRemovedLines();
@@ -716,7 +716,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			Pattern addedPattern = Pattern.compile(addedLinesRegex);
 			Pattern removedPattern = Pattern.compile(removedLinesRegex);
 
-			FileDiff[] fileDiffs = fPatcher.getDiffs();
+			FilePatch2[] fileDiffs = fPatcher.getDiffs();
 			for (int i = 0; i < fileDiffs.length; i++) {
 				IHunk[] hunks = fileDiffs[i].getHunks();
 				for (int j = 0; j < hunks.length; j++) {

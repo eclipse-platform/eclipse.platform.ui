@@ -24,14 +24,14 @@ import org.eclipse.core.runtime.Assert;
  */
 public class Hunk implements IHunk {
 
-	private FileDiff fParent;
+	private FilePatch2 fParent;
 	private int fOldStart, fOldLength;
 	private int fNewStart, fNewLength;
 	private String[] fLines;
 	private int hunkType;
 	private String charset = null;
 
-	public static Hunk createHunk(FileDiff parent, int[] oldRange, int[] newRange, List lines, boolean hasLineAdditions, boolean hasLineDeletions, boolean hasContextLines) {
+	public static Hunk createHunk(FilePatch2 parent, int[] oldRange, int[] newRange, List lines, boolean hasLineAdditions, boolean hasLineDeletions, boolean hasContextLines) {
 		int oldStart = 0;
 		int oldLength = 0;
 		int newStart = 0;
@@ -46,18 +46,18 @@ public class Hunk implements IHunk {
 		else
 			newStart= 0;
 		newLength= newRange[1];
-		int hunkType = FileDiff.CHANGE;
+		int hunkType = FilePatch2.CHANGE;
 		if (!hasContextLines) {
 			if (hasLineAdditions && !hasLineDeletions) {
-				hunkType = FileDiff.ADDITION;
+				hunkType = FilePatch2.ADDITION;
 			} else if (!hasLineAdditions && hasLineDeletions) {
-				hunkType = FileDiff.DELETION;
+				hunkType = FilePatch2.DELETION;
 			}
 		}
 		return new Hunk(parent, hunkType, oldStart, oldLength, newStart, newLength, (String[]) lines.toArray(new String[lines.size()]));
 	}
 	
-	public Hunk(FileDiff parent, int hunkType, int oldStart, int oldLength,
+	public Hunk(FilePatch2 parent, int hunkType, int oldStart, int oldLength,
 			int newStart, int newLength, String[] lines) {
 		fParent = parent;
         if (fParent != null) {
@@ -71,7 +71,7 @@ public class Hunk implements IHunk {
 		fLines = lines;
 	}
 	
-    public Hunk(FileDiff parent, Hunk toCopy) {
+    public Hunk(FilePatch2 parent, Hunk toCopy) {
     	this(parent, toCopy.hunkType, toCopy.fOldStart, toCopy.fOldLength, toCopy.fNewStart, toCopy.fNewLength, toCopy.fLines);
     }
 
@@ -129,10 +129,10 @@ public class Hunk implements IHunk {
 	
 	public int getHunkType(boolean reverse) {
 		if (reverse) {
-			if (hunkType == FileDiff.ADDITION)
-				return FileDiff.DELETION;
-			if (hunkType == FileDiff.DELETION)
-				return FileDiff.ADDITION;
+			if (hunkType == FilePatch2.ADDITION)
+				return FilePatch2.DELETION;
+			if (hunkType == FilePatch2.DELETION)
+				return FilePatch2.ADDITION;
 		}
 		return hunkType;
 	}
@@ -153,10 +153,10 @@ public class Hunk implements IHunk {
 
 	/**
 	 * Set the parent of this hunk. This method
-	 * should only be invoked from {@link FileDiff#add(Hunk)}
+	 * should only be invoked from {@link FilePatch2#add(Hunk)}
 	 * @param diff the parent of this hunk
 	 */
-	void setParent(FileDiff diff) {
+	void setParent(FilePatch2 diff) {
 		if (fParent == diff)
 			return;
 		if (fParent != null)
@@ -164,7 +164,7 @@ public class Hunk implements IHunk {
 		fParent = diff;	
 	}
 
-	public FileDiff getParent() {
+	public FilePatch2 getParent() {
 		return fParent;
 	}
 	

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.compare.patch.IFilePatchResult;
 import org.eclipse.compare.patch.PatchConfiguration;
@@ -18,9 +18,9 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class FileDiffWrapper extends FileDiff implements IFilePatch {
+public class FilePatch extends FilePatch2 implements IFilePatch {
 
-	public FileDiffWrapper(IPath oldPath, long oldDate, IPath newPath,
+	public FilePatch(IPath oldPath, long oldDate, IPath newPath,
 			long newDate) {
 		super(oldPath, oldDate, newPath, newDate);
 	}
@@ -39,9 +39,9 @@ public class FileDiffWrapper extends FileDiff implements IFilePatch {
 				: null, configuration, monitor);
 	}
 
-	protected FileDiff create(IPath oldPath, long oldDate, IPath newPath,
+	protected FilePatch2 create(IPath oldPath, long oldDate, IPath newPath,
 			long newDate) {
-		return new FileDiffWrapper(oldPath, oldDate, newPath, newDate);
+		return new FilePatch(oldPath, oldDate, newPath, newDate);
 	}
 
 }

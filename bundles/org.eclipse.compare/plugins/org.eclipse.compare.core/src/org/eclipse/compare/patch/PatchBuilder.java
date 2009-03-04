@@ -13,7 +13,7 @@ package org.eclipse.compare.patch;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.core.runtime.IPath;
 
@@ -90,7 +90,7 @@ public class PatchBuilder {
 	public static IFilePatch2 createFilePatch(IPath oldPath, long oldDate,
 			IPath newPath, long newDate, IHunk[] hunks) {
 		reorder(hunks);
-		FileDiff fileDiff = new FileDiff(oldPath, oldDate, newPath, newDate);
+		FilePatch2 fileDiff = new FilePatch2(oldPath, oldDate, newPath, newDate);
 		for (int i = 0; i < hunks.length; i++) {
 			fileDiff.add((Hunk) hunks[i]);
 		}
@@ -152,12 +152,12 @@ public class PatchBuilder {
 			boolean hasLineAdditions = checkForPrefix(ADDITION_PREFIX, lines);
 			boolean hasLineDeletions = checkForPrefix(REMOVAL_PREFIX, lines);
 			if (hasLineAdditions && !hasLineDeletions) {
-				return FileDiff.ADDITION;
+				return FilePatch2.ADDITION;
 			} else if (!hasLineAdditions && hasLineDeletions) {
-				return FileDiff.DELETION;
+				return FilePatch2.DELETION;
 			}
 		}
-		return FileDiff.CHANGE;
+		return FilePatch2.CHANGE;
 	}
 
 	private static int getHunkLength(String[] lines, boolean old) {

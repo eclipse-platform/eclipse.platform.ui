@@ -36,7 +36,7 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.compare.internal.patch.WorkspacePatcher;
@@ -456,7 +456,7 @@ public class PatchTest extends TestCase {
 			e.printStackTrace();
 		}
 		
-		FileDiff[] diffs= patcher.getDiffs();
+		FilePatch2[] diffs= patcher.getDiffs();
 		Assert.assertEquals(diffs.length, 1);
 		
 		FileDiffResult diffResult = patcher.getDiffResult(diffs[0]);
@@ -513,7 +513,7 @@ public class PatchTest extends TestCase {
 		}
 		
 		//Sort the diffs by project 
-		FileDiff[] diffs= patcher.getDiffs();
+		FilePatch2[] diffs= patcher.getDiffs();
 		
 		//Iterate through all of the original files, apply the diffs that belong to the file and compare
 		//with the corresponding outcome file

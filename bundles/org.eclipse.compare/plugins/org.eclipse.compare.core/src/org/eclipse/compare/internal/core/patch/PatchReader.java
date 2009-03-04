@@ -53,7 +53,7 @@ public class PatchReader {
 
 	private boolean fIsWorkspacePatch;
 	private DiffProject[] fDiffProjects;
-	private FileDiff[] fDiffs;
+	private FilePatch2[] fDiffs;
 
 	// API for writing new multi-project patch format
 	public static final String MULTIPROJECTPATCH_HEADER= "### Eclipse Workspace Patch"; //$NON-NLS-1$
@@ -152,19 +152,19 @@ public class PatchReader {
 		lr.close();
 
 		fDiffProjects= (DiffProject[]) diffProjects.values().toArray(new DiffProject[diffProjects.size()]);
-		fDiffs = (FileDiff[]) diffs.toArray(new FileDiff[diffs.size()]);
+		fDiffs = (FilePatch2[]) diffs.toArray(new FilePatch2[diffs.size()]);
 	}
 
-	protected FileDiff createFileDiff(IPath oldPath, long oldDate,
+	protected FilePatch2 createFileDiff(IPath oldPath, long oldDate,
 			IPath newPath, long newDate) {
-		return new FileDiff(oldPath, oldDate, newPath, newDate);
+		return new FilePatch2(oldPath, oldDate, newPath, newDate);
 	}
 
 	private String readUnifiedDiff(List diffs, LineReader lr, String line, String diffArgs, String fileName, DiffProject diffProject) throws IOException {
 		List newDiffs= new ArrayList();
 		String nextLine= readUnifiedDiff(newDiffs, lr, line, diffArgs, fileName);
 		for (Iterator iter= newDiffs.iterator(); iter.hasNext();) {
-			FileDiff diff= (FileDiff) iter.next();
+			FilePatch2 diff= (FilePatch2) iter.next();
 			diffProject.add(diff);
 			diffs.add(diff);
 		}
@@ -195,13 +195,13 @@ public class PatchReader {
 			} else if (line.startsWith("--- ")) { //$NON-NLS-1$
 				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName);
 				if (!headerLines.isEmpty())
-					setHeader((FileDiff)diffs.get(diffs.size() - 1), headerLines);
+					setHeader((FilePatch2)diffs.get(diffs.size() - 1), headerLines);
 				diffArgs= fileName= null;
 				reread= true;
 			} else if (line.startsWith("*** ")) { //$NON-NLS-1$
 				line= readContextDiff(diffs, lr, line, diffArgs, fileName);
 				if (!headerLines.isEmpty())
-					setHeader((FileDiff)diffs.get(diffs.size() - 1), headerLines);
+					setHeader((FilePatch2)diffs.get(diffs.size() - 1), headerLines);
 				diffArgs= fileName= null;
 				reread= true;
 			}
@@ -215,10 +215,10 @@ public class PatchReader {
 		
 		lr.close();
 		
-		fDiffs = (FileDiff[]) diffs.toArray(new FileDiff[diffs.size()]);
+		fDiffs = (FilePatch2[]) diffs.toArray(new FilePatch2[diffs.size()]);
 	}
 	
-	private void setHeader(FileDiff diff, List headerLines) {
+	private void setHeader(FilePatch2 diff, List headerLines) {
 		String header = LineReader.createString(false, headerLines);
 		diff.setHeader(header);
 		headerLines.clear();
@@ -238,7 +238,7 @@ public class PatchReader {
 			
 		String[] newArgs= split(line.substring(4));
 	
-		FileDiff diff = createFileDiff(extractPath(oldArgs, 0, fileName),
+		FilePatch2 diff = createFileDiff(extractPath(oldArgs, 0, fileName),
 				extractDate(oldArgs, 1), extractPath(newArgs, 0, fileName),
 				extractDate(newArgs, 1));
 		diffs.add(diff);
@@ -344,7 +344,7 @@ public class PatchReader {
 		
 		String[] newArgs= split(line.substring(4));
 						
-		FileDiff diff = createFileDiff(extractPath(oldArgs, 0, fileName),
+		FilePatch2 diff = createFileDiff(extractPath(oldArgs, 0, fileName),
 				extractDate(oldArgs, 1), extractPath(newArgs, 0, fileName),
 				extractDate(newArgs, 1));
 		diffs.add(diff);
@@ -657,19 +657,19 @@ public class PatchReader {
 		return fDiffProjects;
 	}
 
-	public FileDiff[] getDiffs() {
+	public FilePatch2[] getDiffs() {
 		return fDiffs;
 	}
 	
-	public FileDiff[] getAdjustedDiffs() {
+	public FilePatch2[] getAdjustedDiffs() {
 		if (!isWorkspacePatch() || fDiffs.length == 0)
 			return fDiffs;
 		List result = new ArrayList();
 		for (int i = 0; i < fDiffs.length; i++) {
-			FileDiff diff = fDiffs[i];
+			FilePatch2 diff = fDiffs[i];
 			result.add(diff.asRelativeDiff());
 		}
-		return (FileDiff[]) result.toArray(new FileDiff[result.size()]);
+		return (FilePatch2[]) result.toArray(new FilePatch2[result.size()]);
 	}
 
 }

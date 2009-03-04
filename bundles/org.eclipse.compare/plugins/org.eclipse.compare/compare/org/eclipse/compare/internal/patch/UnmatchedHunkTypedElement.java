@@ -21,7 +21,7 @@ import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ContentChangeNotifier;
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.resources.IFile;
@@ -79,7 +79,7 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 			changeNotifier.fireContentChanged();
 	}
 
-	private FileDiff getDiff() {
+	private FilePatch2 getDiff() {
 		return getHunkResult().getDiffResult().getDiff();
 	}
 

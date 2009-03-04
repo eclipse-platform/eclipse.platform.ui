@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Path;
  * A file diff represents a set of hunks that were associated with the
  * same path in a patch file.
  */
-public class FileDiff implements IFilePatch2 {
+public class FilePatch2 implements IFilePatch2 {
 
 	/**
 	 * Difference constant (value 1) indicating one side was added.
@@ -56,7 +56,7 @@ public class FileDiff implements IFilePatch2 {
 	 * @param newPath the path of the after state
 	 * @param newDate the timestamp of the after state
 	 */
- 	public FileDiff(IPath oldPath, long oldDate, IPath newPath, long newDate) {
+ 	public FilePatch2(IPath oldPath, long oldDate, IPath newPath, long newDate) {
 		fOldPath= oldPath;
 		this.oldDate = oldDate;
 		fNewPath= newPath;
@@ -74,7 +74,7 @@ public class FileDiff implements IFilePatch2 {
 	/**
 	 * Set the project of this diff to the given project.
 	 * This method should only be called from
-	 * {@link DiffProject#add(FileDiff)}
+	 * {@link DiffProject#add(FilePatch2)}
 	 * @param diffProject the parent project
 	 */
 	void setProject(DiffProject diffProject) {
@@ -206,7 +206,7 @@ public class FileDiff implements IFilePatch2 {
 		return getStrippedPath(configuration.getPrefixSegmentStripCount(), configuration.isReversed());
 	}
 
-	public FileDiff asRelativeDiff() {
+	public FilePatch2 asRelativeDiff() {
 		if (fProject == null)
 			return this;
 		IPath adjustedOldPath = null;
@@ -217,7 +217,7 @@ public class FileDiff implements IFilePatch2 {
 		if (fNewPath != null) {
 			adjustedNewPath = new Path(null, fProject.getName()).append(fNewPath);
 		}
-		FileDiff diff = create(adjustedOldPath, 0, adjustedNewPath, 0);
+		FilePatch2 diff = create(adjustedOldPath, 0, adjustedNewPath, 0);
 		for (Iterator iterator = fHunks.iterator(); iterator.hasNext();) {
 			Hunk hunk = (Hunk) iterator.next();
 			// Creating the hunk adds it to the parent diff
@@ -226,9 +226,9 @@ public class FileDiff implements IFilePatch2 {
 		return diff;
 	}
 
-	protected FileDiff create(IPath oldPath, long oldDate, IPath newPath,
+	protected FilePatch2 create(IPath oldPath, long oldDate, IPath newPath,
 			long newDate) {
-		return new FileDiff(oldPath, oldDate, newPath, newDate);
+		return new FilePatch2(oldPath, oldDate, newPath, newDate);
 	}
 
 	public void setHeader(String header) {

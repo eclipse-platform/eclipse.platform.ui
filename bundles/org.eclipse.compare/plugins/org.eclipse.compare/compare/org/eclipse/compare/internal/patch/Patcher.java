@@ -28,7 +28,7 @@ import java.util.Set;
 
 import org.eclipse.compare.internal.core.Messages;
 import org.eclipse.compare.internal.core.patch.DiffProject;
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.compare.internal.core.patch.PatchReader;
@@ -77,7 +77,7 @@ public class Patcher implements IHunkFilter {
 	//	private static final int NORMAL= 2;
 	//	private static final int UNIFIED= 3;
 	
-	private FileDiff[] fDiffs;
+	private FilePatch2[] fDiffs;
 	private IResource fTarget;
 	// patch options
 	private Set disabledElements = new HashSet();
@@ -98,13 +98,13 @@ public class Patcher implements IHunkFilter {
 	 * Returns an array of Diffs after a sucessfull call to <code>parse</code>.
 	 * If <code>parse</code> hasn't been called returns <code>null</code>.
 	 */
-	public FileDiff[] getDiffs() {
+	public FilePatch2[] getDiffs() {
 		if (fDiffs == null)
-			return new FileDiff[0];
+			return new FilePatch2[0];
 		return fDiffs;
 	}
 	
-	public IPath getPath(FileDiff diff) {
+	public IPath getPath(FilePatch2 diff) {
 		return diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 	}
 
@@ -177,9 +177,9 @@ public class Patcher implements IHunkFilter {
 	
 	public void parse(BufferedReader reader) throws IOException {
 		PatchReader patchReader = new PatchReader() {
-			protected FileDiff createFileDiff(IPath oldPath, long oldDate,
+			protected FilePatch2 createFileDiff(IPath oldPath, long oldDate,
 					IPath newPath, long newDate) {
-				return new FileDiffWrapper(oldPath, oldDate, newPath, newDate);
+				return new FilePatch(oldPath, oldDate, newPath, newDate);
 			}
 		};
 		patchReader.parse(reader);
@@ -191,11 +191,11 @@ public class Patcher implements IHunkFilter {
 	}
 	
 	public void countLines() {
-		FileDiff[] fileDiffs = getDiffs();
+		FilePatch2[] fileDiffs = getDiffs();
 		for (int i = 0; i < fileDiffs.length; i++) {
 			int addedLines = 0;
 			int removedLines = 0;
-			FileDiff fileDiff = fileDiffs[i];
+			FilePatch2 fileDiff = fileDiffs[i];
 			for (int j = 0; j < fileDiff.getHunkCount(); j++) {
 				IHunk hunk = fileDiff.getHunks()[j];
 				String[] lines = ((Hunk) hunk).getLines();
@@ -239,10 +239,10 @@ public class Patcher implements IHunkFilter {
 			list.add(singleFile);
 		else {
 			for (i= 0; i < fDiffs.length; i++) {
-				FileDiff diff= fDiffs[i];
+				FilePatch2 diff= fDiffs[i];
 				if (isEnabled(diff)) {
 					switch (diff.getDiffType(isReversed())) {
-					case FileDiff.CHANGE:
+					case FilePatch2.CHANGE:
 						list.add(createPath(container, getPath(diff)));
 						break;
 					}
@@ -263,7 +263,7 @@ public class Patcher implements IHunkFilter {
 			
 			int workTicks= WORK_UNIT;
 			
-			FileDiff diff= fDiffs[i];
+			FilePatch2 diff= fDiffs[i];
 			if (isEnabled(diff)) {
 				
 				IPath path= getPath(diff);
@@ -278,18 +278,18 @@ public class Patcher implements IHunkFilter {
 				
 				int type= diff.getDiffType(isReversed());
 				switch (type) {
-				case FileDiff.ADDITION:
+				case FilePatch2.ADDITION:
 					// patch it and collect rejected hunks
 					List result= apply(diff, file, true, failed);
 					if (result != null)
 						store(LineReader.createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
-				case FileDiff.DELETION:
+				case FilePatch2.DELETION:
 					file.delete(true, true, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
-				case FileDiff.CHANGE:
+				case FilePatch2.CHANGE:
 					// patch it and collect rejected hunks
 					result= apply(diff, file, false, failed);
 					if (result != null)
@@ -333,7 +333,7 @@ public class Patcher implements IHunkFilter {
 		return pp;
 	}
 	
-	List apply(FileDiff diff, IFile file, boolean create, List failedHunks) {
+	List apply(FilePatch2 diff, IFile file, boolean create, List failedHunks) {
 		FileDiffResult result = getDiffResult(diff);
 		List lines = LineReader.load(file, create);
 		result.patch(lines, null);
@@ -437,7 +437,7 @@ public class Patcher implements IHunkFilter {
 	}
 	
 
-	public IFile getTargetFile(FileDiff diff) {
+	public IFile getTargetFile(FilePatch2 diff) {
 		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 		return existsInTarget(path);
 	}
@@ -481,21 +481,21 @@ public class Patcher implements IHunkFilter {
 		int length= 99;
 		if (fDiffs!=null)
 			for (int i= 0; i<fDiffs.length; i++) {
-				FileDiff diff= fDiffs[i];
+				FilePatch2 diff= fDiffs[i];
 				length= Math.min(length, diff.segmentCount());
 			}
 		return length;
 	}
 	
-	public void addDiff(FileDiff newDiff){
-		FileDiff[] temp = new FileDiff[fDiffs.length + 1];
+	public void addDiff(FilePatch2 newDiff){
+		FilePatch2[] temp = new FilePatch2[fDiffs.length + 1];
 		System.arraycopy(fDiffs,0, temp, 0, fDiffs.length);
 		temp[fDiffs.length] = newDiff;
 		fDiffs = temp;
 	}
 	
-	public void removeDiff(FileDiff diffToRemove){
-		FileDiff[] temp = new FileDiff[fDiffs.length - 1];
+	public void removeDiff(FilePatch2 diffToRemove){
+		FilePatch2[] temp = new FilePatch2[fDiffs.length - 1];
 		int counter = 0;
 		for (int i = 0; i < fDiffs.length; i++) {
 			if (fDiffs[i] != diffToRemove){
@@ -508,20 +508,20 @@ public class Patcher implements IHunkFilter {
 	public void setEnabled(Object element, boolean enabled) {
 		if (element instanceof DiffProject) 
 			setEnabledProject((DiffProject) element, enabled);
-		if (element instanceof FileDiff) 
-			setEnabledFile((FileDiff)element, enabled);
+		if (element instanceof FilePatch2) 
+			setEnabledFile((FilePatch2)element, enabled);
 		if (element instanceof Hunk) 
 			setEnabledHunk((Hunk) element, enabled);
 	}
 	
 	private void setEnabledProject(DiffProject projectDiff, boolean enabled) {
-		FileDiff[] diffFiles = projectDiff.getFileDiffs();
+		FilePatch2[] diffFiles = projectDiff.getFileDiffs();
 		for (int i = 0; i < diffFiles.length; i++) {
 			setEnabledFile(diffFiles[i], enabled);
 		}
 	}
 	
-	private void setEnabledFile(FileDiff fileDiff, boolean enabled) {
+	private void setEnabledFile(FilePatch2 fileDiff, boolean enabled) {
 		IHunk[] hunks = fileDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
 			setEnabledHunk((Hunk) hunks[i], enabled);
@@ -531,14 +531,14 @@ public class Patcher implements IHunkFilter {
 	private void setEnabledHunk(Hunk hunk, boolean enabled) {
 		if (enabled) {
 			disabledElements.remove(hunk);
-			FileDiff file = hunk.getParent();
+			FilePatch2 file = hunk.getParent();
 			disabledElements.remove(file);
 			DiffProject project = file.getProject();
 			if (project != null)
 				disabledElements.remove(project);
 		} else {
 			disabledElements.add(hunk);
-			FileDiff file = hunk.getParent();
+			FilePatch2 file = hunk.getParent();
 			if (disabledElements.containsAll(Arrays.asList(file.getHunks()))) {
 				disabledElements.add(file);
 				DiffProject project = file.getProject();
@@ -575,12 +575,12 @@ public class Patcher implements IHunkFilter {
 	public int guessFuzzFactor(IProgressMonitor monitor) {
 		try {
 			monitor.beginTask(Messages.Patcher_2, IProgressMonitor.UNKNOWN);
-			FileDiff[] diffs= getDiffs();
+			FilePatch2[] diffs= getDiffs();
 			if (diffs==null||diffs.length<=0)
 				return -1;
 			int fuzz= -1;
 			for (int i= 0; i<diffs.length; i++) {
-				FileDiff d= diffs[i];
+				FilePatch2 d= diffs[i];
 				IFile file= getTargetFile(d);
 				if (file != null && file.exists()) {
 					List lines= LineReader.load(file, false);
@@ -601,15 +601,15 @@ public class Patcher implements IHunkFilter {
 		refresh(getDiffs());
 	}
 	
-	protected void refresh(FileDiff[] diffs) {
+	protected void refresh(FilePatch2[] diffs) {
 		for (int i = 0; i < diffs.length; i++) {
-			FileDiff diff = diffs[i];
+			FilePatch2 diff = diffs[i];
 			FileDiffResult result = getDiffResult(diff);
 			((WorkspaceFileDiffResult)result).refresh();
 		}
 	}
 	
-	public FileDiffResult getDiffResult(FileDiff diff) {
+	public FileDiffResult getDiffResult(FilePatch2 diff) {
 		FileDiffResult result = (FileDiffResult)diffResults.get(diff);
 		if (result == null) {
 			result = new WorkspaceFileDiffResult(diff, getConfiguration());
@@ -628,7 +628,7 @@ public class Patcher implements IHunkFilter {
 	 * @param diff the diff
 	 * @return the project that contains the diff
 	 */
-	public DiffProject getProject(FileDiff diff) {
+	public DiffProject getProject(FilePatch2 diff) {
 		return diff.getProject();
 	}
 
@@ -656,7 +656,7 @@ public class Patcher implements IHunkFilter {
 	 * @param diff the file diff
 	 * @param contents the contents for the file diff
 	 */
-	public void cacheContents(FileDiff diff, byte[] contents) {
+	public void cacheContents(FilePatch2 diff, byte[] contents) {
 		contentCache.put(diff, contents);
 	}
 	
@@ -665,9 +665,9 @@ public class Patcher implements IHunkFilter {
 	 * given file diff.
 	 * @param diff the file diff
 	 * @return whether contents have been cached for the file diff
-	 * @see #cacheContents(FileDiff, byte[])
+	 * @see #cacheContents(FilePatch2, byte[])
 	 */
-	public boolean hasCachedContents(FileDiff diff) {
+	public boolean hasCachedContents(FilePatch2 diff) {
 		return contentCache.containsKey(diff);
 	}
 
@@ -677,7 +677,7 @@ public class Patcher implements IHunkFilter {
 	 * @param diff the file diff
 	 * @return the content lines that are cached for the file diff
 	 */
-	public List getCachedLines(FileDiff diff) {
+	public List getCachedLines(FilePatch2 diff) {
 		byte[] contents = (byte[])contentCache.get(diff);
 		if (contents != null) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(contents)));
@@ -693,7 +693,7 @@ public class Patcher implements IHunkFilter {
 	 * @return the contents that are cached for the given diff or
 	 * <code>null</code>
 	 */
-	public byte[] getCachedContents(FileDiff diff) {
+	public byte[] getCachedContents(FilePatch2 diff) {
 		return (byte[])contentCache.get(diff);
 	}
 	
@@ -732,7 +732,7 @@ public class Patcher implements IHunkFilter {
 			mergedHunks.remove(hunk);
 	}
 
-	public IProject getTargetProject(FileDiff diff) {
+	public IProject getTargetProject(FilePatch2 diff) {
 		DiffProject dp = getProject(diff);
 		if (dp != null)
 			return Utilities.getProject(dp);

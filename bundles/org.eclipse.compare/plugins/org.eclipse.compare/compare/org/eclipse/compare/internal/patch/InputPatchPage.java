@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import java.io.StringReader;
 
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -189,7 +189,7 @@ import com.ibm.icu.text.MessageFormat;
 		// Read in the patch
 		readInPatch();
 		
-		FileDiff[] diffs= patcher.getDiffs();
+		FilePatch2[] diffs= patcher.getDiffs();
 		if (diffs == null || diffs.length == 0) {
 			String format= PatchMessages.InputPatchPage_NoDiffsFound_format;	
 			String message= MessageFormat.format(format, new String[] { fPatchSource });
@@ -792,7 +792,7 @@ import com.ibm.icu.text.MessageFormat;
 			return false;
 		}
 
-		FileDiff[] diffs= patcher.getDiffs();
+		FilePatch2[] diffs= patcher.getDiffs();
 		if (diffs == null || diffs.length == 0)
 			return false;
 		return true;

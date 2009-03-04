@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.eclipse.compare.internal.core.Messages;
 import org.eclipse.compare.internal.core.patch.DiffProject;
-import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.compare.internal.core.patch.PatchReader;
 import org.eclipse.compare.patch.IHunk;
@@ -91,7 +91,7 @@ public class WorkspacePatcher extends Patcher {
 				return;
 			}
 
-			FileDiff[] diffs = getDiffs();
+			FilePatch2[] diffs = getDiffs();
 			if (pm != null) {
 				String message= Messages.WorkspacePatcher_0;
 				pm.beginTask(message, diffs.length * WORK_UNIT);
@@ -101,7 +101,7 @@ public class WorkspacePatcher extends Patcher {
 
 				int workTicks= WORK_UNIT;
 
-				FileDiff diff= diffs[i];
+				FilePatch2 diff= diffs[i];
 				if (isAccessible(diff)) {
 					IFile file= getTargetFile(diff);
 					IPath path= file.getProjectRelativePath();
@@ -113,18 +113,18 @@ public class WorkspacePatcher extends Patcher {
 
 					int type= diff.getDiffType(isReversed());
 					switch (type) {
-						case FileDiff.ADDITION :
+						case FilePatch2.ADDITION :
 							// patch it and collect rejected hunks
 							List result= apply(diff, file, true, failed);
 							if (result != null)
 								store(LineReader.createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
-						case FileDiff.DELETION :
+						case FilePatch2.DELETION :
 							file.delete(true, true, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
-						case FileDiff.CHANGE :
+						case FilePatch2.CHANGE :
 							// patch it and collect rejected hunks
 							result= apply(diff, file, false, failed);
 							if (result != null)
@@ -164,7 +164,7 @@ public class WorkspacePatcher extends Patcher {
 		}
 	}
 	
-	private boolean isAccessible(FileDiff diff) {
+	private boolean isAccessible(FilePatch2 diff) {
 		return isEnabled(diff) && Utilities.getProject(diff.getProject()).isAccessible();
 	}
 
@@ -176,9 +176,9 @@ public class WorkspacePatcher extends Patcher {
 	 */
 	public IFile[] getTargetFiles(DiffProject project) {
 		List files= new ArrayList();
-		FileDiff[] diffs = project.getFileDiffs();
+		FilePatch2[] diffs = project.getFileDiffs();
 		for (int i = 0; i < diffs.length; i++) {
-			FileDiff diff = diffs[i];
+			FilePatch2 diff = diffs[i];
 			if (isEnabled(diff)) {
 				files.add(getTargetFile(diff));
 			}
@@ -186,7 +186,7 @@ public class WorkspacePatcher extends Patcher {
 		return (IFile[]) files.toArray(new IFile[files.size()]);
 	}
 
-	public IFile getTargetFile(FileDiff diff) {
+	public IFile getTargetFile(FilePatch2 diff) {
 		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 		DiffProject project = getProject(diff);
 		if (project != null)
@@ -194,7 +194,7 @@ public class WorkspacePatcher extends Patcher {
 		return super.getTargetFile(diff);
 	}
 	
-	private IPath getFullPath(FileDiff diff) {
+	private IPath getFullPath(FilePatch2 diff) {
 		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 		DiffProject project = getProject(diff);
 		if (project != null)
@@ -238,8 +238,8 @@ public class WorkspacePatcher extends Patcher {
 	}	
 	
 	protected Object getElementParent(Object element) {
-		if (element instanceof FileDiff && fDiffProjects != null) {
-			FileDiff diff = (FileDiff) element;
+		if (element instanceof FilePatch2 && fDiffProjects != null) {
+			FilePatch2 diff = (FilePatch2) element;
 			for (int i = 0; i < fDiffProjects.length; i++) {
 				DiffProject project = fDiffProjects[i];
 				if (project.contains(diff))
@@ -257,7 +257,7 @@ public class WorkspacePatcher extends Patcher {
 		return (IPath)retargetedDiffs.get(object);
 	}
 
-	public void retargetDiff(FileDiff diff, IFile file) {
+	public void retargetDiff(FilePatch2 diff, IFile file) {
 		retargetedDiffs.put(diff, diff.getPath(false));
 		IHunk[] hunks = diff.getHunks();
 		
@@ -266,16 +266,16 @@ public class WorkspacePatcher extends Patcher {
 			diff.getProject().remove(diff);
 		}
 		removeDiff(diff);
-		FileDiff newDiff = getDiffForFile(file);
+		FilePatch2 newDiff = getDiffForFile(file);
 		for (int i = 0; i < hunks.length; i++) {
 			Hunk hunk = (Hunk) hunks[i];
 			newDiff.add(hunk);
 		}
 	}
 
-	private FileDiff getDiffForFile(IFile file) {
+	private FilePatch2 getDiffForFile(IFile file) {
 		DiffProject diffProject = null;
-		FileDiff[] diffsToCheck;
+		FilePatch2[] diffsToCheck;
 		if (isWorkspacePatch()){
 			// Check if the diff project already exists for the file
 			IProject project = file.getProject();
@@ -296,7 +296,7 @@ public class WorkspacePatcher extends Patcher {
 		}
 		// Check to see if a diff already exists for the file
 		for (int i = 0; i < diffsToCheck.length; i++) {
-			FileDiff fileDiff = diffsToCheck[i];
+			FilePatch2 fileDiff = diffsToCheck[i];
 			if (isDiffForFile(fileDiff, file)) {
 				return fileDiff;
 			}
@@ -304,7 +304,7 @@ public class WorkspacePatcher extends Patcher {
 		
 		// Create a new diff for the file
 		IPath path = getDiffPath(file);
-		FileDiff newDiff = new FileDiff(path, 0, path, 0);
+		FilePatch2 newDiff = new FilePatch2(path, 0, path, 0);
 		if (diffProject != null){
 			diffProject.add(newDiff);
 		}
@@ -320,7 +320,7 @@ public class WorkspacePatcher extends Patcher {
 		return file.getFullPath().removeFirstSegments(getTarget().getFullPath().segmentCount());
 	}
 
-	private boolean isDiffForFile(FileDiff fileDiff, IFile file) {
+	private boolean isDiffForFile(FilePatch2 fileDiff, IFile file) {
 		return getFullPath(fileDiff).equals(file.getFullPath());
 	}
 
@@ -335,13 +335,13 @@ public class WorkspacePatcher extends Patcher {
 	}
 
 	public void retargetHunk(Hunk hunk, IFile file) {
-		FileDiff newDiff = getDiffForFile(file);
+		FilePatch2 newDiff = getDiffForFile(file);
 		newDiff.add(hunk);
 	}
 
 	public void retargetProject(DiffProject project, IProject targetProject) {
 		retargetedDiffs.put(project, Utilities.getProject(project).getFullPath());
-		FileDiff[] diffs = project.getFileDiffs();
+		FilePatch2[] diffs = project.getFileDiffs();
 		DiffProject selectedProject = getDiffProject(targetProject);
 		if (selectedProject == null)
 			selectedProject = addDiffProjectForProject(targetProject);
