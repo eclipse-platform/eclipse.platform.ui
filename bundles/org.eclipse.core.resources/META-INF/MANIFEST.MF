@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.core.resources; singleton:=true
 Bundle-Version: 3.5.0.qualifier
-Bundle-Activator: 
- org.eclipse.core.resources.ResourcesPlugin
+Bundle-Activator: org.eclipse.core.resources.ResourcesPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.internal.dtree;x-internal:=true,
