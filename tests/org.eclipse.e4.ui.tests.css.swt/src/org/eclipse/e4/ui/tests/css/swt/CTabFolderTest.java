@@ -4,7 +4,8 @@
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: IBM Corporation - initial API and implementation
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
@@ -46,6 +47,19 @@ public class CTabFolderTest extends CSSTestCase {
 
 		shell.pack();
 		return folderToTest;
+	}
+	
+	protected Shell createShell(String styleSheet) {
+		Display display = Display.getDefault();
+		engine = createEngine(styleSheet, display);
+
+		// Create widgets
+		Shell shell = new Shell(display, SWT.NONE);
+		
+		engine.applyStyles(shell, true);
+
+		shell.pack();
+		return shell;
 	}
 	
 	public void testBackgroundColor() throws Exception {
@@ -127,8 +141,8 @@ public class CTabFolderTest extends CSSTestCase {
 		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "maximizeVisible", null));
 		folderToTest.getShell().close();
 		folderToTest = createTestCTabFolder("CTabFolder { maximizeVisible: false}");
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "maximizeVisible", null));
 		assertEquals(false, folderToTest.getMaximizeVisible());
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "maximizeVisible", null));
 	}
 	
 	public void testMinimizeVisible() throws Exception {
@@ -199,5 +213,19 @@ public class CTabFolderTest extends CSSTestCase {
 		folderToTest = createTestCTabFolder("CTabFolder { unselectedImageVisible: false}");
 		assertEquals(false, folderToTest.getUnselectedImageVisible());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "unselectedImageVisible", null));
+	}
+	
+	public void testRetrievePropertyNull() {
+		Shell shell = createShell("Shell {color:red}");
+		assertEquals(null, engine.retrieveCSSProperty(shell, "borderVisible", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "maximized", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "maximizeVisible", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "minimizeVisible", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "mruVisible", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "showClose", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "simple", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "single", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "unselectedCloseVisible", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "unselectedImageVisible", null));
 	}
 }
