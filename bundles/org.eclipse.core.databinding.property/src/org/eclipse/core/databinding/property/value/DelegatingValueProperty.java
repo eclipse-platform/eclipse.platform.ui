@@ -108,13 +108,5 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 				ISimplePropertyListener listener) {
 			return null;
 		}
-
-		protected void doAddListener(Object source,
-				INativePropertyListener listener) {
-		}
-
-		protected void doRemoveListener(Object source,
-				INativePropertyListener listener) {
-		}
 	}
 }

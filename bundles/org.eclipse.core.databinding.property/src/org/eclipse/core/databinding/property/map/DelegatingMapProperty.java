@@ -97,14 +97,6 @@ public abstract class DelegatingMapProperty extends MapProperty {
 			return null;
 		}
 
-		protected void doAddListener(Object source,
-				INativePropertyListener listener) {
-		}
-
-		protected void doRemoveListener(Object source,
-				INativePropertyListener listener) {
-		}
-
 		public Object getKeyType() {
 			return keyType;
 		}
