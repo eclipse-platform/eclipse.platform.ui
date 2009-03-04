@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.examples.css.editor;
 
@@ -20,6 +21,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 
 public class CSSEditorSWTWidgets extends AbstractCSSSWTEditor {
 
@@ -32,6 +34,10 @@ public class CSSEditorSWTWidgets extends AbstractCSSSWTEditor {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(layout);
 
+		//Create SWT ToolBar
+		ToolBar toolbar = new ToolBar(composite, SWT.HORIZONTAL);
+		toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		// Create SWT Text
 		Text text = new Text(composite, SWT.BORDER);
 		text.setText("bla bla bla...");
