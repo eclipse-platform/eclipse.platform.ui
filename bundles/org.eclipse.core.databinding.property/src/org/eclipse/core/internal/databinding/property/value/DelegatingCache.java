@@ -27,8 +27,8 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.core.internal.databinding.IdentityMap;
-import org.eclipse.core.internal.databinding.observable.IdentityObservableSet;
+import org.eclipse.core.internal.databinding.identity.IdentityMap;
+import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
 
 /**
  * @since 3.3

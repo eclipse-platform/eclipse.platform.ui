@@ -15,7 +15,7 @@ package org.eclipse.core.databinding.property;
 import java.util.EventObject;
 
 import org.eclipse.core.databinding.observable.IDiff;
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * Event object events in the properties API

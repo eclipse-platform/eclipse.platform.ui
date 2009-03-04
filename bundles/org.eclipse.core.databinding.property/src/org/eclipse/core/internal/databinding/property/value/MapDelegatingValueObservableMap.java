@@ -31,7 +31,7 @@ import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @since 1.2

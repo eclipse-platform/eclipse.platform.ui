@@ -23,7 +23,7 @@ import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @since 1.2

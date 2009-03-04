@@ -40,10 +40,10 @@ import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.core.internal.databinding.IdentityMap;
-import org.eclipse.core.internal.databinding.IdentitySet;
-import org.eclipse.core.internal.databinding.Util;
-import org.eclipse.core.internal.databinding.observable.IdentityObservableSet;
+import org.eclipse.core.internal.databinding.identity.IdentityMap;
+import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
+import org.eclipse.core.internal.databinding.identity.IdentitySet;
+import org.eclipse.core.internal.databinding.property.Util;
 
 /**
  * @since 1.2
