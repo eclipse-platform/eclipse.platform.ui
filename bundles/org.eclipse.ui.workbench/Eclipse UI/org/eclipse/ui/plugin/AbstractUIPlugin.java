@@ -125,7 +125,7 @@ public abstract class AbstractUIPlugin extends Plugin {
      * Storage for dialog and wizard data; <code>null</code> if not yet
      * initialized.
      */
-    private DialogSettings dialogSettings = null;
+    private IDialogSettings dialogSettings = null;
 
     /**
      * Storage for preferences.

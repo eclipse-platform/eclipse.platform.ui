@@ -28,6 +28,7 @@ import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -138,7 +139,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         protected void configureShell(Shell newShell) {
             super.configureShell(newShell);
             String activityName = strings.getProperty(ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities);
-            activityName = activityName.replaceAll("&", ""); //strips possible mnemonic //$NON-NLS-1$ //$NON-NLS-2$
+            activityName = Util.replaceAll(activityName, "&", ""); //strips possible mnemonic //$NON-NLS-1$ //$NON-NLS-2$
 			newShell.setText(NLS.bind(           		
             		ActivityMessages.ActivitiesPreferencePage_advancedDialogTitle,
             		activityName		

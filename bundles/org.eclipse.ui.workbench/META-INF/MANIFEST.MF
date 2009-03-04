@@ -103,5 +103,4 @@ Import-Package: com.ibm.icu.text,
  org.w3c.dom,
  org.xml.sax
 Bundle-RequiredExecutionEnvironment: J2SE-1.4,
- CDC-1.0/Foundation-1.0,
- J2SE-1.3
+ CDC-1.1/Foundation-1.1

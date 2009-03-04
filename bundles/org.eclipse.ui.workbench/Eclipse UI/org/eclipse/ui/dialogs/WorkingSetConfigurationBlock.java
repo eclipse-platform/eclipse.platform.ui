@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
@@ -395,11 +396,22 @@ public class WorkingSetConfigurationBlock {
 
 		return -1;
 	}
+	
+	// copied from org.eclipse.jdt.internal.ui.text.JavaCommentScanner
+	private String[] split(String value, String delimiters) {
+		StringTokenizer tokenizer= new StringTokenizer(value, delimiters);
+		int size= tokenizer.countTokens();
+		String[] tokens= new String[size];
+		int i= 0;
+		while (i < size)
+			tokens[i++]= tokenizer.nextToken();
+		return tokens;
+	}
 
 	private void updateSelectedWorkingSets() {
 		String item = workingSetCombo.getItem(workingSetCombo
 				.getSelectionIndex());
-		String[] workingSetNames = item.split(", "); //$NON-NLS-1$
+		String[] workingSetNames = split(item, ", "); //$NON-NLS-1$
 
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
 				.getWorkingSetManager();
@@ -437,7 +449,7 @@ public class WorkingSetConfigurationBlock {
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
 				.getWorkingSetManager();
 		for (int i = 0; i < strings.length; i++) {
-			String[] workingSetNames = strings[i].split(", "); //$NON-NLS-1$
+			String[] workingSetNames = split(strings[i], ", "); //$NON-NLS-1$
 			boolean valid = true;
 			for (int j = 0; j < workingSetNames.length && valid; j++) {
 				IWorkingSet workingSet = workingSetManager

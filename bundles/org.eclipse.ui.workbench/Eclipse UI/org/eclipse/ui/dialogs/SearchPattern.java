@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
@@ -677,7 +678,7 @@ public class SearchPattern {
 	 * @return trimmed pattern
 	 */
 	private String trimWildcardCharacters(String pattern) {
-		return pattern.replaceAll("\\*+", "\\*"); //$NON-NLS-1$ //$NON-NLS-2$		}
+		return Util.replaceAll(pattern, "\\*+", "\\*"); //$NON-NLS-1$ //$NON-NLS-2$		}
 	}
 
 }
