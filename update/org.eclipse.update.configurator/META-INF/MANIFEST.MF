@@ -19,3 +19,4 @@ Import-Package: javax.xml.parsers,
  org.w3c.dom,
  org.xml.sax,
  org.xml.sax.helpers
+Service-Component: OSGI-INF/bundleGroup.xml
