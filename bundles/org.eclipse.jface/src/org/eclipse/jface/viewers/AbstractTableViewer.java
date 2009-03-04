@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
@@ -216,6 +217,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	protected void hookControl(Control control) {
 		super.hookControl(control);
 		initializeVirtualManager(getControl().getStyle());
+	}
+	
+	protected void handleDispose(DisposeEvent event) {
+		super.handleDispose(event);
+		virtualManager = null;
 	}
 
 	/**
