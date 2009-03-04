@@ -65,6 +65,9 @@ public class WBPartFactory extends SWTPartFactory {
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 			localContext.set(MWindow.class.getName(), part);
 
+			// Add the shell into the WBW's context
+			localContext.set(Shell.class.getName(), wbwShell);
+
 			if (part instanceof MWorkbenchWindow) {
 				TrimmedLayout tl = new TrimmedLayout(wbwShell);
 				wbwShell.setLayout(tl);
