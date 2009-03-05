@@ -339,9 +339,11 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		if (navigatorSaveablesService != null) {
 			assistant.removeListener(navigatorSaveablesService);
 		}
-		for (Iterator contentItr = contentExtensions.values().iterator(); contentItr
-				.hasNext();) {
-			((NavigatorContentExtension) contentItr.next()).dispose();
+		synchronized (this) {
+			for (Iterator contentItr = contentExtensions.values().iterator(); contentItr
+					.hasNext();) {
+				((NavigatorContentExtension) contentItr.next()).dispose();
+			}
 		}
 		getActivationService().removeExtensionActivationListener(this);
 		assistant.dispose();
