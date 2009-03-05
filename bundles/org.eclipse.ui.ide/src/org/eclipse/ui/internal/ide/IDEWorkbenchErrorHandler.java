@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.ide;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -64,7 +68,10 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	private static String MSG_FATAL_ERROR_Recursive = IDEWorkbenchMessages.FatalError_RecursiveError;
 
 	private static String MSG_FATAL_ERROR_Title = IDEWorkbenchMessages.InternalError;
-
+	
+	// cache handled statuses
+	private final Map map = Collections.synchronizedMap(new WeakHashMap()); 
+ 	
 	/**
 	 * @param configurer
 	 */
@@ -82,6 +89,14 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 
 		// if fatal error occurs, we will show the blocking error dialog anyway
 		if (isFatal(statusAdapter)) {
+			// if we modify the hint, we have to be sure that status picked up
+			// from .log will not be handled if it is reported independently via
+			// StatusManager
+			if (!map.containsKey(statusAdapter.getStatus())) {
+				map.put(statusAdapter.getStatus(), null);
+			} else {
+				return;
+			}
 			if (statusAdapter
 					.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) == Boolean.TRUE) {
 				statusAdapter.setProperty(
@@ -94,7 +109,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 		}
 
 		// if fatal error occurs, we will ask to close the workbench
-		if (isFatal(statusAdapter) && style != StatusManager.NONE) {
+		if (isFatal(statusAdapter)) {
 			UIJob handlingExceptionJob = new UIJob("IDE Exception Handler") //$NON-NLS-1$
 			{
 				/*
