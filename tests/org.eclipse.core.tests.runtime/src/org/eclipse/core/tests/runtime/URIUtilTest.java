@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import java.io.File;
+import java.io.*;
 import java.net.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.core.runtime.*;
 
 /**
- * Tests for the {@link URLUtil} class.
+ * Tests for the {@link URIUtil} class.
  */
 public class URIUtilTest extends RuntimeTest {
 	/** Constant value indicating if the current platform is Windows */
@@ -31,7 +30,27 @@ public class URIUtilTest extends RuntimeTest {
 	}
 
 	/**
-	 * Tests for {@link URIUtil#toFile(URL)}.
+	 * Tests for {@link URIUtil#toJarURI(URI, IPath)}.
+	 */
+	public void testToJARURI() {
+		URL locationURL = FileLocator.find(Platform.getBundle(RuntimeTestsPlugin.PI_RUNTIME_TESTS), new Path("Plugin_Testing/uriutil/test.jar"), null);
+		try {
+			locationURL = FileLocator.resolve(locationURL);
+			URI location = URIUtil.toURI(locationURL);
+			URI jar = URIUtil.toJarURI(location, new Path("test/1029/test.txt"));
+			InputStream is = jar.toURL().openStream();
+			is.close();
+		} catch (MalformedURLException e) {
+			fail("1.0", e);
+		} catch (IOException e) {
+			fail("1.1", e);
+		} catch (URISyntaxException e) {
+			fail("1.2", e);
+		}
+	}
+
+	/**
+	 * Tests for {@link URIUtil#toFile(URI)}.
 	 * @throws URISyntaxException 
 	 */
 	public void testToFile() throws URISyntaxException {
@@ -45,7 +64,7 @@ public class URIUtilTest extends RuntimeTest {
 	}
 
 	/**
-	 * Tests for {@link URIUtil#toFile(URL)} involving UNC paths.
+	 * Tests for {@link URIUtil#toFile(URI)} involving UNC paths.
 	 * @throws URISyntaxException 
 	 */
 	public void testToFileUNC() throws URISyntaxException {
@@ -192,6 +211,28 @@ public class URIUtilTest extends RuntimeTest {
 	}
 
 	/**
+	 * Tests for {@link URIUtil#append(URI, String)}.
+	 * @throws URISyntaxException 
+	 */
+	public void testAppend() throws URISyntaxException {
+		URI base = new URI("http://a.b.c/a%20b/");
+		URI result = URIUtil.append(base, "file.txt");
+		assertEquals("1.0", "http://a.b.c/a%20b/file.txt", result.toString());
+		assertEquals("1.1", "//a.b.c/a b/file.txt", result.getSchemeSpecificPart());
+
+		//		base = new URI("http://a.b.c/a%20b/");
+		//		result = URIUtil.append(base, "a b.txt");
+		//		assertEquals("1.0", "http://a.b.c/a%20b/a%20b.txt", result.toString());
+		//		assertEquals("1.1", "//a.b.c/a b/a b.txt", result.getSchemeSpecificPart());
+
+		base = new URI("file:/C:/Documents%20and%20Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/");
+		result = URIUtil.append(base, "content.jar");
+		assertEquals("1.0", "file:/C:/Documents%20and%20Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/content.jar", result.toString());
+		assertEquals("1.1", "/C:/Documents and Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/content.jar", result.getSchemeSpecificPart());
+
+	}
+
+	/**
 	 * Tests for {@link URIUtil#append(URI, String)} when dealing with UNC paths.
 	 */
 	public void testAppendUNC() throws URISyntaxException {
@@ -201,11 +242,6 @@ public class URIUtilTest extends RuntimeTest {
 		URI expectedResolved = new URI("file:////SERVER/some/path/plugins/javax.servlet_2.4.0.v200806031604.jar");
 		URI resolved = URIUtil.append(base, relative.toString());
 		assertEquals("1.0", expectedResolved, resolved);
-
-		//an absolute URI should not be resolved
-		URI absolute = new URI("file:////ANOTHERSERVER/another/path");
-		resolved = URIUtil.append(base, absolute.toString());
-		assertEquals("1.1", absolute, resolved);
 
 	}
 
@@ -346,6 +382,12 @@ public class URIUtilTest extends RuntimeTest {
 		URI relative = new URI("plugins/javax.servlet_2.4.0.v200806031604.jar");
 		URI result = URIUtil.makeAbsolute(relative, base);
 		assertEquals("1.0", new URI("file:////SERVER/some/path/plugins/javax.servlet_2.4.0.v200806031604.jar"), result);
+
+		//an absolute URI should not be resolved
+		URI absolute = new URI("file:////ANOTHERSERVER/another/path");
+		URI resolved = URIUtil.makeAbsolute(absolute, base);
+		assertEquals("1.1", absolute, resolved);
+
 	}
 
 	public void testMakeRelative() throws URISyntaxException {
