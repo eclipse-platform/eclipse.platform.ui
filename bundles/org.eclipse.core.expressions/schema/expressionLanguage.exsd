@@ -276,6 +276,10 @@ rules:
                     &lt;dt&gt;?&lt;/dt&gt; &lt;dd&gt;no elements or one element&lt;/dd&gt;
                     &lt;dt&gt;+&lt;/dt&gt; &lt;dd&gt;one or more elements&lt;/dd&gt;
                     &lt;dt&gt;!&lt;/dt&gt; &lt;dd&gt;no elements&lt;/dd&gt;
+                    &lt;dt&gt;-&lt;i&gt;N&lt;/i&gt;)&lt;/dt&gt;
+                    &lt;dd&gt;less than &lt;i&gt;N&lt;/i&gt; elements&lt;/dd&gt;
+                    &lt;dt&gt;(&lt;i&gt;N&lt;/i&gt;-&lt;/dt&gt;
+                    &lt;dd&gt;greater than &lt;i&gt;N&lt;/i&gt; elements&lt;/dd&gt;
                     &lt;dt&gt;integer value&lt;/dt&gt; &lt;dd&gt;the list must contain the exact number of elements&lt;/dd&gt;
                   &lt;/dl&gt;
                </documentation>

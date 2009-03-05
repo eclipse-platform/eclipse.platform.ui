@@ -20,6 +20,7 @@ public class AllTests {
 		suite.addTest(PropertyTesterTests.suite());
 		suite.addTest(ExpressionTests.suite());
 		suite.addTest(ExpressionInfoTests.suite());
+		suite.addTest(CountExpressionTest.suite());
 		return suite;
 	}
 }

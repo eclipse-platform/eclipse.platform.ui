@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - initial API and implementation.
+ *     Ian Phillips - additional expressions support (<=, <, >=, and >).
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
@@ -26,12 +27,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class CountExpression extends Expression {
 
-	private static final int ANY_NUMBER=	5;
-	private static final int EXACT=			4;
-	private static final int ONE_OR_MORE=	3;
-	private static final int NONE_OR_ONE= 	2;
-	private static final int NONE= 			1;
-	private static final int UNKNOWN= 		0;
+	private static final int GREATER_THAN = 7; // (N-
+	private static final int LESS_THAN    = 6; // -N)
+	private static final int ANY_NUMBER   = 5; // *
+	private static final int EXACT        = 4; // N
+	private static final int ONE_OR_MORE  = 3; // +
+	private static final int NONE_OR_ONE  = 2; // ?
+	private static final int NONE         = 1; // !
+	private static final int UNKNOWN      = 0;
 
 	/**
 	 * The seed for the hash code for all count expressions.
@@ -66,7 +69,21 @@ public class CountExpression extends Expression {
 			fMode= NONE;
 		else if (size.equals("+")) //$NON-NLS-1$
 			fMode= ONE_OR_MORE;
-		else {
+		else if (size.charAt(0) == '-' && size.charAt(size.length() - 1) == ')') {
+			try {
+				fMode = LESS_THAN;
+				fSize = Integer.parseInt(size.substring(1, size.length() - 1));
+			} catch (NumberFormatException e) {
+				fMode= UNKNOWN;
+			}
+		} else if (size.charAt(0) == '(' && size.charAt(size.length() - 1) == '-') {
+			try {
+				fMode = GREATER_THAN;
+				fSize = Integer.parseInt(size.substring(1, size.length() - 1));
+			} catch (NumberFormatException e) {
+				fMode= UNKNOWN;
+			}
+		} else {
 			try {
 				fSize= Integer.parseInt(size);
 				fMode= EXACT;
@@ -100,6 +117,10 @@ public class CountExpression extends Expression {
 				return EvaluationResult.valueOf(fSize == size);
 			case ANY_NUMBER:
 				return EvaluationResult.TRUE;
+			case LESS_THAN:
+				return EvaluationResult.valueOf(size < fSize);
+			case GREATER_THAN:
+				return EvaluationResult.valueOf(size > fSize);
 		}
 		return EvaluationResult.FALSE;
 	}
