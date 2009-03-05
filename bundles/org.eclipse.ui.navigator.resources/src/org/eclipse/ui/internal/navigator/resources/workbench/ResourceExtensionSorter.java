@@ -11,14 +11,21 @@
 
 package org.eclipse.ui.internal.navigator.resources.workbench;
 
-import org.eclipse.ui.views.navigator.ResourceComparator;
+// Sadly, there is nothing that can be done about these warnings, as
+// the INavigatorSorterService has a method that returns a ViewerSorter, so
+// we can't convert this to a ViewerComparator.
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
+ * TODO - This refers to the deprecated ResourceSorter, however we are stuck with this
+ * for the time being because the CommonSorter extension point uses a ViewerSorter.
+ * We should provide an option for a ViewerComparator and then we can remove this
+ * class.
  * 
  * @since 3.2
  * 
  */
-public class ResourceExtensionSorter extends ResourceComparator {
+public class ResourceExtensionSorter extends ResourceSorter {
 
 	/**
 	 * Construct a sorter that uses the name of the resource as its sorting
@@ -26,6 +33,6 @@ public class ResourceExtensionSorter extends ResourceComparator {
 	 * 
 	 */
 	public ResourceExtensionSorter() {
-		super(ResourceComparator.NAME);
+		super(ResourceSorter.NAME);
 	}
 }

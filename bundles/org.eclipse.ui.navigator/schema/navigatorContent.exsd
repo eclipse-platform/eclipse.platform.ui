@@ -502,7 +502,7 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
    <element name="commonSorter">
       <annotation>
          <documentation>
-            A &lt;b&gt;commonSorter&lt;/b&gt; declares an subclass of &lt;code&gt;org.eclipse.jface.viewers.ViewerComparator&lt;/code&gt; which is used to sort children in the tree. The nested &lt;b&gt;parentExpression&lt;/b&gt; describes when the &lt;b&gt;commonSorter&lt;/b&gt; should be used. If an element matches the &lt;b&gt;parentExpression&lt;/b&gt;, then its children will be sorted by this &lt;b&gt;commonSorter&lt;/b&gt;.
+            A &lt;b&gt;commonSorter&lt;/b&gt; declares an subclass of &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt; which is used to sort children in the tree. The nested &lt;b&gt;parentExpression&lt;/b&gt; describes when the &lt;b&gt;commonSorter&lt;/b&gt; should be used. If an element matches the &lt;b&gt;parentExpression&lt;/b&gt;, then its children will be sorted by this &lt;b&gt;commonSorter&lt;/b&gt;.
          </documentation>
       </annotation>
       <complexType>
@@ -519,10 +519,10 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A subclass of &lt;code&gt;org.eclipse.jface.viewers.ViewerComparator&lt;/code&gt;.
+                  A subclass of &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerComparator:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerSorter:"/>
                </appInfo>
             </annotation>
          </attribute>
