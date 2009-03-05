@@ -14,13 +14,15 @@ package org.eclipse.ui.internal.handlers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.AbstractHandlerWithState;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.core.commands.IStateListener;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -34,6 +36,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
+import org.eclipse.ui.handlers.RegistryToggleState;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -54,7 +57,7 @@ import org.eclipse.ui.services.IEvaluationService;
  * 
  * @since 3.0
  */
-public final class HandlerProxy extends AbstractHandler implements
+public final class HandlerProxy extends AbstractHandlerWithState implements
 		IElementUpdater {
 
 	private static Map CEToProxyMap = new HashMap();
@@ -108,6 +111,8 @@ public final class HandlerProxy extends AbstractHandler implements
 	private boolean proxyEnabled;
 	
 	private String commandId;
+
+	private State checkedState;
 
 	/**
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
@@ -427,16 +432,34 @@ public final class HandlerProxy extends AbstractHandler implements
 	 *      java.util.Map)
 	 */
 	public void updateElement(UIElement element, Map parameters) {
+		if (checkedState != null) {
+			Boolean value = (Boolean) checkedState.getValue();
+			element.setChecked(value.booleanValue());
+		}
 		if (handler != null && handler instanceof IElementUpdater) {
 			((IElementUpdater) handler).updateElement(element, parameters);
 		}
 	}
 	
 	private void refreshElements() {
-		if (commandId==null || !(handler instanceof IElementUpdater)) {
+		if (commandId == null || !(handler instanceof IElementUpdater)
+				&& checkedState == null) {
 			return;
 		}
-		ICommandService cs = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService cs = (ICommandService) PlatformUI.getWorkbench()
+				.getService(ICommandService.class);
 		cs.refreshElements(commandId, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.IStateListener#handleStateChange(org.eclipse.core.commands.State, java.lang.Object)
+	 */
+	public void handleStateChange(State state, Object oldValue) {
+		if(state.getId().equals(RegistryToggleState.STATE_ID)) { 
+			checkedState = state;
+		}
+		if (handler instanceof IStateListener) {
+			((IStateListener)handler).handleStateChange(state, oldValue);
+		}
 	}
 }

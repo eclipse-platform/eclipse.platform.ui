@@ -13,8 +13,10 @@ package org.eclipse.ui.handlers;
 
 import java.util.Collection;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -594,5 +596,28 @@ public class HandlerUtil {
 			throws ExecutionException {
 		Object var = getVariableChecked(event, ISources.SHOW_IN_INPUT);
 		return var;
+	}
+
+	/**
+	 * Toggles the command's state.
+	 * 
+	 * @param command The command whose state needs to be toggled
+	 * @return the original value before toggling
+	 * 
+	 * @throws ExecutionException 
+	 * 	When the command doesn't contain the toggle state or when the state doesn't contain a boolean value
+	 * 
+	 * @since 3.5
+	 */
+	public static boolean toggleCommandState(Command command) throws ExecutionException {
+		State state = command.getState("org.eclipse.ui.commands.toggleState"); //$NON-NLS-1$
+		if(state == null)
+			throw new ExecutionException("The command does not have a toggle state"); //$NON-NLS-1$
+		 if(!(state.getValue() instanceof Boolean))
+			throw new ExecutionException("The command's toggle state doesn't contain a boolean value"); //$NON-NLS-1$
+			 
+		boolean oldValue = ((Boolean) state.getValue()).booleanValue();
+		state.setValue(new Boolean(!oldValue));
+		return oldValue;
 	}
 }

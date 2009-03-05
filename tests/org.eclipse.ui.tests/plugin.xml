@@ -4121,5 +4121,31 @@
                platforms="cocoa"
                replace="M2+8">
          </sequenceModifier>
+      </extension>
+      <extension
+            point="org.eclipse.ui.commands">
+         <command
+               defaultHandler="org.eclipse.ui.tests.commands.ToggleStateHandler"
+               id="org.eclipse.ui.tests.toggleStateCommand1"
+               name="name">
+            <state
+                  class="org.eclipse.ui.handlers.RegistryToggleState:true"
+                  id="org.eclipse.ui.commands.toggleState">
+            </state>
+         </command>
+         <command
+               defaultHandler="org.eclipse.ui.tests.commands.ToggleStateHandler"
+               id="org.eclipse.ui.tests.toggleStateCommand2"
+               name="name">
+            <state
+                  class="org.eclipse.ui.handlers.RegistryToggleState:false"
+                  id="org.eclipse.ui.commands.toggleState">
+            </state>
+         </command>
+         <command
+               defaultHandler="org.eclipse.ui.tests.commands.ToggleStateHandler"
+               id="org.eclipse.ui.tests.toggleStateCommand3"
+               name="name">
+         </command>
       </extension>   
 </plugin>            

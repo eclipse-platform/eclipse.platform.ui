@@ -40,6 +40,13 @@ import org.eclipse.jface.commands.ToggleState;
  */
 public final class RegistryToggleState extends ToggleState implements
 		IExecutableExtension {
+	
+	/**
+	 * The state ID for a toggle state understood by the system.
+	 * 
+	 * @since 3.5
+	 */
+	public final static String STATE_ID = "org.eclipse.ui.commands.toggleState";  //$NON-NLS-1$
 
 	/**
 	 * Reads the <code>default</code> parameter from the given string. This
