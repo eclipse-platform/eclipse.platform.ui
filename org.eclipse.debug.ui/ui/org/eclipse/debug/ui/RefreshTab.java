@@ -615,4 +615,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
 	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
+	 * 
+	 * @since 3.5
+	 */
+	public String getId() {
+		return "org.eclipse.debug.ui.refreshTab"; //$NON-NLS-1$
+	}
 }
