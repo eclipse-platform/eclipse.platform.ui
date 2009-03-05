@@ -836,13 +836,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		removeRenderingFromSyncService();
 		JFaceResources.getFontRegistry().removeListener(this);
 		
-		Iterator iter = fMenuListeners.iterator();
-		while (iter.hasNext())
+		if (fMenuListeners != null)
 		{
-			fMenuMgr.removeMenuListener((IMenuListener)iter.next());
+			Iterator iter = fMenuListeners.iterator();
+			while (iter.hasNext())
+			{
+				fMenuMgr.removeMenuListener((IMenuListener)iter.next());
+			}
+			
+			fMenuListeners.clear();
 		}
-		
-		fMenuListeners.clear();
 	}
 	
 	private void addRenderingToSyncService()
