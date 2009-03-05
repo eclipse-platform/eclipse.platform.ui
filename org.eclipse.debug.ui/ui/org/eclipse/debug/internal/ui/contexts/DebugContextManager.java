@@ -14,7 +14,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.views.ViewContextManager;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextManager;
@@ -22,6 +25,7 @@ import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * @since 3.2
@@ -49,11 +53,23 @@ public class DebugContextManager implements IDebugContextManager {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 		 */
-		public void windowClosed(IWorkbenchWindow window) {
-			DebugWindowContextService service = (DebugWindowContextService) fServices.remove(window);
-			if (service != null) {
-				service.dispose();
-			}
+		public void windowClosed(final IWorkbenchWindow window) {
+		    // Use an async exec to dispose the debug context service for the 
+			// closed window.  This will allow other window closed listeners 
+			// to still use the context service before it is disposed.
+			new UIJob(window.getShell().getDisplay(), "DebugContextManager windowClosed() handler") { //$NON-NLS-1$
+				{
+					setSystem(true);
+				}
+				
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					DebugWindowContextService service = (DebugWindowContextService) fServices.remove(window);
+					if (service != null) {
+						service.dispose();
+					}
+					return Status.OK_STATUS;
+				}
+			}.schedule();
 		}
 
 		/* (non-Javadoc)
