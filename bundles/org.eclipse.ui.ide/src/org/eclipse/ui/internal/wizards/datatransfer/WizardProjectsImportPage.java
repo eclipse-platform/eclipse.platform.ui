@@ -56,6 +56,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -78,8 +79,12 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.dialogs.WorkingSetGroup;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -335,12 +340,16 @@ public class WizardProjectsImportPage extends WizardPage implements
 	// to mimize searches
 	private long lastModified;
 
+	private WorkingSetGroup workingSetGroup;
+
+	private IStructuredSelection currentSelection;
+
 	/**
 	 * Creates a new project creation wizard page.
 	 * 
 	 */
 	public WizardProjectsImportPage() {
-		this("wizardExternalProjectsPage"); //$NON-NLS-1$
+		this("wizardExternalProjectsPage", null, null); //$NON-NLS-1$
 	}
 
 	/**
@@ -349,12 +358,22 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * @param pageName
 	 */
 	public WizardProjectsImportPage(String pageName) {
-		this(pageName,null);
+		this(pageName,null, null);
 	}
 			
-	public WizardProjectsImportPage(String pageName,String initialPath) {
+	/**
+	 * More (many more) parameters.
+	 * 
+	 * @param pageName
+	 * @param initialPath
+	 * @param currentSelection
+	 * @since 3.5
+	 */
+	public WizardProjectsImportPage(String pageName,String initialPath,
+			IStructuredSelection currentSelection) {
  		super(pageName);
 		this.initialPath = initialPath;
+		this.currentSelection = currentSelection;
 		setPageComplete(false);
 		setTitle(DataTransferMessages.WizardProjectsImportPage_ImportProjectsTitle);
 		setDescription(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
@@ -381,9 +400,19 @@ public class WizardProjectsImportPage extends WizardPage implements
 		createProjectsRoot(workArea);
 		createProjectsList(workArea);
 		createOptionsArea(workArea);
+		createWorkingSetGroup(workArea);
 		restoreWidgetValues();
 		Dialog.applyDialogFont(workArea);
 
+	}
+
+	/**
+	 * @param workArea
+	 */
+	private void createWorkingSetGroup(Composite workArea) {
+		String[] workingSetIds = new String[] {"org.eclipse.ui.resourceWorkingSetPage",  //$NON-NLS-1$
+				"org.eclipse.jdt.ui.JavaWorkingSetPage"};  //$NON-NLS-1$
+		workingSetGroup = new WorkingSetGroup(workArea, currentSelection, workingSetIds);
 	}
 
 	/**
@@ -1205,7 +1234,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 */
 	public boolean createProjects() {
 		saveWidgetValues();
+		
 		final Object[] selected = projectsList.getCheckedElements();
+		createdProjects = new ArrayList();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
@@ -1244,7 +1275,25 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 		ArchiveFileManipulations.closeStructureProvider(structureProvider,
 				getShell());
+
+		// Adds the projects to the working sets
+		addToWorkingSets();
+		
 		return true;
+	}
+
+	List createdProjects;
+	
+	private void addToWorkingSets() {
+		
+		IWorkingSet[] selectedWorkingSets = workingSetGroup.getSelectedWorkingSets();
+		if(selectedWorkingSets == null || selectedWorkingSets.length == 0)
+			return; // no Working set is selected
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+		for (Iterator i = createdProjects.iterator(); i.hasNext();) {
+			IProject project = (IProject) i.next();
+			workingSetManager.addToWorkingSets(project, selectedWorkingSets);
+		}
 	}
 
 	/**
@@ -1268,6 +1317,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		String projectName = record.getProjectName();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project = workspace.getRoot().getProject(projectName);
+		createdProjects.add(project);
 		if (record.description == null) {
 			// error case
 			record.description = workspace.newProjectDescription(projectName);

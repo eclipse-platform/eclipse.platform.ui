@@ -45,6 +45,7 @@ public class ExternalProjectImportWizard extends Wizard implements
         IImportWizard {
     private static final String EXTERNAL_PROJECT_SECTION = "ExternalProjectImportWizard";//$NON-NLS-1$
 	private WizardProjectsImportPage mainPage;
+	private IStructuredSelection currentSelection = null;
 	private String initialPath = null;
 	
     /**
@@ -82,7 +83,8 @@ public class ExternalProjectImportWizard extends Wizard implements
      */
     public void addPages() {
         super.addPages();
-        mainPage = new WizardProjectsImportPage("wizardExternalProjectsPage",initialPath); //$NON-NLS-1$
+		mainPage = new WizardProjectsImportPage(
+				"wizardExternalProjectsPage", initialPath, currentSelection); //$NON-NLS-1$
         addPage(mainPage);
     }
 
@@ -93,7 +95,7 @@ public class ExternalProjectImportWizard extends Wizard implements
         setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
         setDefaultPageImageDescriptor(
 				IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importproj_wiz.png")); //$NON-NLS-1$
-
+        this.currentSelection = currentSelection;
     }
 
     /* (non-Javadoc)
