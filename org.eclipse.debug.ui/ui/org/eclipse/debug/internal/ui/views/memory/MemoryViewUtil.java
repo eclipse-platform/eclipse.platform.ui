@@ -260,6 +260,6 @@ public class MemoryViewUtil {
 	 * */
 	public static Integer getHashCode(Object o)
 	{
-		return Integer.valueOf(o.hashCode());
+		return new Integer(o.hashCode());
 	}
 }
