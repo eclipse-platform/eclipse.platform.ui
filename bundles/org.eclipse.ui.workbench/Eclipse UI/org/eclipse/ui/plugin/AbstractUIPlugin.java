@@ -664,6 +664,11 @@ public abstract class AbstractUIPlugin extends Plugin {
             throw new IllegalArgumentException();
         }
 
+		ImageDescriptor imageDescriptor = PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(imageFilePath);
+		if (imageDescriptor != null)
+			return imageDescriptor; // found in the shared images
+
         // if the bundle is not ready then there is no image
         Bundle bundle = Platform.getBundle(pluginId);
         if (!BundleUtility.isReady(bundle)) {
