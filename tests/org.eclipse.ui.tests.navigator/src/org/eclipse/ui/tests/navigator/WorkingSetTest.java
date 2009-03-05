@@ -57,8 +57,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		TreeItem[] items = _viewer.getTree().getItems();
 		assertTrue("There should be some items.", items.length > 0);
-		assertEquals(null, ((ProjectExplorer) _commonNavigator)
-				.getWorkingSetLabel());
+		assertEquals(null, _commonNavigator.getWorkingSetLabel());
 	}
 
 	// Bug 212389 projects are not shown when they are not in the working set,
@@ -92,8 +91,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		// project
 		assertTrue("First item needs to be project", items[0].getData().equals(
 				_p1));
-		assertEquals("ws1", ((ProjectExplorer) _commonNavigator)
-				.getWorkingSetLabel());
+		assertEquals("ws1", _commonNavigator.getWorkingSetLabel());
 	}
 
 	// bug 220090 test that working sets are shown when selected locally (not
@@ -126,8 +124,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		// project
 		assertTrue("First item needs to be working set", items[0].getData()
 				.equals(workingSet));
-		assertEquals("ws1", ((ProjectExplorer) _commonNavigator)
-				.getWorkingSetLabel());
+		assertEquals("ws1", _commonNavigator.getWorkingSetLabel());
 	}
 
 	// bug 244174 test property to switch back and forth between working sets
@@ -215,7 +212,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		assertEquals(
 				WorkbenchNavigatorMessages.WorkingSetActionProvider_multipleWorkingSets,
-				((ProjectExplorer) _commonNavigator).getWorkingSetLabel());
+				_commonNavigator.getWorkingSetLabel());
 	}
 
 }
