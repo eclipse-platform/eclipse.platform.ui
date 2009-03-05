@@ -725,28 +725,30 @@ public class WorkbenchStatusDialogManager {
 				}
 			});
 
-			ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
-			toolBarManager.createControl(container);
-			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-			gd.grabExcessHorizontalSpace = true;
-			toolBarManager.getControl().setLayoutData(gd);
-			Label separator = new Label(container, SWT.SEPARATOR
-					| SWT.HORIZONTAL);
-			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-			gd.heightHint = 1;
-			separator.setLayoutData(gd);
+			if(!hideSupportButton){
+				ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+				toolBarManager.createControl(container);
+				GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+				gd.grabExcessHorizontalSpace = true;
+				toolBarManager.getControl().setLayoutData(gd);
+				Label separator = new Label(container, SWT.SEPARATOR
+						| SWT.HORIZONTAL);
+				gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+				gd.heightHint = 1;
+				separator.setLayoutData(gd);
 
-			createActions();
-			toolBarManager.add(closeAction);
+				createActions();
+				toolBarManager.add(closeAction);
 
-			toolBarManager.update(true);
+				toolBarManager.update(true);
+			}
 
 			supportArea = new Composite(container, SWT.NONE);
 			layout = new GridLayout();
 			layout.marginWidth = layout.marginHeight = 0;
 			layout.verticalSpacing = 0;
 			supportArea.setLayout(layout);
-			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL
 					| GridData.VERTICAL_ALIGN_FILL);
 			gd.horizontalSpan = 1;
 			gd.grabExcessHorizontalSpace = true;
@@ -881,6 +883,7 @@ public class WorkbenchStatusDialogManager {
 		 */
 		public void enableDefaultSupportArea(boolean enable) {
 			this.defaultSupportAreaEnabled = enable;
+			Policy.setErrorSupportProvider(new StackTraceSupportArea());
 		}
 
 		private StatusAdapter getStatusAdapterFromEvent(
@@ -1126,6 +1129,8 @@ public class WorkbenchStatusDialogManager {
 	private boolean handleOKStatuses = false;
 
 	private boolean supportForErrorLog = false;
+
+	private boolean hideSupportButton = false;
 
 	/**
 	 * Creates workbench status dialog.
@@ -2027,7 +2032,9 @@ public class WorkbenchStatusDialogManager {
 	 */
 	private void openTray(DialogTray tray) throws IllegalStateException,
 			UnsupportedOperationException {
-		launchTrayButton.setEnabled(false);
+		if (launchTrayButton != null) {
+			launchTrayButton.setEnabled(false);
+		}
 		this.dialog.openTray(tray);
 		trayOpened = true;
 	}
@@ -2277,7 +2284,7 @@ public class WorkbenchStatusDialogManager {
 				hideButton(gotoButton,true);
 		}
 		// and tray enablement button
-		if (supportTray.providesSupport()) {
+		if (supportTray.providesSupport() && !hideSupportButton) {
 			if(launchTrayButton == null || launchTrayButton.isDisposed()){
 				launchTrayButton = createShowSupportToolItem(toolBar);
 			}
@@ -2459,5 +2466,27 @@ public class WorkbenchStatusDialogManager {
 			return Boolean.valueOf(handleOKStatuses);
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * This method makes the dialog to be similar to the JFace ErrorDialog. The
+	 * dialog handles {@link StatusAdapter}s wrapping {@link IStatus} with
+	 * severity {@link IStatus#OK}, does not display the link to the error log,
+	 * does not display the link to the support area but always opens it.
+	 * 
+	 * @see ErrorDialog
+	 * @since 3.5
+	 */
+	public void enableErrorDialogCompatibility(){
+		setProperty(IStatusDialogConstants.ERRORLOG_LINK, Boolean.FALSE);
+		setProperty(IStatusDialogConstants.HANDLE_OK_STATUSES, Boolean.TRUE);
+		setProperty(IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
+		setHideShowSupportButton(true);
+	}
+	
+	private void setHideShowSupportButton(boolean enabled) {
+		this.hideSupportButton  = enabled;
+		
 	}
 }
