@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.navigator.resources.workbench;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.navigator.CommonNavigator;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
@@ -33,7 +34,9 @@ public class TabbedPropertySheetAdapterFactory
     public Object getAdapter(Object adaptableObject, Class adapterType) {
 
         if (adaptableObject instanceof CommonNavigator) {
-            if (IPropertySheetPage.class == adapterType)
+        	if (!((CommonNavigator)adaptableObject).getViewSite().getId().equals(ProjectExplorer.VIEW_ID))
+        		return null;
+        	if (IPropertySheetPage.class == adapterType)
                 return new TabbedPropertySheetPage(
                     new TabbedPropertySheetProjectExplorerContributor(
                         (CommonNavigator) adaptableObject));
