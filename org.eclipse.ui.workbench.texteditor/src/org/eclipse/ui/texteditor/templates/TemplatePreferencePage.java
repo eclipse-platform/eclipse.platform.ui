@@ -119,6 +119,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
+import org.eclipse.ui.internal.texteditor.SWTUtil;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -330,6 +331,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				}
 
 				fContextCombo.addModifyListener(listener);
+				SWTUtil.setDefaultVisibleItemCount(fContextCombo);
 
 				fAutoInsertCheckbox= createCheckbox(composite, TemplatesMessages.EditTemplateDialog_autoinsert);
 				fAutoInsertCheckbox.setSelection(fOriginalTemplate.isAutoInsertable());
