@@ -51,7 +51,6 @@ public class SafeDelegateTreeContentProvider implements
 		contentProvider = aContentProvider;
 		contentService = aContentService;
 		descriptor = aDescriptor;
-		System.out.println("SafeDelegateTreeContentProvider: " + descriptor); //$NON-NLS-1$
 	}
 
 	/**
