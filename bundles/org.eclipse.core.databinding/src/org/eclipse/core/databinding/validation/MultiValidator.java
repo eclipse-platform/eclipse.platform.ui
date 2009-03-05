@@ -39,10 +39,10 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.Util;
-import org.eclipse.core.internal.databinding.observable.ValidatedObservableList;
-import org.eclipse.core.internal.databinding.observable.ValidatedObservableMap;
-import org.eclipse.core.internal.databinding.observable.ValidatedObservableSet;
-import org.eclipse.core.internal.databinding.observable.ValidatedObservableValue;
+import org.eclipse.core.internal.databinding.validation.ValidatedObservableList;
+import org.eclipse.core.internal.databinding.validation.ValidatedObservableMap;
+import org.eclipse.core.internal.databinding.validation.ValidatedObservableSet;
+import org.eclipse.core.internal.databinding.validation.ValidatedObservableValue;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 

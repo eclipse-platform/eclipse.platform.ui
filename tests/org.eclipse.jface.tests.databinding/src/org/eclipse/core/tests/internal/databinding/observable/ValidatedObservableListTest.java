@@ -23,7 +23,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.internal.databinding.observable.ValidatedObservableList;
+import org.eclipse.core.internal.databinding.validation.ValidatedObservableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;

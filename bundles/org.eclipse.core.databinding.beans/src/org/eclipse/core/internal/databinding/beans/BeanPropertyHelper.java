@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.util.Policy;
@@ -87,7 +86,7 @@ public class BeanPropertyHelper {
 		try {
 			Method readMethod = propertyDescriptor.getReadMethod();
 			if (readMethod == null) {
-				throw new BindingException(propertyDescriptor.getName()
+				throw new IllegalArgumentException(propertyDescriptor.getName()
 						+ " property does not have a read method."); //$NON-NLS-1$
 			}
 			if (!readMethod.isAccessible()) {
@@ -175,7 +174,7 @@ public class BeanPropertyHelper {
 				return null;
 			}
 		}
-		throw new BindingException(
+		throw new IllegalArgumentException(
 				"Could not find property with name " + propertyName + " in class " + beanClass); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

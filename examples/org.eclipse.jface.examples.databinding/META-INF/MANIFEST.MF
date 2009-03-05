@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.core.databinding,
  org.eclipse.core.runtime,
  org.eclipse.core.databinding.beans,
- org.eclipse.jface.databinding
+ org.eclipse.jface.databinding,
+ org.eclipse.core.databinding.property
 Export-Package: org.eclipse.jface.examples.databinding;x-internal:=false,
  org.eclipse.jface.examples.databinding.mask;x-internal:=false,
  org.eclipse.jface.examples.databinding.mask.internal;x-internal:=true,

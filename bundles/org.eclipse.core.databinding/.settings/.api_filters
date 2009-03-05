@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.databinding" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.observable.IObservable">
+        <filter id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.observable.IObservable"/>
+                <message_argument value="addDisposeListener(IDisposeListener)"/>
+            </message_arguments>
+        </filter>
+        <filter id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.observable.IObservable"/>
+                <message_argument value="removeDisposeListener(IDisposeListener)"/>
+            </message_arguments>
+        </filter>
+        <filter id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.observable.IObservable"/>
+                <message_argument value="isDisposed()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.observable.map.IObservableMap">
+        <filter id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.observable.map.IObservableMap"/>
+                <message_argument value="getKeyType()"/>
+            </message_arguments>
+        </filter>
+        <filter id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.observable.map.IObservableMap"/>
+                <message_argument value="getValueType()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

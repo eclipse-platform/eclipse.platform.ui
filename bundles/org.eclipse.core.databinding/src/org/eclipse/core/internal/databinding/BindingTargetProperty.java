@@ -15,15 +15,13 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
  * @since 3.3
  * 
  */
-public class BindingTargetProperty extends SimpleValueProperty implements
-		IValueProperty {
+public class BindingTargetProperty extends SimpleValueProperty {
 	public Object getValueType() {
 		return IObservable.class;
 	}

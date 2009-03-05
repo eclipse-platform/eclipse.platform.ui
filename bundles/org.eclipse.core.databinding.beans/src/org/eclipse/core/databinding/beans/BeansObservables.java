@@ -25,12 +25,12 @@ import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservab
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.internal.databinding.Util;
 import org.eclipse.core.internal.databinding.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableMapDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanPropertyHelper;
+import org.eclipse.core.internal.databinding.beans.Util;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

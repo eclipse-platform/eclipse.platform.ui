@@ -20,7 +20,7 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.internal.databinding.IdentitySet;
+import org.eclipse.core.internal.databinding.identity.IdentitySet;
 import org.eclipse.jface.internal.databinding.viewers.ViewerElementSet;
 
 /**

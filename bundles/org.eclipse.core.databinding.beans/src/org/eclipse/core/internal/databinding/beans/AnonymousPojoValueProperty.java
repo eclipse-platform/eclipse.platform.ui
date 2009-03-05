@@ -15,7 +15,6 @@ package org.eclipse.core.internal.databinding.beans;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -53,7 +52,7 @@ public class AnonymousPojoValueProperty extends DelegatingValueProperty {
 		try {
 			delegate = PojoProperties.value(pojoClass, propertyName,
 					(Class) getValueType());
-		} catch (BindingException noSuchProperty) {
+		} catch (IllegalArgumentException noSuchProperty) {
 			delegate = null;
 		}
 		delegates.put(pojoClass, delegate);

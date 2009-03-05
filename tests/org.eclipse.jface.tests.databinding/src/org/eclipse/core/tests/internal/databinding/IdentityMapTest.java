@@ -23,7 +23,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.internal.databinding.IdentityMap;
+import org.eclipse.core.internal.databinding.identity.IdentityMap;
 
 /**
  * @since 1.2

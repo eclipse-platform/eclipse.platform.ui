@@ -11,7 +11,7 @@
 
 package org.eclipse.core.tests.internal.databinding;
 
-import org.eclipse.core.internal.databinding.Queue;
+import org.eclipse.core.internal.databinding.observable.Queue;
 
 import junit.framework.TestCase;
 

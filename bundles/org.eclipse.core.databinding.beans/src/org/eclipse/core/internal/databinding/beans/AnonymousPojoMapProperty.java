@@ -15,7 +15,6 @@ package org.eclipse.core.internal.databinding.beans;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.property.map.DelegatingMapProperty;
 import org.eclipse.core.databinding.property.map.IMapProperty;
@@ -50,7 +49,7 @@ public class AnonymousPojoMapProperty extends DelegatingMapProperty {
 		try {
 			delegate = PojoProperties.map(beanClass, propertyName,
 					(Class) getKeyType(), (Class) getValueType());
-		} catch (BindingException noSuchProperty) {
+		} catch (IllegalArgumentException noSuchProperty) {
 			delegate = null;
 		}
 		delegates.put(beanClass, delegate);
