@@ -9,7 +9,30 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/ui/internal/navigator/workingsets/WorkingSetsContentProvider.java" type="org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="WorkingSetsContentProvider"/>
+                <message_argument value="getRootMode()"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="WorkingSetsContentProvider"/>
+                <message_argument value="setRootMode(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/internal/navigator/resources/actions/WorkingSetActionProvider.java" type="org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider$WorkingSetManagerListener">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="WorkingSetManagerListener"/>
+                <message_argument value="setWorkingSetLabel(String)"/>
+            </message_arguments>
+        </filter>
         <filter id="640712815">
             <message_arguments>
                 <message_argument value="CommonViewer"/>

@@ -21,6 +21,7 @@ import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
@@ -52,7 +53,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	private WorkingSetHelper helper;
 	private IAggregateWorkingSet workingSetRoot;
 	private IExtensionStateModel extensionStateModel;	
-	private ProjectExplorer projectExplorer;
+	private CommonNavigator projectExplorer;
 	private CommonViewer viewer;
 	
 	private IPropertyChangeListener rootModeListener = new IPropertyChangeListener() {
@@ -75,7 +76,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	public void init(ICommonContentExtensionSite aConfig) {
 		NavigatorContentService cs = (NavigatorContentService) aConfig.getService();
 		viewer = (CommonViewer) cs.getViewer();
-		projectExplorer = (ProjectExplorer) viewer.getCommonNavigator();
+		projectExplorer = viewer.getCommonNavigator();
 		
 		extensionStateModel = aConfig.getExtensionStateModel(); 
 		extensionStateModel.addPropertyChangeListener(rootModeListener);

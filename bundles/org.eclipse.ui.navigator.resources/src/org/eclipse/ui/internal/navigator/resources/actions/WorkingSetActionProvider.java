@@ -110,7 +110,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 			}
 			if (viewer != null) {
 				if (newLabel != null)
-					((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(newLabel);
+					viewer.getCommonNavigator().setWorkingSetLabel(newLabel);
 				viewer.getFrameList().reset();
 				viewer.refresh();
 			}
@@ -193,7 +193,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 					} else {
 						savedWorkingSet = workingSet;
 						setWorkingSet(null);
-						((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(null);
+						viewer.getCommonNavigator().setWorkingSetLabel(null);
 						managerChangeListener.ignore();
 						workingSetActionGroup.setWorkingSet(null);
 						workingSetRootModeActionGroup.setShowTopLevelWorkingSets(false);

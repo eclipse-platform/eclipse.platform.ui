@@ -693,5 +693,49 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	protected IMemento getMemento() {
 		return memento;
 	}
-    
+
+	
+	/**
+	 * @param mode
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @since 3.4
+	 */
+	public void setRootMode(int mode) {
+		// For subclassing
+	}
+
+	/**
+	 * @return the root mode
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @since 3.4
+	 */
+	public int getRootMode() {
+		// For subclassing
+		return 0;
+	}
+
+	/**
+	 * @param label
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @since 3.4
+	 */
+	public void setWorkingSetLabel(String label) {
+		// For subclassing
+	}
+
+	/**
+	 * @return the working set label
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @since 3.4
+	 */
+	public String getWorkingSetLabel() {
+		// For subclassing
+		return null;
+	}
+	
+	
 }
