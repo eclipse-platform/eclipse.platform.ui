@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 /**
  * Defines a label provider for the title bar in the tabbed properties view.
@@ -37,7 +38,7 @@ public class TabbedPropertySheetTitleProvider extends LabelProvider {
 	public TabbedPropertySheetTitleProvider() {
 		super();
 		IWorkbenchPart part = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().getActivePart();
+				.getActiveWorkbenchWindow().getActivePage().findView(ProjectExplorer.VIEW_ID);
 
 		INavigatorContentService contentService = (INavigatorContentService) part
 				.getAdapter(INavigatorContentService.class);
