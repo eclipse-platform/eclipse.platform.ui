@@ -610,6 +610,7 @@ public class CommonViewer extends TreeViewer {
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @since 3.4
 	 */
     public void createFrameList() {
         CommonNavigatorFrameSource frameSource = new CommonNavigatorFrameSource(commonNavigator);
@@ -621,6 +622,7 @@ public class CommonViewer extends TreeViewer {
 	 * @return a FrameList
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @since 3.4
 	 */
     public FrameList getFrameList() {
         return frameList;
