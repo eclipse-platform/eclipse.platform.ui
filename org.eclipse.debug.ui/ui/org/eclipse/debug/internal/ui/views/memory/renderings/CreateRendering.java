@@ -44,6 +44,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -205,6 +207,13 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 
 			public void doubleClick(DoubleClickEvent event) {
 				addRenderings();
+			}});
+		
+		// listen for enter being pressed
+		fViewer.getList().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.character == SWT.CR)
+					addRenderings();
 			}});
 		
 		Button addButton = new Button(fCanvas, SWT.NONE);
