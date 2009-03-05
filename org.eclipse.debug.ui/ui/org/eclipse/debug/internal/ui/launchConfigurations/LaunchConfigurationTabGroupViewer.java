@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,6 +74,20 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class LaunchConfigurationTabGroupViewer {
 
+	/**
+	 * Listing of invalid names for launch configurations
+	 * @since 3.5
+	 */
+	static final String[] INVALID_CONFIG_NAMES = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+		"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+		"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+	
+	/**
+	 * Listing of characters that cannot appear in launch configuration names
+	 * @since 3.5
+	 */
+	static final char[] INVALID_CONFIG_NAME_CHARS = new char[] { '@', '&','\\', '/', ':', '*', '?', '"', '<', '>', '|', '\0' };
+	
 	/**
 	 * Containing launch dialog
 	 */
@@ -1213,11 +1227,8 @@ public class LaunchConfigurationTabGroupViewer {
 													 null));
 			}
 			if(Platform.OS_WIN32.equals(Platform.getOS())) {
-				String[] badnames = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
-						"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-						"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
-				for(int i = 0; i < badnames.length; i++) {
-					if(currentName.equals(badnames[i])) {
+				for(int i = 0; i < INVALID_CONFIG_NAMES.length; i++) {
+					if(currentName.equals(INVALID_CONFIG_NAMES[i])) {
 						throw new CoreException(new Status(IStatus.ERROR,
 								DebugUIPlugin.getUniqueIdentifier(),
 								0,
@@ -1227,10 +1238,9 @@ public class LaunchConfigurationTabGroupViewer {
 				}
 			}
 			// See if name contains any characters that we deem illegal.
-			// '@' and '&' are disallowed because they corrupt menu items.
-			char[] disallowedChars = new char[] { '@', '&','\\', '/', ':', '*', '?', '"', '<', '>', '|', '\0' };
-			for (int i = 0; i < disallowedChars.length; i++) {
-				char c = disallowedChars[i];
+			// '@' and '&' are disallowed because they corrupt menu items
+			for (int i = 0; i < INVALID_CONFIG_NAME_CHARS.length; i++) {
+				char c = INVALID_CONFIG_NAME_CHARS[i];
 				if (currentName.indexOf(c) > -1) {
 					throw new CoreException(new Status(IStatus.ERROR,
 														DebugUIPlugin.getUniqueIdentifier(),
@@ -1239,7 +1249,6 @@ public class LaunchConfigurationTabGroupViewer {
 														null));
 				}
 			}
-	
 			// Otherwise, if there's already a config with the same name, complain
 			if (fOriginal != null && !fOriginal.getName().equals(currentName)) {
 				Set reservednames = ((LaunchConfigurationsDialog)getLaunchConfigurationDialog()).getReservedNameSet();
