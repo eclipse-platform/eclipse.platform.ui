@@ -27,7 +27,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * Returns IWorkbenchAdapter adapters, used for displaying,
  * navigating, and populating menus for core objects.
  */
-class WorkbenchAdapterFactory implements IAdapterFactory {
+public class WorkbenchAdapterFactory implements IAdapterFactory {
     private Object workspaceAdapter = new WorkbenchWorkspace();
 
     private Object rootAdapter = new WorkbenchRootResource();

@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.ResourcePropertySource;
 /**
  * Dispenses an <code>IPropertySource</code> adapter for the core resource objects.
  */
-/* package */class StandardPropertiesAdapterFactory implements IAdapterFactory {
+public class StandardPropertiesAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
      * Method declared on IAdapterFactory.
      */

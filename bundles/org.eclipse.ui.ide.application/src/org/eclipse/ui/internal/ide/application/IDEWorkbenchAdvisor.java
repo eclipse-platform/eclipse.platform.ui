@@ -63,7 +63,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchActivityHelper;
 import org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
@@ -162,7 +161,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		configurer.setSaveAndRestore(true);
 
 		// register workspace adapters
-		WorkbenchAdapterBuilder.registerAdapters();
+		IDE.registerAdapters();
 
 		// get the command line arguments
 		String[] cmdLineArgs = Platform.getCommandLineArgs();

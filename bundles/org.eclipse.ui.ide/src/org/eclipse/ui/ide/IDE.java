@@ -18,30 +18,16 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeMatcher;
-
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
@@ -52,12 +38,25 @@ import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -72,6 +71,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.model.StandardPropertiesAdapterFactory;
+import org.eclipse.ui.internal.ide.model.WorkbenchAdapterFactory;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -1468,6 +1469,36 @@ public final class IDE {
 			runnable.run();
 		}
 		return result[0];
+	}
+
+	/**
+	 * Register workbench adapters programmatically. This is necessary to enable
+	 * certain types of content in the explorers.
+	 * <p>
+	 * <b>Note:</b> this method should only be called once, in your
+	 * application's WorkbenchAdvisor#initialize(IWorkbenchConfigurer) method.
+	 * </p>
+	 * 
+	 * @since 3.5
+	 */
+	public static void registerAdapters() {
+        IAdapterManager manager = Platform.getAdapterManager();
+        IAdapterFactory factory = new WorkbenchAdapterFactory();
+        manager.registerAdapters(factory, IWorkspace.class);
+        manager.registerAdapters(factory, IWorkspaceRoot.class);
+        manager.registerAdapters(factory, IProject.class);
+        manager.registerAdapters(factory, IFolder.class);
+        manager.registerAdapters(factory, IFile.class);
+        manager.registerAdapters(factory, IMarker.class);
+
+        // properties adapters
+        IAdapterFactory paFactory = new StandardPropertiesAdapterFactory();
+        manager.registerAdapters(paFactory, IWorkspace.class);
+        manager.registerAdapters(paFactory, IWorkspaceRoot.class);
+        manager.registerAdapters(paFactory, IProject.class);
+        manager.registerAdapters(paFactory, IFolder.class);
+        manager.registerAdapters(paFactory, IFile.class);
+        manager.registerAdapters(paFactory, IMarker.class);
 	}
 
 	private static boolean isIgnoredStatus(IStatus status,
