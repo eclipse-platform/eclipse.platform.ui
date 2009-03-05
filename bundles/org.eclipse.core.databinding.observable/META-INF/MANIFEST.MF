@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.core.databinding.observables
+Bundle-SymbolicName: org.eclipse.core.databinding.observable
 Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
@@ -13,7 +13,7 @@ Export-Package: org.eclipse.core.databinding.observable,
  org.eclipse.core.databinding.observable.set;x-internal:=false,
  org.eclipse.core.databinding.observable.value;x-internal:=false,
  org.eclipse.core.databinding.util,
- org.eclipse.core.internal.databinding.identity;x-friends:="org.eclipse.core.databinding,org.eclipse.core.databinding.properties",
+ org.eclipse.core.internal.databinding.identity;x-friends:="org.eclipse.core.databinding,org.eclipse.core.databinding.property",
  org.eclipse.core.internal.databinding.observable;x-internal:=true,
  org.eclipse.core.internal.databinding.observable.masterdetail;x-friends:="org.eclipse.jface.tests.databinding"
 Require-Bundle: org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)"
