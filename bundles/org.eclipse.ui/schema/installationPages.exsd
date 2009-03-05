@@ -63,10 +63,10 @@ pages to the installation details dialog.  When the installation details dialog 
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified name of a concrete subclass of  &lt;code&gt;org.eclipse.ui.about.InstallationPage&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.branding.InstallationPage:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.about.InstallationPage:"/>
                </appInfo>
             </annotation>
          </attribute>

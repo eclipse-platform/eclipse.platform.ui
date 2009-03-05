@@ -69,11 +69,11 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of a class the implements 
+                  The fully qualified name of a class that implements 
 &lt;code&gt;org.eclipse.ui.about.ISystemSummarySection&lt;/code&gt;.  The class must provide a default constructor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.about.ISystemSummarySection"/>
                </appInfo>
             </annotation>
          </attribute>
