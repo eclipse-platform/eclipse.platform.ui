@@ -1045,9 +1045,35 @@ public class Perspective {
 				setEditorAreaTrimVisibility(editorAreaState == IStackPresentationSite.STATE_MINIMIZED);
 		}
 		
+		// Fix perspectives whose contributing bundle has gone away
+		fixOrphan();
+		
 		// Ensure that the new perspective's layout is correct
 		if (page.window != null && page.window.getTrimManager() != null)
 			page.window.getTrimManager().forceLayout();
+	}
+
+	/**
+	 * An 'orphan' perspective is one that was originally created through a
+	 * contribution but whose contributing bundle is no longer available.
+	 * In order to allow it to behave correctly within the environment
+	 * (for Close, Reset...) we turn it into a 'custom' perspective on its
+	 * first activation.
+	 */
+	private void fixOrphan() {
+		PerspectiveRegistry reg = (PerspectiveRegistry) PlatformUI
+				.getWorkbench().getPerspectiveRegistry();
+		IPerspectiveDescriptor regDesc = reg.findPerspectiveWithId(descriptor
+				.getId());
+		if (regDesc == null) {
+			String msg = "Perspective " + descriptor.getLabel() + " has beed made into a local copy"; //$NON-NLS-1$//$NON-NLS-2$
+			IStatus status = StatusUtil.newStatus(IStatus.WARNING, msg, null);
+			StatusManager.getManager().handle(status, StatusManager.LOG);
+
+			PerspectiveDescriptor newDesc = reg.createPerspective(
+					'<' + descriptor.getLabel() + '>', descriptor);
+			page.savePerspectiveAs(newDesc);
+		}
 	}
 
 	/**
