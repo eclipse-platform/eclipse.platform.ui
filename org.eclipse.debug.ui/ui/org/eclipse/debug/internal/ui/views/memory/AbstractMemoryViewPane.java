@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,9 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
@@ -36,11 +39,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
-public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane, IDebugContextListener{
+public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane, IDebugContextListener, IDebugEventSetListener{
 	
 	public static final String BEGINNING_POPUP = "popUpBegin"; //$NON-NLS-1$
 	protected static final StructuredSelection EMPTY = new StructuredSelection();
@@ -127,6 +131,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		MemoryViewUtil.getMemoryBlockManager().addListener(this);
 		fParent.getViewSite().getPage().addSelectionListener(this);
 		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(this);
+		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 	
 	protected void removeListeners()
@@ -145,6 +150,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 				old.removeSelectionListener(fViewTabEnablementManager);
 			}
 		}
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 	
 	protected void setTabFolder(CTabFolder folder)
@@ -192,14 +198,15 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	private void createFolder(IMemoryBlockRetrieval memRetrieval)
 	{	
 		//if we've got a tabfolder to go with the IMemoryBlockRetrieval, display it
-		if (fTabFolderForDebugView.containsKey(memRetrieval)) {
-			if (fStackLayout.topControl != (CTabFolder)fTabFolderForDebugView.get(memRetrieval)) {
-				setTabFolder((CTabFolder)fTabFolderForDebugView.get(memRetrieval));
+		Integer key = MemoryViewUtil.getHashCode(memRetrieval);
+		if (fTabFolderForDebugView.containsKey(key)) {
+			if (fStackLayout.topControl != (CTabFolder)fTabFolderForDebugView.get(key)) {
+				setTabFolder((CTabFolder)fTabFolderForDebugView.get(key));
 				fViewPaneCanvas.layout();
 			}
 		} else {	//otherwise, add a new one
-			fTabFolderForDebugView.put(memRetrieval, new CTabFolder(fViewPaneCanvas, SWT.NULL));
-			setTabFolder((CTabFolder)fTabFolderForDebugView.get(memRetrieval));
+			fTabFolderForDebugView.put(key, new CTabFolder(fViewPaneCanvas, SWT.NULL));
+			setTabFolder((CTabFolder)fTabFolderForDebugView.get(key));
 			fViewPaneCanvas.layout();
 		}
 	}
@@ -262,7 +269,39 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	{
 		return fSelectionProvider;
 	}
-	
+
+	public void handleDebugEvents(DebugEvent[] events) 
+	{
+		for (int i = 0; i < events.length; i++) 
+		{
+			Object source = events[i].getSource();
+			if (events[i].getKind() == DebugEvent.TERMINATE && source instanceof IMemoryBlockRetrieval) 
+			{
+				//When a memory block retrieval terminates, it and its
+				//tab folders should be removed from our map.
+				IMemoryBlockRetrieval ret = (IMemoryBlockRetrieval)source;
+				if (ret != null) 
+				{
+					final Integer key = MemoryViewUtil.getHashCode(ret);
+					final Object folder = fTabFolderForDebugView.get(key);
+					if (folder != null && folder != fEmptyTabFolder &&  (!((CTabFolder)folder).isDisposed())) 
+					{
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								//remove the tab folder , and all contained tab items
+								disposeOfFolder((CTabFolder) folder);
+								fTabFolderForDebugView.remove(key);
+							}
+						});
+					}
+				}
+			}
+		}
+
+	}
+
+
+
 	public void dispose()
 	{
 		removeListeners();
@@ -279,19 +318,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 				while (enumeration.hasMoreElements())
 				{
 					CTabFolder tabFolder = (CTabFolder)enumeration.nextElement();
-					
-					if (tabFolder.isDisposed())
-						continue;
-					
-					// if tab folder is not empty, dipose view tabs
-					CTabItem[] tabs = tabFolder.getItems();
-					
-					for (int i=0; i<tabs.length; i++)
-					{
-						disposeTab(tabs[i]);
-					}
-					
-					tabFolder.dispose();
+					disposeOfFolder(tabFolder);
 				}
 				
 				// set to null so that clean up is only done once
@@ -303,7 +330,29 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 			DebugUIPlugin.logErrorMessage("Exception occurred when the Memory View is disposed."); //$NON-NLS-1$
 		}		
 	}
-	
+
+	/**
+	 * Helper method to dispose of a tab folder,
+	 * and of any tab items it contains.
+	 * Must be called from the UI thread.
+	 * */
+	private void disposeOfFolder(CTabFolder tabFolder) 
+	{
+		if (!tabFolder.isDisposed()) 
+		{
+
+			// if tab folder is not empty, dipose view tabs
+			CTabItem[] tabs = tabFolder.getItems();
+
+			for (int i=0; i<tabs.length; i++)
+			{
+				disposeTab(tabs[i]);
+			}
+
+			tabFolder.dispose();
+		}
+	}
+
 	public void setVisible(boolean visible)
 	{
 		fVisible = visible;

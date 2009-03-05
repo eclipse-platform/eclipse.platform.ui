@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,7 +178,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					{
 						if (fTabFolderForDebugView.contains(tabFolder))
 						{					
-							fTabFolderForDebugView.remove(retrieve);
+							fTabFolderForDebugView.remove(MemoryViewUtil.getHashCode(retrieve));
 						}
 					}
 					
@@ -606,7 +606,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			// backup current retrieve and tab folder
 			if (currentRetrieve != null && tabFolder != null)
 			{
-				fTabFolderForDebugView.put(currentRetrieve, tabFolder);
+				fTabFolderForDebugView.put(MemoryViewUtil.getHashCode(currentRetrieve), tabFolder);
 			}
 		}
 		
@@ -617,12 +617,13 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		// switch to that tab folder
 		if (retrieve != null && retrieve != currentRetrieve)
 		{	
-			CTabFolder folder = (CTabFolder)fTabFolderForDebugView.get(retrieve);
+			Integer key = MemoryViewUtil.getHashCode(retrieve);
+			CTabFolder folder = (CTabFolder)fTabFolderForDebugView.get(key);
 			
 			if (folder != null)
 			{	
 				setTabFolder(folder);
-				fTabFolderForDebugView.put(retrieve, folder);
+				fTabFolderForDebugView.put(key, folder);
 				fViewPaneCanvas.layout();
 			}
 			else
@@ -638,7 +639,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				else
 				{	
 					emptyFolder();
-					fTabFolderForDebugView.put(retrieve, fEmptyTabFolder);
+					fTabFolderForDebugView.put(key, fEmptyTabFolder);
 					fViewPaneCanvas.layout();
 				}
 			}
@@ -849,7 +850,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				setTabFolder((CTabFolder)fTabFolderForMemoryBlock.get(memoryBlock));
 				IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(memoryBlock);
 				if (retrieval != null)
-					fTabFolderForDebugView.put(retrieval, fTabFolderForMemoryBlock.get(memoryBlock));
+					fTabFolderForDebugView.put(MemoryViewUtil.getHashCode(retrieval), fTabFolderForMemoryBlock.get(memoryBlock));
 				else
 					DebugUIPlugin.logErrorMessage("Memory block retrieval for memory block is null."); //$NON-NLS-1$
 				
@@ -870,7 +871,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(memoryBlock);
 					
 					if (retrieval != null)
-						fTabFolderForDebugView.put(retrieval, toDisplay);
+						fTabFolderForDebugView.put(MemoryViewUtil.getHashCode(retrieval), toDisplay);
 					else
 						DebugUIPlugin.logErrorMessage("Memory block retrieval is null for memory block."); //$NON-NLS-1$
 					
@@ -1209,7 +1210,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(memory);
 			if (retrieval != null)
 			{
-				fTabFolderForDebugView.put(retrieval, folder);
+				fTabFolderForDebugView.put(MemoryViewUtil.getHashCode(retrieval), folder);
 			}
 			else {
 				DebugUIPlugin.logErrorMessage("Memory block retrieval for memory block is null"); //$NON-NLS-1$
