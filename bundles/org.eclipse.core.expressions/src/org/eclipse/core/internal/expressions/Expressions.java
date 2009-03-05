@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -22,21 +23,23 @@ import org.osgi.framework.BundleListener;
 
 import org.w3c.dom.Element;
 
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ICountable;
+import org.eclipse.core.expressions.IIterable;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ICountable;
-import org.eclipse.core.expressions.IIterable;
-
 public class Expressions {
 
 	/**
-	 * Cache to optimize instanceof computation. Map of Key->Boolean.
+	 * Cache to optimize instanceof computation. Weak Map of Class->Map(String, Boolean). Avoid
+	 * conflicts caused by multiple classloader contributions with the same class name. It's a rare
+	 * occurrence but is supported by the OSGi classloader.
 	 */
-	private static Map fgKnownClasses;
+	private static WeakHashMap fgKnownClasses;
 
 	/* debugging flag to enable tracing */
 	public static final boolean TRACING;
@@ -57,19 +60,25 @@ public class Expressions {
 	}
 
 	private static synchronized boolean isSubtype(Class clazz, String type) {
-		Key classKey= new Key(clazz, type);
-		Map knownClassesMap= getKnownClasses();
-		Object obj= knownClassesMap.get(classKey);
+		WeakHashMap knownClassesMap= getKnownClasses();
+		Map nameMap = (Map) knownClassesMap.get(clazz);
+		if (nameMap != null) {
+			Object obj = nameMap.get(type);
 			if (obj != null)
 				return ((Boolean)obj).booleanValue();
-		boolean isSubtype= uncachedIsSubtype(clazz, type);
-		knownClassesMap.put(classKey, isSubtype ? Boolean.TRUE : Boolean.FALSE);
+		}
+		if (nameMap == null) {
+			nameMap = new HashMap();
+			knownClassesMap.put(clazz, nameMap);
+		}
+		boolean isSubtype = uncachedIsSubtype(clazz, type);
+		nameMap.put(type, isSubtype ? Boolean.TRUE : Boolean.FALSE);
 		return isSubtype;
 	}
 	
-	private static Map getKnownClasses() {
+	private static WeakHashMap getKnownClasses() {
 		if (fgKnownClasses == null) {
-			fgKnownClasses= new HashMap();
+			fgKnownClasses= new WeakHashMap();
 			BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
 			BundleListener listener= new BundleListener() {
 				public void bundleChanged(BundleEvent event) {
@@ -77,15 +86,15 @@ public class Expressions {
 					if (event.getType() == BundleEvent.STOPPED) {
 						synchronized (Expressions.class) {
 							fgKnownClasses.clear();
-		}
-		}
-	}
+						}
+					}
+				}
 			};
-			ExpressionPlugin.fgBundleListener= listener;
+			ExpressionPlugin.fgBundleListener = listener;
 			bundleContext.addBundleListener(listener);
 		}
 		return fgKnownClasses;
-	}
+	}	
 
 	public static boolean uncachedIsSubtype(Class clazz, String type) {
 		if (clazz.getName().equals(type))
