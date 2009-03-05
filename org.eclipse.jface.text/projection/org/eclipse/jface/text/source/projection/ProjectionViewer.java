@@ -1250,6 +1250,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.TextViewer#handleVerifyEvent(org.eclipse.swt.events.VerifyEvent)
 	 */
 	protected void handleVerifyEvent(VerifyEvent e) {
+		if (getTextWidget().getBlockSelection()) {
+			ITextSelection selection= (ITextSelection) getSelection();
+			if (exposeModelRange(new Region(selection.getOffset(), selection.getLength())))
+				setSelection(selection);
+			super.handleVerifyEvent(e);
+		}
+
 		Point selection= getSelectedRange();
 		IRegion modelRange= event2ModelRange(e);
 		if (exposeModelRange(modelRange)) {

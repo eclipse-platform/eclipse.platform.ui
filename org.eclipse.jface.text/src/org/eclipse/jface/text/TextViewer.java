@@ -63,8 +63,11 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.text.edits.TextEdit;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
+import org.eclipse.jface.internal.text.SelectionProcessor;
 import org.eclipse.jface.internal.text.StickyHoverManager;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -1656,6 +1659,11 @@ public class TextViewer extends Viewer implements
 	 * @since 3.3
 	 */
 	private IAutoEditStrategy fTabsToSpacesConverter;
+	/**
+	 * The last verify event time, used to fold block editing events.
+	 * @since 3.5
+	 */
+	private int fLastEventTime;
 
 
 	//---- Construction and disposal ------------------
@@ -3639,6 +3647,11 @@ public class TextViewer extends Viewer implements
 			if (!e.doit)
 				return;
 		}
+		
+		if (fTextWidget.getBlockSelection() && fTextWidget.getSelectionRanges().length > 2) {
+			verifyEventInBlockSelection(e);
+			return;
+		}
 
 		IRegion modelRange= event2ModelRange(e);
 		fDocumentCommand.setEvent(e, modelRange);
@@ -3694,6 +3707,53 @@ public class TextViewer extends Viewer implements
 				fVerifyListener.forward(true);
 
 			}
+		}
+	}
+
+	/**
+	 * Simulates typing behavior in block selection mode.
+	 * 
+	 * @param e the verify event.
+	 * @since 3.5
+	 */
+	private void verifyEventInBlockSelection(final VerifyEvent e) {
+		/*
+		 Implementation Note: StyledText sends a sequence of n events
+		 for a single character typed, where n is the number of affected lines. Since
+		 the events share no manifest attribute to group them together or to detect the last event
+		 of a sequence, we simulate the modification at the first event and veto any following
+		 events with an equal event time.
+		 */
+		e.doit= false;
+		boolean isFirst= e.time != fLastEventTime;
+		fLastEventTime= e.time;
+		if (isFirst) {
+			wrapCompoundChange(new Runnable() {
+				public void run() {
+					SelectionProcessor processor= new SelectionProcessor(TextViewer.this);
+					try {
+						TextEdit edit;
+						/* Use the selection instead of the event's coordinates. Is this dangerous? */
+						ISelection selection= getSelection();
+						if (e.text.length() == 0 && e.character == '\0') {
+							// backspace in StyledText block selection mode...
+							edit= processor.backspace(selection);
+						} else {
+							int lines= processor.getCoveredLines(selection);
+							String text= e.text;
+							for (int i= 0; i < lines - 1; i++)
+								text += fDocument.getLegalLineDelimiters()[0] + e.text;
+							edit= processor.replace(selection, text);
+						}
+						edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
+						ISelection empty= processor.makeEmpty(selection);
+						setSelection(empty);
+					} catch (BadLocationException x) {
+						if (TRACE_ERRORS)
+							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
+					}
+				}
+			});
 		}
 	}
 
@@ -3778,7 +3838,11 @@ public class TextViewer extends Viewer implements
 				if (fTextWidget.getSelectionCount() == 0)
 					copyMarkedRegion(true);
 				else
-					fTextWidget.cut();
+					wrapCompoundChange(new Runnable() {
+						public void run() {
+							fTextWidget.cut();
+						}
+					});
 
 				selection= fTextWidget.getSelectionRange();
 				fireSelectionChanged(selection.x, selection.y);
@@ -3792,13 +3856,21 @@ public class TextViewer extends Viewer implements
 				break;
 			case PASTE:
 //				ignoreAutoEditStrategies(true);
-				fTextWidget.paste();
+				wrapCompoundChange(new Runnable(){
+					public void run() {
+						fTextWidget.paste();
+					}
+				});
 				selection= fTextWidget.getSelectionRange();
 				fireSelectionChanged(selection.x, selection.y);
 //				ignoreAutoEditStrategies(false);
 				break;
 			case DELETE:
-				fTextWidget.invokeAction(ST.DELETE_NEXT);
+				wrapCompoundChange(new Runnable(){
+					public void run() {
+						fTextWidget.invokeAction(ST.DELETE_NEXT);
+					}
+				});
 				selection= fTextWidget.getSelectionRange();
 				fireSelectionChanged(selection.x, selection.y);
 				break;
@@ -3823,6 +3895,30 @@ public class TextViewer extends Viewer implements
 				print();
 				break;
 		}
+	}
+
+	/**
+	 * If the text widget is in {@link StyledText#getBlockSelection() block selection mode}, the
+	 * passed code is wrapped into a begin/endCompoundChange undo session on the
+	 * {@linkplain #getRewriteTarget() rewrite target}; otherwise, the runnable is executed
+	 * directly.
+	 * 
+	 * @param runnable the code to wrap when in block selection mode
+	 * @since 3.5
+	 */
+	private void wrapCompoundChange(Runnable runnable) {
+		if (!fTextWidget.getBlockSelection()) {
+			runnable.run();
+			return;
+		}
+		IRewriteTarget target= getRewriteTarget();
+		target.beginCompoundChange();
+		try {
+			runnable.run();
+		} finally {
+			target.endCompoundChange();
+		}
+			
 	}
 
 	/**
@@ -3890,7 +3986,11 @@ public class TextViewer extends Viewer implements
 			fTextWidget.setSelection(widgetMarkOffset, selection.x);
 
 		if (delete) {
-			fTextWidget.cut();
+			wrapCompoundChange(new Runnable() {
+				public void run() {
+					fTextWidget.cut();
+				}
+			});
 		} else {
 			fTextWidget.copy();
 			fTextWidget.setSelection(selection.x); // restore old cursor position

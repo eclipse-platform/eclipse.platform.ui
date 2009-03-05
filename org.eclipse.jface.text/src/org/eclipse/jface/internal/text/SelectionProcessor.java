@@ -124,6 +124,17 @@ public final class SelectionProcessor {
 		IRegion[] getRanges(ISelection selection) throws BadLocationException {
 			return new IRegion[0];
 		}
+
+		/**
+		 * Returns the number of lines touched by <code>selection</code>. 
+		 * 
+		 * @param selection the selection
+		 * @return the number of lines touched by <code>selection</code>
+		 * @throws BadLocationException if accessing the document failed
+		 */
+		int getCoveredLines(ISelection selection) throws BadLocationException {
+			return 0;
+		}
 	}
 
 	private final Implementation NULL_IMPLEMENTATION= new Implementation();
@@ -172,6 +183,11 @@ public final class SelectionProcessor {
 			ITextSelection ts= (ITextSelection)selection;
 			return new IRegion[] { new Region(ts.getOffset(), ts.getLength()) };
 		}
+		
+		int getCoveredLines(ISelection selection) throws BadLocationException {
+			ITextSelection ts= (ITextSelection)selection;
+			return ts.getEndLine() - ts.getStartLine() + 1;
+		}
 	};
 
 	private final Implementation COLUMN_IMPLEMENTATION= new Implementation() {
@@ -185,6 +201,7 @@ public final class SelectionProcessor {
 				int endColumn= cts.getEndColumn();
 				int visualStartColumn= computeVisualColumn(startLine, startColumn);
 				int visualEndColumn= computeVisualColumn(endLine, endColumn);
+				visualEndColumn= Math.max(visualStartColumn, visualEndColumn); // HACK - TextViewer::getSelection does not know about virtual selections
 				root= new MultiTextEdit();
 				String[] delimiters= fDocument.getLegalLineDelimiters();
 
@@ -319,6 +336,11 @@ public final class SelectionProcessor {
 			}
 
 			return ranges;
+		}
+		
+		int getCoveredLines(ISelection selection) throws BadLocationException {
+			ITextSelection ts= (ITextSelection)selection;
+			return ts.getEndLine() - ts.getStartLine() + 1;
 		}
 
 		private TextEdit createReplaceEdit(int line, int visualStartColumn, int visualEndColumn, String replacement) throws BadLocationException {
@@ -570,6 +592,18 @@ public final class SelectionProcessor {
 	 */
 	public IRegion[] getRanges(ISelection selection) throws BadLocationException {
 		return getImplementation(selection).getRanges(selection);
+	}
+
+	/**
+	 * Returns the number of lines touched by <code>selection</code>. Note that for linear
+	 * selections, this is the number of contained delimiters plus 1.
+	 * 
+	 * @param selection the selection
+	 * @return the number of lines touched by <code>selection</code>
+	 * @throws BadLocationException if accessing the document failed
+	 */
+	public int getCoveredLines(ISelection selection) throws BadLocationException {
+		return getImplementation(selection).getCoveredLines(selection);
 	}
 
 	/**
