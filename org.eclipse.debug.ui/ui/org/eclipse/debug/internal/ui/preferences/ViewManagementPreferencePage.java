@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -154,13 +157,21 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fPerspectiveViewer.setLabelProvider(fLabelProvider);
 		fPerspectiveViewer.setInput(this);
 		
-		checkPerspectives(getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES));
+		Set perspectives;
+		String preference = DebugUIPlugin.getDefault().getPreferenceStore().getString(
+            IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
+        if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT.equals(preference)) {
+            perspectives = ViewContextService.getDefaultEnabledPerspectives();
+        } else {
+            perspectives = ViewContextService.parseList(preference);
+        }
+		checkPerspectives(perspectives);
 	}
 	
-	private void checkPerspectives(String perspectiveList) {
+	private void checkPerspectives(Set perspectives) {
 		fPerspectiveViewer.setAllChecked(false);
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
-		Iterator perspectiveIds= ViewContextService.parseList(perspectiveList).iterator();
+		Iterator perspectiveIds= perspectives.iterator();
 		while (perspectiveIds.hasNext()) {
 			IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId((String) perspectiveIds.next());
             if (descriptor != null) {
@@ -173,13 +184,22 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		StringBuffer buffer= new StringBuffer();
 		Object[] descriptors = fPerspectiveViewer.getCheckedElements();
+		Set perspectives = new HashSet();
 		for (int i = 0; i < descriptors.length; i++) {
-			buffer.append(((IPerspectiveDescriptor) descriptors[i]).getId()).append(',');
+		    perspectives.add( ((IPerspectiveDescriptor)descriptors[i]).getId() );
+		}
+		if (perspectives.equals(ViewContextService.getDefaultEnabledPerspectives())) {
+		    getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, 
+		                                  IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
+		} else {
+		    StringBuffer buffer= new StringBuffer();
+    		for (Iterator itr = perspectives.iterator(); itr.hasNext();) {
+                buffer.append(itr.next()).append(',');		    
+    		} 
+    		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
 		}
 		
-		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
 		boolean trackViews = fTrackViewsButton.getSelection();
         getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, trackViews);
 		if (fResetPressed || !trackViews) {
@@ -193,7 +213,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		checkPerspectives(getPreferenceStore().getDefaultString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES));
+        checkPerspectives( ViewContextService.getDefaultEnabledPerspectives() );
 		fTrackViewsButton.setSelection(getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
 		fResetPressed= false;
 		updateResetButton();

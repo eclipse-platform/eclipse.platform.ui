@@ -2552,6 +2552,8 @@ M4 = Platform-specific fourth key
            autoOpen="false"
            contextId="org.eclipse.debug.ui.debugging"
            viewId="org.eclipse.ui.console.ConsoleView"/>
+     <perspective
+           perspectiveId="org.eclipse.debug.ui.DebugPerspective"/>
   </extension>
   
    <extension

@@ -86,7 +86,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * List of perspectives that debugging is allowed in
 	 */
-	private List fEnabledPerspectives = new ArrayList();	
+	private Set fEnabledPerspectives = new HashSet();	
     
     /**
      * Whether to ignore perspective change call backs (set to 
@@ -106,14 +106,19 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	// base debug context
 	public static final String DEBUG_CONTEXT= "org.eclipse.debug.ui.debugging"; //$NON-NLS-1$
 	
-	// extension point
+	// extension points
 	private static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
-	
+
+	// extension elements
+    private static final String ELEM_CONTEXT_VIEW_BINDING= "contextViewBinding"; //$NON-NLS-1$
+    private static final String ELEM_PERSPECTIVE= "perspective"; //$NON-NLS-1$
+    
 	// extension attributes
 	private static final String ATTR_CONTEXT_ID= "contextId"; //$NON-NLS-1$
 	private static final String ATTR_VIEW_ID= "viewId"; //$NON-NLS-1$
 	private static final String ATTR_AUTO_OPEN= "autoOpen"; //$NON-NLS-1$
 	private static final String ATTR_AUTO_CLOSE= "autoClose"; //$NON-NLS-1$	
+    private static final String ATTR_PERSPECTIVE_ID= "perspectiveId"; //$NON-NLS-1$
     
     // XML tags
     private static final String XML_ELEMENT_VIEW_BINDINGS ="viewBindings"; //$NON-NLS-1$
@@ -611,18 +616,20 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement element = configurationElements[i];
-			String viewId = element.getAttribute(ATTR_VIEW_ID);
-			String contextId = element.getAttribute(ATTR_CONTEXT_ID);
-			if (contextId == null || viewId == null) {
-				continue;
+			if ( ELEM_CONTEXT_VIEW_BINDING.equals(element.getName()) ) {
+    			String viewId = element.getAttribute(ATTR_VIEW_ID);
+    			String contextId = element.getAttribute(ATTR_CONTEXT_ID);
+    			if (contextId == null || viewId == null) {
+    				continue;
+    			}
+                ViewBinding info = new ViewBinding(element);
+    			DebugContextViewBindings bindings = (DebugContextViewBindings) fContextIdsToBindings.get(contextId);
+    			if (bindings == null) {
+    				bindings = new DebugContextViewBindings(contextId);
+    				fContextIdsToBindings.put(contextId, bindings);
+    			}
+    			bindings.addBinding(info);
 			}
-            ViewBinding info = new ViewBinding(element);
-			DebugContextViewBindings bindings = (DebugContextViewBindings) fContextIdsToBindings.get(contextId);
-			if (bindings == null) {
-				bindings = new DebugContextViewBindings(contextId);
-				fContextIdsToBindings.put(contextId, bindings);
-			}
-			bindings.addBinding(info);
 		}
 		linkParentContexts();
 	}
@@ -662,16 +669,21 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * Load the collection of perspectives in which view management will occur from the preference store.
 	 */
 	private void loadPerspectives() {
-		String prefString = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
-		fEnabledPerspectives = parseList(prefString);
-	}	
+	    String preference = DebugUIPlugin.getDefault().getPreferenceStore().getString(
+	        IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
+	    if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT.equals(preference)) {
+            fEnabledPerspectives = getDefaultEnabledPerspectives();
+	    } else {
+            fEnabledPerspectives = parseList(preference);
+	    }
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
         if (!fIgnoreChanges) {
-    		if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES.equals(event.getProperty())) {
+    		if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES.equals(event.getProperty())) { 
     			loadPerspectives();
     		} else if (IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS.equals(event.getProperty())) {
     		    loadContextToViewExtensions();
@@ -715,8 +727,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * 
 	 * @return list
 	 */
-	public static List parseList(String listString) {
-		List list = new ArrayList(10);
+	public static Set parseList(String listString) {
+		Set list = new HashSet(10);
 		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
@@ -725,6 +737,32 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		return list;
 	}
 	
+	/**
+     * Calculates the default set of perspectives enabled for view management 
+     * based on the contextViewBindings extension point.
+     * 
+     * @return set of enabled perspectives.
+     * 
+     * @since 3.5
+     */
+    public static Set getDefaultEnabledPerspectives() {
+        Set perspectives = new HashSet(4);
+        
+        IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_CONTEXT_VIEW_BINDINGS);
+        IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
+        for (int i = 0; i < configurationElements.length; i++) {
+            IConfigurationElement element = configurationElements[i];
+            if ( ELEM_PERSPECTIVE.equals(element.getName()) ) {
+                String perspectiveId = element.getAttribute(ATTR_PERSPECTIVE_ID);
+                if (perspectiveId != null) {
+                    perspectives.add(perspectiveId);
+                }
+            }
+        }
+        
+        return perspectives;
+    }
+
 	public void contextActivated(ISelection selection) {
 		if (isEnabledPerspective()) {
 			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {

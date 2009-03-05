@@ -223,14 +223,25 @@ public interface IDebugUIConstants {
 	public static final String PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE= PLUGIN_ID + ".skip_breakpoints_during_run_to_line"; //$NON-NLS-1$
 	
 	/**
-	 * String preference controlling in which perspectives view
-	 * management will occur. The value is a comma-separated list
-	 * of plug-in identifiers.
+	 * String preference controlling in which perspectives view management will
+	 * occur.  This preference, if set, overrides the perspectives enabled 
+	 * through the <code>contextViewBindings</code> extension point. The value 
+	 * is a comma-separated list of perspective IDs, an empty string (no perspectives),
+	 * or the value of <code>PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT</code> ("<code>DEFAULT</code>").
 	 * 
 	 * @since 3.0
 	 */
 	public static final String PREF_MANAGE_VIEW_PERSPECTIVES= PLUGIN_ID + ".manage_view_perspectives"; //$NON-NLS-1$
-	
+
+	/**
+	 * The default value of the {@link PREF_MANAGE_VIEW_PERSPECTIVE} preference. 
+	 * 
+     * @see PREF_MANAGE_VIEW_PERSPECTIVES
+     * 
+	 * @since 3.5
+	 */
+	public static final String PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT= "DEFAULT"; //$NON-NLS-1$
+
 	/**
 	 * Font preference setting for the process console.
 	 * 
