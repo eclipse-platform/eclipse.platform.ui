@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,7 +121,7 @@ public class EditorReference extends WorkbenchPartReference implements
 	 * @param desc
 	 *            the descriptor from the declaration
 	 * @param editorState
-	 *            propogate state from another editor. Can be <code>null</code>.
+	 *            propagate state from another editor. Can be <code>null</code>.
 	 */
 	public EditorReference(EditorManager manager, IEditorInput input,
 			EditorDescriptor desc, IMemento editorState) {
@@ -129,8 +129,26 @@ public class EditorReference extends WorkbenchPartReference implements
 		initListenersAndHandlers();
 		restoredInput = input;
 		this.editorState = editorState;
-		init(desc.getId(), desc.getLabel(),
-				"", desc.getImageDescriptor(), desc.getLabel(), ""); //$NON-NLS-1$//$NON-NLS-2$
+		
+		String title = null;
+		if (input != null)
+			name = title = input.getName();
+		if (title == null)
+			title = desc.getLabel();
+		
+		String toolTip = null;
+		if (input != null)
+			toolTip = input.getToolTipText();
+		if (toolTip == null)
+			toolTip = ""; //$NON-NLS-1$
+		
+		if (input != null) {
+			IPersistableElement persistable = input.getPersistable();
+			if (persistable != null)
+				factoryId = persistable.getFactoryId();
+		}
+
+		init(desc.getId(), title, toolTip, desc.getImageDescriptor(), title, ""); //$NON-NLS-1$
 	}
     
     /**

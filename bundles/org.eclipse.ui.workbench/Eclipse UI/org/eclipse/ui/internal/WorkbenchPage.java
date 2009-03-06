@@ -83,6 +83,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
@@ -5050,6 +5051,102 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	    updateActivePart();
 //	    partList.removePart((WorkbenchPartReference)ref);
 	}
+	
+	public IEditorReference[] openEditors(final IEditorInput[] inputs, final String[] editorIDs, 
+			final int matchFlags) throws MultiPartInitException {
+		if (inputs == null)
+			 throw new IllegalArgumentException();
+		if (editorIDs == null)
+			 throw new IllegalArgumentException();
+		if (inputs.length != editorIDs.length)
+			throw new IllegalArgumentException();
+		
+		final IEditorReference[] results = new IEditorReference[inputs.length];
+		final PartInitException[] exceptions = new PartInitException[inputs.length];
+		BusyIndicator.showWhile(window.getWorkbench().getDisplay(),
+			new Runnable() {
+				public void run() {
+					Workbench workbench = (Workbench) getWorkbenchWindow().getWorkbench();
+						workbench.largeUpdateStart();
+						try {
+							for (int i = 0 ; i < inputs.length; i++) {
+							   if (inputs[i] == null || editorIDs[i] == null)
+							        throw new IllegalArgumentException();
+								boolean activate = (i ==0); // activate the first editor
+								try {
+									// check if there is an editor we can reuse
+							        IEditorReference ref = batchReuseEditor(inputs[i], editorIDs[i], 
+							        		activate, matchFlags);
+							        if (ref == null) // otherwise, create a new one
+								        ref = batchOpenEditor(inputs[i], editorIDs[i], activate);
+							        results[i] = ref;
+								} catch (PartInitException e) {
+									exceptions[i] = e;
+								}
+							}
+						} finally {
+							workbench.largeUpdateEnd();
+						}
+				}
+		});
+		
+		boolean hasException = false;
+		for(int i = 0 ; i < results.length; i++) {
+			if (exceptions[i] != null) {
+				hasException = true;
+			}
+			if (results[i] == null) {
+				continue;
+			}
+	        window.firePerspectiveChanged(this, getPerspective(), results[i], CHANGE_EDITOR_OPEN);
+		}
+        window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
+		
+		if (hasException) {
+			throw new MultiPartInitException(results, exceptions);
+		}
+		return results;
+	}
+	
+    private IEditorReference batchReuseEditor(IEditorInput input, String editorID, boolean activate, int matchFlags) {
+        if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals( editorID))
+        	return null; // don't reuse external editors
+    	int flag = ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).getReuseEditorMatchFlags(matchFlags);
+		IEditorReference[] refs = getEditorManager().findEditors(input, editorID, flag);
+		if (refs.length == 0)
+			return null;
+		IEditorPart editor = refs[0].getEditor(activate);
+		if (editor != null && activate) { // do the IShowEditorInput notification before showing the editor to reduce flicker
+	        if (editor instanceof IShowEditorInput)
+	            ((IShowEditorInput) editor).showEditorInput(input);
+	        showEditor(activate, editor);
+		}
+        return refs[0];
+    }
+    
+    private IEditorReference batchOpenEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
+        IEditorPart editor = null;
+        IEditorReference ref;
+        try {
+        	partBeingOpened = true;
+			ref = getEditorManager().openEditor(editorID, input, true, null);
+			if (ref != null)
+				editor = ref.getEditor(activate);
+		} finally {
+			partBeingOpened = false;
+        }
+		if (editor != null) {
+	        setEditorAreaVisible(true);
+	        if (activate) {
+	            if (editor instanceof AbstractMultiEditor)
+					activate(((AbstractMultiEditor) editor).getActiveEditor());
+				else
+					activate(editor);
+	        } else
+	            bringToTop(editor);
+		}
+		return ref;
+    }
 	
 	public void resetHiddenEditors() {
 		IEditorReference[] refs = (IEditorReference[]) removedEditors

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1174,4 +1174,32 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @see #showEditor(IEditorReference)
 	 */
 	public void hideEditor(IEditorReference ref);
+
+	/**
+	 * Opens editors for the given inputs. Only the editor constructed for the first input 
+	 * gets activated. 
+	 * <p>
+	 * The editor type is determined by mapping <code>editorIDs</code> to an editor
+	 * extension registered with the workbench.  An editor id is passed rather than
+	 * an editor object to prevent the accidental creation of more than one editor
+	 * for the same input. It also guarantees a consistent lifecycle for editors,
+	 * regardless of whether they are created by the user or restored from saved 
+	 * data.
+	 * </p><p>
+	 * The length of the input array and editor ID arrays must be the same. The editors
+	 * are opened using pairs of { input[i], editorIDs[i] }.
+	 * </p>
+	 * @param inputs the editor inputs
+	 * @param editorIDs the IDs of the editor extensions to use, in the order of inputs
+	 * @param matchFlags a bit mask consisting of zero or more of the MATCH_* constants OR-ed together
+	 * @return references to the editors constructed for the inputs. The editors 
+	 * corresponding to those reference might not be materialized.
+	 * @exception MultiPartInitException if at least one editor could not be created or initialized
+	 * @see #MATCH_NONE
+	 * @see #MATCH_INPUT
+	 * @see #MATCH_ID
+	 * @since 3.5
+	 */
+	public IEditorReference[] openEditors(final IEditorInput[] inputs, final String[] editorIDs, 
+			final int matchFlags) throws MultiPartInitException;
 }

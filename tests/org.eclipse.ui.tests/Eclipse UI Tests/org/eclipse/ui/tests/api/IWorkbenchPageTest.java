@@ -2674,4 +2674,143 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(getMessage(), 0, logCount);
 		assertEquals(0, fActivePage.getEditorReferences().length);
 	}
+	
+	/**
+	 * Test opening multiple editors for an edge case: one input.
+	 * 
+	 * openEditors(IWorkbenchPage page, IFile[] inputs)
+	 */
+	public void testOpenEditors1() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditors");
+		IFile[] inputs = new IFile[1];
+		String fileName0 = "test0.txt";
+		inputs[0] = FileUtil.createFile(fileName0, proj);
+
+		// Check: editor references are returned for each file
+		IEditorReference[] refs = IDE.openEditors(fActivePage, inputs);
+		assertNotNull(refs);
+		assertEquals(1, refs.length);
+		assertNotNull(refs[0]);
+		
+		// Check: the editor is materialized
+		IEditorPart editor0 = refs[0].getEditor(false);
+		assertNotNull(editor0);
+		
+		// Check: the first file corresponds to the active editor
+		assertEquals(fActivePage.getActiveEditor(), editor0);
+
+		// Check: created editor match its input
+		assertEquals(editor0.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(inputs[0].getName()).getId());
+		
+		// Check: reference's title matches the file name
+		assertEquals(fileName0, refs[0].getTitle());
+	}
+	
+	/**
+	 * Test opening multiple editors for three inputs. Only first editor 
+	 * should be materialized; it also should be the active editor.
+	 * 
+	 * openEditors(IWorkbenchPage page, IFile[] inputs)
+	 */
+	public void testOpenEditors3() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditors");
+		IFile[] inputs = new IFile[3];
+		String fileName1 = "test1.txt";
+		String fileName2 = "test2.txt";
+		String fileName3 = "test3.txt";
+		inputs[0] = FileUtil.createFile(fileName1, proj);
+		inputs[1] = FileUtil.createFile(fileName2, proj);
+		inputs[2] = FileUtil.createFile(fileName3, proj);
+
+		// Check: editor references are returned for each file
+		IEditorReference[] refs = IDE.openEditors(fActivePage, inputs);
+		assertNotNull(refs);
+		assertEquals(3, refs.length);
+		assertNotNull(refs[0]);
+		assertNotNull(refs[1]);
+		assertNotNull(refs[2]);
+		
+		// Check: the first file got an editor materialized, rest of the files did not
+		IEditorPart editor0 = refs[0].getEditor(false);
+		assertNotNull(editor0);
+		assertNull(refs[1].getEditor(false));
+		assertNull(refs[2].getEditor(false));
+		
+		// Check: the first file corresponds to the active editor
+		assertEquals(fActivePage.getActiveEditor(), editor0);
+
+		// Check: created editors match their inputs
+		assertEquals(editor0.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(inputs[0].getName()).getId());
+		
+		// Check: rest of the editors can be materialized
+		IEditorPart editor1 = refs[1].getEditor(true);
+		assertNotNull(editor1);
+		
+		// Check: those editors match their inputs too
+		assertEquals(editor1.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(inputs[1].getName()).getId());
+		
+		// Check: reference's title matches the file name
+		assertEquals(fileName1, refs[0].getTitle());
+		assertEquals(fileName2, refs[1].getTitle());
+		assertEquals(fileName3, refs[2].getTitle());
+	}
+	
+	/**
+	 * Test editor reuse when opening multiple editors. The internal editors 
+	 * with matching {id, input} should be reused.
+	 * 
+	 * openEditors(IWorkbenchPage page, IFile[] inputs)
+	 */
+	public void testOpenEditorsReuse() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditors");
+		
+		String fileName1 = "test1.txt";
+		String fileName2 = "test2.txt";
+		String fileName3 = "test3.txt";
+		int flag = IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID; // use both matches
+		
+		// open three files
+		IFile[] inputs = new IFile[3];
+		inputs[0] = FileUtil.createFile(fileName1, proj);
+		inputs[1] = FileUtil.createFile(fileName2, proj);
+		inputs[2] = FileUtil.createFile(fileName3, proj);
+		IEditorReference[] refs = IDE.openEditors(fActivePage, inputs);
+		
+		// open two of the same files in mixed order, 1st (materialized) and 3rd (not materialized)
+		String editorID = fWorkbench.getEditorRegistry().getDefaultEditor(inputs[0].getName()).getId();
+		IEditorInput[] inputs2 = new IEditorInput[] { 
+				new FileEditorInput(inputs[1]), 
+				new FileEditorInput(inputs[0]) };
+		String[] editorIDs2 = new String [] { editorID, editorID} ;
+		
+		IEditorReference[] refs2 = fActivePage.openEditors(inputs2, editorIDs2, flag);
+		assertNotNull(refs2);
+		assertEquals(2, refs2.length);
+		
+		// now input1 is materialized and has focus
+		IEditorPart editor = refs2[0].getEditor(false);
+		assertNotNull(editor);
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		
+		// check that the same editor was created
+		assertEquals(refs2[0].getEditor(true), refs[1].getEditor(true));
+		assertEquals(refs2[1].getEditor(true), refs[0].getEditor(true));
+		
+		// open a file with different editor IDs, materialized (input0) and non-materialzed (input3)
+		String editorIDAlt = fWorkbench.getEditorRegistry().getDefaultEditor("abc.log").getId();
+		IEditorInput[] inputs3 = new IEditorInput[] { 
+				new FileEditorInput(inputs[0]), 
+				new FileEditorInput(inputs[2]) };
+		String[] editorIDs3 = new String [] { editorIDAlt, editorIDAlt} ;
+		
+		IEditorReference[] refs3 = fActivePage.openEditors(inputs3, editorIDs3, flag);
+		assertNotNull(refs3);
+		assertEquals(2, refs3.length);
+		
+		assertFalse(refs2[0].equals(refs[0]));
+		assertFalse(refs2[1].equals(refs[2]));
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,12 +60,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.ISaveableFilter;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
@@ -1523,4 +1526,37 @@ public final class IDE {
 		}
 		return false;
 	}
+	
+	/**
+	 * Opens editors on given file resources.
+	 * <p>
+	 * If the page already has an editor open on the target object then that
+	 * editor is brought to front; otherwise, a new editor is opened. The editor created 
+	 * for the first input will be activated.
+	 * </p>
+	 * @param page the page in which the editor will be opened
+	 * @param inputs the inputs for the editors
+	 * @return references to the editors opened; the corresponding editors might not be materialized
+	 * @exception MultiPartInitException if at least one of the editors could not be initialized
+	 * @since 3.5
+	 */
+	public static IEditorReference[] openEditors(IWorkbenchPage page, IFile[] inputs) throws MultiPartInitException {
+		if ((page == null) || (inputs == null))
+			throw new IllegalArgumentException();
+		
+		String[] editorDescriptions = new String[inputs.length]; 
+		IEditorInput[] editorInputs = new IEditorInput[inputs.length]; 
+		for(int i = 0 ; i < inputs.length; i++) {
+			editorInputs[i] = new FileEditorInput(inputs[i]);
+			try {
+				editorDescriptions[i] = getEditorDescriptor(inputs[i]).getId();
+			} catch (PartInitException e) {
+				PartInitException[] exceptions = new PartInitException[inputs.length];
+				exceptions[i] = e;
+				throw new MultiPartInitException(new IWorkbenchPartReference[inputs.length], exceptions);
+			}
+		}
+		return page.openEditors(editorInputs, editorDescriptions, IWorkbenchPage.MATCH_INPUT);
+	}
+	
 }
