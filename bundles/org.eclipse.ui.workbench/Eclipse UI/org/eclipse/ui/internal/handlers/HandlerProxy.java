@@ -36,6 +36,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
+import org.eclipse.ui.handlers.RadioState;
 import org.eclipse.ui.handlers.RegistryToggleState;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -112,7 +113,11 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	
 	private String commandId;
 
+	//
+	// state to support checked or radio commands.
 	private State checkedState;
+	
+	private State radioState;
 
 	/**
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
@@ -435,6 +440,10 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 		if (checkedState != null) {
 			Boolean value = (Boolean) checkedState.getValue();
 			element.setChecked(value.booleanValue());
+		} else if (radioState != null) {
+			String value = (String) radioState.getValue();
+			Object parameter = parameters.get(RadioState.PARAMETER_ID);
+			element.setChecked(value != null && value.equals(parameter));
 		}
 		if (handler != null && handler instanceof IElementUpdater) {
 			((IElementUpdater) handler).updateElement(element, parameters);
@@ -443,7 +452,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	
 	private void refreshElements() {
 		if (commandId == null || !(handler instanceof IElementUpdater)
-				&& checkedState == null) {
+				&& (checkedState == null && radioState == null)) {
 			return;
 		}
 		ICommandService cs = (ICommandService) PlatformUI.getWorkbench()
@@ -455,11 +464,14 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 * @see org.eclipse.core.commands.IStateListener#handleStateChange(org.eclipse.core.commands.State, java.lang.Object)
 	 */
 	public void handleStateChange(State state, Object oldValue) {
-		if(state.getId().equals(RegistryToggleState.STATE_ID)) { 
+		if (state.getId().equals(RegistryToggleState.STATE_ID)) {
 			checkedState = state;
+		} else if (state.getId().equals(RadioState.STATE_ID)) {
+			radioState = state;
+			refreshElements();
 		}
 		if (handler instanceof IStateListener) {
-			((IStateListener)handler).handleStateChange(state, oldValue);
+			((IStateListener) handler).handleStateChange(state, oldValue);
 		}
 	}
 }

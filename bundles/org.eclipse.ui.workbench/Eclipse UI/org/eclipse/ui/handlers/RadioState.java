@@ -22,6 +22,16 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * using the {@link #STATE_ID} id and a string commandParameter using the
  * {@link #PARAMETER_ID} id. Menu contributions supplied by
  * <code>org.eclipse.ui.menus</code> can then set the {@link #PARAMETER_ID}.
+ * <p>
+ * When parsing from the registry, this state understands two parameters:
+ * <code>default</code>, which is the default value for this item; and
+ * <code>persisted</code>, which is whether the state should be persisted
+ * between sessions. The <code>default</code> parameter has no default value and
+ * must be specified in one of its forms, and the <code>persisted</code>
+ * parameter defaults to <code>true</code>. If only one parameter is passed
+ * (i.e., using the class name followed by a colon), then it is assumed to be
+ * the <code>default</code> parameter.
+ * </p>
  * 
  * @see HandlerUtil#updateRadioState(org.eclipse.core.commands.Command, String)
  * @see HandlerUtil#matchesRadioState(org.eclipse.core.commands.ExecutionEvent)
