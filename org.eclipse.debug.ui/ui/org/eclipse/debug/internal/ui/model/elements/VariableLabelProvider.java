@@ -15,7 +15,6 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -41,7 +40,7 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	        if (element instanceof IVariable) {
 	        	IVariable variable = (IVariable) element;
 				if (variable.hasValueChanged()) {
-					return DebugUIPlugin.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB();
+					return DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB();
 				}
 	        }
 		}
@@ -78,7 +77,7 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getFontData(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
 	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId)	throws CoreException {
-		return JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0];
+		return JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
 	}
 	
 	/* (non-Javadoc)

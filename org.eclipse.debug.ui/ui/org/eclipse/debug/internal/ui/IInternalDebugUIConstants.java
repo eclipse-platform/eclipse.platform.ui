@@ -188,22 +188,6 @@ public interface IInternalDebugUIConstants {
     public static final String ID_SOURCE_NOT_FOUND_EDITOR = "org.eclipse.debug.ui.NoSourceFoundEditor"; //$NON-NLS-1$
     
     /**
-     * The name of the font to use for detail panes. This font is managed via
-     * the workbench font preference page.
-     * 
-     * @since 2.1
-     */ 
-    public static final String DETAIL_PANE_FONT= "org.eclipse.debug.ui.DetailPaneFont"; //$NON-NLS-1$   
-    
-    /**
-     * The name of the font to use for the variable text in the variables, registers and expression views.
-     * This font is managed via the workbench font preference page.
-     * 
-     * @since 3.3
-     */ 
-    public static final String VARIABLE_TEXT_FONT= "org.eclipse.debug.ui.VariableTextFont"; //$NON-NLS-1$   
-
-    /**
      * Boolean preference indicating if contextual launch options should be visible
      * to the user rather than the "run as" menu.
      * 
@@ -403,13 +387,6 @@ public interface IInternalDebugUIConstants {
      * @since 3.2
      */
     public static final String ANNOTATION_TYPE_DYNAMIC_INSTRUCTION_POINTER = "org.eclipse.debug.ui.dynamicIP"; //$NON-NLS-1$
-    
-    /**
-     * Preference for background color in tree columns when a value changes color.
-     * 
-     * @since 3.2
-     */
-    public static final String PREF_CHANGED_VALUE_BACKGROUND = IDebugUIConstants.PLUGIN_ID + ".PREF_CHANGED_VALUE_BACKGROUND"; //$NON-NLS-1$
     
     /**
      * Identifier of the external tool builder launch category. Defined here since

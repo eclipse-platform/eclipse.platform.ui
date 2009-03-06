@@ -1205,6 +1205,32 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_CHANGED_DEBUG_ELEMENT_COLOR= "org.eclipse.debug.ui.changedDebugElement"; //$NON-NLS-1$
 
+
+	/**
+	 * Preference for background color in tree columns when a value changes color.
+	 * 
+	 * @since 3.5
+	 * @see DebugUITools
+	 */
+	public static final String PREF_CHANGED_VALUE_BACKGROUND = PLUGIN_ID + ".PREF_CHANGED_VALUE_BACKGROUND"; //$NON-NLS-1$
+
+
+	/**
+	 * The name of the font to use for the variable text in the variables, registers and expression views.
+	 * This font is managed via the workbench font preference page.
+	 * 
+	 * @since 3.5
+	 */ 
+	public static final String PREF_VARIABLE_TEXT_FONT= "org.eclipse.debug.ui.VariableTextFont"; //$NON-NLS-1$   
+
+	/**
+	 * The name of the font to use for detail panes. This font is managed via
+	 * the workbench font preference page.
+	 * 
+	 * @since 3.5
+	 */ 
+	public static final String PREF_DETAIL_PANE_FONT= "org.eclipse.debug.ui.DetailPaneFont"; //$NON-NLS-1$   
+
 	/**
 	 * Instruction pointer image for editor ruler for the currently executing
 	 * instruction in the top stack frame.

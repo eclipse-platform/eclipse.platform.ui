@@ -31,7 +31,6 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneAssignValueAction;
@@ -371,7 +370,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		// Create & configure a SourceViewer
 		fSourceViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
 		fSourceViewer.setDocument(getDetailDocument());
-		fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
+		fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDebugUIConstants.PREF_DETAIL_PANE_FONT));
 		fSourceViewer.getTextWidget().setWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));
 		fSourceViewer.setEditable(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDebugHelpContextIds.DETAIL_PANE);
@@ -893,8 +892,8 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
-		if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
-			fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
+		if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_FONT)) {
+			fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDebugUIConstants.PREF_DETAIL_PANE_FONT));
 		} else if (propertyName.equals(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
 			display(fLastDisplayed);
 		} else if (propertyName.equals(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP)) {

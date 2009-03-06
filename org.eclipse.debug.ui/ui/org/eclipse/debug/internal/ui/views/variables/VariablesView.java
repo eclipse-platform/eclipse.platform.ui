@@ -31,7 +31,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
@@ -423,8 +422,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
 		if (propertyName.equals(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR) || 
-				propertyName.equals(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND) ||
-				propertyName.equals(IInternalDebugUIConstants.VARIABLE_TEXT_FONT)) {
+				propertyName.equals(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND) ||
+				propertyName.equals(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT)) {
 			getViewer().refresh();
 		}
 	}
