@@ -78,7 +78,7 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSPropertyHandler(ICSSPropertyFontHandler.class,
 				CSSPropertyFontXMLHandler.INSTANCE);
 		//Register SWT CSS Property BorderVisible
-		super.registerCSSProperty("borderVisible", CSSPropertyBorderVisibleSWTHandler.class);  
+		super.registerCSSProperty("border-visible", CSSPropertyBorderVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyBorderVisibleSWTHandler.class,
 				CSSPropertyBorderVisibleSWTHandler.INSTANCE);
 		//Register SWT CSS Property Simple
@@ -86,19 +86,19 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSPropertyHandler(CSSPropertySimpleSWTHandler.class,
 				CSSPropertySimpleSWTHandler.INSTANCE);
 		//Register SWT CSS Property MaximizeVisible
-		super.registerCSSProperty("maximizeVisible", CSSPropertyMaximizeVisibleSWTHandler.class);  
+		super.registerCSSProperty("maximize-visible", CSSPropertyMaximizeVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyMaximizeVisibleSWTHandler.class,
 				CSSPropertyMaximizeVisibleSWTHandler.INSTANCE);
 		//Register SWT CSS Property MinimizeVisible
-		super.registerCSSProperty("minimizeVisible", CSSPropertyMinimizeVisibleSWTHandler.class);  
+		super.registerCSSProperty("minimize-visible", CSSPropertyMinimizeVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyMinimizeVisibleSWTHandler.class,
 				CSSPropertyMinimizeVisibleSWTHandler.INSTANCE);
 		//Register SWT CSS Property ShowClose
-		super.registerCSSProperty("showClose", CSSPropertyShowCloseSWTHandler.class);  
+		super.registerCSSProperty("show-close", CSSPropertyShowCloseSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyShowCloseSWTHandler.class,
 				CSSPropertyShowCloseSWTHandler.INSTANCE);
 		//Register SWT CSS Property mruVisible
-		super.registerCSSProperty("mruVisible", CSSPropertyMruVisibleSWTHandler.class);  
+		super.registerCSSProperty("mru-visible", CSSPropertyMruVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyMruVisibleSWTHandler.class,
 				CSSPropertyMruVisibleSWTHandler.INSTANCE);
 		//Register SWT CSS Property Maximized
@@ -114,11 +114,11 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSPropertyHandler(CSSPropertySingleSWTHandler.class,
 				CSSPropertySingleSWTHandler.INSTANCE);
 		//Register SWT CSS Property UnselectedCloseVisible
-		super.registerCSSProperty("unselectedCloseVisible", CSSPropertyUnselectedCloseVisibleSWTHandler.class);  
+		super.registerCSSProperty("unselected-close-visible", CSSPropertyUnselectedCloseVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyUnselectedCloseVisibleSWTHandler.class,
 				CSSPropertyUnselectedCloseVisibleSWTHandler.INSTANCE);
 		//Register SWT CSS Property UnselectedImageVisible
-		super.registerCSSProperty("unselectedImageVisible", CSSPropertyUnselectedImageVisibleSWTHandler.class);  
+		super.registerCSSProperty("unselected-image-visible", CSSPropertyUnselectedImageVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyUnselectedImageVisibleSWTHandler.class,
 				CSSPropertyUnselectedImageVisibleSWTHandler.INSTANCE);
 	}
