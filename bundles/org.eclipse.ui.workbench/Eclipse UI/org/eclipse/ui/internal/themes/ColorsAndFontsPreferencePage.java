@@ -790,6 +790,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         composite.setLayout(layout);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = convertHeightInCharsToPixels(5);
+        data.widthHint = convertWidthInCharsToPixels(30);
         composite.setLayoutData(data);
 
         Label label = new Label(composite, SWT.LEFT);
