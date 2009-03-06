@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation.
- *     Ian Phillips - additional expressions support (<=, <, >=, and >).
+ *     Ian Phillips - additional expressions support ( "-N)", "(N-" ).
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
