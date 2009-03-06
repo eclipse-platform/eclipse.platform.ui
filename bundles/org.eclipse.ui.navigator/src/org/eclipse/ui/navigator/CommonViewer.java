@@ -208,23 +208,6 @@ public class CommonViewer extends TreeViewer {
 	
 	
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#createTreeItem(org.eclipse.swt.widgets.Widget,
-	 *      java.lang.Object, int)
-	 */
-	protected void createTreeItem(Widget parent, final Object element, int index) {
-		try {
-			super.createTreeItem(parent, element, index);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} catch (Error e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	/*
 	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
 	 */
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
