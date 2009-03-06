@@ -4127,7 +4127,7 @@
          <command
                defaultHandler="org.eclipse.ui.tests.commands.ToggleStateHandler"
                id="org.eclipse.ui.tests.toggleStateCommand1"
-               name="name">
+               name="toggleStateCommand1">
             <state
                   class="org.eclipse.ui.handlers.RegistryToggleState:true"
                   id="org.eclipse.ui.commands.toggleState">
@@ -4136,7 +4136,7 @@
          <command
                defaultHandler="org.eclipse.ui.tests.commands.ToggleStateHandler"
                id="org.eclipse.ui.tests.toggleStateCommand2"
-               name="name">
+               name="toggleStateCommand2">
             <state
                   class="org.eclipse.ui.handlers.RegistryToggleState:false"
                   id="org.eclipse.ui.commands.toggleState">
@@ -4145,7 +4145,21 @@
          <command
                defaultHandler="org.eclipse.ui.tests.commands.ToggleStateHandler"
                id="org.eclipse.ui.tests.toggleStateCommand3"
-               name="name">
+               name="toggleStateCommand3">
          </command>
-      </extension>   
+         <command
+               defaultHandler="org.eclipse.ui.tests.commands.RadioStateHandler"
+               id="org.eclipse.ui.tests.radioStateCommand1"
+               name="radioStateCommand1">
+            <commandParameter
+                  id="org.eclipse.ui.commands.radioStateParameter"
+                  name="State"
+                  optional="true">
+            </commandParameter>
+            <state
+                  class="org.eclipse.ui.handlers.RadioState:value2"
+                  id="org.eclipse.ui.commands.radioState">
+            </state>
+         </command>
+      </extension>
 </plugin>            

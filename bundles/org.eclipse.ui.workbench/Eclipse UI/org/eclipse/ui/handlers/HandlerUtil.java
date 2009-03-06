@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -610,7 +610,7 @@ public class HandlerUtil {
 	 * @since 3.5
 	 */
 	public static boolean toggleCommandState(Command command) throws ExecutionException {
-		State state = command.getState("org.eclipse.ui.commands.toggleState"); //$NON-NLS-1$
+		State state = command.getState(RegistryToggleState.STATE_ID);
 		if(state == null)
 			throw new ExecutionException("The command does not have a toggle state"); //$NON-NLS-1$
 		 if(!(state.getValue() instanceof Boolean))
@@ -620,4 +620,61 @@ public class HandlerUtil {
 		state.setValue(new Boolean(!oldValue));
 		return oldValue;
 	}
+	
+	/**
+	 * Checks whether the radio state of the command is same as the radio state
+	 * parameter's value
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return <code>true</code> whe the values are same, <code>false</code>
+	 *         otherwise
+	 * 
+	 * @throws ExecutionException
+	 *             When the command doesn't have the radio state or the event
+	 *             doesn't have the radio state parameter
+	 * @since 3.5
+	 */
+	public static boolean matchesRadioState(ExecutionEvent event)
+			throws ExecutionException {
+
+		String parameter = event.getParameter(RadioState.PARAMETER_ID);
+		if (parameter == null)
+			throw new ExecutionException(
+					"The event does not have the radio state parameter"); //$NON-NLS-1$
+
+		Command command = event.getCommand();
+		State state = command.getState(RadioState.STATE_ID);
+		if (state == null)
+			throw new ExecutionException(
+					"The command does not have a radio state"); //$NON-NLS-1$
+		if (!(state.getValue() instanceof String))
+			throw new ExecutionException(
+					"The command's radio state doesn't contain a String value"); //$NON-NLS-1$
+
+		return parameter.equals(state.getValue());
+	}
+
+	/**
+	 * Updates the radio state of the command to the given value
+	 * 
+	 * @param command
+	 *            the command whose state should be updated
+	 * @param newState
+	 *            the new state
+	 * 
+	 * @throws ExecutionException
+	 *             When the command doesn't have a radio state
+	 * @since 3.5
+	 */
+	public static void updateRadioState(Command command, String newState)
+			throws ExecutionException {
+
+		State state = command.getState(RadioState.STATE_ID);
+		if (state == null)
+			throw new ExecutionException(
+					"The command does not have a radio state"); //$NON-NLS-1$
+		state.setValue(newState);
+	}
+
 }

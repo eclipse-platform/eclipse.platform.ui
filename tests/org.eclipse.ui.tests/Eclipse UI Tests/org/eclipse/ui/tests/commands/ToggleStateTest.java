@@ -16,6 +16,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.State;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.handlers.RegistryToggleState;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -72,10 +73,10 @@ public class ToggleStateTest extends UITestCase {
 
 
 	private void assertState(Command command1, boolean expectedValue) {
-		State state1 = command1.getState("org.eclipse.ui.commands.toggleState");
-		Object value1 = state1.getValue();
-		assertTrue(value1 instanceof Boolean);
-		assertEquals(expectedValue, ((Boolean)value1).booleanValue());
+		State state = command1.getState(RegistryToggleState.STATE_ID);
+		Object value = state.getValue();
+		assertTrue(value instanceof Boolean);
+		assertEquals(expectedValue, ((Boolean)value).booleanValue());
 	}
 	
 }
