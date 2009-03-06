@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.activities.Persistence;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -53,6 +54,7 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 				String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 				String file = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 				if (file == null || id == null) {
+					Persistence.log(element, Persistence.ACTIVITY_IMAGE_BINDING_DESC, "definition must contain icon and ID"); //$NON-NLS-1$
 					continue; //ignore - malformed
 				}
 				if (registry.getDescriptor(id) == null) { // first come, first serve
