@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.internal.ConfigureColumnsDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.ConfigureColumns;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -493,8 +493,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	}
 
 	private void handleColumnsPressed() {
-		ConfigureColumnsDialog d = new ConfigureColumnsDialog(this, table);
-		d.open();
+		ConfigureColumns.forTable(table, this);
 	}
 
 	/**

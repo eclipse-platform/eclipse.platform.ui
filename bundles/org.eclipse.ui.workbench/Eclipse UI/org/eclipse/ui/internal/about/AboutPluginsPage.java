@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.internal.ConfigureColumnsDialog;
+import org.eclipse.jface.util.ConfigureColumns;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -577,9 +577,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 	 * 
 	 */
 	private void handleColumnsPressed() {
-		ConfigureColumnsDialog d = new ConfigureColumnsDialog(this, vendorInfo
-				.getTable());
-		d.open();
+		ConfigureColumns.forTable(vendorInfo.getTable(), this);
 	}
 }
 

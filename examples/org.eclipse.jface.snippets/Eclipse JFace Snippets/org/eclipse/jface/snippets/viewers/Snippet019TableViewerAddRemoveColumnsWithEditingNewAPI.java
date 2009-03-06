@@ -16,7 +16,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.internal.ConfigureColumnsDialog;
+import org.eclipse.jface.util.ConfigureColumns;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -261,8 +261,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 		final Action configureColumns = new Action("Configure Columns...") {
 			public void run() {
-				// Note: the following is not API!
-				new ConfigureColumnsDialog(new SameShellProvider(v.getControl()), v.getTable()).open();
+				ConfigureColumns.forTable(v.getTable(), new SameShellProvider(v.getControl()));
 			}
 		};
 		
