@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,10 @@ import java.net.URL;
 import java.util.Map;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The abstract superclass of all plug-in runtime class
@@ -125,10 +127,14 @@ public abstract class Plugin implements BundleActivator {
 
 	/**
 	 * The debug flag for this plug-in.  The flag is false by default.
-	 * It can be set to true either by the plug-in itself or in the platform 
-	 * debug options.
+	 * This flag is only used when the DebugOptions service is not available.
 	 */
 	private boolean debug = false;
+
+	/**
+	 * DebugOptions service tracker
+	 */
+	private ServiceTracker debugTracker = null;
 
 	/** The plug-in descriptor.
 	 * @deprecated Marked as deprecated to suppress deprecation warnings.
@@ -474,7 +480,15 @@ public abstract class Plugin implements BundleActivator {
 	 * XXX deprecate use the service and cache as needed
 	 */
 	public boolean isDebugging() {
-		return debug;
+		if (bundle == null)
+			return debug;
+		String key = bundle.getSymbolicName() + "/debug"; //$NON-NLS-1$
+		// first check if platform debugging is enabled
+		final DebugOptions debugOptions = getDebugOptions();
+		if (debugOptions == null)
+			return debug;
+		// if platform debugging is enabled, check to see if this plugin is enabled for debugging
+		return debugOptions.isDebugEnabled() ? InternalPlatform.getDefault().getBooleanOption(key, false) : false;
 	}
 
 	/**
@@ -528,7 +542,30 @@ public abstract class Plugin implements BundleActivator {
 	 * XXX deprecate use the service and cache as needed
 	 */
 	public void setDebugging(boolean value) {
-		debug = value;
+		if (bundle == null)
+			this.debug = value;
+		String key = bundle.getSymbolicName() + "/debug"; //$NON-NLS-1$
+		final DebugOptions options = getDebugOptions();
+		if (options == null)
+			this.debug = value;
+		else
+			options.setOption(key, value ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+	}
+
+	/**
+	 * Returns the DebugOptions instance
+	 * 
+	 * @since 3.5
+	 * @return Either the DebugOptions instance or <code>null</code> if this plug-in does not have a bundle
+	 */
+	private DebugOptions getDebugOptions() {
+		if (bundle == null)
+			return null;
+		if (debugTracker == null) {
+			debugTracker = new ServiceTracker(this.bundle.getBundleContext(), DebugOptions.class.getName(), null);
+			debugTracker.open();
+		}
+		return (DebugOptions) this.debugTracker.getService();
 	}
 
 	/**
@@ -692,15 +729,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		bundle = context.getBundle();
-
-		String symbolicName = bundle.getSymbolicName();
-		if (symbolicName != null) {
-			String key = symbolicName + "/debug"; //$NON-NLS-1$
-			String value = InternalPlatform.getDefault().getOption(key);
-			this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
-		}
-
-		initializeDescriptor(symbolicName);
+		initializeDescriptor(bundle.getSymbolicName());
 	}
 
 	/**
@@ -761,6 +790,11 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 3.0
 	 */
 	public void stop(BundleContext context) throws Exception {
+
+		if (this.debugTracker != null) {
+			this.debugTracker.close();
+			this.debugTracker = null;
+		}
 		// sub-classes to override
 	}
 
