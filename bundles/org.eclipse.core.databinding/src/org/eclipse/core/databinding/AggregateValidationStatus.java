@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 182822
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bugs 218269, 146397, 249526
+ *     Matthew Hall - bugs 218269, 146397, 249526, 267451
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
@@ -18,15 +18,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservableCollection;
-import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.runtime.IStatus;
@@ -42,10 +36,7 @@ import org.eclipse.core.runtime.Status;
  * @since 1.0
  * 
  */
-public final class AggregateValidationStatus implements IObservableValue {
-
-	private IObservableValue implementation;
-
+public final class AggregateValidationStatus extends ComputedValue {
 	/**
 	 * Constant denoting an aggregation strategy that merges multiple non-OK
 	 * status objects in a {@link MultiStatus}. Returns an OK status result if
@@ -65,6 +56,9 @@ public final class AggregateValidationStatus implements IObservableValue {
 	 * @see #getStatusMaxSeverity(Collection)
 	 */
 	public static final int MAX_SEVERITY = 2;
+
+	private int strategy;
+	private IObservableCollection validationStatusProviders;
 
 	/**
 	 * Creates a new aggregate validation status observable for the given data
@@ -110,108 +104,26 @@ public final class AggregateValidationStatus implements IObservableValue {
 	 */
 	public AggregateValidationStatus(final Realm realm,
 			final IObservableCollection validationStatusProviders, int strategy) {
-		ObservableTracker.observableCreated(this);
+		super(realm);
+		this.validationStatusProviders = validationStatusProviders;
+		this.strategy = strategy;
+	}
+
+	protected Object calculate() {
+		IStatus result;
 		if (strategy == MERGED) {
-			implementation = new ComputedValue(realm, IStatus.class) {
-				protected Object calculate() {
-					return getStatusMerged(validationStatusProviders);
-				}
-			};
+			result = getStatusMerged(validationStatusProviders);
 		} else {
-			implementation = new ComputedValue(realm, IStatus.class) {
-				protected Object calculate() {
-					return getStatusMaxSeverity(validationStatusProviders);
-				}
-			};
+			result = getStatusMaxSeverity(validationStatusProviders);
 		}
-	}
-
-	/**
-	 * @param listener
-	 * @see org.eclipse.core.databinding.observable.IObservable#addChangeListener(org.eclipse.core.databinding.observable.IChangeListener)
-	 */
-	public void addChangeListener(IChangeListener listener) {
-		implementation.addChangeListener(listener);
-	}
-
-	/**
-	 * @since 1.2
-	 */
-	public void addDisposeListener(IDisposeListener listener) {
-		implementation.addDisposeListener(listener);
-	}
-
-	/**
-	 * @since 1.2
-	 */
-	public void removeDisposeListener(IDisposeListener listener) {
-		implementation.removeDisposeListener(listener);
-	}
-
-	/**
-	 * @param listener
-	 * @see org.eclipse.core.databinding.observable.IObservable#addStaleListener(org.eclipse.core.databinding.observable.IStaleListener)
-	 */
-	public void addStaleListener(IStaleListener listener) {
-		implementation.addStaleListener(listener);
-	}
-
-	/**
-	 * @param listener
-	 * @see org.eclipse.core.databinding.observable.value.IObservableValue#addValueChangeListener(org.eclipse.core.databinding.observable.value.IValueChangeListener)
-	 */
-	public void addValueChangeListener(IValueChangeListener listener) {
-		implementation.addValueChangeListener(listener);
-	}
-
-	/**
-	 * @since 1.2
-	 */
-	public boolean isDisposed() {
-		return implementation.isDisposed();
-	}
-
-	public void dispose() {
-		implementation.dispose();
-	}
-
-	public Realm getRealm() {
-		return implementation.getRealm();
-	}
-
-	public Object getValue() {
-		return implementation.getValue();
-	}
-
-	public Object getValueType() {
-		return implementation.getValueType();
-	}
-
-	public boolean isStale() {
-		return implementation.isStale();
-	}
-
-	public void removeChangeListener(IChangeListener listener) {
-		implementation.removeChangeListener(listener);
-	}
-
-	public void removeStaleListener(IStaleListener listener) {
-		implementation.removeStaleListener(listener);
-	}
-
-	public void removeValueChangeListener(IValueChangeListener listener) {
-		implementation.removeValueChangeListener(listener);
-	}
-
-	public void setValue(Object value) {
-		implementation.setValue(value);
+		return result;
 	}
 
 	/**
 	 * Returns a status object that merges multiple non-OK status objects in a
-	 * {@link MultiStatus}. Returns an OK status result if all statuses from
-	 * the given validation status providers are the an OK status. Returns a
-	 * single status if there is only one non-OK status.
+	 * {@link MultiStatus}. Returns an OK status result if all statuses from the
+	 * given validation status providers are the an OK status. Returns a single
+	 * status if there is only one non-OK status.
 	 * 
 	 * @param validationStatusProviders
 	 *            a collection of validation status providers
@@ -270,5 +182,4 @@ public final class AggregateValidationStatus implements IObservableValue {
 		}
 		return maxStatus;
 	}
-
 }
