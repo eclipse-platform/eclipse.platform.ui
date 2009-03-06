@@ -5050,4 +5050,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	    updateActivePart();
 //	    partList.removePart((WorkbenchPartReference)ref);
 	}
+	
+	public void resetHiddenEditors() {
+		IEditorReference[] refs = (IEditorReference[]) removedEditors
+				.toArray(new IEditorReference[removedEditors.size()]);
+		for (int i = 0; i < refs.length; i++) {
+			showEditor(refs[i]);
+		}
+	}
 }

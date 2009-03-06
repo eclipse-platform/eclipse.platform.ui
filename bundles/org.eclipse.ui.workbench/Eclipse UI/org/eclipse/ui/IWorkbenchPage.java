@@ -1143,11 +1143,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 
 	/**
 	 * Add back an open but non-participating editor
-	 * <p>
-	 * <b>Note:</b> This is experimental API in 3.5M3 and may be removed. Please
-	 * comment on https://bugs.eclipse.org/bugs/show_bug.cgi?id=11001 if you are
-	 * using this API.
-	 * </p>
 	 * 
 	 * @param ref
 	 *            the editor to re-add. Must be an editor removed using
@@ -1161,18 +1156,20 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	/**
 	 * Remove an open editor, turn it into a non-participating editor.
 	 * <p>
-	 * <b>Note:</b> This is experimental API in 3.5M3 and may be removed. Please
-	 * comment on https://bugs.eclipse.org/bugs/show_bug.cgi?id=11001 if you are
-	 * using this API.
+	 * A non-participating editor will not be returned in the list of open
+	 * editors ({@link #getEditorReferences()}) and will not be visible in the
+	 * editor area. However, it will continue to participate in the save
+	 * lifecycle and may still be closed by some workbench close events.
 	 * </p>
 	 * <p>
-	 * Closing a hidden editor is not currently supported well, although
-	 * we'll be looking into that in M4.
+	 * Behaviour for hiding and showing editors from multiple stacks is not
+	 * defined (and unsupported) at this time.
 	 * </p>
 	 * 
 	 * @param ref
-	 *            the editor reference to remove.  It must be a current open editor
-	 *            belonging to this page, and must not be <code>null</code>.
+	 *            the editor reference to remove. It must be a current open
+	 *            editor belonging to this page, and must not be
+	 *            <code>null</code>.
 	 * @since 3.5
 	 * @see #showEditor(IEditorReference)
 	 */
