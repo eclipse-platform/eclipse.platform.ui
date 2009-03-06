@@ -15,13 +15,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
+import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.*;
 
-public class FileLocatorTest extends TestCase {
+public class FileLocatorTest extends CoreTest {
 
 	private final static String searchLocation = "$nl$/intro/messages.properties";
 
@@ -81,7 +83,7 @@ public class FileLocatorTest extends TestCase {
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
 	}
 
-	public void testFileLocatorGetBundleFile() throws BundleException, IOException {
+	public void testFileLocatorGetBundleFile01() throws BundleException, IOException {
 		// test for bug 198447
 		// install the bundle via reference
 		BundleContext context = RuntimeTestsPlugin.getContext();
@@ -94,6 +96,39 @@ public class FileLocatorTest extends TestCase {
 
 		URL fileURL = FileLocator.toFileURL(context.getBundle().getEntry(RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocatorGetRootFile"));
 		assertTrue(new File(fileURL.getFile()).equals(file1));
+
+		// remove the bundle
+		bundle.uninstall();
+		BundleTestingHelper.refreshPackages(context, new Bundle[] {bundle});
+	}
+
+	public void testFileLocatorGetBundleFile02() throws BundleException, IOException {
+		// install the bundle via reference
+		BundleContext context = RuntimeTestsPlugin.getContext();
+		URL url = context.getBundle().getEntry(RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocatorGetRootFile.jar");
+		Bundle bundle = context.installBundle("reference:" + FileLocator.toFileURL(url).toExternalForm());
+		BundleTestingHelper.refreshPackages(context, new Bundle[] {bundle});
+
+		File file1 = FileLocator.getBundleFile(bundle);
+		assertNotNull(file1);
+
+		URL fileURL = FileLocator.toFileURL(context.getBundle().getEntry(RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocatorGetRootFile.jar"));
+		assertTrue(new File(fileURL.getFile()).equals(file1));
+
+		URL manifest = bundle.getEntry("META-INF/MANIFEST.MF");
+		manifest = FileLocator.resolve(manifest);
+		assertEquals("Expection jar protocol: " + manifest.toExternalForm(), "jar", manifest.getProtocol());
+
+		String manifestExternal = manifest.toExternalForm();
+		int index = manifestExternal.lastIndexOf('!');
+		assertTrue("No ! found", index >= 0);
+		String fileExternal = manifestExternal.substring(4, index);
+		try {
+			URL fileExternalURL = new URL(fileExternal);
+			new File(fileExternalURL.toURI());
+		} catch (Exception e) {
+			fail("Unexpected exception.", e);
+		}
 
 		// remove the bundle
 		bundle.uninstall();
@@ -123,7 +158,8 @@ public class FileLocatorTest extends TestCase {
 	public static Test suite() {
 		TestSuite sameSession = new TestSuite(FileLocatorTest.class.getName());
 		sameSession.addTest(new FileLocatorTest("testFileLocatorFind"));
-		sameSession.addTest(new FileLocatorTest("testFileLocatorGetBundleFile"));
+		sameSession.addTest(new FileLocatorTest("testFileLocatorGetBundleFile01"));
+		sameSession.addTest(new FileLocatorTest("testFileLocatorGetBundleFile02"));
 		return sameSession;
 	}
 }
