@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,28 +44,26 @@ public class EscapeUtils {
 	}
 	
 	/**
-	 * Remove any single ampersands, leave pairs of ampersands untouched
-	 * @param value
-	 * @return
-	 */
-	public static String stripSingleAmpersand(String value) {
-		StringBuffer buf = new StringBuffer();
-		boolean unmatchedAmpersand = false;
-		for (int i = 0; i < value.length(); i++) {
-			char c = value.charAt(i);
-            if (c == '&') {
-            	 if (unmatchedAmpersand) {
-            		 buf.append("&&"); //$NON-NLS-1$
-            		 unmatchedAmpersand = false;
-            	 } else {
-            	     unmatchedAmpersand = true;
-            	 }
-            } else {
-            	unmatchedAmpersand = false;
-				buf.append(c);			
-			}
+	* Escape any ampersands used in a label
+	**/
+	public static String escapeForLabel(String message) {
+		// Make the most common case - i.e. no ampersand the
+		// most efficient
+		if (message.indexOf('&') < 0) {
+			return message;
 		}
-		return buf.toString();
+		
+		int next = 0;
+		StringBuffer result = new StringBuffer();
+		int index = message.indexOf('&');
+		while (index >= 0) {
+			result.append(message.substring(next, index + 1));
+			result.append('&');
+			next = index + 1;
+			index = message.indexOf('&', next);
+		}
+		result.append(message.substring(next));
+		return result.toString();
 	}
 
 	private static String escapeSpecialChars(String value, boolean leaveBold) {

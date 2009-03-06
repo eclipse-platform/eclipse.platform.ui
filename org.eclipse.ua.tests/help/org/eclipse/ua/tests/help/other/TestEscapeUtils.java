@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
 package org.eclipse.ua.tests.help.other;
 
 import org.eclipse.help.ui.internal.util.EscapeUtils;
+import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
+
 import junit.framework.TestCase;
 
 public class TestEscapeUtils extends TestCase {
@@ -63,25 +65,21 @@ public class TestEscapeUtils extends TestCase {
 		assertEquals("&lt;/B&gt;", EscapeUtils.escapeSpecialChars("</B>"));
 		assertEquals("</B>", EscapeUtils.escapeSpecialCharsLeavinggBold("</B>"));
 	}
-
-	public void testStripAmpersandEmpty() {
-		assertEquals("", EscapeUtils.stripSingleAmpersand(""));
-	}
-
-	public void testStripAmpersandOnly() {
-		assertEquals("", EscapeUtils.stripSingleAmpersand("&"));
-	}
 	
-	public void testStripAmpersandInWords() {
-		assertEquals("abc", EscapeUtils.stripSingleAmpersand("a&b&c"));
+	public void testEscapeLabelEmpty() {
+		assertEquals("", ViewUtilities.escapeForLabel(""));
 	}
 
-	public void testStripAmpersandRepeated() {
-		assertEquals("&&a&&", EscapeUtils.stripSingleAmpersand("&&a&&"));
+	public void testEscapeLabelNonEmpty() {
+		assertEquals("abc", ViewUtilities.escapeForLabel("abc"));
 	}
-	
-	public void testStripAmpersandSequences() {
-		assertEquals("a&&b&&c&&&&d&&&&e&&&&&&", EscapeUtils.stripSingleAmpersand("&a&&b&&&c&&&&d&&&&&e&&&&&&"));
+
+	public void testEscapeLabelWithAmpersand() {
+		assertEquals("ab&&c", ViewUtilities.escapeForLabel("ab&c"));
+	}
+
+	public void testEscapeLabelMultipleAmpersand() {
+		assertEquals("a&&b&&cd&&e", ViewUtilities.escapeForLabel("a&b&cd&e"));
 	}
 
 }

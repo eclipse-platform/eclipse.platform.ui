@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,7 +261,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (lastContext instanceof IContext2) {
 			String title = ((IContext2)lastContext).getTitle();
 			if (title!=null) {
-				updateSearchExpression(stripMnemonic(title), lastControl);
+				updateSearchExpression(title, lastControl);
 				return;
 			}
 		}
@@ -340,7 +340,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		if (title==null)
 			title = Messages.ContextHelpPart_about;
-		getSection().setText(EscapeUtils.stripSingleAmpersand(title));
+		getSection().setText(EscapeUtils.escapeForLabel(title));
 	}
 
 	private void updateText(String helpText) {
@@ -590,7 +590,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			sbuf.append(" <a href=\""); //$NON-NLS-1$
 			sbuf.append(MORE_HREF);
 			sbuf.append("\">"); //$NON-NLS-1$
-			sbuf.append(NLS.bind(Messages.ContextHelpPart_searchFor, phrase)); 
+			String searchForMessage = NLS.bind(Messages.ContextHelpPart_searchFor, phrase);
+			sbuf.append(EscapeUtils.escapeSpecialChars(searchForMessage)); 
 			sbuf.append("</a></p>"); //$NON-NLS-1$
 		}
 		sbuf.append("</form>"); //$NON-NLS-1$
