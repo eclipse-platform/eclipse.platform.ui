@@ -21,6 +21,7 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 	public  static final String ATT_ICON = "icon"; //$NON-NLS-1$
 	public  static final String ATT_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATT_PERSISTENT = "persistent"; //$NON-NLS-1$
+	public static final String ATT_HELP_CONTEXT_ID = "helpContextId"; //$NON-NLS-1$
 	
 	private String label;
 	private String className;
@@ -28,6 +29,7 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 	private boolean persistent;
 	private ImageDescriptor imageDescriptor;
 	private String description;
+	private String helpContextId;
 	
 	private IConfigurationElement configElement;
 
@@ -82,6 +84,10 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		return persistent;
 	}
 	
+	public String getHelpContextId() {
+		return helpContextId;
+	}
+	
 	/**
 	 * Loads a view descriptor from the registry.
 	 */
@@ -95,6 +101,7 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		} else {
 			persistent = Boolean.valueOf(persistentString).booleanValue();
 		}
+		helpContextId = configElement.getAttribute(ATT_HELP_CONTEXT_ID);
 		// Sanity check.
 		if ((label == null) || (className == null) || (identifier == null)) {
 			throw new CoreException(new Status(IStatus.ERROR, configElement.getNamespaceIdentifier(), 0, "Invalid extension (missing label or class name): " + identifier, //$NON-NLS-1$

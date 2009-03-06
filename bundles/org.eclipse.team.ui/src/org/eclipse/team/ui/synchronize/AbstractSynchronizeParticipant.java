@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	private String fSecondaryId;
 	private boolean pinned;
 	private ImageDescriptor fImageDescriptor;
+	private String fHelpContextId;
 	protected IConfigurationElement configElement;
 
 	/**
@@ -99,8 +100,23 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	public String getSecondaryId() {
 		return fSecondaryId;
 	}
-	
-	
+
+	/**
+	 * Returns the help context id of this participant or value of
+	 * <code>IHelpContextIds.SYNC_VIEW</code> when no specific id has been
+	 * provided.
+	 * 
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getHelpContextId()
+	 * @see org.eclipse.team.internal.ui.IHelpContextIds#SYNC_VIEW
+	 * @since 3.5
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	public String getHelpContextId() {
+		return fHelpContextId == null ? IHelpContextIds.SYNC_VIEW
+				: fHelpContextId;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#setPinned(boolean)
 	 */
@@ -210,8 +226,12 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 		if (strIcon != null) {
 			fImageDescriptor = TeamImages.getImageDescriptorFromExtension(configElement.getDeclaringExtension(), strIcon);
 		}
+
+		// Help Context Id.
+		fHelpContextId = configElement
+				.getAttribute(SynchronizeParticipantDescriptor.ATT_HELP_CONTEXT_ID);
 	}
-	
+
 	protected void setInitializationData(ISynchronizeParticipantDescriptor descriptor) throws CoreException {
 		if(descriptor instanceof SynchronizeParticipantDescriptor) {
 			setInitializationData(((SynchronizeParticipantDescriptor)descriptor).getConfigurationElement(), null, null);

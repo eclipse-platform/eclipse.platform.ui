@@ -39,13 +39,15 @@
             name="%CVSWorkspaceParticipant"
             icon="$nl$/icons/full/eview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant"
-            id="org.eclipse.team.cvs.ui.cvsworkspace-participant">
+            id="org.eclipse.team.cvs.ui.cvsworkspace-participant"
+            helpContextId="org.eclipse.team.cvs.ui.cvs_sync_view_context">
       </participant>
       <participant
             name="%CVSResourceMappingParticipant"
             icon="$nl$/icons/full/eview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceModelParticipant"
-            id="org.eclipse.team.cvs.ui.workspace-participant">
+            id="org.eclipse.team.cvs.ui.workspace-participant"
+            helpContextId="org.eclipse.team.cvs.ui.cvs_sync_view_context">
       </participant>
       <participant
             name="%CVSMergeParticipant"

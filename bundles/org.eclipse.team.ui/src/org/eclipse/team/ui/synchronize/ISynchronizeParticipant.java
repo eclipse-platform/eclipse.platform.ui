@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,13 +56,13 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * the <code>saveState()</code> method. At startup the <code>init()</code> method is called
  * with a handle to the state that was saved. The dispose method is called when the participant is
  * removed from the manager and at shutdown.
- * </p><p>
- * Clients are not intended to implement this interface. Instead, subclass {@link AbstractSynchronizeParticipant}.
  * </p>
  * @see ISynchronizeView
  * @see ISynchronizeManager
  * @see AbstractSynchronizeParticipant
  * @since 3.0
+ * @noimplement Clients are not intended to implement this interface. Instead,
+ *              subclass {@link AbstractSynchronizeParticipant}.
  */
 public interface ISynchronizeParticipant extends IExecutableExtension, IAdaptable {
 	
@@ -256,4 +256,12 @@ public interface ISynchronizeParticipant extends IExecutableExtension, IAdaptabl
      * @since 3.1
      */
     public PreferencePage[] getPreferencePages();
+    
+	/**
+	 * Returns the help context id of this participant.
+	 * 
+	 * @return the help context id of this participant
+	 * @since 3.5
+	 */
+	public String getHelpContextId();
 }
