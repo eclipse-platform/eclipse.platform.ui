@@ -256,29 +256,14 @@ public class NavigatorContentDescriptorManager {
 
 				boolean isOverridden;
 
-				boolean oldWay = !true;
-				if (oldWay) {
-					isOverridden = addDescriptorsConsideringOverrides(anElement,
-							descriptor.getOverriddingExtensions(),
-							aVisibilityAssistant, theFoundDescriptors, possibleChild);
+				Set overridingDescriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
+				isOverridden = addDescriptorsConsideringOverrides(anElement, descriptor.getOverriddingExtensions(),
+						aVisibilityAssistant, overridingDescriptors, possibleChild);
 
-					if (!isOverridden && isApplicable) {
-						theFoundDescriptors.add(descriptor);
-					}
-				} else {
-					// Part of the proposed solution for bug 252293, will turn
-					// this on when testing is completed
-					Set overridingDescriptors = new TreeSet(
-							ExtensionPriorityComparator.INSTANCE);
-					isOverridden = addDescriptorsConsideringOverrides(anElement,
-							descriptor.getOverriddingExtensions(),
-							aVisibilityAssistant, overridingDescriptors, possibleChild);
-
-					if (!isOverridden && isApplicable) {
-						theFoundDescriptors.add(descriptor);
-					} else if (isOverridden) {
-						theFoundDescriptors.addAll(overridingDescriptors);
-					}
+				if (!isOverridden && isApplicable) {
+					theFoundDescriptors.add(descriptor);
+				} else if (isOverridden) {
+					theFoundDescriptors.addAll(overridingDescriptors);
 				}
 
 			} else if (isApplicable) {
