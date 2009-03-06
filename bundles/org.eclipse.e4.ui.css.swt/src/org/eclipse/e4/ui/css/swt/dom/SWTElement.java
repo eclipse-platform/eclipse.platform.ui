@@ -22,6 +22,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Element;
@@ -276,6 +277,12 @@ public class SWTElement extends ElementAdapter implements NodeList {
 			if (control.isFocusControl()) {
 				return control.getData("focusLost") == null;
 			}
+		}
+		if ("active".equals(s) && getNativeWidget() instanceof Shell) {
+				Control control = (Control) getNativeWidget();
+				if (control.isEnabled()) {
+					return control.getData("activeLost") == null;
+				}
 		}
 		if ("hover".equals(s)) {
 			Control control = (Control) getNativeWidget();

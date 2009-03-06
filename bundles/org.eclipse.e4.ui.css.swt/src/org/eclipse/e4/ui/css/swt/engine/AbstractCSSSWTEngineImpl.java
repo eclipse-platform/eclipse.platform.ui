@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.engine;
 
@@ -21,6 +22,7 @@ import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTGradientConver
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTImageConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTRGBConverterImpl;
 import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
+import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTActiveHandler;
 import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTFocusHandler;
 import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTHoverHandler;
 import org.eclipse.swt.widgets.Display;
@@ -57,6 +59,9 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 		// Register SWT Focus Handler
 		super.registerDynamicPseudoClassHandler("focus",
 				DynamicPseudoClassesSWTFocusHandler.INSTANCE);
+		// Register SWT Active Handler
+		super.registerDynamicPseudoClassHandler("active",
+				DynamicPseudoClassesSWTActiveHandler.INSTANCE);
 		// Register SWT Hover Handler
 		super.registerDynamicPseudoClassHandler("hover",
 				DynamicPseudoClassesSWTHoverHandler.INSTANCE);
