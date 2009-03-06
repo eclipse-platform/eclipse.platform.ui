@@ -95,17 +95,17 @@ value is no longer reliable.</p>
 <p>&nbsp;  </p>
 
 <h3>Variables views' preference constants</h3>
-<p><strong>What is affected:</strong> Clients that use the variable font, detail pane font, and change value background preferences.  The new constants are:
+<p><strong>What is affected:</strong> Clients that use the <em>variable</em> font, <em>detail pane</em> font, and <em>changed value background</em> preferences.  The new constants are:
 <ul>
   <li>Constant addition: <code>IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND</code></li>
   <li>Constant addition: <code>IDebugUIConstants.PREF_VARIABLE_TEXT_FONT</code></li>
   <li>Constant addition: <code>IDebugUIConstants.PREF_DETAIL_PANE_FONT</code></li>
 </ul>
 </p>
-<p><strong>Description:</strong> Some of the constants needed to access preference settings for display attributes in the variables 
-view were defined in an internal interface.  This change moves these constants to the IDebugUIConstants interface.  
+<p><strong>Description:</strong> Some clients needed to access preference settings for display attributes in the variables 
+view which were defined in an internal interface.  This change moves these constants to the <code>IDebugUIConstants</code> interface.  
 <p><strong>Action required:</strong> Clients which may have copied these constants or (gasp!) have referenced the internal interface, 
-should instead reference the new constants.</p>
+should instead reference the new API constants.</p>
 
 <h2>March 10, 2009</h2>
 <h3>Problem Reports Fixed</h3>
