@@ -94,6 +94,19 @@ value is no longer reliable.</p>
 <p><strong>Action required:</strong>This is a backwards compatible change, so no action is required.  However, detail pane implementations which need to drive the active view selection, should implement the new <code>IDetailPane2</code> interface.</p>
 <p>&nbsp;  </p>
 
+<h3>Variables views' preference constants</h3>
+<p><strong>What is affected:</strong> Clients that use the variable font, detail pane font, and change value background preferences.  The new constants are:
+<ul>
+  <li>Constant addition: <code>IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND</code></li>
+  <li>Constant addition: <code>IDebugUIConstants.PREF_VARIABLE_TEXT_FONT</code></li>
+  <li>Constant addition: <code>IDebugUIConstants.PREF_DETAIL_PANE_FONT</code></li>
+</ul>
+</p>
+<p><strong>Description:</strong> Some of the constants needed to access preference settings for display attributes in the variables 
+view were defined in an internal interface.  This change moves these constants to the IDebugUIConstants interface.  
+<p><strong>Action required:</strong> Clients which may have copied these constants or (gasp!) have referenced the internal interface, 
+should instead reference the new constants.</p>
+
 <h2>March 10, 2009</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=266162">Bug 266162</a>: Duplicates in prompt to save dirty resources before launching<br>
