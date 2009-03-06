@@ -1320,7 +1320,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// Initialize the activity support.
 		workbenchActivitySupport = new WorkbenchActivitySupport();
 		activityHelper = ActivityPersistanceHelper.getInstance();
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
+			public void runWithException() {
+				WorkbenchImages.getImageRegistry();
+			}
+		});
 		initializeDefaultServices();
 		initializeFonts();
 		initializeColors();

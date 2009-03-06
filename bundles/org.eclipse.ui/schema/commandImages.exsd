@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="commandImages" name="Command Images"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;
 The images extension point provides a way of linking different types of images and icons to a particular command.  These images can be used, as appropriate, wherever the command appears in the user interface.  To accommodate some boundary cases (e.g., tool bar drop-down items), it is possible to group the images for a particular commands into &quot;styles&quot;.  These styles can then be specifically requested when a command is to be displayed.
@@ -16,6 +16,11 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="image" minOccurs="0" maxOccurs="unbounded"/>
@@ -39,9 +44,9 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -49,9 +54,9 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
 
    <element name="image">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="commandId"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             The images to associate with a particular command.
          </documentation>
@@ -62,19 +67,19 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
                <documentation>
                   The identifier of the command with which the images should be associated.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string" use="required">
             <annotation>
                <documentation>
-                  The path to the icon which should be used in the default case.  This will appear when the icon is enabled and mouse is not hovering over it.  It will also be used in any situation where such a more specific icon is not available.
+                  The path to the icon which should be used in the default case, or the &lt;code&gt;ISharedImages&lt;/code&gt; constant.  This will appear when the icon is enabled and mouse is not hovering over it.  It will also be used in any situation where such a more specific icon is not available.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="disabledIcon" type="string">
@@ -82,9 +87,9 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
                <documentation>
                   The icon to display when the command is disabled.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="hoverIcon" type="string">
@@ -92,9 +97,9 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
                <documentation>
                   The icon to display when the user is hovering over the command.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="style" type="string">
@@ -108,18 +113,18 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;pre&gt;
 &lt;extension
@@ -141,9 +146,9 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;
 Within the workbench, it is possible to get images for commands using the &lt;code&gt;org.eclipse.ui.commands.ICommandImageService&lt;/code&gt; interface.  This interface can be retrieved from supporting workbench objects, such as &lt;code&gt;IWorkbench&lt;/code&gt; itself, the &lt;code&gt;IWorkbenchWindow&lt;/code&gt;, or the &lt;code&gt;IWorkbenchPartSite&lt;/code&gt;.  To retrieve the service, you would make a call like &lt;code&gt;workbench.getService(ICommandImageService.class)&lt;/code&gt;.
@@ -152,11 +157,10 @@ Within the workbench, it is possible to get images for commands using the &lt;co
    </annotation>
 
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2005,2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made

@@ -637,38 +637,39 @@ public abstract class AbstractUIPlugin extends Plugin {
         }
     }
 
-    /**
-     * Creates and returns a new image descriptor for an image file located
-     * within the specified plug-in.
-     * <p>
-     * This is a convenience method that simply locates the image file in
-     * within the plug-in (no image registries are involved). The path is
-     * relative to the root of the plug-in, and takes into account files
-     * coming from plug-in fragments. The path may include $arg$ elements.
-     * However, the path must not have a leading "." or path separator.
-     * Clients should use a path like "icons/mysample.gif" rather than 
-     * "./icons/mysample.gif" or "/icons/mysample.gif".
-     * </p>
-     * 
-     * @param pluginId the id of the plug-in containing the image file; 
-     * <code>null</code> is returned if the plug-in does not exist
-     * @param imageFilePath the relative path of the image file, relative to the
-     * root of the plug-in; the path must be legal
-     * @return an image descriptor, or <code>null</code> if no image
-     * could be found
-     * @since 3.0
-     */
+	/**
+	 * Creates and returns a new image descriptor for an image file located
+	 * within the specified plug-in.
+	 * <p>
+	 * This is a convenience method that simply locates the image file in within
+	 * the plug-in. It will now query the ISharedImages registry first. The path
+	 * is relative to the root of the plug-in, and takes into account files
+	 * coming from plug-in fragments. The path may include $arg$ elements.
+	 * However, the path must not have a leading "." or path separator. Clients
+	 * should use a path like "icons/mysample.gif" rather than
+	 * "./icons/mysample.gif" or "/icons/mysample.gif".
+	 * </p>
+	 * 
+	 * @param pluginId
+	 *            the id of the plug-in containing the image file;
+	 *            <code>null</code> is returned if the plug-in does not exist
+	 * @param imageFilePath
+	 *            the relative path of the image file, relative to the root of
+	 *            the plug-in; the path must be legal
+	 * @return an image descriptor, or <code>null</code> if no image could be
+	 *         found
+	 * @since 3.0
+	 */
     public static ImageDescriptor imageDescriptorFromPlugin(String pluginId,
             String imageFilePath) {
         if (pluginId == null || imageFilePath == null) {
             throw new IllegalArgumentException();
         }
 
-// commented out temporarily - see bug 246224 comment 18
-//		ImageDescriptor imageDescriptor = PlatformUI.getWorkbench()
-//				.getSharedImages().getImageDescriptor(imageFilePath);
-//		if (imageDescriptor != null)
-//			return imageDescriptor; // found in the shared images
+		ImageDescriptor imageDescriptor = PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(imageFilePath);
+		if (imageDescriptor != null)
+			return imageDescriptor; // found in the shared images
 
         // if the bundle is not ready then there is no image
         Bundle bundle = Platform.getBundle(pluginId);

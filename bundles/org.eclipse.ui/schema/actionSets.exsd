@@ -182,7 +182,7 @@ If toolbarPath is omitted, the action will not appear in the toolbar.
             <annotation>
                <documentation>
                   a relative path of an icon used to visually represent the action in its context.
-If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in. The icon will appear in toolbars but not in menus. Enabled actions will be represented in menus by the hoverIcon.
+If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in, or the &lt;code&gt;ISharedImages&lt;/code&gt; constant. The icon will appear in toolbars but not in menus. Enabled actions will be represented in menus by the hoverIcon.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>

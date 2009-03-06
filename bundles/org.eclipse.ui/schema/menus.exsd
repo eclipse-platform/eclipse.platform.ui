@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="menus" name="Menus"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;
 This extension point allows the plug-in developer to add (contribute) a variety of custom additions to the eclipse framework:
@@ -50,9 +50,9 @@ supported variables.
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -79,9 +79,9 @@ supported variables.
                <documentation>
                   An optional name of the extension instance.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -89,9 +89,9 @@ supported variables.
 
    <element name="group">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element deprecated="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             &lt;p&gt;
 A logical group.  It can either be visible (e.g., separators are drawn before and after, as appropriate) or invisible.  By default, logical groups are visible.
@@ -129,9 +129,9 @@ See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAdd
 
    <element name="widget">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element deprecated="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             A menu or trim element that is given direct access to the widgets.  For example, this can be used to render a combo box.  &lt;b&gt;NOTE:&lt;/b&gt; If a widget element becomes visible in the user interface, this will lead to plug-in loading.  &lt;strong&gt;Use this element with caution, as it can cause performance problems.&lt;/strong&gt;
             When used as trim the widget will only cause the plug-in to load when it becomes visible in the UI.
@@ -162,9 +162,9 @@ If defined then it can be  used as a reference in the Query part of the location
                <documentation>
                   This class is loaded to fill the appropriate spot in the menu or trim when it shows.  While, strictly speaking, this class must implement &lt;code&gt;IWorkbenchWidget&lt;/code&gt; you should use the default implementation; &lt;code&gt;AbstractWorkbenchTrimWidget&lt;/code&gt; as the base from which to derive your widget implementation. This implementation handles the &apos;init&apos; method and caches the result for use through its &lt;code&gt;getWorkbenchWindow&lt;/code&gt; method.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.IWorkbenchWidget"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -172,9 +172,9 @@ If defined then it can be  used as a reference in the Query part of the location
 
    <element name="layout">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element deprecated="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             This element can be used to specify various layout options for elements added into  &lt;code&gt;trim&lt;/code&gt; locations.
          </documentation>
@@ -199,9 +199,9 @@ If defined then it can be  used as a reference in the Query part of the location
 
    <element name="location">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element deprecated="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             A location in which a &lt;code&gt;menu&lt;/code&gt;, &lt;code&gt;group&lt;/code&gt;, &lt;code&gt;item&lt;/code&gt; or &lt;code&gt;widget&lt;/code&gt; can appear.  This element is used to control location-specific information.
 &lt;p&gt;
@@ -223,9 +223,9 @@ This element is deprecated. Users of this extension point should now define the 
                <documentation>
                   The mnemonic that should be associated with this element in the given location.  A mnemonic should be a single character.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true" deprecated="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="imageStyle" type="string">
@@ -233,9 +233,9 @@ This element is deprecated. Users of this extension point should now define the 
                <documentation>
                   The image style to associate with this location.  It is possible for commands to have different styles of images associated with them.  For example, a different icon could be selected for the tool bar and for the menu.  This is especially important for developers using drop-down tool items in the tool bar, as they may wish to display an icon more appropriate for the drop-down.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute deprecated="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -243,9 +243,9 @@ This element is deprecated. Users of this extension point should now define the 
 
    <element name="bar">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element deprecated="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             A leaf element within a location.  This can be the menu bar or the trim area.  If unqualified, this indicates the top-level menu bar or trim.  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s menu or trim.
          </documentation>
@@ -274,9 +274,9 @@ Within the trim, the workbench defines five general groups which correspond to v
 By positioning the trim contribution within or with respect to these groups, the position is inferred by the workbench.
 &lt;/p&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute deprecated="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
             <simpleType>
                <restriction base="string">
@@ -292,9 +292,9 @@ By positioning the trim contribution within or with respect to these groups, the
                <documentation>
                   This represents the id of a group that the widget is to be placed into.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute deprecated="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -315,9 +315,9 @@ By positioning the trim contribution within or with respect to these groups, the
                <documentation>
                   The class to load as an &lt;code&gt;IExecutableExtension&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -357,9 +357,9 @@ By positioning the trim contribution within or with respect to these groups, the
 
    <element name="part">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element deprecated="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             &lt;p&gt;
 An element within a location.  This qualifies the location to refer to a particular workbench part.  This can be either a view or an editor.  The qualification can use either the class name of the part (including inheritance), or it can refer to the identifier for the view or editor.
@@ -406,9 +406,9 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
                <documentation>
                   The name is either the name of the parameter to pass to the executable extension, or the identifier of the parameter for the command.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/commandParameter/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
@@ -423,9 +423,9 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
 
    <element name="order">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element deprecated="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             &lt;b&gt;NOTE:&lt;/b&gt; This element is deprecated in favor of using the &apos;locationURI&apos; to specify the location at which contributions should be placed.
 &lt;p&gt;
@@ -474,9 +474,9 @@ In the event of conflicts, Eclipse will chose an arbitrary order.  The only guar
 
    <element name="popup">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element deprecated="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             Part of a location.  It indicates that the menu, group, item or widget should appear in the popup menu.
 &lt;p&gt;
@@ -541,9 +541,9 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   If this optional attribute is specified the provided class will be instantiated and used to provide menu contributions at this location.  If provided, all child elements will be ignored.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.ExtensionContributionFactory:"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -570,9 +570,9 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   The label to be displayed for this element when it is placed in either a menu or a toolbar. This value should be translatable.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
@@ -587,9 +587,9 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   The character of the Label that should be given the mnemonic affordance. This is to allow the menu system to re-define the value during translation without having to understand the various platforms&apos; conventions for menu label definition (i.e. using the &apos;&amp;amp;&apos; character...).
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -597,9 +597,9 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   A plugin relative path to the image to be used as the icon for this menu in either a menu or a toolbar.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
@@ -607,9 +607,9 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   The tooltip to be displayed for this element when it is placed in a toolbar. This value should be translatable.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="commandId" type="string">
@@ -617,9 +617,9 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   Th commandId is used to update the submenu text with a keyboard shortcut.  The command should have a handler that can launch a quickmenu version of this menu.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -641,9 +641,9 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   The label to be displayed for this element when it is placed in either a menu. This value should be translatable.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="commandId" type="string" use="required">
@@ -651,9 +651,9 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   This is the id of the Command that is to be bound to this element. This is the hook into the Commands/Handlers/Key binding services that actually do the work should this item be selected. In many cases this command will have been defined in a previous extension declaration.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
@@ -668,20 +668,20 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                <documentation>
                   The character of the Label that should be given the mnemonic affordance. This is to allow the menu system to re-define the value during translation without having to understand the various platforms&apos; conventions for menu label definition (i.e. using the &apos;&amp;amp;&apos; character...).
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
                   a relative path of an icon used to visually represent the action in its context.
-If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in.
+If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in, or the &lt;code&gt;ISharedImages&lt;/code&gt; constant.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="disabledIcon" type="string">
@@ -689,9 +689,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a relative path of an icon used to visually represent the action in its context when the action is disabled. If omitted, the normal icon will simply appear greyed out. The path is relative to the location of the plugin.xml file of the contributing plug-in. The disabled icon will appear in toolbars but not in menus. Icons for disabled actions in menus will be supplied by the OS.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="hoverIcon" type="string">
@@ -699,9 +699,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a relative path of an icon used to visually represent the action in its context when the mouse pointer is over the action. If omitted, the normal icon will be used. The path is relative to the location of the plugin.xml file of the contributing plug-in.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
@@ -709,9 +709,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   The tooltip to be displayed for this element when it is placed in a toolbar. This value should be translatable.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">
@@ -858,9 +858,9 @@ WorkbenchWindowControlContribution base class.
                   The class which will be used to create the control that is to be hosted in a ToolBar. This must be a subclass of
 WorkbenchWindowControlContribution which provides information as to the control&apos;s location (i.e. which workbench window it&apos;s being hosted in and the side of the window that it is currently being displayed on.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.WorkbenchWindowControlContribution"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -892,27 +892,27 @@ If defined then it can be  used as a reference in the Query part of the location
                <documentation>
                   This class is expected to be a subclass of ContributionItem. The item may implement IWorkbenchContribution to be provided an IServiceLocator.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.action.ContributionItem"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.3
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;
 A basic extension looks like this.
@@ -940,9 +940,9 @@ This is the simplest example; adding a command contribution after an existing me
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;p&gt;
 It is preferred that menu contributions be added in the &lt;code&gt;plugin.xml&lt;/code&gt;.  Plugins can
@@ -957,9 +957,9 @@ See &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.comman
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2005,2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
