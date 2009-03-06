@@ -104,7 +104,7 @@ public final class AggregateValidationStatus extends ComputedValue {
 	 */
 	public AggregateValidationStatus(final Realm realm,
 			final IObservableCollection validationStatusProviders, int strategy) {
-		super(realm);
+		super(realm, IStatus.class);
 		this.validationStatusProviders = validationStatusProviders;
 		this.strategy = strategy;
 	}
