@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.navigator.resources" version="2">
     <resource path="src/org/eclipse/ui/navigator/resources/ProjectExplorer.java" type="org.eclipse.ui.navigator.resources.ProjectExplorer">
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="setWorkingSetLabel(String)"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="getWorkingSetLabel()"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="getRootMode()"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="setRootMode(int)"/>
+            </message_arguments>
+        </filter>
         <filter id="640712815">
             <message_arguments>
                 <message_argument value="CommonViewer"/>
