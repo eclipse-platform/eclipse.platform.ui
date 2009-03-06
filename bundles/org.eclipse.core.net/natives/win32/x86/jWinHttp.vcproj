@@ -48,7 +48,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Java\jdk1.6.0_10\include\win32&quot;;&quot;C:\Program Files\Java\jdk1.6.0_10\include\&quot;;include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;WINHTTP_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -143,7 +143,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Java\jdk1.6.0_10\include\win32&quot;;&quot;C:\Program Files\Java\jdk1.6.0_10\include\&quot;;include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;WINHTTP_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -210,26 +210,8 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="jWinHttp.cpp"
+				RelativePath="..\jWinHttp.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -237,7 +219,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\include\jWinHttp.h"
+				RelativePath="..\jWinHttp.h"
 				>
 			</File>
 		</Filter>
