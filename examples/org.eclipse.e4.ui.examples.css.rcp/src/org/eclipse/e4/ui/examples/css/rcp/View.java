@@ -20,67 +20,63 @@ public class View extends ViewPart {
 	public static View TOPMOST;
 
 	private boolean read = false;
-	private Label dateWidget;
+	private Label subject;
 	
 	public void createPartControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		top.setLayout(layout);
 		setCSSClassName(top, "messageBanner");
+		GridLayout topLayout = new GridLayout();
+		topLayout.marginHeight = 0;
+		topLayout.marginWidth = 0;
+		topLayout.numColumns = 1;
+		top.setLayout(topLayout);
+
 		// top banner
 		Composite banner = new Composite(top, SWT.NONE);
-		banner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
-		layout = new GridLayout();
-		layout.marginHeight = 5;
-		layout.marginWidth = 10;
-		layout.numColumns = 2;
-		banner.setLayout(layout);
 		setCSSClassName(banner, "messageBanner");
-		
-		// setup bold font
-		// we'll do this in CSS now instead
-//		Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);    
-		
-		Label l = new Label(banner, SWT.WRAP);
-		l.setText("Subject:");
-//		l.setFont(boldFont);
-		setCSSClassName(l, "messageTitle");
+		banner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
 
-		l = new Label(banner, SWT.WRAP);
-		setCSSClassName(l, "messageBannerContent");
-		setCSSClassName(l, "messageSubject");
-		l.setText("This is a message about the cool Eclipse RCP!");
+		GridLayout bannerLayout = new GridLayout();
+		bannerLayout.marginHeight = 15;
+		bannerLayout.marginWidth = 10;
+		bannerLayout.numColumns = 1;
+		banner.setLayout(bannerLayout);
+				
+		// group for sender and date
+		Composite senderAndDate = new Composite(banner, SWT.NONE);
+		setCSSClassName(banner, "messageBanner");
+//		senderAndDate.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
+
+		GridLayout senderAndDateLayout = new GridLayout();
+		senderAndDateLayout.marginHeight = 0;
+		senderAndDateLayout.marginWidth = 0;
+		senderAndDateLayout.numColumns = 2;
+		senderAndDate.setLayout(senderAndDateLayout);
 		
-		l = new Label(banner, SWT.WRAP);
-		l.setText("From:");
-//		l.setFont(boldFont);
-		setCSSClassName(l, "messageTitle");
-    
-		final Link link = new Link(banner, SWT.NONE);
+		final Link link = new Link(senderAndDate, SWT.NONE);
 		link.setText("<a>nicole@mail.org</a>");
-		setCSSClassName(link, "messageBannerContent");
+		setCSSClassName(link, "messageSender");
 		link.addSelectionListener(new SelectionAdapter() {    
 			public void widgetSelected(SelectionEvent e) {
 				MessageDialog.openInformation(getSite().getShell(), "Not Implemented", "Imagine the address book or a new message being created now.");
 			}    
 		});
-    
-		l = new Label(banner, SWT.WRAP);
-		l.setText("Date: ");
-//		l.setFont(boldFont);
-		setCSSClassName(l, "messageTitle");
-		l = new Label(banner, SWT.WRAP);
-		dateWidget = l;		
-		l.setText("10:34 am "); // add space since we know it will be italic and that gets clipped due to SWT bug
+  	
+		Label l = new Label(senderAndDate, SWT.WRAP);
+		l.setText("  10:34 am"); 
+		setCSSClassName(l, "messageDate");
+		
 
-		setCSSClassName(l, "messageBannerContent");
+		subject = new Label(banner, SWT.WRAP);
+		setCSSClassName(subject, "messageSubject");
+		subject.setText("This is a message about the cool Eclipse CSS! ");
+		    
 		updateCSSForReadState();
 		
 		// message contents
 		Text text = new Text(top, SWT.MULTI | SWT.WRAP);
-		text.setText("This RCP Application was generated from the PDE Plug-in Project wizard. This sample shows how to:\n"+
+		text.setText("\n" +
+						"This RCP Application was generated from the PDE Plug-in Project wizard. This sample shows how to:\n"+
 						"- add a top-level menu and toolbar with actions\n"+
 						"- add keybindings to actions\n" +
 						"- create views that can't be closed and\n"+
@@ -116,10 +112,10 @@ public class View extends ViewPart {
 
 	private void updateCSSForReadState() {
 		setCSSClassName(
-			dateWidget,
+			subject,
 			read
-				? "messageDateRead"
-				: "messageDateUnRead"
+				? "messageSubjectRead"
+				: "messageSubjectUnRead"
 			);
 	}
 }

@@ -1,61 +1,75 @@
+Control {
+	font-family: "Arial";
+}
+	
 Shell {
-	font-family: "Times New Roman"
 	font-size: 12;
 }
 
 ToolBar, Button {
-	font-family: "Times New Roman";
 	font-size: 9;
+	background-color: white;
 }
 
-Text {
-	font-family: "Comic Sans MS";
-	font-size: 10;
-	color: #666666;
-	background-color: #f8f8f8;
+CoolBar {
+	background-color: white;
 }
 
-#navigation {
-	font-family: "Times New Roman";
-	font-size: 8;
-	color: #666666;
-	background-color: #f8f8f8;
+CBanner {
+	background-color: white;
 }
-
-.messageBanner {
-    background-color: #f0f0f0;
-}
-
-.messageTitle {
-    font-weight: bold;
-    background-color: #f0f0f0;
-}
-
-.messageBannerContent {
-    background-color: #f0f0f0;
-}
-
-.messageSubject {
-	font-size: 11;
-}
-.messageDateUnRead {
-    font-style: italic;
-}
-
-.messageDateRead {
-    font-style: normal;
-}
-
 
 CTabFolder {
-    font-family: "Verdana";
     font-weight: normal;
-    font-size: 10;
-    color: #666666;
-    background-color: white;
+    font-size: 9;
+	color: #595959;
+    background-color: #F0F1F7;
 }
 
 CTabFolder:selected {
-    color: #AA4400;
-    background-color: #f0f0f0;
+    background-color: #FDFDFD;
+}
+
+Text {
+	font-size: 11;
+	color: #666666;
+	background-color: #FAFAFA;
+}
+
+#navigation {
+	font-size: 8;
+	color: #595959;
+	background-color: #f0f1f7;
+}
+
+.messageBanner {
+    background-color: #f0f1f7;
+}
+
+.messageBanner Composite, Label, Link {
+    background-color: #f0f1f7;
+}
+
+.messageSender {
+	color: #3e9cfa;
+	font-size: 11;
+}
+
+.messageDate {
+	color: #808080;
+	font-size: 9;
+}
+
+.messageSubjectUnRead {
+    font-size: 14;
+	font-style: italic;
+    font-weight: bold;
+	color: #F2973D;
+}
+
+.messageSubjectRead {
+    font-size: 12;
+	font-style: normal;
+    font-weight: normal;
+	color: #666666;
 }
