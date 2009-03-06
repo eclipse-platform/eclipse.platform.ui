@@ -220,15 +220,10 @@ public class URIUtilTest extends RuntimeTest {
 		assertEquals("1.0", "http://a.b.c/a%20b/file.txt", result.toString());
 		assertEquals("1.1", "//a.b.c/a b/file.txt", result.getSchemeSpecificPart());
 
-		//		base = new URI("http://a.b.c/a%20b/");
-		//		result = URIUtil.append(base, "a b.txt");
-		//		assertEquals("1.0", "http://a.b.c/a%20b/a%20b.txt", result.toString());
-		//		assertEquals("1.1", "//a.b.c/a b/a b.txt", result.getSchemeSpecificPart());
-
-		base = new URI("file:/C:/Documents%20and%20Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/");
-		result = URIUtil.append(base, "content.jar");
-		assertEquals("1.0", "file:/C:/Documents%20and%20Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/content.jar", result.toString());
-		assertEquals("1.1", "/C:/Documents and Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/content.jar", result.getSchemeSpecificPart());
+		base = new URI("http://a.b.c/a%20b/");
+		result = URIUtil.append(base, "a b.txt");
+		assertEquals("2.0", "http://a.b.c/a%20b/a%20b.txt", result.toString());
+		assertEquals("2.1", "//a.b.c/a b/a b.txt", result.getSchemeSpecificPart());
 
 	}
 
@@ -243,6 +238,20 @@ public class URIUtilTest extends RuntimeTest {
 		URI resolved = URIUtil.append(base, relative.toString());
 		assertEquals("1.0", expectedResolved, resolved);
 
+	}
+
+	public void testAppendWindows() throws URISyntaxException {
+		if (!WINDOWS)
+			return;
+		URI base = new URI("file:/C:/a%20b");
+		URI result = URIUtil.append(base, "file.txt");
+		assertEquals("1.0", "file:/C:/a%20b/file.txt", result.toString());
+		assertEquals("1.1", "/C:/a b/file.txt", result.getSchemeSpecificPart());
+
+		base = new URI("file:/C:/Documents%20and%20Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/");
+		result = URIUtil.append(base, "content.jar");
+		assertEquals("2.0", "file:/C:/Documents%20and%20Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/content.jar", result.toString());
+		assertEquals("2.1", "/C:/Documents and Settings/aniefer/junit-workspace/pde.build/265726/buildRepo/content.jar", result.getSchemeSpecificPart());
 	}
 
 	/**
