@@ -55,7 +55,11 @@ public class WritableList extends ObservableList {
 	}
 
 	/**
-	 * Constructs a new instance with the default realm.
+	 * Constructs a new instance with the default realm. Note that for backwards
+	 * compatibility reasons, the contents of the created WritableList will
+	 * change with the contents of the given list. If this is not desired,
+	 * {@link #WritableList(Collection, Object)} should be used by casting the
+	 * first argument to {@link Collection}.
 	 * 
 	 * @param toWrap
 	 * @param elementType
@@ -66,8 +70,26 @@ public class WritableList extends ObservableList {
 	}
 
 	/**
+	 * Constructs a new instance in the default realm containing the elements of
+	 * the given collection. Changes to the given collection after calling this
+	 * method do not affect the contents of the created WritableList.
+	 * 
+	 * @param collection
+	 *            the collection
+	 * @param elementType
+	 *            can be <code>null</code>
+	 */
+	public WritableList(Collection collection, Object elementType) {
+		this(Realm.getDefault(), new ArrayList(collection), elementType);
+	}
+
+	/**
 	 * Creates a writable list containing elements of the given type, wrapping
-	 * an existing client-supplied list.
+	 * an existing client-supplied list. Note that for backwards compatibility
+	 * reasons, the contents of the created WritableList will change with the
+	 * contents of the given list. If this is not desired,
+	 * {@link #WritableList(Realm, Collection, Object)} should be used by
+	 * casting the second argument to {@link Collection}.
 	 * 
 	 * @param realm
 	 * @param toWrap
@@ -77,6 +99,21 @@ public class WritableList extends ObservableList {
 	 */
 	public WritableList(Realm realm, List toWrap, Object elementType) {
 		super(realm, toWrap, elementType);
+	}
+
+	/**
+	 * Constructs a new instance in the default realm containing the elements of
+	 * the given collection. Changes to the given collection after calling this
+	 * method do not affect the contents of the created WritableList.
+	 * 
+	 * @param realm
+	 * @param collection
+	 *            the collection
+	 * @param elementType
+	 *            can be <code>null</code>
+	 */
+	public WritableList(Realm realm, Collection collection, Object elementType) {
+		super(realm, new ArrayList(collection), elementType);
 	}
 
 	public Object set(int index, Object element) {

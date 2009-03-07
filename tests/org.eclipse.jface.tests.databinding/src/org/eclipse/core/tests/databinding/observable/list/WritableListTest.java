@@ -14,7 +14,10 @@
 package org.eclipse.core.tests.databinding.observable.list;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -160,6 +163,46 @@ public class WritableListTest extends TestCase {
 		assertEquals(elementType, list.getElementType());
 	}
 
+	public void testListConstructorsDoNotCopy_1() {
+		RealmTester.setDefault(new CurrentRealm(true));
+		List list = new ArrayList(Arrays.asList(new Object[] { "a", "b", "c" }));
+		WritableList wlist = new WritableList(list, Object.class);
+		wlist.remove(1);
+		assertEquals(2, list.size());
+		list.add("d");
+		assertEquals(3, wlist.size());
+	}
+
+	public void testListConstructorsDoNotCopy_2() {
+		List list = new ArrayList(Arrays.asList(new Object[] { "a", "b", "c" }));
+		WritableList wlist = new WritableList(new CurrentRealm(true), list,
+				Object.class);
+		wlist.remove(1);
+		assertEquals(2, list.size());
+		list.add("d");
+		assertEquals(3, wlist.size());
+	}
+
+	public void testCollectionConstructorsCopy_1() {
+		RealmTester.setDefault(new CurrentRealm(true));
+		List list = new ArrayList(Arrays.asList(new Object[] { "a", "b", "c" }));
+		WritableList wlist = new WritableList((Collection) list, Object.class);
+		wlist.remove(1);
+		assertEquals(3, list.size());
+		list.add("d");
+		assertEquals(2, wlist.size());
+	}
+
+	public void testCollectionConstructorsCopy_2() {
+		List list = new ArrayList(Arrays.asList(new Object[] { "a", "b", "c" }));
+		WritableList wlist = new WritableList(new CurrentRealm(true),
+				(Collection) list, Object.class);
+		wlist.remove(1);
+		assertEquals(3, list.size());
+		list.add("d");
+		assertEquals(2, wlist.size());
+	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(WritableListTest.class.getName());
 		suite.addTestSuite(WritableListTest.class);
@@ -179,7 +222,8 @@ public class WritableListTest extends TestCase {
 
 		public IObservableCollection createObservableCollection(Realm realm,
 				final int itemCount) {
-			WritableList observable = new WritableList(realm, new ArrayList(), String.class);
+			WritableList observable = new WritableList(realm, new ArrayList(),
+					String.class);
 
 			for (int i = 0; i < itemCount; i++) {
 				observable.add(String.valueOf(i));
