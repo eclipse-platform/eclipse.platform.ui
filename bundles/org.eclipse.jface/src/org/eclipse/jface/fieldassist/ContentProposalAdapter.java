@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,9 @@ package org.eclipse.jface.fieldassist;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -42,6 +37,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
+import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
  * ContentProposalAdapter can be used to attach content proposal behavior to a
@@ -1761,6 +1763,10 @@ public class ContentProposalAdapter {
 								watchModify = true;
 							}
 						}
+					} else {
+						// A non-character key has been pressed. Interrupt any
+						// autoactivation that is pending due to autoactivation delay.
+						receivedKeyDown = true;
 					}
 					break;
 
