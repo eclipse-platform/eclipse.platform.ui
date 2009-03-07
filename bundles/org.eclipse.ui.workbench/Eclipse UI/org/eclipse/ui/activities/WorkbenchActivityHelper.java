@@ -81,7 +81,7 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Answers whether a given contribution is allowed to be used based on
 	 * activity enablement. If it is currently disabled, then a dialog is opened
-	 * and the user is prompted to activate the requried activities. If the user
+	 * and the user is prompted to activate the required activities. If the user
 	 * declines their activation then false is returned. In all other cases
 	 * <code>true</code> is returned.
 	 * 
