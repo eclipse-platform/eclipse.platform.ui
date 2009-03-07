@@ -54,6 +54,13 @@ public interface ICommonActionExtensionSite {
 
 	/**
 	 * 
+	 * @return The id of the associated plugin for the Common Action Provider.
+	 * @since 3.4
+	 */
+	String getPluginId();
+
+	/**
+	 * 
 	 * @return The associated content service for the instantiated Common Action
 	 *         Provider.
 	 */

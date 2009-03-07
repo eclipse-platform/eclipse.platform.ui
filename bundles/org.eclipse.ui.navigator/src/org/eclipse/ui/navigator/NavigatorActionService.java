@@ -170,7 +170,6 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 		}
 
 		addCommonActionProviderMenu(aMenu);
-
 	}
 
 	private void createMenuGroups() {
@@ -209,7 +208,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 			}
 		}
 	}
-
+	
 	/**
 	 * Request that the service invoke extensions to fill the given IActionBars with retargetable
 	 * actions or view menu contributions from Action Providers that are interested in the given
@@ -336,7 +335,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 					provider = aProviderDescriptor.createActionProvider();
 					if (provider != null) {
 						actionProviderInstances.put(aProviderDescriptor, provider);
-						initialize(aProviderDescriptor.getId(), provider);
+						initialize(aProviderDescriptor.getId(), aProviderDescriptor.getPluginId(), provider);
 					} else {
 						actionProviderInstances.put(aProviderDescriptor,
 								(provider = SkeletonActionProvider.INSTANCE));
@@ -349,9 +348,9 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 		return provider;
 	}
 
-	private void initialize(String id, CommonActionProvider anActionProvider) {
+	private void initialize(String id, String pluginId, CommonActionProvider anActionProvider) {
 		if (anActionProvider != null && anActionProvider != SkeletonActionProvider.INSTANCE) {
-			ICommonActionExtensionSite configuration = new CommonActionExtensionSite(id, commonViewerSite, contentService, structuredViewer);
+			ICommonActionExtensionSite configuration = new CommonActionExtensionSite(id, pluginId, commonViewerSite, contentService, structuredViewer);
 			anActionProvider.init(configuration);
 			anActionProvider.restoreState(memento);
 			anActionProvider.setContext(new ActionContext(StructuredSelection.EMPTY));

@@ -32,24 +32,28 @@ public class ActivityTest extends NavigatorTestBase {
 
 	private static final boolean DEBUG = false;
 
-	protected boolean verifyMenu(IStructuredSelection sel, String item) {
+	protected static final boolean USE_NEW_MENU = true;
+	
+	protected boolean verifyMenu(IStructuredSelection sel, String item, boolean useNewMenu) {
 		MenuManager mm = new MenuManager();
 		_actionService.setContext(new ActionContext(sel));
 		_actionService.fillContextMenu(mm);
 
 		IContributionItem[] items = mm.getItems();
 
-		MenuManager newMm = (MenuManager) items[1];
-
-		items = newMm.getItems();
-		// Get the new Menu
+		if (useNewMenu) {
+			MenuManager newMm = (MenuManager) items[1];
+			items = newMm.getItems();
+		}
+		
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) items[i];
 				if (aci.getAction().getText().startsWith(item))
 					return true;
 				if (DEBUG)
-					System.out.println("action text: " + aci.getAction().getText());
+					System.out.println("action text: "
+							+ aci.getAction().getText());
 			}
 		}
 
@@ -57,21 +61,24 @@ public class ActivityTest extends NavigatorTestBase {
 	}
 
 	// Bug 217801 make sure category filtering works with common wizards
+	// Bug 257598 missing capabilities support for actions
 	public void testCategoryWizard() throws Exception {
 
 		IStructuredSelection sel = new StructuredSelection(_project);
 		_viewer.setSelection(sel);
 
-		//DisplayHelper.sleep(100000);
-		
-		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench().getActivitySupport();
+		// DisplayHelper.sleep(100000);
 
-		assertFalse(verifyMenu(sel, "Test CNF"));
-
+		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench()
+				.getActivitySupport();
 		Set ids = new HashSet();
 		ids = actSupport.getActivityManager().getEnabledActivityIds();
 
-		//System.out.println("enabled before: " + ids);
+		if (DEBUG)
+			System.out.println("enabled before: " + ids);
+
+		assertFalse(verifyMenu(sel, "Test CNF Activity", USE_NEW_MENU));
+		assertFalse(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityTest1", !USE_NEW_MENU));
 
 		Set newIds = new HashSet();
 		newIds.addAll(ids);
@@ -79,9 +86,11 @@ public class ActivityTest extends NavigatorTestBase {
 		actSupport.setEnabledActivityIds(newIds);
 
 		ids = actSupport.getActivityManager().getEnabledActivityIds();
-		//System.out.println("enabled now: " + ids);
+		if (DEBUG)
+			System.out.println("enabled now: " + ids);
 
-		assertTrue(verifyMenu(sel, "Test CNF"));
+		assertTrue(verifyMenu(sel, "Test CNF Activity", USE_NEW_MENU));
+		assertTrue(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityTest1", !USE_NEW_MENU));
 
 	}
 

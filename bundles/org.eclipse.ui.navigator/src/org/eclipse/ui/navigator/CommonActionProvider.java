@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.navigator.extensions.CommonActionExtensionSite;
 
 /**
  * <p>
@@ -60,7 +64,7 @@ import org.eclipse.ui.actions.ActionGroup;
 public abstract class CommonActionProvider extends ActionGroup implements
 		IMementoAware {
 
-	private ICommonActionExtensionSite actionSite;
+	private CommonActionExtensionSite actionSite;
 
 	/**
 	 * <p>
@@ -76,9 +80,39 @@ public abstract class CommonActionProvider extends ActionGroup implements
 	 *            Action Provider.
 	 */
 	public void init(ICommonActionExtensionSite aSite) {
-		actionSite = aSite;
+		actionSite = (CommonActionExtensionSite) aSite;
 	}
 
+	/**
+	 * Filters the specified action through the {@link WorkbenchActivityHelper}.
+	 * 
+	 * This is used to determine if the {@link IAction} should be included based
+	 * on the currently enabled activities.
+	 * 
+	 * @return true, if the action is to be filtered (suppressed)
+	 * 
+	 * @since 3.4
+	 */
+	protected boolean filterAction(final IAction action) {
+		if (actionSite == null) {
+			String message = "init() method was not called on CommonActionProvider: " + this + " make sure your init() method calls the superclass"; //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalStateException(message);
+		}
+		
+		IPluginContribution piCont = new IPluginContribution() {
+			public String getLocalId() {
+				return action.getId();
+			}
+
+			public String getPluginId() {
+				return actionSite.getPluginId();
+			}
+		};
+
+		return WorkbenchActivityHelper.filterItem(piCont);
+	}
+	
+	
 	/**
 	 * <p>
 	 * Restore the previous state of any actions using the flags in aMemento.

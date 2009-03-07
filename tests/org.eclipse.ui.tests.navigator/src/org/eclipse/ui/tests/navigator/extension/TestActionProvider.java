@@ -27,9 +27,8 @@ public class TestActionProvider extends CommonActionProvider {
 	private IAction action = null;
 
 	public void init(ICommonActionExtensionSite aSite) {
+		super.init(aSite);
 		action = new TestAction(aSite.getViewSite().getShell());
-		
-
 	}
 
 	public void fillContextMenu(IMenuManager menu) {

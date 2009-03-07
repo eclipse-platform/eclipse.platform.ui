@@ -36,6 +36,8 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 
 	private String extensionId;
 
+	private String pluginId;
+	
 	private ICommonViewerSite commonViewerSite;
 
 	private StructuredViewer structuredViewer;
@@ -47,6 +49,8 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	 * @param anExtensionId
 	 *            The unique identifier of the associated content extension or
 	 *            the top-level action provider. <b>May NOT be null.</b>
+	 * @param aPluginId
+	 *            The id of the plugin that contributes this CommonActionProvider
 	 * @param aCommonViewerSite
 	 *            The common viewer site may be used to access information about
 	 *            the part for which the instantiated CommonActionProvider will
@@ -62,6 +66,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	 *            Action Provider. <b>May NOT be null.</b>
 	 */
 	public CommonActionExtensionSite(String anExtensionId,
+			String aPluginId,
 			ICommonViewerSite aCommonViewerSite,
 			NavigatorContentService aContentService,
 			StructuredViewer aStructuredViewer) {
@@ -70,6 +75,7 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 		Assert.isNotNull(aCommonViewerSite);
 		Assert.isNotNull(aStructuredViewer);
 		extensionId = anExtensionId;
+		pluginId = aPluginId;
 		commonViewerSite = aCommonViewerSite;
 		structuredViewer = aStructuredViewer;
 
@@ -82,6 +88,14 @@ public final class CommonActionExtensionSite extends CommonExtensionSite
 	 */
 	public String getExtensionId() {
 		return extensionId;
+	}
+
+	/**
+	 * 
+	 * @return The plugin id of associated Common Action Provider
+	 */
+	public String getPluginId() {
+		return pluginId;
 	}
 
 	/**

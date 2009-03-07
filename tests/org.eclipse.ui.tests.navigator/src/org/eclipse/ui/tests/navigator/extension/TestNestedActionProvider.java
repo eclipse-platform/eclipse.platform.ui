@@ -37,6 +37,7 @@ public class TestNestedActionProvider extends CommonActionProvider {
 	private ICommonActionExtensionSite site;
 
 	public void init(ICommonActionExtensionSite aSite) {
+		super.init(aSite);
 		site = aSite;
 		action = new TestAction(aSite.getViewSite().getShell(),
 				"Nested action (only visible if test ext active)");

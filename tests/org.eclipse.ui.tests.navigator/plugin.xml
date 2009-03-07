@@ -108,6 +108,7 @@
             <instanceof value="org.eclipse.core.resources.IResource"/>
          </enablement>
       </actionProvider>
+      
       <actionProvider
             class="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
             dependsOn="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
@@ -198,6 +199,17 @@
          <enablement>
             <instanceof
                   value="org.eclipse.core.resources.IFolder">
+            </instanceof>
+         </enablement>
+      </actionProvider>
+
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.extension.TestOverrideableActionProvider"
+            id="org.eclipse.ui.tests.navigator.activityTest1"
+            priority="high">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
             </instanceof>
          </enablement>
       </actionProvider>
@@ -375,6 +387,16 @@
          </enablement>            
       </commonWizard>
       
+      <commonWizard
+            associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
+            menuGroupId="org.eclipse.ui.tests.navigator"
+            type="new"
+            wizardId="org.eclipse.ui.tests.navigator.activityTest1.SampleNewWizard2">  
+         <enablement>
+			<instanceof value="org.eclipse.core.resources.IResource" />
+         </enablement>            
+      </commonWizard>
+      
       <!-- bug 204837 commonWizard with no pages displays empty dialog --> 
 	  <commonWizard type="new"
             associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
@@ -413,9 +435,6 @@
             <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
             <!-- pick up the resource filters for free --> 
             <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
-            <actionExtension
-                  pattern="org.eclipse.ui.tests.navigator.extension.*">
-            </actionExtension> 
          </includes>
       </viewerContentBinding>
 
@@ -423,6 +442,7 @@
          <includes>
             <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
             <actionExtension pattern="org.eclipse.ui.navigator.resources.*"/>
+            <actionExtension pattern="org.eclipse.ui.tests.navigator.activityTest1"/>
          </includes>
       </viewerActionBinding>
 
@@ -497,7 +517,7 @@
          point="org.eclipse.ui.activities">
       <activityPatternBinding
             activityId="org.eclipse.ui.tests.navigator.testActivity"
-            pattern="org\.eclipse\.ui\.tests\.navigator.*"/>
+            pattern="org\.eclipse\.ui\.tests\.navigator/org\.eclipse\.ui\.tests\.navigator\.activityTest.*"/>
       <activity
             description="Common Navigator Test Activity"
             id="org.eclipse.ui.tests.navigator.testActivity"
@@ -523,6 +543,10 @@
             class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
             id="org.eclipse.ui.tests.navigator.SampleNewWizard2"
             name="Test CNF New Wizard2 (Does Nothing)"/>
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
+            id="org.eclipse.ui.tests.navigator.activityTest1.SampleNewWizard2"
+            name="Test CNF Activity New Wizard (Activity Test)"/>
    </extension>
    
    <extension

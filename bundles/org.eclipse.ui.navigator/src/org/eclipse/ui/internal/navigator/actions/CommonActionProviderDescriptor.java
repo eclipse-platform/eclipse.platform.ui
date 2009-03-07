@@ -50,6 +50,8 @@ public class CommonActionProviderDescriptor implements
 
 	private final IConfigurationElement configurationElement;
 
+	private final String pluginId;
+	
 	private final boolean isNested;
 
 	private Set dependentDescriptors;
@@ -84,6 +86,7 @@ public class CommonActionProviderDescriptor implements
 		super();
 		Assert.isTrue(TAG_ACTION_PROVIDER.equals(aConfigElement.getName()));
 		configurationElement = aConfigElement;
+		pluginId = configurationElement.getContributor().getName();
 		isNested = false;
 		init();
 	}
@@ -115,6 +118,7 @@ public class CommonActionProviderDescriptor implements
 				.getName())
 				|| TAG_ENABLEMENT.equals(anEnablementExpression.getName()));
 		configurationElement = aConfigElement;
+		pluginId = configurationElement.getContributor().getName();
 		enablementElement = anEnablementExpression;
 		visibilityId = anOverrideId;
 		isNested = nestedUnderNavigatorContent;
@@ -395,6 +399,13 @@ public class CommonActionProviderDescriptor implements
 		return overridingDescriptors.iterator();
 	}
 
+	/**
+	 * @return the id of the contributing plugin
+	 */
+	public String getPluginId() {
+		return pluginId;
+	}
+	
 	public String toString() {
 		if (toString == null) {
 			toString = "CommonActionProviderDescriptor[definedId=" + getDefinedId() + ", visibilityId=" + getId() + ", dependsOn=" + getDependsOnId() + ", overrides=" + getOverridesId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -440,8 +451,6 @@ public class CommonActionProviderDescriptor implements
 			return comparison;
 			
 		}
-		
-		 
 	}
 
 }

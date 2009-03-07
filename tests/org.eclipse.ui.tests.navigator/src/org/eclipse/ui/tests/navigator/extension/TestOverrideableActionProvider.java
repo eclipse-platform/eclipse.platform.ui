@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,18 +28,22 @@ public class TestOverrideableActionProvider extends CommonActionProvider {
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
 	public void init(ICommonActionExtensionSite site) { 
+		super.init(site);
 
 		action = new Action() {
 			
 		}; 
+		action.setId(site.getExtensionId());
 		action.setText(site.getExtensionId());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
-	public void fillContextMenu(IMenuManager menu) { 		 
-		menu.add(action);
+	public void fillContextMenu(IMenuManager menu) {
+		if (!filterAction(action)) {
+			menu.add(action);
+		}
 	}
 
 }
