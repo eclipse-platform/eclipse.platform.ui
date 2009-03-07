@@ -666,7 +666,8 @@ public abstract class AbstractUIPlugin extends Plugin {
             throw new IllegalArgumentException();
         }
 
-		ImageDescriptor imageDescriptor = PlatformUI.getWorkbench()
+		IWorkbench workbench = PlatformUI.isWorkbenchRunning() ? PlatformUI.getWorkbench() : null;
+		ImageDescriptor imageDescriptor = workbench == null ? null : workbench
 				.getSharedImages().getImageDescriptor(imageFilePath);
 		if (imageDescriptor != null)
 			return imageDescriptor; // found in the shared images
