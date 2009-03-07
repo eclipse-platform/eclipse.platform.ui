@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,11 @@ package org.eclipse.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation2;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -19,15 +24,13 @@ import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -41,6 +44,8 @@ import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.MultiPageEditorSite;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import org.eclipse.osgi.util.NLS;
 
 /**
  * <p>
@@ -120,14 +125,20 @@ public abstract class OperationHistoryActionHandler extends Action implements
 
 	private class HistoryListener implements IOperationHistoryListener {
 		public void historyNotification(final OperationHistoryEvent event) {
-			Display display = getWorkbenchWindow().getWorkbench().getDisplay();
+			IWorkbenchWindow workbenchWindow = getWorkbenchWindow();
+			if (workbenchWindow == null)
+				return;
+			
+			Display display = workbenchWindow.getWorkbench().getDisplay();
+			if (display == null)
+				return;
+			
 			switch (event.getEventType()) {
 			case OperationHistoryEvent.OPERATION_ADDED:
 			case OperationHistoryEvent.OPERATION_REMOVED:
 			case OperationHistoryEvent.UNDONE:
 			case OperationHistoryEvent.REDONE:
-				if (display != null
-						&& event.getOperation().hasContext(undoContext)) {
+				if (event.getOperation().hasContext(undoContext)) {
 					display.asyncExec(new Runnable() {
 						public void run() {
 							update();
@@ -136,8 +147,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				}
 				break;
 			case OperationHistoryEvent.OPERATION_NOT_OK:
-				if (display != null
-						&& event.getOperation().hasContext(undoContext)) {
+				if (event.getOperation().hasContext(undoContext)) {
 					display.asyncExec(new Runnable() {
 						public void run() {
 							if (pruning) {
@@ -162,7 +172,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				}
 				break;
 			case OperationHistoryEvent.OPERATION_CHANGED:
-				if (display != null && event.getOperation() == getOperation()) {
+				if (event.getOperation() == getOperation()) {
 					display.asyncExec(new Runnable() {
 						public void run() {
 							update();
