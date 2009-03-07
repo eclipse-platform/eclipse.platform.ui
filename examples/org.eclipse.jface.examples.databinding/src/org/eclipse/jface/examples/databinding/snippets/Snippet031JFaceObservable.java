@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class Snippet024JFaceObservable {
+public class Snippet031JFaceObservable {
 
 	public static final String NAME_PROPERTY = "name_property";
 
