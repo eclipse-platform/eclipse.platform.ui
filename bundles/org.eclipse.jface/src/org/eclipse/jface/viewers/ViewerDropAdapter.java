@@ -141,6 +141,17 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         this.viewer = viewer;
     }
 
+	/**
+	 * Clears internal state of this drop adapter. This method can be called
+	 * when no DnD operation is underway, to clear internal state from previous
+	 * drop operations.
+	 * 
+	 * @since 3.5
+	 */
+    protected void clearState() {
+    	this.currentTarget = null;
+    }
+
     /**
      * Returns the position of the given event's coordinates relative to its target.
      * The position is determined to be before, after, or on the item, based on
