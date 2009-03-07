@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * that land on the resource navigator.
  * 
  * @since 2.0
+ * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 public class NavigatorDropAdapter extends PluginDropAdapter implements
         IOverwriteQuery {

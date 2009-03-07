@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,10 @@ package org.eclipse.ui.views.navigator;
 import java.util.Vector;
 
 /**
- * A string pattern matcher, suppporting ?*? and ??? wildcards.
+ * A string pattern matcher, supporting ?*? and ??? wildcards.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 /* package */class StringMatcher {
     protected String fPattern;

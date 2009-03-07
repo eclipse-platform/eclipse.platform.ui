@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.ui.actions.RenameResourceAction;
  * The ResourceNavigatorRenameAction is the rename action used by the
  * ResourceNavigator that also allows updating after rename.
  * @since 2.0
+ * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 public class ResourceNavigatorRenameAction extends RenameResourceAction {
     private TreeViewer viewer;

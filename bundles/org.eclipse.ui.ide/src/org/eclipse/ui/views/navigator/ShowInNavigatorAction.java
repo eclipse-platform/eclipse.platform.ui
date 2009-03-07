@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  * For each element in the selection, if it is an <code>IResource</code>
  * it uses it directly, otherwise if it is an <code>IMarker</code> it uses the marker's resource,
  * otherwise if it is an <code>IAdaptable</code>, it tries to get the <code>IResource.class</code> adapter.
+ * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 public class ShowInNavigatorAction extends SelectionProviderAction {
     private IWorkbenchPage page;

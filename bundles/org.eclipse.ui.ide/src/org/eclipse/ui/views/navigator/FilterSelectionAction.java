@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 /**
  * The FilterSelectionAction opens the filters dialog.
+ * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 public class FilterSelectionAction extends ResourceNavigatorAction {
     private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.FilterSelection_toolTip;
