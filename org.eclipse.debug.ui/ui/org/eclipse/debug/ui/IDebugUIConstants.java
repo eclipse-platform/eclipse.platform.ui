@@ -234,9 +234,9 @@ public interface IDebugUIConstants {
 	public static final String PREF_MANAGE_VIEW_PERSPECTIVES= PLUGIN_ID + ".manage_view_perspectives"; //$NON-NLS-1$
 
 	/**
-	 * The default value of the {@link PREF_MANAGE_VIEW_PERSPECTIVE} preference. 
+	 * The default value of the {@link IDebugUIConstants#PREF_MANAGE_VIEW_PERSPECTIVES} preference. 
 	 * 
-     * @see PREF_MANAGE_VIEW_PERSPECTIVES
+     * @see IDebugUIConstants#PREF_MANAGE_VIEW_PERSPECTIVES
      * 
 	 * @since 3.5
 	 */
