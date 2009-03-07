@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.ide">
+<schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui.ide" id="resourceFilters" name="Resource Filters"/>
@@ -12,6 +12,11 @@ These filters can be selected to hide resources whose names match the filter&apo
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true" />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
@@ -44,6 +49,11 @@ These filters can be selected to hide resources whose names match the filter&apo
    </element>
 
    <element name="filter">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -68,7 +78,7 @@ These filters can be selected to hide resources whose names match the filter&apo
    <element name="description" type="string">
       <annotation>
          <appInfo>
-            <meta.element translatable="true"/>
+            <meta.element translatable="true" deprecated="true"/>
          </appInfo>
          <documentation>
             the description of the purpose of this filter.
@@ -102,30 +112,14 @@ These filters can be selected to hide resources whose names match the filter&apo
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2009 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
