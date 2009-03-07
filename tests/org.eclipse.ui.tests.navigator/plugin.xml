@@ -214,6 +214,17 @@
          </enablement>
       </actionProvider>
 
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.extension.TestFilteredActionProvider"
+            id="org.eclipse.ui.tests.navigator.activityProviderTest"
+            priority="high">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+      </actionProvider>
+
       <navigatorContent
             contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"
             id="org.eclipse.ui.tests.navigator.testContent2"
@@ -443,6 +454,7 @@
             <actionExtension pattern="org.eclipse.ui.tests.navigator.extension.*"/>
             <actionExtension pattern="org.eclipse.ui.navigator.resources.*"/>
             <actionExtension pattern="org.eclipse.ui.tests.navigator.activityTest1"/>
+            <actionExtension pattern="org.eclipse.ui.tests.navigator.activityProviderTest"/>
          </includes>
       </viewerActionBinding>
 
@@ -518,10 +530,18 @@
       <activityPatternBinding
             activityId="org.eclipse.ui.tests.navigator.testActivity"
             pattern="org\.eclipse\.ui\.tests\.navigator/org\.eclipse\.ui\.tests\.navigator\.activityTest.*"/>
+      <activityPatternBinding
+            activityId="org.eclipse.ui.tests.navigator.testActivityProvider"
+            pattern="org\.eclipse\.ui\.tests\.navigator/org\.eclipse\.ui\.tests\.navigator\.activityProviderTest"/>
       <activity
             description="Common Navigator Test Activity"
             id="org.eclipse.ui.tests.navigator.testActivity"
             name="CN Test">
+      </activity>
+      <activity
+            description="Common Navigator Test Provider Activity"
+            id="org.eclipse.ui.tests.navigator.testActivityProvider"
+            name="CN Test Provider">
       </activity>
       <category
             id="org.eclipse.ui.tests.navigator.category1"

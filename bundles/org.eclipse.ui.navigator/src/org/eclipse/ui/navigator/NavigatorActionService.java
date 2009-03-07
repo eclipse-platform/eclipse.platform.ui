@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.actions.CommonActionDescriptorManager;
@@ -189,6 +191,20 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 		}
 	}
 
+	private boolean filterActionProvider(final CommonActionProviderDescriptor providerDesc) {
+		IPluginContribution piCont = new IPluginContribution() {
+			public String getLocalId() {
+				return providerDesc.getId();
+			}
+
+			public String getPluginId() {
+				return providerDesc.getPluginId();
+			}
+		};
+
+		return WorkbenchActivityHelper.filterItem(piCont);
+	}
+	
 	/**
 	 * @param aMenu
 	 */
@@ -196,12 +212,13 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 
 		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager.getInstance().findRelevantActionDescriptors(contentService, getContext());
 		if (providerDescriptors.length > 0) {
-			CommonActionProvider provider = null;
 			for (int i = 0; i < providerDescriptors.length; i++) {
 				try {
-					provider = getActionProviderInstance(providerDescriptors[i]);
-					provider.setContext(getContext());
-					provider.fillContextMenu(aMenu);
+					if (!filterActionProvider(providerDescriptors[i])) {
+						CommonActionProvider provider = getActionProviderInstance(providerDescriptors[i]);
+						provider.setContext(getContext());
+						provider.fillContextMenu(aMenu);
+					}
 				} catch (Throwable t) {
 					NavigatorPlugin.logError(0, t.getMessage(), t);
 				}
@@ -232,8 +249,8 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 			CommonActionProvider provider = null;
 			for (int i = 0; i < providerDescriptors.length; i++) {
 				try {
-					provider = getActionProviderInstance(providerDescriptors[i]);
-					if(provider != null) {
+					if (!filterActionProvider(providerDescriptors[i])) {
+						provider = getActionProviderInstance(providerDescriptors[i]);
 						provider.setContext(context);
 						provider.fillActionBars(theActionBars);
 						provider.updateActionBars();

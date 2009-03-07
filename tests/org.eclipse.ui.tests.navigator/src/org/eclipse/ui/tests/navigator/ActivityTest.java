@@ -91,7 +91,38 @@ public class ActivityTest extends NavigatorTestBase {
 
 		assertTrue(verifyMenu(sel, "Test CNF Activity", USE_NEW_MENU));
 		assertTrue(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityTest1", !USE_NEW_MENU));
-
 	}
 
+	
+	// Bug 257598 missing capabilities support for actions
+	public void testProviderFilter() throws Exception {
+
+		IStructuredSelection sel = new StructuredSelection(_project);
+		_viewer.setSelection(sel);
+
+		// DisplayHelper.sleep(100000);
+
+		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench()
+				.getActivitySupport();
+		Set ids = new HashSet();
+		ids = actSupport.getActivityManager().getEnabledActivityIds();
+
+		if (DEBUG)
+			System.out.println("enabled before: " + ids);
+
+		assertFalse(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityProviderTest", !USE_NEW_MENU));
+
+		Set newIds = new HashSet();
+		newIds.addAll(ids);
+		newIds.add(TEST_ACTIVITY_PROVIDER);
+		actSupport.setEnabledActivityIds(newIds);
+
+		ids = actSupport.getActivityManager().getEnabledActivityIds();
+		if (DEBUG)
+			System.out.println("enabled now: " + ids);
+
+		assertTrue(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityProviderTest", !USE_NEW_MENU));
+
+	}
+	
 }

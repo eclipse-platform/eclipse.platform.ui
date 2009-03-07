@@ -61,6 +61,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_HAS_CHILDREN = "org.eclipse.ui.tests.navigator.testContentHasChildren";
 
 	protected static final String TEST_ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
+	protected static final String TEST_ACTIVITY_PROVIDER = "org.eclipse.ui.tests.navigator.testActivityProvider";
 
 
 	protected String _navigatorInstanceId;
