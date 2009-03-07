@@ -10,6 +10,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow,
  *                                                 fix for 159597, refactoring (bug 153993),
  *                                                 widget-independency (bug 154329), fix for 187826, 191468
+ *     Peter Centgraf - bug 251575
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -408,4 +409,18 @@ public class TableViewer extends AbstractTableViewer {
 		}
 		super.remove(elements);
 	}
+	
+	protected Widget doFindItem(Object element) {
+		IContentProvider contentProvider = getContentProvider();
+		if (contentProvider instanceof IIndexableLazyContentProvider) {
+			IIndexableLazyContentProvider indexable = (IIndexableLazyContentProvider) contentProvider;
+			int idx = indexable.findElement(element);
+			if (idx != -1) {
+				return doGetItem(idx);
+			}
+			return null;
+		}
+		return super.doFindItem(element);
+	}
+
 }
