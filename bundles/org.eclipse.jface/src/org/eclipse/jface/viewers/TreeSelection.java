@@ -135,9 +135,6 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 	/**
 	 * Creates a new empty selection. See also the static field
 	 * <code>EMPTY</code> which contains an empty selection singleton.
-	 * <p>
-	 * Note that TreeSelection.EMPTY is not equals() to StructuredViewer.EMPTY.
-	 * </p>
 	 * 
 	 * @see #EMPTY
 	 */
