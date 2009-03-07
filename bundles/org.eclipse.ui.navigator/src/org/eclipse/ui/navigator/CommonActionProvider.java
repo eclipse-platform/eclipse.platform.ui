@@ -22,7 +22,7 @@ import org.eclipse.ui.actions.ActionGroup;
  * <p>
  * This abstract class should be extended by clients of the
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension point for
- * top-level and nested <b>actionProvider </b> elements.
+ * top-level and nested <b>actionProvider</b> elements.
  * </p>
  * <p>
  * {@link CommonActionProvider}s may be declared as top-level elements in the
