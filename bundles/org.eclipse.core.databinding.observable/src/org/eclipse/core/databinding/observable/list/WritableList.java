@@ -78,6 +78,7 @@ public class WritableList extends ObservableList {
 	 *            the collection
 	 * @param elementType
 	 *            can be <code>null</code>
+	 * @since 1.2
 	 */
 	public WritableList(Collection collection, Object elementType) {
 		this(Realm.getDefault(), new ArrayList(collection), elementType);
@@ -111,6 +112,7 @@ public class WritableList extends ObservableList {
 	 *            the collection
 	 * @param elementType
 	 *            can be <code>null</code>
+	 * @since 1.2
 	 */
 	public WritableList(Realm realm, Collection collection, Object elementType) {
 		super(realm, new ArrayList(collection), elementType);
