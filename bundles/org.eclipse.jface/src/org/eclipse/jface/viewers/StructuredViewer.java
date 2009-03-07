@@ -1317,7 +1317,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * Attempts to preserves the current selection across a run of the given
 	 * code. This method should not preserve the selection if
-	 * {@link #getPreserveSelection()} returns false.
+	 * {link #getPreserveSelection()} returns false.
 	 * <p>
 	 * The default implementation of this method:
 	 * <ul>
@@ -1334,7 +1334,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @param updateCode
 	 *            the code to run
 	 * 
-	 * @see #getPreserveSelection()
+	 * see #getPreserveSelection()
 	 */
 	protected void preservingSelection(Runnable updateCode) {
 		preservingSelection(updateCode, false);
@@ -1343,9 +1343,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * Attempts to preserves the current selection across a run of the given
 	 * code, with a best effort to avoid scrolling if <code>reveal</code> is
-	 * false, or to reveal the selection if <code>reveal</code> is true. This
-	 * method should not preserve the selection if
-	 * {@link #getPreserveSelection()} returns false.
+	 * false, or to reveal the selection if <code>reveal</code> is true.
 	 * <p>
 	 * The default implementation of this method:
 	 * <ul>
@@ -1774,6 +1772,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
+	 * NON-API - to be removed - see bug 200214
 	 * Enable or disable the preserve selection behavior of this viewer. The
 	 * default is that the viewer attempts to preserve the selection across
 	 * update operations. This is an advanced option, to support clients that
@@ -1791,22 +1790,21 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @param preserve
 	 *            <code>true</code> if selection should be preserved,
 	 *            <code>false</code> otherwise
-	 * @since 3.5
 	 */
-	public void setPreserveSelection(boolean preserve) {
+	void setPreserveSelection(boolean preserve) {
 		this.preserveSelection = preserve;
 	}
 
 	/**
+	 * NON-API - to be removed - see bug 200214
 	 * Returns whether an attempt should be made to preserve selection across
 	 * update operations. To be used by subclasses that override
 	 * {@link #preservingSelection(Runnable)}.
 	 * 
 	 * @return <code>true</code> if selection should be preserved,
 	 *         <code>false</code> otherwise
-	 * @since 3.5
 	 */
-	protected boolean getPreserveSelection() {
+	boolean getPreserveSelection() {
 		return this.preserveSelection;
 	}
 
