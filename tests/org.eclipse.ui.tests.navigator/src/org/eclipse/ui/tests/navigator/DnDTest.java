@@ -55,8 +55,6 @@ public class DnDTest extends NavigatorTestBase {
 			return;
 		}
 
-		System.out.println("DDDDDDDDDDDDDDDDDDDD");
-		
 		_viewer.expandToLevel(_p1, 3);
 		items = _viewer.getTree().getItems();
 
@@ -101,6 +99,38 @@ public class DnDTest extends NavigatorTestBase {
 
 		assertNotNull(TestDragAssistant._finishedEvent);
 		assertNotNull(TestDragAssistant._finishedSelection);
+	}
+
+	// bug 264323 [CommonNavigator] CommonDragAdapterAssistant should be allowed to opt out of a drag
+	public void testDragOptOut() throws Exception {
+		_viewer.expandToLevel(_p1, 3);
+
+		IFile file = _p1.getFolder("f1").getFile("file1.txt");
+
+		// Need to set the selection because the Dnd stuff is not doing it
+		_viewer.setSelection(new StructuredSelection(file));
+
+		// Want to drag this item to an editor so that the ResourceTransferType is
+		// used
+		IWorkbenchPage activePage = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+		TextEditor editorPart = (TextEditor) IDE.openEditor(activePage, file);
+
+		Control end = (Control) editorPart.getAdapter(Control.class);
+		
+		TreeItem[] items = _viewer.getTree().getItems();
+
+		// p1/f1/file1.txt
+		TreeItem start = items[_p1Ind].getItem(0).getItem(0);
+
+		TestDragAssistant._doit = false;
+		
+		if (!SWTEventHelper.performDnD(start, end)) {
+			System.out.println("Drag and drop failed - test invalid");
+			return;
+		}
+
+		assertFalse(TestDragAssistant._dragSetDataCalled);
 	}
 
 	// Bug 261060 Add capability of setting drag operation

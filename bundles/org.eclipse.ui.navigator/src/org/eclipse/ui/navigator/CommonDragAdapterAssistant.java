@@ -98,6 +98,26 @@ public abstract class CommonDragAdapterAssistant {
 
 	/**
 	 * 
+	 * Allows the drag assistant indicate it wants to participate in the drag operation.
+	 * This is called at {@link DragSourceListener#dragStart(DragSourceEvent)} 
+	 * time.
+	 * 
+	 * @param anEvent
+	 *            The event object should return doit = true if it wants to participate
+	 *            in the drag and set doit = false if it does not want to further 
+	 *            participate.  The default is that doit is set to true.
+	 * @param aSelection
+	 *            The current selection from the viewer.
+	 * 
+	 * @since 3.4
+	 */
+	public void dragStart(DragSourceEvent anEvent,
+			IStructuredSelection aSelection) {
+		// May be subclassed
+	}
+	
+	/**
+	 * 
 	 * Allows the drag assistant to do any necessary cleanup after the drop operation
 	 * is done. This is called at {@link DragSourceListener#dragFinished(DragSourceEvent)} 
 	 * time.  This is called on the same assistant that was called for the set data.

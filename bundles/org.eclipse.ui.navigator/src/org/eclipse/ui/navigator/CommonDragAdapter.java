@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -54,6 +56,8 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 
 	private CommonDragAdapterAssistant setDataAssistant;
 	
+	private List assistantsToUse;
+	
 	/**
 	 * Create a DragAdapter that drives the configuration of the drag data.
 	 * 
@@ -68,6 +72,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		super();
 		contentService = aContentService;
 		provider = aProvider;
+		assistantsToUse = new ArrayList();
 	}
 
 	/**
@@ -121,10 +126,30 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 			Control control = dragSource.getControl();
 			if (control == control.getDisplay().getFocusControl()) {
 				ISelection selection = provider.getSelection();
+				assistantsToUse.clear();
+				
 				if (!selection.isEmpty()) {
-					LocalSelectionTransfer.getTransfer()
-							.setSelection(selection);
+					LocalSelectionTransfer.getTransfer().setSelection(selection);
+
+					boolean doIt = false;
 					event.doit = true;
+					INavigatorDnDService dndService = contentService.getDnDService();
+					CommonDragAdapterAssistant[] assistants = dndService.getCommonDragAssistants();
+					for (int i = 0; i < assistants.length; i++) {
+						if (Policy.DEBUG_DND) {
+							System.out.println("CommonDragAdapter.dragStart assistant: " + assistants[i]); //$NON-NLS-1$
+						}
+						assistants[i].dragStart(event, (IStructuredSelection) selection);
+						doIt |= event.doit;
+						if (event.doit) {
+							if (Policy.DEBUG_DND) {
+								System.out.println("CommonDragAdapter.dragStart assistant - event.doit == true"); //$NON-NLS-1$
+							}
+							assistantsToUse.add(assistants[i]);
+						}
+					}
+					
+					event.doit = doIt;
 				} else {
 					event.doit = false;
 				}
@@ -177,16 +202,14 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 						.println("CommonDragAdapter.dragSetData looking for assistants"); //$NON-NLS-1$
 			}
 
-			INavigatorDnDService dndService = contentService.getDnDService();
-			CommonDragAdapterAssistant[] assistants = dndService
-					.getCommonDragAssistants();
-			for (int i = 0; i < assistants.length; i++) {
+			for (int i = 0, len = assistantsToUse.size(); i < len; i++) {
+				CommonDragAdapterAssistant assistant = (CommonDragAdapterAssistant) assistantsToUse.get(i); 
 				if (Policy.DEBUG_DND) {
 					System.out
-							.println("CommonDragAdapter.dragSetData assistant: " + assistants[i]); //$NON-NLS-1$
+							.println("CommonDragAdapter.dragSetData assistant: " + assistant); //$NON-NLS-1$
 				}
 
-				Transfer[] supportedTransferTypes = assistants[i]
+				Transfer[] supportedTransferTypes = assistant
 						.getSupportedTransferTypes();
 				for (int j = 0; j < supportedTransferTypes.length; j++) {
 					if (supportedTransferTypes[j]
@@ -196,13 +219,13 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 								System.out
 										.println("CommonDragAdapter.dragSetData supported xfer type"); //$NON-NLS-1$
 							}
-							if(assistants[i].setDragData(event,
+							if(assistant.setDragData(event,
 									(IStructuredSelection) selection)) {
 								if (Policy.DEBUG_DND) {
 									System.out
 											.println("CommonDragAdapter.dragSetData set data " + event.data); //$NON-NLS-1$
 								}
-								setDataAssistant = assistants[i];
+								setDataAssistant = assistant;
 								return;
 							}
 						} catch (RuntimeException re) {
