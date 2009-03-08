@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn - Bug 256316 getImageDescriptor() is not thread safe 
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -67,10 +68,10 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     private String imageFilename;
 
-    private transient volatile ImageDescriptor imageDesc;
+    private transient ImageDescriptor imageDesc;
     private transient Object imageDescLock = new Object();
 
-    private volatile boolean testImage = true;
+    private boolean testImage = true;
 
     private String className;
 
@@ -272,34 +273,50 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @return the image descriptor
      */
     public ImageDescriptor getImageDescriptor() {
+    	ImageDescriptor tempDescriptor = null;
+
+    	synchronized (imageDescLock) {
 	    	if (!testImage)
 	            return imageDesc;
 	    	
-    	synchronized (imageDescLock) {
-	    	if (!testImage) // test again in case we waited for another thread to calculate it
-	            return imageDesc;
 			if (imageDesc == null) {
 				String imageFileName = getImageFilename();
 				String command = getFileName();
 				if (imageFileName != null && configurationElement != null)
-					imageDesc = AbstractUIPlugin.imageDescriptorFromPlugin(configurationElement.getNamespaceIdentifier(), imageFileName);
+					tempDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(configurationElement.getNamespaceIdentifier(), imageFileName);
 				else if (command != null)
-					imageDesc = WorkbenchImages.getImageDescriptorFromProgram(command, 0);
-			}
-			// Verifies that the image descriptor generates an image.  If not, the 
-			// descriptor is replaced with the default image.
-			if (imageDesc == null)
+					tempDescriptor = WorkbenchImages.getImageDescriptorFromProgram(command, 0);
+			} else
+				tempDescriptor = imageDesc;
+
+			if (tempDescriptor == null) { // still null? return default image
 				imageDesc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-			else {
-				Image img = imageDesc.createImage(false);
-				if (img == null) // @issue what should be the default image?
-				    imageDesc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-				else
-				    img.dispose();
+				testImage = false;
+		        return imageDesc;
 			}
-			testImage = false;
-	        return imageDesc;
     	}
+    	
+		// Verifies that the image descriptor generates an image.  If not, the descriptor is 
+    	// replaced with the default image.
+    	// We must create the image without holding any locks, since there is a potential for deadlock
+    	// on Linux due to SWT's implementation of Image. See bugs 265028 and 256316 for details.
+		Image img = tempDescriptor.createImage(false);
+		if (img == null) // @issue what should be the default image?
+			tempDescriptor = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+		else
+		    img.dispose();
+		// <----- End of must-not-lock part
+		
+		// reenter synchronized block
+		synchronized (imageDescLock) {
+			// if another thread has set the image description, use it
+			if (!testImage)
+				return imageDesc;
+			// otherwise set the image description we calculated above
+			imageDesc = tempDescriptor;
+			testImage = false;
+			return imageDesc;
+		}
     }
 
     /**
