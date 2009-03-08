@@ -378,7 +378,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * 
 	 * @param input
 	 *            the editor input
-	 * @return the matching editor, or <code>null</code> if no match fond
+	 * @return the matching editor, or <code>null</code> if no match found
 	 */
 	public IEditorPart findEditor(IEditorInput input) {
 		return findEditor(null, input, IWorkbenchPage.MATCH_INPUT);
@@ -394,7 +394,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 *            the editor input
 	 * @param matchFlags
 	 *            flags specifying which aspects to match
-	 * @return the matching editor, or <code>null</code> if no match fond
+	 * @return the matching editor, or <code>null</code> if no match found
 	 * @since 3.1
 	 */
 	public IEditorPart findEditor(String editorId, IEditorInput input,
@@ -417,7 +417,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 *            the editor input
 	 * @param matchFlags
 	 *            flags specifying which aspects to match
-	 * @return the matching editor, or <code>null</code> if no match fond
+	 * @return the matching editor, or an empty array if no match found
 	 * @since 3.1
 	 */
 	public IEditorReference[] findEditors(IEditorInput input, String editorId,
@@ -443,8 +443,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Returns an open editor matching the given editor id and/or editor input.
-	 * Returns <code>null</code> if none match.
+	 * Populates a list with open editor(s) matching the given editor id and/or editor input.
 	 * 
 	 * @param editorId
 	 *            the editor id
