@@ -12,6 +12,73 @@
 <h1>Eclipse Platform Build Notes (3.5)<br>
 JFace and Workbench</h1>
 
+<p>Integration Build (March 08, 2009, 1:04 p.m.)</p>
+  <p>Problem reports updated</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=11001">Bug 11001</a>. [Perspectives] DCR: Would like configurable "per perspective" editor sharing (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=71387">Bug 71387</a>. [ActivityMgmt]  Activity API needs to log parsing errors to workbench log (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=134526">Bug 134526</a>. [Contributions] popupMenus ext point support for part input (was: Support Quick Diff menu contributions to annotate bar) (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=150626">Bug 150626</a>. [Import/Export] Create working sets when importing several projects. (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=151711">Bug 151711</a>. [Commands] [IDE] Make QuickMenuAction API (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162102">Bug 162102</a>. [Workbench] User configurability for MAX_RECENT_WORKSPACES (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168682">Bug 168682</a>. [Perspectives] Externalized error message in PerspectiveRegistry (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=183602">Bug 183602</a>. [EditorMgmt] provide API for restoring multiple editors without materialization (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186025">Bug 186025</a>. [Viewers] Virtual Manager should be cleared when Viewer is disposed (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=200214">Bug 200214</a>. [Viewers] TreeViewer performance issues (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=213848">Bug 213848</a>. [DataBinding] WritableSet behaves different to WritableList (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=217974">Bug 217974</a>. [Trim] [PerspectiveBar] Unable to close an "absent" perspective (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218127">Bug 218127</a>. [CommonNavigator] Common Navigator inherited viewer bindings (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218673">Bug 218673</a>. [DataBinding] SWTUtil should use timerExec(0,...) rather than asyncExec (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=221977">Bug 221977</a>. [IDE] [RCP] Use of Project Explorer in RCP requires internal IDE class WorkbenchAdapterBuilder (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=221980">Bug 221980</a>. [Contributions] [Contributions] MenuItems with style radio are not initialized in context menu (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=228022">Bug 228022</a>. [CommonNavigator] Need more priority levels to avoid clashes of content providers (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=230955">Bug 230955</a>. [Viewers] Keyboard navigation and Scrolling Column into view (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=232777">Bug 232777</a>. [Viewers] ViewerDropAdapter holds currentTarget forever (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=235859">Bug 235859</a>. [DataBinding] MultiValidator: Add support for dependencies other than those expressed by IObservables (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=241208">Bug 241208</a>. [Markers] [Problems View] Restore Defaults is not working in the preferences (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=243165">Bug 243165</a>. [ErrorHandling] [StatusHandling] Fatal error appears twice when reported from JOB (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244354">Bug 244354</a>. [CommonNavigator] ProjectExplorer property page incorrectly given in the non-resource use of CN (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=246162">Bug 246162</a>. [Commands] [Services] Make IWorkbenchLocationService public (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=246224">Bug 246224</a>. [Contributions] Accessing SharedImages in plugin.xml (for ex. org.eclipse.ui.menus) (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=251575">Bug 251575</a>. [Viewers] TableViewer support for virtual selection (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=252293">Bug 252293</a>. [CommonNavigator] LabelProviders do not obey override rules (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=255136">Bug 255136</a>. [Commands] [Services] IEvaluationReference needs to remove its provisional API claim (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=255793">Bug 255793</a>. [CommonNavigator] [CNF] Chosen label provider should match content provider (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=255849">Bug 255849</a>. [Metadata] Wrong types and methods used in org.eclipse.ui.workbench (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=256656">Bug 256656</a>. [FieldAssist] cancel auto activation of proposal popup when caret moved (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=257598">Bug 257598</a>. [CommonNavigator] Missing capabilities support for actions provided by the CNF (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=258192">Bug 258192</a>. [DataBinding] Observable for objects the use JFace's IPropertyChangeListener (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=258679">Bug 258679</a>. [Undo] NPE in OperationHistoryActionHandler$HistoryListener when deleting multiple unsaved Java editors (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=259952">Bug 259952</a>. [Preferences] Duplicated text when using tooltip in BooleanFieldEditor (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=262615">Bug 262615</a>. [Commands] Add test for TextActionHandler (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=264030">Bug 264030</a>. [IDE] Platform UI refrences update.configurator (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=264039">Bug 264039</a>. [Wizards] Selecting a project type in the New > Other dialog resizes the list box and obscures the selected item (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=264102">Bug 264102</a>. [CommonNavigator] CommonSorter should use ViewerComparator instead of ViewerSorter (WONTFIX)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=264650">Bug 264650</a>. [Viewers] [JFace] Java doc for TreeSelection is wrong (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=264818">Bug 264818</a>. [Markers] Problems view: Status line shows wrong selection count summary (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=265049">Bug 265049</a>. [CommonNavigator] ClassCastException from WorkingSetFilterActionGroup (that should not happen) (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=265253">Bug 265253</a>. [About] The class information in schemas is wrong (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=265317">Bug 265317</a>. [CommonNavigator] LabelProvider disposal handling not correct (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=265381">Bug 265381</a>. [CommonNavigator] Could not acquire INavigatorContentService from part ("Welcome"). (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=265425">Bug 265425</a>. [Workbench] Finalize API for Platform constants in org.eclipse.jface.util.Util (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=265813">Bug 265813</a>. [StatusHandling]Reduce the incompatibility between status dialog and  jface ErrorDialog (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266018">Bug 266018</a>. ColorsAndFontsPreferencePage should set widthHint in createDescriptionControl (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266177">Bug 266177</a>. [About] selecting a tree element and hitting CTRL+A results in NPE (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266295">Bug 266295</a>. [Contributions] ShowInContext.getSelection() should only be called when needed (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266485">Bug 266485</a>. [ViewMgmt] PageSwitcher uses wrong parent when invoked from detached view (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266677">Bug 266677</a>. [CommonNavigator] ConcurrentModificationException when customizing view while checking out a project (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266769">Bug 266769</a>. [CommonNavigator] Reorg test identifiers (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266790">Bug 266790</a>. [CommonNavigator] Update API metadata (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266862">Bug 266862</a>. [CommonNavigator] Unused copy of QuickMenuAction in common navigator (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=266894">Bug 266894</a>. [CommonNavigator] CCE thrown in CommonSorterDescriptor (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267117">Bug 267117</a>. [JFace] Provide possibility for subclasses to check if a column is visible in ViewerRow (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267242">Bug 267242</a>. [JFace] Add API to configure table and tree columns in a keyboard-accessible way (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267360">Bug 267360</a>. org.eclipse.core.databinding.observable should be set up for API tooling (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267451">Bug 267451</a>. [DataBinding] AggregateValidationStatus illegally implements IObservableValue (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267470">Bug 267470</a>. [Navigator] Deprecate the ResourceNavigator (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267477">Bug 267477</a>. After splitting a plug-in, am now getting six API errors (NEW)<br>
+  </p>
+
 <p>Integration Build (March 02, 2009, 3:39 p.m.)</p>
   <p>Problem reports updated</p>
   <p>
