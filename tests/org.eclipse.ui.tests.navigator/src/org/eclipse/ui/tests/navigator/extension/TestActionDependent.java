@@ -15,17 +15,17 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
-public class DependentAction extends Action implements IAction {
+public class TestActionDependent extends Action implements IAction {
  
 	private Shell shell;
 
-	public DependentAction(Shell aShell, String isValid) {
+	public TestActionDependent(Shell aShell, String isValid) {
 		super("Dependent Action: " + isValid);
 		shell = aShell;
 		
 	}
 	
 	public void run() {
-		MessageDialog.openInformation(shell, "DependentAction", "The dependent action ran!");
+		MessageDialog.openInformation(shell, "TestActionDependent", "The dependent action ran!");
 	}
 }

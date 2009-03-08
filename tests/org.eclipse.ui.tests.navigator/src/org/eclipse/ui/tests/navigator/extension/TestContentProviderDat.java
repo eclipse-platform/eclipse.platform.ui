@@ -19,7 +19,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
-public class DatContentProvider implements ITreeContentProvider {
+public class TestContentProviderDat implements ITreeContentProvider {
 	   
 	private TestExtensionTreeData child = new TestExtensionTreeData(null, "Child", null, null);
 

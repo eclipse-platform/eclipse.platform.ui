@@ -16,11 +16,11 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
-public class TestOverrideableActionProvider extends CommonActionProvider {
+public class TestActionProviderBasic extends CommonActionProvider {
 	
 	private IAction action;
 
-	public TestOverrideableActionProvider() { 
+	public TestActionProviderBasic() { 
 		
 	}
 	
@@ -41,9 +41,7 @@ public class TestOverrideableActionProvider extends CommonActionProvider {
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager menu) {
-		if (!filterAction(action)) {
-			menu.add(action);
-		}
+		menu.add(action);
 	}
 
 }

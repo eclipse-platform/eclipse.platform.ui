@@ -59,7 +59,7 @@ public class ActivityTest extends NavigatorTestBase {
 
 		return false;
 	}
-
+	
 	// Bug 217801 make sure category filtering works with common wizards
 	// Bug 257598 missing capabilities support for actions
 	public void testCategoryWizard() throws Exception {
@@ -124,5 +124,7 @@ public class ActivityTest extends NavigatorTestBase {
 		assertTrue(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityProviderTest", !USE_NEW_MENU));
 
 	}
+
+	
 	
 }

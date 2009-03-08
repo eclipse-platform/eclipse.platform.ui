@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.tests.navigator.extension.TestDataSorter;
-import org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider;
+import org.eclipse.ui.tests.navigator.extension.TestContentProviderResource;
 
 public class SorterTest extends NavigatorTestBase {
 
@@ -28,7 +28,7 @@ public class SorterTest extends NavigatorTestBase {
 	// bug 262707 CommonViewerSorter gets NPE when misconfigured
 	public void testSorterMissing() throws Exception {
 
-		TestResourceContentProvider._returnBadObject = true;
+		TestContentProviderResource._returnBadObject = true;
 
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_SORTER },
 				false);

@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,16 +58,21 @@ public class CommonActionDescriptorManager {
 	public static CommonActionDescriptorManager getInstance() {
 		return INSTANCE;
 	}
-
+	
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
 	private final Map dependentDescriptors = new LinkedHashMap();
 
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Set overridingDescriptors = new LinkedHashSet();
-
-	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
 	private final Map rootDescriptors = new LinkedHashMap();
 
+	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
+	private final Set overridingDescriptors = new LinkedHashSet();
+
+	
+	private final LinkedList rootDescriptorsList = new LinkedList();
+	private final LinkedList dependentDescriptorsList = new LinkedList();
+
+	
 	/**
 	 * 
 	 * @param aDescriptor
@@ -75,9 +82,9 @@ public class CommonActionDescriptorManager {
 			CommonActionProviderDescriptor aDescriptor) {
 
 		if (aDescriptor.getDependsOnId() == null) {
-			rootDescriptors.put(aDescriptor.getDefinedId(), aDescriptor);
+			rootDescriptorsList.add(aDescriptor);
 		} else {
-			dependentDescriptors.put(aDescriptor.getDefinedId(), aDescriptor);
+			dependentDescriptorsList.add(aDescriptor);
 		}
 
 		if (aDescriptor.getOverridesId() != null) {
@@ -85,6 +92,43 @@ public class CommonActionDescriptorManager {
 		}
 	}
 
+	private int findId(List list, String id) {
+		for (int i= 0, len = list.size(); i< len; i++) {
+			CommonActionProviderDescriptor desc = (CommonActionProviderDescriptor) list.get(i);
+			if (desc.getId().equals(id))
+				return i;
+		}
+		return -1;
+	}
+	
+	
+	
+	/**
+	 * Sorts the descriptors according to the appearsBefore property
+	 */
+	private void sortDescriptors(LinkedList list, Map outMap) {
+		boolean changed = true;
+		while (changed) {
+			changed = false;
+			for (int i = 0, len = list.size(); i < len; i++) {
+				CommonActionProviderDescriptor desc = (CommonActionProviderDescriptor) list.get(i);
+				if (desc.getAppearsBeforeId() != null) {
+					int beforeInd = findId(list, desc.getAppearsBeforeId());
+					if (beforeInd < i) {
+						list.add(beforeInd, desc);
+						list.remove(i + 1);
+						changed = true;
+					}
+				}
+			}
+		}
+		for (int i = 0, len = list.size(); i < len; i++) {
+			CommonActionProviderDescriptor desc = (CommonActionProviderDescriptor) list.get(i);
+			outMap.put(desc.getDefinedId(), desc);
+		}
+	}
+	
+	
 	/**
 	 * Orders the set of available descriptors based on the order defined by the
 	 * <i>dependsOn</i> attribute from the <actionProvider /> element in
@@ -92,6 +136,9 @@ public class CommonActionDescriptorManager {
 	 * 
 	 */
 	protected void computeOrdering() {
+		sortDescriptors(rootDescriptorsList, rootDescriptors);
+		sortDescriptors(dependentDescriptorsList, dependentDescriptors);
+		
 		CommonActionProviderDescriptor dependentDescriptor;
 		CommonActionProviderDescriptor requiredDescriptor;
 

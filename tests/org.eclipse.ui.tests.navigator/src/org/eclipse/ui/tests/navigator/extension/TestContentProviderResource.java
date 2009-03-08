@@ -14,7 +14,7 @@ package org.eclipse.ui.tests.navigator.extension;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider;
 
-public class TestResourceContentProvider extends
+public class TestContentProviderResource extends
 		ResourceExtensionContentProvider {
 
 	public static boolean _returnBadObject;

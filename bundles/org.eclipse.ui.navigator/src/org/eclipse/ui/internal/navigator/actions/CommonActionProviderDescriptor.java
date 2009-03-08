@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,8 @@ public class CommonActionProviderDescriptor implements
 	private String dependsOnId;
 
 	private String overridesId;
+	
+	private String appearsBeforeId;
 
 	private String toString;
 
@@ -143,8 +145,9 @@ public class CommonActionProviderDescriptor implements
 			}
 
 			dependsOnId = configurationElement.getAttribute(ATT_DEPENDS_ON);
-
 			overridesId = configurationElement.getAttribute(ATT_OVERRIDES);
+
+			appearsBeforeId = configurationElement.getAttribute(ATT_APPEARS_BEFORE);
 			
 			if(priority == null) {
 				String prio = configurationElement.getAttribute(ATT_PRIORITY);
@@ -208,8 +211,8 @@ public class CommonActionProviderDescriptor implements
 	}
 
 	/**
-	 * Determine if this content extension is enabled for the given selection.
-	 * The content extension is enabled for the selection if and only if it is
+	 * Determine if this action provider descriptor is enabled for the given selection.
+	 * The action provider descriptor is enabled for the selection if and only if it is
 	 * enabled for each element in the selection.
 	 * 
 	 * @param aStructuredSelection
@@ -321,6 +324,15 @@ public class CommonActionProviderDescriptor implements
 	 */
 	public String getOverridesId() {
 		return overridesId;
+	}
+	
+	/**
+	 * 
+	 * @return The value specified by the <i>appearsBefore</i> attribute of the
+	 *         &lt;actionProvider /&gt; element.
+	 */
+	public String getAppearsBeforeId() {
+		return appearsBeforeId;
 	}
 	
 	/**
@@ -445,6 +457,7 @@ public class CommonActionProviderDescriptor implements
 				return LESS_THAN;
 			if(lvalue.equals(rvalue))
 				return EQUALS;
+
 			int comparison = lvalue.getPriority().getValue() - rvalue.getPriority().getValue();
 			if(comparison == 0) 
 				return lvalue.getDefinedId().compareTo(rvalue.getDefinedId());

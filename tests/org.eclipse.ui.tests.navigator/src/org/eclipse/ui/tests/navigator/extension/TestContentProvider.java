@@ -44,20 +44,23 @@ public class TestContentProvider implements ITreeContentProvider,
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
-	private static final IPath MODEL_FILE_PATH = new Path("model.properties");
+	public static final IPath MODEL_FILE_PATH = new Path("model.properties");
 
 	private final Map rootElements = new HashMap();
 
 	private StructuredViewer viewer;
 	
+	public static TestExtensionTreeData _modelRoot;
+	
 	public TestContentProvider() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
+	public Object[] getElements(Object inputElement) {
+		return getChildren(inputElement);
+	}
+
 	public Object[] getChildren(Object parentElement) {
-		
-		
-		
 		if (parentElement instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) parentElement;
 			return data.getChildren();
@@ -105,6 +108,7 @@ public class TestContentProvider implements ITreeContentProvider,
 				is.close();
 				TestExtensionTreeData root = new TestExtensionTreeData(null,
 						MODEL_ROOT, model, modelFile);
+				_modelRoot = root;
 				rootElements.put(modelFile, root);
 				return root;
 			} catch (IOException e) {
@@ -131,10 +135,6 @@ public class TestContentProvider implements ITreeContentProvider,
 			return data.getChildren().length > 0;
 		}
 		return false;
-	}
-
-	public Object[] getElements(Object inputElement) {
-		return getChildren(inputElement);
 	}
 
 	public void dispose() {
@@ -181,7 +181,7 @@ public class TestContentProvider implements ITreeContentProvider,
 			return true;
 		case IResource.FILE:
 			final IFile file = (IFile) source;
-			if ("model.properties".equals(file.getName())) {
+				if ("model.properties".equals(file.getName())) {
 				updateModel(file);
 				new UIJob("Update Test Model in CommonViewer") {
 					public IStatus runInUIThread(IProgressMonitor monitor) {

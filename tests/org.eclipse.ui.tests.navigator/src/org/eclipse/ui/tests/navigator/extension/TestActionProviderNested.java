@@ -24,7 +24,7 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
-public class TestNestedActionProvider extends CommonActionProvider {
+public class TestActionProviderNested extends CommonActionProvider {
 
 	public static final String GROUP_TEST_MENU = "group.testMenu";
 
@@ -41,6 +41,7 @@ public class TestNestedActionProvider extends CommonActionProvider {
 		site = aSite;
 		action = new TestAction(aSite.getViewSite().getShell(),
 				"Nested action (only visible if test ext active)");
+		action.setId("org.eclipse.ui.tests.navigator.NestedAction");
 
 		openAction = new Action() {
 

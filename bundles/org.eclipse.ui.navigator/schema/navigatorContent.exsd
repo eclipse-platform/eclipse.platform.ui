@@ -284,7 +284,7 @@ Clients may provide &lt;b&gt;actionProvider&lt;/b&gt;(s) under the root &lt;b&gt
 &lt;br&gt;&lt;br&gt;
 For root &lt;b&gt;actionProviders&lt;/b&gt; with no id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider.X&quot;. For these &lt;b&gt;actionProvider&lt;/b&gt;s to be given the opportunity to contribute the menus or action bars of a viewer, a &lt;b&gt;viewerActionBinding&lt;/b&gt; must be defined (as part of the &lt;b&gt;org.eclipse.ui.navigator.viewer extension point&lt;/b&gt;) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider.*&quot;). See the documentation for &lt;b&gt;viewerActionBinding&lt;/b&gt; under the schema documentation of &lt;b&gt;org.eclipse.ui.navigator.viewer&lt;/b&gt; for more information.
 &lt;br&gt;&lt;br&gt;
-Any items contributed to the toolbar or the view menu should be removed with the &lt;b&gt;actionProviders&lt;/b&gt; is disposed.
+Any items contributed to the toolbar or the view menu should be removed when the &lt;b&gt;actionProviders&lt;/b&gt; is disposed.
          </documentation>
       </annotation>
       <complexType>
@@ -350,6 +350,16 @@ If the required action provider is disabled or unbound to the current viewer, th
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="appearsBefore" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the ID of the action provider that this action provider appears before.  This action provider will be processed (menus filled, etc) before the specified action provider is processed.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.navigator.navigatorContent/actionProvider/@id"/>
+               </appInfo>
+            </annotation>
          </attribute>
       </complexType>
    </element>

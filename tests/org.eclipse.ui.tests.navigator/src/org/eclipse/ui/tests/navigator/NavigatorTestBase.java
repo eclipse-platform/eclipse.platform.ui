@@ -28,10 +28,12 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActionService;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
+import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 import org.eclipse.ui.tests.navigator.extension.TestDataSorter;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
-import org.eclipse.ui.tests.navigator.extension.TestResourceContentProvider;
+import org.eclipse.ui.tests.navigator.extension.TestContentProviderResource;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
 public class NavigatorTestBase extends TestCase {
@@ -59,11 +61,16 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_MISSINGLABEL = "org.eclipse.ui.tests.navigator.testContentMissingLabel";
 	public static final String TEST_CONTENT_DROP_COPY = "org.eclipse.ui.tests.navigator.testContentDropCopy";
 	public static final String TEST_CONTENT_HAS_CHILDREN = "org.eclipse.ui.tests.navigator.testContentHasChildren";
+	public static final String TEST_CONTENT_ACTION_PROVIDER = "org.eclipse.ui.tests.navigator.testContentActionProvider";
 
 	protected static final String TEST_ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
 	protected static final String TEST_ACTIVITY_PROVIDER = "org.eclipse.ui.tests.navigator.testActivityProvider";
 
 
+	public static final String TEST_ACTION_PROVIDER_PRIORITY = "org.eclipse.ui.tests.navigator.extension.TestActionProviderPriority";
+	
+	protected static final String ACTION_NESTED = "org.eclipse.ui.tests.navigator.NestedAction";
+	
 	protected String _navigatorInstanceId;
 
 	protected Set _expectedChildren = new HashSet();
@@ -94,7 +101,7 @@ public class NavigatorTestBase extends TestCase {
 					"Set the _navigatorInstanceId in the constructor");
 		}
 
-		TestResourceContentProvider.resetTest();
+		TestContentProviderResource.resetTest();
 		TestDataSorter.resetTest();
 		TestLabelProvider.resetTest();
 
@@ -126,6 +133,12 @@ public class NavigatorTestBase extends TestCase {
 		
 		((NavigatorFilterService)_contentService.getFilterService()).resetFilterActivationState();
 
+	}
+	
+	protected void waitForModelObjects() throws Exception {
+		_project.findMember(TestContentProvider.MODEL_FILE_PATH).touch(null);
+		// Let build run to load the model objects
+		DisplayHelper.sleep(50);
 	}
 
 	protected void showNavigator() throws PartInitException {

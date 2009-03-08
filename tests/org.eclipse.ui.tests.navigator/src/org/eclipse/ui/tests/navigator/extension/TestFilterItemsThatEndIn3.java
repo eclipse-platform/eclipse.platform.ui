@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * @since 3.2
  *
  */
-public class TestItemsThatEndIn3 extends ViewerFilter {
+public class TestFilterItemsThatEndIn3 extends ViewerFilter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)

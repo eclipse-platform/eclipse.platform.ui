@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,6 +97,8 @@ public final class NavigatorActivationService implements
 			return b.booleanValue();
 		synchronized (activatedExtensionsMap) {
 			NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(aNavigatorExtensionId);
+			if (descriptor == null)
+				return false;
 			if(descriptor.isActiveByDefault())
 				activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.TRUE);
 			else
