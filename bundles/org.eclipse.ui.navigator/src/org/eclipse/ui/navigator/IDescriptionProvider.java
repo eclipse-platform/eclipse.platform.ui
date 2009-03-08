@@ -25,7 +25,7 @@ public interface IDescriptionProvider {
 	 * <p>
 	 * Provide a description for the status bar view, if available. A default
 	 * string of the form "(x) items selected" will be used if this method
-	 * choosed to return null.
+	 * choose to return null.
 	 * </p>
 	 * 
 	 * <p>
