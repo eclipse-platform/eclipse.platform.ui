@@ -233,7 +233,10 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 				firePropertyChange(PROP_DIRTY);
 			}});
 		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(commonViewer.getControl(),  HELP_CONTEXT);
+		String helpContext = commonViewer.getNavigatorContentService().getViewerDescriptor().getHelpContext();
+		if (helpContext == null)
+			helpContext = HELP_CONTEXT;
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(commonViewer.getControl(), helpContext);
 		
 		stats.endRun();
 	}
@@ -289,7 +292,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		if (commonManager != null) {
 			commonManager.dispose();
 		}
-		if(commonActionGroup != null) {
+		if (commonActionGroup != null) {
 			commonActionGroup.dispose();
 		}
 		super.dispose();

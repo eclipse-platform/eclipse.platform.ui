@@ -101,6 +101,13 @@ its viewer id.
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="helpContext" type="string">
+            <annotation>
+               <documentation>
+                  The help context Id to be associated with the Control associated with the viewer.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

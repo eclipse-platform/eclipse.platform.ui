@@ -121,7 +121,8 @@
 
       <viewer
             viewerId="org.eclipse.ui.tests.navigator.InheritedTestView" 
-            inheritBindingsFromViewer="org.eclipse.ui.tests.navigator.TestView">
+            inheritBindingsFromViewer="org.eclipse.ui.tests.navigator.TestView"
+            helpContext="org.eclipse.ui.tests.navigator.testHelpContext">
       </viewer>
 
    </extension>

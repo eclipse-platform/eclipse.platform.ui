@@ -158,5 +158,13 @@ public interface INavigatorViewerDescriptor {
 	 *         possible return value).
 	 */
 	boolean getBooleanConfigProperty(String aPropertyName);
+	
+	/**
+	 * @return the help context associated with this viewer as specified by 
+	 * the helpContext attribute of the &lt;viewer /&gt; element in the
+	 * <b>org.eclipse.ui.navigator.viewer</b> extension point.
+	 * @since 3.4
+	 */
+	String getHelpContext();
 
 }

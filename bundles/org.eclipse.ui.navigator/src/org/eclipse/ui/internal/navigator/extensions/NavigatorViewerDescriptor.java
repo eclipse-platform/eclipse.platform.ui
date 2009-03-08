@@ -66,6 +66,8 @@ public final class NavigatorViewerDescriptor implements
 
 	private String inheritBindingsFromViewer;
 	
+	private String helpContext;
+	
 	private final Properties properties = new Properties();
 
 	private Set dragAssistants; 
@@ -190,7 +192,22 @@ public final class NavigatorViewerDescriptor implements
 	public void setInheritBindingsFromViewer(String inherit) {
 		inheritBindingsFromViewer = inherit;
 	}
+	
+	/**
+	 * @return the help context associated with this viewer
+	 */
+	public String getHelpContext() {
+		return helpContext;
+	}
 
+	/**
+	 * @param context
+	 *            the help context associated with this viewer
+	 */
+	public void setHelpContext(String context) {
+		helpContext = context;
+	}
+	
 	/**
 	 * @param binding
 	 */

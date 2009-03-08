@@ -97,6 +97,10 @@ public class NavigatorViewerDescriptorManager {
 				if (inherit != null)
 					descriptor.setInheritBindingsFromViewer(inherit);
 				
+				String helpContext = element.getAttribute(ATT_HELP_CONTEXT);
+				if (helpContext != null)
+					descriptor.setHelpContext(helpContext);
+				
 				String attPopupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
 				IConfigurationElement[] tagPopupMenu = element
 						.getChildren(TAG_POPUP_MENU);

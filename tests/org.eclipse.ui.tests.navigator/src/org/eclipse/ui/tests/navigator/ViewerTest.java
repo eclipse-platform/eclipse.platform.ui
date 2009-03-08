@@ -14,6 +14,7 @@ package org.eclipse.ui.tests.navigator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 
 public class ViewerTest extends NavigatorTestBase {
 
@@ -30,6 +31,12 @@ public class ViewerTest extends NavigatorTestBase {
 		_viewer.setSelection(sel);
 
 		verifyMenu(sel, "Resource Mapping");
+	}
+
+	// Bug 198971[CommonNavigator] Provide extension schema for setting help ID
+	public void testHelpId() throws Exception {
+		String context = (String) _viewer.getControl().getData(WorkbenchHelpSystem.HELP_KEY);
+		assertEquals(TEST_VIEWER_HELP_CONTEXT, context);
 	}
 
 	

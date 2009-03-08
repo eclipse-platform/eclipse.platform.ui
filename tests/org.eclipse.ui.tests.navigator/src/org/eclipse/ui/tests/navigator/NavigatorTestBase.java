@@ -77,6 +77,8 @@ public class NavigatorTestBase extends TestCase {
 	
 	protected static final String ACTION_NESTED = "org.eclipse.ui.tests.navigator.NestedAction";
 	
+	public static final String TEST_VIEWER_HELP_CONTEXT = "org.eclipse.ui.tests.navigator.testHelpContext";
+	
 	protected String _navigatorInstanceId;
 
 	protected Set _expectedChildren = new HashSet();
