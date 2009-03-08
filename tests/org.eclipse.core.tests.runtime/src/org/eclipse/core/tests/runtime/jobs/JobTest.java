@@ -14,6 +14,7 @@ package org.eclipse.core.tests.runtime.jobs;
 
 import junit.framework.*;
 import junit.framework.Assert;
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -1248,7 +1249,7 @@ public class JobTest extends AbstractJobTest {
 		waitForState(longJob, Job.RUNNING);
 
 		//the thread that the job is executing in is not the one that was set
-		assertTrue("5.0", longJob.getThread() != null);
+		assertTrue("5.0 (state=" + JobManager.printState(longJob.getState()) + ')', longJob.getThread() != null);
 		longJob.cancel();
 		waitForState(longJob, Job.NONE);
 
