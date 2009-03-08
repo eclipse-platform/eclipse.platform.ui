@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Boris Bokowski - bug 218269
  *     Matthew Hall - bug 237884, 240590, 251003
- *     Ovidio Mallo - bug 238909
+ *     Ovidio Mallo - bug 238909, 235859
  ******************************************************************************/
 
 package org.eclipse.core.databinding.validation;
@@ -209,7 +209,24 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		return unmodifiableValidationStatus;
 	}
 
-	private void revalidate() {
+	/**
+	 * Signals that a re-evaluation of the current validation status is
+	 * necessary.
+	 * <p>
+	 * Clients may invoke this method whenever the validation status needs to be
+	 * updated due to some state change which cannot be automatically tracked by
+	 * the MultiValidator as it is not captured by any {@link IObservable}
+	 * instance.
+	 * <p>
+	 * Note: There is no guarantee as of whether the MultiValidator will
+	 * immediately re-evaluate the validation status by calling
+	 * {@link #validate} when becoming dirty. Instead, it may decide to perform
+	 * the re-evaluation lazily.
+	 * 
+	 * @see #validate()
+	 * @since 1.2
+	 */
+	protected final void revalidate() {
 		class ValidationRunnable implements Runnable {
 			IStatus validationResult;
 
@@ -273,14 +290,20 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	}
 
 	/**
-	 * Return the current validation status.
+	 * Returns the current validation status.
 	 * <p>
-	 * Note: To ensure that the validation status is kept current, all
-	 * dependencies used to calculate status should be accessed through
+	 * Note: To ensure that the validation status is kept current automatically,
+	 * all dependencies used to calculate status should be accessed through
 	 * {@link IObservable} instances. Each dependency observable must be in the
-	 * same realm as the MultiValidator.
+	 * same realm as the MultiValidator. Other dependencies not captured by the
+	 * state of those observables may be accounted for by having clients
+	 * <i>explicitly</i> call {@link #revalidate()} whenever the validation
+	 * status needs to be re-evaluated due to some arbitrary change in the
+	 * application state.
 	 * 
 	 * @return the current validation status.
+	 * 
+	 * @see #revalidate()
 	 */
 	protected abstract IStatus validate();
 
@@ -374,8 +397,8 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	 * The wrapper behaves as follows with respect to the validation status:
 	 * <ul>
 	 * <li>While valid, the wrapper stays in sync with its target observable.
-	 * <li>While invalid, the wrapper's entries are the target observable's
-	 * last valid entries. If the target changes entries, a stale event is fired
+	 * <li>While invalid, the wrapper's entries are the target observable's last
+	 * valid entries. If the target changes entries, a stale event is fired
 	 * signaling that a change is pending.
 	 * <li>When status changes from invalid to valid, the wrapper takes the
 	 * entries of the target observable, and synchronization resumes.

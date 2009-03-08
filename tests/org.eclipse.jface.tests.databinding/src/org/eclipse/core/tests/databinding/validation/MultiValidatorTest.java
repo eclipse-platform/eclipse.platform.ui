@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Matthew Hall - bug 237884, 251003
- *     Ovidio Mallo - bugs 240590, 238909, 251003, 247741
+ *     Ovidio Mallo - bugs 240590, 238909, 251003, 247741, 235859
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.validation;
@@ -194,6 +194,38 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		// trigger revalidation
 		dependency.setValue(ValidationStatus.info("info"));
 		assertFalse(validator.getTargets().contains(validationStatus));
+	}
+
+	public void testRevalidate() {
+		// Use this as an easy way to inject a validation status into the
+		// validator without using an observable value.
+		final IStatus[] status = new IStatus[] { ValidationStatus.ok() };
+
+		class MyMultiValidator extends MultiValidator {
+			protected IStatus validate() {
+				return status[0];
+			}
+
+			protected void callRevalidate() {
+				revalidate();
+			}
+		}
+
+		MyMultiValidator validator = new MyMultiValidator();
+
+		// Initially, the validation status should always be in sync.
+		assertSame(status[0], validator.getValidationStatus().getValue());
+
+		// When the validation status depends on something different than the
+		// IObservable dependency set, the MultiValidator cannot track those
+		// changes automatically so the validation status will get inconsistent
+		// without further ado.
+		status[0] = ValidationStatus.error("");
+		assertNotSame(status[0], validator.getValidationStatus().getValue());
+
+		// By calling makeDirty(), the validation status should be updated.
+		validator.callRevalidate();
+		assertSame(status[0], validator.getValidationStatus().getValue());
 	}
 
 	public void testBug237884_ValidationStatusAccessDuringValidationCausesLoopingDependency() {

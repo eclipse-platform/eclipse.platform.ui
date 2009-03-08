@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding" version="2">
+    <resource path="src/org/eclipse/core/databinding/validation/MultiValidator.java" type="org.eclipse.core.databinding.validation.MultiValidator">
+        <filter id="421654647">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.validation.MultiValidator"/>
+                <message_argument value="revalidate()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.databinding.observable.IObservable">
         <filter id="403804204">
             <message_arguments>
