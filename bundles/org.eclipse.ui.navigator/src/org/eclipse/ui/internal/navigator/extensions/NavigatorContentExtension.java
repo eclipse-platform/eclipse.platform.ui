@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
@@ -241,11 +240,9 @@ public class NavigatorContentExtension implements IMementoAware,
 
 					public void run() throws Exception {
 						if (labelProvider != null) {
-							StructuredViewer viewer = (StructuredViewer)viewerManager.getViewer();
 							labelProvider
 									.removeListener((ILabelProviderListener) contentService
 											.createCommonLabelProvider());
-							viewer.refresh();
 							labelProvider.dispose();
 						}
 

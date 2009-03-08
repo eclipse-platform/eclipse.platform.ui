@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * <p>
@@ -50,34 +45,6 @@ public class StructuredViewerManager {
 
 	private Object cachedNewInput;
 	
-	private UIJob refreshJob = new UIJob(
-			CommonNavigatorMessages.StructuredViewerManager_0) {
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			if(viewer != null) {
-				try {
-					if (viewer.getControl().isDisposed()) {
-						return Status.OK_STATUS;
-					}					
-	
-					
-					Display display = viewer.getControl().getDisplay();
-					if (!display.isDisposed() && viewer != null) {
-						try {
-							viewer.getControl().setRedraw(false);
-							viewer.refresh();
-						} finally {
-							viewer.getControl().setRedraw(true);
-						}
-						 
-					}
-				} catch (RuntimeException e) {
-					NavigatorPlugin.logError(0, e.toString(), e);
-				}
-			}
-			return Status.OK_STATUS;
-		}
-	};
-
 	/**
 	 * 
 	 * @param aViewer
@@ -85,7 +52,6 @@ public class StructuredViewerManager {
 	public StructuredViewerManager(Viewer aViewer) {
 		super();
 		viewer = aViewer;
-		refreshJob.setSystem(true);
 	}
 
 	/**
@@ -141,7 +107,29 @@ public class StructuredViewerManager {
 	 * 
 	 */
 	public void safeRefresh() {
-		refreshJob.schedule(10);
+
+		final Viewer localViewer = viewer;
+
+		if (localViewer == null || localViewer.getControl().isDisposed())
+			return;
+		Display display = localViewer.getControl().getDisplay();
+		if (display.isDisposed())
+			return;
+		display.syncExec(new Runnable() {
+			public void run() {
+				if (localViewer.getControl().isDisposed())
+					return;
+				try {
+					localViewer.getControl().setRedraw(false);
+					localViewer.refresh();
+				} catch (RuntimeException e) {
+					NavigatorPlugin.logError(0, e.toString(), e);
+				} finally {
+					localViewer.getControl().setRedraw(true);
+				}
+
+			}
+		});
 
 	}
 
