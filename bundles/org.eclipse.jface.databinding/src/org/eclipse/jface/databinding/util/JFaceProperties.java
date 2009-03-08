@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.util;
+package org.eclipse.jface.databinding.util;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.internal.databinding.util.JFaceProperty;
+import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * Helper class for providing {@link IObservableValue} instances for properties
@@ -28,6 +29,7 @@ public class JFaceProperties {
 	 * whose getter and setter use the suffix fieldName in the same manner as a
 	 * Java bean and which fires events to an {@link IPropertyChangeListener}
 	 * for the given propertyName when the value of the field changes.
+	 * 
 	 * @param clazz
 	 *            the class defining the getter and setter
 	 * @param fieldName
@@ -37,8 +39,8 @@ public class JFaceProperties {
 	 * 
 	 * @return an observable value
 	 */
-	public static IValueProperty value(Class clazz,
-			String fieldName, String propertyName) {
+	public static IValueProperty value(Class clazz, String fieldName,
+			String propertyName) {
 		return new JFaceProperty(fieldName, propertyName, clazz);
 	}
 
