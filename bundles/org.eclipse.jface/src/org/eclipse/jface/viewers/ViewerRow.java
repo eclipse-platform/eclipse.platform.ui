@@ -392,4 +392,16 @@ public abstract class ViewerRow implements Cloneable {
 		return false;
 	}
 
+	/**
+	 * Returns <code>true</code> if the column with the given index is visible
+	 * 
+	 * @param columnIndex
+	 *            the column index
+	 * 
+	 * @return <code>true</code> if the column is visible
+	 * @since 3.5
+	 */
+	protected boolean isColumnVisible(int columnIndex) {
+		return getWidth(columnIndex) > 0;
+	}
 }

@@ -414,12 +414,8 @@ public class ViewerCell {
 		return true;
 	}
 
-	private int getWidth() {
-		return row.getWidth(columnIndex);
-	}
-
 	private boolean isVisible() {
-		return getWidth() > 0;
+		return row.isColumnVisible(columnIndex);
 	}
 
 	/**
