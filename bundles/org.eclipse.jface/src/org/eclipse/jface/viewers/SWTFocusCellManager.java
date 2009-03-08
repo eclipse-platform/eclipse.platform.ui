@@ -185,6 +185,10 @@ abstract class SWTFocusCellManager {
 			this.focusCell.getItem().addDisposeListener(itemDeletionListener);
 		}
 
+		if( focusCell != null ) {
+			focusCell.scrollIntoView();	
+		}
+		
 		this.cellHighlighter.focusCellChanged(focusCell,oldCell);
 	}
 

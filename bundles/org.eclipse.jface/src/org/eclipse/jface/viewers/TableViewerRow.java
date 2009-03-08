@@ -240,4 +240,13 @@ public class TableViewerRow extends ViewerRow {
 	int getWidth(int columnIndex) {
 		return item.getParent().getColumn(columnIndex).getWidth();
 	}
+	
+	protected boolean scrollCellIntoView(int columnIndex) {
+		item.getParent().showItem(item);
+		if( hasColumns() ) {
+			item.getParent().showColumn(item.getParent().getColumn(columnIndex));	
+		}
+		
+		return true;
+	}
 }

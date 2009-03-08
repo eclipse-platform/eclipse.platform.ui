@@ -46,8 +46,9 @@ public abstract class ViewerRow implements Cloneable {
 	 * @see #getNeighbor(int, boolean)
 	 */
 	public static final int BELOW = 2;
-	
-	private static final String KEY_TEXT_LAYOUT = Policy.JFACE + "styled_label_key_"; //$NON-NLS-1$
+
+	private static final String KEY_TEXT_LAYOUT = Policy.JFACE
+			+ "styled_label_key_"; //$NON-NLS-1$
 
 	/**
 	 * Get the bounds of the entry at the columnIndex,
@@ -162,7 +163,8 @@ public abstract class ViewerRow implements Cloneable {
 	 * Get the ViewerCell at point.
 	 * 
 	 * @param point
-	 * @return @return {@link ViewerCell} or <code>null</code> if the point is not in the bounds of a cell
+	 * @return @return {@link ViewerCell} or <code>null</code> if the point is
+	 *         not in the bounds of a cell
 	 */
 	public ViewerCell getCell(Point point) {
 		int index = getColumnIndex(point);
@@ -196,8 +198,7 @@ public abstract class ViewerRow implements Cloneable {
 	 * Get a ViewerCell for the column at index.
 	 * 
 	 * @param column
-	 * @return {@link ViewerCell} or <code>null</code> if the index is
-	 *         negative.
+	 * @return {@link ViewerCell} or <code>null</code> if the index is negative.
 	 */
 	public ViewerCell getCell(int column) {
 		if (column >= 0)
@@ -214,9 +215,9 @@ public abstract class ViewerRow implements Cloneable {
 	public abstract Control getControl();
 
 	/**
-	 * Returns a neighboring row, or <code>null</code> if no neighbor exists
-	 * in the given direction. If <code>sameLevel</code> is <code>true</code>,
-	 * only sibling rows (under the same parent) will be considered.
+	 * Returns a neighboring row, or <code>null</code> if no neighbor exists in
+	 * the given direction. If <code>sameLevel</code> is <code>true</code>, only
+	 * sibling rows (under the same parent) will be considered.
 	 * 
 	 * @param direction
 	 *            the direction {@link #BELOW} or {@link #ABOVE}
@@ -326,7 +327,6 @@ public abstract class ViewerRow implements Cloneable {
 	public Rectangle getTextBounds(int index) {
 		return null;
 	}
-	
 
 	/**
 	 * Returns the location and bounds of the area where the image is drawn.
@@ -341,26 +341,28 @@ public abstract class ViewerRow implements Cloneable {
 	public Rectangle getImageBounds(int index) {
 		return null;
 	}
-	
+
 	/**
 	 * Set the style ranges to be applied on the text label at the column index
 	 * Note: Requires {@link StyledCellLabelProvider} with owner draw enabled.
 	 * 
-	 * @param columnIndex the index of the column
-	 * @param styleRanges the styled ranges
+	 * @param columnIndex
+	 *            the index of the column
+	 * @param styleRanges
+	 *            the styled ranges
 	 * 
 	 * @since 3.4
 	 */
 	public void setStyleRanges(int columnIndex, StyleRange[] styleRanges) {
 		getItem().setData(KEY_TEXT_LAYOUT + columnIndex, styleRanges);
 	}
-	
-	
+
 	/**
-	 * Returns the style ranges to be applied on the text label at the column index or <code>null</code> if no
-	 * style ranges have been set.
+	 * Returns the style ranges to be applied on the text label at the column
+	 * index or <code>null</code> if no style ranges have been set.
 	 * 
-	 * @param columnIndex the index of the column
+	 * @param columnIndex
+	 *            the index of the column
 	 * @return styleRanges the styled ranges
 	 * 
 	 * @since 3.4
@@ -368,8 +370,26 @@ public abstract class ViewerRow implements Cloneable {
 	public StyleRange[] getStyleRanges(int columnIndex) {
 		return (StyleRange[]) getItem().getData(KEY_TEXT_LAYOUT + columnIndex);
 	}
-	
+
 	int getWidth(int columnIndex) {
 		return getBounds(columnIndex).width;
 	}
+
+	/**
+	 * Scrolls the cell at this index into view
+	 * <p>
+	 * <b>Because of backwards API compatibility the default implementation is a
+	 * no-op. Implementators of {@link ColumnViewer} should overwrite this
+	 * method if their widget supports reordered columns</b>
+	 * </p>
+	 * 
+	 * @param columnIndex
+	 *            the column index
+	 * @return return <code>true</code> when the cell is scrolled into view
+	 * @since 3.5
+	 */
+	protected boolean scrollCellIntoView(int columnIndex) {
+		return false;
+	}
+
 }

@@ -140,14 +140,16 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 
 			List l = getViewer().getSelectionFromWidget();
 
-			if (focusCellManager != null) {
-				focusCellManager.setFocusCell(focusCell);
-			}
-
 			if (!l.contains(focusCell.getElement())) {
 				getViewer().setSelection(
 						new TreeSelection(focusCell.getViewerRow()
 								.getTreePath()),true);
+			}
+			
+			// Set the focus cell after the selection is updated because else
+			// the cell is not scrolled into view
+			if (focusCellManager != null) {
+				focusCellManager.setFocusCell(focusCell);
 			}
 		}
 	}

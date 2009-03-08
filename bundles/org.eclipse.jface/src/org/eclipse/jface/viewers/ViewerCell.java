@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
- *
+ * 
  * @since 3.3
- *
+ * 
  */
 public class ViewerCell {
 	private int columnIndex;
@@ -55,10 +55,9 @@ public class ViewerCell {
 	 */
 	public static int RIGHT = 1 << 3;
 
-	
 	/**
 	 * Create a new instance of the receiver on the row.
-	 *
+	 * 
 	 * @param row
 	 * @param columnIndex
 	 */
@@ -70,7 +69,7 @@ public class ViewerCell {
 
 	/**
 	 * Get the index of the cell.
-	 *
+	 * 
 	 * @return the index
 	 */
 	public int getColumnIndex() {
@@ -79,7 +78,7 @@ public class ViewerCell {
 
 	/**
 	 * Get the bounds of the cell.
-	 *
+	 * 
 	 * @return {@link Rectangle}
 	 */
 	public Rectangle getBounds() {
@@ -88,7 +87,7 @@ public class ViewerCell {
 
 	/**
 	 * Get the element this row represents.
-	 *
+	 * 
 	 * @return {@link Object}
 	 */
 	public Object getElement() {
@@ -105,7 +104,7 @@ public class ViewerCell {
 
 	/**
 	 * Return the text for the cell.
-	 *
+	 * 
 	 * @return {@link String}
 	 */
 	public String getText() {
@@ -114,7 +113,7 @@ public class ViewerCell {
 
 	/**
 	 * Return the Image for the cell.
-	 *
+	 * 
 	 * @return {@link Image} or <code>null</code>
 	 */
 	public Image getImage() {
@@ -123,7 +122,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the background color of the cell.
-	 *
+	 * 
 	 * @param background
 	 */
 	public void setBackground(Color background) {
@@ -133,7 +132,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the foreground color of the cell.
-	 *
+	 * 
 	 * @param foreground
 	 */
 	public void setForeground(Color foreground) {
@@ -143,7 +142,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the font of the cell.
-	 *
+	 * 
 	 * @param font
 	 */
 	public void setFont(Font font) {
@@ -153,7 +152,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the text for the cell.
-	 *
+	 * 
 	 * @param text
 	 */
 	public void setText(String text) {
@@ -163,30 +162,30 @@ public class ViewerCell {
 
 	/**
 	 * Set the Image for the cell.
-	 *
+	 * 
 	 * @param image
 	 */
 	public void setImage(Image image) {
 		row.setImage(columnIndex, image);
 
 	}
-	
+
 	/**
-	 * Set the style ranges to be applied on the text label
-	 * Note: Requires {@link StyledCellLabelProvider} with owner draw enabled.
+	 * Set the style ranges to be applied on the text label Note: Requires
+	 * {@link StyledCellLabelProvider} with owner draw enabled.
 	 * 
-	 * @param styleRanges the styled ranges
+	 * @param styleRanges
+	 *            the styled ranges
 	 * 
 	 * @since 3.4
 	 */
 	public void setStyleRanges(StyleRange[] styleRanges) {
 		row.setStyleRanges(columnIndex, styleRanges);
 	}
-	
-	
+
 	/**
-	 * Returns the style ranges to be applied on the text label or <code>null</code> if no
-	 * style ranges have been set.
+	 * Returns the style ranges to be applied on the text label or
+	 * <code>null</code> if no style ranges have been set.
 	 * 
 	 * @return styleRanges the styled ranges
 	 * 
@@ -198,7 +197,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the columnIndex.
-	 *
+	 * 
 	 * @param column
 	 */
 	void setColumn(int column) {
@@ -208,7 +207,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the row to rowItem and the columnIndex to column.
-	 *
+	 * 
 	 * @param rowItem
 	 * @param column
 	 */
@@ -220,7 +219,7 @@ public class ViewerCell {
 
 	/**
 	 * Return the item for the receiver.
-	 *
+	 * 
 	 * @return {@link Item}
 	 */
 	public Widget getItem() {
@@ -229,7 +228,7 @@ public class ViewerCell {
 
 	/**
 	 * Get the control for this cell.
-	 *
+	 * 
 	 * @return {@link Control}
 	 */
 	public Control getControl() {
@@ -239,7 +238,7 @@ public class ViewerCell {
 	/**
 	 * Get the current index. This can be different from the original index when
 	 * columns are reordered
-	 *
+	 * 
 	 * @return the current index (as shown in the UI)
 	 * @since 3.4
 	 */
@@ -252,9 +251,9 @@ public class ViewerCell {
 	 * neighbor exists in the given direction. Direction constants can be
 	 * combined by bitwise OR; for example, this method will return the cell to
 	 * the upper-left of the current cell by passing {@link #ABOVE} |
-	 * {@link #LEFT}. If <code>sameLevel</code> is <code>true</code>, only
-	 * cells in sibling rows (under the same parent) will be considered.
-	 *
+	 * {@link #LEFT}. If <code>sameLevel</code> is <code>true</code>, only cells
+	 * in sibling rows (under the same parent) will be considered.
+	 * 
 	 * @param directionMask
 	 *            the direction mask used to identify the requested neighbor
 	 *            cell
@@ -289,15 +288,17 @@ public class ViewerCell {
 
 			if (columnIndex >= 0 && columnIndex < row.getColumnCount()) {
 				ViewerCell cell = row.getCellAtVisualIndex(columnIndex);
-				if( cell != null ) {
-					while( cell != null && columnIndex < row.getColumnCount() - 1  && columnIndex > 0 ) {
-						if( cell.isVisible() ) {
+				if (cell != null) {
+					while (cell != null
+							&& columnIndex < row.getColumnCount() - 1
+							&& columnIndex > 0) {
+						if (cell.isVisible()) {
 							break;
 						}
 
 						columnIndex += modifier;
 						cell = row.getCellAtVisualIndex(columnIndex);
-						if( cell == null ) {
+						if (cell == null) {
 							break;
 						}
 					}
@@ -320,7 +321,7 @@ public class ViewerCell {
 	/**
 	 * The location and bounds of the area where the text is drawn depends on
 	 * various things (image displayed, control with SWT.CHECK)
-	 *
+	 * 
 	 * @return The bounds of the of the text area. May return <code>null</code>
 	 *         if the underlying widget implementation doesn't provide this
 	 *         information
@@ -329,9 +330,9 @@ public class ViewerCell {
 	public Rectangle getTextBounds() {
 		return row.getTextBounds(columnIndex);
 	}
-	
+
 	/**
-	 * Returns the location and bounds of the area where the image is drawn 
+	 * Returns the location and bounds of the area where the image is drawn
 	 * 
 	 * @return The bounds of the of the image area. May return <code>null</code>
 	 *         if the underlying widget implementation doesn't provide this
@@ -345,25 +346,27 @@ public class ViewerCell {
 	/**
 	 * Gets the foreground color of the cell.
 	 * 
-	 * @return the foreground of the cell or <code>null</code> for the default foreground
+	 * @return the foreground of the cell or <code>null</code> for the default
+	 *         foreground
 	 * 
 	 * @since 3.4
 	 */
 	public Color getForeground() {
 		return row.getForeground(columnIndex);
 	}
-	
+
 	/**
 	 * Gets the background color of the cell.
 	 * 
-	 * @return the background of the cell or <code>null</code> for the default background
+	 * @return the background of the cell or <code>null</code> for the default
+	 *         background
 	 * 
 	 * @since 3.4
 	 */
 	public Color getBackground() {
 		return row.getBackground(columnIndex);
 	}
-	
+
 	/**
 	 * Gets the font of the cell.
 	 * 
@@ -374,10 +377,10 @@ public class ViewerCell {
 	public Font getFont() {
 		return row.getFont(columnIndex);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
@@ -390,7 +393,7 @@ public class ViewerCell {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
@@ -410,12 +413,22 @@ public class ViewerCell {
 			return false;
 		return true;
 	}
-	
+
 	private int getWidth() {
 		return row.getWidth(columnIndex);
 	}
-	
+
 	private boolean isVisible() {
 		return getWidth() > 0;
+	}
+
+	/**
+	 * Scroll the cell into view
+	 * 
+	 * @return true if the cell was scrolled into view
+	 * @since 3.5
+	 */
+	public boolean scrollIntoView() {
+		return row.scrollCellIntoView(columnIndex);
 	}
 }

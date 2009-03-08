@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * This is an editor-implementation for {@link Table}
- *
+ * 
  * @since 3.3
- *
+ * 
  */
 public final class TableViewerEditor extends ColumnViewerEditor {
 	/**
@@ -57,7 +57,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * Create a customized editor with focusable cells
-	 *
+	 * 
 	 * @param viewer
 	 *            the viewer the editor is created for
 	 * @param focusCellManager
@@ -89,7 +89,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * Create a customized editor whose activation process is customized
-	 *
+	 * 
 	 * @param viewer
 	 *            the viewer the editor is created for
 	 * @param editorActivationStrategy
@@ -120,7 +120,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 		tableEditor.minimumWidth = layoutData.minimumWidth;
 		tableEditor.verticalAlignment = layoutData.verticalAlignment;
 
-		if( layoutData.minimumHeight != SWT.DEFAULT ) {
+		if (layoutData.minimumHeight != SWT.DEFAULT) {
 			tableEditor.minimumHeight = layoutData.minimumHeight;
 		}
 	}
@@ -142,13 +142,15 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 			List l = getViewer().getSelectionFromWidget();
 
-			if (focusCellManager != null) {
-				focusCellManager.setFocusCell(focusCell);
-			}
-
 			if (!l.contains(focusCell.getElement())) {
 				getViewer().setSelection(
-						new StructuredSelection(focusCell.getElement()),true);
+						new StructuredSelection(focusCell.getElement()), true);
+			}
+
+			// Set the focus cell after the selection is updated because else
+			// the cell is not scrolled into view
+			if (focusCellManager != null) {
+				focusCellManager.setFocusCell(focusCell);
 			}
 		}
 	}
