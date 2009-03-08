@@ -64,6 +64,8 @@ public final class NavigatorViewerDescriptor implements
 
 	private boolean allowsPlatformContributions = true;
 
+	private String inheritBindingsFromViewer;
+	
 	private final Properties properties = new Properties();
 
 	private Set dragAssistants; 
@@ -175,6 +177,57 @@ public final class NavigatorViewerDescriptor implements
 		allowsPlatformContributions = toAllowPlatformContributions;
 	}
 
+	/**
+	 * @return the viewer from which this viewer inherits its bindings
+	 */
+	public String getInheritBindingsFromViewer() {
+		return inheritBindingsFromViewer;
+	}
+	
+	/**
+	 * @param inherit
+	 */
+	public void setInheritBindingsFromViewer(String inherit) {
+		inheritBindingsFromViewer = inherit;
+	}
+
+	/**
+	 * @param binding
+	 */
+	public void setContentBinding(Binding binding) {
+		contentBinding = binding;
+	}
+	
+	/**
+	 * @return the content Binding
+	 */
+	public Binding getContentBinding() {
+		return contentBinding;
+	}
+	
+	/**
+	 * @param binding
+	 */
+	public void setActionBinding(Binding binding) {
+		actionBinding = binding;
+	}
+	
+	/**
+	 * @return the action Binding
+	 */
+	public Binding getActionBinding() {
+		return actionBinding;
+	}
+	
+	/**
+	 * @param assistants
+	 */
+	public void setDragAssistants(Set assistants) {
+		dragAssistants = assistants;
+	}
+	
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 

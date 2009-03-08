@@ -80,7 +80,7 @@ its viewer id.
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the common viewer. If the viewer is in a common navigator then the id must match the navigator's id defined in its &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension.
+                  The id of the common viewer. If the viewer is in a common navigator then the id must match the navigator&apos;s id defined in its &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension.
                </documentation>
             </annotation>
          </attribute>
@@ -89,6 +89,16 @@ its viewer id.
                <documentation>
                   The popupMenuId of the defined viewer. If not specified, the popupMenuId defaults to the id of the viewer. Clients may specify only the &quot;popupMenuId&quot; OR a &lt;b&gt;popupMenu&lt;/b&gt; element, but not both. The default list of insertion points is declared in the documentation for the &lt;b&gt;popupMenu&lt;/b&gt; element.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="inheritBindingsFromViewer" type="string">
+            <annotation>
+               <documentation>
+                  Causes all of the action and content bindings from the specified viewer to be used by this viewer.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.navigator.viewer/viewer/@viewerId"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -112,7 +122,7 @@ A viewer may have multiple viewerContentBindings defined, and their includes/exc
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the common viewer. If the viewer is in a common navigator then the id must match the navigator's id defined in its &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension.
+                  The id of the common viewer. If the viewer is in a common navigator then the id must match the navigator&apos;s id defined in its &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension.
                </documentation>
             </annotation>
          </attribute>
@@ -137,7 +147,7 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
          <attribute name="viewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the common viewer. If the viewer is in a common navigator then the id must match the navigator's id defined in its &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension.
+                  The id of the common viewer. If the viewer is in a common navigator then the id must match the navigator&apos;s id defined in its &lt;b&gt;org.eclipse.ui.views&lt;/b&gt; extension.
                </documentation>
             </annotation>
          </attribute>

@@ -24,6 +24,9 @@ public interface IViewerExtPtConstants {
 	String TAG_VIEWER = "viewer"; //$NON-NLS-1$
 	
 	/** */
+	String ATT_INHERIT_BINDINGS_FROM_VIEWER = "inheritBindingsFromViewer"; //$NON-NLS-1$
+
+	/** */
 	String TAG_VIEWER_CONTENT_BINDING = "viewerContentBinding"; //$NON-NLS-1$
 
 	/** */
@@ -67,5 +70,6 @@ public interface IViewerExtPtConstants {
 	
 	/** */
 	String ATT_CLASS = "class"; //$NON-NLS-1$
+	
 
 }

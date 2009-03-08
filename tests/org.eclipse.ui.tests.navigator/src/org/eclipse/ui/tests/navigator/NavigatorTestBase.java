@@ -18,11 +18,16 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.internal.navigator.NavigatorFilterService;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -47,6 +52,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_VIEWER_PROGRAMMATIC = "org.eclipse.ui.tests.navigator.ProgrammaticTestView";
 	public static final String TEST_VIEWER_PIPELINE = "org.eclipse.ui.tests.navigator.PipelineTestView";
 	public static final String TEST_VIEWER_HIDE_EXTENSIONS = "org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView";
+	public static final String TEST_VIEWER_INHERITED = "org.eclipse.ui.tests.navigator.InheritedTestView";
 	
 	public static final String TEST_CONTENT = "org.eclipse.ui.tests.navigator.testContent";
 	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testContent2";	
@@ -93,6 +99,8 @@ public class NavigatorTestBase extends TestCase {
 	protected NavigatorActionService _actionService;
 
 	protected boolean _initTestData = true;
+
+	protected static final boolean DEBUG = !false;
 
 	protected void setUp() throws Exception {
 
@@ -184,4 +192,60 @@ public class NavigatorTestBase extends TestCase {
 		_viewer.refresh();
 	}
 
+	protected Object verifyMenu(IStructuredSelection sel, String item) {
+		MenuManager mm = new MenuManager();
+		_actionService.setContext(new ActionContext(sel));
+		_actionService.fillContextMenu(mm);
+
+		IContributionItem[] items = mm.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof MenuManager) {
+				MenuManager childMm = (MenuManager) items[i];
+				if (DEBUG) {
+					System.out.println("menu text: " + childMm.getMenuText());
+				}
+				if (childMm.getMenuText().indexOf(item) >= 0)
+					return childMm;
+			} else if (items[i] instanceof ActionContributionItem) {
+				ActionContributionItem aci = (ActionContributionItem) items[i];
+				if (DEBUG) {
+					System.out.println("action text: "
+							+ aci.getAction().getText());
+				}
+				if (aci.getAction().getText().indexOf(item) >= 0)
+					return aci;
+			}
+		}
+
+		return null;
+	}
+
+	protected boolean verifyMenu(IStructuredSelection sel, String item, boolean useNewMenu) {
+		MenuManager mm = new MenuManager();
+		_actionService.setContext(new ActionContext(sel));
+		_actionService.fillContextMenu(mm);
+
+		IContributionItem[] items = mm.getItems();
+
+		if (useNewMenu) {
+			MenuManager newMm = (MenuManager) items[1];
+			items = newMm.getItems();
+		}
+		
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof ActionContributionItem) {
+				ActionContributionItem aci = (ActionContributionItem) items[i];
+				if (aci.getAction().getText().startsWith(item))
+					return true;
+				if (DEBUG)
+					System.out.println("action text: "
+							+ aci.getAction().getText());
+			}
+		}
+
+		return false;
+	}
+	
+	
+	
 }

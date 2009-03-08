@@ -32,36 +32,6 @@ public class ActionProviderTest extends NavigatorTestBase {
 		_navigatorInstanceId = TEST_VIEWER;
 	}
 
-	private static final boolean DEBUG = !false;
-
-	protected Object verifyMenu(IStructuredSelection sel, String item) {
-		MenuManager mm = new MenuManager();
-		_actionService.setContext(new ActionContext(sel));
-		_actionService.fillContextMenu(mm);
-
-		IContributionItem[] items = mm.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof MenuManager) {
-				MenuManager childMm = (MenuManager) items[i];
-				if (DEBUG) {
-					System.out.println("menu text: " + childMm.getMenuText());
-				}
-				if (childMm.getMenuText().indexOf(item) >= 0)
-					return childMm;
-			} else if (items[i] instanceof ActionContributionItem) {
-				ActionContributionItem aci = (ActionContributionItem) items[i];
-				if (DEBUG) {
-					System.out.println("action text: "
-							+ aci.getAction().getText());
-				}
-				if (aci.getAction().getText().indexOf(item) >= 0)
-					return aci;
-			}
-		}
-
-		return null;
-	}
-
 	public void testBasicModel() throws Exception {
 		waitForModelObjects();
 

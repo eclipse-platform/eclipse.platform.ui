@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,20 +11,17 @@
 package org.eclipse.ui.internal.navigator.extensions;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.MenuInsertionPoint;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
  * @since 3.2
  */
 public class NavigatorViewerDescriptorManager {
@@ -32,7 +29,7 @@ public class NavigatorViewerDescriptorManager {
 	private static final NavigatorViewerDescriptorManager INSTANCE = new NavigatorViewerDescriptorManager();
 
 	private final Map viewerDescriptors = new HashMap();
-
+	
 	/**
 	 * @return The intialized singleton instance of the viewer descriptor
 	 *         registry.
@@ -43,6 +40,17 @@ public class NavigatorViewerDescriptorManager {
 
 	protected NavigatorViewerDescriptorManager() {
 		new NavigatorViewerDescriptorRegistry().readRegistry();
+		
+		Iterator it = viewerDescriptors.values().iterator();
+		while (it.hasNext()) {
+			NavigatorViewerDescriptor desc = (NavigatorViewerDescriptor) it.next();
+			NavigatorViewerDescriptor parentDesc = (NavigatorViewerDescriptor) viewerDescriptors.get(desc.getInheritBindingsFromViewer());
+			if (parentDesc != null) {
+				desc.setActionBinding(parentDesc.getActionBinding());
+				desc.setContentBinding(parentDesc.getContentBinding());
+				desc.setDragAssistants(parentDesc.getDragAssistants());
+			}
+		}
 	}
 
 	/**
@@ -85,6 +93,10 @@ public class NavigatorViewerDescriptorManager {
 				String viewerId = element.getAttribute(ATT_VIEWER_ID);
 				NavigatorViewerDescriptor descriptor = getNavigatorViewerDescriptor(viewerId);
 
+				String inherit = element.getAttribute(ATT_INHERIT_BINDINGS_FROM_VIEWER);
+				if (inherit != null)
+					descriptor.setInheritBindingsFromViewer(inherit);
+				
 				String attPopupMenuId = element.getAttribute(ATT_POPUP_MENU_ID);
 				IConfigurationElement[] tagPopupMenu = element
 						.getChildren(TAG_POPUP_MENU);
@@ -181,6 +193,16 @@ public class NavigatorViewerDescriptorManager {
 				return true;
 			}
 			return false;
+		}
+		
+		public void readRegistry() {
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint point = registry.getExtensionPoint(NavigatorPlugin.PLUGIN_ID, TAG_VIEWER);
+			if (point == null) {
+				return;
+			}
+
+			super.readRegistry();
 		}
 	}
 

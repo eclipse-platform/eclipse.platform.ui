@@ -32,6 +32,13 @@
             allowMultiple="false"
             class="org.eclipse.ui.navigator.resources.ProjectExplorer"
             name="Test Hide Available Extensions View"/>            
+
+      <view
+            id="org.eclipse.ui.tests.navigator.InheritedTestView"
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            name="Inherited Test View"/>            
+
    </extension>
 
    <extension
@@ -111,6 +118,11 @@
        	      <contentExtension pattern="org.eclipse.ui.tests.navigator.testContentOverridden1" />		       	      
           </includes>
       </viewerContentBinding>
+
+      <viewer
+            viewerId="org.eclipse.ui.tests.navigator.InheritedTestView" 
+            inheritBindingsFromViewer="org.eclipse.ui.tests.navigator.TestView">
+      </viewer>
 
    </extension>
 

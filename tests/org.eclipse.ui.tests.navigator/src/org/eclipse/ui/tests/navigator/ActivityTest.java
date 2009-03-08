@@ -14,14 +14,10 @@ package org.eclipse.ui.tests.navigator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 public class ActivityTest extends NavigatorTestBase {
@@ -33,32 +29,6 @@ public class ActivityTest extends NavigatorTestBase {
 	private static final boolean DEBUG = false;
 
 	protected static final boolean USE_NEW_MENU = true;
-	
-	protected boolean verifyMenu(IStructuredSelection sel, String item, boolean useNewMenu) {
-		MenuManager mm = new MenuManager();
-		_actionService.setContext(new ActionContext(sel));
-		_actionService.fillContextMenu(mm);
-
-		IContributionItem[] items = mm.getItems();
-
-		if (useNewMenu) {
-			MenuManager newMm = (MenuManager) items[1];
-			items = newMm.getItems();
-		}
-		
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof ActionContributionItem) {
-				ActionContributionItem aci = (ActionContributionItem) items[i];
-				if (aci.getAction().getText().startsWith(item))
-					return true;
-				if (DEBUG)
-					System.out.println("action text: "
-							+ aci.getAction().getText());
-			}
-		}
-
-		return false;
-	}
 	
 	// Bug 217801 make sure category filtering works with common wizards
 	// Bug 257598 missing capabilities support for actions
