@@ -37,9 +37,15 @@ public class URIUtilTest extends RuntimeTest {
 		try {
 			locationURL = FileLocator.resolve(locationURL);
 			URI location = URIUtil.toURI(locationURL);
-			URI jar = URIUtil.toJarURI(location, new Path("test/1029/test.txt"));
+			final String suffix = "test/1029/test.txt";
+			URI jar = URIUtil.toJarURI(location, new Path(suffix));
 			InputStream is = jar.toURL().openStream();
 			is.close();
+
+			//null entry path
+			URI jar2 = URIUtil.toJarURI(location, null);
+			assertEquals("2.0", jar.toString(), jar2.toString() + suffix);
+
 		} catch (MalformedURLException e) {
 			fail("1.0", e);
 		} catch (IOException e) {
