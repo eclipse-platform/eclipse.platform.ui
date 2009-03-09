@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -36,7 +34,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 
@@ -322,31 +320,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * @return the current text offset
 	 */
 	protected int getCurrentTextOffset() {
-
-		try {
-			StyledText text= fTextViewer.getTextWidget();
-			if (text == null || text.isDisposed())
-				return -1;
-
-			Display display= text.getDisplay();
-			Point absolutePosition= display.getCursorLocation();
-			Point relativePosition= text.toControl(absolutePosition);
-
-			int widgetOffset= text.getOffsetAtLocation(relativePosition);
-			Point p= text.getLocationAtOffset(widgetOffset);
-			if (p.x > relativePosition.x)
-				widgetOffset--;
-
-			if (fTextViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
-				return extension.widgetOffset2ModelOffset(widgetOffset);
-			}
-
-			return widgetOffset + fTextViewer.getVisibleRegion().getOffset();
-
-		} catch (IllegalArgumentException e) {
-			return -1;
-		}
+		return JFaceTextUtil.getOffsetForCursorLocation(fTextViewer);
 	}
 
 	/*

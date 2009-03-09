@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.internal.text.SelectionProcessor;
 
@@ -385,4 +386,38 @@ public final class JFaceTextUtil {
 		return new SelectionProcessor(viewer).getRanges(selection);
 	}
 
+	/**
+	 * Returns the offset in the given viewer that corresponds to the current cursor location.
+	 * 
+	 * @param viewer the viewer
+	 * @return the offset for the current cursor location or -1 if not available
+	 * @since 3.5
+	 */
+	public static int getOffsetForCursorLocation(ITextViewer viewer) {
+
+		try {
+			StyledText text= viewer.getTextWidget();
+			if (text == null || text.isDisposed())
+				return -1;
+
+			Display display= text.getDisplay();
+			Point absolutePosition= display.getCursorLocation();
+			Point relativePosition= text.toControl(absolutePosition);
+
+			int widgetOffset= text.getOffsetAtLocation(relativePosition);
+			Point p= text.getLocationAtOffset(widgetOffset);
+			if (p.x > relativePosition.x)
+				widgetOffset--;
+
+			if (viewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5)viewer;
+				return extension.widgetOffset2ModelOffset(widgetOffset);
+			}
+
+			return widgetOffset + viewer.getVisibleRegion().getOffset();
+
+		} catch (IllegalArgumentException e) {
+			return -1;
+		}
+	}
 }
