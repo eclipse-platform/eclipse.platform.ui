@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -315,6 +315,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			TableItem selection= fTable.getSelection()[0];
 			IHyperlink link= (IHyperlink)selection.getData();
 			fManager.hideInformationControl();
+			fManager.setCaret();
 			link.open();
 		}
 	}
@@ -581,6 +582,15 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			fIsControlVisible= true;
 		}
 
+		/**
+		 * Sets the caret where hyperlinking got initiated.
+		 * 
+		 * @since 3.5
+		 */
+		private void setCaret() {
+			fHyperlinkPresenter.setCaret();
+		}
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
 		 */
@@ -651,6 +661,12 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	private IHyperlink[] fHyperlinks;
 	private Region fSubjectRegion;
 	private MultipleHyperlinkHoverManager fManager;
+
+	/**
+	 * The offset in the text viewer where hyperlinking got initiated.
+	 * @since 3.5
+	 */
+	private int fCursorOffset;
 
 	/**
 	 * Creates a new multiple hyperlink presenter which uses
@@ -743,7 +759,20 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		}
 
 		fSubjectRegion= new Region(start, end - start);
+		fCursorOffset= JFaceTextUtil.getOffsetForCursorLocation(fTextViewer);
 
 		fManager.showInformation();
 	}
+
+	/**
+	 * Sets the caret where hyperlinking got initiated.
+	 * 
+	 * @since 3.5
+	 */
+	private void setCaret() {
+		Point selectedRange= fTextViewer.getSelectedRange();
+		if (fCursorOffset != -1 && !(fSubjectRegion.getOffset() <= selectedRange.x && selectedRange.x + selectedRange.y <= fSubjectRegion.getOffset() + fSubjectRegion.getLength()))
+			fTextViewer.setSelectedRange(fCursorOffset, 0);
+	}
+
 }
