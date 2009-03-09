@@ -11,21 +11,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -51,8 +47,8 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.AbstractMultiEditor;
+import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -467,8 +463,7 @@ public class EditorReference extends WorkbenchPartReference implements
         
         // If unable to create the part, create an error part instead
         // and pass the error to the status handling facility
-        if (exception != null) {
-            
+        if (exception != null) {           
             IStatus originalStatus = exception.getStatus();
             IStatus logStatus = StatusUtil.newStatus(originalStatus,
                     NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
@@ -480,41 +475,8 @@ public class EditorReference extends WorkbenchPartReference implements
 			// Pass the error to the status handling facility
             StatusManager.getManager().handle(logStatus);
             
-            ErrorEditorPart part = new ErrorEditorPart(displayStatus);
-            
-            IEditorInput input;
-            try {
-                input = getEditorInput();
-            } catch (PartInitException e1) {
-				input = new NullEditorInput(this);
-            }
-            
-            EditorPane pane = (EditorPane)getPane();
-            
-            pane.createControl(getPaneControlContainer());
-            
             EditorDescriptor descr = getDescriptor();
-            
-            EditorSite site = new EditorSite(this, part, manager.page, descr);
-            
-            site.setActionBars(new EditorActionBars(manager.page, site.getWorkbenchWindow(), getId()));
-            
-			part.init(site, input);
-
-            Composite parent = (Composite)pane.getControl();
-            Composite content = new Composite(parent, SWT.NONE);
-            content.setLayout(new FillLayout());
-            
-            try {
-				part.createPartControl(content);
-			} catch (Exception e) {
-				content.dispose();
-				StatusUtil.handleStatus(e, StatusManager.SHOW
-						| StatusManager.LOG);
-				return null;
-			}
-
-            result = part;
+            return getEmptyEditor(descr, displayStatus);
         }
         
         return result;
@@ -784,7 +746,22 @@ public class EditorReference extends WorkbenchPartReference implements
 	 * @return the empty editor part or <code>null</code> in case of an exception
 	 */
 	public IEditorPart getEmptyEditor(EditorDescriptor descr) {
-        ErrorEditorPart part = new ErrorEditorPart();
+		return getEmptyEditor(descr, null);
+	}
+	
+	/**
+	 * Creates and returns an empty editor (<code>ErrorEditorPart</code>).
+	 * 
+	 * @param descr the editor descriptor
+	 * @param displayStatus the error status to display in the fake editor
+	 * @return the empty editor part or <code>null</code> in case of an exception
+	 */
+	public IEditorPart getEmptyEditor(EditorDescriptor descr, IStatus displayStatus) {
+		if (descr == null) {
+			descr = getDescriptor(EditorRegistry.EMPTY_EDITOR_ID);
+		}
+		
+        ErrorEditorPart part = new ErrorEditorPart(displayStatus);
         
         IEditorInput input;
         try {
@@ -798,7 +775,11 @@ public class EditorReference extends WorkbenchPartReference implements
         pane.createControl(getPaneControlContainer());
         
         EditorSite site = new EditorSite(this, part, manager.page, descr);
-        
+        if ((descr != null)) {
+        	// Attempt to maintain the editor's id
+        	site.setId(getId());
+        }
+                
         site.setActionBars(new EditorActionBars(manager.page, site.getWorkbenchWindow(), getId()));
 
 		part.init(site, input);
@@ -821,7 +802,8 @@ public class EditorReference extends WorkbenchPartReference implements
         // if the part's widgets get disposed unexpectedly. The workbench part reference is the only
         // object that should dispose this control, and it will remove the listener before it does so.
 
-        part.setPartName("(Empty)"); //$NON-NLS-1$
+        if (displayStatus == null)
+        	part.setPartName("(Empty)"); //$NON-NLS-1$
         refreshFromPart();
         releaseReferences();
         
