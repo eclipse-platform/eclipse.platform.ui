@@ -143,7 +143,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		protected void clearText() {
 			setFilterText(""); //$NON-NLS-1$
 			// remove the filter if text is cleared
-			if (viewerFilter != null) {
+			if (!locked && viewerFilter != null) {
 				getViewer().removeFilter(viewerFilter);
 				viewerFilter = null;
 				getShell().setText(cachedTitle);
@@ -170,6 +170,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	private Sash sash;
 
 	private IHandlerActivation showViewHandler;
+
+	private boolean locked;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -658,5 +660,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	protected Sash createSash(Composite composite, Control rightControl) {
 		sash = super.createSash(composite, rightControl);
 		return sash;
+	}
+
+	/**
+	 * <code>true</code> if upon clearing the filter field, the list of pages
+	 * should not be reset to all property or preference pages.
+	 * 
+	 * @param b
+	 */
+	public void setLocked(boolean b) {
+		this.locked = b;
 	}
 }
