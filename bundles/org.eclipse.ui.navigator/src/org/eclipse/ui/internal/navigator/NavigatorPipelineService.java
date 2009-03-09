@@ -73,7 +73,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		
 		ContributorTrackingSet trackedSet =(ContributorTrackingSet) anAddModification.getChildren();
 		
-		Set contentDescriptors = contentService.findDescriptorsByTriggerPoint(anAddModification.getParent(), false);
+		Set contentDescriptors = contentService.findDescriptorsByTriggerPoint(anAddModification.getParent(), !NavigatorContentService.CONSIDER_OVERRIDES);
 		
 		
 		for (Iterator descriptorsItr = contentDescriptors.iterator(); descriptorsItr.hasNext();) {

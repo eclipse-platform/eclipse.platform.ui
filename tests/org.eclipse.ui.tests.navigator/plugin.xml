@@ -154,7 +154,7 @@
 
          <commonSorter
               id="org.eclipse.ui.tests.navigator.commonSorter"
-              class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
+              class="org.eclipse.ui.tests.navigator.extension.TestSorterData">
            <parentExpression>
               <or>
                  <adapt type="org.eclipse.core.resources.IProject"/>
@@ -162,18 +162,6 @@
               </or>
            </parentExpression>
          </commonSorter>
-
-       	 <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
-            <parentExpression>
-               <instanceof value="org.eclipse.ui.navigator.INavigatorSorterService"/>
-            </parentExpression>
-       	 </commonSorter> 
-
-       	 <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
-            <parentExpression>
-               <instanceof value="org.eclipse.ui.navigator.INavigatorSorterService"/>
-            </parentExpression>
-       	 </commonSorter>
 
       	 <actionProvider
             id="org.eclipse.ui.tests.navigator.extension.TestNestedActionProvider" 
@@ -292,21 +280,127 @@
 	  </navigatorContent>      
 
       <navigatorContent
-            id="org.eclipse.ui.tests.navigator.testContentSorter"
-            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderResource"
-            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
-            name="Test Navigator Extension [Sorter NPE test]">
+            id="org.eclipse.ui.tests.navigator.testContentSorterModel"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            name="Test Navigator Extension [Sorter For Model]">
 	     <triggerPoints>
             <instanceof value="org.eclipse.core.resources.IResource"/>
          </triggerPoints>            
 
-       <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
+        <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestSorterData">
           <parentExpression>
             <instanceof
                   value="org.eclipse.core.resources.IResource">
             </instanceof>
           </parentExpression>
-       </commonSorter>
+        </commonSorter>
+
+      </navigatorContent>
+
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testContentSorterModel.override"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            name="Test Navigator Extension [Sorter For Model Override]">
+	     <triggerPoints>
+	        <or>
+               <instanceof value="org.eclipse.core.resources.IResource"/>
+			   <instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+			</or>   
+         </triggerPoints>            
+		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testContent"/>
+
+        <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestSorterDataAndResource">
+          <parentExpression>
+          </parentExpression>
+        </commonSorter>
+
+      </navigatorContent>
+
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testContentSorterModel.override.nosort"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            name="Test Navigator Extension [Sorter For Model Override Nosort]">
+	     <triggerPoints>
+	        <or>
+               <instanceof value="org.eclipse.core.resources.IResource"/>
+			   <instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+			</or>   
+         </triggerPoints>            
+		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testContent"/>
+
+      </navigatorContent>
+
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testContentSorterResource"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderResource"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            name="Test Navigator Extension [Resource Sorter]">
+	     <triggerPoints>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </triggerPoints>            
+
+        <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestSorterResource">
+          <parentExpression>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+          </parentExpression>
+        </commonSorter>
+
+      </navigatorContent>
+
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testContentSorterResource.override.resource"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderResource"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            name="Test Navigator Extension [Resource Sorter Override Resource (No sorter)]">
+	     <enablement>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </enablement>            
+		<override suppressedExtensionId="org.eclipse.ui.navigator.ResourceContent"/>
+
+      </navigatorContent>
+
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testContentSorterResource.override"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderResource"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            name="Test Navigator Extension [Resource Sorter Override]">
+	     <enablement>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </enablement>            
+		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testContentSorterResource.override.resource"/>
+
+        <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestSorterResource">
+          <parentExpression>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+          </parentExpression>
+        </commonSorter>
+
+      </navigatorContent>
+
+      <navigatorContent
+            id="org.eclipse.ui.tests.navigator.testContentSorterResource.override.sorter"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderResource"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            name="Test Navigator Extension [Resource Sorter Override]">
+	     <triggerPoints>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+         </triggerPoints>            
+		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testContentSorterResource"/>
+
+        <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestSorterResource">
+          <parentExpression>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+          </parentExpression>
+        </commonSorter>
 
       </navigatorContent>
 
@@ -464,6 +558,32 @@
          </enablement>
       </actionProvider>
 
+      <actionProvider
+            id="org.eclipse.ui.tests.navigator.extension.TestActionProvider.237001.1"
+	        class="org.eclipse.ui.tests.navigator.extension.TestActionProviderBasic"
+	        overrides="org.eclipse.ui.tests.navigator.extension.TestActionProvider.237001.3">
+	     <enablement>
+	         <instanceof value="org.eclipse.core.resources.IResource"/>
+	     </enablement>
+	  </actionProvider>
+
+      <actionProvider
+            id="org.eclipse.ui.tests.navigator.extension.TestActionProvider.237001.2"
+	        class="org.eclipse.ui.tests.navigator.extension.TestActionProviderBasic"
+	        overrides="org.eclipse.ui.tests.navigator.extension.TestActionProvider.237001.3">
+	     <enablement>
+	         <instanceof value="org.eclipse.core.resources.IResource"/>
+	     </enablement>
+	  </actionProvider>
+
+      <actionProvider
+            id="org.eclipse.ui.tests.navigator.extension.TestActionProvider.237001.3"
+	        class="org.eclipse.ui.tests.navigator.extension.TestActionProviderBasic">
+	     <enablement>
+	         <instanceof value="org.eclipse.core.resources.IResource"/>
+	     </enablement>
+	  </actionProvider>
+
       <commonFilter
             id="org.eclipse.ui.tests.navigator.filters.TestItemsThatEndWith3"
             class="org.eclipse.ui.tests.navigator.extension.TestFilterItemsThatEndIn3"
@@ -564,8 +684,8 @@
       <!-- bug 204837 commonWizard with no pages displays empty dialog --> 
 	  <commonWizard type="new"
             associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
-            wizardId="org.eclipse.ui.editors.wizards.UntitledTextFileWizard">
-            menuGroupId="org.eclipse.ui.tests.navigator"
+            wizardId="org.eclipse.ui.editors.wizards.UntitledTextFileWizard"
+            menuGroupId="org.eclipse.ui.tests.navigator">
          <enablement>
             <adapt type="org.eclipse.core.resources.IResource" /> 
          </enablement>
@@ -597,6 +717,7 @@
          </enablement>
       </decorator>
    </extension>
+   
    <extension
          point="org.eclipse.ui.activities">
       <activityPatternBinding

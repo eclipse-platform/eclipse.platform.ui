@@ -120,8 +120,6 @@ public class ActionProviderTest extends NavigatorTestBase {
 			}
 		}
 
-		System.out.println(priorityItems);
-		
 		if (false)
 			DisplayHelper.sleep(10000000);
 

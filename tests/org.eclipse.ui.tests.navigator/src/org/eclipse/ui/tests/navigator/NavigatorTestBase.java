@@ -36,10 +36,11 @@ import org.eclipse.ui.navigator.NavigatorActionService;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
-import org.eclipse.ui.tests.navigator.extension.TestDataSorter;
+import org.eclipse.ui.tests.navigator.extension.TestSorterData;
 import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderResource;
+import org.eclipse.ui.tests.navigator.extension.TestSorterResource;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
 public class NavigatorTestBase extends TestCase {
@@ -61,9 +62,17 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_OVERRIDDEN2 = "org.eclipse.ui.tests.navigator.testContentOverridden2";
 	public static final String TEST_CONTENT_OVERRIDE1 = "org.eclipse.ui.tests.navigator.testContentOverride1";
 	public static final String TEST_CONTENT_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testContentOverride2";
+	
 	public static final String TEST_CONTENT_LABEL1 = "org.eclipse.ui.tests.navigator.testContentLabel1";
 	public static final String TEST_CONTENT_LABEL2 = "org.eclipse.ui.tests.navigator.testContentLabel2";
-	public static final String TEST_CONTENT_SORTER = "org.eclipse.ui.tests.navigator.testContentSorter";
+	
+	public static final String TEST_CONTENT_SORTER_MODEL = "org.eclipse.ui.tests.navigator.testContentSorterModel";
+	public static final String TEST_CONTENT_SORTER_MODEL_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterModel.override";
+	public static final String TEST_CONTENT_SORTER_MODEL_OVERRIDE_NOSORT = "org.eclipse.ui.tests.navigator.testContentSorterModel.override.nosort";
+	public static final String TEST_CONTENT_SORTER_RESOURCE = "org.eclipse.ui.tests.navigator.testContentSorterResource";
+	public static final String TEST_CONTENT_SORTER_RESOURCE_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterResource.override";
+	public static final String TEST_CONTENT_SORTER_RESOURCE_OVERRIDE_SORTER = "org.eclipse.ui.tests.navigator.testContentSorterResource.override.sorter";
+
 	public static final String TEST_CONTENT_REDLABEL = "org.eclipse.ui.tests.navigator.testContentRedLabel";
 	public static final String TEST_CONTENT_MISSINGLABEL = "org.eclipse.ui.tests.navigator.testContentMissingLabel";
 	public static final String TEST_CONTENT_DROP_COPY = "org.eclipse.ui.tests.navigator.testContentDropCopy";
@@ -103,7 +112,7 @@ public class NavigatorTestBase extends TestCase {
 
 	protected boolean _initTestData = true;
 
-	protected static final boolean DEBUG = !false;
+	protected static final boolean DEBUG = false;
 
 	protected void setUp() throws Exception {
 
@@ -113,7 +122,8 @@ public class NavigatorTestBase extends TestCase {
 		}
 
 		TestContentProviderResource.resetTest();
-		TestDataSorter.resetTest();
+		TestSorterData.resetTest();
+		TestSorterResource.resetTest();
 		TestLabelProvider.resetTest();
 		TestDragAssistant.resetTest();
 

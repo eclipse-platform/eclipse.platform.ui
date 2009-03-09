@@ -15,21 +15,23 @@ import java.text.Collator;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-public class TestDataSorter extends ViewerSorter {
+public class TestSorterData extends ViewerSorter {
 
 	public static String _sorterProperty;
 	public static Object _sorterElement;
+	
+	public boolean _forward = true;
 	
 	public static void resetTest() {
 		_sorterProperty = null;
 		_sorterElement = null;
 	}
 	
-	public TestDataSorter() {
+	public TestSorterData() {
 		super(); 
 	}
 
-	public TestDataSorter(Collator collator) {
+	public TestSorterData(Collator collator) {
 		super(collator); 
 	}
 
@@ -43,7 +45,9 @@ public class TestDataSorter extends ViewerSorter {
 				TestExtensionTreeData lvalue = (TestExtensionTreeData) e1;
 				TestExtensionTreeData rvalue = (TestExtensionTreeData) e2;
 				
-				return lvalue.getName().compareTo(rvalue.getName());
+				if (_forward)
+					return lvalue.getName().compareTo(rvalue.getName());
+				return rvalue.getName().compareTo(lvalue.getName());
 			}
 			return -1;
 		} else if(e2 instanceof TestExtensionTreeData) {
