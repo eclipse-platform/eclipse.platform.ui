@@ -8,7 +8,6 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.databinding,
  org.eclipse.core.databinding.conversion;x-internal:=false,
- org.eclipse.core.databinding.util,
  org.eclipse.core.databinding.validation;x-internal:=false,
  org.eclipse.core.internal.databinding;x-friends:="org.eclipse.core.databinding.beans",
  org.eclipse.core.internal.databinding.conversion;x-friends:="org.eclipse.jface.tests.databinding",
