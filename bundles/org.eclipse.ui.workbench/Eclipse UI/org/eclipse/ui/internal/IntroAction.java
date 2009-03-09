@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
@@ -66,7 +67,7 @@ public class IntroAction extends Action implements
         if (labelOverride != null)
         	setText(labelOverride);
         
-        setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
+        setActionDefinitionId(IWorkbenchCommandConstants.HELP_WELCOME);
         
         window.addPageListener(pageListener);
     }
