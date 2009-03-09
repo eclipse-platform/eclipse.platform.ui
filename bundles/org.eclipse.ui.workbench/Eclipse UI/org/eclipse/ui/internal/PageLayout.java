@@ -480,6 +480,13 @@ public class PageLayout implements IPageLayout {
         // Create the folder.
         ViewStack folder = new ViewStack(rootLayoutContainer.page);
         folder.setID(folderId);
+
+		if (getDescriptor() != null
+				&& viewFactory.getWorkbenchPage().window.getWindowAdvisor()
+						.isDurableFolder(getDescriptor().getId(), folderId)) {
+			folder.setDurable(true);
+		}
+        
         addPart(folder, folderId, relationship, ratio, refId);
 
         // Create a wrapper.

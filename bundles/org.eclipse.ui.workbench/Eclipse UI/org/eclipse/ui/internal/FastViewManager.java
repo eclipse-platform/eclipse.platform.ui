@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Carlos Devoto carlos.devoto@compuware.com Bug 213645
  *     Markus Alexander Kuppe, Versant Corporation - bug #215797
  *******************************************************************************/
 
@@ -543,11 +544,21 @@ public class FastViewManager {
 		//long startTick = System.currentTimeMillis();
 		// Update the model first
 		List toMove = getTrueViewOrder(vs);
-		for (Iterator viewIter = toMove.iterator(); viewIter.hasNext();) {
-			IViewReference ref = (IViewReference) viewIter.next();
-			addViewReference(vs.getID(), -1, ref, false);
+		if (toMove.isEmpty()) {
+			// We are dealing with an empty durable ViewStack; hide it!
+			vs.dispose();
+			ILayoutContainer parentContainer = vs.getContainer();
+			ContainerPlaceholder placeholder = new ContainerPlaceholder(vs
+					.getID());
+            placeholder.setRealContainer(vs);
+			parentContainer.replace(vs, placeholder);
+			
+		} else {
+			for (Iterator viewIter = toMove.iterator(); viewIter.hasNext();) {
+				IViewReference ref = (IViewReference) viewIter.next();
+				addViewReference(vs.getID(), -1, ref, false);
+			}
 		}
-
 		vs.deferUpdates(false);
 		
 		// Find (or create) the trim stack to move to
@@ -555,9 +566,29 @@ public class FastViewManager {
 				.calcStackSide(stackBounds), paneOrientation);
 		vstb.setRestoreOnUnzoom(restoreOnUnzoom);
 		vstb.setSelectedTabId(selId);
-		updateTrim(vstb.getId());
-		
-		//System.out.println("minimize time: " + (System.currentTimeMillis()-startTick)); //$NON-NLS-1$
+		if (toMove.isEmpty()) {
+			// We are dealing with an empty durable ViewStack; show the trim!
+			IWindowTrim trim = vstb;
+
+			// Ensure that the trim is displayed
+			if (!trim.getControl().getVisible()) {
+				tbm.setTrimVisible(trim, true);
+			}
+
+			if (trim instanceof FastViewBar) {
+				FastViewBar fvb = (FastViewBar) trim;
+				fvb.update(true);
+			} else if (trim instanceof ViewStackTrimToolBar) {
+				vstb.update(true);
+				vstb.getControl().pack();
+				LayoutUtil.resize(trim.getControl());
+			}
+			tbm.forceLayout();
+		} else {
+	        updateTrim(vstb.getId());
+		}
+
+	    //System.out.println("minimize time: " + (System.currentTimeMillis()-startTick)); //$NON-NLS-1$
 		if (vstb != null) {
 			animation.addEndRect(vstb.getControl());
 			scheduleDeferrableAnimation();
@@ -591,6 +622,35 @@ public class FastViewManager {
 			secondaryId = idParts[1];
 		
 		List fvs = getFastViews(id);
+		if (fvs.isEmpty()) {
+			// We are dealing with a durable view stack that is currently empty, so execute special logic to restore it from the minimized state
+            LayoutPart part = perspective.getPresentation().findPart(id, null);	
+            if (part instanceof ContainerPlaceholder) {
+                ContainerPlaceholder containerPlaceholder = (ContainerPlaceholder) part;                        
+                ILayoutContainer parentContainer = containerPlaceholder
+                        .getContainer();
+                ILayoutContainer container = (ILayoutContainer) containerPlaceholder
+                        .getRealContainer();
+                if (container instanceof LayoutPart) {
+                    parentContainer.replace(containerPlaceholder,
+                            (LayoutPart) container);
+                }
+                containerPlaceholder.setRealContainer(null);
+                IWindowTrim trim = tbm.getTrim(id);
+
+        		// If it's not there there's not much we can do
+        		if (trim == null)
+        			return;
+
+        		// Hide the trim
+				if (trim.getControl().getVisible()) {
+					tbm.setTrimVisible(trim, false);
+					tbm.forceLayout();
+				}
+            }
+            return;
+		} 
+		
 		for (Iterator fvIter = fvs.iterator(); fvIter.hasNext();) {
 			IViewReference ref = (IViewReference) fvIter.next();
 			removeViewReference(ref, true, !fvIter.hasNext());

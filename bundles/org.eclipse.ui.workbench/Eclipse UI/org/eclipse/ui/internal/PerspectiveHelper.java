@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Carlos Devoto carlos.devoto@compuware.com Bug 213645
  *     Marco Maccaferri, maccasoft.com - patch for defect 222750
  *******************************************************************************/
 
@@ -767,9 +768,9 @@ public class PerspectiveHelper {
                 }
             }
 
-            if (!hasChildren) {
+            if (!hasChildren && !(oldContainer instanceof ViewStack && ((ViewStack)oldContainer).getDurable())) {
                 // There are no more children in this container, so get rid of
-                // it
+                // it (but only if the container is not a durable ViewStack)
                 if (oldContainer instanceof LayoutPart) {
                     LayoutPart parent = (LayoutPart) oldContainer;
                     ILayoutContainer parentContainer = parent.getContainer();
@@ -1233,12 +1234,16 @@ public class PerspectiveHelper {
             LayoutPart[] children = container.getChildren();
             if (children != null) {
                 boolean allInvisible = true;
-                for (int i = 0, length = children.length; i < length; i++) {
-                    if (!(children[i] instanceof PartPlaceholder)) {
-                        allInvisible = false;
-                        break;
-                    }
-                }
+                if (container instanceof ViewStack && !((ViewStack) container).isMinimized && ((ViewStack) container).getDurable()) {
+                	allInvisible = false;
+                } else {
+					for (int i = 0, length = children.length; i < length; i++) {
+						if (!(children[i] instanceof PartPlaceholder)) {
+							allInvisible = false;
+							break;
+						}
+					}
+				}
                 if (allInvisible && (container instanceof LayoutPart)) {
                     // what type of window are we in?
                     LayoutPart cPart = (LayoutPart) container;

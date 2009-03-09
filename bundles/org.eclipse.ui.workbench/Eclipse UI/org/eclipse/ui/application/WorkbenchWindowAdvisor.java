@@ -282,6 +282,24 @@ public class WorkbenchWindowAdvisor {
     public Control createEmptyWindowContents(Composite parent) {
         return null;
     }
+    
+	/**
+	 * Returns <code>true</code> if the given folder in the given perspective
+	 * should remain visible even after all parts in it have been closed by the
+	 * user. The default is <code>false</code>. The return value for a certain
+	 * combination of perspective id and folder id must not change over time.
+	 * 
+	 * @param perspectiveId
+	 *            the perspective id
+	 * @param folderId
+	 *            the folder id
+	 * @return <code>true</code> if the given folder should be durable
+	 * 
+	 * @since 3.5
+	 */
+	public boolean isDurableFolder(String perspectiveId, String folderId) {
+		return false;
+	}
 
     /**
      * Disposes any resources allocated by this window advisor.

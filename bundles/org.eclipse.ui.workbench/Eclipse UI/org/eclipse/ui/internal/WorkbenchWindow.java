@@ -3424,13 +3424,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	/**
 	 * Returns the window advisor, creating a new one for this window if needed.
 	 * <p>
-	 * IMPORTANT This method is declared private to prevent regular plug-ins
+	 * IMPORTANT This method is declared package private to prevent regular plug-ins
 	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
 	 * the window advisor that would allow them to tamper with the window. The
 	 * window advisor is internal to the application.
 	 * </p>
 	 */
-	private/* private - DO NOT CHANGE */
+	/* package private - DO NOT CHANGE */
 	WorkbenchWindowAdvisor getWindowAdvisor() {
 		if (windowAdvisor == null) {
 			windowAdvisor = getAdvisor().createWorkbenchWindowAdvisor(
