@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -27,7 +28,7 @@ public class SaveAsAction extends BaseSaveAction {
      */
     public SaveAsAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.SaveAs_text, window); 
-        setActionDefinitionId("org.eclipse.ui.file.saveAs"); //$NON-NLS-1$
+        setActionDefinitionId(IWorkbenchCommandConstants.FILE_SAVEAS);
         setText(WorkbenchMessages.SaveAs_text); 
         setToolTipText(WorkbenchMessages.SaveAs_toolTip); 
         setId("saveAs"); //$NON-NLS-1$

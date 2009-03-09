@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -51,7 +52,7 @@ public class HelpSearchAction extends Action implements IWorkbenchAction {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-        setActionDefinitionId("org.eclipse.ui.help.helpSearch"); //$NON-NLS-1$
+        setActionDefinitionId(IWorkbenchCommandConstants.HELP_HELPSEARCH);
 
         // support for allowing a product to override the text for the action
         String overrideText = PrefUtil.getAPIPreferenceStore().getString(

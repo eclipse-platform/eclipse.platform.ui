@@ -303,6 +303,42 @@ public interface IWorkbenchCommandConstants {
     public static final String WINDOW_MINIMIZEACTIVEVIEWOREDITOR = "org.eclipse.ui.window.minimizePart"; //$NON-NLS-1$
 
     /**
+     * Id for command "Next Editor" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.nextEditor"</code>).
+     */
+    public static final String WINDOW_NEXTEDITOR = "org.eclipse.ui.window.nextEditor"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Previous Editor" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.previousEditor"</code>).
+     */
+    public static final String WINDOW_PREVIOUSEDITOR = "org.eclipse.ui.window.previousEditor"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Next View" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.nextView"</code>).
+     */
+    public static final String WINDOW_NEXTVIEW = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Previous View" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.previousView"</code>).
+     */
+    public static final String WINDOW_PREVIOUSVIEW = "org.eclipse.ui.window.previousView"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Next Perspective" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.nextPerspective"</code>).
+     */
+    public static final String WINDOW_NEXTPERSPECTIVE = "org.eclipse.ui.window.nextPerspective"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Previous Perspective" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.previousPerspective"</code>).
+     */
+    public static final String WINDOW_PREVIOUSPERSPECTIVE = "org.eclipse.ui.window.previousPerspective"; //$NON-NLS-1$
+
+    /**
      * Id for command "Close All Perspectives" in category "Window"
      * (value is <code>"org.eclipse.ui.window.closeAllPerspectives"</code>).
      */
@@ -337,6 +373,18 @@ public interface IWorkbenchCommandConstants {
      * (value is <code>"org.eclipse.ui.window.preferences"</code>).
      */
     public static final String WINDOW_PREFERENCES = "org.eclipse.ui.window.preferences"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Reset Perspective" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.resetPerspective"</code>).
+     */
+    public static final String WINDOW_RESETPERSPECTIVE = "org.eclipse.ui.window.resetPerspective"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Save Perspective As" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.savePerspective"</code>).
+     */
+    public static final String WINDOW_SAVEPERSPECTIVEAS = "org.eclipse.ui.window.savePerspective"; //$NON-NLS-1$
 
     /**
      * Id for command "Show Key Assist" in category "Window"

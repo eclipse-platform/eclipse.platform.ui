@@ -775,7 +775,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "next". This action maintains
      * its enablement state.
      */
-    public static final ActionFactory NEXT = new ActionFactory("next") {//$NON-NLS-1$
+    public static final ActionFactory NEXT = new ActionFactory("next", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.NAVIGATE_NEXT) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -787,7 +788,7 @@ public abstract class ActionFactory {
             RetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_next); 
             action.setToolTipText(WorkbenchMessages.Workbench_nextToolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -803,7 +804,7 @@ public abstract class ActionFactory {
      * </p>
      */
     public static final ActionFactory NEXT_EDITOR = new ActionFactory(
-            "nextEditor") {//$NON-NLS-1$
+            "nextEditor", IWorkbenchCommandConstants.WINDOW_NEXTEDITOR) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -813,8 +814,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new WorkbenchCommandAction(
-					"org.eclipse.ui.window.nextEditor", //$NON-NLS-1$
-					window);
+					getCommandId(), window);
 
 			action.setId(getId());
 			action.setText(WorkbenchMessages.CycleEditorAction_next_text); 
@@ -837,7 +837,8 @@ public abstract class ActionFactory {
 	 * ActionFactory.linkCycleActionPair</code>} to connect the two.
 	 * </p>
 	 */
-    public static final ActionFactory NEXT_PART = new ActionFactory("nextPart") {//$NON-NLS-1$
+    public static final ActionFactory NEXT_PART = new ActionFactory("nextPart", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.WINDOW_NEXTVIEW) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -846,7 +847,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.nextView",window); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
             action.setText(WorkbenchMessages.CyclePartAction_next_text);
 			action.setToolTipText(WorkbenchMessages.CyclePartAction_next_toolTip);
@@ -868,7 +870,7 @@ public abstract class ActionFactory {
      * </p>
      */
     public static final ActionFactory NEXT_PERSPECTIVE = new ActionFactory(
-            "nextPerspective") {//$NON-NLS-1$
+            "nextPerspective", IWorkbenchCommandConstants.WINDOW_NEXTPERSPECTIVE) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -877,7 +879,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.nextPerspective",window); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
             action.setText(WorkbenchMessages.CyclePerspectiveAction_next_text);
             action.setToolTipText(WorkbenchMessages.CyclePerspectiveAction_next_toolTip);
@@ -893,7 +896,7 @@ public abstract class ActionFactory {
      * action maintains its enablement state.
      */
     public static final ActionFactory OPEN_NEW_WINDOW = new ActionFactory(
-            "openNewWindow") {//$NON-NLS-1$
+            "openNewWindow", IWorkbenchCommandConstants.WINDOW_NEWWINDOW) {//$NON-NLS-1$
         
     	
         /* (non-Javadoc)
@@ -903,7 +906,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.newWindow", window); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
             action.setText(WorkbenchMessages.OpenInNewWindowAction_text);
             action.setToolTipText(WorkbenchMessages.OpenInNewWindowAction_toolTip);
@@ -919,7 +923,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "paste". This action maintains
      * its enablement state.
      */
-    public static final ActionFactory PASTE = new ActionFactory("paste") {//$NON-NLS-1$
+    public static final ActionFactory PASTE = new ActionFactory("paste", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.EDIT_PASTE) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -931,7 +936,7 @@ public abstract class ActionFactory {
             RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_paste);
             action.setToolTipText(WorkbenchMessages.Workbench_pasteToolTip); 
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             ISharedImages sharedImages = window.getWorkbench()
                     .getSharedImages();
             action.setImageDescriptor(sharedImages
@@ -947,7 +952,7 @@ public abstract class ActionFactory {
      * This action maintains its enablement state.
      */
     public static final ActionFactory PREFERENCES = new ActionFactory(
-            "preferences") {//$NON-NLS-1$
+            "preferences", IWorkbenchCommandConstants.WINDOW_PREFERENCES) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -967,7 +972,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "previous". This action
      * maintains its enablement state.
      */
-    public static final ActionFactory PREVIOUS = new ActionFactory("previous") {//$NON-NLS-1$
+    public static final ActionFactory PREVIOUS = new ActionFactory("previous", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.NAVIGATE_PREVIOUS) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -979,7 +985,7 @@ public abstract class ActionFactory {
             RetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_previous);
             action.setToolTipText(WorkbenchMessages.Workbench_previousToolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             return action;
         }
     };
@@ -995,7 +1001,7 @@ public abstract class ActionFactory {
      * </p>
      */
     public static final ActionFactory PREVIOUS_EDITOR = new ActionFactory(
-            "previousEditor") {//$NON-NLS-1$
+            "previousEditor", IWorkbenchCommandConstants.WINDOW_PREVIOUSEDITOR) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1004,9 +1010,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new WorkbenchCommandAction(
-					"org.eclipse.ui.window.previousEditor", //$NON-NLS-1$
-					window);
+			IWorkbenchAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
             action.setText(WorkbenchMessages.CycleEditorAction_prev_text);
             action.setToolTipText(WorkbenchMessages.CycleEditorAction_prev_toolTip); 
@@ -1029,7 +1034,7 @@ public abstract class ActionFactory {
      * </p>
      */
     public static final ActionFactory PREVIOUS_PART = new ActionFactory(
-            "previousPart") {//$NON-NLS-1$
+            "previousPart", IWorkbenchCommandConstants.WINDOW_PREVIOUSVIEW) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1038,7 +1043,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.previousView",window); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
 			action.setText(WorkbenchMessages.CyclePartAction_prev_text);
 			action.setToolTipText(WorkbenchMessages.CyclePartAction_prev_toolTip);
@@ -1060,7 +1066,7 @@ public abstract class ActionFactory {
      * </p>
      */
     public static final ActionFactory PREVIOUS_PERSPECTIVE = new ActionFactory(
-            "previousPerspective") {//$NON-NLS-1$
+            "previousPerspective", IWorkbenchCommandConstants.WINDOW_PREVIOUSPERSPECTIVE) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1069,7 +1075,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.previousPerspective",window); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
             action.setText(WorkbenchMessages.CyclePerspectiveAction_prev_text); 
             action.setToolTipText(WorkbenchMessages.CyclePerspectiveAction_prev_toolTip); 
@@ -1085,7 +1092,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "print". This action maintains
      * its enablement state.
      */
-    public static final ActionFactory PRINT = new ActionFactory("print") {//$NON-NLS-1$
+    public static final ActionFactory PRINT = new ActionFactory("print", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.FILE_PRINT) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1097,7 +1105,7 @@ public abstract class ActionFactory {
             RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_print); 
             action.setToolTipText(WorkbenchMessages.Workbench_printToolTip); 
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.file.print"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             action
                     .setImageDescriptor(WorkbenchImages
                             .getImageDescriptor(ISharedImages.IMG_ETOOL_PRINT_EDIT));
@@ -1114,7 +1122,7 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory PROPERTIES = new ActionFactory(
-            "properties") {//$NON-NLS-1$
+            "properties", IWorkbenchCommandConstants.FILE_PROPERTIES) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1126,7 +1134,7 @@ public abstract class ActionFactory {
             RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_properties); 
             action.setToolTipText(WorkbenchMessages.Workbench_propertiesToolTip); 
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -1135,7 +1143,8 @@ public abstract class ActionFactory {
      * Workbench action (id "quit"): Quit (close the workbench). This action
      * maintains its enablement state.
      */
-    public static final ActionFactory QUIT = new ActionFactory("quit") {//$NON-NLS-1$
+    public static final ActionFactory QUIT = new ActionFactory("quit", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.FILE_EXIT) {
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1144,7 +1153,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.file.exit", window); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
             action.setText(WorkbenchMessages.Exit_text); 
             action.setToolTipText(WorkbenchMessages.Exit_toolTip);
@@ -1159,7 +1169,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "redo". This action maintains
      * its enablement state.
      */
-    public static final ActionFactory REDO = new ActionFactory("redo") {//$NON-NLS-1$
+    public static final ActionFactory REDO = new ActionFactory("redo", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.EDIT_REDO) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1171,7 +1182,7 @@ public abstract class ActionFactory {
             LabelRetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_redo); 
             action.setToolTipText(WorkbenchMessages.Workbench_redoToolTip); 
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             ISharedImages sharedImages = window.getWorkbench()
                     .getSharedImages();
             action.setImageDescriptor(sharedImages
@@ -1187,7 +1198,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "refresh". This action
      * maintains its enablement state.
      */
-    public static final ActionFactory REFRESH = new ActionFactory("refresh") {//$NON-NLS-1$
+    public static final ActionFactory REFRESH = new ActionFactory("refresh", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.FILE_REFRESH) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1199,7 +1211,7 @@ public abstract class ActionFactory {
             RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_refresh);
             action.setToolTipText(WorkbenchMessages.Workbench_refreshToolTip); 
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -1209,7 +1221,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "rename". This action maintains
      * its enablement state.
      */
-    public static final ActionFactory RENAME = new ActionFactory("rename") {//$NON-NLS-1$
+    public static final ActionFactory RENAME = new ActionFactory("rename", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.FILE_RENAME) {
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1221,7 +1234,7 @@ public abstract class ActionFactory {
             RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_rename); 
             action.setToolTipText(WorkbenchMessages.Workbench_renameToolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.edit.rename"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             return action;
         }
     };
@@ -1231,7 +1244,7 @@ public abstract class ActionFactory {
      * perspective. This action maintains its enablement state.
      */
     public static final ActionFactory RESET_PERSPECTIVE = new ActionFactory(
-            "resetPerspective") {//$NON-NLS-1$
+            "resetPerspective", IWorkbenchCommandConstants.WINDOW_RESETPERSPECTIVE) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1251,7 +1264,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "revert". This action maintains
      * its enablement state.
      */
-    public static final ActionFactory REVERT = new ActionFactory("revert") {//$NON-NLS-1$
+    public static final ActionFactory REVERT = new ActionFactory("revert", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.FILE_REVERT) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1263,7 +1277,7 @@ public abstract class ActionFactory {
             RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_revert);
             action.setToolTipText(WorkbenchMessages.Workbench_revertToolTip); 
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.file.revert"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             return action;
         }
     };
@@ -1272,7 +1286,8 @@ public abstract class ActionFactory {
      * Workbench action (id "save"): Save the active editor. This action
      * maintains its enablement state.
      */
-    public static final ActionFactory SAVE = new ActionFactory("save") {//$NON-NLS-1$
+    public static final ActionFactory SAVE = new ActionFactory("save", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.FILE_SAVE) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1291,7 +1306,8 @@ public abstract class ActionFactory {
      * Workbench action (id "saveAll"): Save all open editors with unsaved
      * changes. This action maintains its enablement state.
      */
-    public static final ActionFactory SAVE_ALL = new ActionFactory("saveAll") {//$NON-NLS-1$
+    public static final ActionFactory SAVE_ALL = new ActionFactory("saveAll", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.FILE_SAVEALL) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1310,7 +1326,8 @@ public abstract class ActionFactory {
      * Workbench action (id "saveAs"): Save As for the active editor. This
      * action maintains its enablement state.
      */
-    public static final ActionFactory SAVE_AS = new ActionFactory("saveAs") {//$NON-NLS-1$
+    public static final ActionFactory SAVE_AS = new ActionFactory("saveAs", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.FILE_SAVEAS) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1330,7 +1347,7 @@ public abstract class ActionFactory {
      * This action maintains its enablement state.
      */
     public static final ActionFactory SAVE_PERSPECTIVE = new ActionFactory(
-            "savePerspective") {//$NON-NLS-1$
+            "savePerspective", IWorkbenchCommandConstants.WINDOW_SAVEPERSPECTIVEAS) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1351,7 +1368,7 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory SELECT_ALL = new ActionFactory(
-            "selectAll") {//$NON-NLS-1$
+            "selectAll", IWorkbenchCommandConstants.EDIT_SELECTALL) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1363,7 +1380,7 @@ public abstract class ActionFactory {
             RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_selectAll);
             action.setToolTipText(WorkbenchMessages.Workbench_selectAllToolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             return action;
         }
     };
@@ -1508,7 +1525,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "undo". This action maintains
      * its enablement state.
      */
-    public static final ActionFactory UNDO = new ActionFactory("undo") {//$NON-NLS-1$
+    public static final ActionFactory UNDO = new ActionFactory("undo", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.EDIT_UNDO) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1520,7 +1538,7 @@ public abstract class ActionFactory {
             LabelRetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_undo);
             action.setToolTipText(WorkbenchMessages.Workbench_undoToolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             ISharedImages sharedImages = window.getWorkbench()
                     .getSharedImages();
             action.setImageDescriptor(sharedImages
@@ -1536,7 +1554,8 @@ public abstract class ActionFactory {
      * {@link RetargetAction} with id "up". This action maintains its
      * enablement state.
      */
-    public static final ActionFactory UP = new ActionFactory("up") {//$NON-NLS-1$
+    public static final ActionFactory UP = new ActionFactory("up", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.NAVIGATE_UP) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1548,7 +1567,7 @@ public abstract class ActionFactory {
             RetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_up); 
             action.setToolTipText(WorkbenchMessages.Workbench_upToolTip); 
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.navigate.up"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -1558,7 +1577,7 @@ public abstract class ActionFactory {
      * is always enabled.
      */
     public static final ActionFactory HELP_CONTENTS = new ActionFactory(
-            "helpContents") {//$NON-NLS-1$
+            "helpContents", IWorkbenchCommandConstants.HELP_HELPCONTENTS) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1580,7 +1599,7 @@ public abstract class ActionFactory {
      * @since 3.1  
      */
     public static final ActionFactory HELP_SEARCH = new ActionFactory(
-            "helpSearch") {//$NON-NLS-1$
+            "helpSearch", IWorkbenchCommandConstants.HELP_HELPSEARCH) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1602,7 +1621,7 @@ public abstract class ActionFactory {
      * @since 3.1
      */
     public static final ActionFactory DYNAMIC_HELP = new ActionFactory(
-            "dynamicHelp") {//$NON-NLS-1$
+            "dynamicHelp", IWorkbenchCommandConstants.HELP_DYNAMICHELP) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1624,7 +1643,7 @@ public abstract class ActionFactory {
      * @since 3.1
      */
     public static final ActionFactory OPEN_PERSPECTIVE_DIALOG = new ActionFactory(
-            "openPerspectiveDialog") {//$NON-NLS-1$
+            "openPerspectiveDialog", IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1635,7 +1654,7 @@ public abstract class ActionFactory {
 			}
 			
 			WorkbenchCommandAction action = new WorkbenchCommandAction(
-					"org.eclipse.ui.perspectives.showPerspective", window); //$NON-NLS-1$
+					getCommandId(), window); 
 			action.setId(getId());
 	        action.setText(WorkbenchMessages.OpenPerspectiveDialogAction_text);
 	        action.setToolTipText(WorkbenchMessages.OpenPerspectiveDialogAction_tooltip);
@@ -1653,7 +1672,7 @@ public abstract class ActionFactory {
      * @since 3.1
      */
     public static final ActionFactory NEW_EDITOR = new ActionFactory(
-            "newEditor") {//$NON-NLS-1$
+            "newEditor", IWorkbenchCommandConstants.WINDOW_NEWEDITOR) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1663,7 +1682,8 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
 
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.newEditor", window); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
 			action.setId(getId());			
 			action.setText(WorkbenchMessages.NewEditorAction_text);
 			action.setToolTipText(WorkbenchMessages.NewEditorAction_tooltip);
