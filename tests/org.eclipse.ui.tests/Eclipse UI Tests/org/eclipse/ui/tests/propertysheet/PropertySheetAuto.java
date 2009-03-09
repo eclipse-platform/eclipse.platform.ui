@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Alexander Kuppe (Versant Corp.) - https://bugs.eclipse.org/248103
  *******************************************************************************/
 package org.eclipse.ui.tests.propertysheet;
 
@@ -16,6 +17,7 @@ import java.util.Random;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -245,7 +247,7 @@ public class PropertySheetAuto extends UITestCase {
 
     protected IWorkbenchPart createTestPart(IWorkbenchPage page)
             throws Throwable {
-        IViewPart view = page.showView("org.eclipse.ui.views.PropertySheet");
+        IViewPart view = page.showView(IPageLayout.ID_PROP_SHEET);
         selectionProviderView = (SelectionProviderView) page
                 .showView(SelectionProviderView.ID);
         return view;

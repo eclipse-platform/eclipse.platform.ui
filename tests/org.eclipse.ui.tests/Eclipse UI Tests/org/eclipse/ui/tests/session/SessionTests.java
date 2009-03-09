@@ -112,7 +112,10 @@ public class SessionTests extends TestSuite {
 				Bug108033Test.class));
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				ArbitraryPropertiesViewTest.class));
-		addTest(new WorkbenchSessionTest("editorSessionTests", NonRestorableViewTest.class));
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				NonRestorableViewTest.class));
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				NonRestorablePropertySheetTest.class));
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				MarkersViewColumnSizeTest.class));
 	}

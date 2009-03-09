@@ -3975,6 +3975,11 @@
             id="org.eclipse.ui.tests.enabledCount"
             name="Enabled Count">
       </command>
+      <command
+            defaultHandler="org.eclipse.ui.tests.propertysheet.TestNewPropertySheetHandler"
+            id="org.eclipse.ui.views.properties.NewPropertySheetCommandTest"
+            name="TestNewPropertySheetCommand">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">

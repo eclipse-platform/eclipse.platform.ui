@@ -5,11 +5,12 @@
      <extension
          point="org.eclipse.ui.views">
       <view
-            name="%Views.PropertySheet"
-            icon="$nl$/icons/full/eview16/prop_ps.gif"
+            allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.properties.PropertySheet"
-            id="org.eclipse.ui.views.PropertySheet">
+            icon="$nl$/icons/full/eview16/prop_ps.gif"
+            id="org.eclipse.ui.views.PropertySheet"
+            name="%Views.PropertySheet">
       </view>
       <view
             name="%Views.ContentOutline"
@@ -19,5 +20,34 @@
             id="org.eclipse.ui.views.ContentOutline">
       </view>
    </extension>
+     <extension
+           point="org.eclipse.ui.menus">
+		<menuContribution
+				locationURI="popup:org.eclipse.ui.menus.showInMenu">
+			<command
+				commandId="org.eclipse.ui.views.properties.NewPropertySheetCommand"
+				icon="platform:/plugin/org.eclipse.ui.views/icons/full/eview16/prop_ps.gif"
+				label="%Views.PropertySheet"
+				style="push">
+	        </command>
+		</menuContribution>
+  <menuContribution
+        locationURI="menu:org.eclipse.ui.views.PropertySheet">
+     <command
+           commandId="org.eclipse.ui.views.properties.NewPropertySheetCommand"
+           icon="icons/full/elcl16/new.gif"
+           label="%Views.NewPropertySheet"
+           style="push">
+     </command>
+  </menuContribution>
+	</extension>
+     <extension
+           point="org.eclipse.ui.commands">
+        <command
+              defaultHandler="org.eclipse.ui.views.properties.NewPropertySheetHandler"
+              id="org.eclipse.ui.views.properties.NewPropertySheetCommand"
+              name="%Views.PropertySheet">
+        </command>
+     </extension>
    
 </plugin>

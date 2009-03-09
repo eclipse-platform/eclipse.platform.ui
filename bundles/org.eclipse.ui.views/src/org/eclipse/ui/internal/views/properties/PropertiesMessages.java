@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Alexander Kuppe (Versant Corp.) - https://bugs.eclipse.org/248103
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties;
 
@@ -45,6 +46,13 @@ public class PropertiesMessages extends NLS {
 	public static String Filter_text;
 	/** */
 	public static String Filter_toolTip;
+
+	/** */
+	public static String Selection_description;
+	/** */
+	public static String Pin_text;
+	/** */
+	public static String Pin_toolTip;
 
 	/** */
 	public static String PropertyViewer_property;
