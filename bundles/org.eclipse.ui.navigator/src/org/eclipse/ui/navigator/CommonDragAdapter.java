@@ -132,13 +132,13 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 					LocalSelectionTransfer.getTransfer().setSelection(selection);
 
 					boolean doIt = false;
-					event.doit = true;
 					INavigatorDnDService dndService = contentService.getDnDService();
 					CommonDragAdapterAssistant[] assistants = dndService.getCommonDragAssistants();
 					for (int i = 0; i < assistants.length; i++) {
 						if (Policy.DEBUG_DND) {
 							System.out.println("CommonDragAdapter.dragStart assistant: " + assistants[i]); //$NON-NLS-1$
 						}
+						event.doit = true;
 						assistants[i].dragStart(event, (IStructuredSelection) selection);
 						doIt |= event.doit;
 						if (event.doit) {

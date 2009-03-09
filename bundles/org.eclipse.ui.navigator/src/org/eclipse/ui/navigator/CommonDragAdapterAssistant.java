@@ -105,7 +105,7 @@ public abstract class CommonDragAdapterAssistant {
 	 * @param anEvent
 	 *            The event object should return doit = true if it wants to participate
 	 *            in the drag and set doit = false if it does not want to further 
-	 *            participate.  The default is that doit is set to true.
+	 *            participate.
 	 * @param aSelection
 	 *            The current selection from the viewer.
 	 * 
