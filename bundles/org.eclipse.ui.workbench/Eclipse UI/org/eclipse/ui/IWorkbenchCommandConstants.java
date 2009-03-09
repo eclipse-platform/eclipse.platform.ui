@@ -185,6 +185,11 @@ public interface IWorkbenchCommandConstants {
     public static final String EDIT_FINDANDREPLACE = "org.eclipse.ui.edit.findReplace"; //$NON-NLS-1$
 
     /**
+     * Id for command "Add Task" in category "Edit".
+     */
+    public static final String EDIT_ADDTASK = "org.eclipse.ui.edit.addTask"; //$NON-NLS-1$
+
+    /**
      * Id for command "Add Bookmark" in category "Edit"
      * (value is <code>"org.eclipse.ui.edit.addBookmark"</code>).
      */
@@ -269,6 +274,33 @@ public interface IWorkbenchCommandConstants {
      * (value is <code>"org.eclipse.ui.navigate.showIn"</code>).
      */
     public static final String NAVIGATE_SHOWIN = "org.eclipse.ui.navigate.showIn"; //$NON-NLS-1$
+
+    // project category
+    
+    /**
+     * Id for command "Build All" in category "Project".
+     */
+    public static final String PROJECT_BUILDALL = "org.eclipse.ui.project.buildAll"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Build Project" in category "Project".
+     */
+    public static final String PROJECT_BUILDPROJECT = "org.eclipse.ui.project.buildProject"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Close Project" in category "Project".
+     */
+    public static final String PROJECT_CLOSEPROJECT = "org.eclipse.ui.project.closeProject"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Close Unrelated Projects" in category "Project".
+     */
+    public static final String PROJECT_CLOSEUNRELATEDPROJECTS = "org.eclipse.ui.project.closeUnrelatedProjects"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Open Project" in category "Project".
+     */
+    public static final String PROJECT_OPENPROJECT = "org.eclipse.ui.project.openProject"; //$NON-NLS-1$
 
     // Window Category:
 

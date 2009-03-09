@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
@@ -126,7 +127,7 @@ public class GlobalBuildAction extends Action implements
                     .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC));
             setDisabledImageDescriptor(IDEInternalWorkbenchImages
                     .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_DISABLED));
-            setActionDefinitionId("org.eclipse.ui.project.buildAll"); //$NON-NLS-1$
+            setActionDefinitionId(IWorkbenchCommandConstants.PROJECT_BUILDALL);
             break;
         case IncrementalProjectBuilder.FULL_BUILD:
             setText(IDEWorkbenchMessages.GlobalBuildAction_rebuildText);

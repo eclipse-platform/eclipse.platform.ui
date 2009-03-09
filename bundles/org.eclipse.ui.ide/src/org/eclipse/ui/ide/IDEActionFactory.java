@@ -12,6 +12,7 @@ package org.eclipse.ui.ide;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -57,7 +58,8 @@ public final class IDEActionFactory {
      * This action is a {@link RetargetAction} with 
      * id "addTask". This action maintains its enablement state.
      */
-    public static final ActionFactory ADD_TASK = new ActionFactory("addTask") { //$NON-NLS-1$
+    public static final ActionFactory ADD_TASK = new ActionFactory("addTask", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.EDIT_ADDTASK) { 
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -66,7 +68,7 @@ public final class IDEActionFactory {
             RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.Workbench_addTask);
             action.setToolTipText(IDEWorkbenchMessages.Workbench_addTaskToolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.edit.addTask"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -76,7 +78,8 @@ public final class IDEActionFactory {
      * This action is a {@link RetargetAction} with 
      * id "bookmark". This action maintains its enablement state.
      */
-    public static final ActionFactory BOOKMARK = new ActionFactory("bookmark") { //$NON-NLS-1$
+    public static final ActionFactory BOOKMARK = new ActionFactory("bookmark", //$NON-NLS-1$
+    		IWorkbenchCommandConstants.EDIT_ADDBOOKMARK) { 
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -85,7 +88,7 @@ public final class IDEActionFactory {
             RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.Workbench_addBookmark);
             action.setToolTipText(IDEWorkbenchMessages.Workbench_addBookmarkToolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.edit.addBookmark"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -94,7 +97,8 @@ public final class IDEActionFactory {
      * IDE-specific workbench action: Incremental build.
      * This action maintains its enablement state.
      */
-    public static final ActionFactory BUILD = new ActionFactory("build") { //$NON-NLS-1$
+    public static final ActionFactory BUILD = new ActionFactory("build",  //$NON-NLS-1$
+    		IWorkbenchCommandConstants.PROJECT_BUILDALL) {
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -148,7 +152,7 @@ public final class IDEActionFactory {
      * id "buildProject". This action maintains its enablement state.
      */
     public static final ActionFactory BUILD_PROJECT = new ActionFactory(
-            "buildProject") { //$NON-NLS-1$
+            "buildProject", IWorkbenchCommandConstants.PROJECT_BUILDPROJECT) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -158,7 +162,7 @@ public final class IDEActionFactory {
                     IDEWorkbenchMessages.Workbench_buildProject);
             action.setToolTipText(IDEWorkbenchMessages.Workbench_buildProjectToolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.project.buildProject"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -169,7 +173,7 @@ public final class IDEActionFactory {
      * id "closeProject". This action maintains its enablement state.
      */
     public static final ActionFactory CLOSE_PROJECT = new ActionFactory(
-            "closeProject") { //$NON-NLS-1$
+            "closeProject", IWorkbenchCommandConstants.PROJECT_CLOSEPROJECT) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -178,7 +182,7 @@ public final class IDEActionFactory {
             RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.CloseResourceAction_text);
             action.setToolTipText(IDEWorkbenchMessages.CloseResourceAction_text);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.project.closeProject"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
@@ -199,7 +203,7 @@ public final class IDEActionFactory {
      * @since 3.2
      */
     public static final ActionFactory CLOSE_UNRELATED_PROJECTS = new ActionFactory(
-            "closeUnrelatedProjects") { //$NON-NLS-1$
+            "closeUnrelatedProjects", IWorkbenchCommandConstants.PROJECT_CLOSEUNRELATEDPROJECTS) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -208,7 +212,7 @@ public final class IDEActionFactory {
             RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
             action.setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.project.closeUnrelatedProjects"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             return action;
         }
     };
@@ -241,7 +245,7 @@ public final class IDEActionFactory {
      * id "openProject". This action maintains its enablement state.
      */
     public static final ActionFactory OPEN_PROJECT = new ActionFactory(
-            "openProject") { //$NON-NLS-1$
+            "openProject", IWorkbenchCommandConstants.PROJECT_OPENPROJECT) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -250,7 +254,7 @@ public final class IDEActionFactory {
             RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.OpenResourceAction_text);
             action.setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
             window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.project.openProject"); //$NON-NLS-1$
+            action.setActionDefinitionId(getCommandId()); 
             return action;
         }
     };
@@ -356,7 +360,7 @@ public final class IDEActionFactory {
      * This action maintains its enablement state.
      */
     public static final ActionFactory TIPS_AND_TRICKS = new ActionFactory(
-            "tipsAndTricks") { //$NON-NLS-1$
+            "tipsAndTricks", IWorkbenchCommandConstants.HELP_TIPSANDTRICKS) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {

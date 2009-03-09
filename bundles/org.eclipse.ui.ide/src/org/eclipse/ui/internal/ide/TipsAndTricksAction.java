@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
@@ -52,7 +53,7 @@ public class TipsAndTricksAction extends PartEventAction implements
         setToolTipText(IDEWorkbenchMessages.TipsAndTricks_toolTip);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.TIPS_AND_TRICKS_ACTION);
-        setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
+        setActionDefinitionId(IWorkbenchCommandConstants.HELP_TIPSANDTRICKS);
         workbenchWindow.getPartService().addPartListener(this);
     }
 
