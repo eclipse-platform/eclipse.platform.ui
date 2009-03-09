@@ -12,18 +12,16 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.Collections;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.core.resources.IContainer;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -32,6 +30,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.util.Util;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -157,37 +163,12 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 
 		openWithButton.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
-				IWorkbenchPage activePage = getActivePage();
-				if (activePage == null) {
-					return;
-				}
-				IAdaptable selectedAdaptable = getSelectedAdaptable();
-				if (selectedAdaptable == null) {
-					return;
-				}
-
-				OpenWithMenu openWithMenu = new OpenWithMenu(activePage, selectedAdaptable) {
-					/*
-					 * (non-Javadoc)
-					 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
-					 */
-					protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
-						computeResult();
-						setResult(Collections.EMPTY_LIST);
-						close();
-						super.openEditor(editorDescriptor, openUsingDescriptor);
-					}
-				};
-
-				Menu menu = new Menu(parent);
-				Control c = openComposite;
-				Point p = c.getLocation();
-				p.y = p.y + c.getSize().y;
-				p = c.getParent().toDisplay(p);
-
-				menu.setLocation(p);
-				openWithMenu.fill(menu, -1);
-				menu.setVisible(true);
+				showOpenWithMenu(openComposite);
+			}
+		});
+		openWithButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				showOpenWithMenu(openComposite);
 			}
 		});
 
@@ -204,9 +185,9 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 			// See also special code in org.eclipse.jface.dialogs.Dialog#initializeBounds()
 			openComposite.moveBelow(null);
 			if (Util.isCarbon()) {
-				okLayoutData.horizontalIndent = -10;
-			}
+			okLayoutData.horizontalIndent = -10;
 		}
+	}
 	}
 	
 	/* (non-Javadoc)
@@ -254,6 +235,40 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 			return null;
 		}
 		return activeWorkbenchWindow.getActivePage();
+	}
+
+	private void showOpenWithMenu(final Composite openComposite) {
+		IWorkbenchPage activePage = getActivePage();
+		if (activePage == null) {
+			return;
+		}
+		IAdaptable selectedAdaptable = getSelectedAdaptable();
+		if (selectedAdaptable == null) {
+			return;
+		}
+
+		OpenWithMenu openWithMenu = new OpenWithMenu(activePage, selectedAdaptable) {
+			/*
+			 * (non-Javadoc)
+			 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
+			 */
+			protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
+				computeResult();
+				setResult(Collections.EMPTY_LIST);
+				close();
+				super.openEditor(editorDescriptor, openUsingDescriptor);
+			}
+		};
+
+		Menu menu = new Menu(openComposite.getParent());
+		Control c = openComposite;
+		Point p = c.getLocation();
+		p.y = p.y + c.getSize().y;
+		p = c.getParent().toDisplay(p);
+
+		menu.setLocation(p);
+		openWithMenu.fill(menu, -1);
+		menu.setVisible(true);
 	}
 
 }
