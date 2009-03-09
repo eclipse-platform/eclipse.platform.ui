@@ -33,7 +33,7 @@ import org.eclipse.jface.viewers.ViewerCell;
  */
 public class ObservableMapCellLabelProvider extends CellLabelProvider {
 
-	private final IObservableMap[] attributeMaps;
+	private IObservableMap[] attributeMaps;
 
 	private IMapChangeListener mapChangeListener = new IMapChangeListener() {
 		public void handleMapChange(MapChangeEvent event) {
@@ -55,11 +55,13 @@ public class ObservableMapCellLabelProvider extends CellLabelProvider {
 	}
 
 	/**
-	 * Creates a new label provider that tracks changes to one attribute.
+	 * Creates a new label provider that tracks changes to more than one
+	 * attribute. This constructor should be used by subclasses that override
+	 * {@link #update(ViewerCell)} and make use of more than one attribute.
 	 * 
 	 * @param attributeMaps
 	 */
-	public ObservableMapCellLabelProvider(IObservableMap[] attributeMaps) {
+	protected ObservableMapCellLabelProvider(IObservableMap[] attributeMaps) {
 		System.arraycopy(attributeMaps, 0,
 				this.attributeMaps = new IObservableMap[attributeMaps.length],
 				0, attributeMaps.length);
@@ -73,6 +75,8 @@ public class ObservableMapCellLabelProvider extends CellLabelProvider {
 			attributeMaps[i].removeMapChangeListener(mapChangeListener);
 		}
 		super.dispose();
+		this.attributeMaps = null;
+		this.mapChangeListener = null;
 	}
 
 	public void update(ViewerCell cell) {
