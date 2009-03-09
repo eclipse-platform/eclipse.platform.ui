@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,6 +235,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 				if (((IDisconnect) element).isDisconnected()) {
 					label.insert(0, DebugUIMessages.DefaultLabelProvider__disconnected__1); 
 				}
+			} else if (element instanceof String) {
+				label.append((String)element);
 			}
 		} catch (DebugException e) {
 			DebugUIPlugin.log(e);

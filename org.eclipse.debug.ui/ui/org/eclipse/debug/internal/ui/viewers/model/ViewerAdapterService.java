@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPo
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -52,7 +53,12 @@ public class ViewerAdapterService {
      * @return label provider or <code>null</code>
      */
     public static IElementLabelProvider getLabelProvider(Object element) {        
-    	return (IElementLabelProvider)getAdapter(element, IElementLabelProvider.class);
+    	IElementLabelProvider lp = (IElementLabelProvider)getAdapter(element, IElementLabelProvider.class);
+    	if (lp == null && element instanceof String) {
+    		// there are no adapters registered for Strings
+    		return (IElementLabelProvider) new DebugElementAdapterFactory().getAdapter(element, IElementLabelProvider.class);
+    	}
+    	return lp;
     }		    
     
     /**
