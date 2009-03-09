@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -525,58 +525,58 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 			fFilteredProposals= proposals;
 
-			fProposalTable.setRedraw(false);
-			fProposalTable.removeAll();
-
-			Point selection= fViewer.getSelectedRange();
-			int endOffset;
-			endOffset= selection.x + selection.y;
-			IDocument document= fViewer.getDocument();
-			boolean validate= false;
-			if (selection.y != 0 && document != null) validate= true;
 			int selectionIndex= 0;
+			fProposalTable.setRedraw(false);
+			try {
+				fProposalTable.removeAll();
 
-			TableItem item;
-			ICompletionProposal p;
-			for (int i= 0; i < proposals.length; i++) {
-				p= proposals[i];
-				item= new TableItem(fProposalTable, SWT.NULL);
-				if (p.getImage() != null)
-					item.setImage(p.getImage());
+				Point selection= fViewer.getSelectedRange();
+				int endOffset;
+				endOffset= selection.x + selection.y;
+				IDocument document= fViewer.getDocument();
+				boolean validate= false;
+				if (selection.y != 0 && document != null)
+					validate= true;
 
-				String displayString;
-				StyleRange[] styleRanges= null;
-				if (fIsColoredLabelsSupportEnabled && p instanceof ICompletionProposalExtension6) {
-					StyledString styledString= ((ICompletionProposalExtension6)p).getStyledDisplayString();
-					displayString= styledString.getString();
-					styleRanges= styledString.getStyleRanges();
-				} else
-					displayString= p.getDisplayString();
+				TableItem item;
+				ICompletionProposal p;
+				for (int i= 0; i < proposals.length; i++) {
+					p= proposals[i];
+					item= new TableItem(fProposalTable, SWT.NULL);
+					if (p.getImage() != null)
+						item.setImage(p.getImage());
 
-				item.setText(displayString);
-				if (fIsColoredLabelsSupportEnabled)
-					TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
+					String displayString;
+					StyleRange[] styleRanges= null;
+					if (fIsColoredLabelsSupportEnabled && p instanceof ICompletionProposalExtension6) {
+						StyledString styledString= ((ICompletionProposalExtension6)p).getStyledDisplayString();
+						displayString= styledString.getString();
+						styleRanges= styledString.getStyleRanges();
+					} else
+						displayString= p.getDisplayString();
 
-				item.setData(p);
+					item.setText(displayString);
+					if (fIsColoredLabelsSupportEnabled)
+						TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
 
-				if (validate && validateProposal(document, p, endOffset, null)) {
-					selectionIndex= i;
-					validate= false;
+					item.setData(p);
+
+					if (validate && validateProposal(document, p, endOffset, null)) {
+						selectionIndex= i;
+						validate= false;
+					}
 				}
+			} finally {
+				fProposalTable.setRedraw(true);
 			}
-
+			
 			resizeProposalSelector(false);
 
 			selectProposal(selectionIndex, false);
-			fProposalTable.setRedraw(true);
 		}
 	}
 
 	private void resizeProposalSelector(boolean adjustWidth) {
-		// in order to fill in the table items so size computation works correctly
-		// will cause flicker, though
-		fProposalTable.setRedraw(true);
-
 		int width= adjustWidth ? SWT.DEFAULT : ((GridData)fProposalTable.getLayoutData()).widthHint;
 		Point size= fProposalTable.computeSize(width, SWT.DEFAULT, true);
 
