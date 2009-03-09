@@ -250,7 +250,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
         refreshActionBarsContributor();
 	}
 
-	private void refreshActionBarsContributor() {
+	public void refreshActionBarsContributor() {
 		IEditorSite editorSite= getEditorSite();
         if (editorSite != null) {
 	        IEditorActionBarContributor actionBarContributor= editorSite.getActionBarContributor();

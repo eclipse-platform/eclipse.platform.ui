@@ -38,6 +38,7 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.SharedDocumentAdapter;
 import org.eclipse.compare.internal.BufferedCanvas;
 import org.eclipse.compare.internal.ChangePropertyAction;
+import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.CompareEditorSelectionProvider;
 import org.eclipse.compare.internal.CompareHandlerService;
 import org.eclipse.compare.internal.CompareMessages;
@@ -2616,6 +2617,19 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 				public void run() {
 					if (viewer != null) {
 						setActionsActivated(viewer.getSourceViewer(), connect);
+						if (isEditorBacked(viewer.getSourceViewer()) && connect) {
+							/*
+							 * If editor backed, activating contributed actions
+							 * might have disconnected actions provided in
+							 * CompareEditorContributor => when connecting,
+							 * refresh active editor in the contributor, when
+							 * disconnecting do nothing. See bug 261229.
+							 */
+							IWorkbenchPart part = getCompareConfiguration().getContainer().getWorkbenchPart();
+							if (part instanceof CompareEditor) {
+								((CompareEditor) part).refreshActionBarsContributor();
+							}
+						}
 					}
 				}
 			});
