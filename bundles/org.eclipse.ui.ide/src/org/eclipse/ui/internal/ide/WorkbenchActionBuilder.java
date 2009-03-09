@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
@@ -1128,7 +1129,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             register(introAction);
         }
 
-        String showInQuickMenuId = "org.eclipse.ui.navigate.showInQuickMenu"; //$NON-NLS-1$
+        String showInQuickMenuId = IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU;
         showInQuickMenu = new QuickMenuAction(showInQuickMenuId) {
             protected void fillMenu(IMenuManager menu) {
                 menu.add(ContributionItemFactory.VIEWS_SHOW_IN

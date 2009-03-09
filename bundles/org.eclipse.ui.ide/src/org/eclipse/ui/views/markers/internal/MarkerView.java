@@ -80,6 +80,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -1598,7 +1599,7 @@ public abstract class MarkerView extends TableView {
 				.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null) {
 			String keyBinding = bindingService
-					.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+					.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU);
 			if (keyBinding != null) {
 				showInLabel += '\t' + keyBinding;
 			}

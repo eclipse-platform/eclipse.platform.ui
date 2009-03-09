@@ -275,30 +275,41 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String NAVIGATE_SHOWIN = "org.eclipse.ui.navigate.showIn"; //$NON-NLS-1$
 
+    /**
+     * Id for command "Show In" in category "Navigate"
+     * (value is <code>"org.eclipse.ui.navigate.showInQuickMenu"</code>).
+     */
+    public static final String NAVIGATE_SHOWINQUICKMENU = "org.eclipse.ui.navigate.showInQuickMenu"; //$NON-NLS-1$
+
     // project category
     
     /**
      * Id for command "Build All" in category "Project".
+     * (value is <code>"org.eclipse.ui.project.buildAll"</code>).
      */
     public static final String PROJECT_BUILDALL = "org.eclipse.ui.project.buildAll"; //$NON-NLS-1$
 
     /**
      * Id for command "Build Project" in category "Project".
+     * (value is <code>"org.eclipse.ui.project.buildProject"</code>).
      */
     public static final String PROJECT_BUILDPROJECT = "org.eclipse.ui.project.buildProject"; //$NON-NLS-1$
 
     /**
      * Id for command "Close Project" in category "Project".
+     * (value is <code>"org.eclipse.ui.project.closeProject"</code>).
      */
     public static final String PROJECT_CLOSEPROJECT = "org.eclipse.ui.project.closeProject"; //$NON-NLS-1$
 
     /**
      * Id for command "Close Unrelated Projects" in category "Project".
+     * (value is <code>"org.eclipse.ui.project.closeUnrelatedProjects"</code>).
      */
     public static final String PROJECT_CLOSEUNRELATEDPROJECTS = "org.eclipse.ui.project.closeUnrelatedProjects"; //$NON-NLS-1$
 
     /**
      * Id for command "Open Project" in category "Project".
+     * (value is <code>"org.eclipse.ui.project.openProject"</code>).
      */
     public static final String PROJECT_OPENPROJECT = "org.eclipse.ui.project.openProject"; //$NON-NLS-1$
 
@@ -315,6 +326,12 @@ public interface IWorkbenchCommandConstants {
      * (value is <code>"org.eclipse.ui.window.newEditor"</code>).
      */
     public static final String WINDOW_NEWEDITOR = "org.eclipse.ui.window.newEditor"; //$NON-NLS-1$
+
+    /**
+     * Id for command "Show View Menu" in category "Window"
+     * (value is <code>"org.eclipse.ui.window.showViewMenu"</code>).
+     */
+    public static final String WINDOW_SHOWVIEWMENU = "org.eclipse.ui.window.showViewMenu"; //$NON-NLS-1$
 
     /**
      * Id for command "Activate Editor" in category "Window"

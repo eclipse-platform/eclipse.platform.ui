@@ -1503,7 +1503,7 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory SHOW_VIEW_MENU = new ActionFactory(
-            "showViewMenu") {//$NON-NLS-1$
+            "showViewMenu", IWorkbenchCommandConstants.WINDOW_SHOWVIEWMENU) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1512,7 +1512,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.showViewMenu",window); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
             action.setText(WorkbenchMessages.ShowViewMenuAction_text);
             action.setToolTipText(WorkbenchMessages.ShowViewMenuAction_toolTip);
