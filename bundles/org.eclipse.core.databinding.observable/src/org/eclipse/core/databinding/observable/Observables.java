@@ -32,7 +32,9 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.value.DecoratingObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.IVetoableValue;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
 import org.eclipse.core.internal.databinding.observable.ConstantObservableValue;
 import org.eclipse.core.internal.databinding.observable.DelayedObservableValue;
@@ -47,8 +49,8 @@ import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableVa
 import org.eclipse.core.runtime.Assert;
 
 /**
- * Contains static methods to operate on or return
- * {@link IObservable Observables}.
+ * Contains static methods to operate on or return {@link IObservable
+ * Observables}.
  * 
  * @since 1.0
  */
@@ -395,7 +397,8 @@ public class Observables {
 			public synchronized void addStaleListener(IStaleListener listener) {
 			}
 
-			public synchronized void addSetChangeListener(ISetChangeListener listener) {
+			public synchronized void addSetChangeListener(
+					ISetChangeListener listener) {
 			}
 		};
 	}
@@ -518,7 +521,8 @@ public class Observables {
 			public synchronized void addStaleListener(IStaleListener listener) {
 			}
 
-			public synchronized void addListChangeListener(IListChangeListener listener) {
+			public synchronized void addListChangeListener(
+					IListChangeListener listener) {
 			}
 		};
 	}
@@ -555,7 +559,8 @@ public class Observables {
 	 *         specified key in the given map
 	 * @since 1.2
 	 */
-	public static IObservableValue observeMapEntry(IObservableMap map, Object key) {
+	public static IObservableValue observeMapEntry(IObservableMap map,
+			Object key) {
 		return observeMapEntry(map, key, map.getValueType());
 	}
 
@@ -573,8 +578,8 @@ public class Observables {
 	 * @param key
 	 *            the key identifying the map entry to track.
 	 * @param valueType
-	 *            the type of the value. May be <code>null</code>, meaning
-	 *            the value is untyped.
+	 *            the type of the value. May be <code>null</code>, meaning the
+	 *            value is untyped.
 	 * @return an observable value that tracks the value associated with the
 	 *         specified key in the given map
 	 * @since 1.1
@@ -594,8 +599,8 @@ public class Observables {
 	 * @param map
 	 *            the observable map whose entry will be tracked.
 	 * @param valueType
-	 *            the type of the value. May be <code>null</code>, meaning
-	 *            the value is untyped.
+	 *            the type of the value. May be <code>null</code>, meaning the
+	 *            value is untyped.
 	 * @return a factory for creating observable values tracking the value of
 	 *         the observable map entry identified by a particular key object.
 	 * @since 1.1
@@ -618,8 +623,8 @@ public class Observables {
 	 * @param master
 	 *            the observable value that identifies which map entry to track.
 	 * @param valueType
-	 *            the type of the value. May be <code>null</code>, meaning
-	 *            the value is untyped.
+	 *            the type of the value. May be <code>null</code>, meaning the
+	 *            value is untyped.
 	 * @return an observable value tracking the current value of the specified
 	 *         key in the given map an observable value that tracks the current
 	 *         value of the named property for the current value of the master
@@ -630,5 +635,28 @@ public class Observables {
 			IObservableValue master, Object valueType) {
 		return MasterDetailObservables.detailValue(master,
 				mapEntryValueFactory(map, valueType), valueType);
+	}
+
+	/**
+	 * Copies the current value of the source observable to the destination
+	 * observable, and upon value change events fired by the source observable,
+	 * updates the destination observable accordingly, until the source
+	 * observable is disposed. This method assumes that both observables are on
+	 * the same realm.
+	 * 
+	 * @param source
+	 *            the source observable
+	 * @param destination
+	 *            the destination observable
+	 * @since 1.2
+	 */
+	public static void pipe(IObservableValue source,
+			final IObservableValue destination) {
+		destination.setValue(source.getValue());
+		source.addValueChangeListener(new IValueChangeListener() {
+			public void handleValueChange(ValueChangeEvent event) {
+				destination.setValue(event.diff.getNewValue());
+			}
+		});
 	}
 }
