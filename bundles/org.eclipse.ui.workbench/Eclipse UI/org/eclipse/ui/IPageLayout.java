@@ -51,10 +51,10 @@ package org.eclipse.ui;
  * // Get the editor area.
  * String editorArea = layout.getEditorArea();
  *
- * // Top left: Resource Navigator view and Bookmarks view placeholder
+ * // Top left: Project Explorer view and Bookmarks view placeholder
  * IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f,
  *    editorArea);
- * topLeft.addView(IPageLayout.ID_RES_NAV);
+ * topLeft.addView(IPageLayout.ID_PROJECT_EXPLORER);
  * topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
  *
  * // Bottom left: Outline view and Property Sheet view
@@ -79,8 +79,15 @@ public interface IPageLayout {
 
     /**
      * The view id for the workbench's Resource Navigator standard component.
+     * @deprecated
      */
     public static String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
+
+    /**
+     * The view id for the Project Explorer.
+     * @since 3.5
+     */
+    public static String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
 
     /**
      * The view id for the workbench's Property Sheet standard component.

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IAggregateWorkingSet;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -50,7 +51,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	 * @see IWorkbenchPage#findView(String)
 	 * @see IWorkbenchPage#findViewReference(String)
 	 */
-	public static final String VIEW_ID = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
+	public static final String VIEW_ID = IPageLayout.ID_PROJECT_EXPLORER;
 
 	/**
 	 * @since 3.4
