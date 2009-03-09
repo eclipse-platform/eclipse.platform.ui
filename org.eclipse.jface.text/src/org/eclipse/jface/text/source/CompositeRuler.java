@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -296,6 +296,9 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		 * @param listener the listener object
 		 */
 		private void removeListener(Class clazz, EventListener listener) {
+			// Keep as first statement to ensure checkWidget() is called.
+			Control[] children= getChildren();
+
 			int length= fCachedListeners.size();
 			for (int i= 0; i < length; i++) {
 				ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
@@ -305,7 +308,6 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 				}
 			}
 
-			Control[] children= getChildren();
 			for (int i= 0; i < children.length; i++) {
 				if (children[i] != null && !children[i].isDisposed())
 					removeListener(clazz, children[i], listener);
