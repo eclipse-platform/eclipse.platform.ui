@@ -31,8 +31,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -297,6 +295,7 @@ public class FilteredTree extends Composite {
 		createRefreshJob();
 		setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
 		setFont(parent.getFont());
+
 	}
 
 	/**
@@ -673,9 +672,6 @@ public class FilteredTree extends Composite {
 					}
 				});
 
-		// Don't use a field in order to keep it local to this method
-		final Color[] filterTextForeground= new Color[1];
-
 		filterText.addFocusListener(new FocusAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -701,13 +697,6 @@ public class FilteredTree extends Composite {
 					});
 					return;
 				}
-
-				if (filterText.getText().equals(initialText) && filterText.getSelectionCount() == 0) {
-					// XXX: We cannot call clearText() due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=260664
-					setFilterText(""); //$NON-NLS-1$
-					textChanged();
-				}
-				filterText.setForeground(filterTextForeground[0]);
 			}
 
 			/*
@@ -719,14 +708,9 @@ public class FilteredTree extends Composite {
 				if (!useNewLook) {
 					return;
 				}
-				
-				if (filterText.getCharCount() == 0 && initialText != null) {
-					filterText.setText(initialText);
-				}
 				if (filterText.getText().equals(initialText)) {
-					filterTextForeground[0]= filterText.getForeground();
-					filterText.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-					filterText.setSelection(0);
+					setFilterText(""); //$NON-NLS-1$
+					textChanged();
 				}
 			}
 		});
@@ -747,37 +731,6 @@ public class FilteredTree extends Composite {
 					}
 				}
 			});
-
-			final PaintListener[] paintListener= new PaintListener[1];
-			paintListener[0]= new PaintListener() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent
-				 * )
-				 */
-				public void paintControl(PaintEvent e) {
-					filterTextForeground[0]= filterText.getForeground();
-					if (!filterText.isFocusControl() && filterText.getText().equals(initialText)) {
-						filterText.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-
-						// Previous focus check might not be 100% accurate
-						Display display= filterText.getDisplay();
-						display.asyncExec(new Runnable() {
-							public void run() {
-								if (!filterText.isDisposed() && !filterText.isFocusControl()) {
-									filterText.setSelection(0);
-								}
-							}
-						});
-
-					}
-					filterText.removePaintListener(paintListener[0]);
-				}
-
-			};
-			filterText.addPaintListener(paintListener[0]);
 		}
 
 		filterText.addKeyListener(new KeyAdapter() {
@@ -1116,8 +1069,25 @@ public class FilteredTree extends Composite {
 	 */
 	public void setInitialText(String text) {
 		initialText = text;
-		setFilterText(initialText);
-		textChanged();
+		if (useNewLook) {
+			filterText.setMessage(text);
+			if (filterText.isFocusControl()) {
+				setFilterText(initialText);
+				textChanged();
+			} else {
+				getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						if (!filterText.isDisposed() && filterText.isFocusControl()) {
+							setFilterText(initialText);
+							textChanged();
+						}
+					}
+				});
+			}
+		} else {
+			setFilterText(initialText);
+			textChanged();
+		}
 	}
 
 	/**
