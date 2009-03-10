@@ -135,6 +135,10 @@ public class URIUtilTest extends RuntimeTest {
 		//encoded legal character
 		assertEquals("4.1", new URI("http://foo.bar/a%2Cb").getSchemeSpecificPart(), URIUtil.fromString("http://foo.bar/a,b").getSchemeSpecificPart());
 		assertEquals("4.2", new URI("file:/foo.bar/a%2Cb").getSchemeSpecificPart(), URIUtil.fromString("file:/foo.bar/a,b").getSchemeSpecificPart());
+
+		//backslash
+		URI uri = URIUtil.fromString("a\\b");
+		System.out.println(uri);
 	}
 
 	/**
@@ -344,6 +348,9 @@ public class URIUtilTest extends RuntimeTest {
 				//already absolute
 				new URI[] {new URI("file:../plugins/foo.jar"), new URI("file:/eclipse/configuration"), new URI("file:../plugins/foo.jar")}, //
 				new URI[] {new URI("file:/foo.jar"), new URI("file:/eclipse/configuration"), new URI("file:/foo.jar")}, //
+				//encoded characters
+				new URI[] {new URI("plugins%5Cfoo.jar"), new URI("file:/eclipse/"), new URI("file:/eclipse/plugins%5Cfoo.jar")},//
+				new URI[] {new URI("a%20b"), new URI("file:/eclipse/"), new URI("file:/eclipse/a%20b")},//
 		};
 
 		for (int i = 0; i < data.length; i++) {
