@@ -89,7 +89,7 @@ Specifies whether the view should be automatically closed when the given context
    <element name="perspective">
       <annotation>
          <documentation>
-            Specifies a perspective in which the view management will be enabled.
+            Specifies a perspective in which the view management will be enabled (since 3.5).
          </documentation>
       </annotation>
       <complexType>
