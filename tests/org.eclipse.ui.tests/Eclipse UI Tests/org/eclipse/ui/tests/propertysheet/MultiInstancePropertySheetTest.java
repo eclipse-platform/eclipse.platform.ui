@@ -72,6 +72,8 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		super.doTearDown();
 		Platform.getAdapterManager().unregisterAdapters(testPropertySheetPage,
 				PropertySheet.class);
+		testPropertySheetPage = null;
+		selectionProviderView = null;
 	}
 
 	/**
@@ -93,8 +95,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * @throws PartInitException
 	 */
 	public void testDefaultPageAdapter() throws PartInitException {
-		Platform.getAdapterManager().registerAdapters(testPropertySheetPage,
-				PropertySheet.class);
 		PropertySheet propertySheet = (PropertySheet) activePage
 				.showView(IPageLayout.ID_PROP_SHEET);
 		assertTrue(propertySheet.getCurrentPage() instanceof TestPropertySheetPage);
@@ -160,6 +160,8 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		assertEquals(testPropertySheetPage2, secondPage);
 		assertNotSame("PropertySheet hasn't changed selection", firstPart,
 				secondPage.getSelection());
+		Platform.getAdapterManager().unregisterAdapters(testPropertySheetPage2,
+				org.eclipse.ui.tests.session.NonRestorableView.class);
 	}
 
 	/**
@@ -195,6 +197,8 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 				secondPage.getSelection());
 		assertEquals("PropertySheetPage has changed part", firstPart,
 				secondPage.getPart());
+		Platform.getAdapterManager().unregisterAdapters(testPropertySheetPage2,
+				org.eclipse.ui.tests.session.NonRestorableView.class);
 	}
 
 	/**

@@ -37,15 +37,16 @@ public abstract class AbstractPropertySheetTest extends UITestCase {
 		super(testName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doSetUp()
-	 */
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		IWorkbenchWindow workbenchWindow = openTestWindow();
 		activePage = workbenchWindow.getActivePage();
+	}
+	
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
+		activePage = null;
+		propertySheet = null;
 	}
 
 	/**
