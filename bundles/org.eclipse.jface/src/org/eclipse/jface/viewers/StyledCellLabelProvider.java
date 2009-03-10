@@ -75,6 +75,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	private ViewerColumn column;
 	
 	private Widget itemOfLastMeasure;
+	private Object elementOfLastMeasure;
 	private int deltaOfLastMeasure;
 
 	/**
@@ -182,6 +183,8 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	
 		this.viewer= null;
 		this.column= null;
+		this.itemOfLastMeasure = null;
+		this.elementOfLastMeasure = null;
 		
 		super.dispose();
 	}
@@ -282,6 +285,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 		int textWidthDelta = deltaOfLastMeasure = updateTextLayout(layout, cell, applyColors);
 		/* remove-begin if bug 228695 fixed */
 		itemOfLastMeasure = event.item;
+		elementOfLastMeasure = event.item.getData();
 		/* remove-end if bug 228695 fixed */
 
 		event.width += textWidthDelta;
@@ -370,10 +374,11 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			TextLayout textLayout= getSharedTextLayout(event.display);
 
 			/* remove-begin if bug 228695 fixed */
-			if (event.item != itemOfLastMeasure) {
+			if (event.item != itemOfLastMeasure || event.item.getData() != elementOfLastMeasure) {
 				// fLayout has not been configured in 'measure()'
 				deltaOfLastMeasure = updateTextLayout(textLayout, cell, applyColors);
 				itemOfLastMeasure = event.item;
+				elementOfLastMeasure = event.item.getData();
 			}
 			/* remove-end if bug 228695 fixed */
 			
