@@ -1,5 +1,5 @@
 del localfile.obj
-del localfile_3_2_0*
+del localfile_1_0_0*
 
 call "%MSSDK%\bin\SetEnv.Cmd" /Release /ia64 /xp
 
