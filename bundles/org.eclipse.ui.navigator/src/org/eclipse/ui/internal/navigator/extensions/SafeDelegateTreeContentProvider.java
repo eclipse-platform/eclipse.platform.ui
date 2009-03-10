@@ -17,12 +17,12 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IMementoAware;
@@ -43,7 +43,7 @@ public class SafeDelegateTreeContentProvider implements
 	private NavigatorContentDescriptor descriptor;
 	private NavigatorContentService contentService;
 
-	private CommonViewer viewer;
+	private StructuredViewer viewer;
 
 	SafeDelegateTreeContentProvider(ITreeContentProvider aContentProvider,
 			NavigatorContentDescriptor aDescriptor, NavigatorContentService aContentService) {
@@ -116,7 +116,7 @@ public class SafeDelegateTreeContentProvider implements
 	}
 
 	public void inputChanged(final Viewer aViewer, final Object anOldInput, final Object aNewInput) {
-		viewer = (CommonViewer) aViewer;
+		viewer = (StructuredViewer) aViewer;
 		
 		SafeRunner.run(new ISafeRunnable() {
 

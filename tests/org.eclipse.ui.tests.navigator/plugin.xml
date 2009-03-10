@@ -39,6 +39,12 @@
             class="org.eclipse.ui.navigator.CommonNavigator"
             name="Inherited Test View"/>            
 
+      <view
+            id="org.eclipse.ui.tests.navigator.NonCommonViewerTestView"
+            allowMultiple="false"
+            class="org.eclipse.ui.tests.navigator.NonCommonViewerView"
+            name="Non CommonViewer Test View"/>            
+
    </extension>
 
    <extension
@@ -124,6 +130,9 @@
             inheritBindingsFromViewer="org.eclipse.ui.tests.navigator.TestView"
             helpContext="org.eclipse.ui.tests.navigator.testHelpContext">
       </viewer>
+
+	  <!-- don't make the name match the View we want to make sure that works -->
+      <viewer viewerId="org.eclipse.ui.tests.navigator.NonCommonViewerTestViewer"/>      
 
    </extension>
 

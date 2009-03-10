@@ -21,6 +21,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
+import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 
 public class INavigatorContentServiceTests extends NavigatorTestBase {
@@ -188,4 +189,12 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 		}
 
 	}
+
+	// Bug 267722 [CommonNavigator] ClassCastException when synchronizing
+	public void testNonCommonViewer() throws Exception {
+		EditorTestHelper.showView(TEST_VIEW_NON_COMMONVIEWER, true);
+
+	}
+	
+	
 }

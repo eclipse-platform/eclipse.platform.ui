@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,6 +135,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @since 3.1
 	 */
 	private ColorAndFontCollector colorAndFontCollector = new ColorAndFontCollector();
+	
+	
+	/** 
+	 * Calls when associate() and disassociate() are called
+	 */
+	private StructuredViewerInternals.AssociateListener associateListener;
 	
 	/**
 	 * Empty array of widgets.
@@ -612,6 +618,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		// since unmapAllElements() can leave the map inconsistent
 		// See bug 2741 for details.
 		mapElement(element, item);
+		if (associateListener != null)
+			associateListener.associate(element, item);
 	}
 
 	/**
@@ -623,6 +631,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            the widget
 	 */
 	protected void disassociate(Item item) {
+		if (associateListener != null)
+			associateListener.disassociate(item);
 		Object element = item.getData();
 		Assert.isNotNull(element);
 		//Clear the map before we clear the data
@@ -925,7 +935,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	protected Item getItem(int x, int y) {
 		return null;
 	}
-
+	
 	/**
 	 * Returns the children of the given parent without sorting and filtering
 	 * them. The resulting array must not be modified, as it may come directly
@@ -1548,6 +1558,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 	}
 
+	void setAssociateListener(StructuredViewerInternals.AssociateListener l) {
+		associateListener = l;
+	}
+	
 	/**
 	 * Sets the filters, replacing any previous filters, and triggers
 	 * refiltering and resorting of the elements.

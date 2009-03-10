@@ -38,7 +38,6 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorDecoratingLabelProvider;
 import org.eclipse.ui.internal.navigator.NavigatorPipelineService;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.framelist.FrameList;
 
 /**
@@ -545,18 +544,6 @@ public class CommonViewer extends TreeViewer {
 		}
 	}
 
-	protected void associate(Object element, Item item) {
-		super.associate(element, item);
-		NavigatorContentDescriptor desc = contentService.getContribution(element);
-		if (desc != null)
-			item.setData(NavigatorContentService.WIDGET_KEY, desc);
-	}
-
-	protected void disassociate(Item item) {
-		super.disassociate(item);
-		item.setData(NavigatorContentService.WIDGET_KEY, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -577,17 +564,6 @@ public class CommonViewer extends TreeViewer {
 			return;
 		}
 		super.internalRefresh(element, updateLabels);
-	}
-
-	/**
-	 * @param element 
-	 * @return the Widgets corresponding to the element
-	 * 
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 */
-	public Widget[] getItems(Object element) {
-		return findItems(element);
 	}
 
 	/**

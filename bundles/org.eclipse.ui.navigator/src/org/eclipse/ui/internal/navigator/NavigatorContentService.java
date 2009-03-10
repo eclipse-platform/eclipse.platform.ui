@@ -46,7 +46,6 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptorManager;
 import org.eclipse.ui.internal.navigator.extensions.StructuredViewerManager;
 import org.eclipse.ui.internal.navigator.sorters.NavigatorSorterService;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.ui.navigator.IExtensionActivationListener;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -172,7 +171,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public NavigatorContentService(String aViewerId, StructuredViewer aViewer) {
 		this(aViewerId);
-		structuredViewerManager = new StructuredViewerManager(aViewer);
+		structuredViewerManager = new StructuredViewerManager(aViewer, this);
 	}
 
 	public String[] getVisibleExtensionIds() {
@@ -355,7 +354,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		synchronized (this) {
 
 			if (structuredViewerManager == null) {
-				structuredViewerManager = new StructuredViewerManager(aViewer);
+				structuredViewerManager = new StructuredViewerManager((StructuredViewer) aViewer, this);
 				structuredViewerManager.inputChanged(anOldInput, aNewInput);
 			} else {
 				structuredViewerManager.inputChanged(aViewer, anOldInput,
@@ -729,8 +728,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		NavigatorContentDescriptor src = (NavigatorContentDescriptor) contributionMemory.get(element);
 		if (src != null)
 			return src;
-		CommonViewer viewer = (CommonViewer) structuredViewerManager.getViewer();
-		Widget[] ws = viewer.getItems(element);
+		Widget[] ws = structuredViewerManager.getItems(element);
 		if (ws.length == 0)
 			return null;
 		if (ws.length == 1) {

@@ -11,8 +11,13 @@
 package org.eclipse.ui.internal.navigator.extensions;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewerInternals;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 
 /**
@@ -39,19 +44,54 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
  */
 public class StructuredViewerManager {
 
-	private Viewer viewer;
+	private StructuredViewer viewer;
 
 	private Object cachedOldInput;
 
 	private Object cachedNewInput;
+
+	static class StructuredViewerAccess extends StructuredViewerInternals {
+		static class Listener implements StructuredViewerInternals.AssociateListener {
+			private final NavigatorContentService contentService;
+			public Listener(NavigatorContentService contentService) {
+				this.contentService = contentService;
+			}
+			public void associate(Object element, Item item) {
+				NavigatorContentDescriptor desc = contentService.getContribution(element);
+				if (desc != null)
+					item.setData(NavigatorContentService.WIDGET_KEY, desc);
+				//System.out.println("associate: " + element + " item: " + item + " desc: " + desc); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			public void disassociate(Item item) {
+				item.setData(NavigatorContentService.WIDGET_KEY, null);
+				//System.out.println("disassociate:  item: " + item); //$NON-NLS-1$
+			}
+		}
+		protected static void hookAssociateListener(StructuredViewer v, NavigatorContentService contentService) {
+			StructuredViewerInternals.setAssociateListener(v, new Listener(contentService));
+		}
+		protected static Widget[] getItems(StructuredViewer v, Object element) {
+			return StructuredViewerInternals.getItems(v, element);
+		}
+	}
 	
+	/**
+	 * @param element
+	 * @return the items
+	 */
+	public Widget[] getItems(Object element) {
+		return StructuredViewerAccess.getItems(viewer, element);
+	}
+
 	/**
 	 * 
 	 * @param aViewer
+	 * @param contentService 
 	 */
-	public StructuredViewerManager(Viewer aViewer) {
+	public StructuredViewerManager(StructuredViewer aViewer, NavigatorContentService contentService) {
 		super();
 		viewer = aViewer;
+		StructuredViewerAccess.hookAssociateListener(viewer, contentService);
 	}
 
 	/**
@@ -79,7 +119,7 @@ public class StructuredViewerManager {
 	 * @param aNewInput
 	 */
 	public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
-		viewer = aViewer;
+		viewer = (StructuredViewer) aViewer;
 		cachedOldInput = anOldInput;
 		cachedNewInput = aNewInput;
 	}

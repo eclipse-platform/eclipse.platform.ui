@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.navigator" version="2">
+    <resource path="src/org/eclipse/ui/internal/navigator/extensions/StructuredViewerManager.java" type="org.eclipse.ui.internal.navigator.extensions.StructuredViewerManager$StructuredViewerAccess">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="StructuredViewerInternals"/>
+                <message_argument value="StructuredViewerAccess"/>
+                <message_argument value="setAssociateListener(StructuredViewer, StructuredViewerInternalsAssociateListener)"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="StructuredViewerInternals"/>
+                <message_argument value="StructuredViewerAccess"/>
+                <message_argument value="getItems(StructuredViewer, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="StructuredViewerInternals"/>
+                <message_argument value="StructuredViewerAccess"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/navigator/INavigatorPipelineService.java" type="org.eclipse.ui.navigator.INavigatorPipelineService">
         <filter id="403853384">
             <message_arguments>
@@ -14,6 +36,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorSorterService.java" type="org.eclipse.ui.navigator.INavigatorSorterService">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorSorterService"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/navigator/CommonNavigator.java" type="org.eclipse.ui.navigator.CommonNavigator">
         <filter id="388194388">
             <message_arguments>
@@ -23,10 +52,10 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorSorterService.java" type="org.eclipse.ui.navigator.INavigatorSorterService">
+    <resource path="src/org/eclipse/ui/navigator/INavigatorContentExtension.java" type="org.eclipse.ui.navigator.INavigatorContentExtension">
         <filter id="403853384">
             <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorSorterService"/>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorContentExtension"/>
             </message_arguments>
         </filter>
     </resource>
@@ -34,13 +63,6 @@
         <filter id="403853384">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.navigator.INavigatorViewerDescriptor"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorContentExtension.java" type="org.eclipse.ui.navigator.INavigatorContentExtension">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorContentExtension"/>
             </message_arguments>
         </filter>
     </resource>
@@ -95,17 +117,17 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorSaveablesService.java" type="org.eclipse.ui.navigator.INavigatorSaveablesService">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorSaveablesService"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ui/navigator/INavigatorContentService.java" type="org.eclipse.ui.navigator.INavigatorContentService">
         <filter id="403853384">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.navigator.INavigatorContentService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorSaveablesService.java" type="org.eclipse.ui.navigator.INavigatorSaveablesService">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorSaveablesService"/>
             </message_arguments>
         </filter>
     </resource>

@@ -55,6 +55,9 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_VIEWER_PIPELINE = "org.eclipse.ui.tests.navigator.PipelineTestView";
 	public static final String TEST_VIEWER_HIDE_EXTENSIONS = "org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView";
 	public static final String TEST_VIEWER_INHERITED = "org.eclipse.ui.tests.navigator.InheritedTestView";
+	public static final String TEST_VIEWER_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestViewer";	
+
+	public static final String TEST_VIEW_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestView";
 	
 	public static final String TEST_CONTENT = "org.eclipse.ui.tests.navigator.testContent";
 	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testContent2";	
