@@ -37,7 +37,6 @@ public class ShellActiveTest extends CSSTestCase {
 	public void testShellActive() throws Exception {
 		Shell shell = createShell("Shell:active {background-color: #FF0000;}\n" +
 									"Shell {background-color: #0000FF;}");
-		System.out.println(shell.getBackground().getRGB());
 		assertEquals(RED, shell.getBackground().getRGB());
 		Shell newShell = createShell("Shell { background-color: #0000FF; }");
 		assertEquals(BLUE, shell.getBackground().getRGB());
