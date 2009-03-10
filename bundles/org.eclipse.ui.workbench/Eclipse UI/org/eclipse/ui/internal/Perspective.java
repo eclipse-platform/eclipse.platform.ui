@@ -1070,8 +1070,10 @@ public class Perspective {
 			IStatus status = StatusUtil.newStatus(IStatus.WARNING, msg, null);
 			StatusManager.getManager().handle(status, StatusManager.LOG);
 
-			PerspectiveDescriptor newDesc = reg.createPerspective(
-					'<' + descriptor.getLabel() + '>', descriptor);
+			String newDescId = '<' + descriptor.getLabel() + '>';
+			while (reg.findPerspectiveWithId(newDescId) != null)
+				newDescId = '<' + newDescId + '>';
+			PerspectiveDescriptor newDesc = reg.createPerspective(newDescId, descriptor);
 			page.savePerspectiveAs(newDesc);
 		}
 	}
