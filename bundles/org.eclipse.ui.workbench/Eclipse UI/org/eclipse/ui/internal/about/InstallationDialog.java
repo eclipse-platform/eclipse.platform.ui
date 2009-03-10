@@ -98,7 +98,7 @@ public class InstallationDialog extends Dialog implements
 					Button button = (Button) buttons.get(i);
 					button.setVisible(true);
 					setButtonLayoutData(metrics, button, true);
-					GridData data = (GridData)button.getLayoutData();
+					GridData data = (GridData) button.getLayoutData();
 					data.exclude = false;
 					visibleChildren++;
 				}
@@ -109,7 +109,8 @@ public class InstallationDialog extends Dialog implements
 			composite.layout(true);
 		}
 
-		protected void setButtonLayoutData(FontMetrics metrics, Control button, boolean visible) {
+		protected void setButtonLayoutData(FontMetrics metrics, Control button,
+				boolean visible) {
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			int widthHint = Dialog.convertHorizontalDLUsToPixels(metrics,
 					IDialogConstants.BUTTON_WIDTH);
@@ -140,6 +141,7 @@ public class InstallationDialog extends Dialog implements
 	IServiceLocator serviceLocator;
 	private ButtonManager buttonManager;
 	private Map pageToId = new HashMap();
+	private Dialog modalParent;
 
 	/**
 	 * @param parentShell
@@ -352,8 +354,10 @@ public class InstallationDialog extends Dialog implements
 		buttonManager.clear();
 	}
 
-	public void closeContainer() {
+	public void closeModalContainers() {
 		close();
+		if (modalParent != null)
+			modalParent.close();
 	}
 
 	protected void buttonPressed(int buttonId) {
@@ -370,5 +374,21 @@ public class InstallationDialog extends Dialog implements
 		String pageId = (String) pageToId.get(page);
 		Assert.isLegal(pageId != null);
 		return pageId;
+	}
+
+	/**
+	 * Set the modal parent dialog that was used to launch this dialog. This
+	 * should be used by any launching dialog so that the {
+	 * {@link #closeModalContainers()} method can be properly implemented.
+	 * 
+	 * @param parent
+	 *            the modal parent dialog that launched this dialog, or
+	 *            <code>null</code> if there was no parent.
+	 *            
+	 * This is an internal method and should not be used outside of 
+	 * platform UI.
+	 */
+	public void setModalParent(Dialog parent) {
+		this.modalParent = parent;
 	}
 }

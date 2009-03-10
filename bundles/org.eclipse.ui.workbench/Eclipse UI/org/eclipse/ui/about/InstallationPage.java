@@ -54,6 +54,15 @@ public abstract class InstallationPage extends DialogPage {
 		super.setMessage(newMessage, newType);
 	}
 
+	/**
+	 * Set the page container that is hosting this page.  This method
+	 * is typically called by the container itself so that the pages
+	 * have access to the container when registering buttons using
+	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
+	 * or performing other container-related tasks.
+	 * 
+	 * @param container the container that is hosting hte page.
+	 */
 	public void setPageContainer(IInstallationPageContainer container) {
 		this.container = container;
 	}
@@ -117,6 +126,14 @@ public abstract class InstallationPage extends DialogPage {
 	protected void buttonPressed(int buttonId) {
 	}
 
+	/**
+	 * Get the page container that is hosting this page.  This method
+	 * is typically used when registering buttons using
+	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
+	 * or performing other container-related tasks.
+	 * 
+	 * @return the container that is hosting hte page.
+	 */
 	protected IInstallationPageContainer getPageContainer() {
 		return container;
 	}

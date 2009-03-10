@@ -13,8 +13,10 @@ package org.eclipse.ui.about;
 
 import org.eclipse.swt.widgets.Button;
 
-
 /**
+ * Interface for a container that hosts one or more installation pages (
+ * {@link InstallationPage}).
+ * 
  * <em>This API is experimental and will change before 3.5 ships</em>
  * 
  * @since 3.5
@@ -22,17 +24,23 @@ import org.eclipse.swt.widgets.Button;
 public interface IInstallationPageContainer {
 
 	/**
-	 * Register a button as belonging to a particular page in the container.
-	 * The container will manage the placement and visibility of page buttons.
+	 * Register a button as belonging to a particular page in the container. The
+	 * container will manage the placement and visibility of the page's buttons.
 	 * 
-	 * @param page the page that created the button
-	 * @param button the button to be managed
+	 * @param page
+	 *            the page that created the button
+	 * @param button
+	 *            the button to be managed
 	 * 
 	 */
 	public void registerPageButton(InstallationPage page, Button button);
+
 	/**
-	 * Closes the window that is hosting this container.
+	 * Closes any modal containers that were used to launch this installation
+	 * page. This method should be used when a page is launching a long-running
+	 * task (such as a background job) that requires progress indication, in
+	 * order to allow platform progress indication to behave as expected.
 	 */
-	public void closeContainer();
-	
+	public void closeModalContainers();
+
 }
