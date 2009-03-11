@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 221351, 247875, 246782, 249526
+ *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022
  *     Ovidio Mallo - bug 241318
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
@@ -63,14 +65,23 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 			IObservableValue outerObservableValue, Object detailType) {
 		super(outerObservableValue.getRealm(), Collections.EMPTY_SET,
 				detailType);
+		Assert.isTrue(!outerObservableValue.isDisposed(),
+				"Master observable is disposed"); //$NON-NLS-1$
+
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
+
+		outerObservableValue.addDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent staleEvent) {
+				dispose();
+			}
+		});
+
 		ObservableTracker.runAndIgnore(new Runnable() {
 			public void run() {
 				updateInnerObservableSet();
 			}
 		});
-
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
 

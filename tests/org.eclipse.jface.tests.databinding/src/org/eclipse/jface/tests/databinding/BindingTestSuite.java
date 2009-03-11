@@ -131,6 +131,7 @@ import org.eclipse.core.tests.internal.databinding.observable.ValidatedObservabl
 import org.eclipse.core.tests.internal.databinding.observable.ValidatedObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.ValidatedObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableListTest;
+import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.validation.AbstractStringToNumberValidatorTest;
@@ -355,6 +356,7 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
 		addTest(DetailObservableListTest.suite());
+		addTestSuite(DetailObservableMapTest.class);
 		addTest(DetailObservableSetTest.suite());
 		addTest(DetailObservableValueTest.suite());
 

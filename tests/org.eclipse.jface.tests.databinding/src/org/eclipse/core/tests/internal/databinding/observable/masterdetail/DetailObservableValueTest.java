@@ -27,6 +27,7 @@ import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObser
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
@@ -56,13 +57,15 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testGetValueType() throws Exception {
-		DetailObservableValue detailObservable = new DetailObservableValue(outerObservable, null, String.class);
+		DetailObservableValue detailObservable = new DetailObservableValue(
+				outerObservable, null, String.class);
 		assertEquals(String.class, detailObservable.getValueType());
 	}
-	
+
 	/**
 	 * Asserts that when a null value type is set for the detail observable no
-	 * type checking is performed and the value type is always <code>null</code>.
+	 * type checking is performed and the value type is always <code>null</code>
+	 * .
 	 */
 	public void testGetValueTypeNullValueType() throws Exception {
 		WritableValueFactory factory = new WritableValueFactory();
@@ -73,13 +76,15 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 
 		// force the inner observable to be recreated
 		outerObservable.setValue("1");
-		assertNull("value type should be ignored", detailObservable.getValueType());
-		
+		assertNull("value type should be ignored", detailObservable
+				.getValueType());
+
 		factory.type = Object.class;
 
 		// force the inner observable to be recreated
 		outerObservable.setValue("2");
-		assertNull("value type should be ignored", detailObservable.getValueType());
+		assertNull("value type should be ignored", detailObservable
+				.getValueType());
 	}
 
 	/**
@@ -107,6 +112,22 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertFalse(outerObservable.disposed);
 	}
 
+	public void testDisposeMasterDisposesDetail() {
+		IObservableValue master = new WritableValue();
+		WritableValueFactory factory = new WritableValueFactory();
+		master.setValue("");
+
+		IObservableValue detailObservable = MasterDetailObservables
+				.detailValue(master, factory, null);
+		DisposeEventTracker tracker = DisposeEventTracker
+				.observe(detailObservable);
+
+		master.dispose();
+
+		assertEquals(1, tracker.count);
+		assertTrue(detailObservable.isDisposed());
+	}
+
 	/**
 	 * Factory that creates WritableValues with the target as the value.
 	 */
@@ -122,7 +143,8 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(DetailObservableValueTest.class.getName());
+		TestSuite suite = new TestSuite(DetailObservableValueTest.class
+				.getName());
 		suite.addTestSuite(DetailObservableValueTest.class);
 		suite.addTest(MutableObservableValueContractTest.suite(new Delegate()));
 		return suite;

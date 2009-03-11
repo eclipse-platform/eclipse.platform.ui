@@ -22,14 +22,17 @@ import junit.framework.TestSuite;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableList;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -43,31 +46,33 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testElementTypeNull() throws Exception {
-		WritableValue observableValue = new WritableValue(new WritableList(new ArrayList(), Object.class), null);
+		WritableValue observableValue = new WritableValue(new WritableList(
+				new ArrayList(), Object.class), null);
 
 		WritableListFactory factory = new WritableListFactory();
 		DetailObservableList detailObservable = new DetailObservableList(
 				factory, observableValue, null);
 		assertNull(detailObservable.getElementType());
 
-		//change the type returned from the factory
+		// change the type returned from the factory
 		factory.type = String.class;
-		observableValue.setValue(new WritableList(new ArrayList(), String.class));
+		observableValue
+				.setValue(new WritableList(new ArrayList(), String.class));
 		assertNull("element type not null", detailObservable.getElementType());
 	}
-	
+
 	/**
 	 * Asserts that you can't change the type across multiple inner observables.
 	 * 
 	 * @throws Exception
 	 */
 	public void testElementTypeNotNull() throws Exception {
-		WritableValue observableValue = new WritableValue(new WritableList(new ArrayList(), Object.class),
-				null);
+		WritableValue observableValue = new WritableValue(new WritableList(
+				new ArrayList(), Object.class), null);
 
 		WritableListFactory factory = new WritableListFactory();
-		DetailObservableList detailObservable = new DetailObservableList(factory,
-				observableValue, Object.class);
+		DetailObservableList detailObservable = new DetailObservableList(
+				factory, observableValue, Object.class);
 		assertEquals(factory.type, detailObservable.getElementType());
 
 		try {
@@ -104,6 +109,22 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		assertFalse(outerObservable.disposed);
 	}
 
+	public void testDisposeMasterDisposesDetail() {
+		IObservableValue master = new WritableValue();
+		WritableListFactory factory = new WritableListFactory();
+		master.setValue("");
+
+		IObservableList detailObservable = MasterDetailObservables.detailList(
+				master, factory, null);
+		DisposeEventTracker tracker = DisposeEventTracker
+				.observe(detailObservable);
+
+		master.dispose();
+
+		assertEquals(1, tracker.count);
+		assertTrue(detailObservable.isDisposed());
+	}
+
 	private static class WritableListFactory implements IObservableFactory {
 		Object type = Object.class;
 
@@ -113,7 +134,8 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(DetailObservableListTest.class.getName());
+		TestSuite suite = new TestSuite(DetailObservableListTest.class
+				.getName());
 		suite.addTestSuite(DetailObservableListTest.class);
 		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
 		return suite;
@@ -140,8 +162,9 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public void change(IObservable observable) {
-			final IObservableValue master = ((DetailObservableListStub)observable).master;
-			master.setValue(new Integer(((Integer)master.getValue()).intValue()+1));
+			final IObservableValue master = ((DetailObservableListStub) observable).master;
+			master.setValue(new Integer(((Integer) master.getValue())
+					.intValue() + 1));
 		}
 	}
 
@@ -167,6 +190,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 
 	static class DetailObservableListStub extends DetailObservableList {
 		IObservableValue master;
+
 		DetailObservableListStub(IObservableFactory factory,
 				IObservableValue master, Object elementType) {
 			super(factory, master, elementType);

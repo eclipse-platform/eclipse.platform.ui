@@ -24,6 +24,8 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -31,6 +33,7 @@ import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObser
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -45,8 +48,8 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testElementTypeNull() throws Exception {
-		WritableValue observableValue = new WritableValue(new WritableSet(new HashSet(), Object.class),
-				null);
+		WritableValue observableValue = new WritableValue(new WritableSet(
+				new HashSet(), Object.class), null);
 
 		WritableSetFactory factory = new WritableSetFactory();
 		DetailObservableSet detailObservable = new DetailObservableSet(factory,
@@ -72,8 +75,8 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testElementTypeNotNull() throws Exception {
-		WritableValue observableValue = new WritableValue(new WritableSet(new HashSet(), Object.class),
-				null);
+		WritableValue observableValue = new WritableValue(new WritableSet(
+				new HashSet(), Object.class), null);
 
 		WritableSetFactory factory = new WritableSetFactory();
 		DetailObservableSet detailObservable = new DetailObservableSet(factory,
@@ -112,6 +115,22 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 
 		detailObservable.dispose();
 		assertFalse(outerObservable.disposed);
+	}
+
+	public void testDisposeMasterDisposesDetail() {
+		IObservableValue master = new WritableValue();
+		WritableSetFactory factory = new WritableSetFactory();
+		master.setValue("");
+
+		IObservableSet detailObservable = MasterDetailObservables.detailSet(
+				master, factory, null);
+		DisposeEventTracker tracker = DisposeEventTracker
+				.observe(detailObservable);
+
+		master.dispose();
+
+		assertEquals(1, tracker.count);
+		assertTrue(detailObservable.isDisposed());
 	}
 
 	private static class WritableSetFactory implements IObservableFactory {

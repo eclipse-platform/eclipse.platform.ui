@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 221351, 247875, 246782, 249526
+ *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022
  *     Ovidio Mallo - bug 241318
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -65,10 +67,21 @@ public class DetailObservableList extends ObservableList implements IObserving {
 	 */
 	public DetailObservableList(IObservableFactory factory,
 			IObservableValue outerObservableValue, Object detailType) {
-		super(outerObservableValue.getRealm(), Collections.EMPTY_LIST, detailType);
+		super(outerObservableValue.getRealm(), Collections.EMPTY_LIST,
+				detailType);
+		Assert.isTrue(!outerObservableValue.isDisposed(),
+				"Master observable is disposed"); //$NON-NLS-1$
+
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
 		this.detailType = detailType;
+
+		outerObservableValue.addDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent staleEvent) {
+				dispose();
+			}
+		});
+
 		ObservableTracker.runAndIgnore(new Runnable() {
 			public void run() {
 				updateInnerObservableList();
@@ -226,7 +239,7 @@ public class DetailObservableList extends ObservableList implements IObserving {
 			}
 		});
 	}
-	
+
 	public synchronized void dispose() {
 		super.dispose();
 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223114, 226289, 247875, 246782, 249526
+ *     Matthew Hall - bug 223114, 226289, 247875, 246782, 249526, 268022
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
@@ -78,8 +80,18 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 	public DetailObservableMap(IObservableFactory detailFactory,
 			IObservableValue master, Object keyType, Object valueType) {
 		super(master.getRealm(), Collections.EMPTY_MAP);
+		Assert.isTrue(!master.isDisposed(), "Master observable is disposed"); //$NON-NLS-1$
+
 		this.master = master;
 		this.detailFactory = detailFactory;
+		this.detailKeyType = keyType;
+		this.detailValueType = valueType;
+
+		master.addDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent staleEvent) {
+				dispose();
+			}
+		});
 
 		ObservableTracker.runAndIgnore(new Runnable() {
 			public void run() {
@@ -106,8 +118,8 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 							.createObservable(masterValue);
 				}
 			});
-			DetailObservableHelper.warnIfDifferentRealms(getRealm(),
-					detailMap.getRealm());
+			DetailObservableHelper.warnIfDifferentRealms(getRealm(), detailMap
+					.getRealm());
 			wrappedMap = detailMap;
 
 			if (detailKeyType != null) {
