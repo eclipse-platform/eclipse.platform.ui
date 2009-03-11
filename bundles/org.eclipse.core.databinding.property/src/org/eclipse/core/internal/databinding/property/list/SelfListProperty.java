@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263868)
+ *     Matthew Hall - bug 268203
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.list;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.ListDiff;
@@ -38,9 +38,7 @@ public class SelfListProperty extends SimpleListProperty {
 	}
 
 	protected List doGetList(Object source) {
-		// An observable may cache the returned list. We clone the list
-		// to prevent computed diffs from always being empty.
-		return new ArrayList((List) source);
+		return (List) source;
 	}
 
 	protected void doSetList(Object source, List list, ListDiff diff) {

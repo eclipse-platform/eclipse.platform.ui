@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 265561, 262287
+ *     Matthew Hall - bugs 265561, 262287, 268203
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
@@ -77,7 +77,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
-			cachedMap = new HashMap(this);
+			cachedMap = new HashMap(getMap());
 			stale = false;
 
 			if (listener == null) {
@@ -273,7 +273,7 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 	private void notifyIfChanged(MapDiff diff) {
 		if (hasListeners()) {
 			Map oldMap = cachedMap;
-			Map newMap = cachedMap = property.getMap(source);
+			Map newMap = cachedMap = new HashMap(getMap());
 			if (diff == null)
 				diff = Diffs.computeMapDiff(oldMap, newMap);
 			if (!diff.isEmpty() || stale) {

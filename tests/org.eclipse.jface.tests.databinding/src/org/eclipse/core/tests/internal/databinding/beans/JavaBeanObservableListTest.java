@@ -66,8 +66,8 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		super.setUp();
 
 		propertyName = "list";
-		propertyDescriptor = ((IBeanProperty) BeanProperties.list(
-				Bean.class, propertyName)).getPropertyDescriptor();
+		propertyDescriptor = ((IBeanProperty) BeanProperties.list(Bean.class,
+				propertyName)).getPropertyDescriptor();
 		bean = new Bean(new ArrayList());
 
 		list = BeansObservables.observeList(SWTObservables.getRealm(Display
@@ -526,6 +526,20 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		list.add("old");
 		tracker.event.diff.applyTo(list);
 		assertEquals(Collections.singletonList("new"), list);
+	}
+
+	public void testModifyObservableList_FiresListChange() {
+		Bean bean = new Bean(new ArrayList());
+		IObservableList observable = BeansObservables.observeList(bean, "list");
+		ListChangeEventTracker tracker = ListChangeEventTracker
+				.observe(observable);
+
+		Object element = new Object();
+		observable.add(element);
+
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.EMPTY_LIST, Collections
+				.singletonList(element));
 	}
 
 	private static void assertDiff(ListDiff diff, List oldList, List newList) {

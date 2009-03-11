@@ -15,10 +15,11 @@ package org.eclipse.core.tests.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -28,17 +29,19 @@ import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
  * 
  */
-public class JavaBeanObservableMapTest extends TestCase {
+public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 	private Bean model1;
 
 	private Bean model2;
@@ -51,6 +54,8 @@ public class JavaBeanObservableMapTest extends TestCase {
 	private IBeanObservable beanObservable;
 
 	protected void setUp() throws Exception {
+		super.setUp();
+
 		ThreadRealm realm = new ThreadRealm();
 		realm.init(Thread.currentThread());
 		model1 = new Bean("1");
@@ -61,8 +66,8 @@ public class JavaBeanObservableMapTest extends TestCase {
 		set.add(model2);
 
 		String propertyName = "value";
-		propertyDescriptor = ((IBeanProperty) BeanProperties.value(
-				Bean.class, propertyName)).getPropertyDescriptor();
+		propertyDescriptor = ((IBeanProperty) BeanProperties.value(Bean.class,
+				propertyName)).getPropertyDescriptor();
 		map = BeansObservables.observeMap(set, Bean.class, propertyName);
 		beanObservable = (IBeanObservable) map;
 	}
@@ -142,21 +147,21 @@ public class JavaBeanObservableMapTest extends TestCase {
 		assertTrue(listener.event.diff.getRemovedKeys().contains(model1));
 		assertEquals(1, map.size());
 	}
-	
+
 	public void testGetObserved() throws Exception {
 		assertEquals(set, beanObservable.getObserved());
 	}
-	
+
 	public void testGetPropertyDescriptor() throws Exception {
 		assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
-	
+
 	public void testConstructor_SkipRegisterListeners() throws Exception {
 		Realm realm = new CurrentRealm(true);
 		WritableSet set = new WritableSet(realm);
 		Bean bean = new Bean();
 		set.add(bean);
-		
+
 		IObservableMap observable = PojoObservables.observeMap(set, Bean.class,
 				"value");
 		assertFalse(bean.hasListeners("value"));
@@ -164,13 +169,13 @@ public class JavaBeanObservableMapTest extends TestCase {
 
 		assertFalse(bean.hasListeners("value"));
 	}
-	
+
 	public void testConstructor_RegistersListeners() throws Exception {
 		Realm realm = new CurrentRealm(true);
 		WritableSet set = new WritableSet(realm);
 		Bean bean = new Bean();
 		set.add(bean);
-		
+
 		IObservableMap observable = BeansObservables.observeMap(set,
 				Bean.class, "value");
 		assertFalse(bean.hasListeners("value"));
@@ -210,8 +215,30 @@ public class JavaBeanObservableMapTest extends TestCase {
 		assertEquals("new", tracker.event.diff.getNewValue(bean));
 	}
 
+	public void testModifyObservableMap_FiresMapChange() {
+		Bean bean = new Bean(Collections.singletonMap("key", "oldValue"));
+		IObservableMap observable = BeansObservables.observeMap(bean, "map");
+		MapChangeEventTracker tracker = MapChangeEventTracker
+				.observe(observable);
+
+		observable.put("key", "newValue");
+
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.singletonMap("key",
+				"oldValue"), Collections.singletonMap("key", "newValue"));
+	}
+
+	private static void assertDiff(MapDiff diff, Map oldMap, Map newMap) {
+		oldMap = new HashMap(oldMap); // defensive copy in case arg is
+		// unmodifiable
+		diff.applyTo(oldMap);
+		assertEquals("applying diff to list did not produce expected result",
+				newMap, oldMap);
+	}
+
 	public static Test suite() {
-		TestSuite suite = new TestSuite(JavaBeanObservableMapTest.class.getName());
+		TestSuite suite = new TestSuite(JavaBeanObservableMapTest.class
+				.getName());
 		suite.addTestSuite(JavaBeanObservableMapTest.class);
 		return suite;
 	}

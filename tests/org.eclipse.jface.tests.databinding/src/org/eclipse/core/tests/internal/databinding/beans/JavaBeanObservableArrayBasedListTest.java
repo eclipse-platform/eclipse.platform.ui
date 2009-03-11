@@ -65,8 +65,8 @@ public class JavaBeanObservableArrayBasedListTest extends
 		super.setUp();
 
 		propertyName = "array";
-		propertyDescriptor = ((IBeanProperty) BeanProperties.list(
-				Bean.class, propertyName)).getPropertyDescriptor();
+		propertyDescriptor = ((IBeanProperty) BeanProperties.list(Bean.class,
+				propertyName)).getPropertyDescriptor();
 		bean = new Bean(new Object[0]);
 
 		list = BeansObservables.observeList(SWTObservables.getRealm(Display
@@ -491,6 +491,20 @@ public class JavaBeanObservableArrayBasedListTest extends
 		list.add("old");
 		tracker.event.diff.applyTo(list);
 		assertEquals(Collections.singletonList("new"), list);
+	}
+
+	public void testModifyObservableList_FiresListChange() {
+		Bean bean = new Bean(new Object[] { "old" });
+		IObservableList observable = BeansObservables
+				.observeList(bean, "array");
+		ListChangeEventTracker tracker = ListChangeEventTracker
+				.observe(observable);
+
+		observable.set(0, "new");
+
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.singletonList("old"),
+				Collections.singletonList("new"));
 	}
 
 	private static void assertDiff(ListDiff diff, List oldList, List newList) {

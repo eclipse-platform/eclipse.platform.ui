@@ -17,9 +17,9 @@ import java.beans.PropertyDescriptor;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -31,18 +31,20 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.3
  */
-public class JavaBeanObservableSetTest extends TestCase {
+public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 	private IObservableSet observableSet;
 	private IBeanObservable beanObservable;
 	private Bean bean;
@@ -51,10 +53,12 @@ public class JavaBeanObservableSetTest extends TestCase {
 	private SetChangeEventTracker listener;
 
 	protected void setUp() throws Exception {
+		super.setUp();
+
 		bean = new Bean();
 		propertyName = "set";
-		propertyDescriptor = ((IBeanProperty) BeanProperties.set(
-				Bean.class, propertyName)).getPropertyDescriptor();
+		propertyDescriptor = ((IBeanProperty) BeanProperties.set(Bean.class,
+				propertyName)).getPropertyDescriptor();
 
 		observableSet = BeansObservables
 				.observeSet(SWTObservables.getRealm(Display.getDefault()),
@@ -70,36 +74,38 @@ public class JavaBeanObservableSetTest extends TestCase {
 	public void testGetPropertyDescriptor() throws Exception {
 		assertEquals(propertyDescriptor, beanObservable.getPropertyDescriptor());
 	}
-	
+
 	public void testGetElementType() throws Exception {
 		assertEquals(Bean.class, observableSet.getElementType());
 	}
-	
-	public void testRegistersListenerAfterFirstListenerIsAdded() throws Exception {
+
+	public void testRegistersListenerAfterFirstListenerIsAdded()
+			throws Exception {
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 		observableSet.addSetChangeListener(new SetChangeEventTracker());
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
-		
-    public void testRemovesListenerAfterLastListenerIsRemoved() throws Exception {
+
+	public void testRemovesListenerAfterLastListenerIsRemoved()
+			throws Exception {
 		observableSet.addSetChangeListener(listener);
-		
+
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 		observableSet.removeSetChangeListener(listener);
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
 	}
-	
+
 	public void testFiresChangeEvents() throws Exception {
 		observableSet.addSetChangeListener(listener);
 		assertEquals(0, listener.count);
-		bean.setSet(new HashSet(Arrays.asList(new String[] {"1"})));
+		bean.setSet(new HashSet(Arrays.asList(new String[] { "1" })));
 		assertEquals(1, listener.count);
 	}
 
 	public void testConstructor_RegisterListeners() throws Exception {
 		bean = new Bean();
-		observableSet = BeansObservables.observeSet(new CurrentRealm(true), bean,
-				propertyName);
+		observableSet = BeansObservables.observeSet(new CurrentRealm(true),
+				bean, propertyName);
 		assertFalse(bean.hasListeners(propertyName));
 		ChangeEventTracker.observe(observableSet);
 		assertTrue(bean.hasListeners(propertyName));
@@ -137,8 +143,31 @@ public class JavaBeanObservableSetTest extends TestCase {
 				.getAdditions());
 	}
 
+	public void testModifyObservableSet_FiresSetChange() {
+		Bean bean = new Bean(new HashSet());
+		IObservableSet observable = BeansObservables.observeSet(bean, "set");
+		SetChangeEventTracker tracker = SetChangeEventTracker
+				.observe(observable);
+
+		Object element = new Object();
+		observable.add(element);
+
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.EMPTY_SET, Collections
+				.singleton(element));
+	}
+
+	private static void assertDiff(SetDiff diff, Set oldSet, Set newSet) {
+		oldSet = new HashSet(oldSet); // defensive copy in case arg is
+		// unmodifiable
+		diff.applyTo(oldSet);
+		assertEquals("applying diff to list did not produce expected result",
+				newSet, oldSet);
+	}
+
 	public static Test suite() {
-		TestSuite suite = new TestSuite(JavaBeanObservableSetTest.class.getName());
+		TestSuite suite = new TestSuite(JavaBeanObservableSetTest.class
+				.getName());
 		suite.addTestSuite(JavaBeanObservableSetTest.class);
 		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
 		return suite;

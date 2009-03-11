@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 265561, 262287
+ *     Matthew Hall - bugs 265561, 262287, 268203
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.list;
@@ -65,7 +65,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
-			cachedList = getList();
+			cachedList = new ArrayList(getList());
 			stale = false;
 
 			if (listener == null) {
@@ -632,7 +632,7 @@ public class SimplePropertyObservableList extends AbstractObservableList
 	private void notifyIfChanged(ListDiff diff) {
 		if (hasListeners()) {
 			List oldList = cachedList;
-			List newList = cachedList = property.getList(source);
+			List newList = cachedList = new ArrayList(getList());
 			if (diff == null)
 				diff = Diffs.computeListDiff(oldList, newList);
 			if (!diff.isEmpty() || stale) {

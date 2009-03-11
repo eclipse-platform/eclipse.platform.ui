@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263868)
+ *     Matthew Hall - bug 268203
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.set;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.set.SetDiff;
@@ -38,9 +38,7 @@ public final class SelfSetProperty extends SimpleSetProperty {
 	}
 
 	protected Set doGetSet(Object source) {
-		// An observable may cache the returned set. We clone the set
-		// to prevent computed diffs from always being empty.
-		return new HashSet((Set) source);
+		return (Set) source;
 	}
 
 	protected void doSetSet(Object source, Set set, SetDiff diff) {

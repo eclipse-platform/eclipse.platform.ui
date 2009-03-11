@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -33,6 +34,7 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
@@ -59,8 +61,8 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		super.setUp();
 
 		propertyName = "array";
-		propertyDescriptor = ((IBeanProperty) BeanProperties.set(
-				Bean.class, propertyName)).getPropertyDescriptor();
+		propertyDescriptor = ((IBeanProperty) BeanProperties.set(Bean.class,
+				propertyName)).getPropertyDescriptor();
 		bean = new Bean(new HashSet());
 
 		set = BeansObservables.observeSet(SWTObservables.getRealm(Display
@@ -304,6 +306,27 @@ public class JavaBeanObservableArrayBasedSetTest extends
 				.getRemovals());
 		assertEquals(Collections.singleton("new"), tracker.event.diff
 				.getAdditions());
+	}
+
+	public void testModifyObservableSet_FiresSetChange() {
+		Bean bean = new Bean(new Object[] {});
+		IObservableSet observable = BeansObservables.observeSet(bean, "array");
+		SetChangeEventTracker tracker = SetChangeEventTracker
+				.observe(observable);
+
+		observable.add("new");
+
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.EMPTY_SET, Collections
+				.singleton("new"));
+	}
+
+	private static void assertDiff(SetDiff diff, Set oldSet, Set newSet) {
+		oldSet = new HashSet(oldSet); // defensive copy in case arg is
+		// unmodifiable
+		diff.applyTo(oldSet);
+		assertEquals("applying diff to list did not produce expected result",
+				newSet, oldSet);
 	}
 
 	private static void assertPropertyChangeEvent(Bean bean, Runnable runnable) {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 265561, 262287
+ *     Matthew Hall - bugs 265561, 262287, 268203
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.set;
@@ -62,7 +62,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
-			cachedSet = getSet();
+			cachedSet = new HashSet(getSet());
 			stale = false;
 
 			if (listener == null) {
@@ -374,7 +374,7 @@ public class SimplePropertyObservableSet extends AbstractObservableSet
 	private void notifyIfChanged(SetDiff diff) {
 		if (hasListeners()) {
 			Set oldSet = cachedSet;
-			Set newSet = cachedSet = property.getSet(source);
+			Set newSet = cachedSet = new HashSet(getSet());
 			if (diff == null)
 				diff = Diffs.computeSetDiff(oldSet, newSet);
 			if (!diff.isEmpty() || stale) {

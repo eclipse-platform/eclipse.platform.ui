@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263868)
+ *     Matthew Hall - bug 268203
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.map.MapDiff;
@@ -45,9 +45,7 @@ public final class SelfMapProperty extends SimpleMapProperty {
 	}
 
 	protected Map doGetMap(Object source) {
-		// An observable may cache the returned map. We clone the map
-		// to prevent computed diffs from always being empty.
-		return new HashMap((Map) source);
+		return (Map) source;
 	}
 
 	protected void doSetMap(Object source, Map map, MapDiff diff) {
