@@ -28,13 +28,11 @@ import org.eclipse.core.runtime.SubMonitor;
  * Every <code>RangeDifference</code> represents a single kind of difference
  * and the corresponding ranges of the underlying comparable entities in the
  * left, right, and optionally ancestor sides.
+ * </p>
  * <p>
  * Alternatively, the <code>findRanges</code> methods not only return objects for
  * the differing ranges but for non-differing ranges too.
- * <p>
- * The algorithm used is an objectified version of one described in:
- * <it>A File Comparison Program,</it> by Webb Miller and Eugene W. Myers, 
- * Software Practice and Experience, Vol. 15, Nov. 1985.
+ * </p>
  *
  * @see IRangeComparator
  * @see RangeDifference
