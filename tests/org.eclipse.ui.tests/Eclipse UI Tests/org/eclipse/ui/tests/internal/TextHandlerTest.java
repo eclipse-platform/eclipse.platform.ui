@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.internal;
 
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -70,7 +71,8 @@ public class TextHandlerTest extends UITestCase {
 			assertTrue(view.getCutAction().isEnabled());
 			assertTrue(view.getPasteAction().isEnabled());
 			assertTrue(view.getSelectAllAction().isEnabled());
-			
+		} catch (SWTError e) {
+			System.err.println(e.getMessage());
 		} finally {
 			clipboard.dispose();
 		}
@@ -119,6 +121,8 @@ public class TextHandlerTest extends UITestCase {
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
 			assertTrue(view.getSelectAllAction().isEnabled());
+		} catch (SWTError e) {
+			System.err.println(e.getMessage());
 		} finally {
 			clipboard.dispose();
 		}
