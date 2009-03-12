@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
+
+import org.osgi.framework.InvalidSyntaxException;
 
 import java.io.*;
 import java.net.*;
@@ -32,41 +34,41 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	public static final String NAME_SPACE = "org.eclipse.update"; //$NON-NLS-1$
 	public static final String UPDATE_PREFIX = "update@"; //$NON-NLS-1$
 	private static final String INITIAL_PREFIX = "initial@"; //$NON-NLS-1$
-	
+
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug"; //$NON-NLS-1$
 	// debug values
 	public static boolean DEBUG = false;
-	
+
 	private static BundleContext context;
 	private ServiceRegistration configurationFactorySR;
 	private ServiceRegistration bundleGroupProviderSR;
 	private PlatformConfiguration configuration;
-	
+
 	// Location of the configuration data
 	private Location configLocation;
-	
+
 	//Need to store that because it is not provided by the platformConfiguration
 	private long lastTimeStamp;
 
 	// The expected states timestamp
 	private long lastStateTimeStamp;
-	
+
 	// Singleton
 	private static ConfigurationActivator configurator;
 
 	public ConfigurationActivator() {
 		configurator = this;
 	}
-	
+
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
 		loadOptions();
 		acquireFrameworkLogService();
 		initialize();
-		
+
 		//Short cut, if the configuration has not changed
-		if (canRunWithCachedData()) {		
+		if (canRunWithCachedData()) {
 			Utils.debug("Running with cached data"); //$NON-NLS-1$
 			registerBundleGroupProvider();
 			return;
@@ -81,24 +83,36 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	}
 
 	private void registerBundleGroupProvider() {
-		bundleGroupProviderSR = getBundleContext().registerService(IBundleGroupProvider.class.getName(), this, null);
+		final String serviceName = IBundleGroupProvider.class.getName();
+		try {
+			//don't register the service if this bundle has already registered it declaratively
+			ServiceReference[] refs = getBundleContext().getServiceReferences(serviceName, null);
+			if (refs != null) {
+				for (int i = 0; i < refs.length; i++)
+					if (PI_CONFIGURATOR.equals(refs[i].getBundle().getSymbolicName()))
+						return;
+			}
+		} catch (InvalidSyntaxException e) {
+			//can't happen because we don't pass a filter
+		}
+		bundleGroupProviderSR = getBundleContext().registerService(serviceName, this, null);
 	}
-	
+
 	private void initialize() throws Exception {
 		// TODO this test is not really needed any more than any plugin has 
 		// to test to see if the runtime is running.  It was there from earlier days
 		// where startup was much more disjoint.  Some day that level of decoupling
 		// will return but for now...
 		if (!Utils.isRunning())
-			throw new Exception(Messages.ConfigurationActivator_initialize); 
-		
+			throw new Exception(Messages.ConfigurationActivator_initialize);
+
 		configLocation = Utils.getConfigurationLocation();
 		// create the name space directory for update (configuration/org.eclipse.update)
 		if (!configLocation.isReadOnly()) {
 			try {
 				URL privateURL = new URL(configLocation.getURL(), NAME_SPACE);
 				File f = new File(privateURL.getFile());
-				if(!f.exists())
+				if (!f.exists())
 					f.mkdirs();
 			} catch (MalformedURLException e1) {
 				// ignore
@@ -107,11 +121,11 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(Utils.getInstallURL(), configLocation);
 		if (configuration == null)
-			throw Utils.newCoreException(NLS.bind(Messages.ConfigurationActivator_createConfig, (new String[] { configLocation.getURL().toExternalForm() })), null);
+			throw Utils.newCoreException(NLS.bind(Messages.ConfigurationActivator_createConfig, (new String[] {configLocation.getURL().toExternalForm()})), null);
 
 		DataInputStream stream = null;
 		try {
-			stream = new DataInputStream(new URL(configLocation.getURL(),NAME_SPACE+'/'+LAST_CONFIG_STAMP).openStream());
+			stream = new DataInputStream(new URL(configLocation.getURL(), NAME_SPACE + '/' + LAST_CONFIG_STAMP).openStream());
 			lastTimeStamp = stream.readLong();
 			lastStateTimeStamp = stream.readLong();
 		} catch (Exception e) {
@@ -126,7 +140,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				}
 		}
 	}
-
 
 	public void stop(BundleContext ctx) throws Exception {
 		// quick fix (hack) for bug 47861
@@ -156,32 +169,32 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		}
 		if (startLevel < 1)
 			startLevel = 4;
-		
+
 		StartLevel start = null;
 		if (reference != null)
 			start = (StartLevel) context.getService(reference);
 		try {
 			// Get the list of cached bundles and compare with the ones to be installed.
 			// Uninstall all the cached bundles that do not appear on the new list
-			Bundle[] cachedBundles = context.getBundles();		
+			Bundle[] cachedBundles = context.getBundles();
 			URL[] plugins = configuration.getPluginPath();
-				
+
 			// starts the list of bundles to refresh with all currently unresolved bundles (see bug 50680)
 			List toRefresh = getUnresolvedBundles();
 
 			Bundle[] bundlesToUninstall = getBundlesToUninstall(cachedBundles, plugins);
-			for (int i=0; i<bundlesToUninstall.length; i++) {
+			for (int i = 0; i < bundlesToUninstall.length; i++) {
 				try {
 					if (DEBUG)
 						Utils.debug("Uninstalling " + bundlesToUninstall[i].getLocation()); //$NON-NLS-1$
 					// include every bundle being uninstalled in the list of bundles to refresh (see bug 82393)					
-					toRefresh.add(bundlesToUninstall[i]);					
+					toRefresh.add(bundlesToUninstall[i]);
 					bundlesToUninstall[i].uninstall();
 				} catch (Exception e) {
-					Utils.log(NLS.bind(Messages.ConfigurationActivator_uninstallBundle, (new String[] { bundlesToUninstall[i].getLocation() })));
+					Utils.log(NLS.bind(Messages.ConfigurationActivator_uninstallBundle, (new String[] {bundlesToUninstall[i].getLocation()})));
 				}
 			}
-			
+
 			// Get the urls to install
 			String[] bundlesToInstall = getBundlesToInstall(cachedBundles, plugins);
 			ArrayList lazyActivationBundles = new ArrayList(bundlesToInstall.length);
@@ -189,9 +202,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				try {
 					if (DEBUG)
 						Utils.debug("Installing " + bundlesToInstall[i]); //$NON-NLS-1$
-					URL bundleURL = new URL("reference:file:"+bundlesToInstall[i]); //$NON-NLS-1$
+					URL bundleURL = new URL("reference:file:" + bundlesToInstall[i]); //$NON-NLS-1$
 					//Bundle target = context.installBundle(bundlesToInstall[i]);
-					Bundle target = context.installBundle(UPDATE_PREFIX+bundlesToInstall[i], bundleURL.openStream());
+					Bundle target = context.installBundle(UPDATE_PREFIX + bundlesToInstall[i], bundleURL.openStream());
 					// any new bundle should be refreshed as well
 					toRefresh.add(target);
 					if (start != null)
@@ -201,7 +214,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 						lazyActivationBundles.add(target);
 				} catch (Exception e) {
 					if (!Utils.isAutomaticallyStartedBundle(bundlesToInstall[i]))
-						Utils.log(NLS.bind(Messages.ConfigurationActivator_installBundle, (new String[] { bundlesToInstall[i] })) + "   " + e.getMessage()); //$NON-NLS-1$
+						Utils.log(NLS.bind(Messages.ConfigurationActivator_installBundle, (new String[] {bundlesToInstall[i]})) + "   " + e.getMessage()); //$NON-NLS-1$
 				}
 			}
 			context.ungetService(reference);
@@ -216,7 +229,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				} catch (BundleException e) {
 					if ((toActivate.getState() & Bundle.RESOLVED) != 0)
 						// only log errors if the bundle is resolved
-						Utils.log(NLS.bind(Messages.ConfigurationActivator_installBundle, (new String[] { toActivate.getLocation() })) + "   " + e.getMessage()); //$NON-NLS-1$
+						Utils.log(NLS.bind(Messages.ConfigurationActivator_installBundle, (new String[] {toActivate.getLocation()})) + "   " + e.getMessage()); //$NON-NLS-1$
 				}
 			}
 			// keep track of the last config successfully processed
@@ -224,7 +237,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			return true;
 		} catch (Exception e) {
 			return false;
-		} 
+		}
 	}
 
 	private static boolean hasLazyActivationPolicy(Bundle target) {
@@ -268,10 +281,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private void removeInitialBundles(List bundles, Bundle[] cachedBundles) {
 		String[] initialSymbolicNames = getInitialSymbolicNames(cachedBundles);
 		Iterator iter = bundles.iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			Bundle bundle = (Bundle) iter.next();
 			String symbolicName = bundle.getSymbolicName();
-			for(int i = 0; i < initialSymbolicNames.length; i++) {
+			for (int i = 0; i < initialSymbolicNames.length; i++) {
 				if (initialSymbolicNames[i].equals(symbolicName)) {
 					iter.remove();
 					break;
@@ -295,7 +308,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 	private List getUnresolvedBundles() {
 		Bundle[] allBundles = context.getBundles();
-		List unresolved = new ArrayList(); 
+		List unresolved = new ArrayList();
 		for (int i = 0; i < allBundles.length; i++)
 			if (allBundles[i].getState() == Bundle.INSTALLED)
 				unresolved.add(allBundles[i]);
@@ -306,21 +319,21 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		// First, create a map of the cached bundles, for faster lookup
 		HashSet cachedBundlesSet = new HashSet(cachedBundles.length);
 		int offset = UPDATE_PREFIX.length();
-		for (int i=0; i<cachedBundles.length; i++) {
+		for (int i = 0; i < cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String bundleLocation = cachedBundles[i].getLocation();
 			// Ignore bundles not installed by us
 			if (!bundleLocation.startsWith(UPDATE_PREFIX))
 				continue;
-			
+
 			bundleLocation = bundleLocation.substring(offset);
 			cachedBundlesSet.add(bundleLocation);
 			// On windows, we will be doing case insensitive search as well, so lower it now
 			if (Utils.isWindows)
 				cachedBundlesSet.add(bundleLocation.toLowerCase());
 		}
-		
+
 		ArrayList bundlesToInstall = new ArrayList(newPlugins.length);
 		for (int i = 0; i < newPlugins.length; i++) {
 			String location = Utils.makeRelative(Utils.getInstallURL(), newPlugins[i]).getFile();
@@ -329,28 +342,27 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				continue;
 			if (Utils.isWindows && cachedBundlesSet.contains(location.toLowerCase()))
 				continue;
-			
+
 			bundlesToInstall.add(location);
 		}
-		return (String[])bundlesToInstall.toArray(new String[bundlesToInstall.size()]);	
+		return (String[]) bundlesToInstall.toArray(new String[bundlesToInstall.size()]);
 	}
-	
-	
+
 	private Bundle[] getBundlesToUninstall(Bundle[] cachedBundles, URL[] newPlugins) {
 		// First, create a map for faster lookups
 		HashSet newPluginsSet = new HashSet(newPlugins.length);
-		for (int i=0; i<newPlugins.length; i++) {
-			
+		for (int i = 0; i < newPlugins.length; i++) {
+
 			String pluginLocation = Utils.makeRelative(Utils.getInstallURL(), newPlugins[i]).getFile();
 			newPluginsSet.add(pluginLocation);
 			// On windows, we will be doing case insensitive search as well, so lower it now
 			if (Utils.isWindows)
 				newPluginsSet.add(pluginLocation.toLowerCase());
 		}
-		
+
 		ArrayList bundlesToUninstall = new ArrayList();
 		int offset = UPDATE_PREFIX.length();
-		for (int i=0; i<cachedBundles.length; i++) {
+		for (int i = 0; i < cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String cachedBundleLocation = cachedBundles[i].getLocation();
@@ -363,12 +375,11 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				continue;
 			if (Utils.isWindows && newPluginsSet.contains(cachedBundleLocation.toLowerCase()))
 				continue;
-			
+
 			bundlesToUninstall.add(cachedBundles[i]);
 		}
-		return (Bundle[])bundlesToUninstall.toArray(new Bundle[bundlesToUninstall.size()]);
+		return (Bundle[]) bundlesToUninstall.toArray(new Bundle[bundlesToUninstall.size()]);
 	}
-	
 
 	/**
 	 * Creates and starts the platform configuration.
@@ -429,17 +440,17 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		context.removeFrameworkListener(listener);
 		context.ungetService(packageAdminRef);
 	}
-	
+
 	private void writePlatformConfigurationTimeStamp() {
 		DataOutputStream stream = null;
 		try {
 			if (configLocation.isReadOnly())
 				return;
-			
+
 			String configArea = configLocation.getURL().getFile();
 			lastTimeStamp = configuration.getChangeStamp();
 			lastStateTimeStamp = Utils.getStateStamp();
-			stream = new DataOutputStream(new FileOutputStream(configArea +File.separator+ NAME_SPACE+ File.separator+ LAST_CONFIG_STAMP));
+			stream = new DataOutputStream(new FileOutputStream(configArea + File.separator + NAME_SPACE + File.separator + LAST_CONFIG_STAMP));
 			stream.writeLong(lastTimeStamp);
 			stream.writeLong(lastStateTimeStamp);
 		} catch (Exception e) {
@@ -469,49 +480,47 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			context.ungetService(reference);
 		}
 	}
-	
+
 	private boolean canRunWithCachedData() {
-		return  !"true".equals(context.getProperty("osgi.checkConfiguration")) && //$NON-NLS-1$ //$NON-NLS-2$
-				lastTimeStamp==configuration.getChangeStamp() &&
-				lastStateTimeStamp==Utils.getStateStamp();
+		return !"true".equals(context.getProperty("osgi.checkConfiguration")) && //$NON-NLS-1$ //$NON-NLS-2$
+				lastTimeStamp == configuration.getChangeStamp() && lastStateTimeStamp == Utils.getStateStamp();
 	}
-				
+
 	public static BundleContext getBundleContext() {
 		return context;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getName()
 	 */
 	public String getName() {
-		return Messages.BundleGroupProvider; 
+		return Messages.BundleGroupProvider;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getBundleGroups()
 	 */
 	public IBundleGroup[] getBundleGroups() {
 		if (configuration == null)
 			return new IBundleGroup[0];
-		
+
 		IPlatformConfiguration.IFeatureEntry[] features = configuration.getConfiguredFeatureEntries();
 		ArrayList bundleGroups = new ArrayList(features.length);
-		for (int i=0; i<features.length; i++) {
-			if (features[i] instanceof FeatureEntry 
-				&& ((FeatureEntry)features[i]).hasBranding())
+		for (int i = 0; i < features.length; i++) {
+			if (features[i] instanceof FeatureEntry && ((FeatureEntry) features[i]).hasBranding())
 				bundleGroups.add(features[i]);
 		}
-		return (IBundleGroup[])bundleGroups.toArray(new IBundleGroup[bundleGroups.size()]);
+		return (IBundleGroup[]) bundleGroups.toArray(new IBundleGroup[bundleGroups.size()]);
 	}
 
 	public static ConfigurationActivator getConfigurator() {
 		return configurator;
 	}
-	
-	private void acquireFrameworkLogService() throws Exception{
+
+	private void acquireFrameworkLogService() throws Exception {
 		ServiceReference logServiceReference = context.getServiceReference(FrameworkLog.class.getName());
 		if (logServiceReference == null)
 			return;
-		Utils.log  = (FrameworkLog) context.getService(logServiceReference);
+		Utils.log = (FrameworkLog) context.getService(logServiceReference);
 	}
-}	
-
+}
