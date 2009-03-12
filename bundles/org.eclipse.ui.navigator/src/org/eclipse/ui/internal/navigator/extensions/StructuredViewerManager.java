@@ -58,8 +58,7 @@ public class StructuredViewerManager {
 			}
 			public void associate(Object element, Item item) {
 				NavigatorContentDescriptor desc = contentService.getContribution(element);
-				if (desc != null)
-					item.setData(NavigatorContentService.WIDGET_KEY, desc);
+				item.setData(NavigatorContentService.WIDGET_KEY, desc);
 				//System.out.println("associate: " + element + " item: " + item + " desc: " + desc); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			public void disassociate(Item item) {

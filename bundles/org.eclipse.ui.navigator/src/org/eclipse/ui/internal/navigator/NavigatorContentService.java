@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -433,17 +432,22 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @return The label provider
 	 */
 	public ILabelProvider[] findRelevantLabelProviders(Object anElement) {
+		SortedSet extensions = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		NavigatorContentDescriptor ncd = getSourceOfContribution(anElement);
 		if (ncd != null) {
-			return new ILabelProvider[] { getExtension(ncd).getLabelProvider() };
+			extensions.add(getExtension(ncd));
 		}
-		// Rare case where there is no corresponding NCE (for example the root)
-		Set theDescriptorInstances = findContentExtensionsByTriggerPoint(anElement, true, CONSIDER_OVERRIDES);
-		if (theDescriptorInstances.size() == 0) {
+		Set possibleChildDescriptors = findContentExtensionsByTriggerPoint(anElement, true, CONSIDER_OVERRIDES);
+		for (Iterator iter = possibleChildDescriptors.iterator(); iter.hasNext();) {
+			INavigatorContentExtension ext = (INavigatorContentExtension) iter.next();
+			extensions.add(ext);
+		}
+
+		if (extensions.size() == 0) {
 			return NO_LABEL_PROVIDERS;
 		}
 		List resultProvidersList = new ArrayList();
-		for (Iterator itr = theDescriptorInstances.iterator(); itr.hasNext();) {
+		for (Iterator itr = extensions.iterator(); itr.hasNext();) {
 			resultProvidersList.add(((NavigatorContentExtension) itr.next()).getLabelProvider());
 		}
 		return (ILabelProvider[]) resultProvidersList.toArray(new ILabelProvider[resultProvidersList.size()]);
@@ -731,16 +735,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		Widget[] ws = structuredViewerManager.getItems(element);
 		if (ws.length == 0)
 			return null;
-		if (ws.length == 1) {
-			return (NavigatorContentDescriptor)ws[0].getData(WIDGET_KEY);
-		}
-		for (int i = 0; i < ws.length; i++) {
-			if (ws[i].getData() == element) {
-				return (NavigatorContentDescriptor)ws[i].getData(WIDGET_KEY);
-			}
-		}
-		Assert.isTrue(true, "Can't find data in TreeItem " + element); //$NON-NLS-1$
-		return null;
+		return (NavigatorContentDescriptor)ws[0].getData(WIDGET_KEY);
 	}
 	/**
 	 * 

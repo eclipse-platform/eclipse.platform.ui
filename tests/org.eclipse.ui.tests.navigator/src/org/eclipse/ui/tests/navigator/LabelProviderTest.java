@@ -26,7 +26,9 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_navigatorInstanceId = "org.eclipse.ui.tests.navigator.OverrideTestView";
 	}
 
-	public void testBlankLabelProvider() throws Exception {
+	// Backed out this test because the blank label provider was actually 
+	// used to signify no label content  see bug 268250
+	public void XXXtestBlankLabelProvider() throws Exception {
 
 		TestLabelProvider._blank = true;
 		

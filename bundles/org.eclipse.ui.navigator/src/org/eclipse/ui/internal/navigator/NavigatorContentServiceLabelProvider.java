@@ -146,7 +146,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			if (labelProviders[i] instanceof IStyledLabelProvider) {
 				StyledString styledText= ((IStyledLabelProvider) labelProviders[i]).getStyledText(anElement);
 				// paranoia check for null, although null is not a valid return value for IStyledLabelProvider.getStyledText
-				if (styledText != null) {
+				if (styledText != null && styledText.getString().length() > 0) {
 					return styledText;
 				}
 			} else {

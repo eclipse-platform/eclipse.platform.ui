@@ -119,12 +119,19 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		// DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
+		_viewer.expandAll();
+		
 		TreeItem[] items = _viewer.getTree().getItems();
 		// The bug is here where the first item is a IFile, not the enclosing
 		// project
 		assertTrue("First item needs to be working set", items[0].getData()
 				.equals(workingSet));
 		assertEquals("ws1", _commonNavigator.getWorkingSetLabel());
+
+		// bug 268250 [CommonNavigator] Project labels missing in Project Explorer when working sets are top level elements
+		TreeItem projectItem = items[0].getItem(0);
+		assertEquals("p1", projectItem.getText());
+		
 	}
 
 	// bug 244174 test property to switch back and forth between working sets
@@ -183,6 +190,8 @@ public class WorkingSetTest extends NavigatorTestBase {
 				.equals(workingSet));
 	}
 
+
+	
 	public void testMultipleWorkingSets() throws Exception {
 
 		// Force the content provider to be loaded so that it responds to the
