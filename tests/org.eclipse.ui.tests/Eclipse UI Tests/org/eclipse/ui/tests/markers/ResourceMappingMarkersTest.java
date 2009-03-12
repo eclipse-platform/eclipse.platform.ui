@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.markers;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -76,8 +77,16 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 		long timeOut = System.currentTimeMillis() + 2000;
 		waiting[0] = problemView.getCurrentMarkers().length == 0;
 
+		Display display = view.getSite().getShell().getDisplay();
 		while (waiting[0] && System.currentTimeMillis() < timeOut) {
-			view.getSite().getShell().getDisplay().readAndDispatch();
+            // Spin the loop until empty
+			while (display.readAndDispatch()) {}
+
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
 		}
 
 		assertTrue("No markers generated",
