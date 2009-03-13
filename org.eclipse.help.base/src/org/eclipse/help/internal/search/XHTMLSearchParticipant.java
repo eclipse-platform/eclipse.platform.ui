@@ -24,6 +24,7 @@ import org.xml.sax.Attributes;
  */
 public class XHTMLSearchParticipant extends XMLSearchParticipant {
 	
+	private static final String KEYWORDS = "keywords"; //$NON-NLS-1$
 	private static final String META_TAG = "meta"; //$NON-NLS-1$
 	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
@@ -50,6 +51,13 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 	    		if (descriptionAttribute != null) {
 	    			hasDescriptionMetaTag = true;
 		    		data.addToSummary(descriptionAttribute);
+	    		}
+	    	} else if (KEYWORDS.equalsIgnoreCase(nameAttribute)) {
+	    		String keywordsAttribute = attributes.getValue(CONTENT_ATTRIBUTE);
+	    		if (keywordsAttribute != null) {
+	    			data.addText(" "); //$NON-NLS-1$
+		    		data.addText(keywordsAttribute);
+	    			data.addText(" "); //$NON-NLS-1$
 	    		}
 	    	}
 	    }
