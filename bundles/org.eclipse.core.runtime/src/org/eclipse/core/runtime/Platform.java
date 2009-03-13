@@ -773,7 +773,7 @@ public final class Platform {
 	 *
 	 * @return the plug-in registry
 	 * @see IPluginRegistry
-	 * @deprecated <code>IPluginRegistry</code> was refactored in Eclipse 3.0.
+	 * @deprecated use {@link #getExtensionRegistry()} instead.
 	 * This method only works if the compatibility layer is installed and must not be used otherwise.
 	 * See the comments on {@link IPluginRegistry} and its methods for details.
 	 */
