@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.http.jetty.JettyConfigurator;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.server.HelpServer;
@@ -33,8 +37,8 @@ public class JettyHelpServer extends HelpServer {
 	private int port = -1;
 	private static final int AUTO_SELECT_JETTY_PORT = 0;
 	
-	public void start(String webappName) throws Exception {
-		Dictionary d = new Hashtable();
+	public void start(final String webappName) throws Exception {
+		final Dictionary d = new Hashtable();
 		
 		configurePort();
 		d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
@@ -46,11 +50,20 @@ public class JettyHelpServer extends HelpServer {
 		// suppress Jetty INFO/DEBUG messages to stderr
 		Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
 
-		JettyConfigurator.startServer(webappName, d);
-		checkBundle();
-		
+		Job startJob = new Job("Start Help Server") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					JettyConfigurator.startServer(webappName, d);
+				} catch (Throwable t) {
+					return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, "", t); //$NON-NLS-1$
+				}
+				return Status.OK_STATUS;
+			}		
+		};
+		execute(startJob);		
+		checkBundle();	
 	}
-	
+
 	/*
 	 * Ensures that the bundle with the specified name and the highest available
 	 * version is started and reads the port number
@@ -68,12 +81,46 @@ public class JettyHelpServer extends HelpServer {
 		}
 	}
 
-	public void stop(String webappName) throws CoreException {
+	public void stop(final String webappName) throws CoreException {
 		try {
-			JettyConfigurator.stopServer(webappName);
+			Job stopJob = new Job("") { //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						JettyConfigurator.stopServer(webappName);
+					} catch (Throwable t) {
+						return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, "", t); //$NON-NLS-1$
+					}
+					return Status.OK_STATUS;
+				}		
+			};
+			execute(stopJob);
 		}
 		catch (Exception e) {
 			HelpBasePlugin.logError("An error occured while stopping the help server", e); //$NON-NLS-1$
+		}
+	}
+	
+	private void execute(Job job) throws Exception {
+		boolean interrupted = false;
+		job.schedule();
+		while(true) {
+			try {
+				job.join();
+				break;
+			} catch (InterruptedException e) {
+				interrupted = true;
+			}
+		}
+		if (interrupted)
+			Thread.currentThread().interrupt();
+		
+		IStatus result = job.getResult();
+		if (!result.isOK() && result.getException() != null) {
+			Throwable t = result.getException();
+			if (t instanceof Exception)
+				throw (Exception)t;
+			else
+				throw (Error) t;
 		}
 	}
 

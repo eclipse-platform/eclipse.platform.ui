@@ -33,6 +33,7 @@ public class AllWebappTests extends TestSuite {
 		suite.addTestSuite(RestrictedTopicParameter.class);
 		suite.addTestSuite(FilterExtensionTest.class);
 		suite.addTestSuite(FragmentServletTest.class);
+		suite.addTestSuite(HelpServerInterrupt.class);
 		//$JUnit-END$
 		return suite;
 	}
