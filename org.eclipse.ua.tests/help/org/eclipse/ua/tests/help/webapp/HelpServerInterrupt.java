@@ -84,11 +84,5 @@ public class HelpServerInterrupt extends TestCase {
 		Assert.assertTrue(firstbyte > 0);
 		input.close();
 	}
-	
-	public void testServerMultiple() throws Exception {
-		for (sleepTime = 10; sleepTime < 500; sleepTime = sleepTime + 10) {
-		    testServer();
-		}
-	}
 		
 }
