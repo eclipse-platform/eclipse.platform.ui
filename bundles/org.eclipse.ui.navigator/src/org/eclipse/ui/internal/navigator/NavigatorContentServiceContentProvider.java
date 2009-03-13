@@ -314,7 +314,7 @@ public class NavigatorContentServiceContentProvider implements
 				pipelinedContentProvider.getPipelinedChildren(aParentOrPath,
 						pipelinedChildren);
 				
-				pipelinedChildren.setContributor(null);
+				//pipelinedChildren.setContributor(null);
 				
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(aParentOrPath);

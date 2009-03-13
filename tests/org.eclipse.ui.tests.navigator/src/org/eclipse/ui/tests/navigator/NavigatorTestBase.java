@@ -65,6 +65,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_OVERRIDDEN2 = "org.eclipse.ui.tests.navigator.testContentOverridden2";
 	public static final String TEST_CONTENT_OVERRIDE1 = "org.eclipse.ui.tests.navigator.testContentOverride1";
 	public static final String TEST_CONTENT_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testContentOverride2";
+	public static final String TEST_CONTENT_OVERRIDE2_BLANK = "org.eclipse.ui.tests.navigator.testContentOverride2Blank";
 	
 	public static final String TEST_CONTENT_LABEL1 = "org.eclipse.ui.tests.navigator.testContentLabel1";
 	public static final String TEST_CONTENT_LABEL2 = "org.eclipse.ui.tests.navigator.testContentLabel2";

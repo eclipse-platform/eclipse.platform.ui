@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.navigator;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.SafeRunner;
@@ -32,10 +34,13 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
+import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
@@ -140,23 +145,50 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
 	 */
 	public StyledString getStyledText(Object anElement) {
-		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
-		String text = null;
-		for (int i = 0; i < labelProviders.length; i++) {
-			if (labelProviders[i] instanceof IStyledLabelProvider) {
-				StyledString styledText= ((IStyledLabelProvider) labelProviders[i]).getStyledText(anElement);
-				// paranoia check for null, although null is not a valid return value for IStyledLabelProvider.getStyledText
-				if (styledText != null && styledText.getString().length() > 0) {
-					return styledText;
-				}
-			} else {
-				text= labelProviders[i].getText(anElement);
-				if (text != null) {
-					return new StyledString(text);
-				}
+		SortedSet extensions = new TreeSet(ExtensionPriorityComparator.INSTANCE);
+		NavigatorContentDescriptor ncd = contentService.getSourceOfContribution(anElement);
+		if (ncd != null) {
+			extensions.add(contentService.getExtension(ncd));
+		}
+		Set possibleChildDescriptors = contentService.findContentExtensionsWithPossibleChild(anElement, true);
+		for (Iterator iter = possibleChildDescriptors.iterator(); iter.hasNext();) {
+			INavigatorContentExtension ext = (INavigatorContentExtension) iter.next();
+			extensions.add(ext);
+		}
+
+		StyledString text = null; 
+		for (Iterator itr = extensions.iterator(); itr.hasNext() && text == null; ) { 
+			text = findStyledText((NavigatorContentExtension) itr.next(), anElement);
+		}
+		// decorate the element
+		return (text == null) ? new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement))) : text;	
+	}
+	
+	/**
+	 * Search for a styled text label and take overrides into account. 
+	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
+	 * 
+	 * @returns the styled text or <code>null</code> if no extension has been found that provides a label
+	 */
+	private StyledString findStyledText(NavigatorContentExtension foundExtension, Object anElement) { 
+		INavigatorContentDescriptor foundDescriptor;
+		ICommonLabelProvider labelProvider= foundExtension.getLabelProvider();
+		if (labelProvider instanceof IStyledLabelProvider) {
+			StyledString styledText= ((IStyledLabelProvider) labelProvider).getStyledText(anElement);
+			// paranoia check for null, although null is not a valid return value for IStyledLabelProvider.getStyledText
+			if (styledText != null && styledText.length() > 0) {
+				return styledText;
+			}
+		} else {
+			String text= labelProvider.getText(anElement);
+			if (text != null) {
+				return new StyledString(text);
 			}
 		}
-		return new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement)));	
+		if ((foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
+			return findStyledText(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
+		}  
+		return null;
 	}
 	
 	private String makeSmallString(Object obj) {
@@ -164,7 +196,6 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		int len = str.length();
 		return str.substring(0, len < 50 ? len : 49);
 	}
-	
 	
 	/**
 	 * Search for image and take overrides into account. 

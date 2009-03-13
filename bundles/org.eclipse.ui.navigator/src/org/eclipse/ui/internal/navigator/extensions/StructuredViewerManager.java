@@ -58,6 +58,10 @@ public class StructuredViewerManager {
 			}
 			public void associate(Object element, Item item) {
 				NavigatorContentDescriptor desc = contentService.getContribution(element);
+				if (item.getData(NavigatorContentService.WIDGET_KEY) != null) {
+					//System.out.println("associate: SKIPPED " + element + " item: " + item + " desc: " + desc + " found: " + item.getData(NavigatorContentService.WIDGET_KEY)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					return;
+				}
 				item.setData(NavigatorContentService.WIDGET_KEY, desc);
 				//System.out.println("associate: " + element + " item: " + item + " desc: " + desc); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}

@@ -37,10 +37,11 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	private Font boldFont;
 
-	public static boolean _blank;
+	public static boolean _blankStatic;
+	public boolean _blank;
 	
 	public static void resetTest() {
-		_blank = false;
+		_blankStatic = false;
 	}
 	
 	public void init(ICommonContentExtensionSite aSite) {
@@ -60,7 +61,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public String getText(Object element) {
-		if (_blank)
+		if (_blankStatic || _blank)
 			return "";
 		
 		if (element instanceof TestExtensionTreeData) {
@@ -74,7 +75,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public StyledString getStyledText(Object element) {
-		if (_blank)
+		if (_blankStatic || _blank)
 			return new StyledString("");
 		return new StyledString(getText(element));
 	}

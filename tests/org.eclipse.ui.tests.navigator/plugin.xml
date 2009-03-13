@@ -288,6 +288,20 @@
 		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testContentOverridden2"/>
 	  </navigatorContent>      
 
+      <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testContentOverride2Blank" 
+            name="Test Content Override 2 (Label only - Blank)"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlank"
+            priority="lower">
+         <triggerPoints>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </triggerPoints>
+		<override suppressedExtensionId="org.eclipse.ui.tests.navigator.testContentOverridden2"/>
+	  </navigatorContent>      
+
       <navigatorContent
             id="org.eclipse.ui.tests.navigator.testContentSorterModel"
             contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"

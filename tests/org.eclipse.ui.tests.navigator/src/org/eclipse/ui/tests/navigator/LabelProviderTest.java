@@ -11,16 +11,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
+import org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlank;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderGreen;
 
 public class LabelProviderTest extends NavigatorTestBase {
-
-	private static final boolean DEBUG = false;
 
 	public LabelProviderTest() {
 		_navigatorInstanceId = "org.eclipse.ui.tests.navigator.OverrideTestView";
@@ -30,7 +27,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 	// used to signify no label content  see bug 268250
 	public void XXXtestBlankLabelProvider() throws Exception {
 
-		TestLabelProvider._blank = true;
+		TestLabelProvider._blankStatic = true;
 		
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1,
 				TEST_CONTENT_OVERRIDE1 }, false);
@@ -40,10 +37,6 @@ public class LabelProviderTest extends NavigatorTestBase {
 		refreshViewer();
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
-
-		if (DEBUG) {
-			DisplayHelper.sleep(Display.getCurrent(), 10000000);
-		}
 
 		if (!rootItems[0].getText().equals(""))
 			fail("Wrong text: " + rootItems[0].getText());
@@ -61,9 +54,6 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 
-		if (DEBUG) {
-			DisplayHelper.sleep(Display.getCurrent(), 10000000);
-		}
 
 		if (!rootItems[0].getText().startsWith("Green"))
 			fail("Wrong text: " + rootItems[0].getText());
@@ -74,17 +64,41 @@ public class LabelProviderTest extends NavigatorTestBase {
 	
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
 	public void testSimpleResLast() throws Exception {
-
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
 				TEST_CONTENT_OVERRIDE2 }, false);
 		_contentService.getActivationService().activateExtensions(
 				new String[] { TEST_CONTENT_OVERRIDDEN2, TEST_CONTENT_OVERRIDE2 }, true);
 
 		refreshViewer();
+
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 		if (!rootItems[0].getText().startsWith("Cyan"))
 			fail("Wrong text: " + rootItems[0].getText());
 		assertEquals(TestLabelProviderCyan.getTestColor(), rootItems[0]
+				.getBackground(0));
+	}
+
+	
+	// Make sure that it finds label providers that are in overridden content extensions
+	// if none of the label providers from the desired content extensions return anything
+	public void testUsingOverriddenLabelProvider() throws Exception {
+
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
+				TEST_CONTENT_OVERRIDE2_BLANK }, true);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_OVERRIDDEN2, TEST_CONTENT_OVERRIDE2_BLANK }, true);
+
+		refreshViewer();
+		
+		TreeItem[] rootItems = _viewer.getTree().getItems();
+		
+		//DisplayHelper.sleep(10000000);
+		
+		// But we get the text from the overridden label provider
+		if (!rootItems[0].getText().startsWith("Blue"))
+			fail("Wrong text: " + rootItems[0].getText());
+		// We get the color from the blank label provider
+		assertEquals(TestLabelProviderBlank.getTestColor(), rootItems[0]
 				.getBackground(0));
 	}
 	
