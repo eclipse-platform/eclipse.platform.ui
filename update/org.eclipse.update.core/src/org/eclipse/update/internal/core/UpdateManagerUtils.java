@@ -532,7 +532,10 @@ public class UpdateManagerUtils {
 	public static int getMatchingRule(String rule) {
 		if (rule == null)
 			return IUpdateConstants.RULE_COMPATIBLE;
-		int ruleInt = ((Integer) table.get(rule)).intValue();
+		final Integer integer = (Integer) table.get(rule);
+		if (integer == null)
+			return IUpdateConstants.RULE_PERFECT;
+		int ruleInt = integer.intValue();
 		if (ruleInt == IUpdateConstants.RULE_NONE)
 			return IUpdateConstants.RULE_PERFECT;
 		return ruleInt;
