@@ -80,7 +80,8 @@ public class Library implements IDisposable {
 		
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {
-				outputContext.set(IServiceConstants.SELECTION, event.getSelection());
+				StructuredSelection selection = (StructuredSelection)event.getSelection();
+				outputContext.set(IServiceConstants.SELECTION, selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
 			}
 		});
 		IObservableFactory setFactory = new IObservableFactory() {

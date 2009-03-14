@@ -48,7 +48,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.service.packageadmin.PackageAdmin;
 
@@ -143,10 +142,6 @@ public class Workbench implements IWorkbench {
 				}
 				Object newInput = null;
 				Object newValue = mainContext.get(IServiceConstants.SELECTION);
-				if (newValue instanceof IStructuredSelection) {
-					newValue = ((IStructuredSelection) newValue)
-							.getFirstElement();
-				}
 				if (adapterType == null || adapterType.isInstance(newValue)) {
 					newInput = newValue;
 				} else if (newValue != null && adapterType != null) {
