@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
@@ -50,6 +51,11 @@ public class ContextTest extends TestCase {
 
 	public static Test suite() {
 		return new TestSuite(ContextTest.class);
+	}
+	
+	protected void setUp() throws Exception {
+		// Required for isEnabled() to work correctly
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
 	}
 
 	private Context createContext(final String contextSource) {

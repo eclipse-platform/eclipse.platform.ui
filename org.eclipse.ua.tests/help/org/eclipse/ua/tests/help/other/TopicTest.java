@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
@@ -60,6 +61,11 @@ public class TopicTest extends TestCase {
 	
 	public static Test suite() {
 		return new TestSuite(TopicTest.class);
+	}
+	
+	protected void setUp() throws Exception {
+		// Required for isEnabled() to work correctly
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
 	}
 
 	private Topic createTopic(final String topicSource) {
