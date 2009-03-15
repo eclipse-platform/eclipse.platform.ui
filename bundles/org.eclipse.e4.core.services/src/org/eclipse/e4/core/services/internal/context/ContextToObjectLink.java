@@ -11,8 +11,13 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
@@ -32,11 +37,11 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			this.userObject = userObject;
 		}
 
-		// true if a field was set 
 		abstract void processMethod(Method method);
 
-		// true if a field was set 
-		abstract void processField(Field field);
+		abstract void processField(Field field, String injectName);
+
+		abstract void processPostConstructMethod(Method m);
 	}
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
@@ -50,56 +55,76 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 
 	protected List userObjects = new ArrayList(3); // start small
 
-	public ContextToObjectLink(IEclipseContext context, String fieldPrefix, String setMethodPrefix) {
+	public ContextToObjectLink(IEclipseContext context, String fieldPrefix,
+			String setMethodPrefix) {
 		this.context = context;
 		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix : INJECTION_FIELD_PREFIX;
-		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix : INJECTION_SET_METHOD_PREFIX;
+		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix
+				: INJECTION_SET_METHOD_PREFIX;
 
 		fieldPrefixLength = this.fieldPrefix.length();
 	}
 
-	public boolean notify(final IEclipseContext context, final String name, final int eventType, final Object[] args) {
+	public boolean notify(final IEclipseContext context, final String name,
+			final int eventType, final Object[] args) {
 		boolean isSetter = (eventType == IRunAndTrack.ADDED);
 		Processor processor = new Processor(isSetter) {
-			public void processField(final Field field) {
+			void processField(final Field field, String injectName) {
 				String candidateName = field.getName();
 				switch (eventType) {
-					case IRunAndTrack.INITIAL :
-						String key = findKey(candidateName.substring(fieldPrefixLength));
-						if (key != null)
-							setField(args[0], field, context.get(key));
-						break;
-					case IRunAndTrack.ADDED :
-						if (keyMatches(name, candidateName.substring(fieldPrefixLength)))
-							setField(userObject, field, context.get(findKey(name)));
-						break;
-					case IRunAndTrack.REMOVED :
-						if (keyMatches(name, candidateName.substring(fieldPrefixLength)))
-							setField(userObject, field, null);
-						break;
-					default :
-						logWarning(userObject, new IllegalArgumentException("Unknown event type: " + eventType));
+				case IRunAndTrack.INITIAL:
+					String key = findKey(candidateName.substring(fieldPrefixLength));
+					if (key != null)
+						setField(args[0], field, context.get(key));
+					break;
+				case IRunAndTrack.ADDED:
+					if (keyMatches(name, candidateName.substring(fieldPrefixLength)))
+						setField(userObject, field, context.get(findKey(name)));
+					break;
+				case IRunAndTrack.REMOVED:
+					if (keyMatches(name, candidateName.substring(fieldPrefixLength)))
+						setField(userObject, field, null);
+					break;
+				default:
+					logWarning(userObject, new IllegalArgumentException(
+							"Unknown event type: " + eventType));
 				}
 			}
 
-			public void processMethod(final Method method) {
+			void processMethod(final Method method) {
 				String candidateName = method.getName();
 				switch (eventType) {
-					case IRunAndTrack.INITIAL :
-						String key = findKey(candidateName.substring(INJECTION_SET_METHOD_PREFIX.length()));
-						if (key != null)
-							setMethod(args[0], method, context.get(key, method.getParameterTypes()));
-						break;
-					case IRunAndTrack.ADDED :
-						if (keyMatches(name, candidateName.substring(INJECTION_SET_METHOD_PREFIX.length())))
-							setMethod(userObject, method, context.get(findKey(name), method.getParameterTypes()));
-						break;
-					case IRunAndTrack.REMOVED :
-						if (keyMatches(name, candidateName.substring(INJECTION_SET_METHOD_PREFIX.length())))
-							setMethod(userObject, method, null);
-						break;
-					default :
-						logWarning(userObject, new IllegalArgumentException("Unknown event type: " + eventType));
+				case IRunAndTrack.INITIAL:
+					String key = findKey(candidateName
+							.substring(INJECTION_SET_METHOD_PREFIX.length()));
+					if (key != null)
+						setMethod(args[0], method, context.get(key, method
+								.getParameterTypes()));
+					break;
+				case IRunAndTrack.ADDED:
+					if (keyMatches(name, candidateName
+							.substring(INJECTION_SET_METHOD_PREFIX.length())))
+						setMethod(userObject, method, context.get(findKey(name), method
+								.getParameterTypes()));
+					break;
+				case IRunAndTrack.REMOVED:
+					if (keyMatches(name, candidateName
+							.substring(INJECTION_SET_METHOD_PREFIX.length())))
+						setMethod(userObject, method, null);
+					break;
+				default:
+					logWarning(userObject, new IllegalArgumentException(
+							"Unknown event type: " + eventType));
+				}
+			}
+
+			void processPostConstructMethod(Method m) {
+				if (eventType == IRunAndTrack.INITIAL) {
+					try {
+						m.invoke(userObject, new Object[0]);
+					} catch (Exception e) {
+						logWarning(userObject, e);
+					}
 				}
 			}
 		};
@@ -133,7 +158,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			for (Iterator i = userObjects.iterator(); i.hasNext();) {
 				WeakReference ref = (WeakReference) i.next();
 				Object userObject = ref.get();
-				if (userObject == null) { // user object got GCed, clean up refs for future 
+				if (userObject == null) { // user object got GCed, clean up refs
+					// for future
 					i.remove();
 					continue;
 				}
@@ -150,48 +176,117 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 	}
 
 	/**
-	 * For setters: we set fields first, them methods.
-	 * Otherwise, clear methods first, fields next 
+	 * For setters: we set fields first, them methods. Otherwise, clear methods
+	 * first, fields next
 	 */
 	private void walkClassHierarchy(Class objectsClass, Processor processor) {
 		// process superclass first
 		Class superClass = objectsClass.getSuperclass();
-		if (!superClass.getName().equals(JAVA_OBJECT))
+		if (!superClass.getName().equals(JAVA_OBJECT)) {
 			walkClassHierarchy(superClass, processor);
+		}
 		if (processor.isSetter) {
-			// fields second
-			Field[] fields = objectsClass.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				String candidateName = fields[i].getName();
-				if (candidateName.startsWith(fieldPrefix))
-					processor.processField(fields[i]);
-			}
-			// methods last
-			Method[] methods = objectsClass.getDeclaredMethods();
-			for (int i = 0; i < methods.length; i++) {
-				String candidateName = methods[i].getName();
-				if (candidateName.startsWith(INJECTION_SET_METHOD_PREFIX))
-					processor.processMethod(methods[i]);
-			}
+			processFields(objectsClass, processor);
+			processMethods(objectsClass, processor);
 		} else {
-			// methods second
-			Method[] methods = objectsClass.getDeclaredMethods();
-			for (int i = 0; i < methods.length; i++) {
-				String candidateName = methods[i].getName();
-				if (candidateName.startsWith(INJECTION_SET_METHOD_PREFIX))
-					processor.processMethod(methods[i]);
+			processMethods(objectsClass, processor);
+			processFields(objectsClass, processor);
+		}
+	}
+
+	private void processMethods(Class objectsClass, Processor processor) {
+		Method[] methods = objectsClass.getDeclaredMethods();
+		List postConstructMethods = new ArrayList();
+		for (int i = 0; i < methods.length; i++) {
+			Method method = methods[i];
+			String candidateName = method.getName();
+			boolean inject = candidateName.startsWith(INJECTION_SET_METHOD_PREFIX);
+			try {
+				Object[] annotations = (Object[]) method.getClass().getMethod(
+						"getAnnotations", new Class[0]).invoke(method, new Object[0]);
+				for (int j = 0; j < annotations.length; j++) {
+					Object annotation = annotations[j];
+					try {
+						String annotationName = ((Class) annotation.getClass().getMethod(
+								"annotationType", new Class[0]).invoke(annotation,
+								new Object[0])).getName();
+						if (annotationName.endsWith(".Inject")) {
+							inject = true;
+						} else if (annotationName.endsWith(".PostConstruct")) {
+							inject = false;
+							postConstructMethods.add(method);
+						} else if (annotationName.endsWith(".PreDestroy")) {
+						}
+					} catch (Exception ex) {
+						logWarning(method, ex);
+					}
+				}
+			} catch (Exception e) {
+				// ignore - no annotation support
 			}
-			// fields last
-			Field[] fields = objectsClass.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				String candidateName = fields[i].getName();
-				if (candidateName.startsWith(fieldPrefix))
-					processor.processField(fields[i]);
+			if (inject) {
+				processor.processMethod(method);
+			}
+		}
+		for (Iterator it = postConstructMethods.iterator(); it.hasNext();) {
+			Method m = (Method) it.next();
+			processor.processPostConstructMethod(m);
+		}
+	}
+
+	private void processFields(Class objectsClass, Processor processor) {
+		Field[] fields = objectsClass.getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			String injectName = field.getName();
+			boolean inject = injectName.startsWith(fieldPrefix);
+			try {
+				Object[] annotations = (Object[]) field.getClass().getMethod(
+						"getAnnotations", new Class[0]).invoke(field, new Object[0]);
+				for (int j = 0; j < annotations.length; j++) {
+					Object annotation = annotations[j];
+					try {
+						String annotationName = ((Class) annotation.getClass().getMethod(
+								"annotationType", new Class[0]).invoke(annotation,
+								new Object[0])).getName();
+						if (annotationName.endsWith(".Inject")) {
+							inject = true;
+						} else if (annotationName.endsWith(".Named")) {
+							try {
+								injectName = (String) annotation.getClass().getMethod(
+										"value", new Class[0]).invoke(annotation,
+										new Object[0]);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (annotationName.endsWith(".Resource")) {
+							inject = true;
+							String resourceName = null;
+							try {
+								resourceName = (String) annotation.getClass().getMethod(
+										"name", new Class[0]).invoke(annotation,
+										new Object[0]);
+							} catch (Exception e) {
+								logWarning(field, e);
+							}
+							if (resourceName != null && !resourceName.equals("")) {
+								injectName = resourceName;
+							}
+						}
+					} catch (Exception e1) {
+						logWarning(field, e1);
+					}
+				}
+			} catch (Exception e2) {
+				// ignore - no annotation support
+			}
+			if (inject) {
+				processor.processField(field, injectName);
 			}
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////
+	// ///////////////////////////////////////////////////////////////////////////
 
 	protected String findKey(String key) {
 		if (context.containsKey(key)) // priority goes to exact match
@@ -282,7 +377,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			wasAccessible = false;
 		}
 		try {
-			method.invoke(userObject, new Object[] {value});
+			method.invoke(userObject, new Object[] { value });
 		} catch (IllegalArgumentException e) {
 			logWarning(method, e);
 			return false;
@@ -304,7 +399,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		if (e != null)
 			e.printStackTrace();
 		// TBD convert this into real logging
-		//		String msg = NLS.bind("Injection failed", destination.toString());
-		//		RuntimeLog.log(new Status(IStatus.WARNING, IRuntimeConstants.PI_COMMON, 0, msg, e));
+		// String msg = NLS.bind("Injection failed", destination.toString());
+		// RuntimeLog.log(new Status(IStatus.WARNING,
+		// IRuntimeConstants.PI_COMMON, 0, msg, e));
 	}
 }
