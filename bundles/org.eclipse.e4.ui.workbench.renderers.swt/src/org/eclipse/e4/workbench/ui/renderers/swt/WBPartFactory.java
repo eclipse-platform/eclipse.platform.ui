@@ -31,6 +31,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -141,6 +143,22 @@ public class WBPartFactory extends SWTPartFactory {
 		super.hookControllerLogic(me);
 
 		Widget widget = (Widget) me.getWidget();
+
+		if (widget instanceof Shell && me instanceof MWindow) {
+			final Shell shell = (Shell) widget;
+			final MWindow w = (MWindow) me;
+			shell.addControlListener(new ControlListener() {
+				public void controlResized(ControlEvent e) {
+					w.setWidth(shell.getSize().x);
+					w.setHeight(shell.getSize().y);
+				}
+
+				public void controlMoved(ControlEvent e) {
+					w.setX(shell.getLocation().x);
+					w.setY(shell.getLocation().y);
+				}
+			});
+		}
 
 		// Set up the text binding...perhaps should catch exceptions?
 		IObservableValue emfTextObs = EMFObservables.observeValue(me,

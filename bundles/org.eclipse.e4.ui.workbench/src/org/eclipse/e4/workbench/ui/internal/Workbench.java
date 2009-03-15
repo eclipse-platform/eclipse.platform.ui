@@ -13,7 +13,12 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URLConnection;
+import java.util.Collections;
+import java.util.Map;
 
+import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -45,15 +50,17 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 public class Workbench implements IWorkbench {
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
-	private MApplication<MWorkbenchWindow> workbench;
+	private MApplication<? extends MWindow> workbench;
 	private static final boolean saveAndRestore = true;
 	private File workbenchData;
 	private IWorkbenchWindowHandler windowHandler;
@@ -80,9 +87,15 @@ public class Workbench implements IWorkbench {
 		this.windowHandler = windowHandler;
 		exceptionHandler = new ExceptionHandler();
 		this.registry = registry;
-		workbenchData = new File(new File(instanceLocation.getURL()
-				.toExternalForm()),
-				".metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi"); //$NON-NLS-1$
+		try {
+			workbenchData = new File(instanceLocation.getURL().toURI());
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+		workbenchData = new File(workbenchData, ".metadata"); //$NON-NLS-1$
+		workbenchData = new File(workbenchData, ".plugins"); //$NON-NLS-1$
+		workbenchData = new File(workbenchData, "org.eclipse.e4.workbench"); //$NON-NLS-1$
+		workbenchData = new File(workbenchData, "workbench.xmi"); //$NON-NLS-1$
 
 		contributionFactory = new ReflectionContributionFactory(registry);
 		resourceSet = new ResourceSetImpl();
@@ -101,8 +114,8 @@ public class Workbench implements IWorkbench {
 
 		globalContext = createContext(applicationContext);
 		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
-			createWorkbenchModel(workbenchData.getAbsolutePath(),
-					workbenchXmiURI);
+			createWorkbenchModel(URI.createFileURI(workbenchData
+					.getAbsolutePath()), workbenchXmiURI);
 		} else {
 			createWorkbenchModel(null, workbenchXmiURI);
 		}
@@ -158,36 +171,54 @@ public class Workbench implements IWorkbench {
 		return mainContext;
 	}
 
-	private MApplication<MWorkbenchWindow> createWorkbenchModel(
-			String restoreFile, URI workbenchDefinitionInstance) {
-		boolean restore = false;// restoreFile != null;
+	private MApplication<? extends MWindow> createWorkbenchModel(
+			URI restoreLocation, URI applicationDefinitionInstance) {
+		long restoreLastModified = restoreLocation == null ? 0L : new File(
+				restoreLocation.toFileString()).lastModified();
 
-		URI uri = null;
-		Resource resource = null;
-		if (!restore) {
-			resource = new XMIResourceImpl();
-			workbench = ApplicationFactory.eINSTANCE.createMApplication();
-			resource.getContents().add((EObject) workbench);
+		long appLastModified = 0L;
 
-			// Capture the MApplication into the context
-			globalContext.set(MApplication.class.getName(), workbench);
-
-			// Should set up such things as initial perspective id here...
-			String initialPerspectiveId = "org.eclipse.e4.ui.workbench.fragment.testPerspective"; //$NON-NLS-1$
-			populateWBModel(workbench, workbenchDefinitionInstance,
-					initialPerspectiveId);
-		} else {
-			uri = URI.createFileURI(restoreFile);
+		ResourceSetImpl resourceSetImpl = new ResourceSetImpl();
+		Map<String, ?> attributes = resourceSetImpl
+				.getURIConverter()
+				.getAttributes(
+						applicationDefinitionInstance,
+						Collections
+								.singletonMap(
+										URIConverter.OPTION_REQUESTED_ATTRIBUTES,
+										Collections
+												.singleton(URIConverter.ATTRIBUTE_TIME_STAMP)));
+		Object timestamp = attributes.get(URIConverter.ATTRIBUTE_TIME_STAMP);
+		if (timestamp instanceof Long) {
+			appLastModified = ((Long) timestamp).longValue();
+		} else if (applicationDefinitionInstance.isPlatformPlugin()) {
 			try {
-				resource = new ResourceSetImpl().getResource(uri, true);
-				workbench = (MApplication<MWorkbenchWindow>) resource
-						.getContents().get(0);
-
+				java.net.URL url = new java.net.URL(
+						applicationDefinitionInstance.toString());
+				Object[] obj = PlatformURLPluginConnection.parse(url.getFile()
+						.trim(), url);
+				Bundle b = (Bundle) obj[0];
+				URLConnection openConnection = b.getResource((String) obj[1])
+						.openConnection();
+				appLastModified = openConnection.getLastModified();
 			} catch (Exception e) {
-				e.printStackTrace();
+				// ignore
 			}
 		}
-		if (!restore) {
+
+		// new java.util.Date(appLastModified)
+		boolean restore = restoreLastModified > appLastModified;
+
+		if (restore) {
+			System.err.println("Restoring workbench: " + restoreLocation); //$NON-NLS-1$
+			workbench = (MApplication<MWindow>) resourceSetImpl.getResource(
+					restoreLocation, true).getContents().get(0);
+		} else {
+			System.err
+					.println("Initializing workbench: " + applicationDefinitionInstance); //$NON-NLS-1$
+			Resource resource = new XMIResourceImpl();
+			workbench = readWBModel(applicationDefinitionInstance);
+			resource.getContents().add((EObject) workbench);
 			resource.setURI(URI.createFileURI(workbenchData.getAbsolutePath()));
 		}
 
@@ -196,14 +227,17 @@ public class Workbench implements IWorkbench {
 		return workbench;
 	}
 
-	private void populateWBModel(MApplication<MWorkbenchWindow> wb,
-			URI initialWorkbenchDefinitionInstance, String initialPerspectiveId) {
+	private MApplication<? extends MWindow> readWBModel(
+			URI initialWorkbenchDefinitionInstance) {
 
-		MWorkbenchWindow wbw;
 		ILegacyHook legacyHook = (ILegacyHook) globalContext
 				.get(ILegacyHook.class.getName());
 		if (legacyHook != null) {
-			wbw = WorkbenchFactory.eINSTANCE.createMWorkbenchWindow();
+			MApplication<MWorkbenchWindow> app = ApplicationFactory.eINSTANCE
+					.createMApplication();
+			MWorkbenchWindow wbw = WorkbenchFactory.eINSTANCE
+					.createMWorkbenchWindow();
+			app.getWindows().add(wbw);
 			wbw.setWidth(1280);
 			wbw.setHeight(1024);
 			wbw.setX(100);
@@ -223,6 +257,9 @@ public class Workbench implements IWorkbench {
 			// legacyHook.loadMenu(mainMenu);
 			// wbw.setMenu(mainMenu);
 
+			// Should set up such things as initial perspective id here...
+			String initialPerspectiveId = "org.eclipse.e4.ui.workbench.fragment.testPerspective"; //$NON-NLS-1$
+
 			MPerspective<?> persp = WorkbenchFactory.eINSTANCE
 					.createMPerspective();
 			persp.setId(initialPerspectiveId);
@@ -230,40 +267,25 @@ public class Workbench implements IWorkbench {
 			legacyHook.loadPerspective(persp);
 			wbw.getChildren().add(persp);
 			wbw.setActiveChild(persp);
-		} else {
-			Resource resource = new ResourceSetImpl().getResource(
-					initialWorkbenchDefinitionInstance, true);
-			MApplication<MWindow<MPart<?>>> app = (MApplication<MWindow<MPart<?>>>) resource
-					.getContents().get(0);
-
-			// temporary code - we are reading a new model but the code still
-			// assumes
-			// a MWorkbenchWindow with a MPerspective, so we need to copy the
-			// parts of the
-			// window into a perspective.
-			wbw = WorkbenchFactory.eINSTANCE.createMWorkbenchWindow();
-			wbw.setWidth(app.getWindows().get(0).getWidth());
-			wbw.setHeight(app.getWindows().get(0).getHeight());
-			wbw.setX(app.getWindows().get(0).getX());
-			wbw.setY(app.getWindows().get(0).getY());
-			wbw.setMenu(app.getWindows().get(0).getMenu());
-			wbw.setToolBar(app.getWindows().get(0).getToolBar());
-			wbw.setTrim(ApplicationFactory.eINSTANCE.createMTrim());
-			wbw.getHandlers().addAll(app.getWindows().get(0).getHandlers());
-			MPerspective<MPart<?>> perspective = WorkbenchFactory.eINSTANCE
-					.createMPerspective();
-			wbw.getChildren().add(perspective);
-			perspective.getChildren().addAll(
-					app.getWindows().get(0).getChildren());
-
-			processPartContributions(resource, wbw);
+			return app;
 		}
+		Resource resource = new ResourceSetImpl().getResource(
+				initialWorkbenchDefinitionInstance, true);
+		MApplication<MWindow> app = (MApplication<MWindow>) resource
+				.getContents().get(0);
 
-		wb.getWindows().add(wbw);
+		// temporary code - we are reading a new model but the code still
+		// assumes trim to be there
+		// if (app.getWindows().get(0).getTrim() == null) {
+		// app.getWindows().get(0).setTrim(
+		// ApplicationFactory.eINSTANCE.createMTrim());
+		// }
+
+		processPartContributions(resource, app.getWindows().get(0));
+		return app;
 	}
 
-	private void processPartContributions(Resource resource,
-			MWorkbenchWindow wbw) {
+	private void processPartContributions(Resource resource, MWindow mWindow) {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		String extId = "org.eclipse.e4.workbench.parts"; //$NON-NLS-1$
 		IConfigurationElement[] parts = registry
@@ -303,23 +325,27 @@ public class Workbench implements IWorkbench {
 		return null;
 	}
 
-	private void init(MApplication<MWorkbenchWindow> workbench) {
+	private void init(MApplication<? extends MWindow> workbench2) {
+		// Capture the MApplication into the context
+		globalContext.set(MApplication.class.getName(), workbench);
 	}
 
 	public int run() {
-		MWorkbenchWindow wbw = workbench.getWindows().get(0);
+		MWindow wbw = workbench.getWindows().get(0);
 		createGUI(wbw);
 
 		rv = 0;
 		Platform.endSplash();
-		windowHandler.open(appWindow);
+
 		// A position of 0 is not possible on OS-X because then the title-bar is
 		// hidden
 		// below the MMenu-Bar
-
 		windowHandler.setBounds(appWindow, wbw.getX(), wbw.getY(), wbw
 				.getWidth(), wbw.getHeight());
 		windowHandler.layout(appWindow);
+
+		windowHandler.open(appWindow);
+
 		windowHandler.runEvenLoop(appWindow);
 
 		if (workbenchData != null && saveAndRestore && workbench != null) {
@@ -389,7 +415,7 @@ public class Workbench implements IWorkbench {
 		}
 	}
 
-	private void createGUI(MWorkbenchWindow workbenchWindow) {
+	private void createGUI(MWindow wbw) {
 		if (renderer == null) {
 			renderer = new PartRenderer(contributionFactory, globalContext);
 			initializeRenderer(registry, renderer, globalContext,
@@ -397,8 +423,8 @@ public class Workbench implements IWorkbench {
 
 		}
 
-		renderer.createGui(workbenchWindow);
-		appWindow = workbenchWindow.getWidget();
+		renderer.createGui(wbw);
+		appWindow = wbw.getWidget();
 	}
 
 	public void close() {

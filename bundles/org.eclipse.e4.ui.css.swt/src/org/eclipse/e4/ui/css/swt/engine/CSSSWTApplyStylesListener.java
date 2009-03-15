@@ -58,8 +58,8 @@ public class CSSSWTApplyStylesListener {
 
 		public void handleEvent(Event event) {
 			Widget widget = event.widget;
-			if (widget instanceof Shell)
-				((Shell) widget).pack();
+//			if (widget instanceof Shell)
+//				((Shell) widget).pack();
 		}
 	}
 }
