@@ -11,10 +11,18 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.*;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.context.spi.IEclipseContextScheduler;
+import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
+import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 public class EclipseContext implements IEclipseContext {
 
@@ -27,10 +35,12 @@ public class EclipseContext implements IEclipseContext {
 			this.name = name;
 		}
 
-		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
+		final protected void doHandleInvalid(IEclipseContext context, String name,
+				int eventType) {
 			if (EclipseContext.DEBUG)
 				System.out.println("scheduling " + toString()); //$NON-NLS-1$
-			((EclipseContext) context).schedule(this); // XXX conversion: should be IEclipseContext
+			((EclipseContext) context).schedule(this); // XXX conversion: should
+														// be IEclipseContext
 		}
 
 		public void run() {
@@ -57,11 +67,14 @@ public class EclipseContext implements IEclipseContext {
 			this.runnable = runnable;
 		}
 
-		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
-			((EclipseContext) context).schedule(this, name, eventType, null); // XXX IEclipseContext
+		final protected void doHandleInvalid(IEclipseContext context, String name,
+				int eventType) {
+			((EclipseContext) context).schedule(this, name, eventType, null); // XXX
+																				// IEclipseContext
 		}
 
-		public boolean notify(IEclipseContext context, String name, int eventType, Object[] args) {
+		public boolean notify(IEclipseContext context, String name, int eventType,
+				Object[] args) {
 			Computation oldComputation = (Computation) currentComputation.get();
 			currentComputation.set(this);
 			boolean result = true;
@@ -83,9 +96,9 @@ public class EclipseContext implements IEclipseContext {
 	public static boolean DEBUG = false;
 
 	/**
-	 * TODO Can this really be static? Couldn't there be multiple computations ongoing
-	 * in a single thread? For example a computation could recursively cause
-	 * another context lookup and therefore a nested computation.
+	 * TODO Can this really be static? Couldn't there be multiple computations
+	 * ongoing in a single thread? For example a computation could recursively
+	 * cause another context lookup and therefore a nested computation.
 	 */
 	static ThreadLocal currentComputation = new ThreadLocal();
 
@@ -111,11 +124,14 @@ public class EclipseContext implements IEclipseContext {
 			runnable.run();
 	}
 
-	protected boolean schedule(IRunAndTrack runnable, String name, int eventType, Object[] args) {
+	protected boolean schedule(IRunAndTrack runnable, String name, int eventType,
+			Object[] args) {
 		if (runnable == null)
 			return false;
-		if (strategy != null && strategy instanceof IEclipseContextScheduler)
-			return ((IEclipseContextScheduler) strategy).schedule(this, runnable, name, eventType, args);
+		if (eventType != IRunAndTrack.INITIAL && strategy != null
+				&& strategy instanceof IEclipseContextScheduler)
+			return ((IEclipseContextScheduler) strategy).schedule(this, runnable, name,
+					eventType, args);
 		return runnable.notify(this, name, eventType, args);
 	}
 
@@ -173,11 +189,13 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	protected Object internalGet(EclipseContext originatingContext, String name, Object[] arguments, boolean local) {
+	protected Object internalGet(EclipseContext originatingContext, String name,
+			Object[] arguments, boolean local) {
 		trackAccess(name);
 		LookupKey lookupKey = new LookupKey(name, arguments);
 		if (this == originatingContext) {
-			ValueComputation valueComputation = (ValueComputation) localValueComputations.get(lookupKey);
+			ValueComputation valueComputation = (ValueComputation) localValueComputations
+					.get(lookupKey);
 			if (valueComputation != null) {
 				return valueComputation.get(arguments);
 			}
@@ -186,24 +204,30 @@ public class EclipseContext implements IEclipseContext {
 		if (result != null) {
 			if (result instanceof IComputedValue) {
 				if (EclipseContext.DEBUG)
-					System.out.println("creating new value computation for " + name + " in " + this + " from " + originatingContext); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				ValueComputation valueComputation = new ValueComputation(this, originatingContext, name, ((IComputedValue) result));
-				originatingContext.localValueComputations.put(lookupKey, valueComputation);
+					System.out
+							.println("creating new value computation for " + name + " in " + this + " from " + originatingContext); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				ValueComputation valueComputation = new ValueComputation(this,
+						originatingContext, name, ((IComputedValue) result));
+				originatingContext.localValueComputations
+						.put(lookupKey, valueComputation);
 				result = valueComputation.get(arguments);
 			}
 			return result;
 		}
 		if (!local && parent != null) {
-			return ((EclipseContext) parent).internalGet(originatingContext, name, arguments, local); // XXX IEclipseContext
+			return ((EclipseContext) parent).internalGet(originatingContext, name,
+					arguments, local); // XXX IEclipseContext
 		}
 		return null;
 	}
 
 	protected void invalidate(String name, int eventType) {
 		if (EclipseContext.DEBUG)
-			System.out.println("invalidating " + get(IContextConstants.DEBUG_STRING) + ',' + name); //$NON-NLS-1$
+			System.out
+					.println("invalidating " + get(IContextConstants.DEBUG_STRING) + ',' + name); //$NON-NLS-1$
 		localValueComputations.remove(name);
-		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners
+				.size()]);
 		for (int i = 0; i < ls.length; i++) {
 			ls[i].handleInvalid(this, name, eventType);
 		}

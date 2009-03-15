@@ -70,19 +70,22 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		boolean isSetter = (eventType == IRunAndTrack.ADDED);
 		Processor processor = new Processor(isSetter) {
 			void processField(final Field field, String injectName) {
-				String candidateName = field.getName();
 				switch (eventType) {
 				case IRunAndTrack.INITIAL:
-					String key = findKey(candidateName.substring(fieldPrefixLength));
-					if (key != null)
-						setField(args[0], field, context.get(key));
+					String key = findKey(injectName, field.getType());
+					if (key == null) {
+						throw new IllegalStateException("Could not set " + field
+								+ " because of missing: " + injectName);
+					}
+					setField(args[0], field, context.get(key));
 					break;
 				case IRunAndTrack.ADDED:
-					if (keyMatches(name, candidateName.substring(fieldPrefixLength)))
-						setField(userObject, field, context.get(findKey(name)));
+					if (keyMatches(name, injectName))
+						setField(userObject, field, context.get(findKey(name, field
+								.getType())));
 					break;
 				case IRunAndTrack.REMOVED:
-					if (keyMatches(name, candidateName.substring(fieldPrefixLength)))
+					if (keyMatches(name, injectName))
 						setField(userObject, field, null);
 					break;
 				default:
@@ -96,16 +99,20 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				switch (eventType) {
 				case IRunAndTrack.INITIAL:
 					String key = findKey(candidateName
-							.substring(INJECTION_SET_METHOD_PREFIX.length()));
-					if (key != null)
-						setMethod(args[0], method, context.get(key, method
-								.getParameterTypes()));
+							.substring(INJECTION_SET_METHOD_PREFIX.length()), method
+							.getParameterTypes()[0]);
+					if (key == null) {
+						throw new IllegalStateException("Could not invoke " + method
+								+ " because of missing: " + candidateName);
+					}
+					setMethod(args[0], method, context.get(key, method
+							.getParameterTypes()));
 					break;
 				case IRunAndTrack.ADDED:
 					if (keyMatches(name, candidateName
 							.substring(INJECTION_SET_METHOD_PREFIX.length())))
-						setMethod(userObject, method, context.get(findKey(name), method
-								.getParameterTypes()));
+						setMethod(userObject, method, context.get(findKey(name, method
+								.getParameterTypes()[0]), method.getParameterTypes()));
 					break;
 				case IRunAndTrack.REMOVED:
 					if (keyMatches(name, candidateName
@@ -121,7 +128,16 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			void processPostConstructMethod(Method m) {
 				if (eventType == IRunAndTrack.INITIAL) {
 					try {
-						m.invoke(userObject, new Object[0]);
+						if (!m.isAccessible()) {
+							m.setAccessible(true);
+							try {
+								m.invoke(userObject, new Object[0]);
+							} finally {
+								m.setAccessible(false);
+							}
+						} else {
+							m.invoke(userObject, new Object[0]);
+						}
 					} catch (Exception e) {
 						logWarning(userObject, e);
 					}
@@ -185,16 +201,21 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		if (!superClass.getName().equals(JAVA_OBJECT)) {
 			walkClassHierarchy(superClass, processor);
 		}
+		List postConstructMethods;
 		if (processor.isSetter) {
 			processFields(objectsClass, processor);
-			processMethods(objectsClass, processor);
+			postConstructMethods = processMethods(objectsClass, processor);
 		} else {
-			processMethods(objectsClass, processor);
+			postConstructMethods = processMethods(objectsClass, processor);
 			processFields(objectsClass, processor);
+		}
+		for (Iterator it = postConstructMethods.iterator(); it.hasNext();) {
+			Method m = (Method) it.next();
+			processor.processPostConstructMethod(m);
 		}
 	}
 
-	private void processMethods(Class objectsClass, Processor processor) {
+	private List processMethods(Class objectsClass, Processor processor) {
 		Method[] methods = objectsClass.getDeclaredMethods();
 		List postConstructMethods = new ArrayList();
 		for (int i = 0; i < methods.length; i++) {
@@ -228,10 +249,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				processor.processMethod(method);
 			}
 		}
-		for (Iterator it = postConstructMethods.iterator(); it.hasNext();) {
-			Method m = (Method) it.next();
-			processor.processPostConstructMethod(m);
-		}
+		return postConstructMethods;
 	}
 
 	private void processFields(Class objectsClass, Processor processor) {
@@ -239,7 +257,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 			String injectName = field.getName();
-			boolean inject = injectName.startsWith(fieldPrefix);
+			boolean inject = false;
 			try {
 				Object[] annotations = (Object[]) field.getClass().getMethod(
 						"getAnnotations", new Class[0]).invoke(field, new Object[0]);
@@ -280,6 +298,10 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			} catch (Exception e2) {
 				// ignore - no annotation support
 			}
+			if (!inject && injectName.startsWith(fieldPrefix)) {
+				inject = true;
+				injectName = injectName.substring(fieldPrefixLength);
+			}
 			if (inject) {
 				processor.processField(field, injectName);
 			}
@@ -288,16 +310,21 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 
 	// ///////////////////////////////////////////////////////////////////////////
 
-	protected String findKey(String key) {
+	protected String findKey(String key, Class clazz) {
 		if (context.containsKey(key)) // priority goes to exact match
 			return key;
 		// alternate capitalization of the first char if possible
 		String candidate = altKey(key);
-		if (candidate == null) // no alternative spellings
-			return null;
-		if (context.containsKey(candidate))
-			return candidate;
-		return null; // means "not set"; differentiate from null values
+		if (candidate != null) {
+			if (context.containsKey(candidate)) {
+				return candidate;
+			}
+		}
+		// try type name
+		if (context.containsKey(clazz.getName())) {
+			return clazz.getName();
+		}
+		return null;
 	}
 
 	protected boolean keyMatches(String key1, String key2) {
