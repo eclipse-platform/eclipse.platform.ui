@@ -93,6 +93,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="URI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="object" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="persistedState" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MHandler" eSuperTypes="#//MContribution">
     <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"

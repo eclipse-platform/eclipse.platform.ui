@@ -45,8 +45,8 @@ public class ContributedPartFactory extends SWTPartFactory {
 			final IEclipseContext localContext = EclipseContextFactory.create(
 					parentContext, UIContextScheduler.instance);
 			localContext.set(IContextConstants.DEBUG_STRING, "ContributedPart"); //$NON-NLS-1$
-			IEclipseContext outputContext = EclipseContextFactory.create(null,
-					UIContextScheduler.instance);
+			final IEclipseContext outputContext = EclipseContextFactory.create(
+					null, UIContextScheduler.instance);
 			outputContext.set(IContextConstants.DEBUG_STRING,
 					"ContributedPart-output"); //$NON-NLS-1$
 			contributedPart.setContext(localContext);
@@ -55,6 +55,17 @@ public class ContributedPartFactory extends SWTPartFactory {
 			localContext.set(IServiceConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			localContext.set(MContributedPart.class.getName(), contributedPart);
+			localContext.set(IServiceConstants.PERSISTED_STATE, contributedPart
+					.getPersistedState());
+			outputContext.runAndTrack(new Runnable() {
+				public void run() {
+					Object state = outputContext
+							.get(IServiceConstants.PERSISTED_STATE);
+					if (state != null) {
+						contributedPart.setPersistedState((String) state);
+					}
+				}
+			}, ""); //$NON-NLS-1$
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 			Object newPart = contributionFactory.create(contributedPart
 					.getURI(), localContext);

@@ -21,4 +21,9 @@ public interface IServiceConstants {
 	 * 
 	 */
 	public static final String INPUT = "input"; //$NON-NLS-1$
+
+	/**
+	 * 
+	 */
+	public static final String PERSISTED_STATE = "persistedState"; //$NON-NLS-1$
 }

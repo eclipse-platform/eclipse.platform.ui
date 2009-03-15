@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.5 2009/02/03 14:25:36 emoffatt Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.6 2009/02/04 21:18:31 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -499,6 +499,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getMContribution_PersistedState() {
+		return (EAttribute)mContributionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getMHandler() {
 		return mHandlerEClass;
 	}
@@ -823,6 +832,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		mContributionEClass = createEClass(MCONTRIBUTION);
 		createEAttribute(mContributionEClass, MCONTRIBUTION__URI);
 		createEAttribute(mContributionEClass, MCONTRIBUTION__OBJECT);
+		createEAttribute(mContributionEClass, MCONTRIBUTION__PERSISTED_STATE);
 
 		mHandlerEClass = createEClass(MHANDLER);
 		createEReference(mHandlerEClass, MHANDLER__COMMAND);
@@ -1014,6 +1024,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEClass(mContributionEClass, MContribution.class, "MContribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getMContribution_URI(), ecorePackage.getEString(), "URI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getMContribution_Object(), ecorePackage.getEJavaObject(), "object", null, 0, 1, MContribution.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getMContribution_PersistedState(), ecorePackage.getEString(), "persistedState", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(mHandlerEClass, MHandler.class, "MHandler", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getMHandler_Command(), this.getMCommand(), null, "command", null, 1, 1, MHandler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$

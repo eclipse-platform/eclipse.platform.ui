@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MContributionImpl.java,v 1.1 2009/02/03 14:25:34 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MContributionImpl#getURI <em>URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MContributionImpl#getObject <em>Object</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.MContributionImpl#getPersistedState <em>Persisted State</em>}</li>
  * </ul>
  * </p>
  *
@@ -75,6 +76,26 @@ public abstract class MContributionImpl extends MApplicationElementImpl implemen
 	 * @ordered
 	 */
 	protected Object object = OBJECT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPersistedState()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String PERSISTED_STATE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPersistedState()
+	 * @generated
+	 * @ordered
+	 */
+	protected String persistedState = PERSISTED_STATE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -142,6 +163,27 @@ public abstract class MContributionImpl extends MApplicationElementImpl implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getPersistedState() {
+		return persistedState;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPersistedState(String newPersistedState) {
+		String oldPersistedState = persistedState;
+		persistedState = newPersistedState;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.MCONTRIBUTION__PERSISTED_STATE, oldPersistedState, persistedState));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -149,6 +191,8 @@ public abstract class MContributionImpl extends MApplicationElementImpl implemen
 				return getURI();
 			case ApplicationPackage.MCONTRIBUTION__OBJECT:
 				return getObject();
+			case ApplicationPackage.MCONTRIBUTION__PERSISTED_STATE:
+				return getPersistedState();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -166,6 +210,9 @@ public abstract class MContributionImpl extends MApplicationElementImpl implemen
 				return;
 			case ApplicationPackage.MCONTRIBUTION__OBJECT:
 				setObject(newValue);
+				return;
+			case ApplicationPackage.MCONTRIBUTION__PERSISTED_STATE:
+				setPersistedState((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -185,6 +232,9 @@ public abstract class MContributionImpl extends MApplicationElementImpl implemen
 			case ApplicationPackage.MCONTRIBUTION__OBJECT:
 				setObject(OBJECT_EDEFAULT);
 				return;
+			case ApplicationPackage.MCONTRIBUTION__PERSISTED_STATE:
+				setPersistedState(PERSISTED_STATE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -201,6 +251,8 @@ public abstract class MContributionImpl extends MApplicationElementImpl implemen
 				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
 			case ApplicationPackage.MCONTRIBUTION__OBJECT:
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+			case ApplicationPackage.MCONTRIBUTION__PERSISTED_STATE:
+				return PERSISTED_STATE_EDEFAULT == null ? persistedState != null : !PERSISTED_STATE_EDEFAULT.equals(persistedState);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -219,6 +271,8 @@ public abstract class MContributionImpl extends MApplicationElementImpl implemen
 		result.append(uri);
 		result.append(", object: "); //$NON-NLS-1$
 		result.append(object);
+		result.append(", persistedState: "); //$NON-NLS-1$
+		result.append(persistedState);
 		result.append(')');
 		return result.toString();
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MContributedPartImpl.java,v 1.1 2009/02/03 14:25:36 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MContributedPartImpl#getURI <em>URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MContributedPartImpl#getObject <em>Object</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.MContributedPartImpl#getPersistedState <em>Persisted State</em>}</li>
  * </ul>
  * </p>
  *
@@ -77,6 +78,26 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 	 * @ordered
 	 */
 	protected Object object = OBJECT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPersistedState()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String PERSISTED_STATE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPersistedState()
+	 * @generated
+	 * @ordered
+	 */
+	protected String persistedState = PERSISTED_STATE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -144,6 +165,27 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getPersistedState() {
+		return persistedState;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPersistedState(String newPersistedState) {
+		String oldPersistedState = persistedState;
+		persistedState = newPersistedState;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.MCONTRIBUTED_PART__PERSISTED_STATE, oldPersistedState, persistedState));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -151,6 +193,8 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 				return getURI();
 			case ApplicationPackage.MCONTRIBUTED_PART__OBJECT:
 				return getObject();
+			case ApplicationPackage.MCONTRIBUTED_PART__PERSISTED_STATE:
+				return getPersistedState();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -168,6 +212,9 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 				return;
 			case ApplicationPackage.MCONTRIBUTED_PART__OBJECT:
 				setObject(newValue);
+				return;
+			case ApplicationPackage.MCONTRIBUTED_PART__PERSISTED_STATE:
+				setPersistedState((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -187,6 +234,9 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 			case ApplicationPackage.MCONTRIBUTED_PART__OBJECT:
 				setObject(OBJECT_EDEFAULT);
 				return;
+			case ApplicationPackage.MCONTRIBUTED_PART__PERSISTED_STATE:
+				setPersistedState(PERSISTED_STATE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -203,6 +253,8 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
 			case ApplicationPackage.MCONTRIBUTED_PART__OBJECT:
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+			case ApplicationPackage.MCONTRIBUTED_PART__PERSISTED_STATE:
+				return PERSISTED_STATE_EDEFAULT == null ? persistedState != null : !PERSISTED_STATE_EDEFAULT.equals(persistedState);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -218,6 +270,7 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 			switch (derivedFeatureID) {
 				case ApplicationPackage.MCONTRIBUTED_PART__URI: return ApplicationPackage.MCONTRIBUTION__URI;
 				case ApplicationPackage.MCONTRIBUTED_PART__OBJECT: return ApplicationPackage.MCONTRIBUTION__OBJECT;
+				case ApplicationPackage.MCONTRIBUTED_PART__PERSISTED_STATE: return ApplicationPackage.MCONTRIBUTION__PERSISTED_STATE;
 				default: return -1;
 			}
 		}
@@ -235,6 +288,7 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 			switch (baseFeatureID) {
 				case ApplicationPackage.MCONTRIBUTION__URI: return ApplicationPackage.MCONTRIBUTED_PART__URI;
 				case ApplicationPackage.MCONTRIBUTION__OBJECT: return ApplicationPackage.MCONTRIBUTED_PART__OBJECT;
+				case ApplicationPackage.MCONTRIBUTION__PERSISTED_STATE: return ApplicationPackage.MCONTRIBUTED_PART__PERSISTED_STATE;
 				default: return -1;
 			}
 		}
@@ -255,6 +309,8 @@ public class MContributedPartImpl<P extends MPart<?>> extends MItemPartImpl<P> i
 		result.append(uri);
 		result.append(", object: "); //$NON-NLS-1$
 		result.append(object);
+		result.append(", persistedState: "); //$NON-NLS-1$
+		result.append(persistedState);
 		result.append(')');
 		return result.toString();
 	}

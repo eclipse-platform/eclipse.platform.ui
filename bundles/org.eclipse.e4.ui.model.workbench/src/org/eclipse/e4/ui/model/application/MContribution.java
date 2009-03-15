@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MContribution.java,v 1.1 2009/02/03 14:25:34 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -23,6 +23,7 @@ package org.eclipse.e4.ui.model.application;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getURI <em>URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getObject <em>Object</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}</li>
  * </ul>
  * </p>
  *
@@ -82,5 +83,31 @@ public interface MContribution extends MApplicationElement {
 	 * @generated
 	 */
 	void setObject(Object value);
+
+	/**
+	 * Returns the value of the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Persisted State</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Persisted State</em>' attribute.
+	 * @see #setPersistedState(String)
+	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMContribution_PersistedState()
+	 * @model
+	 * @generated
+	 */
+	String getPersistedState();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Persisted State</em>' attribute.
+	 * @see #getPersistedState()
+	 * @generated
+	 */
+	void setPersistedState(String value);
 
 } // MContribution

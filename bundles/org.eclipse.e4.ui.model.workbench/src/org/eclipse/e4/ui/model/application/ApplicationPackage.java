@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.5 2009/02/03 14:25:34 emoffatt Exp $
+ * $Id: ApplicationPackage.java,v 1.6 2009/02/04 21:18:31 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -919,13 +919,22 @@ public interface ApplicationPackage extends EPackage {
 	int MCONTRIBUTED_PART__OBJECT = MITEM_PART_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MCONTRIBUTED_PART__PERSISTED_STATE = MITEM_PART_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>MContributed Part</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MCONTRIBUTED_PART_FEATURE_COUNT = MITEM_PART_FEATURE_COUNT + 2;
+	int MCONTRIBUTED_PART_FEATURE_COUNT = MITEM_PART_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MContributionImpl <em>MContribution</em>}' class.
@@ -974,13 +983,22 @@ public interface ApplicationPackage extends EPackage {
 	int MCONTRIBUTION__OBJECT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MCONTRIBUTION__PERSISTED_STATE = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>MContribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MCONTRIBUTION_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MCONTRIBUTION_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MHandlerImpl <em>MHandler</em>}' class.
@@ -1027,6 +1045,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MHANDLER__OBJECT = MCONTRIBUTION__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MHANDLER__PERSISTED_STATE = MCONTRIBUTION__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -2102,6 +2129,17 @@ public interface ApplicationPackage extends EPackage {
 	EAttribute getMContribution_Object();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Persisted State</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContribution#getPersistedState()
+	 * @see #getMContribution()
+	 * @generated
+	 */
+	EAttribute getMContribution_PersistedState();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandler <em>MHandler</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2654,6 +2692,14 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MCONTRIBUTION__OBJECT = eINSTANCE.getMContribution_Object();
+
+		/**
+		 * The meta object literal for the '<em><b>Persisted State</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MCONTRIBUTION__PERSISTED_STATE = eINSTANCE.getMContribution_PersistedState();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MHandlerImpl <em>MHandler</em>}' class.
