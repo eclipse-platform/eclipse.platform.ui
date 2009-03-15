@@ -2,6 +2,7 @@ package org.eclipse.e4.demo.e4photo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Retention;
 
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -10,6 +11,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.demo.e4photo.annotations.Inject;
+import org.eclipse.e4.demo.e4photo.annotations.PostConstruct;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -67,6 +70,7 @@ public class ExifTable {
 		viewer.setInput(inputList);
 	}
 
+	@Inject
 	public void setInput(IResource selection) {
 		if (selection == null)
 			return;

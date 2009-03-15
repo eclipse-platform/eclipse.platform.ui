@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.emf.common.util.URI;
 import org.osgi.framework.Bundle;
 
@@ -270,7 +271,9 @@ public class ReflectionContributionFactory implements IContributionFactory {
 				params[i] = context.get(paramKeys[i].getName());
 			}
 
-			return targetConstructor.newInstance(params);
+			Object newInstance = targetConstructor.newInstance(params);
+			ContextInjectionFactory.inject(newInstance, context);
+			return newInstance;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -12,7 +12,6 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -59,7 +58,6 @@ public class ContributedPartFactory extends SWTPartFactory {
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 			Object newPart = contributionFactory.create(contributedPart
 					.getURI(), localContext);
-			ContextInjectionFactory.inject(newPart, localContext);
 			contributedPart.setObject(newPart);
 		}
 
