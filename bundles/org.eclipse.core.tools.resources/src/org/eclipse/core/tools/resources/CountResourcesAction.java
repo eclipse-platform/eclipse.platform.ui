@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tools.resources;
 
+import org.eclipse.core.resources.IContainer;
+
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -139,7 +141,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 		ResourceCounterVisitor counter = new ResourceCounterVisitor();
 
 		for (Iterator resourcesIter = resources.iterator(); resourcesIter.hasNext();)
-			((IResource) resourcesIter.next()).accept(counter);
+			((IResource) resourcesIter.next()).accept(counter, IResource.DEPTH_INFINITE, IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 
 		return counter.count;
 	}
