@@ -1,0 +1,11 @@
+Native Build Info:
+------------------
+
+platform:         win32.x86
+built by:         Szymon.Brandys@pl.ibm.com
+build date:       10-Mar-2009
+OS Name:          Microsoft Windows XP Professional SP 2
+OS Version:       Unknown
+Compiler version: Microsoft (R) C/C++ Optimizing Compiler Version 14.00.50727.42 for x64
+Linker version:   Microsoft (R) Incremental Linker Version 8.00.50727.42 
+Java version:     Standard Edition (build 1.4.2_18)
