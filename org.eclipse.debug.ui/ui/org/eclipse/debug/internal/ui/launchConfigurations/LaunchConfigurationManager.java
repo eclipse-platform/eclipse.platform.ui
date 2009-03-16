@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -569,6 +569,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				} else if (element.getNodeName().equals(IConfigurationElementConstants.FAVORITES)) {
 					ILaunchConfiguration[] favs = getLaunchConfigurations(element);
 					history.setFavorites(favs);
+					// add any favorites that have been added to the workspace before this plug-in
+					// was loaded - @see bug 231600
+					ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations();
+					for (int j = 0; j < configurations.length; j++) {
+						ILaunchConfiguration config = configurations[j];
+						history.checkFavorites(config);
+					}
 				}
 			}
 		}
