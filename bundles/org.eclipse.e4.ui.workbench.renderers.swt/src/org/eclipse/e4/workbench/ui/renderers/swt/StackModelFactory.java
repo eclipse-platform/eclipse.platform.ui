@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -63,12 +62,13 @@ public class StackModelFactory extends SWTPartFactory {
 			ctf.setSimple(false);
 			ctf.setTabHeight(20);
 			newWidget = ctf;
-			final IEclipseContext folderContext = EclipseContextFactory.create(parentContext,
-					UIContextScheduler.instance);
+			final IEclipseContext folderContext = EclipseContextFactory.create(
+					parentContext, UIContextScheduler.instance);
 			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
 			part.setContext(folderContext);
 			final IEclipseContext toplevelContext = getToplevelContext(part);
-			final IStylingEngine engine = (IStylingEngine) folderContext.get(IStylingEngine.class.getName());
+			final IStylingEngine engine = (IStylingEngine) folderContext
+					.get(IStylingEngine.class.getName());
 			folderContext.runAndTrack(new Runnable() {
 				public void run() {
 					IEclipseContext currentActive = toplevelContext;
@@ -79,7 +79,7 @@ public class StackModelFactory extends SWTPartFactory {
 						currentActive = child;
 					}
 					// System.out.println(cti.getText() + " is now " + ((currentActive == tabItemContext) ? "active" : "inactive"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-					
+
 					if (currentActive == folderContext) {
 						engine.setClassname(ctf, "active"); //$NON-NLS-1$
 					} else {
@@ -102,14 +102,19 @@ public class StackModelFactory extends SWTPartFactory {
 
 		// If there's none defined then pick the first
 		if (selPart == null && part.getChildren().size() > 0) {
-			((MStack) part).setActiveChild((MItemPart<?>) part.getChildren().get(
-					0));
+			((MStack) part).setActiveChild((MItemPart<?>) part.getChildren()
+					.get(0));
 			// selPart = (MPart) part.getChildren().get(0);
 		} else {
 			for (int i = 0; i < items.length; i++) {
 				MPart<?> me = (MPart<?>) items[i].getData(OWNING_ME);
-				if (selPart == me)
+				if (selPart == me) {
+					// Ensure the part is created
+					if (items[i].getControl() == null)
+						renderer.createGui(selPart);
+
 					ctf.setSelection(items[i]);
+				}
 			}
 		}
 	}
@@ -124,7 +129,7 @@ public class StackModelFactory extends SWTPartFactory {
 			int createFlags = 0;
 
 			// if(element instanceof View && ((View)element).isCloseable())
-			//createFlags = createFlags | SWT.CLOSE;
+			// createFlags = createFlags | SWT.CLOSE;
 
 			CTabItem cti = findItemForPart(parentElement, element);
 			if (cti == null)
@@ -179,9 +184,9 @@ public class StackModelFactory extends SWTPartFactory {
 	private void hookChildControllerLogic(final MPart<?> parentElement,
 			final MPart<?> childElement, final CTabItem cti) {
 		// Handle label changes
-		IObservableValue textObs = EMFObservables.observeValue(
-				(EObject) childElement,
-				ApplicationPackage.Literals.MITEM__NAME);
+		IObservableValue textObs = EMFObservables
+				.observeValue((EObject) childElement,
+						ApplicationPackage.Literals.MITEM__NAME);
 		ISWTObservableValue uiObs = SWTObservables.observeText(cti);
 		dbc.bindValue(uiObs, textObs, null, null);
 
@@ -190,7 +195,7 @@ public class StackModelFactory extends SWTPartFactory {
 				ApplicationPackage.Literals.MITEM__TOOLTIP);
 		ISWTObservableValue uiTTipObs = SWTObservables.observeTooltipText(cti);
 		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
-		
+
 		// Handle tab item image changes
 		((EObject) childElement).eAdapters().add(new AdapterImpl() {
 			@Override
@@ -238,7 +243,7 @@ public class StackModelFactory extends SWTPartFactory {
 				}
 			}
 		});
-		
+
 		// Detect activation...picks up cases where the user clicks on the
 		// (already active) tab
 		ctf.addListener(SWT.Activate, new Listener() {
