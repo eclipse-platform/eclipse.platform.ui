@@ -241,7 +241,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		searchSashForm = new SashForm(searchComposite, SWT.HORIZONTAL);
 		//Find field
 		searchField = new Text(searchSashForm, SWT.SEARCH);
-		searchField.setText(CVSUIMessages.CVSHistoryPage_EnterSearchTerm);
+		searchField.setMessage(CVSUIMessages.CVSHistoryPage_EnterSearchTerm);
 		final SearchHistoryTable searchHistoryTable = new SearchHistoryTable();
 		searchField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e){
@@ -702,7 +702,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					if (searchFilter != null)
 					  treeViewer.removeFilter(searchFilter);
 				} else {
-					searchField.setText(CVSUIMessages.CVSHistoryPage_EnterSearchTerm);
+					searchField.setMessage(CVSUIMessages.CVSHistoryPage_EnterSearchTerm);
 					searchField.selectAll();
 					searchField.setFocus();
 				}
