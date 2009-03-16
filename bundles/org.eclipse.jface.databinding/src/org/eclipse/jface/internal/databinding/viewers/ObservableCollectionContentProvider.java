@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
- *     Matthew Hall - bugs 226765, 222991, 238296, 263956, 226292, 265051
+ *     Matthew Hall - bugs 226765, 222991, 238296, 263956, 226292, 265051,
+ *                    266038
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -139,7 +140,6 @@ public abstract class ObservableCollectionContentProvider implements
 			removeCollectionChangeListener(observableCollection);
 
 		if (viewerObservable != null) {
-			viewerObservable.setValue(null);
 			viewerObservable.dispose();
 			viewerObservable = null;
 		}

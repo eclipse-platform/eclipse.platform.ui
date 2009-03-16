@@ -6,42 +6,37 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthew Hall - initial API and implementation (bug 239015)
- *     Matthew Hall - bug 266038
+ *     Matthew Hall - initial API and implementation (bug 266038)
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
-import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
  * 
  */
-public class ObservableCollectionTreeContentProviderTest extends
+public class ObservableCollectionContentProviderTest extends
 		AbstractDefaultRealmTestCase {
 	private Shell shell;
-	private TreeViewer viewer;
-	ObservableListTreeContentProvider contentProvider;
+	private TableViewer viewer;
+	ObservableListContentProvider contentProvider;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		shell = new Shell();
-		viewer = new TreeViewer(shell);
+		viewer = new TableViewer(shell);
 	}
 
 	protected void tearDown() throws Exception {
@@ -51,40 +46,10 @@ public class ObservableCollectionTreeContentProviderTest extends
 		super.tearDown();
 	}
 
-	public void testGetKnownElements_ExcludesInput() {
-		final Object input = new Object();
-		Object[] rootElements = new Object[] { "one", "two", "three" };
-		final IObservableList rootElementList = new WritableList(Arrays
-				.asList(rootElements), null);
-		contentProvider = new ObservableListTreeContentProvider(
-				new IObservableFactory() {
-					public IObservable createObservable(Object target) {
-						if (target == input)
-							return rootElementList;
-						return null;
-					}
-				}, null);
-		viewer.setContentProvider(contentProvider);
-		viewer.setInput(input);
-		contentProvider.getElements(input);
-
-		IObservableSet knownElements = contentProvider.getKnownElements();
-		assertFalse(knownElements.contains(input));
-		assertEquals(new HashSet(Arrays.asList(rootElements)), knownElements);
-	}
-
 	public void testGetKnownElements_DisposedWithoutModificationOnContentProviderDispose() {
-		final Object input = new Object();
-		final IObservableList rootElementList = new WritableList(Collections
+		final IObservableList input = new WritableList(Collections
 				.singletonList("element"), null);
-		contentProvider = new ObservableListTreeContentProvider(
-				new IObservableFactory() {
-					public IObservable createObservable(Object target) {
-						if (target == input)
-							return rootElementList;
-						return null;
-					}
-				}, null);
+		contentProvider = new ObservableListContentProvider();
 		contentProvider.inputChanged(viewer, null, input);
 
 		IObservableSet knownElements = contentProvider.getKnownElements();
