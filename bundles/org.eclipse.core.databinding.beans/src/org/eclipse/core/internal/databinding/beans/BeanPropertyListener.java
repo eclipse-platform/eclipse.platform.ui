@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 265561)
+ *     Matthew Hall - bug 268336
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -19,11 +20,15 @@ import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.NativePropertyListener;
 
-abstract class BeanPropertyListener extends NativePropertyListener implements
-		PropertyChangeListener {
+/**
+ * @since 3.3
+ * 
+ */
+public abstract class BeanPropertyListener extends NativePropertyListener
+		implements PropertyChangeListener {
 	private final PropertyDescriptor propertyDescriptor;
 
-	BeanPropertyListener(IProperty property,
+	protected BeanPropertyListener(IProperty property,
 			PropertyDescriptor propertyDescriptor,
 			ISimplePropertyListener listener) {
 		super(property, listener);
@@ -31,11 +36,16 @@ abstract class BeanPropertyListener extends NativePropertyListener implements
 	}
 
 	public void propertyChange(java.beans.PropertyChangeEvent evt) {
-		if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
+		if (evt.getPropertyName() == null
+				|| propertyDescriptor.getName().equals(evt.getPropertyName())) {
 			Object oldValue = evt.getOldValue();
 			Object newValue = evt.getNewValue();
-			IDiff diff = (oldValue == null || newValue == null) ? null
-					: computeDiff(oldValue, newValue);
+			IDiff diff;
+			if (evt.getPropertyName() == null || oldValue == null
+					|| newValue == null)
+				diff = null;
+			else
+				diff = computeDiff(oldValue, newValue);
 			fireChange(evt.getSource(), diff);
 		}
 	}
