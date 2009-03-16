@@ -96,7 +96,7 @@ A participant is a generic component that provides access to creating a page and
          <attribute name="helpContextId" type="string">
             <annotation>
                <documentation>
-                  A unique identified indicating the help context for this participant.
+                  Since 3.5. A unique identifier indicating the help context for this participant.
                </documentation>
             </annotation>
          </attribute>
@@ -125,7 +125,8 @@ A participant is a generic component that provides access to creating a page and
   name=&quot;CVS Workspace&quot;
   icon=&quot;icons/full/cview16/server.gif&quot;         
   class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant&quot;
-  id=&quot;org.eclipse.team.cvs.ui.cvsworkspace-participant&quot;&gt;
+  id=&quot;org.eclipse.team.cvs.ui.cvsworkspace-participant&quot;
+  helpContextId=&quot;org.eclipse.team.cvs.ui.cvs_workspace_sync_view_context&quot;&gt;
  &lt;/participant&gt;
  &lt;participant
   name=&quot;CVS Merge&quot;
