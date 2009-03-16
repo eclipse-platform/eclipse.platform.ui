@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public interface INavigatable {
 	
 	/**
 	 * Request that the currently selected change be opened. Return <code>true</code>
-	 * if the request resulted in the change being opened and <code>false/code> if the
+	 * if the request resulted in the change being opened and <code>false</code> if the
 	 * currently selected change could not be opened.
 	 * @return whether the selected change was opened.
 	 */
