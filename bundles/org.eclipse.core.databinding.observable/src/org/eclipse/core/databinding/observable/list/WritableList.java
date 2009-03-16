@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164653
- *     Brad Reynolds - bug 167204
+ *     Brad Reynolds - bugs 164653, 167204
  *     Gautam Saggar - bug 169529
  *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 208858, 213145
+ *     Sebastian Fuchs <spacehorst@gmail.com> - bug 243848
+ *     Matthew Hall - bugs 208858, 213145, 243848
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -49,6 +49,7 @@ public class WritableList extends ObservableList {
 	 * Creates an empty writable list with a <code>null</code> element type.
 	 * 
 	 * @param realm
+	 *            the observable's realm
 	 */
 	public WritableList(Realm realm) {
 		this(realm, new ArrayList(), null);
@@ -62,6 +63,7 @@ public class WritableList extends ObservableList {
 	 * first argument to {@link Collection}.
 	 * 
 	 * @param toWrap
+	 *            The java.util.List to wrap
 	 * @param elementType
 	 *            can be <code>null</code>
 	 */
@@ -75,7 +77,7 @@ public class WritableList extends ObservableList {
 	 * method do not affect the contents of the created WritableList.
 	 * 
 	 * @param collection
-	 *            the collection
+	 *            the collection to copy
 	 * @param elementType
 	 *            can be <code>null</code>
 	 * @since 1.2
@@ -93,8 +95,9 @@ public class WritableList extends ObservableList {
 	 * casting the second argument to {@link Collection}.
 	 * 
 	 * @param realm
+	 *            the observable's realm
 	 * @param toWrap
-	 *            The java.utilList to wrap
+	 *            The java.util.List to wrap
 	 * @param elementType
 	 *            can be <code>null</code>
 	 */
@@ -108,8 +111,9 @@ public class WritableList extends ObservableList {
 	 * method do not affect the contents of the created WritableList.
 	 * 
 	 * @param realm
+	 *            the observable's realm
 	 * @param collection
-	 *            the collection
+	 *            the collection to copy
 	 * @param elementType
 	 *            can be <code>null</code>
 	 * @since 1.2
