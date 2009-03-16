@@ -54,7 +54,6 @@ public class HelpServerInterrupt extends TestCase {
 		startServerWithInterrupt();
 		checkServer();
 		WebappManager.stop("help");
-		System.out.println("Iteration Count = " + iterations);
 	}	
 	
 	private void startServerWithInterrupt() throws Exception {
