@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -918,6 +918,9 @@ public class SearchIndex implements ISearchIndex {
 	 *             if lock already obtained
 	 */
 	public synchronized boolean tryLock() throws OverlappingFileLockException {
+		if ("none".equals(System.getProperty("osgi.locking"))) {  //$NON-NLS-1$//$NON-NLS-2$
+			return true; // Act as if lock succeeded
+		}
 		if (lock != null) {
 			throw new OverlappingFileLockException();
 		}
@@ -930,10 +933,21 @@ public class SearchIndex implements ISearchIndex {
 				lock = l;
 				return true;
 			}
+			logLockFailure(null);
 		} catch (IOException ioe) {
 			lock = null;
+			logLockFailure(ioe);
 		}
 		return false;
+	}
+
+	private static boolean errorReported = false;
+	
+	private void logLockFailure(IOException ioe) {
+		if (!errorReported) {
+			HelpBasePlugin.logError("Unable to Lock Help Search Index", ioe); //$NON-NLS-1$ 		
+			errorReported = true;
+		}
 	}
 
 	private File getLockFile() {
