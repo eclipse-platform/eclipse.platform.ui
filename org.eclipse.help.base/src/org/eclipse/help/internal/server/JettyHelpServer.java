@@ -115,7 +115,7 @@ public class JettyHelpServer extends HelpServer {
 			Thread.currentThread().interrupt();
 		
 		IStatus result = job.getResult();
-		if (!result.isOK() && result.getException() != null) {
+		if (result != null && !result.isOK() && result.getException() != null) {
 			Throwable t = result.getException();
 			if (t instanceof Exception)
 				throw (Exception)t;
