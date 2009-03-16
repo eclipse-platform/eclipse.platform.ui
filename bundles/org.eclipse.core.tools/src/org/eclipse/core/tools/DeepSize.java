@@ -180,6 +180,10 @@ public class DeepSize {
 			} else if (componentType == byte.class) {
 				byte[] a = (byte[]) array;
 				size += a.length;
+			} else if (componentType == boolean.class) {
+				//TODO representation of a boolean array might be optimized by JVM
+				boolean[] a = (boolean[]) array;
+				size += a.length;
 			} else if (componentType == short.class) {
 				short[] a = (short[]) array;
 				size += a.length * 2;
@@ -188,7 +192,6 @@ public class DeepSize {
 				size += a.length * 8;
 			} else {
 				//TODO: primitive arrays
-				System.out.println(componentType);
 			}
 			count(type, size);
 			return size;
