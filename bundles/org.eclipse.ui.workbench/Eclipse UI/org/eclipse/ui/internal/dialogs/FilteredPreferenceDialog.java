@@ -15,27 +15,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceContentProvider;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.osgi.service.prefs.BackingStoreException;
+
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -50,6 +33,30 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceContentProvider;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceLabelProvider;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -66,7 +73,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.osgi.service.prefs.BackingStoreException;
+
 
 /**
  * Baseclass for preference dialogs that will show two tabs of preferences -
@@ -210,25 +217,20 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
 		int styleBits = SWT.SINGLE;
-		filteredTree = new PreferenceFilteredTree(parent, styleBits,
-				new PreferencePatternFilter());
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
-		filteredTree.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
+		TreeViewer tree;
+		if (!hasAtMostOnePage()) {
+			filteredTree= new PreferenceFilteredTree(parent, styleBits, new PreferencePatternFilter());
+			GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
+			gd.horizontalIndent= IDialogConstants.HORIZONTAL_MARGIN;
+			filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
-		TreeViewer tree = filteredTree.getViewer();
+			tree= filteredTree.getViewer();
+		} else
+			tree= new TreeViewer(parent, styleBits);
 
 		setContentAndLabelProviders(tree);
 		tree.setInput(getPreferenceManager());
 
-		// if the tree has only one or zero pages, make the combo area disable
-		if (hasAtMostOnePage(tree)) {
-			Text filterText = filteredTree.getFilterControl();
-			if (filterText != null) {
-				filteredTree.getFilterControl().setEnabled(false);
-			}
-		}
 
 		tree.addFilter(new CapabilityFilter());
 
@@ -250,21 +252,16 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	/**
 	 * Return whether or not there are less than two pages.
 	 * 
-	 * @param tree
 	 * @return <code>true</code> if there are less than two pages.
 	 */
-	private boolean hasAtMostOnePage(TreeViewer tree) {
-		ITreeContentProvider contentProvider = (ITreeContentProvider) tree
-				.getContentProvider();
-		Object[] children = contentProvider.getElements(tree.getInput());
-
-		if (children.length <= 1) {
-			if (children.length == 0) {
-				return true;
-			}
-			return !contentProvider.hasChildren(children[0]);
+	private boolean hasAtMostOnePage() {
+		ITreeContentProvider contentProvider= new PreferenceContentProvider();
+		try {
+			Object[] children= contentProvider.getElements(getPreferenceManager());
+			return children.length == 0 || children.length == 1 && !contentProvider.hasChildren(children[0]);
+		} finally {
+			contentProvider.dispose();
 		}
-		return false;
 	}
 
 	/**
@@ -273,8 +270,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	 * @param treeViewer
 	 */
 	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
-		treeViewer.setLabelProvider(new PreferenceBoldLabelProvider(
-				filteredTree));
+		if (hasAtMostOnePage()) {
+			treeViewer.setLabelProvider(new PreferenceLabelProvider());
+		} else {
+			treeViewer.setLabelProvider(new PreferenceBoldLabelProvider(filteredTree));
+		}
 		IContributionService cs = (IContributionService) PlatformUI
 				.getWorkbench().getActiveWorkbenchWindow().getService(
 						IContributionService.class);
@@ -634,15 +634,21 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTreeFont(org.eclipse.swt.graphics.Font)
 	 */
 	protected void updateTreeFont(Font dialogFont) {
-		applyDialogFont(filteredTree, dialogFont);
-		filteredTree.layout(true);
+		if (hasAtMostOnePage()) {
+			Composite composite= getTreeViewer().getTree();
+			applyDialogFont(composite, dialogFont);
+			composite.layout(true);
+		} else {
+			applyDialogFont(filteredTree, dialogFont);
+			filteredTree.layout(true);
+		}
 	}
 
 	/**
-	 * Apply the dialog font to the control and it's children.
+	 * Apply the dialog font to the given control and it's children.
 	 * 
-	 * @param control
-	 * @param dialogFont
+	 * @param control the control
+	 * @param dialogFont the dialog font
 	 */
 	private void applyDialogFont(Control control, Font dialogFont) {
 		control.setFont(dialogFont);
