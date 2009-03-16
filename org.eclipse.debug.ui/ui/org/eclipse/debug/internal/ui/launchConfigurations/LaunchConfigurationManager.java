@@ -573,8 +573,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 					// was loaded - @see bug 231600
 					ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations();
 					for (int j = 0; j < configurations.length; j++) {
-						ILaunchConfiguration config = configurations[j];
-						history.checkFavorites(config);
+						history.checkFavorites(configurations[j]);
 					}
 				}
 			}
