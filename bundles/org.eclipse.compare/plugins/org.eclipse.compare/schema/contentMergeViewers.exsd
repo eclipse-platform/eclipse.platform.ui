@@ -83,7 +83,7 @@ content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreat
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  a translatable label that will be used in the UI for this viewer
+                  Since 3.5. A translatable label that will be used in the UI for this viewer.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -136,7 +136,8 @@ for text files (extension &quot;txt&quot;):
      &lt;viewer 
          id=&quot;org.eclipse.compare.contentmergeviewer.TextMergeViewer&quot; 
          class=&quot;org.eclipse.compare.internal.TextMergeViewerCreator&quot; 
-         extensions=&quot;txt&quot; 
+         extensions=&quot;txt&quot;
+         label=&quot;Text Compare&quot; 
     /&gt; 
 &lt;/extension&gt; 
 &lt;/pre&gt;
