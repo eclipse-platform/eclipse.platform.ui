@@ -12,8 +12,6 @@ package org.eclipse.debug.internal.ui.actions.expressions;
 
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.views.expression.ExpressionView;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
@@ -26,12 +24,6 @@ public class PasteWatchExpressionsAction extends SelectionListenerAction {
 	public PasteWatchExpressionsAction(ExpressionView expressionView) {
 		super(ActionMessages.PasteWatchExpressionsAction_0);
 		fExpressionView = expressionView;
-		addPropertyChangeListener(new IPropertyChangeListener(){
-		
-			public void propertyChange(PropertyChangeEvent event) {
-				System.out.println(event);
-			}
-		});
 //        setToolTipText(BreakpointGroupMessages.PasteWatchExpressionsAction_1);
 //        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.PASTE_WATCH_EXPRESSIONS_ACTION);
 	}
