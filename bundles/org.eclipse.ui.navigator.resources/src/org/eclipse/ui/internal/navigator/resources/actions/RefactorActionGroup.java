@@ -20,12 +20,12 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.MoveResourceAction;
 import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * This is the action group for refactor actions, including global action
@@ -103,10 +103,10 @@ public class RefactorActionGroup extends ActionGroup {
 		};
 
 		moveAction = new MoveResourceAction(sp);
-		moveAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.MOVE);
+		moveAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_MOVE);
 
 		renameAction = new RenameResourceAction(sp, tree);
-		renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
+		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 	}
 
 	public void updateActionBars() {

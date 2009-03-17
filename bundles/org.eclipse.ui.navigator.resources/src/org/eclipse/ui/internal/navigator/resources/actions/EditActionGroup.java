@@ -21,11 +21,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * @since 3.2
@@ -120,12 +120,12 @@ public class EditActionGroup extends ActionGroup {
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		pasteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
-		pasteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
 		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-		copyAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 
 		IShellProvider sp = new IShellProvider() {
 			public Shell getShell() {
@@ -136,7 +136,7 @@ public class EditActionGroup extends ActionGroup {
 		deleteAction = new DeleteResourceAction(sp);
 		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-		deleteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
+		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 	}
 
 	public void updateActionBars() {

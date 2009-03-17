@@ -21,13 +21,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * Adds the properties action to the menu.
@@ -48,7 +48,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 				return aSite.getViewSite().getShell();
 			}
 		},delegateSelectionProvider);
-		propertiesAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PROPERTIES); 
+		propertiesAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PROPERTIES); 
 	}
 
 	/*
