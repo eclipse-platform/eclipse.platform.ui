@@ -175,6 +175,8 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 	 * @return the optional title argument or <code>null</code>
 	 * @noreference This method is for internal use only. Clients should not
 	 *              call this method.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
 	 */
 	public String getTitleArgument() {
 		return fTitleArgument;
@@ -295,6 +297,8 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 	 *            an optional argument for the pane's title
 	 * @noreference This method is for internal use only. Clients should not
 	 *              call this method.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
 	 */
 	public void setTitleArgument(String argument) {
 		fTitleArgument= argument;
