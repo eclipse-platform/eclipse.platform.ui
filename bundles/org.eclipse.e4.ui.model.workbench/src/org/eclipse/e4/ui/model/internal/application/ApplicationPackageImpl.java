@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.6 2009/02/04 21:18:31 pwebster Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.7 2009/03/15 21:26:03 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -1011,7 +1011,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
 		initEReference(getMPart_Parent(), g1, this.getMPart_Children(), "parent", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getMPart_Visible(), ecorePackage.getEBoolean(), "visible", "true", 0, 1, MPart.class, IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEAttribute(getMPart_Visible(), ecorePackage.getEBoolean(), "visible", "true", 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 		initEAttribute(getMPart_Context(), this.getIEclipseContext(), "context", null, 0, 1, MPart.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(mStackEClass, MStack.class, "MStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$

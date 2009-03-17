@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MPartImpl.java,v 1.1 2009/02/03 14:25:36 emoffatt Exp $
+ * $Id: MPartImpl.java,v 1.2 2009/02/04 21:18:31 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -510,6 +510,18 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public void setVisible(boolean newVisible) {
+		boolean oldVisible = (eFlags & VISIBLE_EFLAG) != 0;
+		if (newVisible) eFlags |= VISIBLE_EFLAG; else eFlags &= ~VISIBLE_EFLAG;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.MPART__VISIBLE, oldVisible, newVisible));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public IEclipseContext getContext() {
 		return context;
 	}
@@ -656,6 +668,9 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 			case ApplicationPackage.MPART__PARENT:
 				setParent((MPart<?>)newValue);
 				return;
+			case ApplicationPackage.MPART__VISIBLE:
+				setVisible((Boolean)newValue);
+				return;
 			case ApplicationPackage.MPART__CONTEXT:
 				setContext((IEclipseContext)newValue);
 				return;
@@ -697,6 +712,9 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 				return;
 			case ApplicationPackage.MPART__PARENT:
 				setParent((MPart<?>)null);
+				return;
+			case ApplicationPackage.MPART__VISIBLE:
+				setVisible(VISIBLE_EDEFAULT);
 				return;
 			case ApplicationPackage.MPART__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);

@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MPart.java,v 1.1 2009/02/03 14:25:34 emoffatt Exp $
+ * $Id: MPart.java,v 1.2 2009/02/04 21:18:32 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -269,11 +269,22 @@ public interface MPart<P extends MPart<?>> extends MApplicationElement {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Visible</em>' attribute.
+	 * @see #setVisible(boolean)
 	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMPart_Visible()
-	 * @model default="true" transient="true" changeable="false" derived="true"
+	 * @model default="true" derived="true"
 	 * @generated
 	 */
 	boolean isVisible();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MPart#isVisible <em>Visible</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Visible</em>' attribute.
+	 * @see #isVisible()
+	 * @generated
+	 */
+	void setVisible(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Context</b></em>' attribute.
