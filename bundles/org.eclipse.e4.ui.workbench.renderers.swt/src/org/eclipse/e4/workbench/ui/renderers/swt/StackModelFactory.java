@@ -139,43 +139,14 @@ public class StackModelFactory extends SWTPartFactory {
 			cti.setText(itemPart.getName());
 			cti.setImage(getImage(element));
 
-			// Handle label changes
-			IObservableValue textObs = EMFObservables.observeValue(
-					(EObject) element, ApplicationPackage.Literals.MITEM__NAME);
-			ISWTObservableValue uiObs = SWTObservables.observeText(cti);
-			dbc.bindValue(uiObs, textObs, null, null);
-			IObservableValue emfTTipObs = EMFObservables.observeValue(
-					(EObject) element,
-					ApplicationPackage.Literals.MITEM__TOOLTIP);
-			ISWTObservableValue uiTTipObs = SWTObservables
-					.observeTooltipText(cti);
-			dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
-
-			// Handle tab item image changes
-			((EObject) element).eAdapters().add(new AdapterImpl() {
-				@Override
-				public void notifyChanged(Notification msg) {
-					MPart<?> sm = (MPart<?>) msg.getNotifier();
-					if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
-							.getFeature())) {
-						CTabItem item = findItemForPart(parentElement, sm);
-						if (item != null) {
-							Image image = getImage(sm);
-							if (image != null)
-								item.setImage(image);
-						}
-					}
-				}
-			});
+			// Hook up special logic to synch up the Tab Items
+			hookTabControllerLogic(parentElement, element, cti);
 
 			// Lazy Loading: On the first pass through this method the
 			// part's control will be null (we're just creating the tabs
 			Control ctrl = (Control) element.getWidget();
 			if (ctrl != null) {
 				cti.setControl(ctrl);
-
-				// Hook up special logic to synch up the Tab Items
-				hookChildControllerLogic(parentElement, element, cti);
 			}
 		}
 	}
@@ -210,9 +181,50 @@ public class StackModelFactory extends SWTPartFactory {
 		return null;
 	}
 
-	private void hookChildControllerLogic(final MPart<?> parentElement,
+	private void hookTabControllerLogic(final MPart<?> parentElement,
 			final MPart<?> childElement, final CTabItem cti) {
+		// Handle visibility changes
+		((EObject) childElement).eAdapters().add(new AdapterImpl() {
+			@Override
+			public void notifyChanged(Notification msg) {
+				if (ApplicationPackage.Literals.MPART__VISIBLE.equals(msg
+						.getFeature())) {
+					MPart<?> changedPart = (MPart<?>) msg.getNotifier();
+					if (changedPart.isVisible()) {
+						childAdded(changedPart.getParent(), changedPart);
+					} else {
+						childRemoved(changedPart.getParent(), changedPart);
+					}
+				}
+			}
+		});
 
+		// Handle label changes
+		IObservableValue textObs = EMFObservables
+				.observeValue((EObject) childElement,
+						ApplicationPackage.Literals.MITEM__NAME);
+		ISWTObservableValue uiObs = SWTObservables.observeText(cti);
+		dbc.bindValue(uiObs, textObs, null, null);
+
+		// Observe tooltip changes
+		IObservableValue emfTTipObs = EMFObservables.observeValue(
+				(EObject) childElement,
+				ApplicationPackage.Literals.MITEM__TOOLTIP);
+		ISWTObservableValue uiTTipObs = SWTObservables.observeTooltipText(cti);
+		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
+
+		// Handle tab item image changes
+		((EObject) childElement).eAdapters().add(new AdapterImpl() {
+			@Override
+			public void notifyChanged(Notification msg) {
+				MPart<?> sm = (MPart<?>) msg.getNotifier();
+				if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
+						.getFeature())) {
+					Image image = getImage(sm);
+					cti.setImage(image);
+				}
+			}
+		});
 	}
 
 	@Override
