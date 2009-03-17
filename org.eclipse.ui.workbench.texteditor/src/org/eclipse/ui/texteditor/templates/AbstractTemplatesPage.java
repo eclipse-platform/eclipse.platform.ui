@@ -94,6 +94,7 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
@@ -104,7 +105,6 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorExtension2;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage.EditTemplateDialog;
 
 
@@ -788,7 +788,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				return null;
 			}
 		};
-		fEditorPasteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		fEditorPasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 		fTextEditor.setAction(ITextEditorActionConstants.PASTE, fEditorPasteAction);
 	}
 
@@ -836,10 +836,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		IActionBars actionBars= getSite().getActionBars();
 
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), fPasteAction);
-		fPasteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		fPasteAction.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 		fPasteAction.setText(TemplatesMessages.TemplatesPage_paste);
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
-		fCopyAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		fCopyAction.setActionDefinitionId(ActionFactory.COPY.getCommandId());
 		fCopyAction.setText(TemplatesMessages.TemplatesPage_copy);
 		fillToolbar(actionBars);
 		fillMenu(actionBars);
