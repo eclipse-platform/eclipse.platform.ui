@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
@@ -563,8 +564,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fSearchesDropDownAction.updateEnablement();
 		fSearchAgainAction= new SearchAgainAction(this);
 		fSearchAgainAction.setEnabled(false);
-		// hackery to get the shortcut to show up
-		fSearchAgainAction.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
+		fSearchAgainAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
 		fCancelAction= new CancelSearchAction(this);
 		fCancelAction.setEnabled(false);
 		fPinSearchViewAction= new PinSearchViewAction(this);
@@ -647,7 +647,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 		IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null)
-			keyBinding= bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU);
 
 		if (keyBinding == null)
 			keyBinding= ""; //$NON-NLS-1$

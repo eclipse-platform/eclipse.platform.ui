@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IURIEditorInput;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
@@ -1124,7 +1125,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
 			String message= status.getMessage();
 			IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getService(IBindingService.class);
-			String keySequence= bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
+			String keySequence= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.FILE_REFRESH);
 			if (keySequence != null)
 				message= message + NLSUtility.format(TextEditorMessages.TextFileDocumentProvider_error_outOfSyncHintWithKeyBinding, keySequence);
 			else
