@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,12 @@ public class AddFromHistoryAction extends BaseCompareAction {
 				} catch (CoreException ex) {
 					pm.done();
 				}
+				
+				// There could be a recently deleted file at the same path as
+				// the container. If such a file is the only one to restore, we
+				// should not suggest to restore it, so set states to null.
+				if (states.length == 1 && states[0].getFullPath().equals(container.getFullPath()))
+					states = null;
 		
 				if (states == null || states.length <= 0) {
 					String msg= Utilities.getString(bundle, "noLocalHistoryError"); //$NON-NLS-1$
@@ -71,20 +77,19 @@ public class AddFromHistoryAction extends BaseCompareAction {
 					dialog.setHelpContextId(ICompareContextIds.ADD_FROM_HISTORY_DIALOG);
 				}
 					
-				if (dialog.select(container, states)) {		
-							
-					AddFromHistoryDialog.HistoryInput[] selected= dialog.getSelected();				
-
-					if (selected != null && selected.length > 0) {	
+				if (dialog.select(container, states)) {
+					AddFromHistoryDialog.HistoryInput[] selected = dialog
+							.getSelected();
+					if (selected != null && selected.length > 0) {
 						try {
 							updateWorkspace(bundle, parentShell, selected);
-	
 						} catch (InterruptedException x) {
 							// Do nothing. Operation has been canceled by user.
-							
 						} catch (InvocationTargetException x) {
-							String reason= x.getTargetException().getMessage();
-							MessageDialog.openError(parentShell, title, Utilities.getFormattedString(bundle, "replaceError", reason));	//$NON-NLS-1$
+							String reason = x.getTargetException().getMessage();
+							MessageDialog.openError(parentShell, title,
+									Utilities.getFormattedString(bundle,
+											"replaceError", reason)); //$NON-NLS-1$
 						}
 					}
 				}
